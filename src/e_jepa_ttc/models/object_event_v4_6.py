@@ -13,7 +13,6 @@ from dataclasses import dataclass
 
 import torch
 from torch import nn
-from torch.nn import functional
 
 from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config
 from e_jepa_ttc.models.object_event_v4_2 import ObjectEventTTCV42
@@ -161,16 +160,12 @@ class ObjectEventTTCV46(nn.Module):
     ]:
         resized = self.base._resize(events)
         batch, steps, channels, height, width = resized.shape
-        maps = self.geometry_encoder(
-            resized.reshape(batch * steps, channels, height, width)
-        )
+        maps = self.geometry_encoder(resized.reshape(batch * steps, channels, height, width))
         _, embed_dim, map_h, map_w = maps.shape
         maps = maps.reshape(batch, steps, embed_dim, map_h, map_w)
         flat_maps = maps.reshape(batch * steps, embed_dim, map_h, map_w)
         logits = self.foreground_head(flat_maps)
-        probabilities = torch.sigmoid(
-            logits / self.geometry_config.foreground_temperature
-        )
+        probabilities = torch.sigmoid(logits / self.geometry_config.foreground_temperature)
         h_extent, w_extent, center_y, center_x = self._soft_extent(
             probabilities, floor=self.geometry_config.moment_floor
         )
@@ -227,17 +222,13 @@ class ObjectEventTTCV46(nn.Module):
         ) = self._geometry_forward(events)
         maximum = self.config.max_abs_expansion
         base_expansion = base_output.expansion.detach()
-        base_log_eta = torch.log1p(
-            -base_expansion.clamp(-maximum * 0.999, maximum * 0.999)
-        )
+        base_log_eta = torch.log1p(-base_expansion.clamp(-maximum * 0.999, maximum * 0.999))
         residual = (height_log_eta - base_log_eta).clamp(
             -self.geometry_config.residual_log_eta_limit,
             self.geometry_config.residual_log_eta_limit,
         )
         fused_log_eta = base_log_eta + blend * residual
-        expansion = (1.0 - torch.exp(fused_log_eta)).clamp(
-            -maximum * 0.999, maximum * 0.999
-        )
+        expansion = (1.0 - torch.exp(fused_log_eta)).clamp(-maximum * 0.999, maximum * 0.999)
         height_expansion = (1.0 - torch.exp(height_log_eta)).clamp(
             -maximum * 0.999, maximum * 0.999
         )

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 import torch
 from torch.nn import functional
@@ -18,13 +18,16 @@ class ObjectEventV412LossConfig:
     margin: float = 1.0
 
     def __post_init__(self) -> None:
-        if min(
-            self.original_bce_weight,
-            self.reversed_bce_weight,
-            self.antisymmetry_weight,
-            self.margin_weight,
-            self.margin,
-        ) < 0.0:
+        if (
+            min(
+                self.original_bce_weight,
+                self.reversed_bce_weight,
+                self.antisymmetry_weight,
+                self.margin_weight,
+                self.margin,
+            )
+            < 0.0
+        ):
             raise ValueError("v4.12 loss weights must be non-negative")
         if self.original_bce_weight + self.reversed_bce_weight <= 0.0:
             raise ValueError("at least one BCE term must be active")
@@ -53,7 +56,10 @@ def reversal_balanced_sign_loss(
     config: ObjectEventV412LossConfig | None = None,
 ) -> ObjectEventV412LossOutput:
     cfg = config or ObjectEventV412LossConfig()
-    if original_logits.shape != reversed_logits.shape or original_logits.shape != target_expansion.shape:
+    if (
+        original_logits.shape != reversed_logits.shape
+        or original_logits.shape != target_expansion.shape
+    ):
         raise ValueError("v4.12 sign-loss tensors must have identical shapes")
     negative = target_expansion < 0.0
     reversed_negative = ~negative
@@ -101,9 +107,7 @@ def _screen_core_gates(
         >= thresholds["screen_balanced_sign_gate"],
         "negative_accuracy": metrics["negative_accuracy"]
         >= thresholds["screen_negative_accuracy_gate"],
-        "minimum_sequence_negative_accuracy": metrics[
-            "minimum_sequence_negative_accuracy"
-        ]
+        "minimum_sequence_negative_accuracy": metrics["minimum_sequence_negative_accuracy"]
         >= thresholds["screen_min_sequence_negative_accuracy_gate"],
         "reverse_accuracy": metrics["reverse_sign_accuracy"]
         >= thresholds["screen_reverse_accuracy_gate"],
@@ -131,9 +135,7 @@ def directional_sign_checkpoint_gates(
         )
     if mode != "screen":
         raise ValueError("mode must be overfit or screen")
-    return _screen_core_gates(
-        metrics=metrics, baseline=baseline, thresholds=thresholds
-    )
+    return _screen_core_gates(metrics=metrics, baseline=baseline, thresholds=thresholds)
 
 
 def directional_sign_gates(
@@ -156,9 +158,7 @@ def directional_sign_gates(
             "antisymmetry": metrics["antisymmetry_mean_abs"]
             <= thresholds["overfit_antisymmetry_ceiling"],
         }
-    gates = _screen_core_gates(
-        metrics=metrics, baseline=baseline, thresholds=thresholds
-    )
+    gates = _screen_core_gates(metrics=metrics, baseline=baseline, thresholds=thresholds)
     gates.update(
         {
             "zero_event_dependence": metrics["zero_event_pearson_drop"]

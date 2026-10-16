@@ -1,4 +1,5 @@
 """Posterior-aware losses for Object Event TTC v4.28."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -36,7 +37,10 @@ class ObjectEventV428LossConfig:
         )
         if min(weights) < 0.0:
             raise ValueError("v4.28 loss weights must be non-negative")
-        if min(self.smooth_l1_beta, self.sign_temperature, self.posterior_sigma, self.epsilon) <= 0.0:
+        if (
+            min(self.smooth_l1_beta, self.sign_temperature, self.posterior_sigma, self.epsilon)
+            <= 0.0
+        ):
             raise ValueError("v4.28 loss scales must be positive")
 
 
@@ -89,7 +93,9 @@ def object_event_v4_28_loss(
         sigma=config.posterior_sigma,
         epsilon=config.epsilon,
     )
-    signed = torch.where(target_exp >= 0.0, torch.ones_like(target_exp), -torch.ones_like(target_exp))
+    signed = torch.where(
+        target_exp >= 0.0, torch.ones_like(target_exp), -torch.ones_like(target_exp)
+    )
     sign_each = functional.softplus(-signed * output.expansion / config.sign_temperature)
     components = {
         "lhr": (sample_weight * lhr_each).mean(),

@@ -17,6 +17,7 @@ def main() -> int:
     """Preserve this campaign's complete state at the next durable optimizer boundary."""
     import psutil
     import torch
+
     from e_jepa_ttc.simplex_t.training import state_digest
 
     c = Campaign(ROOT / "configs/campaign/efficient_context_v1.json")

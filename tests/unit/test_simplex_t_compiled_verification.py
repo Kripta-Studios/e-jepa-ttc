@@ -23,8 +23,10 @@ def fixture(root):
     }
     for name, array in fields.items():
         np.save(output / f"{name}.npy", array)
+
     def digest(path):
         return hashlib.sha256(path.read_bytes()).hexdigest()
+
     manifest = {
         "schema": "simplex_t_compiled_query_context_v1",
         "status": "COMPLETE_FOLD_CACHE_NOT_SCIENTIFIC_FREEZE",

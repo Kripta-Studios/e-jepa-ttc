@@ -135,9 +135,7 @@ def _candidate(
     finite_mask = all_predictions["finite"].astype(bool).to_numpy() & np.isfinite(
         all_predictions["prediction_ttc"].to_numpy(dtype=np.float64)
     )
-    low_label_auc_mid = float(
-        np.trapezoid([mid_values[value] for value in low], x=np.asarray(low))
-    )
+    low_label_auc_mid = float(np.trapezoid([mid_values[value] for value in low], x=np.asarray(low)))
     gate = classify_jepa_causal_gate(
         {
             "low_label_auc_mid": low_label_auc_mid,
@@ -204,7 +202,10 @@ def main() -> int:
                 "arms": {"D2": d2, "D3": d3},
                 "jepa_causally_positive": bool(positive),
                 "best_positive_arm": (
-                    min(positive, key=lambda item: (item["low_label_auc_mid"], item["mid_by_fraction"][1.0]))["arm"]
+                    min(
+                        positive,
+                        key=lambda item: (item["low_label_auc_mid"], item["mid_by_fraction"][1.0]),
+                    )["arm"]
                     if positive
                     else None
                 ),

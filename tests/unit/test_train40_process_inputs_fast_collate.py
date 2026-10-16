@@ -62,9 +62,7 @@ def _fixture(output: Path, *, shards: int = 16, size: int | None = None) -> None
         )
         for path, entries in ((input_path, input_entries), (teacher_path, teacher_entries)):
             stat = path.stat()
-            entries.append(
-                {"name": path.name, "bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
-            )
+            entries.append({"name": path.name, "bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns})
         rows.extend(
             {
                 "sequence_id": "sequence",
@@ -183,8 +181,7 @@ def test_source_has_no_accelerator_or_optimizer_calls() -> None:
     source = Path(ProcessInputs.__module__.replace(".", "/") + ".py")
     if not source.is_file():
         source = (
-            Path(__file__).parents[2]
-            / "operational/train40_system/process_inputs_fast_collate.py"
+            Path(__file__).parents[2] / "operational/train40_system/process_inputs_fast_collate.py"
         )
     text = source.read_text(encoding="utf-8")
     assert "torch.cuda" not in text

@@ -274,7 +274,7 @@ def _fit_and_predict(
 
 
 def _oof_contract_hashes(rows: Sequence[Mapping[str, object]]) -> dict[str, str]:
-    """Bind phase-D arms to the exact signed-TTC OOF identity and weights."""
+    "Bind phase-D arms to the exact signed-TTC OOF identity and weights."
 
     ordered = sorted(rows, key=lambda row: str(row["token_id"]))
     return {
@@ -456,7 +456,11 @@ def main() -> int:
     parser.add_argument("--cache-manifest", type=Path)
     parser.add_argument("--winner-artifact", type=Path)
     parser.add_argument("--low-label-manifest", type=Path)
-    parser.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
+    parser.add_argument(
+        "--protocol",
+        type=Path,
+        default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json",
+    )
     parser.add_argument(
         "--output-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/jepa"
     )
@@ -466,7 +470,7 @@ def main() -> int:
     parser.add_argument(
         "--allow-fixture-cache",
         action="store_true",
-        help="test-only escape hatch; production V8 execution rejects fixture caches",
+        help=("test-only escape hatch; production V8 execution rejects fixture caches"),
     )
     args = parser.parse_args()
     try:
@@ -485,8 +489,15 @@ def main() -> int:
                 )
             )
             return 0
-        if args.cache_manifest is None or args.winner_artifact is None or args.low_label_manifest is None:
-            raise ValueError("--cache-manifest, --winner-artifact and --low-label-manifest are required to execute")
+        if (
+            args.cache_manifest is None
+            or args.winner_artifact is None
+            or args.low_label_manifest is None
+        ):
+            raise ValueError(
+                "--cache-manifest, --winner-artifact and --low-label-manifest are "
+                "required to execute"
+            )
         summaries = execute(
             config_dir=args.config_dir,
             cache_manifest=args.cache_manifest,

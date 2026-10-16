@@ -12,10 +12,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_BASE = "e16e6e76c5367dc5a8ad916fc255cd9a1e9ff0a0"
 EXPECTED_HASHES = {
-    "src/e_jepa_ttc/data/garlttc_lhr_cache.py": "5cd40940bccc8986dd61744882665c60292751587fc34dfb301a12a6e4d2310b",
-    "src/e_jepa_ttc/data/object_event_v4.py": "8b20a0ed5b799641ed910f113d4f9b3bde4d1322053b5942e42f7173ad4f84cb",
-    "src/e_jepa_ttc/models/object_event_v4.py": "6560673c38deb76f6f7fa26fd022c110a2e88aca6278e11b224835cbe25c5260",
-    "scripts/train_e_jepa_object_event_v4.py": "25958e577b2b94070d58c699e3a44bbce4966f59f49d5f4cf05649c4f11048b3",
+    "src/e_jepa_ttc/data/garlttc_lhr_cache.py": (
+        "5cd40940bccc8986dd61744882665c60292751587fc34dfb301a12a6e4d2310b"
+    ),
+    "src/e_jepa_ttc/data/object_event_v4.py": (
+        "8b20a0ed5b799641ed910f113d4f9b3bde4d1322053b5942e42f7173ad4f84cb"
+    ),
+    "src/e_jepa_ttc/models/object_event_v4.py": (
+        "6560673c38deb76f6f7fa26fd022c110a2e88aca6278e11b224835cbe25c5260"
+    ),
+    "scripts/train_e_jepa_object_event_v4.py": (
+        "25958e577b2b94070d58c699e3a44bbce4966f59f49d5f4cf05649c4f11048b3"
+    ),
 }
 
 
@@ -49,7 +57,8 @@ def main() -> int:
             "precontext": float(manifest.get("event_v4_precontext_valid_fraction", 0.0)) >= 0.80,
             "shape": extension.get("event_v4_common_roi_shape", [])[:2] == [3, 12],
             "common_coordinates": extension.get("event_v4_independent_endpoint_resize") is False,
-            "preserved_scale": extension.get("event_v4_preserves_absolute_scale_inside_common_roi") is True,
+            "preserved_scale": extension.get("event_v4_preserves_absolute_scale_inside_common_roi")
+            is True,
         }
         if not all(checks.values()):
             raise RuntimeError(f"Cache contract failed: {checks}")

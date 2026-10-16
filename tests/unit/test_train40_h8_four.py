@@ -34,9 +34,7 @@ def test_real_spawn_keeps_eight_pending_with_four_workers() -> None:
             assert getattr(pool._executor, "_max_workers") == 4
             first = [pool.submit(_prepare_value, {"value": value}) for value in range(8)]
             first_values = [future.result().copy() for future in first]
-            second = [
-                pool.submit(_prepare_value, {"value": value}) for value in range(8, 16)
-            ]
+            second = [pool.submit(_prepare_value, {"value": value}) for value in range(8, 16)]
             second_values = [future.result().copy() for future in second]
     assert [int(value[0]) for value in first_values + second_values] == list(range(16))
     assert 1 <= len({int(value[1]) for value in first_values + second_values}) <= 4

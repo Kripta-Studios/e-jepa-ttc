@@ -1,8 +1,9 @@
 """Window construction, losses and gates for Object Event TTC v4.16."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 from collections.abc import Mapping
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -68,7 +69,9 @@ def causal_window_indices(
     work["_row"] = np.arange(count, dtype=np.int64)
     work["_timestamp"] = [_timestamp_from_token(v) for v in work["sample_token"]]
     for _, group in work.groupby(["sequence_id", "track_id"], sort=False):
-        ordered = group.sort_values(["_timestamp", "_row"], kind="stable")["_row"].to_numpy(dtype=np.int64)
+        ordered = group.sort_values(["_timestamp", "_row"], kind="stable")["_row"].to_numpy(
+            dtype=np.int64
+        )
         for position, row in enumerate(ordered):
             history = ordered[max(0, position - window_size + 1) : position + 1]
             start = window_size - len(history)
@@ -93,7 +96,9 @@ def gather_windows(values: torch.Tensor, indices: np.ndarray, mask: np.ndarray) 
     return gathered
 
 
-def gather_scalar_windows(values: torch.Tensor, indices: np.ndarray, mask: np.ndarray) -> torch.Tensor:
+def gather_scalar_windows(
+    values: torch.Tensor, indices: np.ndarray, mask: np.ndarray
+) -> torch.Tensor:
     if values.ndim != 1 or len(values) != len(indices):
         raise ValueError("scalar values must align with windows")
     safe = np.maximum(indices, 0)
@@ -102,10 +107,7 @@ def gather_scalar_windows(values: torch.Tensor, indices: np.ndarray, mask: np.nd
     return gathered
 
 
-
-def uniform_epoch_indices(
-    train_indices: torch.Tensor, generator: torch.Generator
-) -> torch.Tensor:
+def uniform_epoch_indices(train_indices: torch.Tensor, generator: torch.Generator) -> torch.Tensor:
     """Visit each selected row exactly once in a random order.
 
     Sequence/sign importance weights are already applied inside the v4.16 loss.
@@ -118,6 +120,7 @@ def uniform_epoch_indices(
         raise ValueError("train_indices must be non-empty")
     order = torch.randperm(len(train_indices), generator=generator)
     return train_indices[order]
+
 
 def temporal_dual_head_loss(
     *,
@@ -144,7 +147,9 @@ def temporal_dual_head_loss(
         raise ValueError("magnitude_floor must be positive")
 
     negative = (target_expansion < 0.0).to(sign_logit.dtype)
-    current_bce = functional.binary_cross_entropy_with_logits(sign_logit, negative, reduction="none")
+    current_bce = functional.binary_cross_entropy_with_logits(
+        sign_logit, negative, reduction="none"
+    )
     weight = sample_weight.to(current_bce.dtype).clamp_min(0.0)
     normaliser = weight.sum().clamp_min(1.0e-12)
     final_sign = (current_bce * weight).sum() / normaliser
@@ -225,22 +230,38 @@ def v416_screen_gates(
     return {
         "oof_balanced_sign": oof["balanced_sign_accuracy"] >= gates["oof_balanced_sign_gate"],
         "oof_negative_accuracy": oof["negative_accuracy"] >= gates["oof_negative_accuracy_gate"],
-        "oof_min_sequence_negative_accuracy": oof["minimum_sequence_negative_accuracy"] >= gates["oof_min_sequence_negative_accuracy_gate"],
+        "oof_min_sequence_negative_accuracy": oof["minimum_sequence_negative_accuracy"]
+        >= gates["oof_min_sequence_negative_accuracy_gate"],
         "oof_expansion_mae": oof["expansion_mae"] <= gates["oof_expansion_mae_gate"],
         "validation_pearson": validation["pearson"] >= gates["validation_pearson_gate"],
-        "validation_expansion_mae": validation["expansion_mae"] <= gates["validation_expansion_mae_gate"],
-        "validation_weighted_mid": validation["weighted_mid"] <= gates["validation_weighted_mid_gate"],
-        "validation_weighted_rte_relative": validation["weighted_rte_percent"] <= gates["validation_weighted_rte_relative_ceiling"] * baseline["weighted_rte_percent"],
-        "validation_saturation": validation["ttc_saturation_rate"] <= baseline["ttc_saturation_rate"] + gates["validation_saturation_max_increase"],
-        "validation_balanced_sign": validation["balanced_sign_accuracy"] >= gates["validation_balanced_sign_gate"],
-        "validation_negative_accuracy": validation["negative_accuracy"] >= gates["validation_negative_accuracy_gate"],
-        "validation_min_sequence_pearson": validation["minimum_sequence_pearson"] >= gates["validation_min_sequence_pearson_gate"],
-        "validation_min_sequence_negative_accuracy": validation["minimum_sequence_negative_accuracy"] >= gates["validation_min_sequence_negative_accuracy_gate"],
-        "validation_positive_accuracy": validation["positive_accuracy"] >= gates["validation_positive_accuracy_gate"],
-        "zero_event_dependence": diagnostics["zero_event_pearson_drop"] >= gates["zero_event_pearson_drop_gate"],
-        "shuffled_event_dependence": diagnostics["shuffled_event_pearson_drop"] >= gates["shuffled_event_pearson_drop_gate"],
-        "exact_sign_oddness": diagnostics["sign_oddness_max_abs"] <= gates["exact_sign_oddness_ceiling"],
-        "exact_magnitude_evenness": diagnostics["magnitude_evenness_max_abs"] <= gates["exact_magnitude_evenness_ceiling"],
+        "validation_expansion_mae": validation["expansion_mae"]
+        <= gates["validation_expansion_mae_gate"],
+        "validation_weighted_mid": validation["weighted_mid"]
+        <= gates["validation_weighted_mid_gate"],
+        "validation_weighted_rte_relative": validation["weighted_rte_percent"]
+        <= gates["validation_weighted_rte_relative_ceiling"] * baseline["weighted_rte_percent"],
+        "validation_saturation": validation["ttc_saturation_rate"]
+        <= baseline["ttc_saturation_rate"] + gates["validation_saturation_max_increase"],
+        "validation_balanced_sign": validation["balanced_sign_accuracy"]
+        >= gates["validation_balanced_sign_gate"],
+        "validation_negative_accuracy": validation["negative_accuracy"]
+        >= gates["validation_negative_accuracy_gate"],
+        "validation_min_sequence_pearson": validation["minimum_sequence_pearson"]
+        >= gates["validation_min_sequence_pearson_gate"],
+        "validation_min_sequence_negative_accuracy": validation[
+            "minimum_sequence_negative_accuracy"
+        ]
+        >= gates["validation_min_sequence_negative_accuracy_gate"],
+        "validation_positive_accuracy": validation["positive_accuracy"]
+        >= gates["validation_positive_accuracy_gate"],
+        "zero_event_dependence": diagnostics["zero_event_pearson_drop"]
+        >= gates["zero_event_pearson_drop_gate"],
+        "shuffled_event_dependence": diagnostics["shuffled_event_pearson_drop"]
+        >= gates["shuffled_event_pearson_drop_gate"],
+        "exact_sign_oddness": diagnostics["sign_oddness_max_abs"]
+        <= gates["exact_sign_oddness_ceiling"],
+        "exact_magnitude_evenness": diagnostics["magnitude_evenness_max_abs"]
+        <= gates["exact_magnitude_evenness_ceiling"],
     }
 
 

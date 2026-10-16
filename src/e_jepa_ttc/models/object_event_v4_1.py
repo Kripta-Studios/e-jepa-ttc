@@ -207,8 +207,7 @@ class ObjectEventTTCV41(nn.Module):
         # plus twelve endpoint-statistic blocks.  Keeping a spatial grid is
         # essential: global averages alone discarded the expansion pattern in v4.
         encoded_dim = (
-            9 * self.config.embed_dim * self.config.spatial_grid**2
-            + 12 * self.config.embed_dim * 2
+            9 * self.config.embed_dim * self.config.spatial_grid**2 + 12 * self.config.embed_dim * 2
         )
         self.encoded_head = nn.Sequential(
             nn.LayerNorm(encoded_dim),

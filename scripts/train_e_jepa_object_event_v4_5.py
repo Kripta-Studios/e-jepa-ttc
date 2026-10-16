@@ -35,6 +35,14 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
+from e_jepa_ttc.models.object_event_v4_2 import ObjectEventTTCV42  # noqa: E402
+from e_jepa_ttc.object_event_v4_4 import official_eap_metrics  # noqa: E402
+from e_jepa_ttc.training.object_event_v4_5 import (  # noqa: E402
+    ObjectEventV45LossConfig,
+    object_event_v4_5_loss,
+    reciprocal_reverse_target,
+)
 from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
     EventBatch,
     MaterializedSplit,
@@ -49,14 +57,6 @@ from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
     _sampling_weights,
     _seed,
     _sha256,
-)
-from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_2 import ObjectEventTTCV42  # noqa: E402
-from e_jepa_ttc.object_event_v4_4 import official_eap_metrics  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_5 import (  # noqa: E402
-    ObjectEventV45LossConfig,
-    object_event_v4_5_loss,
-    reciprocal_reverse_target,
 )
 
 
@@ -199,16 +199,14 @@ def _augment_metrics(
     )
     negative_by_sequence = sign_counts["sum"].astype(int).to_dict()
     count_by_sequence = sign_counts["count"].astype(int).to_dict()
-    per_sequence["negative_count"] = per_sequence["sequence_id"].map(
-        negative_by_sequence
-    ).astype(int)
+    per_sequence["negative_count"] = (
+        per_sequence["sequence_id"].map(negative_by_sequence).astype(int)
+    )
     per_sequence["positive_count"] = (
         per_sequence["sequence_id"].map(count_by_sequence).astype(int)
         - per_sequence["negative_count"]
     )
-    eligible = per_sequence[
-        per_sequence["negative_count"] >= per_sequence_negative_min_count
-    ]
+    eligible = per_sequence[per_sequence["negative_count"] >= per_sequence_negative_min_count]
     min_sequence_negative = (
         float(eligible["negative_accuracy"].min()) if not eligible.empty else 0.0
     )
@@ -284,18 +282,12 @@ def _selection_objective(metrics: Mapping[str, Any]) -> float:
         + 80.0 * (1.0 - _finite(event.get("balanced_sign_accuracy")))
         + 40.0 * (1.0 - _finite(event.get("negative_accuracy")))
         + 20.0 * (1.0 - _finite(event.get("pearson")))
-        + 20.0
-        * (
-            1.0
-            - _finite(sequence.get("minimum_eligible_negative_accuracy"))
-        )
+        + 20.0 * (1.0 - _finite(sequence.get("minimum_eligible_negative_accuracy")))
         - 10.0 * _finite(dependence.get("shuffled_event_pearson_drop"))
     )
 
 
-def _gates(
-    metrics: Mapping[str, Any], config: ObjectEventV45TrainConfig
-) -> dict[str, bool]:
+def _gates(metrics: Mapping[str, Any], config: ObjectEventV45TrainConfig) -> dict[str, bool]:
     event = cast(Mapping[str, object], metrics["event"])
     official = cast(Mapping[str, object], metrics["official_eap"])
     sequence = cast(Mapping[str, object], metrics["per_sequence"])
@@ -318,9 +310,7 @@ def _gates(
         >= config.validation_min_sequence_negative_accuracy_gate,
         "zero_event_dependence": _finite(dependence.get("zero_event_pearson_drop"))
         >= config.zero_event_pearson_drop_gate,
-        "shuffled_event_dependence": _finite(
-            dependence.get("shuffled_event_pearson_drop")
-        )
+        "shuffled_event_dependence": _finite(dependence.get("shuffled_event_pearson_drop"))
         >= config.shuffled_event_pearson_drop_gate,
     }
 
@@ -338,9 +328,7 @@ def run(
     started_at = datetime.now(UTC)
     model_config, train_config, loss_config = _load_config(config_path)
     if seed_override is not None:
-        train_config = ObjectEventV45TrainConfig(
-            **{**asdict(train_config), "seed": seed_override}
-        )
+        train_config = ObjectEventV45TrainConfig(**{**asdict(train_config), "seed": seed_override})
     _seed(train_config.seed)
     device = _resolve_device(device_name)
     if device.type == "cuda":
@@ -644,9 +632,7 @@ def run(
                 "elapsed_seconds": time.perf_counter() - started,
                 "git_commit": _git_commit(),
                 "device": str(device),
-                "gpu_name": torch.cuda.get_device_name(device)
-                if device.type == "cuda"
-                else None,
+                "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
                 "cache_manifest": cache_manifest.resolve().as_posix(),
                 "cache_manifest_sha256": _sha256(cache_manifest),
                 "config": config_path.resolve().as_posix(),

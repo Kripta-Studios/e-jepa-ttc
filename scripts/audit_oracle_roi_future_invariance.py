@@ -1,3 +1,5 @@
+# ruff: noqa: E402
+# CLI entry point: add the checkout to sys.path before importing project modules.
 #!/usr/bin/env python
 """Emit machine-readable evidence for oracle-ROI endpoint/future invariance.
 
@@ -5,6 +7,7 @@ This dynamic geometry-helper audit complements the static materializer source au
 It proves that common_square_from_boxes(..., (t1,t2)) is invariant to mutations of
 boxes strictly after t2, while remaining (correctly) dependent on the oracle box at t2.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -16,8 +19,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from e_jepa_ttc.artifacts.hashing import sign_artifact
-from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
+from e_jepa_ttc.artifacts.hashing import (
+    sign_artifact,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
+from e_jepa_ttc.data.event_v4_geometry import (
+    common_square_from_boxes,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
 
 
 def main() -> int:
@@ -55,7 +62,7 @@ def main() -> int:
         "interpretation": {
             "future_lookahead_gt_t2_detected": False if future == base else True,
             "oracle_endpoint_localization_dependency": True if endpoint != base else False,
-            "claim": "endpoint-window causal oracle-ROI preprocessing; not localization-free",
+            "claim": ("endpoint-window causal oracle-ROI preprocessing; not localization-free"),
         },
         "private_test_opened": False,
     }

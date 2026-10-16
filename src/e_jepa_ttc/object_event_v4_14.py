@@ -4,10 +4,11 @@ V4.14 does not retune the v4.13 fusion.  It trains the exact odd directional
 probe with true seeds 7/13/23, applies the already locked v4.13 rule to every
 seed, and forms a conservative consensus from the median receding probability.
 """
+
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 import numpy as np
 import pandas as pd
@@ -92,7 +93,9 @@ def align_selective_seeds(
     if len(seed_frames) < 2:
         raise ValueError("at least two seed frames are required")
     seeds = sorted(seed_frames)
-    normalized = {seed: _normalize(frame, name=f"seed {seed}") for seed, frame in seed_frames.items()}
+    normalized = {
+        seed: _normalize(frame, name=f"seed {seed}") for seed, frame in seed_frames.items()
+    }
     first = normalized[seeds[0]]
     result = first.loc[:, [*IDENTITY_COLUMNS, *TARGET_COLUMNS]].copy()
     baseline = first["baseline_prediction_expansion"].to_numpy(dtype=np.float64)
@@ -139,7 +142,9 @@ def align_selective_seeds(
 
 def pairwise_seed_metrics(seed_frames: Mapping[int, pd.DataFrame]) -> pd.DataFrame:
     seeds = sorted(seed_frames)
-    normalized = {seed: _normalize(frame, name=f"seed {seed}") for seed, frame in seed_frames.items()}
+    normalized = {
+        seed: _normalize(frame, name=f"seed {seed}") for seed, frame in seed_frames.items()
+    }
     rows: list[dict[str, float | int]] = []
     for index, seed_a in enumerate(seeds):
         a = normalized[seed_a]
@@ -151,16 +156,16 @@ def pairwise_seed_metrics(seed_frames: Mapping[int, pd.DataFrame]) -> pd.DataFra
             pb = b["selective_prediction_expansion"].to_numpy(dtype=np.float64)
             qa = a["negative_probability"].to_numpy(dtype=np.float64)
             qb = b["negative_probability"].to_numpy(dtype=np.float64)
-            rows.append({
-                "seed_a": seed_a,
-                "seed_b": seed_b,
-                "selective_prediction_pearson": _pearson(pa, pb),
-                "negative_probability_pearson": _pearson(qa, qb),
-                "mean_abs_prediction_difference": float(np.mean(np.abs(pa - pb))),
-                "override_agreement": float(np.mean(
-                    (qa >= 0.985) == (qb >= 0.985)
-                )),
-            })
+            rows.append(
+                {
+                    "seed_a": seed_a,
+                    "seed_b": seed_b,
+                    "selective_prediction_pearson": _pearson(pa, pb),
+                    "negative_probability_pearson": _pearson(qa, qb),
+                    "mean_abs_prediction_difference": float(np.mean(np.abs(pa - pb))),
+                    "override_agreement": float(np.mean((qa >= 0.985) == (qb >= 0.985))),
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -192,21 +197,21 @@ def robustness_gates(
         >= config.worst_seed_negative_accuracy_gate,
         "mean_seed_min_sequence_negative_accuracy": float(
             per_seed["minimum_sequence_negative_accuracy"].mean()
-        ) >= config.mean_seed_min_sequence_negative_accuracy_gate,
+        )
+        >= config.mean_seed_min_sequence_negative_accuracy_gate,
         "worst_seed_min_sequence_negative_accuracy": float(
             per_seed["minimum_sequence_negative_accuracy"].min()
-        ) >= config.worst_seed_min_sequence_negative_accuracy_gate,
+        )
+        >= config.worst_seed_min_sequence_negative_accuracy_gate,
         "consensus_pearson": float(consensus["pearson"]) >= config.consensus_pearson_gate,
         "consensus_track_bootstrap_lower": float(bootstrap["lower_95"])
         >= config.consensus_track_bootstrap_lower_gate,
         "consensus_weighted_mid": float(consensus["weighted_mid"])
         <= config.consensus_weighted_mid_gate,
         "consensus_weighted_rte_relative": float(consensus["weighted_rte_percent"])
-        <= float(baseline["weighted_rte_percent"])
-        * config.consensus_weighted_rte_relative_ceiling,
+        <= float(baseline["weighted_rte_percent"]) * config.consensus_weighted_rte_relative_ceiling,
         "consensus_saturation": float(consensus["ttc_saturation_rate"])
-        <= float(baseline["ttc_saturation_rate"])
-        + config.consensus_saturation_max_increase,
+        <= float(baseline["ttc_saturation_rate"]) + config.consensus_saturation_max_increase,
         "consensus_expansion_mae": float(consensus["expansion_mae"])
         <= config.consensus_expansion_mae_gate,
         "consensus_balanced_sign": float(consensus["balanced_sign_accuracy"])
@@ -217,17 +222,20 @@ def robustness_gates(
         >= config.consensus_min_sequence_pearson_gate,
         "consensus_min_sequence_negative_accuracy": float(
             consensus["minimum_sequence_negative_accuracy"]
-        ) >= config.consensus_min_sequence_negative_accuracy_gate,
+        )
+        >= config.consensus_min_sequence_negative_accuracy_gate,
         "consensus_positive_accuracy": float(consensus["positive_accuracy"])
         >= config.consensus_positive_accuracy_gate,
         "consensus_override_rate": float(diagnostics["override_rate"])
         <= config.consensus_override_rate_gate,
         "pairwise_selective_prediction_pearson": float(
             pairwise["selective_prediction_pearson"].min()
-        ) >= config.pairwise_selective_prediction_pearson_gate,
+        )
+        >= config.pairwise_selective_prediction_pearson_gate,
         "pairwise_negative_probability_pearson": float(
             pairwise["negative_probability_pearson"].min()
-        ) >= config.pairwise_negative_probability_pearson_gate,
+        )
+        >= config.pairwise_negative_probability_pearson_gate,
         "mean_sample_prediction_std": float(diagnostics["mean_sample_prediction_std"])
         <= config.mean_sample_prediction_std_gate,
         "zero_event_dependence": float(diagnostics["zero_event_pearson_drop"])

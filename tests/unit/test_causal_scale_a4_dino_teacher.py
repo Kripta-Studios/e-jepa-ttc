@@ -130,9 +130,9 @@ def test_a4_training_resume_parity(tmp_path) -> None:
 
         def __getitem__(self, idx: int) -> dict[str, object]:
             res = {
-                "event_v4_common_roi": np.random.default_rng(idx).normal(
-                    size=(3, 12, 128, 128)
-                ).astype(np.float32),
+                "event_v4_common_roi": np.random.default_rng(idx)
+                .normal(size=(3, 12, 128, 128))
+                .astype(np.float32),
                 "garl_delta_t_s": np.float32(0.1),
                 "observable_motion": np.zeros(18, dtype=np.float32),
                 "garl_visible_heights_px": np.asarray([20.0, 25.0], dtype=np.float32),

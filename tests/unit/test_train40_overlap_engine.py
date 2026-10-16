@@ -86,7 +86,7 @@ def test_original_scientific_ast_is_retained_outside_explicit_coordination_repla
 def test_only_admitted_transfer_metric_and_diagnostic_replacements_are_present() -> None:
     source = OVERLAP.read_text(encoding="utf-8")
     assert "DevicePrefetch(data, depth=3)" in source
-    assert "prefetch.take(cursor[\"order\"], start, config.batch_size)" in source
+    assert 'prefetch.take(cursor["order"], start, config.batch_size)' in source
     assert "training._record_relational_fg_bg_diagnostic = relational_diagnostic" in source
     assert "losses = scalar_metrics(components, total)" in source
     assert source.count("torch.cuda.current_stream().synchronize()") == 2

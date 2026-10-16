@@ -64,6 +64,7 @@ class CompressedInputCache(ExclusiveInputCache):
     def get(self, token: str) -> tuple:
         """Change storage only; keep the original encoder, keys, target and tensor arithmetic."""
         import numpy as np
+
         from e_jepa_ttc.efficient_context.garl_input import encode_record
 
         raw_stat = (self.c.raw / self.rows[token]["sequence_id"] / "events.h5").stat()

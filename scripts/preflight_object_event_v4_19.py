@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for Object Event TTC v4.19 dense correspondence/divergence probe."""
+
 from __future__ import annotations
 
 import argparse
@@ -19,7 +20,12 @@ def main() -> int:
     parser.add_argument("--v48-checkpoint", action="append", required=True)
     args = parser.parse_args()
 
-    for path in (args.cache_manifest, args.v418_summary, args.ensemble_train, args.ensemble_validation):
+    for path in (
+        args.cache_manifest,
+        args.v418_summary,
+        args.ensemble_train,
+        args.ensemble_validation,
+    ):
         if not path.is_file():
             raise FileNotFoundError(path)
 
@@ -32,7 +38,11 @@ def main() -> int:
     if recommendation != "foreground_geometry_insufficient_use_dense_flow_divergence_supervision":
         raise RuntimeError(f"v4.19 is not the contracted next experiment: {recommendation}")
     contract = v418.get("scientific_contract", {})
-    for key in ("three_frozen_true_seed_v48_backbones", "official_eap_test_not_opened", "evttc_not_opened"):
+    for key in (
+        "three_frozen_true_seed_v48_backbones",
+        "official_eap_test_not_opened",
+        "evttc_not_opened",
+    ):
         if contract.get(key) is not True:
             raise RuntimeError(f"v4.18 contract missing: {key}")
 
@@ -50,7 +60,13 @@ def main() -> int:
     if sorted(seeds) != [7, 13, 23]:
         raise RuntimeError("v4.19 requires true v4.8 seeds 7,13,23")
 
-    required = {"sequence_id", "sample_token", "track_id", "target_expansion", "fused_prediction_expansion"}
+    required = {
+        "sequence_id",
+        "sample_token",
+        "track_id",
+        "target_expansion",
+        "fused_prediction_expansion",
+    }
     rows: dict[str, int] = {}
     for split, path in (("train", args.ensemble_train), ("validation", args.ensemble_validation)):
         frame = pd.read_csv(path)
@@ -59,19 +75,24 @@ def main() -> int:
             raise RuntimeError(f"{path} missing columns: {missing}")
         rows[split] = len(frame)
 
-    print(json.dumps({
-        "status": "passed",
-        "v418_recommendation": recommendation,
-        "rows": rows,
-        "scientific_contract": {
-            "no_new_trainable_sign_head": True,
-            "dense_feature_correspondence_probe": True,
-            "three_true_seed_v48_backbones_required": True,
-            "v410_magnitude_frozen_for_sign_isolation": True,
-            "official_eap_test_not_opened": True,
-            "evttc_not_opened": True,
-        },
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "v418_recommendation": recommendation,
+                "rows": rows,
+                "scientific_contract": {
+                    "no_new_trainable_sign_head": True,
+                    "dense_feature_correspondence_probe": True,
+                    "three_true_seed_v48_backbones_required": True,
+                    "v410_magnitude_frozen_for_sign_isolation": True,
+                    "official_eap_test_not_opened": True,
+                    "evttc_not_opened": True,
+                },
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

@@ -126,9 +126,7 @@ def main() -> int:
     except Exception as error:
         parser.exit(2, f"V7 geometry audit failed: {type(error).__name__}: {error}\n")
     print(
-        json.dumps(
-            {"output": str(args.output), "geometry_positive": report["geometry_positive"]}
-        )
+        json.dumps({"output": str(args.output), "geometry_positive": report["geometry_positive"]})
     )
     return 0
 

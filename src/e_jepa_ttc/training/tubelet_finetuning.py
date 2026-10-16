@@ -94,8 +94,8 @@ class PredictionCollapseError(RuntimeError):
 def resolve_optimization_config(train_config: object) -> TubeletOptimizationConfig:
     """Resolve v2 controls while preserving legacy single-LR configurations."""
 
-    learning_rate = float(getattr(train_config, "learning_rate"))
-    weight_decay = float(getattr(train_config, "weight_decay"))
+    learning_rate = float(train_config.learning_rate)
+    weight_decay = float(train_config.weight_decay)
 
     def optional_float(name: str, fallback: float) -> float:
         value = getattr(train_config, name, None)
@@ -118,9 +118,7 @@ def resolve_optimization_config(train_config: object) -> TubeletOptimizationConf
         readout_warmup_optimizer_steps=int(
             getattr(train_config, "readout_warmup_optimizer_steps", 0)
         ),
-        min_prediction_std_ratio=float(
-            getattr(train_config, "min_prediction_std_ratio", 0.0)
-        ),
+        min_prediction_std_ratio=float(getattr(train_config, "min_prediction_std_ratio", 0.0)),
         collapse_patience=int(getattr(train_config, "collapse_patience", 0)),
     )
 
@@ -175,8 +173,7 @@ def split_parameter_groups(
         missing = sorted(expected - received)
         extra = sorted(received - expected)
         raise RuntimeError(
-            "Tubelet optimizer groups are not exhaustive: "
-            f"missing={missing!r}; extra={extra!r}"
+            f"Tubelet optimizer groups are not exhaustive: missing={missing!r}; extra={extra!r}"
         )
     return groups
 
@@ -435,11 +432,7 @@ def checkpoint_is_eligible(
         config.readout_warmup_optimizer_steps == 0
         or optimizer_step > config.readout_warmup_optimizer_steps
     )
-    return (
-        warmup_finished
-        and math.isfinite(score)
-        and not is_prediction_collapsed(health, config)
-    )
+    return warmup_finished and math.isfinite(score) and not is_prediction_collapsed(health, config)
 
 
 __all__ = [

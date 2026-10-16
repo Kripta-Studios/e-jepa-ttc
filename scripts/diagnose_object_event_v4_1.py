@@ -99,7 +99,9 @@ def _construct(cls: type[Any], values: Mapping[str, Any]) -> Any:
     return cls(**dict(values))
 
 
-def load_config(path: Path) -> tuple[ObjectEventV41Config, ObjectEventV41TrainConfig, ObjectEventV41LossConfig]:
+def load_config(
+    path: Path,
+) -> tuple[ObjectEventV41Config, ObjectEventV41TrainConfig, ObjectEventV41LossConfig]:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError("Diagnostic config must be a mapping")
@@ -154,12 +156,10 @@ class EventOnlyBatch:
     sample_tokens: list[str]
     track_ids: list[str]
 
-    def to(self, device: torch.device) -> "EventOnlyBatch":
+    def to(self, device: torch.device) -> EventOnlyBatch:
         return EventOnlyBatch(
             events=self.events.to(device=device, dtype=torch.float32, non_blocking=True),
-            delta_t_s=self.delta_t_s.to(
-                device=device, dtype=torch.float32, non_blocking=True
-            ),
+            delta_t_s=self.delta_t_s.to(device=device, dtype=torch.float32, non_blocking=True),
             target_ttc_s=self.target_ttc_s.to(
                 device=device, dtype=torch.float32, non_blocking=True
             ),
@@ -183,9 +183,7 @@ def _lightweight_record(record: Mapping[str, Any], input_size: int) -> dict[str,
     if events.shape[:2] != (3, 12):
         raise ValueError(f"Expected event tensor [3,12,H,W], got {tuple(events.shape)}")
     if events.shape[-2:] != (input_size, input_size):
-        events = torch.nn.functional.interpolate(
-            events, size=(input_size, input_size), mode="area"
-        )
+        events = torch.nn.functional.interpolate(events, size=(input_size, input_size), mode="area")
     return {
         "events": events.contiguous(),
         "delta_t_s": float(record["garl_delta_t_s"]),
@@ -263,9 +261,7 @@ def _collate_event_only(records: list[dict[str, Any]]) -> EventOnlyBatch:
         raise ValueError("Empty v4.1 event-only batch")
     return EventOnlyBatch(
         events=torch.stack([record["events"] for record in records]),
-        delta_t_s=torch.tensor(
-            [record["delta_t_s"] for record in records], dtype=torch.float32
-        ),
+        delta_t_s=torch.tensor([record["delta_t_s"] for record in records], dtype=torch.float32),
         target_ttc_s=torch.tensor(
             [record["target_ttc_s"] for record in records], dtype=torch.float32
         ),
@@ -327,7 +323,7 @@ def _branch_metrics(
     }
 
 
-def _autocast(device: torch.device, precision: str):
+def _autocast(device: torch.device, precision: str) -> torch.autocast:
     enabled = precision != "fp32"
     dtype = torch.float16 if precision == "fp16" else torch.bfloat16
     return torch.autocast(device_type=device.type, dtype=dtype, enabled=enabled)
@@ -425,16 +421,15 @@ def _train_gates(metrics: Mapping[str, Any], config: ObjectEventV41TrainConfig) 
     event = cast(Mapping[str, float], cast(Mapping[str, Any], metrics["branches"])["event"])
     return {
         "pearson": float(event["pearson"]) >= config.train_pearson_gate,
-        "balanced_sign": float(event["balanced_sign_accuracy"])
-        >= config.train_balanced_sign_gate,
-        "saturation": float(event["ttc_saturation_rate"])
-        <= config.train_saturation_gate,
-        "expansion_mae": float(event["expansion_mae"])
-        <= config.train_expansion_mae_gate,
+        "balanced_sign": float(event["balanced_sign_accuracy"]) >= config.train_balanced_sign_gate,
+        "saturation": float(event["ttc_saturation_rate"]) <= config.train_saturation_gate,
+        "expansion_mae": float(event["expansion_mae"]) <= config.train_expansion_mae_gate,
     }
 
 
-def _validation_gates(metrics: Mapping[str, Any], config: ObjectEventV41TrainConfig) -> dict[str, bool]:
+def _validation_gates(
+    metrics: Mapping[str, Any], config: ObjectEventV41TrainConfig
+) -> dict[str, bool]:
     branches = cast(Mapping[str, Any], metrics["branches"])
     event = cast(Mapping[str, float], branches["event"])
     dependence = cast(Mapping[str, float], metrics["event_dependence"])
@@ -492,9 +487,7 @@ def run(
     if device.type == "cuda":
         torch.set_float32_matmul_precision("high")
 
-    train_dataset = GarlTTCObjectEventV4Dataset(
-        cache_manifest.as_posix(), splits=("train",)
-    )
+    train_dataset = GarlTTCObjectEventV4Dataset(cache_manifest.as_posix(), splits=("train",))
     validation_dataset = GarlTTCObjectEventV4Dataset(
         cache_manifest.as_posix(), splits=("validation",)
     )
@@ -588,7 +581,9 @@ def run(
         gates = _train_gates(train_metrics, train_config)
         all_gates = all(gates.values())
         gate_streak = gate_streak + 1 if all_gates else 0
-        event = cast(Mapping[str, float], cast(Mapping[str, Any], train_metrics["branches"])["event"])
+        event = cast(
+            Mapping[str, float], cast(Mapping[str, Any], train_metrics["branches"])["event"]
+        )
         score = (
             float(event["pearson"])
             + float(event["balanced_sign_accuracy"])
@@ -683,7 +678,13 @@ def run(
     gradient_audit = _gradient_audit(model, first_batch, device=device)
     overfit_passed = all(train_gates.values())
     screen_passed = overfit_passed and all(validation_gates.values())
-    status = "screen_passed" if screen_passed else "overfit_passed" if overfit_passed else "overfit_failed"
+    status = (
+        "screen_passed"
+        if screen_passed
+        else "overfit_passed"
+        if overfit_passed
+        else "overfit_failed"
+    )
     ended_at = datetime.now(UTC)
     summary = cast(
         dict[str, Any],

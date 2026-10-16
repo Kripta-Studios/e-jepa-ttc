@@ -12,10 +12,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_HEAD = "1d11b3ee81dc58ac3b07d6a190bbd52baf72daeb"
 EXPECTED_HASHES = {
-    "scripts/train_e_jepa_object_event_v4_2.py": "c7cd7498cd490f3dacb4b1f4c478133b585787aed5a95ba556fae68838f928df",
-    "src/e_jepa_ttc/models/object_event_v4_2.py": "6f802c15d1a9a33d9f5ae10c4321e9ab6ed43a845627b99bb316c6e89d6d35ad",
-    "src/e_jepa_ttc/training/object_event_v4_2.py": "7a805e57b83191e883e9a2726607d4b5df20c36725e3e624885e82bae69ad2d0",
-    "configs/experiment/e_jepa_garl_object_event_screen_v4_2.yaml": "fd3d7d3cbaca5242840ee6c8bc5e8b004821f23292940512969813de5b16173c",
+    "scripts/train_e_jepa_object_event_v4_2.py": (
+        "c7cd7498cd490f3dacb4b1f4c478133b585787aed5a95ba556fae68838f928df"
+    ),
+    "src/e_jepa_ttc/models/object_event_v4_2.py": (
+        "6f802c15d1a9a33d9f5ae10c4321e9ab6ed43a845627b99bb316c6e89d6d35ad"
+    ),
+    "src/e_jepa_ttc/training/object_event_v4_2.py": (
+        "7a805e57b83191e883e9a2726607d4b5df20c36725e3e624885e82bae69ad2d0"
+    ),
+    ("configs/experiment/e_jepa_garl_object_event_screen_v4_2.yaml"): (
+        "fd3d7d3cbaca5242840ee6c8bc5e8b004821f23292940512969813de5b16173c"
+    ),
 }
 
 
@@ -70,14 +78,20 @@ def main() -> int:
         seed7 = json.loads(args.seed7_summary.read_text(encoding="utf-8"))
         if not bool(seed7.get("screen_passed", False)):
             raise RuntimeError("Existing seed-7 v4.2 summary did not pass")
-    print(json.dumps({
-        "status": "passed",
-        "head": head,
-        "expected_head": EXPECTED_HEAD,
-        "v4_2_hashes": actual_hashes,
-        "cache_checks": checks,
-        "seed7_reusable": seed7 is not None,
-    }, indent=2, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "head": head,
+                "expected_head": EXPECTED_HEAD,
+                "v4_2_hashes": actual_hashes,
+                "cache_checks": checks,
+                "seed7_reusable": seed7 is not None,
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

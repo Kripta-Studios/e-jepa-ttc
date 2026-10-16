@@ -27,9 +27,7 @@ def _model() -> ObjectEventTTCV46:
 
 
 def test_boxes_to_feature_masks_clips_and_rasterises() -> None:
-    boxes = torch.tensor(
-        [[[0.0, 0.0, 8.0, 8.0], [8.0, 8.0, 24.0, 24.0], [-4.0, 4.0, 12.0, 20.0]]]
-    )
+    boxes = torch.tensor([[[0.0, 0.0, 8.0, 8.0], [8.0, 8.0, 24.0, 24.0], [-4.0, 4.0, 12.0, 20.0]]])
     masks = boxes_to_feature_masks(
         boxes,
         source_height=32,
@@ -62,9 +60,7 @@ def test_v46_loss_is_finite_and_backpropagates() -> None:
         output,
         delta_t_s=torch.full((4,), 0.1),
         target_ttc_s=torch.tensor([1.0, 2.0, -3.0, 5.0]),
-        visible_heights_px=torch.tensor(
-            [[30.0, 33.0], [25.0, 26.0], [28.0, 27.0], [20.0, 21.0]]
-        ),
+        visible_heights_px=torch.tensor([[30.0, 33.0], [25.0, 26.0], [28.0, 27.0], [20.0, 21.0]]),
         boxes_xyxy=torch.tensor(
             [
                 [[4.0, 4.0, 20.0, 20.0], [5.0, 5.0, 21.0, 22.0], [6.0, 4.0, 23.0, 24.0]],

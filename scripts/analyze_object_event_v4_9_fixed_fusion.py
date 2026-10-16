@@ -23,9 +23,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from scripts.preflight_object_event_v4_9 import (  # noqa: E402
-    assess_v42_fusion_baseline,
-)
 from e_jepa_ttc.object_event_v4_9 import (  # noqa: E402
     FixedFusionConfig,
     add_fusion_columns,
@@ -34,6 +31,9 @@ from e_jepa_ttc.object_event_v4_9 import (  # noqa: E402
     dependence_metrics,
     evaluate_prediction,
     fusion_gates,
+)
+from scripts.preflight_object_event_v4_9 import (  # noqa: E402
+    assess_v42_fusion_baseline,
 )
 
 
@@ -59,9 +59,7 @@ def _git_commit() -> str:
 def _load_summary(path: Path, artifact_type: str) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("artifact_type") != artifact_type:
-        raise RuntimeError(
-            f"Unexpected artifact type in {path}: {payload.get('artifact_type')!r}"
-        )
+        raise RuntimeError(f"Unexpected artifact type in {path}: {payload.get('artifact_type')!r}")
     return payload
 
 
@@ -88,9 +86,7 @@ def _evaluate_split(
         "fixed_fusion": fused_metrics,
         "event_dependence": dependence,
         "expert_prediction_pearson": float(
-            rows[["base_prediction_expansion", "dense_prediction_expansion"]]
-            .corr()
-            .iloc[0, 1]
+            rows[["base_prediction_expansion", "dense_prediction_expansion"]].corr().iloc[0, 1]
         ),
         "expert_disagreement_mean": float(rows["expert_disagreement"].mean()),
         "expert_disagreement_p95": float(rows["expert_disagreement"].quantile(0.95)),
@@ -107,12 +103,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         shutil.rmtree(output)
     output.mkdir(parents=True)
 
-    v42_summary = _load_summary(
-        args.v42_summary, "object_event_v4_2_full_event_only_screen"
-    )
-    v48_summary = _load_summary(
-        args.v48_summary, "object_event_v4_8_dense_foreground_motion"
-    )
+    v42_summary = _load_summary(args.v42_summary, "object_event_v4_2_full_event_only_screen")
+    v48_summary = _load_summary(args.v48_summary, "object_event_v4_8_dense_foreground_motion")
     v42_assessment = assess_v42_fusion_baseline(
         v42_summary,
         allow_marginal_negative_accuracy_only=bool(
@@ -121,8 +113,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     if not bool(v42_assessment["accepted_for_fusion"]):
         raise RuntimeError(
-            "v4.2 source screen is not eligible: "
-            f"{json.dumps(v42_assessment, sort_keys=True)}"
+            f"v4.2 source screen is not eligible: {json.dumps(v42_assessment, sort_keys=True)}"
         )
     if not bool(v48_summary.get("passed")) or v48_summary.get("mode") != "screen":
         raise RuntimeError("v4.8 source screen is not eligible")

@@ -50,9 +50,7 @@ def test_student_hard_argmax_is_temperature_invariant() -> None:
     previous = torch.randn(1, 8, 8, 8)
     current = torch.zeros_like(previous)
     current[:, :, :, 1:] = previous[:, :, :, :-1]
-    result = MODULE._student_correlation(
-        previous, current, radius=2, temperatures=(0.02, 0.10)
-    )
+    result = MODULE._student_correlation(previous, current, radius=2, temperatures=(0.02, 0.10))
     assert result["hard_dx"].shape == (1, 8, 8)
     # Temperature only changes the soft field; hard argmax is computed once.
     assert not torch.allclose(result["soft"][0.02]["dx"], result["soft"][0.10]["dx"])
@@ -76,14 +74,47 @@ def test_decision_selects_smallest_eligible_radius_and_largest_safe_tau() -> Non
         },
     }
     teacher = {
-        "1": {"bbox_physical_coverage": 0.70, "excess_error_reduction": 0.3, "real_vs_shuffled_best_error_improvement": 0.2, "foreground_excess_error_reduction": 0.2, "real_vs_spatial_null_best_error_improvement": 0.2},
-        "2": {"bbox_physical_coverage": 0.95, "excess_error_reduction": 0.3, "real_vs_shuffled_best_error_improvement": 0.2, "foreground_excess_error_reduction": 0.2, "real_vs_spatial_null_best_error_improvement": 0.2},
-        "4": {"bbox_physical_coverage": 1.00, "excess_error_reduction": 0.4, "real_vs_shuffled_best_error_improvement": 0.3, "foreground_excess_error_reduction": 0.3, "real_vs_spatial_null_best_error_improvement": 0.3},
+        "1": {
+            "bbox_physical_coverage": 0.70,
+            "excess_error_reduction": 0.3,
+            "real_vs_shuffled_best_error_improvement": 0.2,
+            "foreground_excess_error_reduction": 0.2,
+            "real_vs_spatial_null_best_error_improvement": 0.2,
+        },
+        "2": {
+            "bbox_physical_coverage": 0.95,
+            "excess_error_reduction": 0.3,
+            "real_vs_shuffled_best_error_improvement": 0.2,
+            "foreground_excess_error_reduction": 0.2,
+            "real_vs_spatial_null_best_error_improvement": 0.2,
+        },
+        "4": {
+            "bbox_physical_coverage": 1.00,
+            "excess_error_reduction": 0.4,
+            "real_vs_shuffled_best_error_improvement": 0.3,
+            "foreground_excess_error_reduction": 0.3,
+            "real_vs_spatial_null_best_error_improvement": 0.3,
+        },
     }
     base = {
-        "1": {"physical_epe_improvement_over_zero": 0.0, "real_minus_shuffled_top1_cosine": 0.0, "real_minus_spatial_null_top1_cosine": 0.0, "real_margin": 0.0},
-        "2": {"physical_epe_improvement_over_zero": 0.30, "real_minus_shuffled_top1_cosine": 0.02, "real_minus_spatial_null_top1_cosine": 0.02, "real_margin": 0.02},
-        "4": {"physical_epe_improvement_over_zero": 0.30, "real_minus_shuffled_top1_cosine": 0.02, "real_minus_spatial_null_top1_cosine": 0.02, "real_margin": 0.02},
+        "1": {
+            "physical_epe_improvement_over_zero": 0.0,
+            "real_minus_shuffled_top1_cosine": 0.0,
+            "real_minus_spatial_null_top1_cosine": 0.0,
+            "real_margin": 0.0,
+        },
+        "2": {
+            "physical_epe_improvement_over_zero": 0.30,
+            "real_minus_shuffled_top1_cosine": 0.02,
+            "real_minus_spatial_null_top1_cosine": 0.02,
+            "real_margin": 0.02,
+        },
+        "4": {
+            "physical_epe_improvement_over_zero": 0.30,
+            "real_minus_shuffled_top1_cosine": 0.02,
+            "real_minus_spatial_null_top1_cosine": 0.02,
+            "real_margin": 0.02,
+        },
     }
     students = {
         "A4": base,

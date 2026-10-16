@@ -56,24 +56,16 @@ def run(run_dir: Path, parent_summary_path: Path, output_path: Path) -> dict[str
     ratio = float(metrics["log_ratio_pearson"])
     parent_ratio = float(parent_metrics["log_ratio_pearson"])
     delta_h = _pearson(geometry.get("delta_log_height_vs_physical"), "global")
-    parent_delta_h = _pearson(
-        parent_geometry.get("delta_log_height_vs_physical"), "global"
-    )
-    delta_h_macro = _pearson(
-        geometry.get("delta_log_height_vs_physical"), "macro_by_sequence"
-    )
+    parent_delta_h = _pearson(parent_geometry.get("delta_log_height_vs_physical"), "global")
+    delta_h_macro = _pearson(geometry.get("delta_log_height_vs_physical"), "macro_by_sequence")
     parent_delta_h_macro = _pearson(
         parent_geometry.get("delta_log_height_vs_physical"), "macro_by_sequence"
     )
-    absolute_h_macro = _pearson(
-        geometry.get("absolute_log_height"), "macro_by_sequence"
-    )
+    absolute_h_macro = _pearson(geometry.get("absolute_log_height"), "macro_by_sequence")
     parent_absolute_h_macro = _pearson(
         parent_geometry.get("absolute_log_height"), "macro_by_sequence"
     )
-    delta_w_macro = _pearson(
-        geometry.get("delta_log_width_vs_physical"), "macro_by_sequence"
-    )
+    delta_w_macro = _pearson(geometry.get("delta_log_width_vs_physical"), "macro_by_sequence")
     parent_delta_w_macro = _pearson(
         parent_geometry.get("delta_log_width_vs_physical"), "macro_by_sequence"
     )
@@ -93,22 +85,20 @@ def run(run_dir: Path, parent_summary_path: Path, output_path: Path) -> dict[str
     ratio_threshold = float(gate["parent_a4_log_ratio_pearson"]) + float(
         gate["log_ratio_pearson_min_gain_vs_a4"]
     )
-    delta_h_threshold = float(
-        gate["parent_a4_delta_log_height_vs_physical_pearson"]
-    ) + float(gate["delta_log_height_vs_physical_min_gain_vs_a4"])
+    delta_h_threshold = float(gate["parent_a4_delta_log_height_vs_physical_pearson"]) + float(
+        gate["delta_log_height_vs_physical_min_gain_vs_a4"]
+    )
     delta_h_macro_threshold = float(
         gate["parent_a4_delta_log_height_vs_physical_macro_pearson"]
     ) + float(gate["delta_log_height_vs_physical_macro_min_gain_vs_a4"])
-    absolute_h_macro_floor = float(
-        gate["parent_a4_absolute_log_height_macro_pearson"]
-    ) - float(gate["absolute_log_height_macro_max_drop_vs_a4"])
+    absolute_h_macro_floor = float(gate["parent_a4_absolute_log_height_macro_pearson"]) - float(
+        gate["absolute_log_height_macro_max_drop_vs_a4"]
+    )
     checks = {
         "log_ratio_gain": ratio >= ratio_threshold,
         "delta_height_gain": delta_h >= delta_h_threshold,
         "delta_height_macro_gain": delta_h_macro >= delta_h_macro_threshold,
-        "absolute_height_macro_non_regression": (
-            absolute_h_macro >= absolute_h_macro_floor
-        ),
+        "absolute_height_macro_non_regression": (absolute_h_macro >= absolute_h_macro_floor),
     }
     gate_pass = all(checks.values())
 
@@ -139,9 +129,7 @@ def run(run_dir: Path, parent_summary_path: Path, output_path: Path) -> dict[str
         "thresholds": {
             "log_ratio_pearson": ratio_threshold,
             "delta_log_height_vs_physical_pearson": delta_h_threshold,
-            "delta_log_height_vs_physical_macro_pearson": (
-                delta_h_macro_threshold
-            ),
+            "delta_log_height_vs_physical_macro_pearson": (delta_h_macro_threshold),
             "absolute_log_height_macro_pearson_floor": absolute_h_macro_floor,
         },
         "a4_parent": {
@@ -161,9 +149,7 @@ def run(run_dir: Path, parent_summary_path: Path, output_path: Path) -> dict[str
             "delta_log_height_vs_physical_macro_pearson": delta_h_macro,
             "delta_log_height_macro_gain": delta_h_macro - parent_delta_h_macro,
             "absolute_log_height_macro_pearson": absolute_h_macro,
-            "absolute_log_height_macro_change": (
-                absolute_h_macro - parent_absolute_h_macro
-            ),
+            "absolute_log_height_macro_change": (absolute_h_macro - parent_absolute_h_macro),
             "delta_log_width_vs_physical_macro_pearson": delta_w_macro,
             "delta_log_width_macro_gain": delta_w_macro - parent_delta_w_macro,
             "delta_log_width_vs_physical_per_sequence": width_per_sequence,

@@ -32,8 +32,9 @@ def _row(name: str, summary: dict[str, Any]) -> dict[str, Any]:
         "expansion_pearson": evaluation["signed_expansion_health"]["pearson"],
         "log_ratio_pearson": evaluation["log_ratio_health"]["pearson"],
         "geometry_prior_pearson": evaluation["geometry_prior_health"]["pearson"],
-        "geometry_prior_macro_mid": evaluation["geometry_prior_metrics"]
-        ["sequence_macro"]["sequence_macro_paper_MiD_overall"],
+        "geometry_prior_macro_mid": evaluation["geometry_prior_metrics"]["sequence_macro"][
+            "sequence_macro_paper_MiD_overall"
+        ],
         "latent_prediction_cosine": evaluation["latent_prediction_cosine"],
         "saturation_rate": evaluation["ttc_saturation_rate"],
         "pretrained": summary["pretraining"]["used"],

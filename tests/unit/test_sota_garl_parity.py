@@ -85,16 +85,13 @@ def test_run_rejects_preprocessing_drift(monkeypatch, tmp_path: Path) -> None:
     assert (args.output / "SHA256.json").is_file()
 
 
-def test_bind_existing_adds_local_lineage_without_model_rerun(
-    monkeypatch, tmp_path: Path
-) -> None:
+def test_bind_existing_adds_local_lineage_without_model_rerun(monkeypatch, tmp_path: Path) -> None:
     report = {
         "status": "PASSED",
         "samples": 3,
         "preprocessing_max_abs": 0.0,
         "records": [
-            {"bit_exact": True, "reference_sensor_sha256": str(index) * 64}
-            for index in range(1, 4)
+            {"bit_exact": True, "reference_sensor_sha256": str(index) * 64} for index in range(1, 4)
         ],
         "models": {"full": {"strict_state_load": True}},
         "identities": {
@@ -104,9 +101,7 @@ def test_bind_existing_adds_local_lineage_without_model_rerun(
     }
     (tmp_path / "RESULT.json").write_text(json.dumps(report), encoding="utf-8")
     (tmp_path / "REPORT.md").write_text("passed\n", encoding="utf-8")
-    monkeypatch.setattr(
-        garl_parity, "_local_source_hashes", lambda: {"helper.py": "c" * 64}
-    )
+    monkeypatch.setattr(garl_parity, "_local_source_hashes", lambda: {"helper.py": "c" * 64})
     binding = garl_parity.bind_existing(tmp_path)
     rebound = json.loads((tmp_path / "RESULT.json").read_text(encoding="utf-8"))
     assert rebound["identities"]["local_executed_helpers"] == {"helper.py": "c" * 64}

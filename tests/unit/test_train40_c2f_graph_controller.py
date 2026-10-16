@@ -17,9 +17,7 @@ def test_only_producer_implementation_changes(monkeypatch, tmp_path: Path, arm: 
         return sentinel
 
     monkeypatch.setattr(controller.controller_overlap, "_launch", launch)
-    result = controller.launch(
-        tmp_path, arm, "operational.train40_system.engine", ["--arm", arm]
-    )
+    result = controller.launch(tmp_path, arm, "operational.train40_system.engine", ["--arm", arm])
     expected = "engine_c2f_graph_replay" if arm == "c2f" else "engine_host_fast_4"
     assert result is sentinel
     assert calls == [(tmp_path, arm, f"operational.train40_system.{expected}", ["--arm", arm])]

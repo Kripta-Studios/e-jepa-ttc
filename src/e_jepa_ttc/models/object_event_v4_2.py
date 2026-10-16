@@ -42,9 +42,7 @@ class ObjectEventTTCV42(ObjectEventTTCV41):
 
     def forward(self, events: torch.Tensor) -> ObjectEventV42Output:
         _, encoded_raw, _, endpoints, spatial = self._forward_one_order(events)
-        _, reverse_encoded_raw, _, _, _ = self._forward_one_order(
-            torch.flip(events, dims=(1,))
-        )
+        _, reverse_encoded_raw, _, _, _ = self._forward_one_order(torch.flip(events, dims=(1,)))
         maximum = self.config.max_abs_expansion
         expansion = maximum * torch.tanh(encoded_raw)
         reverse_expansion = maximum * torch.tanh(reverse_encoded_raw)

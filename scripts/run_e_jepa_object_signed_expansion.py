@@ -16,10 +16,7 @@ PROFILES = {
     "screen": {
         "split": ROOT / "data" / "splits" / "eap_pilot12_v1.json",
         "experiment": (
-            ROOT
-            / "configs"
-            / "experiment"
-            / "e_jepa_garl_object_signed_expansion_screen_v3.yaml"
+            ROOT / "configs" / "experiment" / "e_jepa_garl_object_signed_expansion_screen_v3.yaml"
         ),
         "cache": ROOT / "artifacts" / "cache" / "garl_object_lhr_screen_v2",
         "output": ROOT / "artifacts" / "runs" / "e_jepa_garl_object_signed_expansion_screen_v3",
@@ -29,10 +26,7 @@ PROFILES = {
     "full": {
         "split": ROOT / "data" / "splits" / "eap_train40_v1.json",
         "experiment": (
-            ROOT
-            / "configs"
-            / "experiment"
-            / "e_jepa_garl_object_signed_expansion_full_v3.yaml"
+            ROOT / "configs" / "experiment" / "e_jepa_garl_object_signed_expansion_full_v3.yaml"
         ),
         "cache": ROOT / "artifacts" / "cache" / "garl_object_lhr_full_v2",
         "output": ROOT / "artifacts" / "runs" / "e_jepa_garl_object_signed_expansion_full_v3",

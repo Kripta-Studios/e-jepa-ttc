@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed preflight for Object Event TTC v4.5 paired reciprocal MiD."""
+"Fail-closed preflight for Object Event TTC v4.5 paired reciprocal MiD."
 
 from __future__ import annotations
 
@@ -16,10 +16,18 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 BASE_COMMIT = "488b433857090e525c447bf2974ac72639f25194"
 EXPECTED_HASHES = {
-    "scripts/train_e_jepa_object_event_v4_2.py": "c7cd7498cd490f3dacb4b1f4c478133b585787aed5a95ba556fae68838f928df",
-    "src/e_jepa_ttc/models/object_event_v4_2.py": "6f802c15d1a9a33d9f5ae10c4321e9ab6ed43a845627b99bb316c6e89d6d35ad",
-    "src/e_jepa_ttc/training/object_event_v4_2.py": "7a805e57b83191e883e9a2726607d4b5df20c36725e3e624885e82bae69ad2d0",
-    "configs/experiment/e_jepa_garl_object_event_screen_v4_2.yaml": "fd3d7d3cbaca5242840ee6c8bc5e8b004821f23292940512969813de5b16173c",
+    "scripts/train_e_jepa_object_event_v4_2.py": (
+        "c7cd7498cd490f3dacb4b1f4c478133b585787aed5a95ba556fae68838f928df"
+    ),
+    "src/e_jepa_ttc/models/object_event_v4_2.py": (
+        "6f802c15d1a9a33d9f5ae10c4321e9ab6ed43a845627b99bb316c6e89d6d35ad"
+    ),
+    "src/e_jepa_ttc/training/object_event_v4_2.py": (
+        "7a805e57b83191e883e9a2726607d4b5df20c36725e3e624885e82bae69ad2d0"
+    ),
+    ("configs/experiment/e_jepa_garl_object_event_screen_v4_2.yaml"): (
+        "fd3d7d3cbaca5242840ee6c8bc5e8b004821f23292940512969813de5b16173c"
+    ),
 }
 REQUIRED_V44_FILES = (
     "src/e_jepa_ttc/object_event_v4_4.py",
@@ -110,9 +118,7 @@ def main() -> int:
             raise FileNotFoundError(path)
         actual = _sha256(path)
         if actual != expected:
-            raise RuntimeError(
-                f"Hash mismatch for {relative}: expected {expected}, got {actual}"
-            )
+            raise RuntimeError(f"Hash mismatch for {relative}: expected {expected}, got {actual}")
         checked_hashes[relative] = actual
 
     for relative in REQUIRED_V44_FILES:
@@ -132,9 +138,7 @@ def main() -> int:
     if v44.get("artifact_type") != "object_event_v4_4_train_only_geometry_cv":
         raise ValueError(f"Unexpected v4.4 artifact: {v44.get('artifact_type')}")
     validation = v44.get("validation_metrics", {})
-    hybrid_mid = (
-        validation.get("hybrid", {}).get("official_eap", {}).get("weighted_mid")
-    )
+    hybrid_mid = validation.get("hybrid", {}).get("official_eap", {}).get("weighted_mid")
     if hybrid_mid is None or not 100.0 < float(hybrid_mid) < 400.0:
         raise ValueError(f"Invalid v4.4 hybrid weighted MiD: {hybrid_mid}")
 

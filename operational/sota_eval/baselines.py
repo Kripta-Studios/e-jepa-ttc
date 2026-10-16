@@ -332,9 +332,7 @@ def _predict_cmax(
         "contrast": result.contrast if np.isfinite(result.contrast) else None,
         "null_contrast": result.null_contrast if np.isfinite(result.null_contrast) else None,
         "relative_contrast_gain": (
-            result.relative_contrast_gain
-            if np.isfinite(result.relative_contrast_gain)
-            else None
+            result.relative_contrast_gain if np.isfinite(result.relative_contrast_gain) else None
         ),
         "survival_fraction": result.survival_fraction,
         "confidence": result.confidence,

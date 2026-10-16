@@ -27,7 +27,6 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8 import (  # noqa: E402
     assert_causal_prefix_invariance,
     canonical_json_sha256,
     load_causal_scale_replay_checkpoint,
-    replay_factorial_a5,
     replay_output_frame,
     sha256_file,
     validate_causal_scale_replay_input,
@@ -85,7 +84,8 @@ def _checkpoint_config_provenance(checkpoint: Path, model: CausalScaleTTC) -> di
     expected_effective_config = expected_effective.__dict__.copy()
     if effective_config != expected_effective_config:
         raise ValueError(
-            "loaded model effective config differs from checkpoint config expanded with current defaults"
+            "loaded model effective config differs from checkpoint config "
+            "expanded with current defaults"
         )
     return {
         "raw_checkpoint_config_sha256": canonical_json_sha256(raw_config),
@@ -94,7 +94,7 @@ def _checkpoint_config_provenance(checkpoint: Path, model: CausalScaleTTC) -> di
 
 
 def _producer_git_identity() -> dict[str, Any]:
-    """Record observed producer identity. Production entry points require clean HEAD."""
+    "Record observed producer identity. Production entry points require clean HEAD."
 
     return serialize_git_identity(observe_git_identity())
 
@@ -163,7 +163,7 @@ def _garl_frame(
 def run_garl_replay(
     *, checkpoint: Path, replay_input: Path, output_dir: Path, config_sha256: str, device_name: str
 ) -> dict[str, Any]:
-    """Replay a real local Garl replica checkpoint over the frozen V8 row payload."""
+    "Replay a real local Garl replica checkpoint over the frozen V8 row payload."
 
     raw = torch.load(replay_input, map_location="cpu", weights_only=False)
     if not isinstance(raw, dict):
@@ -323,10 +323,13 @@ def run_replay_sharded(
     device_name: str = "cpu",
     dropout_levels: tuple[float, ...] = (0.1, 0.3, 0.5),
 ) -> dict[str, Any]:
-    """Replay a signed fold manifest part-by-part with bounded CPU/GPU memory."""
+    "Replay a signed fold manifest part-by-part with bounded CPU/GPU memory."
 
     input_manifest = _signed_json(input_manifest_path)
-    if input_manifest.get("artifact_type") != "scientific_recovery_v8_autopsy_replay_input_sharded_v2":
+    if (
+        input_manifest.get("artifact_type")
+        != "scientific_recovery_v8_autopsy_replay_input_sharded_v2"
+    ):
         raise ValueError("run_replay_sharded requires a V8 sharded replay-input manifest")
     parts = input_manifest.get("parts")
     if not isinstance(parts, list) or not parts:
@@ -412,7 +415,9 @@ def run_replay_sharded(
         "device": str(device),
         "causality_checks": {
             "future_prefix_invariance": True,
-            "future_prefix_invariance_method": "same_shape_future_endpoint_and_interval_perturbation_v1",
+            "future_prefix_invariance_method": (
+                "same_shape_future_endpoint_and_interval_perturbation_v1"
+            ),
             "timestamp_rollback_rejected": bool(rollback_checks) and all(rollback_checks),
             "state_reset_contract": "not_applicable_stateless_checkpoint",
             "optimizer_steps": 0,
@@ -443,7 +448,9 @@ def run_protocol_replays(
     parents = protocol.get("parent_checkpoints")
     if not isinstance(parents, dict):
         raise ValueError("V8 protocol lacks parent_checkpoints")
-    expected_rows = protocol.get("sample_contract", {}).get("row_count_contract", {}).get("by_outer_fold")
+    expected_rows = (
+        protocol.get("sample_contract", {}).get("row_count_contract", {}).get("by_outer_fold")
+    )
     if not isinstance(expected_rows, dict):
         raise ValueError("V8 protocol lacks frozen per-fold row counts")
     result: dict[str, Any] = {}
@@ -467,10 +474,15 @@ def run_protocol_replays(
             ):
                 raise ValueError(f"signed replay input binding mismatch for fold {fold}")
             config_payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
-            if not isinstance(config_payload, dict) or not isinstance(config_payload.get("model_config"), dict):
+            if not isinstance(config_payload, dict) or not isinstance(
+                config_payload.get("model_config"), dict
+            ):
                 raise ValueError(f"checkpoint has no model_config: {checkpoint}")
             fold_output = output_dir / model_name / f"fold{fold}"
-            if input_manifest.get("artifact_type") == "scientific_recovery_v8_autopsy_replay_input_sharded_v2":
+            if (
+                input_manifest.get("artifact_type")
+                == "scientific_recovery_v8_autopsy_replay_input_sharded_v2"
+            ):
                 manifest = run_replay_sharded(
                     checkpoint=checkpoint,
                     input_manifest_path=sidecar,
@@ -481,9 +493,7 @@ def run_protocol_replays(
                 )
             else:
                 replay_input = replay_input_root / f"fold{fold}.pt"
-                if (
-                    input_manifest.get("input_sha256") != sha256_file(replay_input)
-                ):
+                if input_manifest.get("input_sha256") != sha256_file(replay_input):
                     raise ValueError(f"legacy replay input binding mismatch for fold {fold}")
                 payload = torch.load(replay_input, map_location="cpu", weights_only=False)
                 if not isinstance(payload, dict):
@@ -532,15 +542,24 @@ def run_protocol_replays(
             "interventions": interventions,
             "causality_checks": {
                 "future_prefix_invariance": bool(causal_manifests)
-                and all(source["causality_checks"].get("future_prefix_invariance") is True for source in causal_manifests),
+                and all(
+                    source["causality_checks"].get("future_prefix_invariance") is True
+                    for source in causal_manifests
+                ),
                 "future_prefix_invariance_method": (
                     "same_shape_future_endpoint_and_interval_perturbation_v1"
-                    if causal_manifests else "not_applicable_garl_pair_checkpoint"
+                    if causal_manifests
+                    else "not_applicable_garl_pair_checkpoint"
                 ),
                 "timestamp_rollback_rejected": bool(causal_manifests)
-                and all(source["causality_checks"].get("timestamp_rollback_rejected") is True for source in causal_manifests),
+                and all(
+                    source["causality_checks"].get("timestamp_rollback_rejected") is True
+                    for source in causal_manifests
+                ),
                 "state_reset_contract": (
-                    "not_applicable_stateless_checkpoint" if causal_manifests else "not_applicable_garl_pair_checkpoint"
+                    "not_applicable_stateless_checkpoint"
+                    if causal_manifests
+                    else "not_applicable_garl_pair_checkpoint"
                 ),
             },
             **_producer_git_identity(),
@@ -561,7 +580,7 @@ def run_replay(
     device_name: str = "cpu",
     dropout_levels: tuple[float, ...] = (0.1, 0.3, 0.5),
 ) -> dict[str, Any]:
-    """Run all frozen A5/C2F interventions for one small portable payload."""
+    "Run all frozen A5/C2F interventions for one small portable payload."
 
     device = torch.device(device_name)
     model = load_causal_scale_replay_checkpoint(checkpoint, device=device)
@@ -602,7 +621,9 @@ def run_replay(
         "device": str(device),
         "causality_checks": {
             "future_prefix_invariance": True,
-            "future_prefix_invariance_method": "same_shape_future_endpoint_and_interval_perturbation_v1",
+            "future_prefix_invariance_method": (
+                "same_shape_future_endpoint_and_interval_perturbation_v1"
+            ),
             "timestamp_rollback_rejected": rollback_rejected,
             "state_reset_contract": "not_applicable_stateless_checkpoint",
             "optimizer_steps": 0,
@@ -614,6 +635,7 @@ def run_replay(
     sign_artifact(manifest)
     _atomic_json(output_dir / "manifest.json", manifest)
     return manifest
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)

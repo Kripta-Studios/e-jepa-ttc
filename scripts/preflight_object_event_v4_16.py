@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for Object Event TTC v4.16 temporal dual head."""
+
 from __future__ import annotations
 
 import argparse

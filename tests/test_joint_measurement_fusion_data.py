@@ -78,8 +78,11 @@ def test_missing_rgb_survives_batching_and_is_exact_event_fallback():
 @pytest.mark.parametrize(
     "indices",
     [
-        torch.tensor([]), torch.tensor([0.0]), torch.tensor([-1]),
-        torch.tensor([3]), torch.tensor([[0]]),
+        torch.tensor([]),
+        torch.tensor([0.0]),
+        torch.tensor([-1]),
+        torch.tensor([3]),
+        torch.tensor([[0]]),
     ],
 )
 def test_invalid_indices_cannot_silently_change_population(indices):

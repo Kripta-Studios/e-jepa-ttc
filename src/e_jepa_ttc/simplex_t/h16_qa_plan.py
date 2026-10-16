@@ -183,9 +183,7 @@ def bind_h16_reference_receipts(work: Path) -> dict:
         )
         if sha256(receipt) != receipt_hash or sha256(payload) != record["sha256"]:
             raise ValueError("H16 reference changed during validation")
-        references.append(
-            dict(item, receipt_sha256=receipt_hash, payload_sha256=record["sha256"])
-        )
+        references.append(dict(item, receipt_sha256=receipt_hash, payload_sha256=record["sha256"]))
     return {
         "status": "REFERENCES_BOUND_NOT_REPLAYED" if not missing else "REFERENCES_INCOMPLETE",
         "plan": plan,

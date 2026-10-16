@@ -32,9 +32,7 @@ def _row(name: str, path: Path) -> dict[str, Any]:
         "arm": name,
         "seed": value.get("seed"),
         "best_epoch": value.get("best_epoch"),
-        "full_macro_mid": _get(
-            metrics, "sequence_macro", "sequence_macro_paper_MiD_overall"
-        ),
+        "full_macro_mid": _get(metrics, "sequence_macro", "sequence_macro_paper_MiD_overall"),
         "full_mae_s": metrics.get("mae_s"),
         "full_expansion_pearson": _get(full, "expansion_health", "pearson"),
         "event_macro_mid": _get(
@@ -48,9 +46,7 @@ def _row(name: str, path: Path) -> dict[str, Any]:
         "event_negative_recall": _get(event, "direction", "negative_recall"),
         "motion_expansion_pearson": _get(motion, "expansion_health", "pearson"),
         "pearson_drop_zero_events": dependence.get("pearson_drop_zero_events"),
-        "pearson_drop_shuffled_events": dependence.get(
-            "pearson_drop_shuffled_events"
-        ),
+        "pearson_drop_shuffled_events": dependence.get("pearson_drop_shuffled_events"),
         "reversal_error_max": evaluation.get("reversal_error_max"),
         "event_gate_mean": evaluation.get("event_gate_mean"),
         "saturation_rate": full.get("saturation_rate"),
@@ -65,9 +61,7 @@ def main() -> int:
     parser.add_argument("--level", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    frame = pd.DataFrame(
-        [_row("scratch", args.scratch), _row("level-transfer", args.level)]
-    )
+    frame = pd.DataFrame([_row("scratch", args.scratch), _row("level-transfer", args.level)])
     print(frame.to_string(index=False))
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)

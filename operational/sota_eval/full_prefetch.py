@@ -135,9 +135,7 @@ def _execution_receipt(
         "previous_execution_sha256": previous_sha256,
         "records": records,
         "queries_consumed": len(records),
-        "waited_for_ram_seconds": (
-            0.0 if adapter is None else adapter.waited_for_ram_seconds
-        ),
+        "waited_for_ram_seconds": (0.0 if adapter is None else adapter.waited_for_ram_seconds),
         "error": error,
         "scientific_binding_changed": False,
         "timing_warning": (
@@ -318,9 +316,7 @@ def pilot(
         "parent_rss_bytes_after_process": process_parent_rss,
         "parent_rss_bytes_after_direct": int(parent.memory_info().rss),
         "worker_memory": adapter.worker_memory,
-        "max_worker_peak_rss_bytes": max(
-            item["peak_rss_bytes"] for item in adapter.worker_memory
-        ),
+        "max_worker_peak_rss_bytes": max(item["peak_rss_bytes"] for item in adapter.worker_memory),
         "waited_for_ram_seconds": adapter.waited_for_ram_seconds,
         "array_payload_bytes_per_query": [
             sum(value.nbytes for value in prepared.values() if isinstance(value, np.ndarray))
@@ -339,16 +335,11 @@ def pilot(
     atomic_json(output / "PILOT.json", result)
     atomic_json(
         output / "BACKEND_FREEZE.json",
-        backend_binding(
-            manifest_path, workers=2, max_ahead=2, min_available_bytes=2 * GIB
-        ),
+        backend_binding(manifest_path, workers=2, max_ahead=2, min_available_bytes=2 * GIB),
     )
     atomic_json(
         output / "SHA256.json",
-        {
-            name: digest(output / name)
-            for name in ("PILOT.json", "BACKEND_FREEZE.json")
-        },
+        {name: digest(output / name) for name in ("PILOT.json", "BACKEND_FREEZE.json")},
     )
     return result
 
@@ -361,7 +352,8 @@ def main() -> int:
     pilot_parser.add_argument("--output", type=Path, default=DEFAULT_PILOT_OUTPUT)
     pilot_parser.add_argument("--count", type=int, default=32)
     pilot_parser.add_argument(
-        "--selection", choices=("sequential", "first-per-sequence"),
+        "--selection",
+        choices=("sequential", "first-per-sequence"),
         default="first-per-sequence",
     )
     run_parser = subparsers.add_parser("run")

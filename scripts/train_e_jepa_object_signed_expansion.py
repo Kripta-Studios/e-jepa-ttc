@@ -116,8 +116,7 @@ def _roc_auc(target_negative: np.ndarray, score_negative: np.ndarray) -> float |
         return None
     ranks = pd.Series(score).rank(method="average").to_numpy(dtype=np.float64)
     return float(
-        (ranks[target].sum() - positives * (positives + 1) / 2.0)
-        / (positives * negatives)
+        (ranks[target].sum() - positives * (positives + 1) / 2.0) / (positives * negatives)
     )
 
 
@@ -293,8 +292,7 @@ def _load_pretrained(
     payload = torch.load(path, map_location="cpu", weights_only=False)
     if (
         not isinstance(payload, Mapping)
-        or payload.get("artifact_type")
-        != "dense_level_dynamics_jepa_checkpoint_v1"
+        or payload.get("artifact_type") != "dense_level_dynamics_jepa_checkpoint_v1"
     ):
         raise ValueError("Expected dense_level_dynamics_jepa_checkpoint_v1")
     state = payload.get("online_encoder_state_dict")
@@ -346,8 +344,7 @@ def _parameter_groups(
         {
             "name": "adapter",
             "params": (
-                list(model.endpoint_adapter.parameters())
-                + list(model.activity_fusion.parameters())
+                list(model.endpoint_adapter.parameters()) + list(model.activity_fusion.parameters())
             ),
             "lr": config.adapter_learning_rate,
             "weight_decay": config.readout_weight_decay,
@@ -355,8 +352,7 @@ def _parameter_groups(
         {
             "name": "motion",
             "params": (
-                list(model.motion_encoder.parameters())
-                + list(model.geometry_residual.parameters())
+                list(model.motion_encoder.parameters()) + list(model.geometry_residual.parameters())
             ),
             "lr": config.motion_learning_rate,
             "weight_decay": config.readout_weight_decay,
@@ -382,9 +378,7 @@ def _parameter_groups(
     manifest = [
         {
             "name": str(group["name"]),
-            "parameter_count": sum(
-                parameter.numel() for parameter in group["params"]
-            ),
+            "parameter_count": sum(parameter.numel() for parameter in group["params"]),
             "base_lr": float(group["lr"]),
             "weight_decay": float(group["weight_decay"]),
         }
@@ -457,9 +451,8 @@ def _train_epoch(
             loss = object_signed_expansion_loss(output, batch, epoch=epoch, config=loss_config)
             backward = loss.total / train_config.gradient_accumulation_steps
         update = (
-            (batch_index + 1) % train_config.gradient_accumulation_steps == 0
-            or batch_index + 1 == len(loader)
-        )
+            batch_index + 1
+        ) % train_config.gradient_accumulation_steps == 0 or batch_index + 1 == len(loader)
         if scaler is None:
             backward.backward()
             if update:
@@ -560,10 +553,7 @@ def _evaluate(
     prior_metrics = _metrics(prior_frame)
     negative_mid = float(metrics["bins"]["negative"]["mid"])
     saturation = float(
-        np.mean(
-            np.abs(prediction_ttc)
-            >= model.config.ttc_clip_seconds * (1.0 - 1.0e-6)
-        )
+        np.mean(np.abs(prediction_ttc) >= model.config.ttc_clip_seconds * (1.0 - 1.0e-6))
     )
     return frame, {
         "metrics": metrics,
@@ -607,37 +597,29 @@ def _eligible(
     auc = direction.get("auc")
     metrics = cast(Mapping[str, Any], evaluation["metrics"])
     model_macro = float(
-        cast(Mapping[str, Any], metrics["sequence_macro"])[
-            "sequence_macro_paper_MiD_overall"
-        ]
+        cast(Mapping[str, Any], metrics["sequence_macro"])["sequence_macro_paper_MiD_overall"]
     )
     prior_metrics = cast(Mapping[str, Any], evaluation["geometry_prior_metrics"])
     prior_macro = float(
-        cast(Mapping[str, Any], prior_metrics["sequence_macro"])[
-            "sequence_macro_paper_MiD_overall"
-        ]
+        cast(Mapping[str, Any], prior_metrics["sequence_macro"])["sequence_macro_paper_MiD_overall"]
     )
     gates = {
         "selection_epoch": epoch >= config.selection_start_epoch,
         "expansion_variation": (
-            float(expansion["prediction_std_ratio"])
-            >= config.min_expansion_std_ratio
+            float(expansion["prediction_std_ratio"]) >= config.min_expansion_std_ratio
         ),
         "expansion_correlation": float(expansion["pearson"]) >= config.min_expansion_pearson,
         "ratio_correlation": float(ratio["pearson"]) >= config.min_log_ratio_pearson,
         "balanced_sign": (
-            balanced is not None
-            and float(balanced) >= config.min_balanced_sign_accuracy
+            balanced is not None and float(balanced) >= config.min_balanced_sign_accuracy
         ),
         "negative_recall": (
-            negative_recall is not None
-            and float(negative_recall) >= config.min_negative_recall
+            negative_recall is not None and float(negative_recall) >= config.min_negative_recall
         ),
         "sign_auc": auc is not None and float(auc) >= config.min_sign_auc,
         "saturation": float(evaluation["ttc_saturation_rate"]) <= config.max_ttc_saturation_rate,
         "beats_geometry_prior": (
-            model_macro
-            <= prior_macro * (1.0 - config.min_prior_improvement_fraction)
+            model_macro <= prior_macro * (1.0 - config.min_prior_improvement_fraction)
         ),
     }
     return all(gates.values()), gates
@@ -950,11 +932,7 @@ def main() -> int:
         }
         train_config = replace(
             train_config,
-            **{
-                key: value
-                for key, value in overrides.items()
-                if value is not None
-            },
+            **{key: value for key, value in overrides.items() if value is not None},
         )
         result = train(
             manifest_path=args.cache_manifest.resolve(),

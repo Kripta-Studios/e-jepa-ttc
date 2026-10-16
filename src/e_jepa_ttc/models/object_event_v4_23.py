@@ -1,15 +1,18 @@
 """Trainability controls for Object Event TTC v4.23 joint geometry + TTC."""
+
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import replace
-from typing import Iterable
 
 from torch import nn
 
 from e_jepa_ttc.models.object_event_v4_22 import select_tail_parameter_names
 
 
-def configure_joint_geometry_ttc_unfreeze(backbone: nn.Module, geometry_tail_count: int) -> dict[str, list[str]]:
+def configure_joint_geometry_ttc_unfreeze(
+    backbone: nn.Module, geometry_tail_count: int
+) -> dict[str, list[str]]:
     """Train only the geometry tail and the existing v4.8 motion predictor.
 
     V4.8 normally runs the foreground model under no-grad. Switching
@@ -33,7 +36,9 @@ def configure_joint_geometry_ttc_unfreeze(backbone: nn.Module, geometry_tail_cou
     backbone.eval()
     return {
         "geometry": selected_geometry,
-        "temporal_projection": [name for name, _ in backbone.temporal_projection.named_parameters()],
+        "temporal_projection": [
+            name for name, _ in backbone.temporal_projection.named_parameters()
+        ],
         "field_head": [name for name, _ in backbone.field_head.named_parameters()],
     }
 
@@ -45,11 +50,20 @@ def geometry_parameters(backbone: nn.Module) -> Iterable[nn.Parameter]:
 
 def motion_parameters(backbone: nn.Module) -> Iterable[nn.Parameter]:
     modules = (backbone.temporal_projection, backbone.field_head)
-    return (parameter for module in modules for parameter in module.parameters() if parameter.requires_grad)
+    return (
+        parameter
+        for module in modules
+        for parameter in module.parameters()
+        if parameter.requires_grad
+    )
 
 
 def named_trainable_parameters(backbone: nn.Module) -> dict[str, nn.Parameter]:
-    return {name: parameter for name, parameter in backbone.named_parameters() if parameter.requires_grad}
+    return {
+        name: parameter
+        for name, parameter in backbone.named_parameters()
+        if parameter.requires_grad
+    }
 
 
 __all__ = [

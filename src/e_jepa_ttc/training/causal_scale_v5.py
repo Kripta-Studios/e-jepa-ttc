@@ -317,8 +317,7 @@ def _selection_score(metrics: Mapping[str, float | None]) -> float:
     slope = metrics.get("slope")
     sign_accuracy = metrics.get("sign_accuracy")
     if any(
-        value is None
-        for value in (ratio_mae, foreground_iou, correlation, slope, sign_accuracy)
+        value is None for value in (ratio_mae, foreground_iou, correlation, slope, sign_accuracy)
     ):
         raise ValueError("validation selection metrics are unavailable")
     score = (
@@ -431,9 +430,7 @@ def train_synthetic_causal_scale(
     for epoch in range(1, training_config.epochs + 1):
         epoch_learning_rate = float(optimizer.param_groups[0]["lr"])
         epoch_loss_config = (
-            warmup_loss_config
-            if epoch <= training_config.foreground_warmup_epochs
-            else loss_config
+            warmup_loss_config if epoch <= training_config.foreground_warmup_epochs else loss_config
         )
         train_metrics = train_one_epoch(
             model,
@@ -455,8 +452,7 @@ def train_synthetic_causal_scale(
             for name, loader in validation_loaders.items()
         }
         group_scores = {
-            name: _selection_score(metrics)
-            for name, metrics in validation_group_metrics.items()
+            name: _selection_score(metrics) for name, metrics in validation_group_metrics.items()
         }
         macro_score = sum(group_scores.values()) / len(group_scores)
         worst_group_score = max(group_scores.values())

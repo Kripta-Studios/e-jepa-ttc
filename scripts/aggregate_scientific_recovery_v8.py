@@ -18,6 +18,7 @@ def main() -> int:
         aggregate_seed7,
     )
     from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import verify_frozen_inputs
+
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
         "--protocol",

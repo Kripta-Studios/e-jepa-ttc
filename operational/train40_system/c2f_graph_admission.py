@@ -42,9 +42,7 @@ class StepResult(NamedTuple):
 class ForwardDispatcher:
     """Select the compiled B32 callable while retaining exact eager tail behavior."""
 
-    def __init__(
-        self, original: Callable[..., object], compiled: Callable[..., object]
-    ) -> None:
+    def __init__(self, original: Callable[..., object], compiled: Callable[..., object]) -> None:
         self.original = original
         self.compiled = compiled
         self.compiled_enabled = False
@@ -135,9 +133,7 @@ def _gradient_comparison(controls: list[tuple[str, StepResult]]) -> dict[str, An
     result: dict[str, Any] = {}
     for title in ("raw", "clipped"):
         vectors = [
-            torch.cat(
-                [tensor.flatten().double() for tensor in getattr(sample, title).values()]
-            )
+            torch.cat([tensor.flatten().double() for tensor in getattr(sample, title).values()])
             for _, sample in controls
         ]
         pairs = []
@@ -259,12 +255,13 @@ def run(output: Path, arm: str, checkpoint: Path | None = None) -> None:
     original_forward: Callable[..., object] | None = None
     original_diagnostic: Callable[..., None] | None = None
     try:
-        if os.environ.get("OMP_WAIT_POLICY", "").upper() == "PASSIVE" or os.environ.get(
-            "KMP_BLOCKTIME"
-        ) == "0":
+        if (
+            os.environ.get("OMP_WAIT_POLICY", "").upper() == "PASSIVE"
+            or os.environ.get("KMP_BLOCKTIME") == "0"
+        ):
             raise RuntimeError("Graph admission requires the original non-idle-wait environment")
         source = backend_source.read_text(encoding="utf-8")
-        if "register_backend(name=\"cudagraphs\"" not in source or "aot_autograd(" not in source:
+        if 'register_backend(name="cudagraphs"' not in source or "aot_autograd(" not in source:
             raise RuntimeError("Installed Torch CUDA-graphs backend source is incompatible")
         if BACKEND not in list_backends():
             raise RuntimeError("Installed Torch does not register the cudagraphs backend")
@@ -317,9 +314,7 @@ def run(output: Path, arm: str, checkpoint: Path | None = None) -> None:
             torch.cuda.set_rng_state_all(initial_cuda_rng)
             model.zero_grad(set_to_none=True)
 
-        def step(
-            batch: ObjectEventV4Batch, compiled: bool, *, restore: bool = True
-        ) -> StepResult:
+        def step(batch: ObjectEventV4Batch, compiled: bool, *, restore: bool = True) -> StepResult:
             if restore:
                 reset()
             dispatcher.compiled_enabled = compiled
@@ -489,9 +484,11 @@ def run(output: Path, arm: str, checkpoint: Path | None = None) -> None:
         steady_recompiles = steady_counter_delta.get("stats", {}).get("unique_graphs", 0)
         if steady_recompiles:
             raise RuntimeError(f"Steady replay compiled {steady_recompiles} additional graphs")
-        if tuple(model.state_dict()) != state_keys or {
-            name: id(parameter) for name, parameter in model.named_parameters()
-        } != parameter_ids:
+        if (
+            tuple(model.state_dict()) != state_keys
+            or {name: id(parameter) for name, parameter in model.named_parameters()}
+            != parameter_ids
+        ):
             raise ValueError("Compilation changed model keys or parameter identity")
         if digest(checkpoint) != checkpoint_sha:
             raise ValueError("Admission changed the training checkpoint")
@@ -540,8 +537,7 @@ def run(output: Path, arm: str, checkpoint: Path | None = None) -> None:
                 "repeated_dropout_CPU_and_CUDA_RNG_trajectory_exact": True,
                 "B32_B8_B32_output_loss_components_and_RNG_trajectory_exact": True,
                 "rng_trajectory": [
-                    _rng_identity(sample.cpu_rng, sample.cuda_rng)
-                    for sample in compiled_trajectory
+                    _rng_identity(sample.cpu_rng, sample.cuda_rng) for sample in compiled_trajectory
                 ],
                 "batch8_uses_original_eager_forward": True,
                 "model_parameter_identity_and_state_dict_keys_unchanged": True,

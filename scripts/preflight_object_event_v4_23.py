@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for Object Event TTC v4.23."""
+
 from __future__ import annotations
 
 import argparse
@@ -31,7 +32,10 @@ def main() -> int:
     summary = json.loads(args.v422_summary.read_text(encoding="utf-8"))
     if summary.get("status") != "completed":
         raise RuntimeError("v4.22 did not complete")
-    if summary.get("decision", {}).get("recommendation") != "partial_unfreeze_supported_integrate_geometry_auxiliary_with_ttc":
+    if (
+        summary.get("decision", {}).get("recommendation")
+        != "partial_unfreeze_supported_integrate_geometry_auxiliary_with_ttc"
+    ):
         raise RuntimeError("v4.22 did not support joint geometry+TTC integration")
     contract = summary.get("scientific_contract", {})
     required = (
@@ -53,24 +57,32 @@ def main() -> int:
         if not path.exists():
             raise FileNotFoundError(path)
         payload = torch.load(path, map_location="cpu", weights_only=False)
-        if payload.get("artifact_type") != "object_event_v4_22_adapted_v48" or int(payload.get("seed", -1)) != seed:
+        if (
+            payload.get("artifact_type") != "object_event_v4_22_adapted_v48"
+            or int(payload.get("seed", -1)) != seed
+        ):
             raise RuntimeError(f"invalid v4.22 adapted checkpoint for seed {seed}: {path}")
         if seed not in records:
             raise RuntimeError(f"v4.22 summary lacks seed record {seed}")
 
-    print(json.dumps({
-        "status": "passed",
-        "v422_recommendation": summary["decision"]["recommendation"],
-        "adapted_seeds": sorted(checkpoints),
-        "scientific_contract": {
-            "start_from_v422_geometry_adapted_seeds": True,
-            "ttc_labels_train_only": True,
-            "geometry_auxiliary_retained": True,
-            "no_validation_model_selection": True,
-            "official_eap_test_not_opened": True,
-            "evttc_not_opened": True,
-        },
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "v422_recommendation": summary["decision"]["recommendation"],
+                "adapted_seeds": sorted(checkpoints),
+                "scientific_contract": {
+                    "start_from_v422_geometry_adapted_seeds": True,
+                    "ttc_labels_train_only": True,
+                    "geometry_auxiliary_retained": True,
+                    "no_validation_model_selection": True,
+                    "official_eap_test_not_opened": True,
+                    "evttc_not_opened": True,
+                },
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

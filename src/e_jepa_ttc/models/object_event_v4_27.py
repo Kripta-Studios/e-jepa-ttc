@@ -1,4 +1,5 @@
 """Object Event TTC v4.27: event-native vertical scale-correlation LHR head."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -50,7 +51,9 @@ class ObjectEventTTCV427(nn.Module):
     search over physically meaningful vertical scale hypotheses.
     """
 
-    def __init__(self, backbone: ObjectEventTTCV48, config: ObjectEventV427Config | None = None) -> None:
+    def __init__(
+        self, backbone: ObjectEventTTCV48, config: ObjectEventV427Config | None = None
+    ) -> None:
         super().__init__()
         self.backbone = backbone
         self.config = config or ObjectEventV427Config()
@@ -65,7 +68,9 @@ class ObjectEventTTCV427(nn.Module):
         )
         self.register_buffer(
             "log_scale_candidates",
-            torch.linspace(self.config.log_scale_min, self.config.log_scale_max, self.config.scale_bins),
+            torch.linspace(
+                self.config.log_scale_min, self.config.log_scale_max, self.config.scale_bins
+            ),
             persistent=True,
         )
 
@@ -79,7 +84,9 @@ class ObjectEventTTCV427(nn.Module):
         return (marginal * y[None]).sum(dim=-1) / marginal.sum(dim=-1).clamp_min(epsilon)
 
     @staticmethod
-    def _profile(features: torch.Tensor, mask: torch.Tensor, epsilon: float) -> tuple[torch.Tensor, torch.Tensor]:
+    def _profile(
+        features: torch.Tensor, mask: torch.Tensor, epsilon: float
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         weights = mask[:, None].clamp_min(0.0)
         profile = (features * weights).sum(dim=-1) / weights.sum(dim=-1).clamp_min(epsilon)
         profile = functional.normalize(profile, dim=1, eps=epsilon)
@@ -113,15 +120,25 @@ class ObjectEventTTCV427(nn.Module):
         batch, _, height = source.shape
         y_target = torch.linspace(-1.0, 1.0, height, device=source.device, dtype=source.dtype)
         ratio = torch.exp(log_eta).to(dtype=source.dtype)
-        y_source = source_center[:, None] + ratio[:, None] * (y_target[None] - target_center[:, None])
+        y_source = source_center[:, None] + ratio[:, None] * (
+            y_target[None] - target_center[:, None]
+        )
         x = torch.zeros_like(y_source)
         grid = torch.stack((x, y_source), dim=-1).unsqueeze(2)
         warped = functional.grid_sample(
             source.unsqueeze(-1), grid, mode="bilinear", padding_mode="zeros", align_corners=True
         ).squeeze(-1)
-        warped_weight = functional.grid_sample(
-            source_weight[:, None, :, None], grid, mode="bilinear", padding_mode="zeros", align_corners=True
-        ).squeeze(1).squeeze(-1)
+        warped_weight = (
+            functional.grid_sample(
+                source_weight[:, None, :, None],
+                grid,
+                mode="bilinear",
+                padding_mode="zeros",
+                align_corners=True,
+            )
+            .squeeze(1)
+            .squeeze(-1)
+        )
         return warped, warped_weight
 
     def forward(self, events: torch.Tensor) -> ObjectEventV427Output:
@@ -131,7 +148,9 @@ class ObjectEventTTCV427(nn.Module):
         previous = self.feature_projection(maps[:, 1])
         current = self.feature_projection(maps[:, 2])
         size = previous.shape[-2:]
-        fg = functional.interpolate(foreground[:, 1:3], size=size, mode="bilinear", align_corners=False)
+        fg = functional.interpolate(
+            foreground[:, 1:3], size=size, mode="bilinear", align_corners=False
+        )
         fg_previous = fg[:, 0].clamp_min(self.config.foreground_floor)
         fg_current = fg[:, 1].clamp_min(self.config.foreground_floor)
         prev_profile, prev_weight = self._profile(previous, fg_previous, self.config.epsilon)

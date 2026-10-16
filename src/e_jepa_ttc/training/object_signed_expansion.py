@@ -136,9 +136,8 @@ def targets_from_batch(
     if bool((expansion >= 1.0).any()):
         raise ValueError("Official TTC lies outside the LHR domain")
     official_ratio = torch.log1p(-expansion)
-    visible_ratio = (
-        torch.log(batch.visible_heights_px[:, 0].clamp_min(1.0e-6))
-        - torch.log(batch.visible_heights_px[:, 1].clamp_min(1.0e-6))
+    visible_ratio = torch.log(batch.visible_heights_px[:, 0].clamp_min(1.0e-6)) - torch.log(
+        batch.visible_heights_px[:, 1].clamp_min(1.0e-6)
     )
     visible_expansion = 1.0 - torch.exp(visible_ratio)
     return ObjectSignedExpansionTargets(
@@ -204,9 +203,7 @@ def object_signed_expansion_loss(
     targets = targets_from_batch(batch, config)
     components: dict[str, torch.Tensor] = {}
 
-    geometry_disagreement = (
-        targets.visible_expansion - targets.signed_expansion
-    ).abs()
+    geometry_disagreement = (targets.visible_expansion - targets.signed_expansion).abs()
     geometry_confidence = torch.exp(
         -geometry_disagreement / config.geometry_disagreement_scale
     ).clamp_min(0.1)
@@ -225,15 +222,9 @@ def object_signed_expansion_loss(
         beta=config.expansion_beta,
     )
     components["geometry_residual_regularization"] = (
-        output.learned_residual_expansion.abs()
-        * targets.sample_weights
-        * geometry_confidence
+        output.learned_residual_expansion.abs() * targets.sample_weights * geometry_confidence
     ).sum() / (targets.sample_weights * geometry_confidence).sum().clamp_min(1.0e-6)
-    sign_margin = (
-        -targets.target_sign
-        * output.signed_expansion
-        / config.sign_temperature
-    )
+    sign_margin = -targets.target_sign * output.signed_expansion / config.sign_temperature
     components["sign_margin"] = (
         functional.softplus(sign_margin) * targets.sample_weights
     ).sum() / targets.sample_weights.sum().clamp_min(1.0e-6)
@@ -256,13 +247,14 @@ def object_signed_expansion_loss(
         output.activity_targets,
         reduction="none",
     )
-    components["activity_reconstruction"] = (
-        activity_loss * valid
-    ).sum() / valid.sum().clamp_min(1.0)
+    components["activity_reconstruction"] = (activity_loss * valid).sum() / valid.sum().clamp_min(
+        1.0
+    )
     components["ordered_swap"] = (
-        torch.tanh(output.ordered_score_forward)
-        + torch.tanh(output.ordered_score_reverse)
-    ).abs().mean()
+        (torch.tanh(output.ordered_score_forward) + torch.tanh(output.ordered_score_reverse))
+        .abs()
+        .mean()
+    )
 
     total = (
         config.expansion_weight * components["signed_expansion"]
@@ -272,8 +264,7 @@ def object_signed_expansion_loss(
         * 0.5
         * (components["latent_forward"] + components["latent_reverse"])
         + config.latent_variance_weight * components["latent_variance"]
-        + config.activity_reconstruction_weight
-        * components["activity_reconstruction"]
+        + config.activity_reconstruction_weight * components["activity_reconstruction"]
         + config.ordered_swap_weight * components["ordered_swap"]
     )
 
@@ -304,11 +295,11 @@ def object_signed_expansion_loss(
         )
 
     components["target_expansion_mae"] = (
-        output.signed_expansion.detach() - targets.signed_expansion.detach()
-    ).abs().mean()
+        (output.signed_expansion.detach() - targets.signed_expansion.detach()).abs().mean()
+    )
     components["target_ratio_mae"] = (
-        output.log_height_ratio.detach() - targets.official_log_ratio.detach()
-    ).abs().mean()
+        (output.log_height_ratio.detach() - targets.official_log_ratio.detach()).abs().mean()
+    )
     components["official_geometry_disagreement"] = geometry_disagreement.detach().mean()
     components["learned_residual_abs_mean"] = (
         output.learned_residual_expansion.detach().abs().mean()

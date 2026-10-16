@@ -71,9 +71,8 @@ def object_event_v4_7_loss(
     if visible_heights_px.ndim != 2 or visible_heights_px.shape[1] != 2:
         raise ValueError("visible_heights_px must be [B,2]")
     target = target_expansion(delta_t_s, target_ttc_s, config.max_abs_expansion)
-    target_height_log_eta = (
-        torch.log(visible_heights_px[:, 0].clamp_min(1.0e-4))
-        - torch.log(visible_heights_px[:, 1].clamp_min(1.0e-4))
+    target_height_log_eta = torch.log(visible_heights_px[:, 0].clamp_min(1.0e-4)) - torch.log(
+        visible_heights_px[:, 1].clamp_min(1.0e-4)
     )
     map_h, map_w = output.foreground_logits.shape[-2:]
     masks = boxes_to_feature_masks(
@@ -99,9 +98,7 @@ def object_event_v4_7_loss(
             beta=config.smooth_l1_beta,
         ),
         "correlation": 1.0 - pearson_torch(output.expansion, target),
-        "foreground_bce": functional.binary_cross_entropy_with_logits(
-            endpoint_logits, masks
-        ),
+        "foreground_bce": functional.binary_cross_entropy_with_logits(endpoint_logits, masks),
         "foreground_dice": _dice_loss(endpoint_logits, masks),
         "row_profile": functional.smooth_l1_loss(endpoint_rows, target_rows, beta=0.02),
         "sign": functional.binary_cross_entropy_with_logits(

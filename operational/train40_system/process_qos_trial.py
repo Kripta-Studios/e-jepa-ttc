@@ -39,7 +39,8 @@ def phase(name: str, seconds: int) -> dict:
         datetime.fromisoformat(last["checked_utc"]) - datetime.fromisoformat(first["checked_utc"])
     ).total_seconds()
     if (first["started_utc"], first["freeze_sha256"]) != (
-        last["started_utc"], last["freeze_sha256"]
+        last["started_utc"],
+        last["freeze_sha256"],
     ):
         raise ValueError("H8 process or execution contract changed during the phase")
     if rows <= 0 or elapsed <= 0:

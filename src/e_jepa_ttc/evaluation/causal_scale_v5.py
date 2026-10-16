@@ -242,8 +242,7 @@ def evaluate_synthetic_learning_gates(
         "ratio_80_coverage",
     }
     finite = all(
-        isinstance(metrics.get(key), (int, float))
-        and math.isfinite(float(metrics[key]))  # type: ignore[arg-type]
+        isinstance(metrics.get(key), (int, float)) and math.isfinite(float(metrics[key]))  # type: ignore[arg-type]
         for key in required
     )
     if not finite:

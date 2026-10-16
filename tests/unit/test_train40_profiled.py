@@ -106,9 +106,7 @@ def test_profile_failure_unpatches_and_training_continues(
             DurableState.commit_update(state)  # type: ignore[arg-type]
             observed.append("continued")
 
-    profiler, calls, original = _run_with_fake_profiler(
-        monkeypatch, tmp_path, engine, fail_step=2
-    )
+    profiler, calls, original = _run_with_fake_profiler(monkeypatch, tmp_path, engine, fail_step=2)
     assert len(calls) == 3
     assert observed == ["continued"] * 3
     assert profiler.steps == 2
@@ -158,9 +156,7 @@ def test_trace_callback_writes_relative_trace_tables_and_sha_manifest(
             "active_trace_commit_range": [14223, 14227],
         }
         engine_profiled._trace_callback(output, directory, observation)(Profiler())
-        assert exported == [
-            str((directory / "FULL_STEP_TRACE.json").relative_to(ROOT))
-        ]
+        assert exported == [str((directory / "FULL_STEP_TRACE.json").relative_to(ROOT))]
         manifest = json.loads(
             (directory / "FULL_STEP_PROFILE_MANIFEST.json").read_text(encoding="utf-8")
         )
@@ -191,9 +187,7 @@ def test_controller_routes_only_exact_a5_c2f_engine_tasks(
 
     monkeypatch.setattr(controller_profiled.controller_overlap, "_launch", raw_launch)
     monkeypatch.setattr(controller_profiled, "_launch", raw_launch)
-    controller_profiled.launch(
-        tmp_path, "a5", "operational.train40_system.engine", ["--arm", "a5"]
-    )
+    controller_profiled.launch(tmp_path, "a5", "operational.train40_system.engine", ["--arm", "a5"])
     controller_profiled.launch(tmp_path, "teacher", "some.other.module", [])
     assert [call[2] for call in calls] == [
         "operational.train40_system.engine_profiled",

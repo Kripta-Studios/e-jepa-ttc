@@ -121,15 +121,12 @@ def analyze(
             delta = batch.delta_t_s[:, None].expand(-1, batch.events.shape[1] - 1)
             with torch.autocast(device_type=torch_device.type, dtype=torch.bfloat16):
                 output = model(batch.events, delta)
-            physical_ratio, valid = target_log_ratio_from_ttc(
-                batch.target_ttc_s, delta[:, -1]
-            )
+            physical_ratio, valid = target_log_ratio_from_ttc(batch.target_ttc_s, delta[:, -1])
             if not bool(valid.all()):
                 raise ValueError("A0 validation decomposition encountered invalid TTC ratios.")
-            bbox_height = (
-                (batch.boxes_xyxy[..., 3] - batch.boxes_xyxy[..., 1]).clamp_min(1e-6)
-                / float(batch.events.shape[-2])
-            )
+            bbox_height = (batch.boxes_xyxy[..., 3] - batch.boxes_xyxy[..., 1]).clamp_min(
+                1e-6
+            ) / float(batch.events.shape[-2])
             bbox_ratio = bbox_height[:, -1].log() - bbox_height[:, -2].log()
             current_pair_known = output.diagnostics["pair_known"][:, -1].float()
             batch_values = {
@@ -188,9 +185,7 @@ def analyze(
         diagnosis.update(
             {
                 "a1_geometry_only_is_causal_explanation_confirmed": False,
-                "a1_status": (
-                    "preregistered_ablation_required_to_test_weak_box_noise_hypothesis"
-                ),
+                "a1_status": ("preregistered_ablation_required_to_test_weak_box_noise_hypothesis"),
             }
         )
     result: dict[str, Any] = {
@@ -243,15 +238,14 @@ def analyze(
             "ttc_clip_seconds": model_config.ttc_clip_seconds,
             "known_saturation_count": int(
                 np.count_nonzero(
-                    (~unknown)
-                    & (np.abs(arrays["ttc"]) >= model_config.ttc_clip_seconds * 0.999)
+                    (~unknown) & (np.abs(arrays["ttc"]) >= model_config.ttc_clip_seconds * 0.999)
                 )
             ),
         },
         "localization": {
-            "weak_bbox_iou_from_selected_summary": json.loads(
-                summary.read_text(encoding="utf-8")
-            )["validation_metrics"]["weak_bbox_iou"],
+            "weak_bbox_iou_from_selected_summary": json.loads(summary.read_text(encoding="utf-8"))[
+                "validation_metrics"
+            ]["weak_bbox_iou"],
             "weak_box_is_filled_rectangle_not_segmentation": True,
         },
         "diagnosis": diagnosis,

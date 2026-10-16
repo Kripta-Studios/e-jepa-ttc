@@ -1,3 +1,5 @@
+# ruff: noqa: E402
+# CLI entry point: add the checkout to sys.path before importing project modules.
 #!/usr/bin/env python3
 """Run the train-only Object Event TTC v4.11 sign-router screen."""
 
@@ -8,10 +10,10 @@ import json
 import shutil
 import sys
 import traceback
+from collections.abc import Mapping
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Mapping
 
 import numpy as np
 import pandas as pd
@@ -22,9 +24,14 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from e_jepa_ttc.object_event_v4_4 import official_eap_metrics, pearson
-from e_jepa_ttc.object_event_v4_10 import track_cluster_bootstrap
-from e_jepa_ttc.object_event_v4_11 import (
+from e_jepa_ttc.object_event_v4_4 import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    official_eap_metrics,
+    pearson,
+)
+from e_jepa_ttc.object_event_v4_10 import (
+    track_cluster_bootstrap,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
+from e_jepa_ttc.object_event_v4_11 import (  # noqa: E402 - CLI path bootstrap precedes project imports.
     IDENTITY_COLUMNS,
     TARGET_COLUMNS,
     V411RouterConfig,
@@ -66,7 +73,9 @@ def _config_from_yaml(path: Path) -> V411RouterConfig:
     return V411RouterConfig(**normalized)
 
 
-def _load_seed_frames(run_root: Path, seeds: tuple[int, ...], split: str) -> dict[int, pd.DataFrame]:
+def _load_seed_frames(
+    run_root: Path, seeds: tuple[int, ...], split: str
+) -> dict[int, pd.DataFrame]:
     frames: dict[int, pd.DataFrame] = {}
     for seed in seeds:
         seed_root = run_root / f"seed-{seed}"
@@ -174,26 +183,21 @@ def run(*, run_root: Path, config_path: Path, output_dir: Path) -> dict[str, obj
         config=config,
     )
 
-    validation_baseline_metrics, _ = routing_metrics(
-        validation, baseline_validation, config=config
-    )
+    validation_baseline_metrics, _ = routing_metrics(validation, baseline_validation, config=config)
     validation_routed_metrics, validation_per_sequence = routing_metrics(
         validation, validation_event, config=config
     )
     _add_official_metrics(
         validation_baseline_metrics, validation, baseline_validation, config=config
     )
-    _add_official_metrics(
-        validation_routed_metrics, validation, validation_event, config=config
-    )
+    _add_official_metrics(validation_routed_metrics, validation, validation_event, config=config)
 
     target = validation["target_expansion"].to_numpy(dtype=np.float64)
     event_pearson = pearson(target, validation_event)
     dependence = {
         "zero_event_pearson_drop": event_pearson - pearson(target, validation_zero),
         "zero_event_mean_abs_change": float(np.mean(np.abs(validation_event - validation_zero))),
-        "shuffled_event_pearson_drop": event_pearson
-        - pearson(target, validation_shuffled),
+        "shuffled_event_pearson_drop": event_pearson - pearson(target, validation_shuffled),
         "shuffled_event_mean_abs_change": float(
             np.mean(np.abs(validation_event - validation_shuffled))
         ),
@@ -255,7 +259,7 @@ def run(*, run_root: Path, config_path: Path, output_dir: Path) -> dict[str, obj
     summary: dict[str, object] = {
         "artifact_type": "object_event_v4_11_train_only_sign_router",
         "status": "sign_router_passed" if passed else "sign_router_failed",
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
         "source_v49_run_root": str(run_root.resolve()),
         "config": asdict(config),
         "selected_router": dict(selected),
@@ -296,9 +300,7 @@ def main() -> int:
     parser.add_argument(
         "--config",
         type=Path,
-        default=Path(
-            "configs/experiment/e_jepa_garl_object_event_sign_router_v4_11.yaml"
-        ),
+        default=Path("configs/experiment/e_jepa_garl_object_event_sign_router_v4_11.yaml"),
     )
     parser.add_argument(
         "--output-dir",
@@ -322,7 +324,7 @@ def main() -> int:
         args.output_dir.mkdir(parents=True, exist_ok=True)
         failure = {
             "artifact_type": "object_event_v4_11_failure",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "error_type": type(exc).__name__,
             "error": str(exc),
             "traceback": traceback.format_exc(),

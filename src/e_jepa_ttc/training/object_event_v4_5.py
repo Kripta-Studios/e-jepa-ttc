@@ -72,14 +72,17 @@ class ObjectEventV45LossConfig:
             raise ValueError("sign_margin must be non-negative")
         if not 0.0 < self.max_abs_expansion < 1.0:
             raise ValueError("max_abs_expansion must lie in (0,1)")
-        if sum(
-            (
-                self.crucial_weight,
-                self.small_weight,
-                self.large_weight,
-                self.negative_weight,
+        if (
+            sum(
+                (
+                    self.crucial_weight,
+                    self.small_weight,
+                    self.large_weight,
+                    self.negative_weight,
+                )
             )
-        ) <= 0.0:
+            <= 0.0
+        ):
             raise ValueError("at least one eAP range weight must be positive")
 
 
@@ -208,9 +211,13 @@ def reciprocal_log_eta_error(
     """Exact reciprocal consistency: ``log eta_fwd + log eta_rev = 0``."""
 
     return (
-        log_eta(forward_prediction, maximum=maximum)
-        + log_eta(reverse_prediction, maximum=maximum)
-    ).abs().mean()
+        (
+            log_eta(forward_prediction, maximum=maximum)
+            + log_eta(reverse_prediction, maximum=maximum)
+        )
+        .abs()
+        .mean()
+    )
 
 
 def object_event_v4_5_loss(
@@ -244,16 +251,16 @@ def object_event_v4_5_loss(
         "correlation": 1.0 - pearson_torch(output.expansion, target),
         "ranking": _ranking(output.expansion, target, config.smooth_l1_beta),
         "sign": _balanced_sign_bce(forward_logits, target),
-        "sign_margin": _balanced_sign_margin(
-            output.expansion, target, margin=config.sign_margin
-        ),
+        "sign_margin": _balanced_sign_margin(output.expansion, target, margin=config.sign_margin),
         "reverse_expansion": functional.smooth_l1_loss(
             output.reverse_expansion, reverse_target, beta=config.smooth_l1_beta
         ),
         "reverse_mid": (
             log_eta(output.reverse_expansion, maximum=config.max_abs_expansion)
             - log_eta(reverse_target, maximum=config.max_abs_expansion)
-        ).abs().mean(),
+        )
+        .abs()
+        .mean(),
         "reverse_sign": _balanced_sign_bce(reverse_logits, reverse_target),
         "reciprocal_consistency": reciprocal_log_eta_error(
             output.expansion,
@@ -261,8 +268,7 @@ def object_event_v4_5_loss(
             maximum=config.max_abs_expansion,
         ),
         "variance": (
-            output.expansion.float().std(unbiased=False)
-            - target.float().std(unbiased=False)
+            output.expansion.float().std(unbiased=False) - target.float().std(unbiased=False)
         ).abs(),
     }
     total = (

@@ -59,13 +59,25 @@ packages = ["src/e_jepa_ttc"]
 line-length = 100
 target-version = "py311"
 # Preserve the received handoff byte-for-byte; executable integration lives in src/operational.
-extend-exclude = ["docs/range_transfer_handoff_20261010", "docs/joint_measurement_handoff_20261012"]
+extend-exclude = [
+  "docs/range_transfer_handoff_20261010",
+  "docs/joint_measurement_handoff_20261012",
+  "docs/range_readout_handoff_20261012",
+  "docs/rgb_port_handoff_20261008",
+  # Executed, hash-bound historical evidence is data, not editable source.
+  "docs/joint_measurement_20261012/evidence_A1_loss_graph_20261016",
+  "docs/rgb_port_streaming_20261010/evidence",
+  "docs/sota_campaign_20261008",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["ANN"]
+# Historical CLI adapters inspect JSON, dynamically loaded modules and model hooks.
+# Keep explicit Any at those boundaries; all other annotation rules still apply.
+"scripts/**/*.py" = ["ANN401"]
 # Sensor admission already binds these executed bytes; preserve its three long lines.
 "operational/joint_measurement/data.py" = ["E501"]
 

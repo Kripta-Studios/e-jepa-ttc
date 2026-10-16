@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train Object Event TTC v4.7 high-resolution foreground extent screen."""
+"Train Object Event TTC v4.7 high-resolution foreground extent screen."
 
 from __future__ import annotations
 
@@ -28,9 +28,19 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
+from e_jepa_ttc.models.object_event_v4_7 import (  # noqa: E402
+    ObjectEventTTCV47,
+    ObjectEventV47Config,
+)
+from e_jepa_ttc.object_event_v4_4 import official_eap_metrics  # noqa: E402
+from e_jepa_ttc.training.object_event_v4_6 import boxes_to_feature_masks  # noqa: E402
+from e_jepa_ttc.training.object_event_v4_7 import (  # noqa: E402
+    ObjectEventV47LossConfig,
+    object_event_v4_7_loss,
+)
 from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
     _autocast,
-    _branch_metrics,
     _evaluate,
     _git_commit,
     _json_safe,
@@ -44,17 +54,6 @@ from scripts.train_e_jepa_object_event_v4_6 import (  # noqa: E402
     _balanced_overfit_subset,
     _materialize,
     _sampling_weights,
-)
-from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_7 import (  # noqa: E402
-    ObjectEventTTCV47,
-    ObjectEventV47Config,
-)
-from e_jepa_ttc.object_event_v4_4 import official_eap_metrics  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_6 import boxes_to_feature_masks  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_7 import (  # noqa: E402
-    ObjectEventV47LossConfig,
-    object_event_v4_7_loss,
 )
 
 
@@ -122,7 +121,9 @@ def _construct(cls: type[Any], values: Mapping[str, Any]) -> Any:
     return cls(**dict(values))
 
 
-def _load_config(path: Path) -> tuple[
+def _load_config(
+    path: Path,
+) -> tuple[
     ObjectEventV41Config,
     ObjectEventV47Config,
     ObjectEventV47TrainConfig,
@@ -248,16 +249,13 @@ def _evaluate_v47(
         ),
         seed=seed,
     )
-    extra = _geometry_predictions(
-        model, split, batch_size=train_config.batch_size, device=device
-    )
+    extra = _geometry_predictions(model, split, batch_size=train_config.batch_size, device=device)
     target_expansion = rows["target_expansion"].to_numpy(dtype=np.float64)
     prediction = rows["prediction_expansion"].to_numpy(dtype=np.float64)
     delta_t = rows["delta_t_s"].to_numpy(dtype=np.float64)
     target_ttc = rows["target_ttc_s"].to_numpy(dtype=np.float64)
     target_height = (
-        torch.log(split.visible_heights_px[:, 0])
-        - torch.log(split.visible_heights_px[:, 1])
+        torch.log(split.visible_heights_px[:, 0]) - torch.log(split.visible_heights_px[:, 1])
     ).numpy()
     target_log_eta = np.log1p(np.clip(-target_expansion, -0.999999, None))
     rows["target_height_log_eta"] = target_height
@@ -295,9 +293,7 @@ def _evaluate_v47(
     )
     augmented["geometry"] = {
         "height_log_eta_pearson": _pearson(target_height, extra["height_log_eta"]),
-        "height_log_eta_mae": float(
-            np.mean(np.abs(target_height - extra["height_log_eta"]))
-        ),
+        "height_log_eta_mae": float(np.mean(np.abs(target_height - extra["height_log_eta"]))),
         "foreground_soft_iou": float(np.mean(extra["soft_iou"])),
         "minimum_sequence_height_pearson": float(
             height_per_sequence["height_log_eta_pearson"].min()
@@ -305,9 +301,7 @@ def _evaluate_v47(
         "macro_sequence_height_pearson": float(
             height_per_sequence["height_log_eta_pearson"].mean()
         ),
-        "oracle_height_to_ttc_log_eta_pearson": _pearson(
-            target_log_eta, target_height
-        ),
+        "oracle_height_to_ttc_log_eta_pearson": _pearson(target_log_eta, target_height),
     }
     augmented["per_sequence"]["minimum_eligible_negative_accuracy"] = (
         float(eligible["negative_accuracy"].min()) if not eligible.empty else 0.0
@@ -368,37 +362,28 @@ def _overfit_gates(
         >= config.overfit_balanced_sign_gate,
         "height_ratio": _finite(geometry.get("height_log_eta_pearson"))
         >= config.overfit_height_pearson_gate,
-        "foreground": _finite(geometry.get("foreground_soft_iou"))
-        >= config.overfit_mask_iou_gate,
+        "foreground": _finite(geometry.get("foreground_soft_iou")) >= config.overfit_mask_iou_gate,
     }
 
 
-def _screen_gates(
-    metrics: Mapping[str, Any], config: ObjectEventV47TrainConfig
-) -> dict[str, bool]:
+def _screen_gates(metrics: Mapping[str, Any], config: ObjectEventV47TrainConfig) -> dict[str, bool]:
     event = cast(Mapping[str, object], metrics["event"])
     geometry = cast(Mapping[str, object], metrics["geometry"])
     dependence = cast(Mapping[str, object], metrics["event_dependence"])
     return {
         "height_ratio": _finite(geometry.get("height_log_eta_pearson"))
         >= config.screen_height_pearson_gate,
-        "minimum_sequence_height_ratio": _finite(
-            geometry.get("minimum_sequence_height_pearson")
-        )
+        "minimum_sequence_height_ratio": _finite(geometry.get("minimum_sequence_height_pearson"))
         >= config.screen_min_sequence_height_pearson_gate,
-        "expansion_pearson": _finite(event.get("pearson"))
-        >= config.screen_expansion_pearson_gate,
+        "expansion_pearson": _finite(event.get("pearson")) >= config.screen_expansion_pearson_gate,
         "balanced_sign": _finite(event.get("balanced_sign_accuracy"))
         >= config.screen_balanced_sign_gate,
         "negative_accuracy": _finite(event.get("negative_accuracy"))
         >= config.screen_negative_accuracy_gate,
-        "foreground": _finite(geometry.get("foreground_soft_iou"))
-        >= config.screen_mask_iou_gate,
+        "foreground": _finite(geometry.get("foreground_soft_iou")) >= config.screen_mask_iou_gate,
         "zero_event_dependence": _finite(dependence.get("zero_event_pearson_drop"))
         >= config.zero_event_pearson_drop_gate,
-        "shuffled_event_dependence": _finite(
-            dependence.get("shuffled_event_pearson_drop")
-        )
+        "shuffled_event_dependence": _finite(dependence.get("shuffled_event_pearson_drop"))
         >= config.shuffled_event_pearson_drop_gate,
     }
 
@@ -586,8 +571,7 @@ def run(
                     "global_step": global_step,
                     "train_loss": epoch_loss / max(examples, 1),
                     "train_components": {
-                        name: value / max(examples, 1)
-                        for name, value in components.items()
+                        name: value / max(examples, 1) for name, value in components.items()
                     },
                     "validation_selection_objective": objective,
                     "validation": validation_metrics,
@@ -596,9 +580,7 @@ def run(
                     "best_epoch": best_epoch,
                     "best_objective": best_objective,
                     "best_gate_epoch": best_gate_epoch,
-                    "best_gate_objective": (
-                        best_gate_objective if best_gate_epoch > 0 else None
-                    ),
+                    "best_gate_objective": (best_gate_objective if best_gate_epoch > 0 else None),
                 }
             ),
         )
@@ -613,9 +595,7 @@ def run(
                     "epoch": epoch,
                     "loss": row["train_loss"],
                     "height_pearson": geometry.get("height_log_eta_pearson"),
-                    "min_sequence_height_pearson": geometry.get(
-                        "minimum_sequence_height_pearson"
-                    ),
+                    "min_sequence_height_pearson": geometry.get("minimum_sequence_height_pearson"),
                     "expansion_pearson": event.get("pearson"),
                     "balanced_sign": event.get("balanced_sign_accuracy"),
                     "mask_iou": geometry.get("foreground_soft_iou"),
@@ -676,9 +656,7 @@ def run(
                 "elapsed_seconds": time.perf_counter() - started,
                 "git_commit": _git_commit(),
                 "device": str(device),
-                "gpu_name": (
-                    torch.cuda.get_device_name(device) if device.type == "cuda" else None
-                ),
+                "gpu_name": (torch.cuda.get_device_name(device) if device.type == "cuda" else None),
                 "cache_manifest": cache_manifest.resolve().as_posix(),
                 "cache_manifest_sha256": _sha256(cache_manifest),
                 "config": config_path.resolve().as_posix(),

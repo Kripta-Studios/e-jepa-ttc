@@ -66,10 +66,14 @@ def run(paths: list[Path], output: Path) -> dict[str, Any]:
         raise ValueError("seed7 lacks A5 transport gate")
     gate = contract["transport_gate"]
     thresholds = {
-        "log_ratio_pearson": float(gate["parent_a4_log_ratio_pearson"]) + float(gate["log_ratio_pearson_min_gain_vs_a4"]),
-        "delta_height_global": float(gate["parent_a4_delta_log_height_vs_physical_pearson"]) + float(gate["delta_log_height_vs_physical_min_gain_vs_a4"]),
-        "delta_height_macro": float(gate["parent_a4_delta_log_height_vs_physical_macro_pearson"]) + float(gate["delta_log_height_vs_physical_macro_min_gain_vs_a4"]),
-        "absolute_height_macro": float(gate["parent_a4_absolute_log_height_macro_pearson"]) - float(gate["absolute_log_height_macro_max_drop_vs_a4"]),
+        "log_ratio_pearson": float(gate["parent_a4_log_ratio_pearson"])
+        + float(gate["log_ratio_pearson_min_gain_vs_a4"]),
+        "delta_height_global": float(gate["parent_a4_delta_log_height_vs_physical_pearson"])
+        + float(gate["delta_log_height_vs_physical_min_gain_vs_a4"]),
+        "delta_height_macro": float(gate["parent_a4_delta_log_height_vs_physical_macro_pearson"])
+        + float(gate["delta_log_height_vs_physical_macro_min_gain_vs_a4"]),
+        "absolute_height_macro": float(gate["parent_a4_absolute_log_height_macro_pearson"])
+        - float(gate["absolute_log_height_macro_max_drop_vs_a4"]),
     }
     per_seed_support = {}
     for row in rows:
@@ -99,8 +103,9 @@ def run(paths: list[Path], output: Path) -> dict[str, Any]:
         "support_count": support_count,
         "replication_supported": support_count >= 2,
         "interpretation": (
-            "Seeds 13/23 are replication only. The absolute threshold reuses the preregistered A4 seed7 gate; "
-            "it is not a seed-specific A4 causal comparison."
+            "Seeds 13/23 are replication only. The absolute t"
+            "hreshold reuses the preregistered A4 seed7 gate;"
+            " it is not a seed-specific A4 causal comparison."
         ),
         "official_test_opened": False,
     }
@@ -115,7 +120,15 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     payload = run([p.resolve() for p in args.summary], args.output.resolve())
-    print(json.dumps({"replication_supported": payload["replication_supported"], "support_count": payload["support_count"]}, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "replication_supported": payload["replication_supported"],
+                "support_count": payload["support_count"],
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if payload["replication_supported"] else 5
 
 

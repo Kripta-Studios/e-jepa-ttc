@@ -1,4 +1,5 @@
 """Losses and diagnostics for Object Event TTC v4.27 scale-correlation LHR."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -23,13 +24,16 @@ class ObjectEventV427LossConfig:
     epsilon: float = 1.0e-6
 
     def __post_init__(self) -> None:
-        if min(
-            self.lhr_weight,
-            self.expansion_weight,
-            self.correlation_weight,
-            self.sign_weight,
-            self.entropy_weight,
-        ) < 0.0:
+        if (
+            min(
+                self.lhr_weight,
+                self.expansion_weight,
+                self.correlation_weight,
+                self.sign_weight,
+                self.entropy_weight,
+            )
+            < 0.0
+        ):
             raise ValueError("v4.27 loss weights must be non-negative")
         if min(self.smooth_l1_beta, self.sign_temperature, self.epsilon) <= 0.0:
             raise ValueError("v4.27 loss scales must be positive")
@@ -70,7 +74,9 @@ def object_event_v4_27_loss(
     expansion_each = functional.smooth_l1_loss(
         output.expansion, target_exp, beta=config.smooth_l1_beta, reduction="none"
     )
-    signed = torch.where(target_exp >= 0.0, torch.ones_like(target_exp), -torch.ones_like(target_exp))
+    signed = torch.where(
+        target_exp >= 0.0, torch.ones_like(target_exp), -torch.ones_like(target_exp)
+    )
     sign_each = functional.softplus(-signed * output.expansion / config.sign_temperature)
     components = {
         "lhr": (sample_weight * lhr_each).mean(),

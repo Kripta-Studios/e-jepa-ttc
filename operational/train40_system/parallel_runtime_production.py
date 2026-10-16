@@ -372,8 +372,7 @@ class ParallelResourceMonitor(resource_monitor.ResourceMonitor):
                 < resource_monitor.TREE_RSS_LIMIT_BYTES
                 and int(fresh.get("host_available_bytes", 0))
                 >= resource_monitor.HOST_AVAILABLE_MIN_BYTES
-                and int(fresh.get("disk_free_bytes", 0))
-                >= resource_monitor.DISK_FREE_MIN_BYTES
+                and int(fresh.get("disk_free_bytes", 0)) >= resource_monitor.DISK_FREE_MIN_BYTES
             )
             if fresh_admissible:
                 reasons.remove("RESOURCE_MONITOR_INVENTORY_INCOMPLETE")

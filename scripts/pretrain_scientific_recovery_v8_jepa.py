@@ -272,7 +272,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--cache-manifest", type=Path, required=True)
-    parser.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
+    parser.add_argument(
+        "--protocol",
+        type=Path,
+        default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json",
+    )
     parser.add_argument("--fold", type=int, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--device", default="cuda")

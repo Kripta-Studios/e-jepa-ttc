@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Materialize route-specific signed V8 seed-7 aggregates from the canonical screen aggregate."""
+"Materialize route-specific signed V8 seed-7 aggregates from the canonical screen aggregate."
+
 from __future__ import annotations
 
 import argparse
@@ -148,15 +149,44 @@ def materialize(
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
-    p.add_argument("--manifest", type=Path, default=ROOT / "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json")
-    p.add_argument("--aggregate", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/aggregate_seed7.json")
-    p.add_argument("--output-dir", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/arm_aggregates")
+    p.add_argument(
+        "--protocol",
+        type=Path,
+        default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json",
+    )
+    p.add_argument(
+        "--manifest",
+        type=Path,
+        default=ROOT / "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json",
+    )
+    p.add_argument(
+        "--aggregate",
+        type=Path,
+        default=ROOT / "artifacts/scientific_recovery_v8/aggregate_seed7.json",
+    )
+    p.add_argument(
+        "--output-dir", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/arm_aggregates"
+    )
     args = p.parse_args()
     try:
-        outputs = materialize(protocol_path=args.protocol, manifest_path=args.manifest, aggregate_path=args.aggregate, output_dir=args.output_dir)
+        outputs = materialize(
+            protocol_path=args.protocol,
+            manifest_path=args.manifest,
+            aggregate_path=args.aggregate,
+            output_dir=args.output_dir,
+        )
     except (OSError, ValueError, KeyError) as error:
-        p.exit(2, f"V8 primary aggregate materialization failed closed: {type(error).__name__}: {error}\n")
+        p.exit(
+            2,
+            (
+                "V8 primary aggregate materialization failed clos"
+                "ed: "
+                f"{type(error).__name__}"
+                ": "
+                f"{error}"
+                "\n"
+            ),
+        )
     print(json.dumps({"status": "completed", "outputs": [str(x) for x in outputs]}, indent=2))
     return 0
 

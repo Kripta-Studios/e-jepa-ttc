@@ -34,10 +34,14 @@ def verify_d1_index_ancestry(manifest: dict, ancestry: Path, ancestry_sha256: st
         if receipt.get("status") != "D1_FROZEN_INNER_ANCESTRY_RECHECKED_NO_EXPERT_REFITS":
             raise ValueError("unrecognized D1 ancestry receipt")
         references.append(receipt["authoritative_ancestry"])
-    if not references or sha256(ancestry) != ancestry_sha256 or any(
-        Path(ref["path"]).resolve(strict=True) != ancestry.resolve(strict=True)
-        or ref["sha256"] != ancestry_sha256
-        for ref in references
+    if (
+        not references
+        or sha256(ancestry) != ancestry_sha256
+        or any(
+            Path(ref["path"]).resolve(strict=True) != ancestry.resolve(strict=True)
+            or ref["sha256"] != ancestry_sha256
+            for ref in references
+        )
     ):
         raise ValueError("D1 index changes acknowledged historical ancestry")
 

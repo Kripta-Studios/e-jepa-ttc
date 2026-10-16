@@ -38,9 +38,7 @@ class ContinuousC2FResourceMonitor(C2FResourceMonitor):
                 "sequence": None if previous is None else previous.get("sequence"),
                 "sampled_monotonic": time.monotonic(),
                 "error": f"Continuous receiver failed: {message}",
-                "torch_imported": (
-                    None if previous is None else previous.get("torch_imported")
-                ),
+                "torch_imported": (None if previous is None else previous.get("torch_imported")),
             }
         self._continuous_stop.set()
 
@@ -151,8 +149,7 @@ class ContinuousC2FResourceMonitor(C2FResourceMonitor):
             state["continuous_receiver"] = {
                 "poll_seconds": RECEIVER_POLL_SECONDS,
                 "thread_alive": bool(
-                    self._continuous_thread is not None
-                    and self._continuous_thread.is_alive()
+                    self._continuous_thread is not None and self._continuous_thread.is_alive()
                 ),
                 "error": self._continuous_error,
             }

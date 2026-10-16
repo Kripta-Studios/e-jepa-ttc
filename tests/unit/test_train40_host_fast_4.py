@@ -192,7 +192,5 @@ def test_engine_variant_is_exact_name_substitution() -> None:
     reconstructed = candidate.replace("Host fast 4", "Host pipeline")
     reconstructed = reconstructed.replace("HOST_FAST_4", "HOST_FAST_COLLATE")
     reconstructed = reconstructed.replace("host_fast_4", "host_fast_collate")
-    reconstructed = reconstructed.replace(
-        "process_inputs_fast_4", "process_inputs_fast_collate"
-    )
+    reconstructed = reconstructed.replace("process_inputs_fast_4", "process_inputs_fast_collate")
     assert reconstructed == base

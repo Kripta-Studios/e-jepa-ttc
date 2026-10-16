@@ -12,9 +12,7 @@ from operational.train40_system.durable_io import atomic_json
 
 
 @pytest.mark.parametrize("name", controller_pause_safe.PAUSE_MARKERS)
-def test_pause_marker_blocks_engine_proxy_without_a_live_process(
-    tmp_path: Path, name: str
-) -> None:
+def test_pause_marker_blocks_engine_proxy_without_a_live_process(tmp_path: Path, name: str) -> None:
     calls: list[str] = []
     active = controller_pause_safe.active_for(
         tmp_path, lambda marker: calls.append(marker) is not None
@@ -30,9 +28,7 @@ def test_removing_pause_resumes_frozen_active_route(tmp_path: Path) -> None:
     marker = tmp_path / "COORDINATION_PAUSE_REQUEST.json"
     marker.write_text("{}", encoding="utf-8")
     calls: list[str] = []
-    active = controller_pause_safe.active_for(
-        tmp_path, lambda task: calls.append(task) is not None
-    )
+    active = controller_pause_safe.active_for(tmp_path, lambda task: calls.append(task) is not None)
     assert active(controller_pause_safe.ENGINE_MARKER)
     marker.unlink()
     assert not active(controller_pause_safe.ENGINE_MARKER)
@@ -42,9 +38,7 @@ def test_removing_pause_resumes_frozen_active_route(tmp_path: Path) -> None:
 def test_pause_only_intercepts_engine_marker(tmp_path: Path) -> None:
     (tmp_path / "STOP_REQUEST").write_text("stop", encoding="utf-8")
     calls: list[str] = []
-    active = controller_pause_safe.active_for(
-        tmp_path, lambda task: calls.append(task) is not None
-    )
+    active = controller_pause_safe.active_for(tmp_path, lambda task: calls.append(task) is not None)
     assert not active("operational.train40_system.verify_downloads")
     assert calls == ["operational.train40_system.verify_downloads"]
 

@@ -51,7 +51,12 @@ def test_vertical_warp_log_eta_convention_matches_height_ratio():
     ).squeeze(-1)
 
     warped, _ = ObjectEventTTCV427._warp_profile(
-        None, source, source_weight, center, center, log_eta  # type: ignore[arg-type]
+        None,
+        source,
+        source_weight,
+        center,
+        center,
+        log_eta,  # type: ignore[arg-type]
     )
     torch.testing.assert_close(warped, current, atol=1.0e-6, rtol=1.0e-5)
 

@@ -81,12 +81,8 @@ def _activity_observation(events: torch.Tensor) -> dict[str, torch.Tensor]:
     x = (torch.arange(width, device=events.device, dtype=events.dtype) + 0.5) / width
     centroid_y = (row_mass * y).sum(dim=-1) / total
     centroid_x = (column_mass * x).sum(dim=-1) / total
-    variance_y = (
-        row_mass * (y - centroid_y.unsqueeze(-1)).square()
-    ).sum(dim=-1) / total
-    variance_x = (
-        column_mass * (x - centroid_x.unsqueeze(-1)).square()
-    ).sum(dim=-1) / total
+    variance_y = (row_mass * (y - centroid_y.unsqueeze(-1)).square()).sum(dim=-1) / total
+    variance_x = (column_mass * (x - centroid_x.unsqueeze(-1)).square()).sum(dim=-1) / total
     return {
         "height": torch.sqrt((12.0 * variance_y + (1.0 / height) ** 2).clamp_min(0.0)),
         "width": torch.sqrt((12.0 * variance_x + (1.0 / width) ** 2).clamp_min(0.0)),
@@ -134,10 +130,7 @@ def analyze(
     summary_value = json.loads(summary.read_text(encoding="utf-8"))
     if not isinstance(summary_value, dict) or not verify_artifact_hash(summary_value):
         raise ValueError("summary must be a valid signed artifact")
-    if (
-        summary_value.get("training_config", {}).get("foreground_supervision")
-        != "bbox_geometry"
-    ):
+    if summary_value.get("training_config", {}).get("foreground_supervision") != "bbox_geometry":
         raise ValueError("geometry observability audit requires an A1 bbox_geometry run")
 
     checkpoint_value = torch.load(checkpoint, map_location="cpu", weights_only=False)
@@ -178,9 +171,7 @@ def analyze(
         "activity_centroid_x",
         "activity_centroid_y",
     )
-    endpoint_values = {
-        endpoint: {key: [] for key in keys} for endpoint in ("t1", "t2")
-    }
+    endpoint_values = {endpoint: {key: [] for key in keys} for endpoint in ("t1", "t2")}
     sequences: list[str] = []
     tracks: list[str] = []
     physical_ratios: list[np.ndarray] = []
@@ -215,12 +206,8 @@ def analyze(
             }
             for endpoint, index in (("t1", 1), ("t2", 2)):
                 for key, value in tensors.items():
-                    endpoint_values[endpoint][key].append(
-                        value[:, index].float().cpu().numpy()
-                    )
-            physical, valid = target_log_ratio_from_ttc(
-                batch.target_ttc_s, delta_t[:, -1]
-            )
+                    endpoint_values[endpoint][key].append(value[:, index].float().cpu().numpy())
+            physical, valid = target_log_ratio_from_ttc(batch.target_ttc_s, delta_t[:, -1])
             if not bool(valid.all()):
                 raise ValueError("validation contains an invalid physical TTC ratio")
             physical_ratios.append(physical.float().cpu().numpy())
@@ -265,18 +252,12 @@ def analyze(
             "activity_delta_height_vs_bbox": _relationship(
                 target_delta_height, activity_delta_height
             ),
-            "activity_delta_width_vs_bbox": _relationship(
-                target_delta_width, activity_delta_width
-            ),
+            "activity_delta_width_vs_bbox": _relationship(target_delta_width, activity_delta_width),
             "bbox_delta_width_vs_bbox_delta_height": _relationship(
                 target_delta_height, target_delta_width
             ),
-            "predicted_delta_height_vs_physical": _relationship(
-                physical, predicted_delta_height
-            ),
-            "predicted_delta_width_vs_physical": _relationship(
-                physical, predicted_delta_width
-            ),
+            "predicted_delta_height_vs_physical": _relationship(physical, predicted_delta_height),
+            "predicted_delta_width_vs_physical": _relationship(physical, predicted_delta_width),
         },
         "interpretation": {
             "activity_moment_is_diagnostic_only": True,

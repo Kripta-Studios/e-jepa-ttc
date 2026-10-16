@@ -315,8 +315,10 @@ def execute_jobs(
         # Append on resume so the complete process history is retained.  Each
         # invocation is bracketed with an ISO timestamp in both streams.
         started = datetime.now(UTC).isoformat()
-        with stdout_path.open("a", encoding="utf-8", buffering=1) as stdout_handle, \
-             stderr_path.open("a", encoding="utf-8", buffering=1) as stderr_handle:
+        with (
+            stdout_path.open("a", encoding="utf-8", buffering=1) as stdout_handle,
+            stderr_path.open("a", encoding="utf-8", buffering=1) as stderr_handle,
+        ):
             stdout_handle.write(f"\n===== V8 JOB START {started} =====\n")
             stdout_handle.write("COMMAND: " + " ".join(job.command) + "\n")
             stderr_handle.write(f"\n===== V8 JOB START {started} =====\n")
@@ -329,12 +331,8 @@ def execute_jobs(
                 text=True,
             )
             finished = datetime.now(UTC).isoformat()
-            stdout_handle.write(
-                f"===== V8 JOB END {finished} exit={result.returncode} =====\n"
-            )
-            stderr_handle.write(
-                f"===== V8 JOB END {finished} exit={result.returncode} =====\n"
-            )
+            stdout_handle.write(f"===== V8 JOB END {finished} exit={result.returncode} =====\n")
+            stderr_handle.write(f"===== V8 JOB END {finished} exit={result.returncode} =====\n")
         return int(result.returncode)
 
     outputs: dict[str, dict[str, Any]] = {}

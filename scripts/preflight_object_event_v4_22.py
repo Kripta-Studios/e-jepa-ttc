@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for v4.22 object-centric geometry partial-unfreeze."""
+
 from __future__ import annotations
 
 import argparse
@@ -12,7 +13,13 @@ import torch
 
 
 def _object_centric_audit(frame: pd.DataFrame, *, split: str) -> dict[str, Any]:
-    required = {"sequence_id", "sample_token", "track_id", "target_expansion", "fused_prediction_expansion"}
+    required = {
+        "sequence_id",
+        "sample_token",
+        "track_id",
+        "target_expansion",
+        "fused_prediction_expansion",
+    }
     missing = sorted(required - set(frame.columns))
     if missing:
         raise RuntimeError(f"{split} ensemble missing columns: {missing}")
@@ -30,7 +37,10 @@ def _object_centric_audit(frame: pd.DataFrame, *, split: str) -> dict[str, Any]:
     sample = frame["sample_token"].astype(str)
     track = frame["track_id"].astype(str)
     starts_with_track = pd.Series(
-        [sample_value.startswith(track_value + "_") for sample_value, track_value in zip(sample, track, strict=True)],
+        [
+            sample_value.startswith(track_value + "_")
+            for sample_value, track_value in zip(sample, track, strict=True)
+        ],
         index=frame.index,
         dtype=bool,
     )
@@ -53,7 +63,10 @@ def _object_centric_audit(frame: pd.DataFrame, *, split: str) -> dict[str, Any]:
     multi_object_frames = int((objects_per_frame > 1).sum())
     if multi_object_frames == 0:
         raise RuntimeError(
-            f"{split} contains no multi-object frame keys; refuse encoder adaptation until object-centric cache alignment is verified"
+            f"{split}"
+            " contains no multi-object frame keys; refuse enc"
+            "oder adaptation until object-centric cache align"
+            "ment is verified"
         )
     return {
         "rows": int(len(frame)),
@@ -91,20 +104,37 @@ def main() -> int:
             raise FileNotFoundError(path)
 
     v419 = json.loads(args.v419_summary.read_text(encoding="utf-8"))
-    if v419.get("artifact_type") != "object_event_v4_19_dense_correspondence_probe" or v419.get("status") != "completed":
+    if (
+        v419.get("artifact_type") != "object_event_v4_19_dense_correspondence_probe"
+        or v419.get("status") != "completed"
+    ):
         raise RuntimeError("v4.19 representation probe is not complete")
-    if v419.get("decision", {}).get("recommendation") != "dense_correspondence_supported_train_box_pseudoflow_decoder":
+    if (
+        v419.get("decision", {}).get("recommendation")
+        != "dense_correspondence_supported_train_box_pseudoflow_decoder"
+    ):
         raise RuntimeError("v4.19 did not support dense correspondence")
 
     v420 = json.loads(args.v420_summary.read_text(encoding="utf-8"))
-    if v420.get("artifact_type") != "object_event_v4_20_box_pseudoflow_decoder" or v420.get("status") != "completed":
+    if (
+        v420.get("artifact_type") != "object_event_v4_20_box_pseudoflow_decoder"
+        or v420.get("status") != "completed"
+    ):
         raise RuntimeError("v4.20 pseudoflow decoder is not complete")
     v420_recommendation = v420.get("decision", {}).get("recommendation")
-    if v420_recommendation != "frozen_refiner_insufficient_move_pseudoflow_divergence_supervision_into_encoder":
-        raise RuntimeError(f"v4.22 is not the contracted next experiment after v4.20: {v420_recommendation}")
+    if (
+        v420_recommendation
+        != "frozen_refiner_insufficient_move_pseudoflow_divergence_supervision_into_encoder"
+    ):
+        raise RuntimeError(
+            f"v4.22 is not the contracted next experiment after v4.20: {v420_recommendation}"
+        )
 
     v421 = json.loads(args.v421_summary.read_text(encoding="utf-8"))
-    if v421.get("artifact_type") != "object_event_v4_21_box_pseudoflow_target_audit" or v421.get("status") != "completed":
+    if (
+        v421.get("artifact_type") != "object_event_v4_21_box_pseudoflow_target_audit"
+        or v421.get("status") != "completed"
+    ):
         raise RuntimeError("v4.21 box-pseudoflow target audit is not complete")
     v421_recommendation = v421.get("decision", {}).get("recommendation")
     if v421_recommendation != "box_pseudoflow_supervision_supported_proceed_partial_unfreeze":
@@ -140,22 +170,27 @@ def main() -> int:
     for split, path in (("train", args.ensemble_train), ("validation", args.ensemble_validation)):
         object_audit[split] = _object_centric_audit(pd.read_csv(path), split=split)
 
-    print(json.dumps({
-        "status": "passed",
-        "v420_recommendation": v420_recommendation,
-        "v421_recommendation": v421_recommendation,
-        "object_centric_audit": object_audit,
-        "scientific_contract": {
-            "one_cache_row_is_one_object_track_sample": True,
-            "multi_object_source_frames_survive_as_distinct_rows": True,
-            "partial_unfreeze_is_now_supported_by_oracle_target_audit": True,
-            "boxes_remain_train_only_targets": True,
-            "ttc_labels_excluded_from_encoder_loss": True,
-            "three_true_seed_v48_checkpoints_required": True,
-            "official_eap_test_not_opened": True,
-            "evttc_not_opened": True,
-        },
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "v420_recommendation": v420_recommendation,
+                "v421_recommendation": v421_recommendation,
+                "object_centric_audit": object_audit,
+                "scientific_contract": {
+                    "one_cache_row_is_one_object_track_sample": True,
+                    "multi_object_source_frames_survive_as_distinct_rows": True,
+                    "partial_unfreeze_is_now_supported_by_oracle_target_audit": True,
+                    "boxes_remain_train_only_targets": True,
+                    "ttc_labels_excluded_from_encoder_loss": True,
+                    "three_true_seed_v48_checkpoints_required": True,
+                    "official_eap_test_not_opened": True,
+                    "evttc_not_opened": True,
+                },
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

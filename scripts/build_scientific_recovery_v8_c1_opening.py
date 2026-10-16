@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Build the preregistered signed C1 opening evidence; never opens C1 without a frozen route."""
+"Build the preregistered signed C1 opening evidence; never opens C1 without a frozen route."
+
 from __future__ import annotations
 
 import argparse
@@ -74,7 +75,9 @@ def stability_maps(frozen: Any, truth: bool) -> tuple[dict[str, bool], dict[str,
     return folds, sequences
 
 
-def build_autopsy_route(frozen: Any, protocol_path: Path, source_path: Path, output_root: Path) -> Path | None:
+def build_autopsy_route(
+    frozen: Any, protocol_path: Path, source_path: Path, output_root: Path
+) -> Path | None:
     source = read_signed(source_path)
     if source.get("mechanism_decision") != "H3":
         return None
@@ -116,15 +119,21 @@ def build_autopsy_route(frozen: Any, protocol_path: Path, source_path: Path, out
         },
     )
     return _opening(
-        frozen=frozen, protocol_path=protocol_path, route="autopsy_h3", arm="autopsy",
-        source_path=source_path, regime_path=output_root / "autopsy_h3_regime_evidence.json",
-        regime=regime, causal_path=output_root / "autopsy_h3_causal_invariance.json",
-        causal=causal, output_root=output_root,
+        frozen=frozen,
+        protocol_path=protocol_path,
+        route="autopsy_h3",
+        arm="autopsy",
+        source_path=source_path,
+        regime_path=output_root / "autopsy_h3_regime_evidence.json",
+        regime=regime,
+        causal_path=output_root / "autopsy_h3_causal_invariance.json",
+        causal=causal,
+        output_root=output_root,
     )
 
 
 def load_router_oof_frame(source: dict[str, Any], *, results_root: Path) -> pd.DataFrame:
-    """Load choose_c2f evidence from the hash-bound official fold CSVs, not a sidecar OOF."""
+    "Load choose_c2f evidence from the hash-bound official fold CSVs, not a sidecar OOF."
 
     predictions = source.get("prediction_sha256")
     if not isinstance(predictions, dict) or not predictions:
@@ -132,11 +141,7 @@ def load_router_oof_frame(source: dict[str, Any], *, results_root: Path) -> pd.D
     frames: list[pd.DataFrame] = []
     for fold, expected in sorted(predictions.items(), key=lambda item: int(item[0])):
         path = (
-            results_root
-            / "results"
-            / "runs"
-            / f"router_fold{fold}_seed7"
-            / "dev_predictions.csv"
+            results_root / "results" / "runs" / f"router_fold{fold}_seed7" / "dev_predictions.csv"
         )
         if not path.is_file() or sha(path) != expected:
             raise ValueError(f"router fold {fold} prediction CSV binding is invalid")
@@ -154,9 +159,11 @@ def build_router_route(
     if source.get("gate_decision", {}).get("passed") is not True:
         return None
     frame = load_router_oof_frame(source, results_root=results_root)
+
     def stable(part: pd.DataFrame) -> bool:
         fraction = float(part["choose_c2f"].astype(float).mean())
         return len(part) > 0 and 0.02 <= fraction <= 0.98
+
     fold_map = {str(int(k)): stable(v) for k, v in frame.groupby("outer_fold", sort=True)}
     sequence_map = {str(k): stable(v) for k, v in frame.groupby("sequence_id", sort=True)}
     if not all(fold_map.values()) or not all(sequence_map.values()):
@@ -196,14 +203,22 @@ def build_router_route(
         },
     )
     return _opening(
-        frozen=frozen, protocol_path=protocol_path, route="router_regime", arm="router",
-        source_path=source_path, regime_path=output_root / "router_regime_evidence.json",
-        regime=regime, causal_path=output_root / "router_causal_invariance.json",
-        causal=causal, output_root=output_root,
+        frozen=frozen,
+        protocol_path=protocol_path,
+        route="router_regime",
+        arm="router",
+        source_path=source_path,
+        regime_path=output_root / "router_regime_evidence.json",
+        regime=regime,
+        causal_path=output_root / "router_causal_invariance.json",
+        causal=causal,
+        output_root=output_root,
     )
 
 
-def build_exp6_route(frozen: Any, protocol_path: Path, source_path: Path, output_root: Path) -> Path | None:
+def build_exp6_route(
+    frozen: Any, protocol_path: Path, source_path: Path, output_root: Path
+) -> Path | None:
     source = read_signed(source_path)
     if source.get("gate_decision", {}).get("passed") is not True:
         return None
@@ -240,16 +255,32 @@ def build_exp6_route(frozen: Any, protocol_path: Path, source_path: Path, output
         },
     )
     return _opening(
-        frozen=frozen, protocol_path=protocol_path, route="exp6_regime", arm="exp6_3",
-        source_path=source_path, regime_path=output_root / "exp6_regime_evidence.json",
-        regime=regime, causal_path=output_root / "exp6_causal_invariance.json",
-        causal=causal, output_root=output_root,
+        frozen=frozen,
+        protocol_path=protocol_path,
+        route="exp6_regime",
+        arm="exp6_3",
+        source_path=source_path,
+        regime_path=output_root / "exp6_regime_evidence.json",
+        regime=regime,
+        causal_path=output_root / "exp6_causal_invariance.json",
+        causal=causal,
+        output_root=output_root,
     )
 
 
-def _opening(*, frozen: Any, protocol_path: Path, route: str, arm: str, source_path: Path,
-             regime_path: Path, regime: dict[str, Any], causal_path: Path,
-             causal: dict[str, Any], output_root: Path) -> Path:
+def _opening(
+    *,
+    frozen: Any,
+    protocol_path: Path,
+    route: str,
+    arm: str,
+    source_path: Path,
+    regime_path: Path,
+    regime: dict[str, Any],
+    causal_path: Path,
+    causal: dict[str, Any],
+    output_root: Path,
+) -> Path:
     common = binding(frozen, protocol_path)
     payload = {
         "artifact_type": "scientific_recovery_v8_c1_opening_decision_v1",
@@ -271,8 +302,16 @@ def _opening(*, frozen: Any, protocol_path: Path, route: str, arm: str, source_p
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
-    p.add_argument("--manifest", type=Path, default=ROOT / "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json")
+    p.add_argument(
+        "--protocol",
+        type=Path,
+        default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json",
+    )
+    p.add_argument(
+        "--manifest",
+        type=Path,
+        default=ROOT / "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json",
+    )
     p.add_argument("--results-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8")
     args = p.parse_args()
     try:
@@ -292,20 +331,28 @@ def main() -> int:
         exp6 = args.results_root / "arm_aggregates" / "exp6_3_seed7_aggregate.json"
         if autopsy.is_file():
             value = build_autopsy_route(frozen, args.protocol, autopsy, out)
-            if value: created.append(value)
+            if value:
+                created.append(value)
         if router.is_file():
             value = build_router_route(
                 frozen, args.protocol, router, out, results_root=args.results_root
             )
-            if value: created.append(value)
+            if value:
+                created.append(value)
         if exp6.is_file():
             value = build_exp6_route(frozen, args.protocol, exp6, out)
-            if value: created.append(value)
+            if value:
+                created.append(value)
         if created:
             assert_adaptive_gate(results_root=args.results_root, frozen=frozen)
     except (OSError, ValueError, KeyError, V8IntegrityError) as error:
         p.exit(2, f"V8 C1 opening build failed closed: {type(error).__name__}: {error}\n")
-    print(json.dumps({"status": "open" if created else "closed", "artifacts": [str(x) for x in created]}, indent=2))
+    print(
+        json.dumps(
+            {"status": "open" if created else "closed", "artifacts": [str(x) for x in created]},
+            indent=2,
+        )
+    )
     return 0
 
 

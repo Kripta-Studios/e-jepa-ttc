@@ -36,10 +36,9 @@ def _resume_cursor(
         if not path.is_file() or not receipt_path.is_file():
             raise ValueError("Last durable H8 fragment is missing")
         receipt = kernel.read(receipt_path)
-        if (
-            receipt.get("binding_sha256") != kernel.digest(binding_path)
-            or receipt.get("sha256") != kernel.digest(path)
-        ):
+        if receipt.get("binding_sha256") != kernel.digest(binding_path) or receipt.get(
+            "sha256"
+        ) != kernel.digest(path):
             raise ValueError("Last durable H8 fragment changed")
     return cursor
 
@@ -273,9 +272,10 @@ def history_cache(output: Path, raw_root: Path) -> None:
                         raise ValueError("H8 feature fragment changed")
                 else:
                     for next_row in range(row, min(row + 8, TOTAL_ROWS)):
-                        if next_row not in pending and not (
-                            directory / f"query_{next_row:05d}.json"
-                        ).exists():
+                        if (
+                            next_row not in pending
+                            and not (directory / f"query_{next_row:05d}.json").exists()
+                        ):
                             pending[next_row] = pool.submit(kernel.prepare, jobs[next_row])
                     started = kernel.time.perf_counter()
                     tensor = torch.from_numpy(pending.pop(row).result()).to("cuda")

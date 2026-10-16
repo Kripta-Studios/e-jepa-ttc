@@ -12,13 +12,13 @@ labels, official eAP test labels, and EvTTC labels are never model features.
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Iterable, Mapping, Sequence
 
 import numpy as np
 import pandas as pd
 
-from e_jepa_ttc.object_event_v4_4 import branch_metrics, pearson, sequence_sign_weights
+from e_jepa_ttc.object_event_v4_4 import branch_metrics, sequence_sign_weights
 
 IDENTITY_COLUMNS: tuple[str, ...] = ("sequence_id", "sample_token", "track_id")
 TARGET_COLUMNS: tuple[str, ...] = ("delta_t_s", "target_ttc_s", "target_expansion")
@@ -107,16 +107,21 @@ class V411RouterConfig:
             0.0 < value < 1.0 for value in self.negative_threshold_grid
         ):
             raise ValueError("negative thresholds must lie in (0,1)")
-        if not self.flip_scale_grid or not all(0.0 < value <= 1.0 for value in self.flip_scale_grid):
+        if not self.flip_scale_grid or not all(
+            0.0 < value <= 1.0 for value in self.flip_scale_grid
+        ):
             raise ValueError("flip scales must lie in (0,1]")
         if self.maximum_iterations < 5:
             raise ValueError("maximum_iterations must be at least 5")
-        if min(
-            self.convergence_tolerance,
-            self.hessian_damping,
-            self.minimum_flip_magnitude,
-            self.minimum_abs_expansion,
-        ) <= 0.0:
+        if (
+            min(
+                self.convergence_tolerance,
+                self.hessian_damping,
+                self.minimum_flip_magnitude,
+                self.minimum_abs_expansion,
+            )
+            <= 0.0
+        ):
             raise ValueError("v4.11 numerical controls must be positive")
         if self.per_sequence_negative_min_count < 1:
             raise ValueError("per_sequence_negative_min_count must be positive")
@@ -197,13 +202,13 @@ def align_seed_experts(
                 raise ValueError(f"{split_name} target mismatch in {column} for seed {seed}")
         for branch, columns in BRANCH_COLUMNS.items():
             for expert, column in zip(("base", "dense", "fixed"), columns, strict=True):
-                result[f"{branch}_{expert}_seed_{seed}"] = frame[column].to_numpy(
-                    dtype=np.float64
-                )
+                result[f"{branch}_{expert}_seed_{seed}"] = frame[column].to_numpy(dtype=np.float64)
     return result
 
 
-def _seed_matrix(frame: pd.DataFrame, *, branch: str, expert: str, seeds: Sequence[int]) -> np.ndarray:
+def _seed_matrix(
+    frame: pd.DataFrame, *, branch: str, expert: str, seeds: Sequence[int]
+) -> np.ndarray:
     columns = [f"{branch}_{expert}_seed_{int(seed)}" for seed in seeds]
     missing = [column for column in columns if column not in frame.columns]
     if missing:
@@ -500,8 +505,8 @@ def select_router_train_only(
     oof_rows["fixed_prediction_expansion"] = fixed
     oof_rows["negative_probability"] = selected_probability
     oof_rows["routed_prediction_expansion"] = selected_prediction
-    oof_rows["negative_repair"] = (
-        (fixed >= 0.0) & (selected_probability >= float(best["negative_threshold"]))
+    oof_rows["negative_repair"] = (fixed >= 0.0) & (
+        selected_probability >= float(best["negative_threshold"])
     )
     return final_model, best, candidates, oof_rows
 
@@ -528,9 +533,7 @@ def validation_gates(
         >= config.validation_negative_accuracy_floor,
         "minimum_sequence_pearson": float(routed["minimum_sequence_pearson"])
         >= config.validation_min_sequence_pearson_floor,
-        "minimum_sequence_negative_accuracy": float(
-            routed["minimum_sequence_negative_accuracy"]
-        )
+        "minimum_sequence_negative_accuracy": float(routed["minimum_sequence_negative_accuracy"])
         >= config.validation_min_sequence_negative_accuracy_floor,
         "track_bootstrap_lower": float(bootstrap_lower)
         >= config.validation_track_bootstrap_lower_floor,

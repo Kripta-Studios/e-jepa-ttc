@@ -482,9 +482,7 @@ def _copy_sanitized(source: Path, destination: Path, repo: Path, roots: list[str
         shutil.copyfile(source, destination)
 
 
-def _refresh_published_checksum_manifests(
-    evidence: Path, inventory: list[dict[str, Any]]
-) -> None:
+def _refresh_published_checksum_manifests(evidence: Path, inventory: list[dict[str, Any]]) -> None:
     """Make nested checksum manifests describe published bytes after sanitization.
 
     A source manifest is retained as provenance through ``source_sha256`` in the

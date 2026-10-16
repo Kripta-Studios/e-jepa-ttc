@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Leak-free grouped OOF residual geometry stack for Object Event TTC v4.26."""
+"Leak-free grouped OOF residual geometry stack for Object Event TTC v4.26."
+
 from __future__ import annotations
 
 import argparse
@@ -21,18 +22,6 @@ for candidate in (ROOT, ROOT / "src"):
     if str(candidate) not in sys.path:
         sys.path.insert(0, str(candidate))
 
-from scripts.analyze_object_event_v4_22_encoder_geometry import _score_backbone  # noqa: E402
-from scripts.analyze_object_event_v4_24_orchestrator import (  # noqa: E402
-    _combine_seed_results,
-    _evaluate_arm_cv,
-    _load_config as _load_v424_config,
-    _sequence_folds,
-)
-from scripts.analyze_object_event_v4_25_geometry_readout import _load_champion  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_12 import _align_ensemble, _read_ensemble  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_16 import _json_safe, _metrics, _resolve_device  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_26 import (  # noqa: E402
     ResidualSpec,
     apply_residual_calibration,
@@ -41,6 +30,24 @@ from e_jepa_ttc.training.object_event_v4_26 import (  # noqa: E402
     predict_anchored_residual,
     residual_design_matrix,
     track_metrics,
+)
+from scripts.analyze_object_event_v4_22_encoder_geometry import _score_backbone  # noqa: E402
+from scripts.analyze_object_event_v4_24_orchestrator import (  # noqa: E402
+    _combine_seed_results,
+    _evaluate_arm_cv,
+    _sequence_folds,
+)
+from scripts.analyze_object_event_v4_24_orchestrator import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    _load_config as _load_v424_config,
+)
+from scripts.analyze_object_event_v4_25_geometry_readout import _load_champion  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_12 import _align_ensemble, _read_ensemble  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
+    _json_safe,
+    _metrics,
+    _resolve_device,
 )
 
 
@@ -55,11 +62,13 @@ def _parse_seed_paths(values: list[str]) -> dict[int, Path]:
 
 
 @torch.no_grad()
-def _predict_backbone(backbone: Any, split: Any, *, batch_size: int, device: torch.device) -> np.ndarray:
+def _predict_backbone(
+    backbone: Any, split: Any, *, batch_size: int, device: torch.device
+) -> np.ndarray:
     chunks: list[torch.Tensor] = []
     backbone.eval()
     for start in range(0, len(split.events), batch_size):
-        events = split.events[start:start + batch_size].to(device=device, dtype=torch.float32)
+        events = split.events[start : start + batch_size].to(device=device, dtype=torch.float32)
         chunks.append(backbone(events).expansion.detach().float().cpu())
     return torch.cat(chunks).numpy().astype(np.float64)
 
@@ -118,9 +127,11 @@ def _candidate_objective(
         selection["pearson_weight"] * float(metrics["pearson"])
         + selection["balanced_sign_weight"] * float(metrics["balanced_sign_accuracy"])
         + selection["minimum_sequence_pearson_weight"] * float(metrics["minimum_sequence_pearson"])
-        + selection["minimum_sequence_negative_weight"] * float(metrics["minimum_sequence_negative_accuracy"])
+        + selection["minimum_sequence_negative_weight"]
+        * float(metrics["minimum_sequence_negative_accuracy"])
         + selection["track_macro_pearson_weight"] * float(tracks["track_macro_pearson"])
-        + selection["minimum_negative_track_weight"] * float(tracks["minimum_negative_track_accuracy"])
+        + selection["minimum_negative_track_weight"]
+        * float(tracks["minimum_negative_track_accuracy"])
         - selection["normalized_mae_penalty"] * float(metrics["expansion_mae"]) / target_std
     )
     return bool(eligible), float(objective)
@@ -185,9 +196,9 @@ def main() -> int:
     started = time.perf_counter()
 
     raw = yaml.safe_load(
-        (ROOT / "configs/experiment/e_jepa_garl_object_event_oof_residual_stack_v4_26.yaml").read_text(
-            encoding="utf-8"
-        )
+        (
+            ROOT / "configs/experiment/e_jepa_garl_object_event_oof_residual_stack_v4_26.yaml"
+        ).read_text(encoding="utf-8")
     )
     meta = dict(raw["meta"])
     selection = {str(k): float(v) for k, v in dict(raw["selection"]).items()}
@@ -203,8 +214,12 @@ def main() -> int:
     champions = _parse_seed_paths(args.champion_checkpoint)
     device = _resolve_device(args.device)
     base_config, _, _, _, _ = _load_v48_config(args.v48_config)
-    train_split, train_manifest = _materialize(args.cache_manifest, "train", input_size=base_config.input_size)
-    val_split, val_manifest = _materialize(args.cache_manifest, "validation", input_size=base_config.input_size)
+    train_split, train_manifest = _materialize(
+        args.cache_manifest, "train", input_size=base_config.input_size
+    )
+    val_split, val_manifest = _materialize(
+        args.cache_manifest, "validation", input_size=base_config.input_size
+    )
     train_frame = _align_ensemble(train_split, _read_ensemble(args.ensemble_train))
     val_frame = _align_ensemble(val_split, _read_ensemble(args.ensemble_validation))
 
@@ -217,7 +232,9 @@ def main() -> int:
     )
     per_seed = []
     for seed in (7, 13, 23):
-        print(f"[v4.26] cross-fitting anchor+geometry seed={seed} over {len(folds)} folds", flush=True)
+        print(
+            f"[v4.26] cross-fitting anchor+geometry seed={seed} over {len(folds)} folds", flush=True
+        )
         per_seed.append(
             _evaluate_arm_cv(
                 "geometry_only_regularized",
@@ -255,13 +272,15 @@ def main() -> int:
                 spec, oof_anchor, oof_div, oof_vert, target, fit_idx, held_idx
             )
             pred[held_idx] = fold_pred
-            record.update({
-                "readout": spec.name,
-                "fold": fold_id,
-                "held_out_sequences": sorted(
-                    train_frame.iloc[held_idx]["sequence_id"].astype(str).unique().tolist()
-                ),
-            })
+            record.update(
+                {
+                    "readout": spec.name,
+                    "fold": fold_id,
+                    "held_out_sequences": sorted(
+                        train_frame.iloc[held_idx]["sequence_id"].astype(str).unique().tolist()
+                    ),
+                }
+            )
             local_records.append(record)
         if not np.isfinite(pred).all():
             raise RuntimeError(f"incomplete meta-OOF coverage for {spec.name}")
@@ -273,17 +292,26 @@ def main() -> int:
             minimum_negative_track_samples=int(meta["minimum_negative_track_samples"]),
         )
         eligible, objective = _candidate_objective(metrics, tracks, selection)
-        ranking.append({
-            "readout": spec.name,
-            "eligible": eligible,
-            "objective": objective,
-            **{k: metrics[k] for k in (
-                "pearson", "expansion_mae", "positive_accuracy", "negative_accuracy",
-                "balanced_sign_accuracy", "minimum_sequence_pearson",
-                "minimum_sequence_negative_accuracy",
-            )},
-            **tracks,
-        })
+        ranking.append(
+            {
+                "readout": spec.name,
+                "eligible": eligible,
+                "objective": objective,
+                **{
+                    k: metrics[k]
+                    for k in (
+                        "pearson",
+                        "expansion_mae",
+                        "positive_accuracy",
+                        "negative_accuracy",
+                        "balanced_sign_accuracy",
+                        "minimum_sequence_pearson",
+                        "minimum_sequence_negative_accuracy",
+                    )
+                },
+                **tracks,
+            }
+        )
         oof_predictions[spec.name] = pred
         fold_records.extend(local_records)
 
@@ -291,10 +319,15 @@ def main() -> int:
     control = next(row for row in ranking if row["readout"] == "anchor_control")
     winner = ranking[0]
     minimum_gain = float(meta["minimum_objective_gain_over_control"])
-    if winner["readout"] != "anchor_control" and float(winner["objective"]) < float(control["objective"]) + minimum_gain:
+    if (
+        winner["readout"] != "anchor_control"
+        and float(winner["objective"]) < float(control["objective"]) + minimum_gain
+    ):
         winner = control
     chosen = next(spec for spec in specs if spec.name == winner["readout"])
-    print(f"[v4.26] selected residual={chosen.name} objective={winner['objective']:.4f}", flush=True)
+    print(
+        f"[v4.26] selected residual={chosen.name} objective={winner['objective']:.4f}", flush=True
+    )
 
     # Fit the final residual mapping on the first-level OOF train predictions,
     # then apply it once to full-train champions on development validation.
@@ -358,15 +391,19 @@ def main() -> int:
     if chosen.name == "anchor_control":
         recommendation = "oof_residual_not_selected_proceed_explicit_lhr_v427"
     elif (
-        float(val_metrics["pearson"]) >= float(v410_metrics["pearson"]) + decision_cfg["minimum_pearson_gain_over_v410"]
-        and float(val_metrics["negative_accuracy"]) >= float(v410_metrics["negative_accuracy"]) + decision_cfg["minimum_negative_accuracy_gain_over_v410"]
-        and float(val_metrics["balanced_sign_accuracy"]) >= float(v410_metrics["balanced_sign_accuracy"]) + decision_cfg["minimum_balanced_sign_gain_over_v410"]
+        float(val_metrics["pearson"])
+        >= float(v410_metrics["pearson"]) + decision_cfg["minimum_pearson_gain_over_v410"]
+        and float(val_metrics["negative_accuracy"])
+        >= float(v410_metrics["negative_accuracy"])
+        + decision_cfg["minimum_negative_accuracy_gain_over_v410"]
+        and float(val_metrics["balanced_sign_accuracy"])
+        >= float(v410_metrics["balanced_sign_accuracy"])
+        + decision_cfg["minimum_balanced_sign_gain_over_v410"]
     ):
         recommendation = "oof_residual_supported_lock_architecture_then_long_multiseed"
-    elif (
-        float(val_metrics["pearson"]) >= float(v410_metrics["pearson"]) - decision_cfg["tradeoff_pearson_tolerance"]
-        and float(val_metrics["negative_accuracy"]) > float(v410_metrics["negative_accuracy"])
-    ):
+    elif float(val_metrics["pearson"]) >= float(v410_metrics["pearson"]) - decision_cfg[
+        "tradeoff_pearson_tolerance"
+    ] and float(val_metrics["negative_accuracy"]) > float(v410_metrics["negative_accuracy"]):
         recommendation = "oof_residual_tradeoff_promising_do_not_open_test_confirm_long_multiseed"
     else:
         recommendation = "oof_residual_insufficient_proceed_explicit_lhr_v427"
@@ -375,7 +412,9 @@ def main() -> int:
     pd.DataFrame(fold_records).to_json(
         args.output_dir / "meta_fold_coefficients.jsonl", orient="records", lines=True
     )
-    oof_out = train_frame.loc[:, ["sequence_id", "sample_token", "track_id", "target_expansion"]].copy()
+    oof_out = train_frame.loc[
+        :, ["sequence_id", "sample_token", "track_id", "target_expansion"]
+    ].copy()
     oof_out["oof_anchor_prediction_expansion"] = oof_anchor
     oof_out["v426_oof_prediction_expansion"] = final_oof_pred
     oof_out["oof_divergence_raw"] = oof_div
@@ -384,7 +423,9 @@ def main() -> int:
     oof_per_seq.to_csv(args.output_dir / "oof_train_per_sequence.csv", index=False)
     oof_per_track.to_csv(args.output_dir / "oof_train_per_track.csv", index=False)
 
-    val_out = val_frame.loc[:, ["sequence_id", "sample_token", "track_id", "target_expansion"]].copy()
+    val_out = val_frame.loc[
+        :, ["sequence_id", "sample_token", "track_id", "target_expansion"]
+    ].copy()
     val_out["v410_baseline_prediction_expansion"] = v410
     val_out["v424_anchor_prediction_expansion"] = val_anchor
     val_out["v426_prediction_expansion"] = val_pred
@@ -428,10 +469,18 @@ def main() -> int:
                 "v426_negative_accuracy": val_metrics["negative_accuracy"],
                 "v410_balanced_sign": v410_metrics["balanced_sign_accuracy"],
                 "v426_balanced_sign": val_metrics["balanced_sign_accuracy"],
-                "v410_minimum_sequence_negative_accuracy": v410_metrics["minimum_sequence_negative_accuracy"],
-                "v426_minimum_sequence_negative_accuracy": val_metrics["minimum_sequence_negative_accuracy"],
-                "v410_minimum_negative_track_accuracy": v410_track_metrics["minimum_negative_track_accuracy"],
-                "v426_minimum_negative_track_accuracy": val_track_metrics["minimum_negative_track_accuracy"],
+                "v410_minimum_sequence_negative_accuracy": v410_metrics[
+                    "minimum_sequence_negative_accuracy"
+                ],
+                "v426_minimum_sequence_negative_accuracy": val_metrics[
+                    "minimum_sequence_negative_accuracy"
+                ],
+                "v410_minimum_negative_track_accuracy": v410_track_metrics[
+                    "minimum_negative_track_accuracy"
+                ],
+                "v426_minimum_negative_track_accuracy": val_track_metrics[
+                    "minimum_negative_track_accuracy"
+                ],
             },
         },
         "scientific_contract": {
@@ -454,16 +503,23 @@ def main() -> int:
     (args.output_dir / "summary.json").write_text(
         json.dumps(_json_safe(summary), indent=2), encoding="utf-8"
     )
-    print(json.dumps(_json_safe({
-        "status": "completed",
-        "selected_residual": chosen.name,
-        "coefficients": coeff.tolist(),
-        "v410_validation_metrics": v410_metrics,
-        "v424_anchor_validation_metrics": anchor_metrics,
-        "validation_metrics": val_metrics,
-        "validation_track_metrics": val_track_metrics,
-        "decision": summary["decision"],
-    }), indent=2))
+    print(
+        json.dumps(
+            _json_safe(
+                {
+                    "status": "completed",
+                    "selected_residual": chosen.name,
+                    "coefficients": coeff.tolist(),
+                    "v410_validation_metrics": v410_metrics,
+                    "v424_anchor_validation_metrics": anchor_metrics,
+                    "validation_metrics": val_metrics,
+                    "validation_track_metrics": val_track_metrics,
+                    "decision": summary["decision"],
+                }
+            ),
+            indent=2,
+        )
+    )
     return 0
 
 

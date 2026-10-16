@@ -23,7 +23,10 @@ def test_sequence_sign_weights_balance_cells() -> None:
     target = np.asarray([1, 1, 1, 1, -1, -1, 1, 1, 1, -1], dtype=np.float64)
     weights = sequence_sign_weights(sequence, target, cap=1000.0)
     cells = np.asarray(
-        [f"{seq}|{'negative' if value < 0 else 'positive'}" for seq, value in zip(sequence, target, strict=True)]
+        [
+            f"{seq}|{'negative' if value < 0 else 'positive'}"
+            for seq, value in zip(sequence, target, strict=True)
+        ]
     )
     masses = [float(weights[cells == cell].sum()) for cell in np.unique(cells)]
     assert np.max(masses) - np.min(masses) < 1.0e-10

@@ -127,9 +127,7 @@ def _attach_signed_readout(output_dir: Path, report: dict[str, Any]) -> dict[str
 def reevaluate(*, device_name: str, output_dir: Path) -> dict[str, Any]:
     """Evaluate A5, A8 and V6.1 without opening any held-out split."""
 
-    protocol = _read_signed(
-        ROOT / "configs/protocol/scientific_recovery_v7_balanced_oof.json"
-    )
+    protocol = _read_signed(ROOT / "configs/protocol/scientific_recovery_v7_balanced_oof.json")
     grouped = _read_signed(
         ROOT / "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
     )

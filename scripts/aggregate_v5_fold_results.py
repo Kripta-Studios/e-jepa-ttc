@@ -99,13 +99,12 @@ def align_fold_predictions(frames: dict[str, pd.DataFrame]) -> dict[str, pd.Data
     for name, frame in frames.items():
         if set(frame["sample_token"].astype(str)) != tokens:
             raise ValueError(f"{name} sample-token population differs from {reference_name}")
-        current = frame.set_index("sample_token").loc[
-            reference["sample_token"].astype(str)
-        ].reset_index()
+        current = (
+            frame.set_index("sample_token").loc[reference["sample_token"].astype(str)].reset_index()
+        )
         for column in ("sequence_id", "track_id"):
             if not (
-                current[column].astype(str).to_numpy()
-                == reference[column].astype(str).to_numpy()
+                current[column].astype(str).to_numpy() == reference[column].astype(str).to_numpy()
             ).all():
                 raise ValueError(f"{name} {column} differs from {reference_name}")
         if not np.allclose(
@@ -169,15 +168,17 @@ def _validate_summary(
     if arm == "garl":
         protocol = payload.get("protocol", {})
         sealed = payload.get("sealed_sources", {})
-        if protocol.get("from_scratch") is not True or protocol.get(
-            "pretrained_release_checkpoint_used"
-        ) is not False:
+        if (
+            protocol.get("from_scratch") is not True
+            or protocol.get("pretrained_release_checkpoint_used") is not False
+        ):
             raise ValueError(f"Garl fold {fold} was not trained from scratch")
         if protocol.get("public_validation_used_for_selection") is not False:
             raise ValueError(f"Garl fold {fold} used public validation for selection")
-        if sealed.get("public_validation_opened") is not False or sealed.get(
-            "private_test_opened"
-        ) is not False:
+        if (
+            sealed.get("public_validation_opened") is not False
+            or sealed.get("private_test_opened") is not False
+        ):
             raise ValueError(f"Garl fold {fold} opened a forbidden split")
         prediction_record = payload.get("artifacts", {}).get("predictions", {})
     else:
@@ -221,16 +222,12 @@ def aggregate(
         fold_frames: dict[str, pd.DataFrame] = {}
         for arm in ARMS:
             run_dir = run_root / RUN_NAMES[arm].format(fold=fold)
-            prediction_name = (
-                "dev_predictions.parquet" if arm == "garl" else "dev_predictions.csv"
-            )
+            prediction_name = "dev_predictions.parquet" if arm == "garl" else "dev_predictions.csv"
             prediction = run_dir / prediction_name
             summary_path = run_dir / "summary.json"
             fold_frames[arm] = _read_predictions(prediction)
             summaries[arm][fold] = _summary(summary_path)
-            _validate_summary(
-                summaries[arm][fold], arm=arm, fold=fold, prediction=prediction
-            )
+            _validate_summary(summaries[arm][fold], arm=arm, fold=fold, prediction=prediction)
             sources[f"{arm}_fold{fold}"] = {
                 "predictions": {"path": str(prediction.resolve()), "sha256": _sha256(prediction)},
                 "summary": {"path": str(summary_path.resolve()), "sha256": _sha256(summary_path)},
@@ -365,7 +362,8 @@ def aggregate(
                     "coverage_not_materially_worse",
                 )
             ),
-            "decision": "PASS" if all(
+            "decision": "PASS"
+            if all(
                 gate_checks[key]
                 for key in (
                     "improves_a6_aggregate",
@@ -374,7 +372,8 @@ def aggregate(
                     "model_prefix_causality",
                     "coverage_not_materially_worse",
                 )
-            ) else "FAIL",
+            )
+            else "FAIL",
         },
         "contracts": {
             "outer_dev_used_for_checkpoint_selection": True,
@@ -387,9 +386,7 @@ def aggregate(
         "sources": sources,
     }
     if not all(
-        math.isfinite(
-            float(arm_results[arm]["outer_dev_9_sequence"]["sequence_macro_MiD"])
-        )
+        math.isfinite(float(arm_results[arm]["outer_dev_9_sequence"]["sequence_macro_MiD"]))
         for arm in ARMS
     ):
         raise ValueError("an arm has non-finite aggregate MiD")
@@ -426,9 +423,7 @@ def main() -> int:
     except Exception as error:
         parser.exit(2, f"V5 fold aggregation failed: {type(error).__name__}: {error}\n")
     print(
-        json.dumps(
-            {"output": str(args.output_dir / "aggregate.json"), "gate": result["a8_0_gate"]}
-        )
+        json.dumps({"output": str(args.output_dir / "aggregate.json"), "gate": result["a8_0_gate"]})
     )
     return 0
 

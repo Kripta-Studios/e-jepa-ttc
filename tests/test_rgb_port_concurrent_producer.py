@@ -249,9 +249,7 @@ def test_live_c2f_gap_adopts_validated_v1_metrics_lineage(
     monkeypatch.setattr(
         acceleration_queue,
         "_validate_runtime_receipts",
-        lambda _run, *, require_endpoint, fit_id: validated.append(
-            f"{fit_id}:{require_endpoint}"
-        ),
+        lambda _run, *, require_endpoint, fit_id: validated.append(f"{fit_id}:{require_endpoint}"),
     )
     runtime.after_restore(state)
     adopted = json.loads(

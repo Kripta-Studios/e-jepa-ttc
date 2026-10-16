@@ -12,6 +12,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+
 from runtime import (
     atomic_parquet_write,
     digest,
@@ -141,7 +142,6 @@ class InputSnapshot:
 def install(launch: dict) -> tuple[InputSnapshot, Callable[..., Any], Callable[..., Any]]:
     """Install operation-only adapters after complete input admission is required."""
     import pandas as pd
-
     from e_jepa_ttc.simplex_t import (
         campaign_completion,
         candidate_interface,

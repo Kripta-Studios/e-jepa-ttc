@@ -86,13 +86,18 @@ def run(campaign: Path, output: Path) -> None:
                 count = int(mask.sum())
                 selected += count
                 total_absolute += float(np.abs(values).sum())
-                rows.append(dict(
-                    model=model, partition=partition, stratum=str(label), population=count,
-                    sequences=int(len(np.unique(sequences[mask]))),
-                    mae_seconds=float(np.abs(values).mean()),
-                    rmse_seconds=float(np.sqrt(np.square(values).mean())),
-                    median_absolute_error_seconds=float(np.median(np.abs(values))),
-                ))
+                rows.append(
+                    dict(
+                        model=model,
+                        partition=partition,
+                        stratum=str(label),
+                        population=count,
+                        sequences=int(len(np.unique(sequences[mask]))),
+                        mae_seconds=float(np.abs(values).mean()),
+                        rmse_seconds=float(np.sqrt(np.square(values).mean())),
+                        median_absolute_error_seconds=float(np.median(np.abs(values))),
+                    )
+                )
             if selected != n or not np.isclose(total_absolute, np.abs(error).sum(), rtol=1e-12):
                 raise ValueError("Partition does not reconcile to original population")
     with (output / "STRATA.csv").open("w", newline="", encoding="utf-8") as handle:
@@ -101,10 +106,17 @@ def run(campaign: Path, output: Path) -> None:
         writer.writerows(rows)
     pin(Path(__file__))
     result = dict(
-        status="COMPLETE", role="TRAIN_FIT_DESCRIPTION_NOT_INDEPENDENT_EVALUATION",
-        population=n, sequences=40, optimizer_updates=0, new_predictions=0,
-        fixed_partitions=list(partitions), partition_reconciliation="PASSED",
-        clipping_or_model_selection=False, inputs_sha256=hashes, rows=rows,
+        status="COMPLETE",
+        role="TRAIN_FIT_DESCRIPTION_NOT_INDEPENDENT_EVALUATION",
+        population=n,
+        sequences=40,
+        optimizer_updates=0,
+        new_predictions=0,
+        fixed_partitions=list(partitions),
+        partition_reconciliation="PASSED",
+        clipping_or_model_selection=False,
+        inputs_sha256=hashes,
+        rows=rows,
         limitation="Native own TTC bounded to +/-60s; Garl native output unbounded.",
     )
     (output / "RESULT.json").write_text(

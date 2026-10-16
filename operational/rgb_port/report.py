@@ -117,9 +117,7 @@ def _endpoint_state(run: Path, fit_id: str, consumed: dict[str, str]) -> dict[st
     return {
         "fit_id": fit_id,
         "status": "COMPLETE" if complete else str((receipt or {}).get("status", "MISSING")),
-        "completed_updates": int(
-            (journal or receipt or {}).get("completed_updates", 0)
-        ),
+        "completed_updates": int((journal or receipt or {}).get("completed_updates", 0)),
         "checkpoint_durable_updates": int(
             (journal or {}).get("durable_updates", (receipt or {}).get("completed_updates", 0))
         ),
@@ -137,7 +135,9 @@ def _endpoint_state(run: Path, fit_id: str, consumed: dict[str, str]) -> dict[st
     }
 
 
-def _curve_payload(run: Path, fit_id: str, state: Mapping[str, Any], consumed: dict[str, str]) -> dict[str, Any]:
+def _curve_payload(
+    run: Path, fit_id: str, state: Mapping[str, Any], consumed: dict[str, str]
+) -> dict[str, Any]:
     fit = run / "fits" / fit_id
     sources = sorted({*fit.glob("curve*.json"), *fit.glob("epoch*.json")})
     records: list[dict[str, Any]] = []
@@ -162,13 +162,19 @@ def _curve_payload(run: Path, fit_id: str, state: Mapping[str, Any], consumed: d
     }
 
 
-def _accounting(run: Path, states: Mapping[str, Mapping[str, Any]], consumed: dict[str, str]) -> dict[str, Any]:
+def _accounting(
+    run: Path, states: Mapping[str, Mapping[str, Any]], consumed: dict[str, str]
+) -> dict[str, Any]:
     technical_sources: list[dict[str, Any]] = []
     for path in (run / "TECHNICAL_JOURNAL.json", run / "qa" / "GLOBAL_TECHNICAL_JOURNAL.json"):
         journal = _json_if(path, consumed)
         if journal is not None:
             technical_sources.append(
-                {"path": str(path.resolve()), "sha256": sha256_file(path), "completed": int(journal.get("completed", 0))}
+                {
+                    "path": str(path.resolve()),
+                    "sha256": sha256_file(path),
+                    "completed": int(journal.get("completed", 0)),
+                }
             )
     technical = max((item["completed"] for item in technical_sources), default=0)
     scientific = sum(int(state["completed_updates"]) for state in states.values())
@@ -212,7 +218,11 @@ def _metric_line(name: str, scope: str, metric: Mapping[str, Any]) -> str:
 
 def _evaluation_section(value: Mapping[str, Any] | None) -> list[str]:
     if not value or value.get("schema") != V_SCHEMA or value.get("status") != "COMPLETE":
-        return ["## Evaluación V", "", "INCOMPLETA: no existe un análisis V científico completo y congelado."]
+        return [
+            "## Evaluación V",
+            "",
+            "INCOMPLETA: no existe un análisis V científico completo y congelado.",
+        ]
     lines = [
         "## Evaluación V",
         "",
@@ -233,7 +243,9 @@ def _evaluation_section(value: Mapping[str, Any] | None) -> list[str]:
         if isinstance(gate, Mapping):
             checks = gate.get("checks", {})
             rendered = ", ".join(f"{key}={_fmt(item)}" for key, item in sorted(checks.items()))
-            lines.append(f"- `{contrast}`: passed={_fmt(gate.get('passed'))}; {rendered}; bootstrap={_fmt((gate.get('bootstrap') or {}).get('status'))}.")
+            lines.append(
+                f"- `{contrast}`: passed={_fmt(gate.get('passed'))}; {rendered}; bootstrap={_fmt((gate.get('bootstrap') or {}).get('status'))}."
+            )
         else:
             lines.append(f"- `{contrast}`: ausente; no se interpreta como resultado negativo.")
     return lines
@@ -270,7 +282,9 @@ def _resume_commands(
     return primary, direct
 
 
-def _model_card(branch: str, states: Mapping[str, Mapping[str, Any]], source_sha: str | None) -> str:
+def _model_card(
+    branch: str, states: Mapping[str, Mapping[str, Any]], source_sha: str | None
+) -> str:
     event = branch == "E"
     fits = (
         ("E_A5_MATCHED", "E_C2F_MATCHED", "PAIR_E_MATCHED", "E_H1_MATCHED", "E_CTX_MATCHED")
@@ -291,15 +305,31 @@ def _model_card(branch: str, states: Mapping[str, Mapping[str, Any]], source_sha
         "",
     ]
     if event:
-        lines.append("E usa como máximo 4 consultas nativas dentro de 650 ms, con un span máximo observado de 300 ms. La capacidad 8 no equivale al H8 histórico.")
+        lines.append(
+            "E usa como máximo 4 consultas nativas dentro de 650 ms, con un span máximo observado de 300 ms. La capacidad 8 no equivale al H8 histórico."
+        )
     else:
-        lines.append("RGB usa como máximo 5 tripletas distintas reales a 10 Hz dentro de 650 ms. Los deltas internos proceden del reloj real del sensor RGB.")
+        lines.append(
+            "RGB usa como máximo 5 tripletas distintas reales a 10 Hz dentro de 650 ms. Los deltas internos proceden del reloj real del sensor RGB."
+        )
         lines.append("")
-        lines.append("En ausencia de RGB, las rutas de fusión congeladas usan exactamente la predicción E_CTX; la rama R aislada queda no disponible.")
-    lines.extend(["", "## Endpoints y ascendencia", "", "| endpoint | estado | checkpoint SHA-256 | freeze SHA-256 |", "|---|---|---|---|"])
+        lines.append(
+            "En ausencia de RGB, las rutas de fusión congeladas usan exactamente la predicción E_CTX; la rama R aislada queda no disponible."
+        )
+    lines.extend(
+        [
+            "",
+            "## Endpoints y ascendencia",
+            "",
+            "| endpoint | estado | checkpoint SHA-256 | freeze SHA-256 |",
+            "|---|---|---|---|",
+        ]
+    )
     for fit_id in fits:
         state = states[fit_id]
-        lines.append(f"| {fit_id} | {state['status']} | {_fmt(state['checkpoint_sha256'])} | {_fmt(state['endpoint_freeze_sha256'])} |")
+        lines.append(
+            f"| {fit_id} | {state['status']} | {_fmt(state['checkpoint_sha256'])} | {_fmt(state['endpoint_freeze_sha256'])} |"
+        )
     lines.extend(
         [
             "",
@@ -338,7 +368,9 @@ def build_report(*, run: Path, config_path: Path, output: Path) -> dict[str, Any
     curve_dir = output / "curves"
     curve_dir.mkdir(parents=True, exist_ok=True)
     for fit_id in FIT_IDS:
-        atomic_write_json(curve_dir / f"{fit_id}.json", _curve_payload(run, fit_id, states[fit_id], consumed))
+        atomic_write_json(
+            curve_dir / f"{fit_id}.json", _curve_payload(run, fit_id, states[fit_id], consumed)
+        )
     accounting = _accounting(run, states, consumed)
     scientific_v = bool(
         evaluation
@@ -362,17 +394,27 @@ def build_report(*, run: Path, config_path: Path, output: Path) -> dict[str, Any
     ]
     if costs and costs.get("status") == "COMPLETE":
         for scope, profile in sorted(costs.get("profiles", {}).items()):
-            lines.append(f"- `{scope}`: alcance `{profile.get('scope', scope)}`, mediana={_fmt(profile.get('warm_ms', {}).get('median', profile.get('median_ms', profile.get('latency_median_ms'))))} ms, p95={_fmt(profile.get('warm_ms', {}).get('p95', profile.get('p95_ms', profile.get('latency_p95_ms'))))} ms; batch semántico={_fmt(profile.get('batch_semantics'))}.")
-        lines.append("Los costes excluidos se mantienen separados; no se suman offline cache/weights/teacher a la latencia de ruta.")
+            lines.append(
+                f"- `{scope}`: alcance `{profile.get('scope', scope)}`, mediana={_fmt(profile.get('warm_ms', {}).get('median', profile.get('median_ms', profile.get('latency_median_ms'))))} ms, p95={_fmt(profile.get('warm_ms', {}).get('p95', profile.get('p95_ms', profile.get('latency_p95_ms'))))} ms; batch semántico={_fmt(profile.get('batch_semantics'))}."
+            )
+        lines.append(
+            "Los costes excluidos se mantienen separados; no se suman offline cache/weights/teacher a la latencia de ruta."
+        )
     else:
-        lines.append("INCOMPLETO: PROFILE_ROUTES no aportó un recibo COMPLETE; no se estiman costes.")
+        lines.append(
+            "INCOMPLETO: PROFILE_ROUTES no aportó un recibo COMPLETE; no se estiman costes."
+        )
     if migration:
-        lines.extend([
-            "", "## Correcciones de código y precisión", "",
-            "Código corregido directamente con migración verificable de hashes. Los estados event conservan su objetivo, pesos, optimizador y cursor; RGB incorpora el router de luminancia/gradiente y la reducción por batch efectivo.",
-            "La geometría de entrenamiento sigue en BF16 por decisión explícita. Los campos TTC q10/q90 heredados son alias de los límites del intervalo de fase transformado, no cuantiles marginales TTC garantizados. Los cruces por fase cero se exportan como no disponibles y se conserva el intervalo de fase.",
-            "Dev32 usa la cadencia event de 100 ms e historias RGB de frames reales. La ROI retrospectiva está disponible en el query; esta adaptación sigue siendo transferencia exploratoria, no equivalencia con el protocolo nativo ni holdout.",
-        ])
+        lines.extend(
+            [
+                "",
+                "## Correcciones de código y precisión",
+                "",
+                "Código corregido directamente con migración verificable de hashes. Los estados event conservan su objetivo, pesos, optimizador y cursor; RGB incorpora el router de luminancia/gradiente y la reducción por batch efectivo.",
+                "La geometría de entrenamiento sigue en BF16 por decisión explícita. Los campos TTC q10/q90 heredados son alias de los límites del intervalo de fase transformado, no cuantiles marginales TTC garantizados. Los cruces por fase cero se exportan como no disponibles y se conserva el intervalo de fase.",
+                "Dev32 usa la cadencia event de 100 ms e historias RGB de frames reales. La ROI retrospectiva está disponible en el query; esta adaptación sigue siendo transferencia exploratoria, no equivalencia con el protocolo nativo ni holdout.",
+            ]
+        )
     lines.extend(["", "## Transferencia", ""])
     lines.append(
         f"- Dev32 expuesto: {_fmt((dev32 or {}).get('status', 'MISSING'))}. Es exploratorio, no holdout ni selección oficial."
@@ -399,7 +441,9 @@ def build_report(*, run: Path, config_path: Path, output: Path) -> dict[str, Any
     )
     for fit_id in FIT_IDS:
         state = states[fit_id]
-        lines.append(f"| {fit_id} | {state['status']} | {state['completed_updates']} | {_fmt(state['checkpoint_sha256'])} |")
+        lines.append(
+            f"| {fit_id} | {state['status']} | {state['completed_updates']} | {_fmt(state['checkpoint_sha256'])} |"
+        )
     lines.extend(["", "## Reanudación", ""])
     repository = config_path.parent.parent.parent
     primary_resume, direct_resumes = _resume_commands(run, repository, consumed)
@@ -420,7 +464,11 @@ def build_report(*, run: Path, config_path: Path, output: Path) -> dict[str, Any
     lines.extend(["", "## Decisión de queue", ""])
     lines.append(
         "NEXT_DECISION permanece bajo propiedad de queue. "
-        + (f"Se leyó el snapshot SHA-256 `{consumed[str((run / 'NEXT_DECISION.json').resolve())]}`." if next_decision else "No había snapshot; este generador no lo crea ni lo modifica.")
+        + (
+            f"Se leyó el snapshot SHA-256 `{consumed[str((run / 'NEXT_DECISION.json').resolve())]}`."
+            if next_decision
+            else "No había snapshot; este generador no lo crea ni lo modifica."
+        )
     )
 
     report_path = output / "REPORT.md"
@@ -431,11 +479,20 @@ def build_report(*, run: Path, config_path: Path, output: Path) -> dict[str, Any
     _write_text(e_card, _model_card("E", states, source_sha))
     _write_text(rgb_card, _model_card("RGB_E", states, source_sha))
 
-    output_files = [report_path, e_card, rgb_card, *(curve_dir / f"{fit_id}.json" for fit_id in FIT_IDS)]
+    output_files = [
+        report_path,
+        e_card,
+        rgb_card,
+        *(curve_dir / f"{fit_id}.json" for fit_id in FIT_IDS),
+    ]
     manifest = {
         "schema": "rgb_port_report_hash_manifest_v1",
         "outputs": [
-            {"path": _relative(path, output), "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+            {
+                "path": _relative(path, output),
+                "bytes": path.stat().st_size,
+                "sha256": sha256_file(path),
+            }
             for path in output_files
         ],
         "inputs": [{"path": path, "sha256": digest} for path, digest in sorted(consumed.items())],

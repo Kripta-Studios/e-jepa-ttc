@@ -5,10 +5,11 @@ V4.13 keeps the stable v4.10 signed magnitude as the default and injects a
 soft directional score everywhere, while allowing a sign-changing correction
 only for extremely confident receding predictions.
 """
+
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 import numpy as np
 
@@ -55,9 +56,7 @@ def conservative_dual_head_prediction(
 
     magnitude = np.abs(baseline)
     directional = magnitude * (1.0 - 2.0 * probability)
-    override = (baseline >= 0.0) & (
-        probability >= cfg.negative_override_probability
-    )
+    override = (baseline >= 0.0) & (probability >= cfg.negative_override_probability)
     blend = np.full_like(baseline, cfg.base_blend)
     blend[override] = cfg.override_blend
     routed = (1.0 - blend) * baseline + blend * directional
@@ -77,19 +76,13 @@ def selective_fusion_gates(
         >= baseline["pearson"] - thresholds["pearson_max_drop"],
         "mae_preserved": routed["expansion_mae"]
         <= baseline["expansion_mae"] + thresholds["mae_tolerance"],
-        "balanced_sign": routed["balanced_sign_accuracy"]
-        >= thresholds["balanced_sign_gate"],
-        "negative_accuracy": routed["negative_accuracy"]
-        >= thresholds["negative_accuracy_gate"],
-        "minimum_sequence_negative_accuracy": routed[
-            "minimum_sequence_negative_accuracy"
-        ]
+        "balanced_sign": routed["balanced_sign_accuracy"] >= thresholds["balanced_sign_gate"],
+        "negative_accuracy": routed["negative_accuracy"] >= thresholds["negative_accuracy_gate"],
+        "minimum_sequence_negative_accuracy": routed["minimum_sequence_negative_accuracy"]
         >= thresholds["minimum_sequence_negative_accuracy_gate"],
         "positive_accuracy_preserved": routed["positive_accuracy"]
-        >= baseline["positive_accuracy"]
-        - thresholds["positive_accuracy_max_drop"],
-        "override_rate": diagnostics["override_rate"]
-        <= thresholds["maximum_override_rate"],
+        >= baseline["positive_accuracy"] - thresholds["positive_accuracy_max_drop"],
+        "override_rate": diagnostics["override_rate"] <= thresholds["maximum_override_rate"],
         "zero_event_dependence": diagnostics["zero_event_pearson_drop"]
         >= thresholds["zero_event_pearson_drop_gate"],
         "shuffled_event_dependence": diagnostics["shuffled_event_pearson_drop"]

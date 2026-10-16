@@ -43,9 +43,7 @@ def _guard_sequence(
     yield from values
 
 
-def _monitor(
-    tmp_path: Path, fake: FakeTime, host_values: list[int]
-) -> flow.MemoryFlowMonitor:
+def _monitor(tmp_path: Path, fake: FakeTime, host_values: list[int]) -> flow.MemoryFlowMonitor:
     values = iter(host_values)
     return flow.MemoryFlowMonitor(
         tmp_path,

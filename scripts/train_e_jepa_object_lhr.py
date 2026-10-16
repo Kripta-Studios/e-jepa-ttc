@@ -97,9 +97,7 @@ def _metrics(predictions: pd.DataFrame) -> dict[str, Any]:
     signed["mae_s"] = float(np.mean(np.abs(target - prediction)))
     signed["median_ae_s"] = float(np.median(np.abs(target - prediction)))
     signed["sign_accuracy"] = float(np.mean(np.sign(target) == np.sign(prediction)))
-    signed["sequence_macro"] = sequence_macro_signed_metrics(
-        target, prediction, sequence
-    )
+    signed["sequence_macro"] = sequence_macro_signed_metrics(target, prediction, sequence)
     return signed
 
 
@@ -382,9 +380,8 @@ def _train_epoch(
             loss = object_lhr_loss(output, batch, epoch=epoch, config=curriculum)
             backward = loss.total / train_config.gradient_accumulation_steps
         update = (
-            (batch_index + 1) % train_config.gradient_accumulation_steps == 0
-            or batch_index + 1 == len(loader)
-        )
+            batch_index + 1
+        ) % train_config.gradient_accumulation_steps == 0 or batch_index + 1 == len(loader)
         if scaler is None:
             backward.backward()
             if update:
@@ -435,9 +432,7 @@ def _evaluate(
         ratio_predictions.append(output.log_height_ratio.cpu().numpy())
         height_errors.append(
             float(
-                torch.abs(
-                    output.log_visible_heights - torch.log(batch.visible_heights_px)
-                )
+                torch.abs(output.log_visible_heights - torch.log(batch.visible_heights_px))
                 .mean()
                 .cpu()
             )

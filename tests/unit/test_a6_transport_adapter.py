@@ -1,6 +1,8 @@
 from __future__ import annotations
-import torch
+
 import pytest
+import torch
+
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
 
 
@@ -59,4 +61,7 @@ def test_adapter_receives_gradient_without_geometry_gradient() -> None:
     loss.backward()
     assert all(p.grad is None for p in model.encoder.parameters())
     assert model.transport_adapter is not None
-    assert any(p.grad is not None and torch.isfinite(p.grad).all() for p in model.transport_adapter.parameters())
+    assert any(
+        p.grad is not None and torch.isfinite(p.grad).all()
+        for p in model.transport_adapter.parameters()
+    )

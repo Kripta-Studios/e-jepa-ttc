@@ -115,11 +115,7 @@ def _intervals(value: object) -> tuple[tuple[int, int], tuple[int, int], tuple[i
     if t1[0] < 100_000 or t1[0] >= t1[1] or t2[0] >= t2[1] or t1[1] > t2[0]:
         raise ValueError("t1/t2 windows must be positive, ordered, and non-overlapping")
     t0 = shifted_precontext_window(t1, shift_s=0.1)
-    if (
-        t0[1] - t0[0] != t1[1] - t1[0]
-        or t1[0] - t0[0] < 100_000
-        or t0[1] > t1[0]
-    ):
+    if t0[1] - t0[0] != t1[1] - t1[0] or t1[0] - t0[0] < 100_000 or t0[1] > t1[0]:
         raise RuntimeError("unexpected shifted t0 pre-context convention")
     return t0, t1, t2
 

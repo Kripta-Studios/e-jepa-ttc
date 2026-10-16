@@ -410,13 +410,9 @@ def run(output: Path, arm: str) -> None:
                     journal_begin_finished - journal_begin_started
                 )
                 * 1000,
-                "optimizer_step_cpu_submit_elapsed": (
-                    optimizer_submitted - journal_begin_finished
-                )
+                "optimizer_step_cpu_submit_elapsed": (optimizer_submitted - journal_begin_finished)
                 * 1000,
-                "journal_commit_fsync_cpu_elapsed": (
-                    journal_commit_finished - optimizer_submitted
-                )
+                "journal_commit_fsync_cpu_elapsed": (journal_commit_finished - optimizer_submitted)
                 * 1000,
                 "post_commit_current_stream_wait_elapsed": (
                     current_stream_sync_finished - journal_commit_finished
@@ -524,6 +520,7 @@ def run(output: Path, arm: str) -> None:
         )
         raise
     finally:
+
         def restore_failed_warmup() -> None:
             nonlocal cursor, restored_after_warmup
             cursor = state.restore(model, optimizer, scheduler, generator)

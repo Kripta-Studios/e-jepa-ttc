@@ -31,9 +31,7 @@ def normalized_weighted_absolute_phase_error(
 ) -> torch.Tensor:
     """Official-weight X0-DYN-W loss, normalized by the observed weight sum."""
 
-    if not (
-        predicted_benchmark_phase.shape == target_benchmark_phase.shape == sample_weight.shape
-    ):
+    if not (predicted_benchmark_phase.shape == target_benchmark_phase.shape == sample_weight.shape):
         raise ValueError("prediction, target and sample_weight shapes differ")
     predicted64 = predicted_benchmark_phase.to(torch.float64)
     target64 = target_benchmark_phase.to(torch.float64)

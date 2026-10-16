@@ -73,13 +73,9 @@ class ObjectExpansionConfig:
         if not 0.0 <= self.dropout < 1.0:
             raise ValueError("dropout must lie in [0,1)")
         if not 0.0 < self.min_abs_inverse_ttc < self.max_abs_inverse_ttc:
-            raise ValueError(
-                "Inverse-TTC bounds must satisfy 0 < min_abs < max_abs"
-            )
+            raise ValueError("Inverse-TTC bounds must satisfy 0 < min_abs < max_abs")
         if not (
-            self.min_abs_inverse_ttc
-            <= self.initial_abs_inverse_ttc
-            <= self.max_abs_inverse_ttc
+            self.min_abs_inverse_ttc <= self.initial_abs_inverse_ttc <= self.max_abs_inverse_ttc
         ):
             raise ValueError("initial_abs_inverse_ttc must lie inside the bounds")
         if not 0.0 < self.initial_negative_probability < 1.0:
@@ -260,8 +256,7 @@ class ObjectCentricExpansionTTC(nn.Module):
             raise ValueError("events must have shape [B,2,C,H,W]")
         if events.shape[2] != self.config.in_channels:
             raise ValueError(
-                f"events have {events.shape[2]} channels; "
-                f"expected {self.config.in_channels}"
+                f"events have {events.shape[2]} channels; expected {self.config.in_channels}"
             )
         if delta_t_s.shape != (events.shape[0],):
             raise ValueError("delta_t_s must have shape [B]")

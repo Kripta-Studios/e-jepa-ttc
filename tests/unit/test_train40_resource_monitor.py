@@ -249,9 +249,7 @@ def test_worker_fails_closed_if_spawn_entrypoint_imported_torch(
 
 
 def test_production_spawn_entrypoint_keeps_heavy_imports_lazy() -> None:
-    source = Path("operational/train40_system/engine_host_pipeline.py").read_text(
-        encoding="utf-8"
-    )
+    source = Path("operational/train40_system/engine_host_pipeline.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
     top_imports: set[str] = set()
     for statement in tree.body:

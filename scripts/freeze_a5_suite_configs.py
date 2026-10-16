@@ -11,6 +11,7 @@ Scientific contract
   control trained at the same lambda when making a transport claim.
 * Validation remains the original frozen 2048-row manifest.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -26,8 +27,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SCREEN_A4_LAMBDA = 4.0
 TEMPLATES = {
     "seed7": ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1.yaml",
-    "seed13": ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1_seed13.yaml",
-    "seed23": ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1_seed23.yaml",
+    "seed13": ROOT
+    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1_seed13.yaml",
+    "seed23": ROOT
+    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1_seed23.yaml",
     "cap_s": ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_cap_s_v1.yaml",
     "cap_m": ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_cap_m_v1.yaml",
 }
@@ -71,8 +74,6 @@ def _write(path: Path, payload: dict[str, Any]) -> None:
     )
 
 
-
-
 def _load_transport_selection(path: Path | None) -> dict[str, Any] | None:
     if path is None:
         return None
@@ -83,7 +84,9 @@ def _load_transport_selection(path: Path | None) -> dict[str, Any] | None:
         "a5_transport_preflight_train_only_v3_confirmation",
     }
     if artifact_type not in allowed_types:
-        raise ValueError("--preflight-selection must be an authorized A5 transport preflight artifact")
+        raise ValueError(
+            "--preflight-selection must be an authorized A5 transport preflight artifact"
+        )
     scope = payload.get("scope", {})
     decision = payload.get("decision", {})
     if (
@@ -159,6 +162,7 @@ def _apply_transport_selection(
     contract["transport_temperature_selected_before_a5_validation"] = True
     return model_target.relative_to(ROOT).as_posix()
 
+
 def _freeze_screen_lambda(payload: dict[str, Any]) -> None:
     training = payload.get("training")
     contract = payload.get("decision_contract")
@@ -180,7 +184,9 @@ def _freeze_scale_lambda(payload: dict[str, Any], dino_lambda: float) -> None:
     if not isinstance(training, dict) or not isinstance(contract, dict):
         raise ValueError("template lacks training/decision_contract")
     training["representation_distillation_weight"] = float(dino_lambda)
-    contract["a4_endpoint_dino_lambda_source"] = "train_only_A4_lambda_CV_selected_before_A5_scale_validation"
+    contract["a4_endpoint_dino_lambda_source"] = (
+        "train_only_A4_lambda_CV_selected_before_A5_scale_validation"
+    )
     contract["a4_endpoint_dino_lambda_frozen"] = float(dino_lambda)
     contract["scale_transport_claim_requires_A4_control_at_same_lambda"] = True
 
@@ -225,7 +231,9 @@ def _scale_config(
         "manifest_sha256": _sha(teacher_manifest),
         "artifact_sha256": teacher_meta.get("artifact_sha256"),
     }
-    payload["training"]["representation_teacher_cache_artifact_sha256"] = teacher_meta.get("artifact_sha256")
+    payload["training"]["representation_teacher_cache_artifact_sha256"] = teacher_meta.get(
+        "artifact_sha256"
+    )
     experiment["name"] = f"e_jepa_garl_event_causal_scale_a5_corr_v1_train{rows}_seed{seed}"
     experiment["protocol_version"] = f"causal_scale_eap_a5_event_local_transport_train{rows}_v1"
     experiment["parent_arm"] = f"A4_S1_train{rows}_same_lambda_control_required_for_transport_claim"
@@ -280,23 +288,40 @@ def run(
         specs = {
             8192: (
                 [ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json"],
-                [ROOT / "artifacts/cache/dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json"],
+                [
+                    ROOT
+                    / (
+                        "artifacts/cache/dinov3_convnext_large_relational"
+                        "_a4_train8192_rgb_v1/manifest.json"
+                    )
+                ],
             ),
             16384: (
                 [
-                    ROOT / "artifacts/cache/garl_object_event_common_roi_train16384_v1/manifest.json",
+                    ROOT
+                    / "artifacts/cache/garl_object_event_common_roi_train16384_v1/manifest.json",
                     ROOT / "artifacts/cache/garl_object_event_common_roi_train16k_v1/manifest.json",
                 ],
                 [
-                    ROOT / "artifacts/cache/dinov3_convnext_large_relational_a4_train16384_rgb_v1/manifest.json",
-                    ROOT / "artifacts/cache/dinov3_convnext_large_relational_a4_train16k_rgb_v1/manifest.json",
+                    ROOT
+                    / (
+                        "artifacts/cache/dinov3_convnext_large_relational"
+                        "_a4_train16384_rgb_v1/manifest.json"
+                    ),
+                    ROOT
+                    / (
+                        "artifacts/cache/dinov3_convnext_large_relational"
+                        "_a4_train16k_rgb_v1/manifest.json"
+                    ),
                 ],
             ),
         }
         for rows, (event_candidates, teacher_candidates) in specs.items():
             event_manifest = _find_existing(event_candidates)
             teacher_manifest = _find_existing(teacher_candidates)
-            ready = validation.is_file() and event_manifest is not None and teacher_manifest is not None
+            ready = (
+                validation.is_file() and event_manifest is not None and teacher_manifest is not None
+            )
             scale_status[str(rows)] = {"ready": ready}
             if not ready:
                 continue
@@ -320,14 +345,19 @@ def run(
                 seed_configs[str(seed)] = target.relative_to(ROOT).as_posix()
             # Backward-compatible alias used by earlier orchestration.
             written[f"scale_{rows}"] = seed_configs["7"]
-            scale_status[str(rows)].update({
-                "event_manifest": event_manifest.relative_to(ROOT).as_posix(),
-                "teacher_manifest": teacher_manifest.relative_to(ROOT).as_posix(),
-                "configs": seed_configs,
-                "config": seed_configs["7"],
-                "dino_lambda": scale_dino_lambda,
-                "hardware_profile": {"num_workers": num_workers, "prefetch_factor": prefetch_factor},
-            })
+            scale_status[str(rows)].update(
+                {
+                    "event_manifest": event_manifest.relative_to(ROOT).as_posix(),
+                    "teacher_manifest": teacher_manifest.relative_to(ROOT).as_posix(),
+                    "configs": seed_configs,
+                    "config": seed_configs["7"],
+                    "dino_lambda": scale_dino_lambda,
+                    "hardware_profile": {
+                        "num_workers": num_workers,
+                        "prefetch_factor": prefetch_factor,
+                    },
+                }
+            )
 
     manifest = {
         "artifact_type": "a5_frozen_runtime_configs_v2",
@@ -335,9 +365,13 @@ def run(
         "screen_lambda_scope": "immutable_A4_comparator_for_clean_transport_attribution",
         "scale_dino_endpoint_lambda": scale_dino_lambda,
         "scale_lambda_scope": (
-            "selected_train_only_before_A5_scale_validation" if scale_dino_lambda is not None else None
+            "selected_train_only_before_A5_scale_validation"
+            if scale_dino_lambda is not None
+            else None
         ),
-        "files": {name: {"path": path, "sha256": _sha(ROOT / path)} for name, path in written.items()},
+        "files": {
+            name: {"path": path, "sha256": _sha(ROOT / path)} for name, path in written.items()
+        },
         "scale_status": scale_status,
         "transport_selection": (
             {
@@ -346,7 +380,9 @@ def run(
                 "source_artifact_sha256": selection.get("artifact_sha256"),
                 "radius": selection["radius"],
                 "temperature": selection["temperature"],
-            } if selection is not None else None
+            }
+            if selection is not None
+            else None
         ),
         "private_test_opened": False,
     }

@@ -1,4 +1,5 @@
 """Training helpers for Object Event TTC v4.18 radial physics bottleneck."""
+
 from __future__ import annotations
 
 import copy
@@ -24,9 +25,7 @@ def train_monotone_head(
         raise ValueError("train_indices cannot be empty")
     torch.manual_seed(seed)
     model = MonotoneOddPhysicsHead(features.shape[1])
-    optimizer = torch.optim.AdamW(
-        model.parameters(), lr=learning_rate, weight_decay=weight_decay
-    )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     x = features[train_indices].float()
     y = (target_expansion[train_indices] < 0.0).float()
     history: list[dict[str, float]] = []

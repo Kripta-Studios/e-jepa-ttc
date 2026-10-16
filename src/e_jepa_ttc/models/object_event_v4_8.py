@@ -119,7 +119,7 @@ class ObjectEventTTCV48(nn.Module):
         if not trainable:
             self.foreground_model.eval()
 
-    def train(self, mode: bool = True) -> "ObjectEventTTCV48":
+    def train(self, mode: bool = True) -> ObjectEventTTCV48:
         super().train(mode)
         if self.motion_config.freeze_foreground:
             self.foreground_model.eval()
@@ -168,7 +168,12 @@ class ObjectEventTTCV48(nn.Module):
         )
         foreground_probabilities = foreground_probabilities.reshape_as(foreground_logits)
         activity = activity_full.reshape_as(foreground_logits)
-        return maps_by_time.detach() if self.motion_config.freeze_foreground else maps_by_time, foreground_logits, foreground_probabilities, activity
+        return (
+            maps_by_time.detach() if self.motion_config.freeze_foreground else maps_by_time,
+            foreground_logits,
+            foreground_probabilities,
+            activity,
+        )
 
     @staticmethod
     def _temporal_maps(maps: torch.Tensor) -> torch.Tensor:
@@ -194,7 +199,9 @@ class ObjectEventTTCV48(nn.Module):
         return torch.stack((a0, a1, a2, d01, d12, acceleration), dim=1)
 
     def forward(self, events: torch.Tensor) -> ObjectEventV48Output:
-        maps, foreground_logits, foreground_probabilities, activity = self._foreground_and_features(events)
+        maps, foreground_logits, foreground_probabilities, activity = self._foreground_and_features(
+            events
+        )
         temporal = self.temporal_projection(self._temporal_maps(maps))
         temporal = functional.interpolate(
             temporal,
@@ -210,9 +217,7 @@ class ObjectEventTTCV48(nn.Module):
         activity_change = (activity[:, 2] - activity[:, 1]).abs()
         event_presence = torch.tanh(activity_change)
         local_log_eta = (
-            self.motion_config.maximum_abs_log_eta
-            * torch.tanh(field[:, 0])
-            * event_presence
+            self.motion_config.maximum_abs_log_eta * torch.tanh(field[:, 0]) * event_presence
         )
         confidence_logits = field[:, 1]
         confidence = torch.sigmoid(confidence_logits)
@@ -241,9 +246,7 @@ class ObjectEventTTCV48(nn.Module):
             maximum * 0.999,
         )
         raw_score = torch.atanh((expansion / maximum).clamp(-0.999, 0.999))
-        reverse_raw_score = torch.atanh(
-            (reverse_expansion / maximum).clamp(-0.999, 0.999)
-        )
+        reverse_raw_score = torch.atanh((reverse_expansion / maximum).clamp(-0.999, 0.999))
         return ObjectEventV48Output(
             expansion=expansion,
             reverse_expansion=reverse_expansion,

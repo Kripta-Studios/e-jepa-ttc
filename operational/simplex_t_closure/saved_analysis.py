@@ -15,14 +15,14 @@ sys.path.insert(0, str(ROOT / "src"))
 import numpy as np
 import pandas as pd
 import psutil
-from adapters import UNCERTAINTY_DIRECTORY_GUARD, UNCERTAINTY_EXISTS_GUARD, resumable_function
-from runtime import atomic_json, digest, publish_json, resumable_hierarchical_losses
-
 from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase, strict_macro_mass
 from e_jepa_ttc.simplex_t import uncertainty_analysis
 from e_jepa_ttc.simplex_t.diagnostic_summary import summarize_diagnostics
 from e_jepa_ttc.simplex_t.replication_summary import three_seed_losses
 from e_jepa_ttc.simplex_t.temporal_diagnostics import sampled_temporal_diagnostics
+
+from adapters import UNCERTAINTY_DIRECTORY_GUARD, UNCERTAINTY_EXISTS_GUARD, resumable_function
+from runtime import atomic_json, digest, publish_json, resumable_hierarchical_losses
 
 CAMPAIGN = ROOT / "artifacts/simplex_t/scientific_campaign"
 OUT = ROOT / "artifacts/simplex_t/closure_20261002/saved_analysis"

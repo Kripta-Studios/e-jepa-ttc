@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Preflight for Object Event TTC v4.18 radial/divergence physics bottleneck."""
+"Preflight for Object Event TTC v4.18 radial/divergence physics bottleneck."
+
 from __future__ import annotations
 
 import argparse
@@ -36,9 +37,15 @@ def main() -> int:
     contract = v417.get("scientific_contract", {})
     required_v417_contract = {
         "three_frozen_true_seed_v48_backbones": "v4.17 three-backbone contract missing",
-        "signed_v48_anchor_is_event_only_forward_feature": "v4.17 event-only signed-anchor contract missing",
-        "track_and_sequence_ids_are_grouping_metadata_not_forward_features": "v4.17 metadata-only ID contract missing",
-        "validation_not_used_for_epoch_or_hyperparameter_selection": "v4.17 validation-selection contract missing",
+        "signed_v48_anchor_is_event_only_forward_feature": (
+            "v4.17 event-only signed-anchor contract missing"
+        ),
+        (
+            "track_and_sequence_ids_are_grouping_metadata_not_forward_features"
+        ): "v4.17 metadata-only ID contract missing",
+        (
+            "validation_not_used_for_epoch_or_hyperparameter_selection"
+        ): "v4.17 validation-selection contract missing",
         "official_eap_test_not_opened": "Official eAP test was already opened",
         "evttc_not_opened": "EvTTC was already opened",
     }

@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from typing import Any
 
 import torch
-
 from torch.utils.data import Dataset
 
 
@@ -132,8 +131,7 @@ def collate_object_lhr(
     targets = torch.tensor([float(record["ttc_s"]) for record in records], dtype=torch.float32)
     if heights.shape != (len(records), 2):
         raise ValueError(
-            "garl_visible_heights_px must collate to [B,2], "
-            f"got {tuple(heights.shape)}"
+            f"garl_visible_heights_px must collate to [B,2], got {tuple(heights.shape)}"
         )
     if not torch.isfinite(heights).all() or bool((heights <= 0).any()):
         raise ValueError("Visible-height supervision must be finite and strictly positive")

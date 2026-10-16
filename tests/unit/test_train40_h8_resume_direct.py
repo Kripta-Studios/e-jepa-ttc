@@ -49,9 +49,12 @@ def test_cursor_accepts_durable_status_and_verifies_only_last_prefix(
         return _digest(path)
 
     kernel = SimpleNamespace(read=lambda path: json.loads(path.read_text()), digest=digest)
-    assert direct._resume_cursor(
-        tmp_path, directory, binding_path, binding, kernel=kernel, total_rows=5
-    ) == 3
+    assert (
+        direct._resume_cursor(
+            tmp_path, directory, binding_path, binding, kernel=kernel, total_rows=5
+        )
+        == 3
+    )
     assert digested == [binding_path, last]
 
 
@@ -105,9 +108,7 @@ def test_deferred_assembly_matches_canonical_first_occurrence_order(tmp_path: Pa
         resource_guard=lambda _output: (True, {}),
         atomic_json=lambda path, value: publications.append((path.name, value)),
     )
-    result = direct._assemble_fragments(
-        tmp_path, directory, histories, jobs, kernel=kernel
-    )
+    result = direct._assemble_fragments(tmp_path, directory, histories, jobs, kernel=kernel)
     assert result is not None
     features, history, anchors, available = result
     np.testing.assert_array_equal(features, np.stack((first[0], first[1], second[1])))
@@ -143,9 +144,7 @@ def test_assembly_guards_every_256_rows_and_pauses_separately(tmp_path: Path) ->
         resource_guard=guard,
         atomic_json=lambda path, value: publications.append((path.name, value)),
     )
-    assert direct._assemble_fragments(
-        tmp_path, directory, histories, jobs, kernel=kernel
-    ) is None
+    assert direct._assemble_fragments(tmp_path, directory, histories, jobs, kernel=kernel) is None
     assert guards == 2
     assert publications[-1] == (
         "H8_ASSEMBLY_PROGRESS.json",

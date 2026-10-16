@@ -175,9 +175,10 @@ def run_smoke(
         raise ValueError("public train parquet hash does not match preregistration")
     model_path = model_path.resolve(strict=True)
     weights_path = model_path / "model.safetensors"
-    if model_path.name != teacher["revision"] or sha256_file(weights_path) != teacher[
-        "expected_weights_sha256"
-    ]:
+    if (
+        model_path.name != teacher["revision"]
+        or sha256_file(weights_path) != teacher["expected_weights_sha256"]
+    ):
         raise ValueError("SAM snapshot revision or weights hash mismatch")
 
     columns = [

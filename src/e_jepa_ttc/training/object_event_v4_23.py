@@ -1,4 +1,5 @@
 """Combined objective for Object Event TTC v4.23."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

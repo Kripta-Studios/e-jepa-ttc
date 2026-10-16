@@ -163,9 +163,7 @@ def freeze_candidate(output_root: Path, seeds: Sequence[int]) -> dict[str, Any]:
         if int(summary.get("seed", -1)) != seed:
             raise ValueError(f"Seed mismatch in {summary_path}")
         checkpoint = Path(str(summary["best_checkpoint"]))
-        if not checkpoint.is_file() or _sha256(checkpoint) != summary.get(
-            "best_checkpoint_sha256"
-        ):
+        if not checkpoint.is_file() or _sha256(checkpoint) != summary.get("best_checkpoint_sha256"):
             raise ValueError(f"Checkpoint hash mismatch: {checkpoint}")
         commits.add(str(summary["git_commit"]))
         configs.add(str(summary["config_hash"]))
@@ -265,8 +263,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "do not pass one --pretrained checkpoint to all full seeds."
             )
         output_root = (
-            args.output_root
-            or ROOT / "artifacts" / "runs" / PROFILE_OUTPUT_NAMES[args.profile]
+            args.output_root or ROOT / "artifacts" / "runs" / PROFILE_OUTPUT_NAMES[args.profile]
         ).resolve()
         args.output_root = output_root
         split = (args.split or PROFILE_SPLITS[args.profile]).resolve()
@@ -322,8 +319,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 or args.evttc_metrics is None
             ):
                 raise ValueError(
-                    "evttc-score requires --evttc-predictions, --evttc-targets and "
-                    "--evttc-metrics"
+                    "evttc-score requires --evttc-predictions, --evttc-targets and --evttc-metrics"
                 )
             _run(
                 [

@@ -4,6 +4,7 @@ This module deliberately contains no trainable prediction head. It asks a
 representation question: do the frozen v4.8 spatial encoder maps contain local
 correspondences from which translation-invariant expansion can be recovered?
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -24,17 +25,22 @@ class ObjectEventV419Config:
     def __post_init__(self) -> None:
         if self.search_radius <= 0:
             raise ValueError("search_radius must be positive")
-        if min(
-            self.correlation_temperature,
-            self.foreground_floor,
-            self.confidence_floor,
-            self.minimum_score_scale,
-            self.epsilon,
-        ) <= 0.0:
+        if (
+            min(
+                self.correlation_temperature,
+                self.foreground_floor,
+                self.confidence_floor,
+                self.minimum_score_scale,
+                self.epsilon,
+            )
+            <= 0.0
+        ):
             raise ValueError("v4.19 numerical controls must be positive")
 
 
-def _offsets(radius: int, *, device: torch.device, dtype: torch.dtype) -> tuple[torch.Tensor, torch.Tensor]:
+def _offsets(
+    radius: int, *, device: torch.device, dtype: torch.dtype
+) -> tuple[torch.Tensor, torch.Tensor]:
     values = torch.arange(-radius, radius + 1, device=device, dtype=dtype)
     dy, dx = torch.meshgrid(values, values, indexing="ij")
     return dx.reshape(-1), dy.reshape(-1)
@@ -68,11 +74,14 @@ def local_correlation_flow(
     patches = patches.reshape(batch, channels, candidates, height, width)
     correlation = (first_n[:, :, None] * patches).sum(dim=1)
 
-    validity = functional.unfold(
-        torch.ones((1, 1, height, width), device=first.device, dtype=first_n.dtype),
-        kernel_size=kernel,
-        padding=radius,
-    ).reshape(1, candidates, height, width) > 0.5
+    validity = (
+        functional.unfold(
+            torch.ones((1, 1, height, width), device=first.device, dtype=first_n.dtype),
+            kernel_size=kernel,
+            padding=radius,
+        ).reshape(1, candidates, height, width)
+        > 0.5
+    )
     correlation = correlation.masked_fill(~validity, -1.0e4)
     probability = torch.softmax(correlation / float(temperature), dim=1)
 
@@ -86,7 +95,9 @@ def local_correlation_flow(
     return flow_x, flow_y, confidence
 
 
-def _finite_derivatives(flow_x: torch.Tensor, flow_y: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+def _finite_derivatives(
+    flow_x: torch.Tensor, flow_y: torch.Tensor
+) -> tuple[torch.Tensor, torch.Tensor]:
     if flow_x.ndim != 3 or flow_y.shape != flow_x.shape:
         raise ValueError("flow fields must align as [B,H,W]")
     du_dx = torch.zeros_like(flow_x)
@@ -113,9 +124,8 @@ def dense_flow_scores(
     """Return mean divergence, radial scale slope and translation magnitude."""
     if foreground_pair.shape != flow_x.shape or confidence.shape != flow_x.shape:
         raise ValueError("foreground/confidence must align with flow")
-    weight = (
-        (foreground_floor + foreground_pair.float().clamp_min(0.0))
-        * (confidence_floor + confidence.float().clamp(0.0, 1.0))
+    weight = (foreground_floor + foreground_pair.float().clamp_min(0.0)) * (
+        confidence_floor + confidence.float().clamp(0.0, 1.0)
     )
     mass = weight.sum(dim=(-2, -1)).clamp_min(epsilon)
 
@@ -151,8 +161,12 @@ def antisymmetric_correspondence_scores(
     if first_foreground.ndim != 3 or second_foreground.shape != first_foreground.shape:
         raise ValueError("foreground endpoints must align as [B,H,W]")
     target_size = first_features.shape[-2:]
-    fg1 = functional.interpolate(first_foreground[:, None].float(), size=target_size, mode="bilinear", align_corners=False)[:, 0]
-    fg2 = functional.interpolate(second_foreground[:, None].float(), size=target_size, mode="bilinear", align_corners=False)[:, 0]
+    fg1 = functional.interpolate(
+        first_foreground[:, None].float(), size=target_size, mode="bilinear", align_corners=False
+    )[:, 0]
+    fg2 = functional.interpolate(
+        second_foreground[:, None].float(), size=target_size, mode="bilinear", align_corners=False
+    )[:, 0]
     foreground_pair = torch.sqrt((fg1 * fg2).clamp_min(0.0))
 
     fx, fy, conf_f = local_correlation_flow(
@@ -170,13 +184,19 @@ def antisymmetric_correspondence_scores(
         epsilon=config.epsilon,
     )
     div_f, radial_f, translation_f = dense_flow_scores(
-        fx, fy, foreground_pair, conf_f,
+        fx,
+        fy,
+        foreground_pair,
+        conf_f,
         foreground_floor=config.foreground_floor,
         confidence_floor=config.confidence_floor,
         epsilon=config.epsilon,
     )
     div_r, radial_r, translation_r = dense_flow_scores(
-        rx, ry, foreground_pair, conf_r,
+        rx,
+        ry,
+        foreground_pair,
+        conf_r,
         foreground_floor=config.foreground_floor,
         confidence_floor=config.confidence_floor,
         epsilon=config.epsilon,

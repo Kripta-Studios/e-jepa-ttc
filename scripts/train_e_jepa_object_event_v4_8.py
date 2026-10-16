@@ -28,6 +28,18 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
+from e_jepa_ttc.models.object_event_v4_7 import ObjectEventV47Config  # noqa: E402
+from e_jepa_ttc.models.object_event_v4_8 import (  # noqa: E402
+    ObjectEventTTCV48,
+    ObjectEventV48Config,
+)
+from e_jepa_ttc.object_event_v4_4 import official_eap_metrics  # noqa: E402
+from e_jepa_ttc.training.object_event_v4_6 import boxes_to_feature_masks  # noqa: E402
+from e_jepa_ttc.training.object_event_v4_8 import (  # noqa: E402
+    ObjectEventV48LossConfig,
+    object_event_v4_8_loss,
+)
 from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
     _autocast,
     _evaluate,
@@ -43,18 +55,6 @@ from scripts.train_e_jepa_object_event_v4_6 import (  # noqa: E402
     _balanced_overfit_subset,
     _materialize,
     _sampling_weights,
-)
-from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_7 import ObjectEventV47Config  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_8 import (  # noqa: E402
-    ObjectEventTTCV48,
-    ObjectEventV48Config,
-)
-from e_jepa_ttc.object_event_v4_4 import official_eap_metrics  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_6 import boxes_to_feature_masks  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_8 import (  # noqa: E402
-    ObjectEventV48LossConfig,
-    object_event_v4_8_loss,
 )
 
 
@@ -122,7 +122,9 @@ def _construct(cls: type[Any], values: Mapping[str, Any]) -> Any:
     return cls(**dict(values))
 
 
-def _load_config(path: Path) -> tuple[
+def _load_config(
+    path: Path,
+) -> tuple[
     ObjectEventV41Config,
     ObjectEventV47Config,
     ObjectEventV48Config,
@@ -198,7 +200,10 @@ def _dense_predictions(
         pooled.append(output.pooled_log_eta.float().cpu().numpy())
         dense_mae.append(per_sample_dense.float().cpu().numpy())
         confidence.append(
-            ((output.confidence_probabilities * union).sum(dim=(-2, -1)) / union.sum(dim=(-2, -1)).clamp_min(1.0e-6))
+            (
+                (output.confidence_probabilities * union).sum(dim=(-2, -1))
+                / union.sum(dim=(-2, -1)).clamp_min(1.0e-6)
+            )
             .float()
             .cpu()
             .numpy()
@@ -250,10 +255,14 @@ def _evaluate_v48(
         device=device,
         max_abs_expansion=loss_config.max_abs_expansion,
         shuffle_repeats=(
-            train_config.shuffle_repeats_final if final else train_config.shuffle_repeats_during_training
+            train_config.shuffle_repeats_final
+            if final
+            else train_config.shuffle_repeats_during_training
         ),
         bootstrap_repeats=(
-            train_config.bootstrap_repeats_final if final else train_config.bootstrap_repeats_during_training
+            train_config.bootstrap_repeats_final
+            if final
+            else train_config.bootstrap_repeats_during_training
         ),
         seed=seed,
     )
@@ -333,19 +342,24 @@ def _gates(
     if mode == "overfit":
         return {
             "expansion_pearson": _finite(event.get("pearson")) >= config.overfit_pearson_gate,
-            "balanced_sign": _finite(event.get("balanced_sign_accuracy")) >= config.overfit_balanced_sign_gate,
-            "log_eta": _finite(motion.get("log_eta_pearson")) >= config.overfit_log_eta_pearson_gate,
+            "balanced_sign": _finite(event.get("balanced_sign_accuracy"))
+            >= config.overfit_balanced_sign_gate,
+            "log_eta": _finite(motion.get("log_eta_pearson"))
+            >= config.overfit_log_eta_pearson_gate,
             "pooled_log_eta_mae": _finite(motion.get("log_eta_mae"), 1.0)
             <= config.overfit_log_eta_mae_gate,
-            "foreground": _finite(motion.get("foreground_soft_iou")) >= config.overfit_mask_iou_gate,
+            "foreground": _finite(motion.get("foreground_soft_iou"))
+            >= config.overfit_mask_iou_gate,
         }
     return {
         "log_eta": _finite(motion.get("log_eta_pearson")) >= config.screen_log_eta_pearson_gate,
         "minimum_sequence_log_eta": _finite(motion.get("minimum_sequence_log_eta_pearson"))
         >= config.screen_min_sequence_log_eta_pearson_gate,
         "expansion_pearson": _finite(event.get("pearson")) >= config.screen_expansion_pearson_gate,
-        "balanced_sign": _finite(event.get("balanced_sign_accuracy")) >= config.screen_balanced_sign_gate,
-        "negative_accuracy": _finite(event.get("negative_accuracy")) >= config.screen_negative_accuracy_gate,
+        "balanced_sign": _finite(event.get("balanced_sign_accuracy"))
+        >= config.screen_balanced_sign_gate,
+        "negative_accuracy": _finite(event.get("negative_accuracy"))
+        >= config.screen_negative_accuracy_gate,
         "foreground": _finite(motion.get("foreground_soft_iou")) >= config.screen_mask_iou_gate,
         "zero_event_dependence": _finite(dependence.get("zero_event_pearson_drop"))
         >= config.zero_event_pearson_drop_gate,
@@ -371,15 +385,21 @@ def run(
             raise FileExistsError(f"Output exists: {output_dir}")
         shutil.rmtree(output_dir)
     output_dir.mkdir(parents=True, exist_ok=False)
-    base_config, foreground_config, motion_config, train_config, loss_config = _load_config(config_path)
+    base_config, foreground_config, motion_config, train_config, loss_config = _load_config(
+        config_path
+    )
     _seed(train_config.seed)
     device = _resolve_device(device_name)
-    train_split, train_manifest = _materialize(cache_manifest, "train", input_size=base_config.input_size)
+    train_split, train_manifest = _materialize(
+        cache_manifest, "train", input_size=base_config.input_size
+    )
     validation_split, validation_manifest = _materialize(
         cache_manifest, "validation", input_size=base_config.input_size
     )
     if mode == "overfit":
-        train_split = _balanced_overfit_subset(train_split, train_config.overfit_samples, train_config.seed)
+        train_split = _balanced_overfit_subset(
+            train_split, train_config.overfit_samples, train_config.seed
+        )
         validation_split = train_split
         maximum_epochs = train_config.overfit_maximum_epochs
         minimum_epochs = 1
@@ -395,7 +415,9 @@ def run(
     trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
     if not trainable:
         raise RuntimeError("v4.8 has no trainable motion-field parameters")
-    optimizer = torch.optim.AdamW(trainable, lr=train_config.learning_rate, weight_decay=train_config.weight_decay)
+    optimizer = torch.optim.AdamW(
+        trainable, lr=train_config.learning_rate, weight_decay=train_config.weight_decay
+    )
     scaler = (
         torch.amp.GradScaler("cuda")
         if device.type == "cuda" and train_config.precision == "fp16"
@@ -572,7 +594,9 @@ def run(
     train_per_sequence.to_csv(output_dir / "train_per_sequence.csv", index=False)
     validation_rows.to_csv(output_dir / "validation_predictions.csv", index=False)
     validation_per_sequence.to_csv(output_dir / "validation_per_sequence.csv", index=False)
-    gates = _gates(train_metrics if mode == "overfit" else validation_metrics, train_config, mode=mode)
+    gates = _gates(
+        train_metrics if mode == "overfit" else validation_metrics, train_config, mode=mode
+    )
     passed = all(gates.values())
     summary = cast(
         dict[str, Any],

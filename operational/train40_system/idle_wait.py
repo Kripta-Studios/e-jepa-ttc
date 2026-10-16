@@ -57,8 +57,7 @@ def run(output: Path, mode: str) -> None:
     if mode not in {"baseline", "passive"}:
         raise ValueError("mode must be baseline or passive")
     if mode == "passive" and (
-        os.environ.get("OMP_WAIT_POLICY") != "PASSIVE"
-        or os.environ.get("KMP_BLOCKTIME") != "0"
+        os.environ.get("OMP_WAIT_POLICY") != "PASSIVE" or os.environ.get("KMP_BLOCKTIME") != "0"
     ):
         raise ValueError("Passive benchmark requires the admitted launcher environment")
     torch.set_num_threads(4)

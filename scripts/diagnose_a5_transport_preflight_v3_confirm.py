@@ -15,6 +15,7 @@ exactly one candidate (r=1, tau=0.02) and confirms it on the complementary train
 indices that V2 never inspected.  Validation/test remain unopened and no
 optimizer step is taken.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -32,12 +33,16 @@ from torch.utils.data import DataLoader, Subset
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
-import diagnose_a5_transport_preflight_v2 as v2
+import diagnose_a5_transport_preflight_v2 as v2  # noqa: E402 - CLI path bootstrap precedes project imports.
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE_CONFIG = v2.DEFAULT_SOURCE_CONFIG
-DEFAULT_PROTOCOL = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_a5_preflight_v3_confirm.yaml"
-DEFAULT_V2_ARTIFACT = ROOT / "artifacts/metrics/a5_transport_preflight_v2/a5_transport_preflight_v2.json"
+DEFAULT_PROTOCOL = (
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_a5_preflight_v3_confirm.yaml"
+)
+DEFAULT_V2_ARTIFACT = (
+    ROOT / "artifacts/metrics/a5_transport_preflight_v2/a5_transport_preflight_v2.json"
+)
 DEFAULT_A4 = v2.DEFAULT_A4
 
 
@@ -97,7 +102,10 @@ def _load_v2_discovery(path: Path, candidate_radius: int, candidate_tau: float) 
     if payload.get("artifact_type") != "a5_transport_preflight_train_only_v2":
         raise ValueError("V3 requires the immutable A5-PREFLIGHT-V2 artifact")
     scope = payload.get("scope", {})
-    if scope.get("public_train_only") is not True or scope.get("validation_or_test_opened") is not False:
+    if (
+        scope.get("public_train_only") is not True
+        or scope.get("validation_or_test_opened") is not False
+    ):
         raise ValueError("V2 artifact violated train-only contract")
     if int(scope.get("optimizer_steps", -1)) != 0:
         raise ValueError("V2 artifact contains optimizer steps")
@@ -113,7 +121,9 @@ def _load_v2_discovery(path: Path, candidate_radius: int, candidate_tau: float) 
     best = a4.sort_values(
         ["soft_physical_epe", "radius", "temperature"], ascending=[True, True, False]
     ).iloc[0]
-    if int(best["radius"]) != candidate_radius or not np.isclose(float(best["temperature"]), candidate_tau):
+    if int(best["radius"]) != candidate_radius or not np.isclose(
+        float(best["temperature"]), candidate_tau
+    ):
         raise ValueError(
             "Frozen V3 candidate is not the minimum-A4-soft-EPE point in the supplied V2 artifact: "
             f"observed r={int(best['radius'])}, tau={float(best['temperature'])}"
@@ -124,7 +134,9 @@ def _load_v2_discovery(path: Path, candidate_radius: int, candidate_tau: float) 
         "temperature_csv": temp_path,
         "temperature_csv_sha256": v2._sha256(temp_path),
         "discovery_best_soft_physical_epe": float(best["soft_physical_epe"]),
-        "discovery_best_soft_epe_improvement_over_zero": float(best["soft_physical_epe_improvement_over_zero"]),
+        "discovery_best_soft_epe_improvement_over_zero": float(
+            best["soft_physical_epe_improvement_over_zero"]
+        ),
     }
 
 
@@ -143,7 +155,10 @@ def run(
     protocol = protocol_root.get("protocol")
     if not isinstance(protocol, dict):
         raise ValueError("V3 protocol YAML lacks protocol mapping")
-    if protocol.get("public_train_only") is not True or protocol.get("validation_or_test_opened") is not False:
+    if (
+        protocol.get("public_train_only") is not True
+        or protocol.get("validation_or_test_opened") is not False
+    ):
         raise ValueError("V3 refuses non-train-only protocol")
     if int(protocol.get("optimizer_steps", -1)) != 0:
         raise ValueError("V3 must have zero optimizer steps")
@@ -158,7 +173,10 @@ def run(
     data = source.get("data")
     if not isinstance(data, dict):
         raise ValueError("source config lacks data mapping")
-    if any(data.get(key) is not False for key in ("official_test_opened", "codabench_opened", "evttc_test_opened")):
+    if any(
+        data.get(key) is not False
+        for key in ("official_test_opened", "codabench_opened", "evttc_test_opened")
+    ):
         raise ValueError("V3 refuses any config authorizing private/test access")
 
     v2.seed_everything(int(protocol["seed"]), deterministic=True)
@@ -179,7 +197,9 @@ def run(
     discovery_count = int(protocol["discovery_v2_sample_count"])
     v2_count = int(discovery["payload"]["scope"]["samples"])
     if v2_count != discovery_count:
-        raise ValueError(f"V2 sample count drifted: expected {discovery_count}, observed {v2_count}")
+        raise ValueError(
+            f"V2 sample count drifted: expected {discovery_count}, observed {v2_count}"
+        )
     v2_indices = set(v2._selected_indices(len(dataset), discovery_count))
     confirm_indices = [idx for idx in range(len(dataset)) if idx not in v2_indices]
     if not confirm_indices:
@@ -188,8 +208,11 @@ def run(
         raise RuntimeError("V3 confirmation is not disjoint from V2 discovery")
 
     loader = DataLoader(
-        Subset(dataset, confirm_indices), batch_size=batch_size, shuffle=False,
-        num_workers=0, collate_fn=v2.collate_object_event_v4,
+        Subset(dataset, confirm_indices),
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=0,
+        collate_fn=v2.collate_object_event_v4,
     )
     bank = v2._collect_metadata_and_teacher(loader)
     partner, different_track_fraction = v2._same_sequence_null_partners(
@@ -211,8 +234,14 @@ def run(
     for name, model in (("A4", a4_model), ("RANDOM", random_model)):
         features = v2._collect_student_features(model, loader, device)
         summary, temps, student_rows = v2._student_audit(
-            name, features, bank, partner, device=device,
-            radii=(radius,), temperatures=(tau,), batch_size=batch_size,
+            name,
+            features,
+            bank,
+            partner,
+            device=device,
+            radii=(radius,),
+            temperatures=(tau,),
+            batch_size=batch_size,
         )
         students[name] = summary
         temperature_rows.extend(temps)
@@ -224,16 +253,23 @@ def run(
     thresholds = protocol["confirmation"]
     teacher_row = teacher_summary[str(radius)]
     a4_row = students["A4"][str(radius)]
-    random_row = students["RANDOM"][str(radius)]
+    _random_row = students["RANDOM"][str(radius)]
     a4_temp = next(r for r in temperature_rows if r["model"] == "A4")
     random_temp = next(r for r in temperature_rows if r["model"] == "RANDOM")
 
     teacher_seq, teacher_seq_fraction = _sequence_specificity(
-        all_rows, kind="teacher",
-        teacher_shuffled_min=float(thresholds["teacher_real_vs_shuffled_best_error_improvement_min"]),
-        teacher_spatial_min=float(thresholds["teacher_real_vs_spatial_null_best_error_improvement_min"]),
+        all_rows,
+        kind="teacher",
+        teacher_shuffled_min=float(
+            thresholds["teacher_real_vs_shuffled_best_error_improvement_min"]
+        ),
+        teacher_spatial_min=float(
+            thresholds["teacher_real_vs_spatial_null_best_error_improvement_min"]
+        ),
     )
-    student_rows_only = [r for r in all_rows if r.get("kind") == "student" and r.get("model") == "A4"]
+    student_rows_only = [
+        r for r in all_rows if r.get("kind") == "student" and r.get("model") == "A4"
+    ]
     student_seq, student_seq_fraction = _sequence_specificity(
         student_rows_only, kind="student", teacher_shuffled_min=0.0, teacher_spatial_min=0.0
     )
@@ -241,18 +277,34 @@ def run(
     soft_improvement = float(a4_temp["soft_physical_epe_improvement_over_zero"])
     random_soft_improvement = float(random_temp["soft_physical_epe_improvement_over_zero"])
     checks = {
-        "teacher_real_vs_shuffled_absolute_post_match": float(teacher_row["real_vs_shuffled_best_error_improvement"]) >= float(thresholds["teacher_real_vs_shuffled_best_error_improvement_min"]),
-        "teacher_real_vs_spatial_null_absolute_post_match": float(teacher_row["real_vs_spatial_null_best_error_improvement"]) >= float(thresholds["teacher_real_vs_spatial_null_best_error_improvement_min"]),
-        "teacher_sequence_specificity": teacher_seq_fraction >= float(thresholds["teacher_sequence_specificity_fraction_min"]),
-        "student_soft_physics": soft_improvement >= float(thresholds["student_soft_epe_improvement_over_zero_min"]),
-        "student_soft_physics_over_random": (soft_improvement - random_soft_improvement) >= float(thresholds["student_soft_epe_advantage_over_random_min"]),
-        "student_temporal_specificity": float(a4_row["real_minus_shuffled_top1_cosine"]) >= float(thresholds["student_real_vs_shuffled_top1_cosine_min"]),
-        "student_spatial_null_specificity": float(a4_row["real_minus_spatial_null_top1_cosine"]) >= float(thresholds["student_real_vs_spatial_null_top1_cosine_min"]),
-        "student_confidence_margin": float(a4_row["real_margin"]) >= float(thresholds["student_confidence_margin_min"]),
-        "student_sequence_temporal_specificity": student_seq_fraction >= float(thresholds["student_sequence_temporal_specificity_fraction_min"]),
-        "local_physical_coverage": float(teacher_row["bbox_physical_coverage"]) >= float(thresholds["bbox_physical_coverage_min"]),
-        "boundary_not_degenerate": float(a4_row["hard_boundary_fraction"]) <= float(thresholds["hard_boundary_fraction_max"]),
-        "vertical_scale_signal": float(a4_row["divergence_y_vs_log_height_pearson"]) >= float(thresholds["divergence_y_vs_log_height_pearson_min"]),
+        "teacher_real_vs_shuffled_absolute_post_match": float(
+            teacher_row["real_vs_shuffled_best_error_improvement"]
+        )
+        >= float(thresholds["teacher_real_vs_shuffled_best_error_improvement_min"]),
+        "teacher_real_vs_spatial_null_absolute_post_match": float(
+            teacher_row["real_vs_spatial_null_best_error_improvement"]
+        )
+        >= float(thresholds["teacher_real_vs_spatial_null_best_error_improvement_min"]),
+        "teacher_sequence_specificity": teacher_seq_fraction
+        >= float(thresholds["teacher_sequence_specificity_fraction_min"]),
+        "student_soft_physics": soft_improvement
+        >= float(thresholds["student_soft_epe_improvement_over_zero_min"]),
+        "student_soft_physics_over_random": (soft_improvement - random_soft_improvement)
+        >= float(thresholds["student_soft_epe_advantage_over_random_min"]),
+        "student_temporal_specificity": float(a4_row["real_minus_shuffled_top1_cosine"])
+        >= float(thresholds["student_real_vs_shuffled_top1_cosine_min"]),
+        "student_spatial_null_specificity": float(a4_row["real_minus_spatial_null_top1_cosine"])
+        >= float(thresholds["student_real_vs_spatial_null_top1_cosine_min"]),
+        "student_confidence_margin": float(a4_row["real_margin"])
+        >= float(thresholds["student_confidence_margin_min"]),
+        "student_sequence_temporal_specificity": student_seq_fraction
+        >= float(thresholds["student_sequence_temporal_specificity_fraction_min"]),
+        "local_physical_coverage": float(teacher_row["bbox_physical_coverage"])
+        >= float(thresholds["bbox_physical_coverage_min"]),
+        "boundary_not_degenerate": float(a4_row["hard_boundary_fraction"])
+        <= float(thresholds["hard_boundary_fraction_max"]),
+        "vertical_scale_signal": float(a4_row["divergence_y_vs_log_height_pearson"])
+        >= float(thresholds["divergence_y_vs_log_height_pearson_min"]),
     }
     authorized = all(checks.values())
     failed = [name for name, passed in checks.items() if not passed]
@@ -277,11 +329,15 @@ def run(
     student_csv = output_dir / "a5_preflight_v3_students.csv"
     temp_csv = output_dir / "a5_preflight_v3_temperature.csv"
     sequence_csv = output_dir / "a5_preflight_v3_sequences.csv"
-    pd.DataFrame([{"radius": radius, **teacher_row}]).to_csv(teacher_csv, index=False, lineterminator="\n")
-    pd.DataFrame([
-        {"model": name, "radius": radius, **students[name][str(radius)]}
-        for name in ("A4", "RANDOM")
-    ]).to_csv(student_csv, index=False, lineterminator="\n")
+    pd.DataFrame([{"radius": radius, **teacher_row}]).to_csv(
+        teacher_csv, index=False, lineterminator="\n"
+    )
+    pd.DataFrame(
+        [
+            {"model": name, "radius": radius, **students[name][str(radius)]}
+            for name in ("A4", "RANDOM")
+        ]
+    ).to_csv(student_csv, index=False, lineterminator="\n")
     pd.DataFrame(temperature_rows).to_csv(temp_csv, index=False, lineterminator="\n")
     seq_rows: list[dict[str, Any]] = []
     for seq, values in teacher_seq.items():
@@ -320,11 +376,15 @@ def run(
             "teacher_manifest_sha256": v2._sha256(teacher_manifest),
         },
         "discovery_contract": {
-            "candidate_selection_rule": "minimum A4 soft physical EPE over the preregistered V2 r x tau grid",
+            "candidate_selection_rule": (
+                "minimum A4 soft physical EPE over the preregistered V2 r x tau grid"
+            ),
             "candidate_radius": radius,
             "candidate_temperature": tau,
             "discovery_best_soft_physical_epe": discovery["discovery_best_soft_physical_epe"],
-            "discovery_best_soft_epe_improvement_over_zero": discovery["discovery_best_soft_epe_improvement_over_zero"],
+            "discovery_best_soft_epe_improvement_over_zero": discovery[
+                "discovery_best_soft_epe_improvement_over_zero"
+            ],
             "no_candidate_reselection_in_v3": True,
         },
         "teacher": teacher_row,

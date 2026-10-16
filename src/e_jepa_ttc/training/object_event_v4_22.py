@@ -1,8 +1,9 @@
 """Direct geometry-encoder pseudoflow losses for Object Event TTC v4.22."""
+
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 import torch
 from torch.nn import functional
@@ -20,7 +21,15 @@ class ObjectEventV422LossConfig:
     epsilon: float = 1.0e-6
 
     def __post_init__(self) -> None:
-        if min(self.flow_weight, self.divergence_weight, self.vertical_scale_weight, self.encoder_anchor_weight) < 0.0:
+        if (
+            min(
+                self.flow_weight,
+                self.divergence_weight,
+                self.vertical_scale_weight,
+                self.encoder_anchor_weight,
+            )
+            < 0.0
+        ):
             raise ValueError("loss weights must be non-negative")
         if self.smooth_l1_beta <= 0.0 or self.epsilon <= 0.0:
             raise ValueError("loss scales must be positive")
@@ -61,7 +70,6 @@ def relative_parameter_anchor(
     return torch.stack(terms).mean()
 
 
-
 def vertical_log_scale_from_flow(
     flow: torch.Tensor,
     mask: torch.Tensor,
@@ -91,6 +99,7 @@ def vertical_log_scale_from_flow(
     scale = (1.0 + slope).clamp_min(0.05)
     return torch.log(scale)
 
+
 def encoder_pseudoflow_loss(
     forward_flow: torch.Tensor,
     reverse_flow: torch.Tensor,
@@ -106,28 +115,68 @@ def encoder_pseudoflow_loss(
     ones_f = torch.ones_like(mask_forward)
     ones_r = torch.ones_like(mask_reverse)
     pred_div_f, _, _ = dense_flow_scores(
-        forward_flow[:, 0], forward_flow[:, 1], mask_forward, ones_f,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        forward_flow[:, 0],
+        forward_flow[:, 1],
+        mask_forward,
+        ones_f,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     target_div_f, _, _ = dense_flow_scores(
-        target_forward[:, 0], target_forward[:, 1], mask_forward, ones_f,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        target_forward[:, 0],
+        target_forward[:, 1],
+        mask_forward,
+        ones_f,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     pred_div_r, _, _ = dense_flow_scores(
-        reverse_flow[:, 0], reverse_flow[:, 1], mask_reverse, ones_r,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        reverse_flow[:, 0],
+        reverse_flow[:, 1],
+        mask_reverse,
+        ones_r,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     target_div_r, _, _ = dense_flow_scores(
-        target_reverse[:, 0], target_reverse[:, 1], mask_reverse, ones_r,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        target_reverse[:, 0],
+        target_reverse[:, 1],
+        mask_reverse,
+        ones_r,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
-    pred_vertical_f = vertical_log_scale_from_flow(forward_flow, mask_forward, epsilon=config.epsilon)
-    target_vertical_f = vertical_log_scale_from_flow(target_forward, mask_forward, epsilon=config.epsilon)
-    pred_vertical_r = vertical_log_scale_from_flow(reverse_flow, mask_reverse, epsilon=config.epsilon)
-    target_vertical_r = vertical_log_scale_from_flow(target_reverse, mask_reverse, epsilon=config.epsilon)
+    pred_vertical_f = vertical_log_scale_from_flow(
+        forward_flow, mask_forward, epsilon=config.epsilon
+    )
+    target_vertical_f = vertical_log_scale_from_flow(
+        target_forward, mask_forward, epsilon=config.epsilon
+    )
+    pred_vertical_r = vertical_log_scale_from_flow(
+        reverse_flow, mask_reverse, epsilon=config.epsilon
+    )
+    target_vertical_r = vertical_log_scale_from_flow(
+        target_reverse, mask_reverse, epsilon=config.epsilon
+    )
     flow = 0.5 * (
-        masked_flow_loss(forward_flow, target_forward, mask_forward, beta=config.smooth_l1_beta, epsilon=config.epsilon)
-        + masked_flow_loss(reverse_flow, target_reverse, mask_reverse, beta=config.smooth_l1_beta, epsilon=config.epsilon)
+        masked_flow_loss(
+            forward_flow,
+            target_forward,
+            mask_forward,
+            beta=config.smooth_l1_beta,
+            epsilon=config.epsilon,
+        )
+        + masked_flow_loss(
+            reverse_flow,
+            target_reverse,
+            mask_reverse,
+            beta=config.smooth_l1_beta,
+            epsilon=config.epsilon,
+        )
     )
     divergence = 0.5 * (
         functional.smooth_l1_loss(pred_div_f, target_div_f, beta=config.smooth_l1_beta)

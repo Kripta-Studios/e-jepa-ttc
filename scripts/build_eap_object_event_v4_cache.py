@@ -89,9 +89,7 @@ def main() -> int:
                 "config": asdict(config),
                 "manifest": (args.output_dir.resolve() / "manifest.json").as_posix(),
                 "split_counts": result.get("split_counts"),
-                "precontext_motion_valid_fraction": result.get(
-                    "precontext_motion_valid_fraction"
-                ),
+                "precontext_motion_valid_fraction": result.get("precontext_motion_valid_fraction"),
                 "event_v4_precontext_valid_fraction": result.get(
                     "event_v4_precontext_valid_fraction"
                 ),

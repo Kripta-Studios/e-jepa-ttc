@@ -1,8 +1,9 @@
 """Losses, anchor transforms and gates for Object Event TTC v4.17."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 from collections.abc import Mapping
+from dataclasses import dataclass
 
 import torch
 from torch.nn import functional
@@ -90,10 +91,7 @@ def temporal_sign_loss(
     valid = history_mask.to(history.dtype)
     history_sign = (history * valid).sum() / valid.sum().clamp_min(1.0)
 
-    total = (
-        config.final_sign_weight * final_sign
-        + config.history_sign_weight * history_sign
-    )
+    total = config.final_sign_weight * final_sign + config.history_sign_weight * history_sign
     return ObjectEventV417Loss(
         total=total,
         final_sign=final_sign,
@@ -113,21 +111,37 @@ def v417_screen_gates(
     return {
         "oof_balanced_sign": oof["balanced_sign_accuracy"] >= gates["oof_balanced_sign_gate"],
         "oof_negative_accuracy": oof["negative_accuracy"] >= gates["oof_negative_accuracy_gate"],
-        "oof_min_sequence_negative_accuracy": oof["minimum_sequence_negative_accuracy"] >= gates["oof_min_sequence_negative_accuracy_gate"],
+        "oof_min_sequence_negative_accuracy": oof["minimum_sequence_negative_accuracy"]
+        >= gates["oof_min_sequence_negative_accuracy_gate"],
         "validation_pearson": validation["pearson"] >= gates["validation_pearson_gate"],
-        "validation_expansion_mae": validation["expansion_mae"] <= gates["validation_expansion_mae_gate"],
-        "validation_weighted_mid": validation["weighted_mid"] <= gates["validation_weighted_mid_gate"],
-        "validation_weighted_rte_relative": validation["weighted_rte_percent"] <= gates["validation_weighted_rte_relative_ceiling"] * baseline["weighted_rte_percent"],
-        "validation_saturation": validation["ttc_saturation_rate"] <= baseline["ttc_saturation_rate"] + gates["validation_saturation_max_increase"],
-        "validation_balanced_sign": validation["balanced_sign_accuracy"] >= gates["validation_balanced_sign_gate"],
-        "validation_negative_accuracy": validation["negative_accuracy"] >= gates["validation_negative_accuracy_gate"],
-        "validation_min_sequence_pearson": validation["minimum_sequence_pearson"] >= gates["validation_min_sequence_pearson_gate"],
-        "validation_min_sequence_negative_accuracy": validation["minimum_sequence_negative_accuracy"] >= gates["validation_min_sequence_negative_accuracy_gate"],
-        "validation_positive_accuracy": validation["positive_accuracy"] >= gates["validation_positive_accuracy_gate"],
-        "anchor_not_worse_than_v416_magnitude": anchor["magnitude_mae"] <= gates["anchor_magnitude_mae_gate"],
-        "zero_event_dependence": diagnostics["zero_event_pearson_drop"] >= gates["zero_event_pearson_drop_gate"],
-        "shuffled_event_dependence": diagnostics["shuffled_event_pearson_drop"] >= gates["shuffled_event_pearson_drop_gate"],
-        "exact_sign_oddness": diagnostics["sign_oddness_max_abs"] <= gates["exact_sign_oddness_ceiling"],
+        "validation_expansion_mae": validation["expansion_mae"]
+        <= gates["validation_expansion_mae_gate"],
+        "validation_weighted_mid": validation["weighted_mid"]
+        <= gates["validation_weighted_mid_gate"],
+        "validation_weighted_rte_relative": validation["weighted_rte_percent"]
+        <= gates["validation_weighted_rte_relative_ceiling"] * baseline["weighted_rte_percent"],
+        "validation_saturation": validation["ttc_saturation_rate"]
+        <= baseline["ttc_saturation_rate"] + gates["validation_saturation_max_increase"],
+        "validation_balanced_sign": validation["balanced_sign_accuracy"]
+        >= gates["validation_balanced_sign_gate"],
+        "validation_negative_accuracy": validation["negative_accuracy"]
+        >= gates["validation_negative_accuracy_gate"],
+        "validation_min_sequence_pearson": validation["minimum_sequence_pearson"]
+        >= gates["validation_min_sequence_pearson_gate"],
+        "validation_min_sequence_negative_accuracy": validation[
+            "minimum_sequence_negative_accuracy"
+        ]
+        >= gates["validation_min_sequence_negative_accuracy_gate"],
+        "validation_positive_accuracy": validation["positive_accuracy"]
+        >= gates["validation_positive_accuracy_gate"],
+        "anchor_not_worse_than_v416_magnitude": anchor["magnitude_mae"]
+        <= gates["anchor_magnitude_mae_gate"],
+        "zero_event_dependence": diagnostics["zero_event_pearson_drop"]
+        >= gates["zero_event_pearson_drop_gate"],
+        "shuffled_event_dependence": diagnostics["shuffled_event_pearson_drop"]
+        >= gates["shuffled_event_pearson_drop_gate"],
+        "exact_sign_oddness": diagnostics["sign_oddness_max_abs"]
+        <= gates["exact_sign_oddness_ceiling"],
     }
 
 

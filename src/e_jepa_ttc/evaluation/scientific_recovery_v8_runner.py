@@ -227,10 +227,14 @@ def verify_frozen_inputs(protocol_path: Path, manifest_path: Path) -> FrozenV8In
                 raise V8IntegrityError(f"invalid conditional config {template_name}[{index}]")
             config_path = _repo_path(ROOT / str(entry["path"]))
             if not config_path.is_file() or entry.get("sha256") != _sha256_file(config_path):
-                raise V8IntegrityError(f"conditional config hash mismatch: {template_name}[{index}]")
+                raise V8IntegrityError(
+                    f"conditional config hash mismatch: {template_name}[{index}]"
+                )
             config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
             if not isinstance(config, Mapping):
-                raise V8IntegrityError(f"conditional config is not a mapping: {template_name}[{index}]")
+                raise V8IntegrityError(
+                    f"conditional config is not a mapping: {template_name}[{index}]"
+                )
             _assert_closed(config, label=f"conditional config {template_name}[{index}]")
     models = manifest.get("model_configs")
     if not isinstance(models, Mapping) or not models:

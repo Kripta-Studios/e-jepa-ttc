@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Aggregate locked v4.13 corrections from true v4.12 seeds 7/13/23."""
+
 from __future__ import annotations
 
 import argparse
@@ -7,10 +8,11 @@ import json
 import shutil
 import sys
 import traceback
+from collections.abc import Mapping
 from dataclasses import asdict, fields
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -43,27 +45,32 @@ def _load_config(path: Path) -> tuple[ObjectEventV413Config, V414AggregateConfig
     return fusion, V414AggregateConfig(**values)
 
 
-def _per_sequence(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int) -> pd.DataFrame:
+def _per_sequence(
+    frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int
+) -> pd.DataFrame:
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     rows: list[dict[str, Any]] = []
     for sequence_id, indices in frame.groupby("sequence_id", sort=True).groups.items():
         idx = np.asarray(list(indices), dtype=np.int64)
         y, p = target[idx], prediction[idx]
         negative, positive = y < 0.0, y >= 0.0
-        rows.append({
-            "sequence_id": str(sequence_id),
-            "count": int(len(idx)),
-            "negative_count": int(negative.sum()),
-            "positive_count": int(positive.sum()),
-            "pearson": pearson(y, p),
-            "expansion_mae": float(np.mean(np.abs(y - p))),
-            "positive_accuracy": float(np.mean(p[positive] >= 0.0)) if positive.any() else 0.0,
-            "negative_accuracy": float(np.mean(p[negative] < 0.0)) if negative.any() else 0.0,
-            "balanced_sign_accuracy": 0.5 * (
-                (float(np.mean(p[positive] >= 0.0)) if positive.any() else 0.0)
-                + (float(np.mean(p[negative] < 0.0)) if negative.any() else 0.0)
-            ),
-        })
+        rows.append(
+            {
+                "sequence_id": str(sequence_id),
+                "count": int(len(idx)),
+                "negative_count": int(negative.sum()),
+                "positive_count": int(positive.sum()),
+                "pearson": pearson(y, p),
+                "expansion_mae": float(np.mean(np.abs(y - p))),
+                "positive_accuracy": float(np.mean(p[positive] >= 0.0)) if positive.any() else 0.0,
+                "negative_accuracy": float(np.mean(p[negative] < 0.0)) if negative.any() else 0.0,
+                "balanced_sign_accuracy": 0.5
+                * (
+                    (float(np.mean(p[positive] >= 0.0)) if positive.any() else 0.0)
+                    + (float(np.mean(p[negative] < 0.0)) if negative.any() else 0.0)
+                ),
+            }
+        )
     result = pd.DataFrame(rows)
     eligible = result[result["negative_count"] >= minimum_negatives]
     result.attrs["minimum_sequence_negative_accuracy"] = (
@@ -73,7 +80,9 @@ def _per_sequence(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives
     return result
 
 
-def _metrics(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int) -> tuple[dict[str, Any], pd.DataFrame]:
+def _metrics(
+    frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int
+) -> tuple[dict[str, Any], pd.DataFrame]:
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     metrics = branch_metrics(target, prediction, frame["delta_t_s"].to_numpy(dtype=np.float64))
     per_sequence = _per_sequence(frame, prediction, minimum_negatives)
@@ -93,7 +102,9 @@ def _metrics(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int
     return metrics, per_sequence
 
 
-def _track_bootstrap(frame: pd.DataFrame, prediction: np.ndarray, repeats: int) -> dict[str, float | int]:
+def _track_bootstrap(
+    frame: pd.DataFrame, prediction: np.ndarray, repeats: int
+) -> dict[str, float | int]:
     keys = frame["sequence_id"].astype(str) + "|" + frame["track_id"].astype(str)
     unique = np.asarray(sorted(keys.unique()), dtype=object)
     lookup = {str(key): np.flatnonzero(keys.to_numpy(dtype=object) == key) for key in unique}
@@ -114,18 +125,28 @@ def _track_bootstrap(frame: pd.DataFrame, prediction: np.ndarray, repeats: int) 
     }
 
 
-def _load_seed(direction_root: Path, fusion_root: Path, seed: int, locked: ObjectEventV413Config) -> tuple[dict[str, Any], pd.DataFrame, pd.DataFrame]:
+def _load_seed(
+    direction_root: Path, fusion_root: Path, seed: int, locked: ObjectEventV413Config
+) -> tuple[dict[str, Any], pd.DataFrame, pd.DataFrame]:
     direction_dir = direction_root / f"seed-{seed}" / "screen"
     fusion_dir = fusion_root / f"seed-{seed}"
     direction_summary_path = direction_dir / "summary.json"
     direction_predictions_path = direction_dir / "validation_predictions.csv"
     fusion_summary_path = fusion_dir / "summary.json"
     fusion_predictions_path = fusion_dir / "validation_predictions.csv"
-    for path in (direction_summary_path, direction_predictions_path, fusion_summary_path, fusion_predictions_path):
+    for path in (
+        direction_summary_path,
+        direction_predictions_path,
+        fusion_summary_path,
+        fusion_predictions_path,
+    ):
         if not path.is_file():
             raise FileNotFoundError(path)
     direction_summary = json.loads(direction_summary_path.read_text(encoding="utf-8"))
-    if direction_summary.get("artifact_type") != "object_event_v4_12_reversal_balanced_directional_sign":
+    if (
+        direction_summary.get("artifact_type")
+        != "object_event_v4_12_reversal_balanced_directional_sign"
+    ):
         raise RuntimeError(f"Unexpected v4.12 artifact for seed {seed}")
     actual_seed = int(direction_summary.get("train_config", {}).get("seed", -1))
     if actual_seed != seed:
@@ -140,12 +161,16 @@ def _load_seed(direction_root: Path, fusion_root: Path, seed: int, locked: Objec
         raise RuntimeError(f"Incomplete v4.13 result for seed {seed}")
     if ObjectEventV413Config(**fusion_summary["config"]) != locked:
         raise RuntimeError(f"v4.13 fusion parameters changed for seed {seed}")
-    fusion_frame = pd.read_csv(fusion_predictions_path).sort_values(
-        list(IDENTITY_COLUMNS), kind="stable"
-    ).reset_index(drop=True)
-    direction_frame = pd.read_csv(direction_predictions_path).sort_values(
-        list(IDENTITY_COLUMNS), kind="stable"
-    ).reset_index(drop=True)
+    fusion_frame = (
+        pd.read_csv(fusion_predictions_path)
+        .sort_values(list(IDENTITY_COLUMNS), kind="stable")
+        .reset_index(drop=True)
+    )
+    direction_frame = (
+        pd.read_csv(direction_predictions_path)
+        .sort_values(list(IDENTITY_COLUMNS), kind="stable")
+        .reset_index(drop=True)
+    )
     if not fusion_frame.loc[:, list(IDENTITY_COLUMNS)].equals(
         direction_frame.loc[:, list(IDENTITY_COLUMNS)]
     ):
@@ -161,7 +186,9 @@ def _load_seed(direction_root: Path, fusion_root: Path, seed: int, locked: Objec
     return fusion_summary, fusion_frame, direction_frame
 
 
-def aggregate(*, direction_root: Path, fusion_root: Path, config_path: Path, output_dir: Path) -> dict[str, Any]:
+def aggregate(
+    *, direction_root: Path, fusion_root: Path, config_path: Path, output_dir: Path
+) -> dict[str, Any]:
     locked, config = _load_config(config_path)
     fusion_summaries: dict[int, dict[str, Any]] = {}
     fusion_frames: dict[int, pd.DataFrame] = {}
@@ -190,11 +217,19 @@ def aggregate(*, direction_root: Path, fusion_root: Path, config_path: Path, out
     zero_values: list[np.ndarray] = []
     shuffled_values: list[np.ndarray] = []
     for seed in config.seeds:
-        direction = direction_frames[seed].sort_values(list(IDENTITY_COLUMNS), kind="stable").reset_index(drop=True)
-        if not aligned.loc[:, list(IDENTITY_COLUMNS)].equals(direction.loc[:, list(IDENTITY_COLUMNS)]):
+        direction = (
+            direction_frames[seed]
+            .sort_values(list(IDENTITY_COLUMNS), kind="stable")
+            .reset_index(drop=True)
+        )
+        if not aligned.loc[:, list(IDENTITY_COLUMNS)].equals(
+            direction.loc[:, list(IDENTITY_COLUMNS)]
+        ):
             raise RuntimeError(f"v4.12 direction identities do not align for seed {seed}")
         zero_values.append(direction["zero_events_prediction_expansion"].to_numpy(dtype=np.float64))
-        shuffled_values.append(direction["shuffled_prediction_expansion"].to_numpy(dtype=np.float64))
+        shuffled_values.append(
+            direction["shuffled_prediction_expansion"].to_numpy(dtype=np.float64)
+        )
     aligned["mean_zero_events_prediction_expansion"] = np.mean(zero_values, axis=0)
     aligned["mean_shuffled_prediction_expansion"] = np.mean(shuffled_values, axis=0)
     target = aligned["target_expansion"].to_numpy(dtype=np.float64)
@@ -206,7 +241,9 @@ def aggregate(*, direction_root: Path, fusion_root: Path, config_path: Path, out
         "p95_sample_prediction_std": float(aligned["seed_selective_prediction_std"].quantile(0.95)),
         "mean_probability_std": float(aligned["seed_negative_probability_std"].mean()),
         "zero_event_pearson_drop": pearson(target, prediction)
-        - pearson(target, aligned["mean_zero_events_prediction_expansion"].to_numpy(dtype=np.float64)),
+        - pearson(
+            target, aligned["mean_zero_events_prediction_expansion"].to_numpy(dtype=np.float64)
+        ),
         "shuffled_event_pearson_drop": pearson(target, prediction)
         - pearson(target, aligned["mean_shuffled_prediction_expansion"].to_numpy(dtype=np.float64)),
     }
@@ -219,21 +256,21 @@ def aggregate(*, direction_root: Path, fusion_root: Path, config_path: Path, out
             frame["selective_prediction_expansion"].to_numpy(dtype=np.float64),
             config.per_sequence_negative_min_count,
         )
-        per_seed_rows.append({
-            "seed": seed,
-            "passed": bool(fusion_summaries[seed].get("passed")),
-            "status": str(fusion_summaries[seed].get("status")),
-            "pearson": metrics["pearson"],
-            "expansion_mae": metrics["expansion_mae"],
-            "weighted_mid": metrics["weighted_mid"],
-            "positive_accuracy": metrics["positive_accuracy"],
-            "negative_accuracy": metrics["negative_accuracy"],
-            "balanced_sign_accuracy": metrics["balanced_sign_accuracy"],
-            "minimum_sequence_pearson": metrics["minimum_sequence_pearson"],
-            "minimum_sequence_negative_accuracy": metrics[
-                "minimum_sequence_negative_accuracy"
-            ],
-        })
+        per_seed_rows.append(
+            {
+                "seed": seed,
+                "passed": bool(fusion_summaries[seed].get("passed")),
+                "status": str(fusion_summaries[seed].get("status")),
+                "pearson": metrics["pearson"],
+                "expansion_mae": metrics["expansion_mae"],
+                "weighted_mid": metrics["weighted_mid"],
+                "positive_accuracy": metrics["positive_accuracy"],
+                "negative_accuracy": metrics["negative_accuracy"],
+                "balanced_sign_accuracy": metrics["balanced_sign_accuracy"],
+                "minimum_sequence_pearson": metrics["minimum_sequence_pearson"],
+                "minimum_sequence_negative_accuracy": metrics["minimum_sequence_negative_accuracy"],
+            }
+        )
     per_seed = pd.DataFrame(per_seed_rows)
     pairwise = pairwise_seed_metrics(fusion_frames)
     bootstrap = _track_bootstrap(aligned, prediction, config.track_bootstrap_repeats)

@@ -1,9 +1,9 @@
 """Object Event TTC v4.28: posterior-supervised profile or 2-D scale correlation."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-from typing import Iterable
+from dataclasses import dataclass
 
 import torch
 from torch import nn
@@ -35,7 +35,15 @@ class ObjectEventV428Config:
             raise ValueError("v4.28 requires positive correlation_dim and odd scale_bins >= 9")
         if not self.log_scale_min < 0.0 < self.log_scale_max:
             raise ValueError("v4.28 scale range must straddle zero")
-        if min(self.correlation_temperature, self.foreground_floor, self.activity_floor, self.epsilon) <= 0.0:
+        if (
+            min(
+                self.correlation_temperature,
+                self.foreground_floor,
+                self.activity_floor,
+                self.epsilon,
+            )
+            <= 0.0
+        ):
             raise ValueError("v4.28 numerical controls must be positive")
         if not self.rotation_degrees:
             raise ValueError("v4.28 requires at least one rotation candidate")
@@ -95,7 +103,9 @@ class ObjectEventTTCV428(nn.Module):
         else:
             self.profile_matcher = None
             self.backbone = backbone
-            in_channels = int(backbone.config.embed_dim) + int(backbone.motion_config.motion_refine_dim)
+            in_channels = int(backbone.config.embed_dim) + int(
+                backbone.motion_config.motion_refine_dim
+            )
             hidden = int(config.correlation_dim)
             self.feature_projection = nn.Sequential(
                 nn.Conv2d(in_channels, hidden, kernel_size=1, bias=False),
@@ -198,12 +208,16 @@ class ObjectEventTTCV428(nn.Module):
             device=previous.device,
         )
         candidates = grid.shape[1]
-        source = previous[:, None].expand(batch, candidates, channels, height, width).reshape(
-            batch * candidates, channels, height, width
+        source = (
+            previous[:, None]
+            .expand(batch, candidates, channels, height, width)
+            .reshape(batch * candidates, channels, height, width)
         )
-        source_weight = previous_weight[:, None, None].expand(
-            batch, candidates, 1, height, width
-        ).reshape(batch * candidates, 1, height, width)
+        source_weight = (
+            previous_weight[:, None, None]
+            .expand(batch, candidates, 1, height, width)
+            .reshape(batch * candidates, 1, height, width)
+        )
         flat_grid = grid.reshape(batch * candidates, height, width, 2)
         warped = functional.grid_sample(
             source, flat_grid, mode="bilinear", padding_mode="zeros", align_corners=True
@@ -216,7 +230,9 @@ class ObjectEventTTCV428(nn.Module):
         )
         current = functional.normalize(current, dim=1, eps=self.config.epsilon)
         similarity = (warped * current[:, None]).sum(dim=2)
-        overlap = (warped_weight.reshape(batch, candidates, height, width) * current_weight[:, None]).clamp_min(0.0)
+        overlap = (
+            warped_weight.reshape(batch, candidates, height, width) * current_weight[:, None]
+        ).clamp_min(0.0)
         numerator = (similarity * overlap).sum(dim=(-2, -1))
         denominator = overlap.sum(dim=(-2, -1)).clamp_min(self.config.epsilon)
         return numerator / denominator
@@ -239,8 +255,12 @@ class ObjectEventTTCV428(nn.Module):
             else:
                 prev_level = functional.avg_pool2d(previous, kernel_size=factor, stride=factor)
                 curr_level = functional.avg_pool2d(current, kernel_size=factor, stride=factor)
-                prev_weight = functional.avg_pool2d(previous_weight[:, None], factor, factor).squeeze(1)
-                curr_weight = functional.avg_pool2d(current_weight[:, None], factor, factor).squeeze(1)
+                prev_weight = functional.avg_pool2d(
+                    previous_weight[:, None], factor, factor
+                ).squeeze(1)
+                curr_weight = functional.avg_pool2d(
+                    current_weight[:, None], factor, factor
+                ).squeeze(1)
             scores.append(
                 self._spatial_level_scores(
                     prev_level,
@@ -259,7 +279,9 @@ class ObjectEventTTCV428(nn.Module):
         if maps.ndim != 5 or maps.shape[1] != 3:
             raise ValueError("v4.28 expects exactly three event steps")
         temporal = self.backbone.temporal_projection(self.backbone._temporal_maps(maps))
-        temporal = functional.interpolate(temporal, size=maps.shape[-2:], mode="bilinear", align_corners=False)
+        temporal = functional.interpolate(
+            temporal, size=maps.shape[-2:], mode="bilinear", align_corners=False
+        )
         previous = self.feature_projection(torch.cat((maps[:, 1], temporal), dim=1))
         current = self.feature_projection(torch.cat((maps[:, 2], temporal), dim=1))
         foreground_pair = functional.interpolate(
@@ -269,13 +291,15 @@ class ObjectEventTTCV428(nn.Module):
             activity[:, 1:3], size=maps.shape[-2:], mode="bilinear", align_corners=False
         )
         previous_weight = self._event_weight(
-            foreground_pair[:, 0], activity_pair[:, 0],
+            foreground_pair[:, 0],
+            activity_pair[:, 0],
             foreground_floor=self.config.foreground_floor,
             activity_floor=self.config.activity_floor,
             epsilon=self.config.epsilon,
         )
         current_weight = self._event_weight(
-            foreground_pair[:, 1], activity_pair[:, 1],
+            foreground_pair[:, 1],
+            activity_pair[:, 1],
             foreground_floor=self.config.foreground_floor,
             activity_floor=self.config.activity_floor,
             epsilon=self.config.epsilon,
@@ -283,16 +307,23 @@ class ObjectEventTTCV428(nn.Module):
         joint_scores = self._spatial_scores(previous, current, previous_weight, current_weight)
         scale_count = self.log_scale_candidates.numel()
         rotation_count = self.rotation_candidates_radians.numel()
-        joint_logits = joint_scores.reshape(events.shape[0], scale_count, rotation_count) / self.config.correlation_temperature
+        joint_logits = (
+            joint_scores.reshape(events.shape[0], scale_count, rotation_count)
+            / self.config.correlation_temperature
+        )
         # Rotation is a nuisance variable. Marginalize it in log-space before
         # estimating the TTC-relevant scale posterior.
         scale_logits = torch.logsumexp(joint_logits, dim=-1) - math.log(float(rotation_count))
         scale_probabilities = torch.softmax(scale_logits, dim=-1)
         candidates = self.log_scale_candidates.to(dtype=scale_probabilities.dtype)
         predicted_log_eta = (scale_probabilities * candidates[None]).sum(dim=-1)
-        rotation_joint = torch.softmax(joint_logits.reshape(events.shape[0], -1), dim=-1).reshape_as(joint_logits)
+        rotation_joint = torch.softmax(
+            joint_logits.reshape(events.shape[0], -1), dim=-1
+        ).reshape_as(joint_logits)
         rotation_probabilities = rotation_joint.sum(dim=1)
-        rotation_degrees = self.rotation_candidates_radians.to(rotation_probabilities.dtype) * (180.0 / math.pi)
+        rotation_degrees = self.rotation_candidates_radians.to(rotation_probabilities.dtype) * (
+            180.0 / math.pi
+        )
         expected_rotation = (rotation_probabilities * rotation_degrees[None]).sum(dim=-1)
         scale_entropy = _normalised_entropy(scale_probabilities, self.config.epsilon)
         rotation_entropy = _normalised_entropy(rotation_probabilities, self.config.epsilon)

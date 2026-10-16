@@ -94,8 +94,11 @@ def verify(root: Path, heads: bool) -> dict:
         for mode in protocol["modes"]
     }
     observed = {(r["sample_token"], r["model"], r["mode"]) for r in rows}
-    if len(planned) != 1728 or len(observed) != len(rows) or not observed <= planned or (
-        is_complete and observed != planned
+    if (
+        len(planned) != 1728
+        or len(observed) != len(rows)
+        or not observed <= planned
+        or (is_complete and observed != planned)
     ):
         raise ValueError("observed IDs do not equal the prospectively fixed queue")
     query_map = {q["sample_token"]: q for q in protocol["queries"]}
@@ -108,10 +111,13 @@ def verify(root: Path, heads: bool) -> dict:
             raise ValueError("query producer family changed")
         label = row["model"]
         allowed = (
-            {"A5"} if label == "A5_ONLY_C0" else
-            {"C2F"} if label == "C2F_ONLY_C0" else
-            {"A5", "PAIR"} if label == "A5_PAIR_C0" else
-            {"A5", "C2F", "PAIR"}
+            {"A5"}
+            if label == "A5_ONLY_C0"
+            else {"C2F"}
+            if label == "C2F_ONLY_C0"
+            else {"A5", "PAIR"}
+            if label == "A5_PAIR_C0"
+            else {"A5", "C2F", "PAIR"}
         )
         calls = {name: int(name in allowed) for name in ("A5", "C2F", "PAIR")}
         if row["actual_producer_calls"] != calls or set(row["allowed_producers"]) != allowed:
@@ -126,13 +132,19 @@ def verify(root: Path, heads: bool) -> dict:
         if any(not 0 <= parity["input_errors"][k] <= v for k, v in bounds.items()):
             raise ValueError("captured input fails the fixed numerical admission")
         if not 0 <= parity["point_phase_error"] <= 1e-5 or not (
-            0 <= parity["ttc_error_seconds"] <= .01
+            0 <= parity["ttc_error_seconds"] <= 0.01
         ):
             raise ValueError("TTC emission fails numerical admission")
-        partition = sum(row[k] for k in (
-            "raw_read_ms", "roi_voxel_ms", "experts_transfers_ms", "normalize_ms",
-            "head_emission_ms",
-        ))
+        partition = sum(
+            row[k]
+            for k in (
+                "raw_read_ms",
+                "roi_voxel_ms",
+                "experts_transfers_ms",
+                "normalize_ms",
+                "head_emission_ms",
+            )
+        )
         if abs(partition - row["total_ms"]) > 1e-6:
             raise ValueError("stage timers do not partition the direct total")
     expected = list(csv.DictReader((root / "ROUTE_COST.csv").open(encoding="utf-8")))
@@ -160,27 +172,28 @@ def verify(root: Path, heads: bool) -> dict:
     matched = [r for r in rows if query_counts[r["sample_token"]] == 27]
     contribution_errors = []
     for share in shares:
-        group = [r for r in matched if (r["model"], r["mode"]) == (
-            share["model"], share["mode"]
-        )]
+        group = [r for r in matched if (r["model"], r["mode"]) == (share["model"], share["mode"])]
         if len(group) != int(share["measurements"]):
             raise ValueError("stage share query count differs")
         total = sum(r["total_ms"] for r in group)
         for field in (
-            "raw_read_ms", "roi_voxel_ms", "experts_transfers_ms",
-            "normalize_ms", "head_emission_ms",
+            "raw_read_ms",
+            "roi_voxel_ms",
+            "experts_transfers_ms",
+            "normalize_ms",
+            "head_emission_ms",
         ):
-            contribution_errors.append(abs(
-                sum(r[field] for r in group) / total
-                - float(share[field + "_fraction_of_measured_sum"])
-            ))
+            contribution_errors.append(
+                abs(
+                    sum(r[field] for r in group) / total
+                    - float(share[field + "_fraction_of_measured_sum"])
+                )
+            )
     if max(contribution_errors) > 1e-12:
         raise ValueError("stage contribution differs from physical fragments")
     accuracy = {
         r["model"]: r
-        for r in csv.DictReader((root / "audit/ACCURACY_COST_FRONTIER.csv").open(
-            encoding="utf-8"
-        ))
+        for r in csv.DictReader((root / "audit/ACCURACY_COST_FRONTIER.csv").open(encoding="utf-8"))
     }
     frontier = list(csv.DictReader((root / "COST_ACCURACY_SHARED.csv").open(encoding="utf-8")))
     if len(frontier) != 9 or {r["model"] for r in frontier} != set(protocol["models"]):
@@ -189,8 +202,7 @@ def verify(root: Path, heads: bool) -> dict:
         if float(row["OLD_DEV_MiD"]) != float(accuracy[row["OLD_DEV_evidence_model"]]["MiD"]):
             raise ValueError("referenced full-precision OLD_DEV score differs")
     parity_receipts = [
-        record(path)
-        for path in sorted((root / "results/parity_historical_runtime").glob("*.json"))
+        record(path) for path in sorted((root / "results/parity_historical_runtime").glob("*.json"))
     ]
     if len(parity_receipts) != 64 or any(
         r["protocol_sha256"] != protocol_hash for r in parity_receipts

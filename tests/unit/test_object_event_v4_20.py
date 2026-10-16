@@ -14,8 +14,13 @@ from e_jepa_ttc.training.object_event_v4_20 import (
 def test_box_affine_pseudoflow_recovers_translation() -> None:
     boxes = torch.tensor([[[0, 0, 1, 1], [20, 20, 60, 60], [24, 18, 64, 58]]], dtype=torch.float32)
     flow, mask = box_affine_pseudoflow(
-        boxes, source_height=100, source_width=100, target_height=20, target_width=20,
-        first_index=1, second_index=2,
+        boxes,
+        source_height=100,
+        source_width=100,
+        target_height=20,
+        target_width=20,
+        first_index=1,
+        second_index=2,
     )
     selected = flow[0, :, mask[0].bool()]
     assert torch.allclose(selected[0].mean(), torch.tensor(0.8), atol=1.0e-5)
@@ -25,12 +30,21 @@ def test_box_affine_pseudoflow_recovers_translation() -> None:
 def test_box_affine_pseudoflow_expansion_has_positive_divergence() -> None:
     boxes = torch.tensor([[[0, 0, 1, 1], [30, 30, 70, 70], [20, 20, 80, 80]]], dtype=torch.float32)
     flow, mask = box_affine_pseudoflow(
-        boxes, source_height=100, source_width=100, target_height=32, target_width=32,
-        first_index=1, second_index=2,
+        boxes,
+        source_height=100,
+        source_width=100,
+        target_height=32,
+        target_width=32,
+        first_index=1,
+        second_index=2,
     )
     div, _, _ = dense_flow_scores(
-        flow[:, 0], flow[:, 1], mask, torch.ones_like(mask),
-        foreground_floor=1.0e-6, confidence_floor=1.0e-6,
+        flow[:, 0],
+        flow[:, 1],
+        mask,
+        torch.ones_like(mask),
+        foreground_floor=1.0e-6,
+        confidence_floor=1.0e-6,
     )
     assert float(div[0]) > 0.5
 
@@ -38,20 +52,38 @@ def test_box_affine_pseudoflow_expansion_has_positive_divergence() -> None:
 def test_reverse_pseudoflow_has_opposite_divergence_orientation() -> None:
     boxes = torch.tensor([[[0, 0, 1, 1], [30, 30, 70, 70], [20, 20, 80, 80]]], dtype=torch.float32)
     forward, mf = box_affine_pseudoflow(
-        boxes, source_height=100, source_width=100, target_height=32, target_width=32,
-        first_index=1, second_index=2,
+        boxes,
+        source_height=100,
+        source_width=100,
+        target_height=32,
+        target_width=32,
+        first_index=1,
+        second_index=2,
     )
     reverse, mr = box_affine_pseudoflow(
-        boxes, source_height=100, source_width=100, target_height=32, target_width=32,
-        first_index=2, second_index=1,
+        boxes,
+        source_height=100,
+        source_width=100,
+        target_height=32,
+        target_width=32,
+        first_index=2,
+        second_index=1,
     )
     df, _, _ = dense_flow_scores(
-        forward[:, 0], forward[:, 1], mf, torch.ones_like(mf),
-        foreground_floor=1.0e-6, confidence_floor=1.0e-6,
+        forward[:, 0],
+        forward[:, 1],
+        mf,
+        torch.ones_like(mf),
+        foreground_floor=1.0e-6,
+        confidence_floor=1.0e-6,
     )
     dr, _, _ = dense_flow_scores(
-        reverse[:, 0], reverse[:, 1], mr, torch.ones_like(mr),
-        foreground_floor=1.0e-6, confidence_floor=1.0e-6,
+        reverse[:, 0],
+        reverse[:, 1],
+        mr,
+        torch.ones_like(mr),
+        foreground_floor=1.0e-6,
+        confidence_floor=1.0e-6,
     )
     assert float(df[0]) > 0.0
     assert float(dr[0]) < 0.0
@@ -88,12 +120,22 @@ def test_pseudoflow_loss_is_finite_and_backpropagates() -> None:
         dtype=torch.float32,
     )
     tf, mf = box_affine_pseudoflow(
-        boxes, source_height=100, source_width=100, target_height=12, target_width=12,
-        first_index=1, second_index=2,
+        boxes,
+        source_height=100,
+        source_width=100,
+        target_height=12,
+        target_width=12,
+        first_index=1,
+        second_index=2,
     )
     tr, mr = box_affine_pseudoflow(
-        boxes, source_height=100, source_width=100, target_height=12, target_width=12,
-        first_index=2, second_index=1,
+        boxes,
+        source_height=100,
+        source_width=100,
+        target_height=12,
+        target_width=12,
+        first_index=2,
+        second_index=1,
     )
     pf, rf = model(f)
     pr, rr = model(r)

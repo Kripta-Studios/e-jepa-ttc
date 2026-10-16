@@ -3,7 +3,8 @@
 V4.2 and v4.8 are complementary event-only experts.  V4.9 does not train a
 new gate: it evaluates one fixed convex coefficient chosen before this v4.9 run and
 keeps an alpha sweep as a diagnostic only.  The coefficient is informed by prior
-development screens and is not suitable for a final benchmark claim.  The official eAP test and EvTTC stay
+development screens and is not suitable for a final benchmark claim.
+The official eAP test and EvTTC stay
 sealed.
 """
 
@@ -54,11 +55,14 @@ class FixedFusionConfig:
             raise ValueError("alpha_sweep_points must be at least 2")
         if not 0.0 < self.max_abs_expansion < 1.0:
             raise ValueError("max_abs_expansion must lie in (0,1)")
-        if min(
-            self.ttc_clip_seconds,
-            self.minimum_abs_expansion,
-            self.per_sequence_negative_min_count,
-        ) <= 0:
+        if (
+            min(
+                self.ttc_clip_seconds,
+                self.minimum_abs_expansion,
+                self.per_sequence_negative_min_count,
+            )
+            <= 0
+        ):
             raise ValueError("v4.9 positive controls must be positive")
 
 
@@ -194,7 +198,7 @@ def add_fusion_columns(rows: pd.DataFrame, *, alpha: float) -> pd.DataFrame:
 
 
 def alpha_sweep(rows: pd.DataFrame, *, config: FixedFusionConfig) -> pd.DataFrame:
-    """Diagnostic sweep.  Its optimum must never replace ``config.alpha``."""
+    "Diagnostic sweep.  Its optimum must never replace ``config.alpha``."
 
     records: list[dict[str, object]] = []
     target = rows["target_expansion"].to_numpy(dtype=np.float64)
@@ -257,9 +261,7 @@ def fusion_gates(
         "negative_accuracy": float(fused["negative_accuracy"]) >= config.negative_accuracy_gate,
         "minimum_sequence_pearson": float(fused["minimum_sequence_pearson"])
         >= config.minimum_sequence_pearson_gate,
-        "minimum_sequence_negative_accuracy": float(
-            fused["minimum_sequence_negative_accuracy"]
-        )
+        "minimum_sequence_negative_accuracy": float(fused["minimum_sequence_negative_accuracy"])
         >= config.minimum_sequence_negative_accuracy_gate,
         "zero_event_dependence": float(dependence["zero_event_pearson_drop"])
         >= config.zero_event_pearson_drop_gate,

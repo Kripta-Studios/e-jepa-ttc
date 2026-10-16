@@ -49,9 +49,7 @@ def _gradient_comparison(
     result = {}
     for title in ("raw", "clipped"):
         vectors = [
-            torch.cat(
-                [tensor.flatten().double() for tensor in getattr(sample, title).values()]
-            )
+            torch.cat([tensor.flatten().double() for tensor in getattr(sample, title).values()])
             for _, sample in controls
         ]
         pairs = []
@@ -210,9 +208,10 @@ def run(output: Path, arm: str) -> None:
                 if gradients.keys() != expected_gradients.keys():
                     raise ValueError("Gradient coverage differs")
                 for name, gradient in gradients.items():
-                    if gradient.shape != expected_gradients[name].shape or not torch.isfinite(
-                        gradient
-                    ).all():
+                    if (
+                        gradient.shape != expected_gradients[name].shape
+                        or not torch.isfinite(gradient).all()
+                    ):
                         raise ValueError("Invalid gradient: " + name)
             if not torch.equal(sample.cpu_rng, expected.cpu_rng) or not all(
                 torch.equal(left, right)

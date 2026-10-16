@@ -1,4 +1,5 @@
 """Geometry-only supervision helpers for Object Event TTC v4.20."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -109,27 +110,61 @@ def pseudoflow_loss(
     ones_f = torch.ones_like(mask_forward)
     ones_r = torch.ones_like(mask_reverse)
     div_pf, _, _ = dense_flow_scores(
-        refined_forward[:, 0], refined_forward[:, 1], mask_forward, ones_f,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        refined_forward[:, 0],
+        refined_forward[:, 1],
+        mask_forward,
+        ones_f,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     div_tf, _, _ = dense_flow_scores(
-        target_forward[:, 0], target_forward[:, 1], mask_forward, ones_f,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        target_forward[:, 0],
+        target_forward[:, 1],
+        mask_forward,
+        ones_f,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     div_pr, _, _ = dense_flow_scores(
-        refined_reverse[:, 0], refined_reverse[:, 1], mask_reverse, ones_r,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        refined_reverse[:, 0],
+        refined_reverse[:, 1],
+        mask_reverse,
+        ones_r,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     div_tr, _, _ = dense_flow_scores(
-        target_reverse[:, 0], target_reverse[:, 1], mask_reverse, ones_r,
-        foreground_floor=config.epsilon, confidence_floor=config.epsilon, epsilon=config.epsilon,
+        target_reverse[:, 0],
+        target_reverse[:, 1],
+        mask_reverse,
+        ones_r,
+        foreground_floor=config.epsilon,
+        confidence_floor=config.epsilon,
+        epsilon=config.epsilon,
     )
     components = {
-        "flow": 0.5 * (
-            _masked_smooth_l1(refined_forward, target_forward, mask_forward, beta=config.smooth_l1_beta, epsilon=config.epsilon)
-            + _masked_smooth_l1(refined_reverse, target_reverse, mask_reverse, beta=config.smooth_l1_beta, epsilon=config.epsilon)
+        "flow": 0.5
+        * (
+            _masked_smooth_l1(
+                refined_forward,
+                target_forward,
+                mask_forward,
+                beta=config.smooth_l1_beta,
+                epsilon=config.epsilon,
+            )
+            + _masked_smooth_l1(
+                refined_reverse,
+                target_reverse,
+                mask_reverse,
+                beta=config.smooth_l1_beta,
+                epsilon=config.epsilon,
+            )
         ),
-        "divergence": 0.5 * (
+        "divergence": 0.5
+        * (
             functional.smooth_l1_loss(div_pf, div_tf, beta=config.smooth_l1_beta)
             + functional.smooth_l1_loss(div_pr, div_tr, beta=config.smooth_l1_beta)
         ),

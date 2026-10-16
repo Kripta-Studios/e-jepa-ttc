@@ -32,9 +32,7 @@ def _record(token: str, *, steps: int = 3) -> dict[str, Any]:
         "event_v4_boxes_xyxy": np.tile(
             np.asarray([0.0, 0.0, 3.0, 3.0], dtype=np.float32), (steps, 1)
         ),
-        "event_v4_common_square_xyxy": np.asarray(
-            [0.0, 0.0, 4.0, 4.0], dtype=np.float32
-        ),
+        "event_v4_common_square_xyxy": np.asarray([0.0, 0.0, 4.0, 4.0], dtype=np.float32),
         "sequence_id": "sequence",
         "sample_token": token,
         "track_id": "track",
@@ -76,9 +74,7 @@ def test_fallback_calls_original_std_for_constant_subnormal_and_tiny() -> None:
     constant = torch.zeros(shape, dtype=torch.float32)
     cases.append(constant)
     subnormal = constant.clone()
-    subnormal.reshape(-1)[0] = torch.nextafter(
-        torch.tensor(0.0), torch.tensor(1.0)
-    )
+    subnormal.reshape(-1)[0] = torch.nextafter(torch.tensor(0.0), torch.tensor(1.0))
     cases.append(subnormal)
     tiny = constant.clone()
     tiny.reshape(-1)[0] = torch.finfo(torch.float32).tiny
@@ -92,9 +88,7 @@ def test_fallback_calls_original_std_for_constant_subnormal_and_tiny() -> None:
 def test_first_representable_range_above_threshold_skips_std() -> None:
     count = 192
     threshold = torch.tensor(
-        4.0
-        * torch.finfo(torch.float32).tiny
-        * math.sqrt(2.0 * (count - 1)),
+        4.0 * torch.finfo(torch.float32).tiny * math.sqrt(2.0 * (count - 1)),
         dtype=torch.float32,
     )
     above = torch.nextafter(threshold, torch.tensor(torch.inf, dtype=torch.float32))
@@ -193,9 +187,9 @@ def test_collator_ast_diff_is_only_constant_check_delegation() -> None:
 def test_process_loader_copy_changes_only_collator_import() -> None:
     root = Path(__file__).parents[2]
     base = (root / "operational/train40_system/process_inputs.py").read_text(encoding="utf-8")
-    candidate = (
-        root / "operational/train40_system/process_inputs_fast_collate.py"
-    ).read_text(encoding="utf-8")
+    candidate = (root / "operational/train40_system/process_inputs_fast_collate.py").read_text(
+        encoding="utf-8"
+    )
     old = "from e_jepa_ttc.data.object_event_v4 import collate_object_event_v4"
     new = "from operational.train40_system.fast_collate import collate_object_event_v4"
     assert candidate.count(new) == 1

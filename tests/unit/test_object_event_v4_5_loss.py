@@ -70,8 +70,11 @@ def test_full_loss_is_finite_and_backpropagates_through_both_orders() -> None:
     target = (delta_t / ttc).clamp(-0.24975, 0.24975)
     forward = (target + 0.003).detach().clone().requires_grad_(True)
     reverse = (
-        reciprocal_reverse_target(target, maximum=0.25) - 0.002
-    ).detach().clone().requires_grad_(True)
+        (reciprocal_reverse_target(target, maximum=0.25) - 0.002)
+        .detach()
+        .clone()
+        .requires_grad_(True)
+    )
     loss = object_event_v4_5_loss(
         _output(forward, reverse),
         delta_t,

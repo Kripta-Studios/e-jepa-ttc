@@ -103,9 +103,8 @@ def targets_from_batch(batch: ObjectLHRBatch) -> ObjectExpansionTargets:
     if bool((normalized_expansion >= 1).any()):
         raise ValueError("Official TTC lies outside the LHR domain")
     log_height_ratio = torch.log1p(-normalized_expansion)
-    visible_log_ratio = (
-        torch.log(batch.visible_heights_px[:, 0].clamp_min(1.0e-6))
-        - torch.log(batch.visible_heights_px[:, 1].clamp_min(1.0e-6))
+    visible_log_ratio = torch.log(batch.visible_heights_px[:, 0].clamp_min(1.0e-6)) - torch.log(
+        batch.visible_heights_px[:, 1].clamp_min(1.0e-6)
     )
     return ObjectExpansionTargets(
         signed_inverse_ttc=signed_inverse,
@@ -174,12 +173,10 @@ def object_expansion_loss(
         )
 
     components["target_inverse_mae"] = torch.abs(
-        output.signed_inverse_ttc_soft.detach()
-        - targets.signed_inverse_ttc.detach()
+        output.signed_inverse_ttc_soft.detach() - targets.signed_inverse_ttc.detach()
     ).mean()
     components["target_log_ratio_mae"] = torch.abs(
-        output.log_height_ratio_soft.detach()
-        - targets.log_height_ratio.detach()
+        output.log_height_ratio_soft.detach() - targets.log_height_ratio.detach()
     ).mean()
     components["official_geometry_disagreement"] = torch.abs(
         targets.visible_log_ratio.detach() - targets.log_height_ratio.detach()

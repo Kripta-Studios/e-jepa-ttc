@@ -149,9 +149,7 @@ def autopsy_replay_identity_paths_changed(
             f"cannot compare autopsy producer {producer_commit} to HEAD {head_commit}: {error}"
         ) from error
     changed = [
-        line.strip().replace("\\", "/")
-        for line in result.stdout.splitlines()
-        if line.strip()
+        line.strip().replace("\\", "/") for line in result.stdout.splitlines() if line.strip()
     ]
     identity = set(AUTOPSY_REPLAY_IDENTITY_PATHS)
     return any(path in identity for path in changed)

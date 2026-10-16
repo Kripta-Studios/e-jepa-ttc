@@ -72,9 +72,7 @@ def test_close_memmap_releases_file_for_atomic_promotion(tmp_path: Path) -> None
 
 
 def test_intervals_accept_real_clock_jitter_without_overlap() -> None:
-    t0, t1, t2 = _intervals(
-        [[851_499_853, 851_599_855], [851_599_855, 851_699_856]]
-    )
+    t0, t1, t2 = _intervals([[851_499_853, 851_599_855], [851_599_855, 851_699_856]])
 
     assert t0 == (851_399_851, 851_499_853)
     assert t0[1] == t1[0]

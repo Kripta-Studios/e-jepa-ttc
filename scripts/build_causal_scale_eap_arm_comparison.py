@@ -105,8 +105,7 @@ def build_comparison(
     if len(aligned) != len(reference) or len(aligned) != len(candidate):
         raise ValueError("arm prediction token sets differ")
     if not (
-        aligned["reference_sequence_id"].astype(str)
-        == aligned["candidate_sequence_id"].astype(str)
+        aligned["reference_sequence_id"].astype(str) == aligned["candidate_sequence_id"].astype(str)
     ).all():
         raise ValueError("arm prediction sequence IDs differ")
     target = aligned["reference_target_ttc_s"].to_numpy(dtype=np.float64)
@@ -125,12 +124,8 @@ def build_comparison(
     def paper_mid(truth: np.ndarray, estimate: np.ndarray) -> float:
         return float(signed_garl_metrics(truth, estimate)["paper_MiD_overall"])
 
-    reference_prediction = aligned["reference_prediction_ttc_s"].to_numpy(
-        dtype=np.float64
-    )
-    candidate_prediction = aligned["candidate_prediction_ttc_s"].to_numpy(
-        dtype=np.float64
-    )
+    reference_prediction = aligned["reference_prediction_ttc_s"].to_numpy(dtype=np.float64)
+    candidate_prediction = aligned["candidate_prediction_ttc_s"].to_numpy(dtype=np.float64)
     bootstrap = paired_sequence_bootstrap_difference(
         target,
         reference_prediction,

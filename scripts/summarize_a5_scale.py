@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Summarize A5 data scaling (8k -> 16k) without inventing a new promotion gate."""
+
 from __future__ import annotations
 
 import argparse

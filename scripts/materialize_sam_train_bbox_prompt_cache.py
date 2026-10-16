@@ -99,9 +99,7 @@ def full_mask_geometry(mask: torch.Tensor, bbox: list[float]) -> dict[str, float
     }
 
 
-def endpoint_filter_reasons(
-    metrics: dict[str, float], filter_config: dict[str, Any]
-) -> list[str]:
+def endpoint_filter_reasons(metrics: dict[str, float], filter_config: dict[str, Any]) -> list[str]:
     reasons: list[str] = []
     if metrics["predicted_iou"] < float(filter_config["minimum_predicted_iou"]):
         reasons.append("low_predicted_iou")
@@ -126,18 +124,14 @@ def temporal_sign_consistent(mask_ratio: float, bbox_ratio: float, epsilon: floa
     return math.copysign(1.0, mask_ratio) == math.copysign(1.0, bbox_ratio)
 
 
-def pack_binary_mask(
-    mask: np.ndarray, *, bitorder: Literal["big", "little"]
-) -> np.ndarray:
+def pack_binary_mask(mask: np.ndarray, *, bitorder: Literal["big", "little"]) -> np.ndarray:
     binary = np.asarray(mask, dtype=np.bool_)
     if binary.shape != (128, 128):
         raise ValueError(f"expected a 128x128 mask, got {binary.shape}")
     return np.packbits(binary.reshape(-1), bitorder=bitorder)
 
 
-def unpack_binary_mask(
-    packed: np.ndarray, *, bitorder: Literal["big", "little"]
-) -> np.ndarray:
+def unpack_binary_mask(packed: np.ndarray, *, bitorder: Literal["big", "little"]) -> np.ndarray:
     values = np.unpackbits(np.asarray(packed, dtype=np.uint8), bitorder=bitorder)
     if values.size != 128 * 128:
         raise ValueError("packed mask has an unexpected size")
@@ -275,8 +269,7 @@ def _load_complete_manifest(
         if int(shard.get("shard_index", -1)) != shard_index:
             return None
         tokens = [
-            str(value)
-            for value in frame.iloc[start : start + shard_rows]["sample_token"].tolist()
+            str(value) for value in frame.iloc[start : start + shard_rows]["sample_token"].tolist()
         ]
         npz_path = output_dir / str(shard["npz_path"])
         sidecar_path = output_dir / f"shard-{shard_index:05d}.json"
@@ -488,9 +481,10 @@ def run_materialization(
     runtime = cast(dict[str, Any], config["runtime"])
     gate = cast(dict[str, Any], config["gate"])
     weights = model_path.resolve(strict=True) / "model.safetensors"
-    if model_path.name != teacher["revision"] or sha256_file(weights) != teacher[
-        "expected_weights_sha256"
-    ]:
+    if (
+        model_path.name != teacher["revision"]
+        or sha256_file(weights) != teacher["expected_weights_sha256"]
+    ):
         raise ValueError("SAM snapshot mismatch")
     output_dir.mkdir(parents=True, exist_ok=True)
     shard_rows = int(output["shard_rows"])

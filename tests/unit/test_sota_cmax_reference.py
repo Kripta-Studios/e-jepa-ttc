@@ -113,12 +113,8 @@ def test_runner_resumes_signed_fragments_without_reprediction(
 
     monkeypatch.setattr(cmax_reference, "_predict_row", predict)
     output = tmp_path / "output"
-    first = cmax_reference.run_reference_cmax(
-        query_manifest=manifest, output_dir=output
-    )
-    second = cmax_reference.run_reference_cmax(
-        query_manifest=manifest, output_dir=output
-    )
+    first = cmax_reference.run_reference_cmax(query_manifest=manifest, output_dir=output)
+    second = cmax_reference.run_reference_cmax(query_manifest=manifest, output_dir=output)
     assert calls == 1
     assert first["fragment_sha256"] == second["fragment_sha256"]
     fragment = json.loads(next(output.glob("fragments/*.json")).read_text())

@@ -29,9 +29,9 @@ def test_grouped_pair_uses_neutral_labels_and_binds_protocol(tmp_path: Path) -> 
     output = tmp_path / "paired.json"
     _rows([1.0, 4.0, 7.0, -1.0]).to_csv(first, index=False)
     _rows([1.2, 4.2, 7.2, -1.2]).to_csv(second, index=False)
-    _rows([1.0, 4.0, 7.0, -1.0])[
-        ["sample_token", "sequence_id", "track_id"]
-    ].to_csv(metadata, index=False)
+    _rows([1.0, 4.0, 7.0, -1.0])[["sample_token", "sequence_id", "track_id"]].to_csv(
+        metadata, index=False
+    )
     protocol.write_text('{"artifact_type":"grouped"}\n', encoding="utf-8")
 
     result = run(
@@ -52,9 +52,9 @@ def test_grouped_pair_uses_neutral_labels_and_binds_protocol(tmp_path: Path) -> 
     assert result["fold"] == 0
     assert result["delta_first_minus_second"]["sequence_macro_MiD"] < 0
     assert result["checks"]["private_test_opened"] is False
-    assert result["sources"]["protocol"]["sha256"] == hashlib.sha256(
-        protocol.read_bytes()
-    ).hexdigest()
+    assert (
+        result["sources"]["protocol"]["sha256"] == hashlib.sha256(protocol.read_bytes()).hexdigest()
+    )
 
 
 def test_grouped_pair_rejects_invalid_label(tmp_path: Path) -> None:
@@ -66,9 +66,9 @@ def test_grouped_pair_rejects_invalid_label(tmp_path: Path) -> None:
     protocol = tmp_path / "protocol.json"
     _rows([1.0, 4.0, 7.0, -1.0]).to_csv(first, index=False)
     _rows([1.1, 4.1, 7.1, -1.1]).to_csv(second, index=False)
-    _rows([1.0, 4.0, 7.0, -1.0])[
-        ["sample_token", "sequence_id", "track_id"]
-    ].to_csv(metadata, index=False)
+    _rows([1.0, 4.0, 7.0, -1.0])[["sample_token", "sequence_id", "track_id"]].to_csv(
+        metadata, index=False
+    )
     protocol.write_text("{}\n", encoding="utf-8")
     with pytest.raises(ValueError, match="label"):
         run(

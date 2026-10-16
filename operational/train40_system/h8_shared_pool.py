@@ -82,8 +82,7 @@ def _prepare_into_arena(
     dtype = np.dtype(dtype_string)
     if value.shape != shape or value.dtype != dtype:
         raise ValueError(
-            f"Shared H8 result contract differs: {value.shape}/{value.dtype} "
-            f"!= {shape}/{dtype}"
+            f"Shared H8 result contract differs: {value.shape}/{value.dtype} != {shape}/{dtype}"
         )
     handle = _child_handle(shared_name)
     destination = np.ndarray(shape, dtype=dtype, buffer=handle.buf)
@@ -284,9 +283,7 @@ class SharedArrayProcessPool(Generic[T]):
                 "arena_copy_seconds": self._arena_copy_seconds,
             }
 
-    def _validate_metadata(
-        self, metadata: dict[str, Any], row_token: str, slot: int
-    ) -> None:
+    def _validate_metadata(self, metadata: dict[str, Any], row_token: str, slot: int) -> None:
         expected = {
             "row_token": row_token,
             "slot": slot,

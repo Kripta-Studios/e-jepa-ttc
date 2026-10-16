@@ -112,9 +112,7 @@ def test_train_screen_accepts_signed_v3_confirmation(
     assert result["selected_temperature"] == 0.02
 
 
-def test_train_screen_rejects_v3_overlap(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_train_screen_rejects_v3_overlap(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     with pytest.raises(ValueError, match="disjoint"):
         _run_with_payload(tmp_path, monkeypatch, _v3_payload(overlap=1))
 

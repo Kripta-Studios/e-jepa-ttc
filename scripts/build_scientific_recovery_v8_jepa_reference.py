@@ -6,6 +6,7 @@ prospective router wins, JEPA attribution is performed on the preregistered A5
 constituent encoder because a meta-router is not itself a single transferable
 encoder.  The primary TTC winner identity remains R in the artifact.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -60,9 +61,21 @@ def _write(path: Path, value: dict[str, Any]) -> None:
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--aggregate", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/results/aggregate_seed7.json")
-    p.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
-    p.add_argument("--output", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/jepa/downstream_reference.json")
+    p.add_argument(
+        "--aggregate",
+        type=Path,
+        default=ROOT / "artifacts/scientific_recovery_v8/results/aggregate_seed7.json",
+    )
+    p.add_argument(
+        "--protocol",
+        type=Path,
+        default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json",
+    )
+    p.add_argument(
+        "--output",
+        type=Path,
+        default=ROOT / "artifacts/scientific_recovery_v8/jepa/downstream_reference.json",
+    )
     a = p.parse_args()
     try:
         aggregate, protocol = _signed(a.aggregate), _signed(a.protocol)
@@ -102,22 +115,30 @@ def main() -> int:
             ),
         }
         if candidate in routes:
-            model_path, cache_path, jepa_candidate, downstream_steps, model_overrides = routes[candidate]
+            model_path, cache_path, jepa_candidate, downstream_steps, model_overrides = routes[
+                candidate
+            ]
             note = "JEPA uses the selected single-encoder downstream architecture."
         else:
             source = protocol.get("sources", {}).get("a5_model_recipe", {})
             model_path = ROOT / str(source.get("path"))
-            cache_path = ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json"
+            cache_path = (
+                ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json"
+            )
             jepa_candidate = "A5"
             downstream_steps = 3
             model_overrides = {}
             note = (
-                "A5 is the fallback JEPA encoder reference. If the TTC winner is R, R remains the "
-                "primary TTC winner but JEPA attribution is performed on its A5 constituent because "
-                "the meta-router has no single transferable encoder."
+                "A5 is the fallback JEPA encoder reference. If th"
+                "e TTC winner is R, R remains the primary TTC win"
+                "ner but JEPA attribution is performed on its A5 "
+                "constituent because the meta-router has no singl"
+                "e transferable encoder."
             )
         if not model_path.is_file() or not cache_path.is_file():
-            raise ValueError(f"JEPA reference source missing: model={model_path}, cache={cache_path}")
+            raise ValueError(
+                f"JEPA reference source missing: model={model_path}, cache={cache_path}"
+            )
         downstream_model_config = _model_recipe(model_path)
         downstream_model_config.update(model_overrides)
         result = {
@@ -125,8 +146,16 @@ def main() -> int:
             "status": "admissible",
             "candidate_id": candidate,
             "jepa_reference_candidate_id": jepa_candidate,
-            "selection_aggregate": {"path": a.aggregate.as_posix(), "artifact_sha256": aggregate["artifact_sha256"], "sha256": _sha(a.aggregate)},
-            "protocol": {"path": a.protocol.as_posix(), "artifact_sha256": protocol["artifact_sha256"], "sha256": _sha(a.protocol)},
+            "selection_aggregate": {
+                "path": a.aggregate.as_posix(),
+                "artifact_sha256": aggregate["artifact_sha256"],
+                "sha256": _sha(a.aggregate),
+            },
+            "protocol": {
+                "path": a.protocol.as_posix(),
+                "artifact_sha256": protocol["artifact_sha256"],
+                "sha256": _sha(a.protocol),
+            },
             "downstream_model_recipe": {
                 "path": model_path.resolve().relative_to(ROOT.resolve()).as_posix(),
                 "sha256": _sha(model_path),
@@ -141,7 +170,17 @@ def main() -> int:
             "closed_evaluation": protocol.get("closed_evaluation", {}),
         }
         _write(a.output, result)
-        print(json.dumps({"status": "completed", "output": str(a.output), "candidate_id": candidate, "jepa_reference_candidate_id": jepa_candidate}, sort_keys=True))
+        print(
+            json.dumps(
+                {
+                    "status": "completed",
+                    "output": str(a.output),
+                    "candidate_id": candidate,
+                    "jepa_reference_candidate_id": jepa_candidate,
+                },
+                sort_keys=True,
+            )
+        )
         return 0
     except (OSError, ValueError, KeyError) as error:
         p.exit(2, f"V8 JEPA reference build failed closed: {type(error).__name__}: {error}\n")

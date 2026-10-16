@@ -1,11 +1,11 @@
 """Object Event TTC v4.16: causal temporal sign + magnitude heads."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 import torch
 from torch import nn
-from torch.nn import functional
 
 
 @dataclass(frozen=True)
@@ -21,13 +21,16 @@ class ObjectEventV416Config:
     epsilon: float = 1.0e-6
 
     def __post_init__(self) -> None:
-        if min(
-            self.window_size,
-            self.sign_hidden_dim,
-            self.sign_bottleneck_dim,
-            self.magnitude_hidden_dim,
-            self.magnitude_bottleneck_dim,
-        ) <= 0:
+        if (
+            min(
+                self.window_size,
+                self.sign_hidden_dim,
+                self.sign_bottleneck_dim,
+                self.magnitude_hidden_dim,
+                self.magnitude_bottleneck_dim,
+            )
+            <= 0
+        ):
             raise ValueError("v4.16 dimensions must be positive")
         if not 0.0 < self.magnitude_floor < self.maximum_magnitude:
             raise ValueError("invalid magnitude bounds")
@@ -154,9 +157,13 @@ class EvenMagnitudeHead(nn.Module):
             (context, latest, torch.log(anchor + self.config.epsilon)[:, None]),
             dim=1,
         )
-        log_ratio = self.network(feature).squeeze(-1).clamp(
-            -self.config.maximum_log_ratio,
-            self.config.maximum_log_ratio,
+        log_ratio = (
+            self.network(feature)
+            .squeeze(-1)
+            .clamp(
+                -self.config.maximum_log_ratio,
+                self.config.maximum_log_ratio,
+            )
         )
         magnitude = (anchor * torch.exp(log_ratio)).clamp(
             self.config.magnitude_floor,
@@ -192,7 +199,9 @@ class ObjectEventTTCV416(nn.Module):
             windows, mask, anchor_magnitude
         )
         probability = torch.sigmoid(sign_logit)
-        sign = torch.where(sign_logit >= 0.0, -torch.ones_like(sign_logit), torch.ones_like(sign_logit))
+        sign = torch.where(
+            sign_logit >= 0.0, -torch.ones_like(sign_logit), torch.ones_like(sign_logit)
+        )
         signed = sign * magnitude
         return ObjectEventV416Output(
             sign_logit=sign_logit,

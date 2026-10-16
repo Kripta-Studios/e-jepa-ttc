@@ -14,13 +14,13 @@ def test_one_optimizer_step_is_finite() -> None:
         ratio = 1.0 - 0.1 / ttc
         records.append(
             {
-                "event_v4_common_roi": np.random.default_rng(index).normal(
-                    size=(3, 12, 16, 16)
-                ).astype(np.float32),
+                "event_v4_common_roi": np.random.default_rng(index)
+                .normal(size=(3, 12, 16, 16))
+                .astype(np.float32),
                 "garl_delta_t_s": np.float32(0.1),
-                "observable_motion": np.random.default_rng(index + 10).normal(
-                    size=18
-                ).astype(np.float32),
+                "observable_motion": np.random.default_rng(index + 10)
+                .normal(size=18)
+                .astype(np.float32),
                 "garl_visible_heights_px": np.asarray([20.0, 20.0 / ratio], dtype=np.float32),
                 "ttc_s": np.float32(ttc),
                 "event_v4_boxes_xyxy": np.ones((3, 4), dtype=np.float32),

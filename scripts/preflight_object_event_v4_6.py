@@ -15,9 +15,15 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 BASE_COMMIT = "488b433857090e525c447bf2974ac72639f25194"
 EXPECTED_HASHES = {
-    "scripts/train_e_jepa_object_event_v4_2.py": "c7cd7498cd490f3dacb4b1f4c478133b585787aed5a95ba556fae68838f928df",
-    "src/e_jepa_ttc/models/object_event_v4_2.py": "6f802c15d1a9a33d9f5ae10c4321e9ab6ed43a845627b99bb316c6e89d6d35ad",
-    "src/e_jepa_ttc/training/object_event_v4_2.py": "7a805e57b83191e883e9a2726607d4b5df20c36725e3e624885e82bae69ad2d0",
+    "scripts/train_e_jepa_object_event_v4_2.py": (
+        "c7cd7498cd490f3dacb4b1f4c478133b585787aed5a95ba556fae68838f928df"
+    ),
+    "src/e_jepa_ttc/models/object_event_v4_2.py": (
+        "6f802c15d1a9a33d9f5ae10c4321e9ab6ed43a845627b99bb316c6e89d6d35ad"
+    ),
+    "src/e_jepa_ttc/training/object_event_v4_2.py": (
+        "7a805e57b83191e883e9a2726607d4b5df20c36725e3e624885e82bae69ad2d0"
+    ),
 }
 
 
@@ -30,7 +36,9 @@ def _sha256(path: Path) -> str:
 
 
 def _git(*arguments: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", *arguments], cwd=ROOT, capture_output=True, text=True, check=False)
+    return subprocess.run(
+        ["git", *arguments], cwd=ROOT, capture_output=True, text=True, check=False
+    )
 
 
 def _head() -> str:

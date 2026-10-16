@@ -61,9 +61,7 @@ def _manifest(path: Path, csv_path: Path) -> Path:
     value = {
         "artifact_type": "test_replay",
         "status": "completed_replay_without_optimizer_steps",
-        "interventions": {
-            "baseline": {"path": csv_path.name, "sha256": sha256_file(csv_path)}
-        },
+        "interventions": {"baseline": {"path": csv_path.name, "sha256": sha256_file(csv_path)}},
     }
     sign_artifact(value)
     path.write_text(json.dumps(value), encoding="utf-8")
@@ -96,7 +94,6 @@ def test_autopsy_frame_still_requires_complete_replay_header(tmp_path: Path) -> 
         module._frame(manifest, "baseline", replay=True)
 
 
-
 def _garl_row(token: str, *, fold: int) -> dict[str, object]:
     return {
         "token_id": token,
@@ -114,9 +111,7 @@ def _garl_row(token: str, *, fold: int) -> dict[str, object]:
 def test_external_garl_binding_uses_its_real_narrow_schema(tmp_path: Path) -> None:
     module = _load_aggregate_module()
     csv_path = tmp_path / "baseline.csv"
-    pd.DataFrame([_garl_row("t0", fold=0), _garl_row("t1", fold=1)]).to_csv(
-        csv_path, index=False
-    )
+    pd.DataFrame([_garl_row("t0", fold=0), _garl_row("t1", fold=1)]).to_csv(csv_path, index=False)
     manifest = _manifest(tmp_path / "manifest.json", csv_path)
 
     frame = module._garl_frame(manifest)

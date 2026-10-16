@@ -38,9 +38,7 @@ def _real_admission(output: Path) -> tuple[Path, dict]:
         raise ValueError("Exact real coordination admission must pass")
     if admission.get("optimizer_updates") != 0:
         raise ValueError("Coordination admission must execute zero optimizer updates")
-    if not isinstance(
-        admission.get("exact_loss_all_components_and_all_parameter_gradients"), bool
-    ):
+    if not isinstance(admission.get("exact_loss_all_components_and_all_parameter_gradients"), bool):
         raise ValueError("Gradient bit equality must be reported honestly")
     repeated = admission.get("repeated_gradient_admission")
     if not isinstance(repeated, dict) or not repeated:
@@ -83,12 +81,8 @@ def run(output: Path) -> None:
         "schema": "train40_coordination_overlap_freeze_v1",
         "files": dependency_files(seeds),
         "trainer_sha256": digest(overlap_engine),
-        "controller_sha256": digest(
-            ROOT / "operational/train40_system/controller_overlap.py"
-        ),
-        "coordination_sha256": digest(
-            ROOT / "operational/train40_system/coordination.py"
-        ),
+        "controller_sha256": digest(ROOT / "operational/train40_system/controller_overlap.py"),
+        "coordination_sha256": digest(ROOT / "operational/train40_system/coordination.py"),
         "original_engine_sha256": digest(original_engine),
         "models_freeze_sha256": digest(models_path),
         "engineering_freeze_sha256": digest(engineering_path),
@@ -96,9 +90,7 @@ def run(output: Path) -> None:
         "QA": {name: digest(output / name) for name in QA_CHECKS},
         "real_coordination_admission_sha256": digest(admission_path),
         "real_coordination_checkpoint_sha256": admission["checkpoint_sha256"],
-        "real_coordination_checkpoint_full_state_sha256": admission[
-            "checkpoint_full_state_sha256"
-        ],
+        "real_coordination_checkpoint_full_state_sha256": admission["checkpoint_full_state_sha256"],
         "gradient_bit_equality_observed": admission[
             "exact_loss_all_components_and_all_parameter_gradients"
         ],

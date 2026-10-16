@@ -199,9 +199,7 @@ def _paired_tail(frame: pd.DataFrame) -> tuple[dict[str, Any], pd.DataFrame]:
     return tail_summary, tail.sort_values("causal_mid_per_sample", ascending=False)[columns]
 
 
-def _paired_summary(
-    frame: pd.DataFrame, *, reference_prediction_column: str
-) -> dict[str, Any]:
+def _paired_summary(frame: pd.DataFrame, *, reference_prediction_column: str) -> dict[str, Any]:
     target = frame["target_ttc_s"].to_numpy(dtype=np.float64)
     causal_error = _mid_per_sample(
         target, frame["causal_prediction_ttc_s"].to_numpy(dtype=np.float64)
@@ -279,9 +277,7 @@ def build_comparison(
     """Validate exact rows and write the release/matched comparison tables."""
 
     if re.fullmatch(r"[a-z][a-z0-9_]*", candidate_label) is None:
-        raise ValueError(
-            "candidate_label must be a lowercase JSON-key-safe identifier."
-        )
+        raise ValueError("candidate_label must be a lowercase JSON-key-safe identifier.")
     if (matched_predictions is None) != (matched_summary is None):
         raise ValueError("matched predictions and summary must be supplied together.")
     inputs = (
@@ -296,9 +292,7 @@ def build_comparison(
         official_train_labels,
         official_config,
         official_checkpoint,
-    ) + tuple(
-        path for path in (matched_predictions, matched_summary) if path is not None
-    )
+    ) + tuple(path for path in (matched_predictions, matched_summary) if path is not None)
     for path in inputs:
         if not path.is_file():
             raise FileNotFoundError(f"Required comparison input not found: {path}")
@@ -402,9 +396,12 @@ def build_comparison(
         and (aligned["sequence_id"].astype(str) == aligned["release_sequence_id"].astype(str)).all()
     ):
         raise ValueError("Sequence IDs disagree after exact-token alignment.")
-    if matched is not None and not (
-        aligned["sequence_id"].astype(str) == aligned["matched_sequence_id"].astype(str)
-    ).all():
+    if (
+        matched is not None
+        and not (
+            aligned["sequence_id"].astype(str) == aligned["matched_sequence_id"].astype(str)
+        ).all()
+    ):
         raise ValueError("Matched sequence IDs disagree after exact-token alignment.")
     target = aligned["target_ttc_s"].to_numpy(dtype=np.float64)
     for column in ("causal_target_ttc_s", "release_target_ttc_s"):
@@ -421,9 +418,8 @@ def build_comparison(
 
     causal_arm = _arm_metrics(aligned, "causal_prediction_ttc_s")
     release_arm = _arm_metrics(aligned, "release_prediction_ttc_s")
-    matched_arm = (
-        _arm_metrics(aligned, "matched_prediction_ttc_s") if matched is not None else None
-    )
+    matched_arm = _arm_metrics(aligned, "matched_prediction_ttc_s") if matched is not None else None
+
     def paper_mid(truth: np.ndarray, estimate: np.ndarray) -> float:
         return float(signed_garl_metrics(truth, estimate)["paper_MiD_overall"])
 
@@ -530,18 +526,12 @@ def build_comparison(
                     "validation_rows_used_for_training": False,
                     "seed": matched_report.get("protocol", {}).get("seed"),
                     "epochs_completed": len(matched_report.get("history", [])),
-                    "selected_epoch": matched_report.get("selection", {}).get(
-                        "best_epoch"
-                    ),
+                    "selected_epoch": matched_report.get("selection", {}).get("best_epoch"),
                     "elapsed_seconds": matched_report.get("timing", {}).get(
                         "training_and_validation_elapsed_seconds"
                     ),
-                    "peak_vram_mb": matched_report.get("resources", {}).get(
-                        "peak_vram_mb"
-                    ),
-                    "parameter_count": matched_report.get("resources", {}).get(
-                        "parameter_count"
-                    ),
+                    "peak_vram_mb": matched_report.get("resources", {}).get("peak_vram_mb"),
+                    "parameter_count": matched_report.get("resources", {}).get("parameter_count"),
                     "pretrained_release_checkpoint_used": False,
                 },
             }

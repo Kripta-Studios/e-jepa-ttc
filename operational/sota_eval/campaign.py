@@ -219,8 +219,7 @@ def _transient_state_replace_failure(log: Path) -> bool:
         return False
     tail = log.read_text(encoding="utf-8", errors="replace")[-16_384:].lower()
     return all(
-        marker in tail
-        for marker in ("permissionerror", "winerror 5", "os.replace", "state.json")
+        marker in tail for marker in ("permissionerror", "winerror 5", "os.replace", "state.json")
     )
 
 
@@ -395,8 +394,7 @@ def _seal_score(directory: Path) -> None:
     result = _read(directory / "RESULT.json")
     if (
         result.get("status") != "COMPLETE"
-        or result.get("prediction_seal_sha256")
-        != digest(directory / "PREDICTIONS_SEALED.json")
+        or result.get("prediction_seal_sha256") != digest(directory / "PREDICTIONS_SEALED.json")
         or result.get("manifest_sha256") != digest(directory / "QUERY_MANIFEST.json")
     ):
         raise ValueError("Scorer did not produce a complete result bound to predictions")
@@ -477,15 +475,13 @@ def _validated_event_command(
         raise ValueError("Event-only launch uses a different Python environment")
     campaign_value = command[5] if backend == "prefetch" else command[4]
     output_value = command[7] if backend == "prefetch" else command[6]
-    if (
-        (ROOT / campaign_value).resolve() != campaign.resolve()
-        and Path(campaign_value).resolve() != campaign.resolve()
-    ):
+    if (ROOT / campaign_value).resolve() != campaign.resolve() and Path(
+        campaign_value
+    ).resolve() != campaign.resolve():
         raise ValueError("Event-only launch campaign differs")
-    if (
-        (ROOT / output_value).resolve() != baseline.resolve()
-        and Path(output_value).resolve() != baseline.resolve()
-    ):
+    if (ROOT / output_value).resolve() != baseline.resolve() and Path(
+        output_value
+    ).resolve() != baseline.resolve():
         raise ValueError("Event-only launch output differs")
 
 
@@ -613,9 +609,7 @@ def _preserve_baseline(
     return value
 
 
-def _write_state(
-    output: Path, phase: str, status: str, started: float, **extra: object
-) -> None:
+def _write_state(output: Path, phase: str, status: str, started: float, **extra: object) -> None:
     atomic_json(
         output / "PIPELINE_STATE.json",
         {
@@ -714,9 +708,7 @@ def run(
             if not check():
                 _write_state(output, phase, "RUNNING", started, command=command)
                 _snapshot_backend_execution(baseline, output, "event")
-                return_code, attempts = _run_child(
-                    phase, command, output, environment, invoke
-                )
+                return_code, attempts = _run_child(phase, command, output, environment, invoke)
                 if return_code != 0:
                     _write_state(
                         output,
@@ -733,9 +725,7 @@ def run(
             completed.append(phase)
 
         full.mkdir(parents=True, exist_ok=True)
-        _preserve_baseline(
-            baseline, full, device=device, event_backend=event_backend
-        )
+        _preserve_baseline(baseline, full, device=device, event_backend=event_backend)
         assets = _copy_public_full(public_full_source, full / "public_garl")
         _immutable_json(
             full / "PUBLIC_FULL_ASSETS.json",
@@ -822,9 +812,7 @@ def run(
                 _write_state(output, phase, "RUNNING", started, command=command)
                 if phase == "full_inference":
                     _snapshot_backend_execution(full, output, "full")
-                return_code, attempts = _run_child(
-                    phase, command, output, environment, invoke
-                )
+                return_code, attempts = _run_child(phase, command, output, environment, invoke)
                 if return_code != 0:
                     _write_state(
                         output,

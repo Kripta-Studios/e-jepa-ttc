@@ -51,15 +51,14 @@ def run(config_path: Path, calibration_path: Path) -> None:
     contract = config.get("decision_contract")
     if not isinstance(training, dict) or not isinstance(contract, dict):
         raise ValueError("A4D config lacks training/decision_contract")
-    if training.get("representation_supervision") != (
-        "dinov3_local_relational_temporal_delta"
-    ):
+    if training.get("representation_supervision") != ("dinov3_local_relational_temporal_delta"):
         raise ValueError("config is not the A4D temporal-delta arm")
     if float(training.get("representation_temporal_delta_weight", -1.0)) != 0.0:
         raise ValueError("A4D temporal weight is already frozen; refusing to overwrite")
-    if training.get(
-        "representation_temporal_delta_calibration_artifact_sha256"
-    ) != "REPLACE_AFTER_CALIBRATION":
+    if (
+        training.get("representation_temporal_delta_calibration_artifact_sha256")
+        != "REPLACE_AFTER_CALIBRATION"
+    ):
         raise ValueError("A4D training calibration identity placeholder was modified")
     teacher = config.get("data", {}).get("dinov3_relational_teacher", {})
     if calibration.get("teacher_artifact_sha256") != teacher.get("artifact_sha256"):
@@ -74,9 +73,10 @@ def run(config_path: Path, calibration_path: Path) -> None:
     expected_artifact = (ROOT / str(declared["artifact"])).resolve()
     if expected_artifact != calibration_path.resolve():
         raise ValueError("calibration path differs from A4D decision contract")
-    if declared.get("file_sha256") != "REPLACE_AFTER_CALIBRATION" or declared.get(
-        "artifact_sha256"
-    ) != "REPLACE_AFTER_CALIBRATION":
+    if (
+        declared.get("file_sha256") != "REPLACE_AFTER_CALIBRATION"
+        or declared.get("artifact_sha256") != "REPLACE_AFTER_CALIBRATION"
+    ):
         raise ValueError("A4D calibration hash placeholders were already modified")
 
     file_sha = _sha256(calibration_path)
@@ -90,7 +90,7 @@ def run(config_path: Path, calibration_path: Path) -> None:
     )
     text, count_training_sha = re.subn(
         (
-            r'(?m)^(\s*representation_temporal_delta_calibration_artifact_sha256:\s*)'
+            r"(?m)^(\s*representation_temporal_delta_calibration_artifact_sha256:\s*)"
             r'"REPLACE_AFTER_CALIBRATION"\s*$'
         ),
         rf'\g<1>"{signed_sha}"',
@@ -125,10 +125,7 @@ def run(config_path: Path, calibration_path: Path) -> None:
         abs_tol=1.0e-12,
     ):
         raise RuntimeError("frozen A4D weight did not round-trip")
-    if (
-        frozen_training["representation_temporal_delta_calibration_artifact_sha256"]
-        != signed_sha
-    ):
+    if frozen_training["representation_temporal_delta_calibration_artifact_sha256"] != signed_sha:
         raise RuntimeError("frozen A4D training calibration identity did not round-trip")
     if frozen_calibration["file_sha256"] != file_sha:
         raise RuntimeError("frozen A4D file hash did not round-trip")

@@ -8,10 +8,11 @@ import json
 import math
 import sys
 import traceback
+from collections.abc import Mapping
 from dataclasses import asdict, fields, replace
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -66,9 +67,7 @@ def _load_seed(run_root: Path, seed: int, split: str) -> tuple[dict[str, Any], p
         raise RuntimeError(f"Unexpected v4.9 artifact for seed {seed}")
     status = str(summary.get("status", ""))
     if status not in {"fusion_screen_passed", "fusion_screen_failed"}:
-        raise RuntimeError(
-            f"v4.9 seed {seed} is not a completed fixed-fusion screen: {status!r}"
-        )
+        raise RuntimeError(f"v4.9 seed {seed} is not a completed fixed-fusion screen: {status!r}")
     alpha = float(summary.get("fusion_config", {}).get("alpha", -1.0))
     if alpha != 0.5:
         raise RuntimeError(f"v4.9 seed {seed} used alpha={alpha}, expected 0.5")
@@ -99,9 +98,7 @@ def _per_seed_metrics(
         summary = summaries[seed]
         gates_raw = summary.get("gates", {})
         gates = gates_raw if isinstance(gates_raw, Mapping) else {}
-        failed_gates = sorted(
-            str(name) for name, passed in gates.items() if not bool(passed)
-        )
+        failed_gates = sorted(str(name) for name, passed in gates.items() if not bool(passed))
         rows.append(
             {
                 "seed": seed,
@@ -115,9 +112,7 @@ def _per_seed_metrics(
                 "weighted_mid": official["weighted_mid"],
                 "sequence_macro_pearson": metrics["sequence_macro_pearson"],
                 "minimum_sequence_pearson": metrics["minimum_sequence_pearson"],
-                "minimum_sequence_negative_accuracy": metrics[
-                    "minimum_sequence_negative_accuracy"
-                ],
+                "minimum_sequence_negative_accuracy": metrics["minimum_sequence_negative_accuracy"],
             }
         )
     return pd.DataFrame.from_records(rows)
@@ -144,10 +139,8 @@ def _gates(
         "mean_seed_pearson": float(pearsons.mean()) >= config.mean_seed_pearson_gate,
         "worst_seed_pearson": float(pearsons.min()) >= config.worst_seed_pearson_gate,
         "seed_pearson_std": float(pearsons.std(ddof=0)) <= config.seed_pearson_std_gate,
-        "mean_seed_balanced_sign": float(balanced.mean())
-        >= config.mean_seed_balanced_sign_gate,
-        "worst_seed_balanced_sign": float(balanced.min())
-        >= config.worst_seed_balanced_sign_gate,
+        "mean_seed_balanced_sign": float(balanced.mean()) >= config.mean_seed_balanced_sign_gate,
+        "worst_seed_balanced_sign": float(balanced.min()) >= config.worst_seed_balanced_sign_gate,
         "mean_seed_negative_accuracy": float(negatives.mean())
         >= config.mean_seed_negative_accuracy_gate,
         "ensemble_pearson": _finite(ensemble.get("pearson")) >= config.ensemble_pearson_gate,
@@ -159,9 +152,7 @@ def _gates(
         >= config.ensemble_balanced_sign_gate,
         "ensemble_negative_accuracy": _finite(ensemble.get("negative_accuracy"))
         >= config.ensemble_negative_accuracy_gate,
-        "ensemble_expansion_mae": _finite(
-            ensemble.get("expansion_mae"), default=float("inf")
-        )
+        "ensemble_expansion_mae": _finite(ensemble.get("expansion_mae"), default=float("inf"))
         <= config.ensemble_expansion_mae_gate,
         "ensemble_min_sequence_pearson": _finite(ensemble.get("minimum_sequence_pearson"))
         >= config.ensemble_min_sequence_pearson_gate,
@@ -169,10 +160,8 @@ def _gates(
             ensemble.get("minimum_sequence_negative_accuracy")
         )
         >= config.ensemble_min_sequence_negative_accuracy_gate,
-        "pairwise_prediction_pearson": pairwise_min
-        >= config.pairwise_prediction_pearson_gate,
-        "mean_sample_prediction_std": mean_sample_std
-        <= config.mean_sample_prediction_std_gate,
+        "pairwise_prediction_pearson": pairwise_min >= config.pairwise_prediction_pearson_gate,
+        "mean_sample_prediction_std": mean_sample_std <= config.mean_sample_prediction_std_gate,
         "zero_event_dependence": dependence["zero_event_pearson_drop"]
         >= config.zero_event_pearson_drop_gate,
         "shuffled_event_dependence": dependence["shuffled_event_pearson_drop"]
@@ -244,9 +233,7 @@ def aggregate(*, run_root: Path, config_path: Path, output_dir: Path) -> dict[st
     aligned_train.to_csv(output_dir / "ensemble_train_predictions.csv", index=False)
     aligned_validation.to_csv(output_dir / "ensemble_validation_predictions.csv", index=False)
     train_per_sequence.to_csv(output_dir / "ensemble_train_per_sequence.csv", index=False)
-    validation_per_sequence.to_csv(
-        output_dir / "ensemble_validation_per_sequence.csv", index=False
-    )
+    validation_per_sequence.to_csv(output_dir / "ensemble_validation_per_sequence.csv", index=False)
     per_seed.to_csv(output_dir / "per_seed_summary.csv", index=False)
     pairwise.to_csv(output_dir / "pairwise_seed_metrics.csv", index=False)
 

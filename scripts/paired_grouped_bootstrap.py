@@ -104,9 +104,7 @@ def run(
             "failure_pct_delta_first_minus_second": legacy["bootstrap"][
                 "failure_pct_delta_ejepa_minus_garl"
             ],
-            "probability_first_lower_MiD": legacy["bootstrap"][
-                "probability_ejepa_lower_MiD"
-            ],
+            "probability_first_lower_MiD": legacy["bootstrap"]["probability_ejepa_lower_MiD"],
         },
         "claim_scope": "development_only_not_sealed_not_sota",
     }

@@ -168,9 +168,7 @@ def run(
     endpoint_errors: list[float] = []
     delta_errors: list[float] = []
     teacher_delta_abs: list[float] = []
-    per_offset_teacher_delta_abs: list[list[float]] = [
-        [] for _ in A4_RELATION_OFFSETS
-    ]
+    per_offset_teacher_delta_abs: list[list[float]] = [[] for _ in A4_RELATION_OFFSETS]
     valid_pair_fractions: list[float] = []
     tokens: list[str] = []
 
@@ -208,9 +206,7 @@ def run(
                 endpoint_errors.append(
                     float(endpoint_error_map[index][endpoint_valid[index]].mean().cpu())
                 )
-                delta_errors.append(
-                    float(delta_error_map[index][pair_valid[index]].mean().cpu())
-                )
+                delta_errors.append(float(delta_error_map[index][pair_valid[index]].mean().cpu()))
                 teacher_delta_abs.append(
                     float(teacher_delta_map[index][teacher_pair_valid[index]].mean().cpu())
                 )
@@ -238,10 +234,7 @@ def run(
         raise ValueError("cached DINO teacher has degenerate zero temporal relation change")
 
     lambda_raw = (
-        TARGET_FRACTION_OF_WEIGHTED_ENDPOINT
-        * endpoint_weight
-        * median_endpoint
-        / median_delta
+        TARGET_FRACTION_OF_WEIGHTED_ENDPOINT * endpoint_weight * median_endpoint / median_delta
     )
     selected = float(np.clip(lambda_raw, *CLAMP_RANGE))
     if not math.isfinite(selected):
@@ -271,8 +264,7 @@ def run(
         "endpoint_distillation_weight": endpoint_weight,
         "target_fraction_of_weighted_endpoint": TARGET_FRACTION_OF_WEIGHTED_ENDPOINT,
         "calibration_formula": (
-            "0.25 * endpoint_weight * median_endpoint_relation_error "
-            "/ median_temporal_delta_error"
+            "0.25 * endpoint_weight * median_endpoint_relation_error / median_temporal_delta_error"
         ),
         "median_endpoint_relation_error": median_endpoint,
         "median_temporal_delta_error": median_delta,
@@ -295,19 +287,23 @@ def run(
     }
     sign_artifact(payload)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    output_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(
+        json.dumps(
+            {
+                "artifact": str(output_path),
+                "artifact_sha256": payload["artifact_sha256"],
+                "file_sha256": _sha256(output_path),
+                "median_endpoint_relation_error": median_endpoint,
+                "median_temporal_delta_error": median_delta,
+                "median_teacher_temporal_delta_abs": median_teacher_energy,
+                "lambda_raw": lambda_raw,
+                "selected_weight": selected,
+            },
+            indent=2,
+            sort_keys=True,
+        )
     )
-    print(json.dumps({
-        "artifact": str(output_path),
-        "artifact_sha256": payload["artifact_sha256"],
-        "file_sha256": _sha256(output_path),
-        "median_endpoint_relation_error": median_endpoint,
-        "median_temporal_delta_error": median_delta,
-        "median_teacher_temporal_delta_abs": median_teacher_energy,
-        "lambda_raw": lambda_raw,
-        "selected_weight": selected,
-    }, indent=2, sort_keys=True))
     return payload
 
 

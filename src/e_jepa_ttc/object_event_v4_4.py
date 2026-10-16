@@ -12,8 +12,8 @@ features, or validation targets during fitting.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import numpy as np
 import torch
@@ -155,7 +155,9 @@ def pearson(target: np.ndarray, prediction: np.ndarray) -> float:
     return value if np.isfinite(value) else 0.0
 
 
-def sequence_sign_weights(sequence_ids: Iterable[str], target: np.ndarray, *, cap: float = 10.0) -> np.ndarray:
+def sequence_sign_weights(
+    sequence_ids: Iterable[str], target: np.ndarray, *, cap: float = 10.0
+) -> np.ndarray:
     """Balance sequence/sign cells while bounding rare-cell leverage."""
 
     sequence = np.asarray(list(sequence_ids), dtype=object)
@@ -165,7 +167,9 @@ def sequence_sign_weights(sequence_ids: Iterable[str], target: np.ndarray, *, ca
     if cap < 1.0:
         raise ValueError("cap must be at least 1")
     signs = np.where(target < 0.0, "negative", "positive")
-    cells = np.asarray([f"{seq}|{sign}" for seq, sign in zip(sequence, signs, strict=True)], dtype=object)
+    cells = np.asarray(
+        [f"{seq}|{sign}" for seq, sign in zip(sequence, signs, strict=True)], dtype=object
+    )
     unique, counts = np.unique(cells, return_counts=True)
     count_by_cell = dict(zip(unique.tolist(), counts.tolist(), strict=True))
     raw = np.asarray([1.0 / count_by_cell[cell] for cell in cells], dtype=np.float64)

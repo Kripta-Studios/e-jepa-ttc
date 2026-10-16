@@ -35,7 +35,9 @@ def _model(path: Path) -> tuple[CausalScaleTTCConfig, int]:
     return config, count
 
 
-def _cost_volume_mib(grid: int, radius: int, batch: int, pairs: int, bytes_per_value: int = 4) -> float:
+def _cost_volume_mib(
+    grid: int, radius: int, batch: int, pairs: int, bytes_per_value: int = 4
+) -> float:
     k = (2 * radius + 1) ** 2
     return batch * pairs * grid * grid * k * bytes_per_value / 2**20
 
@@ -74,11 +76,15 @@ def run(output: Path, *, garl_parameter_count: int) -> dict[str, Any]:
             "first_a5_arm": "keep A4 width/depth and 32x32 grid; isolate transport",
             "post_gate_capacity_arm_order": ["cap_s", "cap_m"],
             "do_not_mix_larger_grid_with_first_capacity_arm": True,
-            "larger_grid_next_only_if": "transport is useful but correspondence is spatially under-resolved",
+            "larger_grid_next_only_if": (
+                "transport is useful but correspondence is spatially under-resolved"
+            ),
             "reason": (
-                "A4/A4D is ~0.355M params versus ~24.67M for Garl event-LHR, so capacity is a plausible "
-                "secondary bottleneck; however increasing width/depth or DINO grid in A5-CORR-V1 would confound "
-                "the causal test of p->q transport."
+                "A4/A4D is ~0.355M params versus ~24.67M for Garl"
+                " event-LHR, so capacity is a plausible secondary"
+                " bottleneck; however increasing width/depth or D"
+                "INO grid in A5-CORR-V1 would confound the causal"
+                " test of p->q transport."
             ),
         },
     }

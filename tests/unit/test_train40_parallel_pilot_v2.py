@@ -186,9 +186,7 @@ def test_failure_cleanup_waits_for_live_peer_full_checkpoint(
         "request_peer_pause",
         lambda out, token, arm: pauses.append(arm),
     )
-    parallel_controller.wait_for_paused_survivors(
-        output, "nonce", cast(Any, {"a5": Process()})
-    )
+    parallel_controller.wait_for_paused_survivors(output, "nonce", cast(Any, {"a5": Process()}))
     assert pauses == ["coordinator_failure"]
 
 
@@ -234,9 +232,7 @@ def test_parallel_engine_restores_monitor_binding_on_delegate_failure(
     with pytest.raises(RuntimeError, match="delegate failed"):
         parallel_engine.run(tmp_path, "a5", "nonce")
     assert resource_monitor.ResourceMonitor is original
-    runtime = json.loads(
-        (tmp_path / "fits/a5_seed7/PARALLEL_PILOT_V2_RUNTIME.json").read_text()
-    )
+    runtime = json.loads((tmp_path / "fits/a5_seed7/PARALLEL_PILOT_V2_RUNTIME.json").read_text())
     assert runtime == {"arm": "a5", "status": "FAILED", "token": "nonce"}
 
 

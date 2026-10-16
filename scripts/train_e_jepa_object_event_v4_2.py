@@ -38,7 +38,6 @@ if str(ROOT / "src") not in sys.path:
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_2 import ObjectEventTTCV42  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_1 import target_expansion  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_2 import (  # noqa: E402
     ObjectEventV42LossConfig,
     object_event_v4_2_loss,
@@ -134,12 +133,8 @@ def _load_config(
         raise ValueError("v4.2 config must be a mapping")
     return (
         _construct(ObjectEventV41Config, cast(Mapping[str, Any], raw.get("model", {}))),
-        _construct(
-            ObjectEventV42TrainConfig, cast(Mapping[str, Any], raw.get("train", {}))
-        ),
-        _construct(
-            ObjectEventV42LossConfig, cast(Mapping[str, Any], raw.get("loss", {}))
-        ),
+        _construct(ObjectEventV42TrainConfig, cast(Mapping[str, Any], raw.get("train", {}))),
+        _construct(ObjectEventV42LossConfig, cast(Mapping[str, Any], raw.get("loss", {}))),
     )
 
 
@@ -195,9 +190,7 @@ def _materialize(
 ) -> tuple[MaterializedSplit, dict[str, Any]]:
     dataset = GarlTTCObjectEventV4Dataset(manifest.as_posix(), splits=(split,))
     count = len(dataset)
-    events = torch.empty(
-        (count, 3, 12, input_size, input_size), dtype=torch.float16
-    )
+    events = torch.empty((count, 3, 12, input_size, input_size), dtype=torch.float16)
     delta_t = torch.empty(count, dtype=torch.float32)
     target_ttc = torch.empty(count, dtype=torch.float32)
     sequence_ids: list[str] = []
@@ -209,9 +202,7 @@ def _materialize(
         if item.shape[:2] != (3, 12):
             raise ValueError(f"Expected [3,12,H,W], got {tuple(item.shape)}")
         if item.shape[-2:] != (input_size, input_size):
-            item = torch.nn.functional.interpolate(
-                item, size=(input_size, input_size), mode="area"
-            )
+            item = torch.nn.functional.interpolate(item, size=(input_size, input_size), mode="area")
         events[index].copy_(item.to(torch.float16))
         delta_t[index] = float(record["garl_delta_t_s"])
         target_ttc[index] = float(record["ttc_s"])
@@ -259,14 +250,14 @@ def _sampling_weights(split: MaterializedSplit) -> torch.Tensor:
     return torch.tensor(raw, dtype=torch.float64)
 
 
-def _autocast(device: torch.device, precision: str):
+def _autocast(device: torch.device, precision: str) -> torch.autocast:
     enabled = precision != "fp32"
     dtype = torch.float16 if precision == "fp16" else torch.bfloat16
     return torch.autocast(device_type=device.type, dtype=dtype, enabled=enabled)
 
 
 def _metric_float(value: object, *, default: float = 0.0) -> float:
-    """Return a finite metric value, using a fail-closed default otherwise."""
+    "Return a finite metric value, using a fail-closed default otherwise."
     try:
         number = float(value)
     except (TypeError, ValueError):
@@ -284,19 +275,13 @@ def _pearson(target: np.ndarray, prediction: np.ndarray) -> float:
     finite = np.isfinite(target) & np.isfinite(prediction)
     target = target[finite]
     prediction = prediction[finite]
-    if (
-        target.size < 2
-        or float(np.std(target)) <= 1.0e-12
-        or float(np.std(prediction)) <= 1.0e-12
-    ):
+    if target.size < 2 or float(np.std(target)) <= 1.0e-12 or float(np.std(prediction)) <= 1.0e-12:
         return 0.0
     correlation = float(np.corrcoef(target, prediction)[0, 1])
     return correlation if math.isfinite(correlation) else 0.0
 
 
-def _balanced_sign(
-    target: np.ndarray, prediction: np.ndarray
-) -> tuple[float, float, float]:
+def _balanced_sign(target: np.ndarray, prediction: np.ndarray) -> tuple[float, float, float]:
     positive = target >= 0.0
     negative = target < 0.0
     pos_acc = float(np.mean(prediction[positive] >= 0.0)) if positive.any() else 0.0
@@ -324,9 +309,7 @@ def _branch_metrics(
         "positive_accuracy": pos_acc,
         "negative_accuracy": neg_acc,
         "balanced_sign_accuracy": balanced,
-        "ttc_saturation_rate": float(
-            np.mean(np.abs(ttc) >= ttc_clip * (1.0 - 1.0e-6))
-        ),
+        "ttc_saturation_rate": float(np.mean(np.abs(ttc) >= ttc_clip * (1.0 - 1.0e-6))),
     }
 
 
@@ -365,9 +348,7 @@ def _predict(
         output = model(batch)
         predictions.append(output.expansion.float().cpu().numpy())
         reverse_predictions.append(output.reverse_expansion.float().cpu().numpy())
-        reversal_errors.append(
-            output.reversal_consistency_error.float().cpu().numpy()
-        )
+        reversal_errors.append(output.reversal_consistency_error.float().cpu().numpy())
     return (
         np.concatenate(predictions),
         np.concatenate(reverse_predictions),
@@ -393,8 +374,10 @@ def _evaluate(
         model, torch.zeros_like(split.events), batch_size=batch_size, device=device
     )
     target = (
-        split.delta_t_s / split.target_ttc_s
-    ).clamp(-max_abs_expansion * 0.999, max_abs_expansion * 0.999).numpy()
+        (split.delta_t_s / split.target_ttc_s)
+        .clamp(-max_abs_expansion * 0.999, max_abs_expansion * 0.999)
+        .numpy()
+    )
     delta_t = split.delta_t_s.numpy()
 
     rng = np.random.default_rng(seed)
@@ -483,16 +466,12 @@ def _evaluate(
             "count": len(per_sequence),
         },
         "event_dependence": {
-            "zero_event_pearson_drop": event_metrics["pearson"]
-            - zero_metrics["pearson"],
-            "zero_event_mean_abs_change": float(
-                np.mean(np.abs(prediction - zero_prediction))
-            ),
+            "zero_event_pearson_drop": event_metrics["pearson"] - zero_metrics["pearson"],
+            "zero_event_mean_abs_change": float(np.mean(np.abs(prediction - zero_prediction))),
             "shuffled_event_pearson_mean": shuffle_mean_pearson,
             "shuffled_event_pearson_std": float(np.std(shuffled_pearsons)),
             "shuffled_event_pearsons": shuffled_pearsons,
-            "shuffled_event_pearson_drop": event_metrics["pearson"]
-            - shuffle_mean_pearson,
+            "shuffled_event_pearson_drop": event_metrics["pearson"] - shuffle_mean_pearson,
             "shuffled_event_mean_abs_change": float(np.mean(shuffled_changes)),
         },
         "reversal": {
@@ -504,16 +483,13 @@ def _evaluate(
     return rows, per_sequence, cast(dict[str, Any], _json_safe(metrics))
 
 
-def _gates(
-    metrics: Mapping[str, Any], config: ObjectEventV42TrainConfig
-) -> dict[str, bool]:
+def _gates(metrics: Mapping[str, Any], config: ObjectEventV42TrainConfig) -> dict[str, bool]:
     event = cast(Mapping[str, object], metrics["event"])
     bootstrap = cast(Mapping[str, object], metrics["bootstrap_pearson"])
     sequence = cast(Mapping[str, object], metrics["per_sequence"])
     dependence = cast(Mapping[str, object], metrics["event_dependence"])
     return {
-        "pearson": _metric_float(event.get("pearson"))
-        >= config.validation_pearson_gate,
+        "pearson": _metric_float(event.get("pearson")) >= config.validation_pearson_gate,
         "pearson_lower_ci": _metric_float(bootstrap.get("lower_95"))
         >= config.validation_pearson_lower_ci_gate,
         "sequence_macro_pearson": _metric_float(sequence.get("macro_pearson"))
@@ -529,21 +505,13 @@ def _gates(
         >= config.validation_negative_accuracy_gate,
         "expansion_mae": _metric_float(event.get("expansion_mae"), default=float("inf"))
         <= config.validation_expansion_mae_gate,
-        "saturation": _metric_float(
-            event.get("ttc_saturation_rate"), default=float("inf")
-        )
+        "saturation": _metric_float(event.get("ttc_saturation_rate"), default=float("inf"))
         <= config.validation_saturation_gate,
-        "zero_event_dependence": _metric_float(
-            dependence.get("zero_event_pearson_drop")
-        )
+        "zero_event_dependence": _metric_float(dependence.get("zero_event_pearson_drop"))
         >= config.zero_event_pearson_drop_gate,
-        "shuffled_event_dependence": _metric_float(
-            dependence.get("shuffled_event_pearson_drop")
-        )
+        "shuffled_event_dependence": _metric_float(dependence.get("shuffled_event_pearson_drop"))
         >= config.shuffled_event_pearson_drop_gate,
-        "shuffled_event_change": _metric_float(
-            dependence.get("shuffled_event_mean_abs_change")
-        )
+        "shuffled_event_change": _metric_float(dependence.get("shuffled_event_mean_abs_change"))
         >= config.shuffled_event_mean_abs_change_gate,
     }
 
@@ -610,9 +578,7 @@ def run(
     started_at = datetime.now(UTC)
     model_config, train_config, loss_config = _load_config(config_path)
     if seed_override is not None:
-        train_config = ObjectEventV42TrainConfig(
-            **{**asdict(train_config), "seed": seed_override}
-        )
+        train_config = ObjectEventV42TrainConfig(**{**asdict(train_config), "seed": seed_override})
     _seed(train_config.seed)
     device = _resolve_device(device_name)
     if device.type == "cuda":
@@ -862,9 +828,7 @@ def run(
     train_predictions.to_csv(output_dir / "train_predictions.csv", index=False)
     validation_predictions.to_csv(output_dir / "validation_predictions.csv", index=False)
     train_per_sequence.to_csv(output_dir / "train_per_sequence.csv", index=False)
-    validation_per_sequence.to_csv(
-        output_dir / "validation_per_sequence.csv", index=False
-    )
+    validation_per_sequence.to_csv(output_dir / "validation_per_sequence.csv", index=False)
     final_gates = _gates(validation_metrics, train_config)
     screen_passed = all(final_gates.values())
     gradient_audit = _gradient_audit(
@@ -887,9 +851,7 @@ def run(
                 "elapsed_seconds": time.perf_counter() - started,
                 "git_commit": _git_commit(),
                 "device": str(device),
-                "gpu_name": torch.cuda.get_device_name(device)
-                if device.type == "cuda"
-                else None,
+                "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
                 "cache_manifest": cache_manifest.resolve().as_posix(),
                 "cache_manifest_sha256": _sha256(cache_manifest),
                 "config": config_path.resolve().as_posix(),

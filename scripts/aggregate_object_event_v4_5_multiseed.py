@@ -13,10 +13,10 @@ import math
 import shutil
 import sys
 import traceback
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, fields
 from datetime import UTC, datetime
 from pathlib import Path
-from collections.abc import Mapping
 from typing import Any, cast
 
 import numpy as np
@@ -150,18 +150,18 @@ def _align(seed_frames: dict[int, pd.DataFrame]) -> pd.DataFrame:
     if aligned is None:
         raise ValueError("no seed frames")
     seeds = sorted(seed_frames)
-    aligned["ensemble_expansion"] = aligned[
-        [f"prediction_seed_{seed}" for seed in seeds]
-    ].mean(axis=1)
+    aligned["ensemble_expansion"] = aligned[[f"prediction_seed_{seed}" for seed in seeds]].mean(
+        axis=1
+    )
     aligned["ensemble_zero_events_expansion"] = aligned[
         [f"zero_seed_{seed}" for seed in seeds]
     ].mean(axis=1)
     aligned["ensemble_shuffled_expansion"] = aligned[
         [f"shuffled_seed_{seed}" for seed in seeds]
     ].mean(axis=1)
-    aligned["seed_prediction_std"] = aligned[
-        [f"prediction_seed_{seed}" for seed in seeds]
-    ].std(axis=1, ddof=0)
+    aligned["seed_prediction_std"] = aligned[[f"prediction_seed_{seed}" for seed in seeds]].std(
+        axis=1, ddof=0
+    )
     return aligned.sort_values(IDENTITY_COLUMNS).reset_index(drop=True)
 
 
@@ -203,8 +203,7 @@ def _track_bootstrap(
 ) -> dict[str, float]:
     cluster_key = frame["sequence_id"].astype(str) + "|" + frame["track_id"].astype(str)
     clusters = {
-        key: np.flatnonzero(cluster_key.to_numpy() == key)
-        for key in sorted(cluster_key.unique())
+        key: np.flatnonzero(cluster_key.to_numpy() == key) for key in sorted(cluster_key.unique())
     }
     keys = np.asarray(list(clusters), dtype=object)
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
@@ -338,20 +337,16 @@ def aggregate(
         >= config.ensemble_negative_accuracy_gate,
         "ensemble_expansion_mae": _finite(expansion["expansion_mae"], default=float("inf"))
         <= config.ensemble_expansion_mae_gate,
-        "ensemble_saturation": _finite(
-            expansion["ttc_saturation_rate"], default=float("inf")
-        )
+        "ensemble_saturation": _finite(expansion["ttc_saturation_rate"], default=float("inf"))
         <= config.ensemble_saturation_gate,
         "ensemble_min_sequence_negative_accuracy": minimum_sequence_negative
         >= config.ensemble_min_sequence_negative_accuracy_gate,
-        "pairwise_prediction_pearson": pairwise_min
-        >= config.pairwise_prediction_pearson_gate,
+        "pairwise_prediction_pearson": pairwise_min >= config.pairwise_prediction_pearson_gate,
         "mean_sample_prediction_std": _finite(
             expansion["mean_sample_prediction_std"], default=float("inf")
         )
         <= config.mean_sample_prediction_std_gate,
-        "track_bootstrap_lower": bootstrap["lower_95"]
-        >= config.track_bootstrap_lower_gate,
+        "track_bootstrap_lower": bootstrap["lower_95"] >= config.track_bootstrap_lower_gate,
         "zero_event_dependence": _finite(expansion["zero_event_pearson_drop"])
         >= config.zero_event_pearson_drop_gate,
         "shuffled_event_dependence": _finite(expansion["shuffled_event_pearson_drop"])

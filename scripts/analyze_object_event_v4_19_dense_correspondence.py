@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Probe frozen v4.8 maps for dense correspondence/divergence signal."""
+
 from __future__ import annotations
 
 import argparse
@@ -23,16 +24,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_12 import _align_ensemble, _read_ensemble  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
-    _build_frozen_consensus,
-    _json_safe,
-    _metrics,
-    _parse_checkpoints,
-    _resolve_device,
-)
 from e_jepa_ttc.models.object_event_v4_19 import (  # noqa: E402
     ObjectEventV419Config,
     antisymmetric_correspondence_scores,
@@ -43,6 +34,16 @@ from e_jepa_ttc.training.object_event_v4_19 import (  # noqa: E402
     fit_score_calibration,
     pearson,
     prediction_from_score,
+)
+from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_12 import _align_ensemble, _read_ensemble  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
+    _build_frozen_consensus,
+    _json_safe,
+    _metrics,
+    _parse_checkpoints,
+    _resolve_device,
 )
 
 
@@ -111,8 +112,12 @@ def _extract_scores(
         disagreement = (stacked - median[None]).abs().median(dim=0).values
         outputs.append(median.float().cpu())
         seed_disagreements.append(disagreement.float().cpu())
-        confidence_values.append(torch.stack(per_seed_confidence).median(dim=0).values.float().cpu())
-        translation_values.append(torch.stack(per_seed_translation).median(dim=0).values.float().cpu())
+        confidence_values.append(
+            torch.stack(per_seed_confidence).median(dim=0).values.float().cpu()
+        )
+        translation_values.append(
+            torch.stack(per_seed_translation).median(dim=0).values.float().cpu()
+        )
     scores = torch.cat(outputs, dim=0).numpy()
     disagreement = torch.cat(seed_disagreements, dim=0).numpy()
     confidence = torch.cat(confidence_values, dim=0).numpy()
@@ -139,7 +144,9 @@ def _component_diagnostics(frame: pd.DataFrame, score: np.ndarray, name: str) ->
     }
 
 
-def _evaluate_score(frame: pd.DataFrame, score: np.ndarray, magnitude: np.ndarray) -> tuple[dict[str, Any], pd.DataFrame, np.ndarray]:
+def _evaluate_score(
+    frame: pd.DataFrame, score: np.ndarray, magnitude: np.ndarray
+) -> tuple[dict[str, Any], pd.DataFrame, np.ndarray]:
     prediction = prediction_from_score(score, magnitude)
     metrics, per_sequence = _metrics(frame, prediction, minimum_negatives=20)
     return metrics, per_sequence, prediction
@@ -153,8 +160,14 @@ def _decision(
     validation_components: list[dict[str, Any]],
     thresholds: dict[str, float],
 ) -> dict[str, Any]:
-    pearson_ok = float(combined["pearson"]) >= float(baseline["pearson"]) - thresholds["baseline_pearson_tolerance"]
-    fragile_ok = float(combined["minimum_sequence_negative_accuracy"]) >= thresholds["minimum_sequence_negative_accuracy_floor"]
+    pearson_ok = (
+        float(combined["pearson"])
+        >= float(baseline["pearson"]) - thresholds["baseline_pearson_tolerance"]
+    )
+    fragile_ok = (
+        float(combined["minimum_sequence_negative_accuracy"])
+        >= thresholds["minimum_sequence_negative_accuracy_floor"]
+    )
     positive_ok = float(combined["positive_accuracy"]) >= thresholds["positive_accuracy_floor"]
     best_train = max(abs(float(row["pearson_to_target_expansion"])) for row in train_components)
     best_val = max(abs(float(row["pearson_to_target_expansion"])) for row in validation_components)
@@ -177,7 +190,9 @@ def _decision(
             "baseline_pearson": float(baseline["pearson"]),
             "combined_pearson": float(combined["pearson"]),
         },
-        "note": "Development representation probe only; official eAP test and EvTTC remain unopened.",
+        "note": (
+            "Development representation probe only; official eAP test and EvTTC remain unopened."
+        ),
     }
 
 
@@ -198,37 +213,68 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         device=device,
     )
     base_config, _, _, _, _ = _load_v48_config(args.v48_config)
-    train_split, train_manifest = _materialize(args.cache_manifest, "train", input_size=base_config.input_size)
-    validation_split, validation_manifest = _materialize(args.cache_manifest, "validation", input_size=base_config.input_size)
+    train_split, train_manifest = _materialize(
+        args.cache_manifest, "train", input_size=base_config.input_size
+    )
+    validation_split, validation_manifest = _materialize(
+        args.cache_manifest, "validation", input_size=base_config.input_size
+    )
     train_frame = _align_ensemble(train_split, _read_ensemble(args.ensemble_train))
     validation_frame = _align_ensemble(validation_split, _read_ensemble(args.ensemble_validation))
 
     train_raw, train_extract_diag = _extract_scores(
-        frozen, train_split.events, batch_size=run_config.descriptor_batch_size,
-        device=device, branch="event", seed=run_config.seed, config=model_config,
+        frozen,
+        train_split.events,
+        batch_size=run_config.descriptor_batch_size,
+        device=device,
+        branch="event",
+        seed=run_config.seed,
+        config=model_config,
     )
     validation_raw, validation_extract_diag = _extract_scores(
-        frozen, validation_split.events, batch_size=run_config.descriptor_batch_size,
-        device=device, branch="event", seed=run_config.seed, config=model_config,
+        frozen,
+        validation_split.events,
+        batch_size=run_config.descriptor_batch_size,
+        device=device,
+        branch="event",
+        seed=run_config.seed,
+        config=model_config,
     )
     target_train = train_frame["target_expansion"].to_numpy(dtype=np.float64)
     names = ("dense_divergence", "dense_radial_slope")
     calibrations = [
-        fit_score_calibration(train_raw[:, i], target_train, minimum_scale=model_config.minimum_score_scale)
+        fit_score_calibration(
+            train_raw[:, i], target_train, minimum_scale=model_config.minimum_score_scale
+        )
         for i in range(2)
     ]
     train_components = [apply_score_calibration(train_raw[:, i], calibrations[i]) for i in range(2)]
-    validation_components = [apply_score_calibration(validation_raw[:, i], calibrations[i]) for i in range(2)]
+    validation_components = [
+        apply_score_calibration(validation_raw[:, i], calibrations[i]) for i in range(2)
+    ]
     train_combined = equal_physics_consensus(train_components[0], train_components[1])
-    validation_combined = equal_physics_consensus(validation_components[0], validation_components[1])
+    validation_combined = equal_physics_consensus(
+        validation_components[0], validation_components[1]
+    )
 
-    train_diag_rows = [_component_diagnostics(train_frame, train_components[i], names[i]) for i in range(2)]
-    val_diag_rows = [_component_diagnostics(validation_frame, validation_components[i], names[i]) for i in range(2)]
-    train_diag_rows.append(_component_diagnostics(train_frame, train_combined, "equal_dense_consensus"))
-    val_diag_rows.append(_component_diagnostics(validation_frame, validation_combined, "equal_dense_consensus"))
+    train_diag_rows = [
+        _component_diagnostics(train_frame, train_components[i], names[i]) for i in range(2)
+    ]
+    val_diag_rows = [
+        _component_diagnostics(validation_frame, validation_components[i], names[i])
+        for i in range(2)
+    ]
+    train_diag_rows.append(
+        _component_diagnostics(train_frame, train_combined, "equal_dense_consensus")
+    )
+    val_diag_rows.append(
+        _component_diagnostics(validation_frame, validation_combined, "equal_dense_consensus")
+    )
 
-    train_magnitude = np.abs(train_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64))
-    validation_magnitude = np.abs(validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64))
+    _train_magnitude = np.abs(train_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64))
+    validation_magnitude = np.abs(
+        validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)
+    )
     baseline_prediction = validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)
     baseline_metrics, _ = _metrics(validation_frame, baseline_prediction, minimum_negatives=20)
 
@@ -240,7 +286,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         ("dense_radial_slope", validation_components[1]),
         ("equal_dense_consensus", validation_combined),
     ):
-        metrics, per_sequence, prediction = _evaluate_score(validation_frame, score, validation_magnitude)
+        metrics, per_sequence, prediction = _evaluate_score(
+            validation_frame, score, validation_magnitude
+        )
         evaluated[name] = metrics
         predictions[name] = prediction
         tmp = per_sequence.copy()
@@ -248,15 +296,27 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         per_sequence_frames.append(tmp)
 
     zero_raw, zero_extract_diag = _extract_scores(
-        frozen, validation_split.events, batch_size=run_config.descriptor_batch_size,
-        device=device, branch="zero", seed=run_config.seed, config=model_config,
+        frozen,
+        validation_split.events,
+        batch_size=run_config.descriptor_batch_size,
+        device=device,
+        branch="zero",
+        seed=run_config.seed,
+        config=model_config,
     )
     shuffled_raw, shuffled_extract_diag = _extract_scores(
-        frozen, validation_split.events, batch_size=run_config.descriptor_batch_size,
-        device=device, branch="shuffled", seed=run_config.seed, config=model_config,
+        frozen,
+        validation_split.events,
+        batch_size=run_config.descriptor_batch_size,
+        device=device,
+        branch="shuffled",
+        seed=run_config.seed,
+        config=model_config,
     )
     zero_components = [apply_score_calibration(zero_raw[:, i], calibrations[i]) for i in range(2)]
-    shuffled_components = [apply_score_calibration(shuffled_raw[:, i], calibrations[i]) for i in range(2)]
+    shuffled_components = [
+        apply_score_calibration(shuffled_raw[:, i], calibrations[i]) for i in range(2)
+    ]
     zero_combined = equal_physics_consensus(zero_components[0], zero_components[1])
     shuffled_combined = equal_physics_consensus(shuffled_components[0], shuffled_components[1])
 
@@ -268,11 +328,19 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         thresholds=decision_config,
     )
 
-    pd.DataFrame(train_diag_rows).to_csv(args.output_dir / "train_dense_score_diagnostics.csv", index=False)
-    pd.DataFrame(val_diag_rows).to_csv(args.output_dir / "validation_dense_score_diagnostics.csv", index=False)
-    pd.concat(per_sequence_frames, ignore_index=True).to_csv(args.output_dir / "validation_per_sequence.csv", index=False)
+    pd.DataFrame(train_diag_rows).to_csv(
+        args.output_dir / "train_dense_score_diagnostics.csv", index=False
+    )
+    pd.DataFrame(val_diag_rows).to_csv(
+        args.output_dir / "validation_dense_score_diagnostics.csv", index=False
+    )
+    pd.concat(per_sequence_frames, ignore_index=True).to_csv(
+        args.output_dir / "validation_per_sequence.csv", index=False
+    )
 
-    rows = validation_frame[["sequence_id", "sample_token", "track_id", "target_expansion", "target_ttc_s", "delta_t_s"]].copy()
+    rows = validation_frame[
+        ["sequence_id", "sample_token", "track_id", "target_expansion", "target_ttc_s", "delta_t_s"]
+    ].copy()
     rows["baseline_prediction_expansion"] = baseline_prediction
     rows["dense_divergence_score"] = validation_components[0]
     rows["dense_radial_slope_score"] = validation_components[1]
@@ -292,12 +360,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "status": "completed",
         "created_at": datetime.now(UTC).isoformat(),
         "elapsed_seconds": time.perf_counter() - started,
-        "config": {"model": asdict(model_config), "run": asdict(run_config), "decision": decision_config},
+        "config": {
+            "model": asdict(model_config),
+            "run": asdict(run_config),
+            "decision": decision_config,
+        },
         "train_manifest": train_manifest,
         "validation_manifest": validation_manifest,
-        "train_only_calibration": {
-            names[i]: asdict(calibrations[i]) for i in range(2)
-        },
+        "train_only_calibration": {names[i]: asdict(calibrations[i]) for i in range(2)},
         "baseline_validation_metrics": baseline_metrics,
         "dense_divergence_validation_metrics": evaluated["dense_divergence"],
         "dense_radial_slope_validation_metrics": evaluated["dense_radial_slope"],
@@ -310,7 +380,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "shuffled_extraction": shuffled_extract_diag,
             "zero_mean_abs_consensus_score": float(np.mean(np.abs(zero_combined))),
             "shuffled_mean_abs_consensus_score": float(np.mean(np.abs(shuffled_combined))),
-            "validation_true_negative_rate": float(np.mean(validation_frame["target_expansion"].to_numpy(dtype=np.float64) < 0.0)),
+            "validation_true_negative_rate": float(
+                np.mean(validation_frame["target_expansion"].to_numpy(dtype=np.float64) < 0.0)
+            ),
             "validation_predicted_negative_rate": float(np.mean(validation_combined < 0.0)),
         },
         "decision": decision,
@@ -328,7 +400,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "evttc_not_opened": True,
         },
     }
-    (args.output_dir / "summary.json").write_text(json.dumps(_json_safe(result), indent=2), encoding="utf-8")
+    (args.output_dir / "summary.json").write_text(
+        json.dumps(_json_safe(result), indent=2), encoding="utf-8"
+    )
     print(json.dumps(_json_safe(result), indent=2))
     return result
 

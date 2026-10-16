@@ -42,8 +42,7 @@ def wait_for_registry(output: Path, token: str, arm: str, timeout: float = 120.0
                 registry.get("token") == token
                 and isinstance(row, dict)
                 and int(row.get("pid", -1)) == os.getpid()
-                and abs(float(row.get("create_time", -1)) - psutil.Process().create_time())
-                <= 0.001
+                and abs(float(row.get("create_time", -1)) - psutil.Process().create_time()) <= 0.001
                 and row.get("module") == MODULE
             ):
                 return

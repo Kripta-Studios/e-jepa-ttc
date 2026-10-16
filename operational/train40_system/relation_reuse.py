@@ -95,9 +95,7 @@ def _dispatcher(
     return dispatch
 
 
-def _loss_wrapper(
-    original: Callable[P, R], counters: ReuseCounters
-) -> Callable[P, R]:
+def _loss_wrapper(original: Callable[P, R], counters: ReuseCounters) -> Callable[P, R]:
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
         counters.loss_calls += 1
         token = _CURRENT.set(_LossScope(counters=counters))

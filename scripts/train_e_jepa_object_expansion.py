@@ -114,9 +114,7 @@ def _metrics(predictions: pd.DataFrame) -> dict[str, Any]:
     signed = signed_garl_metrics(target, prediction)
     signed["mae_s"] = float(np.mean(np.abs(target - prediction)))
     signed["median_ae_s"] = float(np.median(np.abs(target - prediction)))
-    signed["sign_accuracy"] = float(
-        np.mean(np.sign(target) == np.sign(prediction))
-    )
+    signed["sign_accuracy"] = float(np.mean(np.sign(target) == np.sign(prediction)))
     signed["sequence_macro"] = sequence_macro_signed_metrics(
         target,
         prediction,
@@ -235,16 +233,12 @@ def load_spec(
     model_value = _inherited(model_path)
     train_value = _inherited(train_path)
     if model_value.get("model") != "e_jepa_object_expansion_v2":
-        raise ValueError(
-            "Object-expansion trainer requires model=e_jepa_object_expansion_v2"
-        )
+        raise ValueError("Object-expansion trainer requires model=e_jepa_object_expansion_v2")
     model_names = {field.name for field in fields(ObjectExpansionConfig)}
     train_names = {field.name for field in fields(ObjectExpansionTrainConfig)}
     loss_names = {field.name for field in fields(ObjectExpansionLossConfig)}
     if "lr_milestones" in train_value:
-        train_value["lr_milestones"] = _tuple_milestones(
-            train_value["lr_milestones"]
-        )
+        train_value["lr_milestones"] = _tuple_milestones(train_value["lr_milestones"])
     return (
         ObjectExpansionConfig(
             **{key: value for key, value in model_value.items() if key in model_names}
@@ -283,8 +277,7 @@ def _load_pretrained(
     payload = torch.load(path, map_location="cpu", weights_only=False)
     if (
         not isinstance(payload, Mapping)
-        or payload.get("artifact_type")
-        != "dense_level_dynamics_jepa_checkpoint_v1"
+        or payload.get("artifact_type") != "dense_level_dynamics_jepa_checkpoint_v1"
     ):
         raise ValueError("Expected dense_level_dynamics_jepa_checkpoint_v1")
     state = payload.get("online_encoder_state_dict")
@@ -363,9 +356,7 @@ def _parameter_groups(
     manifest = [
         {
             "name": str(group["name"]),
-            "parameter_count": sum(
-                parameter.numel() for parameter in group["params"]
-            ),
+            "parameter_count": sum(parameter.numel() for parameter in group["params"]),
             "base_lr": float(group["lr"]),
             "weight_decay": float(group["weight_decay"]),
         }
@@ -384,9 +375,7 @@ def _set_epoch_lrs(
 ) -> dict[str, float]:
     reductions = sum(epoch > milestone for milestone in config.lr_milestones)
     multiplier = config.lr_gamma**reductions
-    backbone_warmup = (
-        pretrained and epoch <= config.pretrained_backbone_warmup_epochs
-    )
+    backbone_warmup = pretrained and epoch <= config.pretrained_backbone_warmup_epochs
     result: dict[str, float] = {}
     for group, spec in zip(optimizer.param_groups, manifest, strict=True):
         name = str(spec["name"])
@@ -449,9 +438,8 @@ def _train_epoch(
             )
             backward = loss.total / train_config.gradient_accumulation_steps
         update = (
-            (batch_index + 1) % train_config.gradient_accumulation_steps == 0
-            or batch_index + 1 == len(loader)
-        )
+            batch_index + 1
+        ) % train_config.gradient_accumulation_steps == 0 or batch_index + 1 == len(loader)
         if scaler is None:
             backward.backward()
             if update:
@@ -483,10 +471,7 @@ def _train_epoch(
         "phase": curriculum_phase(epoch, loss_config),
         "loss": float(np.mean(totals)),
         "optimizer_steps": steps,
-        "components": {
-            name: float(np.mean(values))
-            for name, values in components.items()
-        },
+        "components": {name: float(np.mean(values)) for name, values in components.items()},
     }
 
 
@@ -530,39 +515,23 @@ def _evaluate(
                     "sequence_id": batch.sequence_ids[index],
                     "track_id": batch.track_ids[index],
                     "target_ttc_s": float(batch.target_ttc_s[index].cpu()),
-                    "prediction_ttc_s": float(
-                        output.ttc_mean_seconds[index].cpu()
-                    ),
-                    "target_signed_inverse_ttc": float(
-                        targets.signed_inverse_ttc[index].cpu()
-                    ),
+                    "prediction_ttc_s": float(output.ttc_mean_seconds[index].cpu()),
+                    "target_signed_inverse_ttc": float(targets.signed_inverse_ttc[index].cpu()),
                     "prediction_signed_inverse_ttc": float(
                         output.signed_inverse_ttc_hard[index].cpu()
                     ),
                     "prediction_signed_inverse_ttc_soft": float(
                         output.signed_inverse_ttc_soft[index].cpu()
                     ),
-                    "target_log_abs_inverse_ttc": float(
-                        targets.log_abs_inverse_ttc[index].cpu()
-                    ),
+                    "target_log_abs_inverse_ttc": float(targets.log_abs_inverse_ttc[index].cpu()),
                     "prediction_log_abs_inverse_ttc": float(
                         output.log_abs_inverse_ttc[index].cpu()
                     ),
-                    "target_log_height_ratio": float(
-                        targets.log_height_ratio[index].cpu()
-                    ),
-                    "prediction_log_height_ratio": float(
-                        output.log_height_ratio_soft[index].cpu()
-                    ),
-                    "target_negative": bool(
-                        targets.negative_class[index].cpu()
-                    ),
-                    "prediction_negative": bool(
-                        output.direction_logits[index].argmax().cpu() == 1
-                    ),
-                    "negative_probability": float(
-                        output.negative_probability[index].cpu()
-                    ),
+                    "target_log_height_ratio": float(targets.log_height_ratio[index].cpu()),
+                    "prediction_log_height_ratio": float(output.log_height_ratio_soft[index].cpu()),
+                    "target_negative": bool(targets.negative_class[index].cpu()),
+                    "prediction_negative": bool(output.direction_logits[index].argmax().cpu() == 1),
+                    "negative_probability": float(output.negative_probability[index].cpu()),
                 }
             )
     frame = pd.DataFrame.from_records(rows)
@@ -570,22 +539,14 @@ def _evaluate(
         raise RuntimeError("Object-expansion evaluation produced no rows")
     target_ttc = frame["target_ttc_s"].to_numpy(dtype=np.float64)
     prediction_ttc = frame["prediction_ttc_s"].to_numpy(dtype=np.float64)
-    target_inverse = frame["target_signed_inverse_ttc"].to_numpy(
-        dtype=np.float64
-    )
-    prediction_inverse = frame["prediction_signed_inverse_ttc"].to_numpy(
-        dtype=np.float64
-    )
+    target_inverse = frame["target_signed_inverse_ttc"].to_numpy(dtype=np.float64)
+    prediction_inverse = frame["prediction_signed_inverse_ttc"].to_numpy(dtype=np.float64)
     target_ratio = frame["target_log_height_ratio"].to_numpy(dtype=np.float64)
-    prediction_ratio = frame["prediction_log_height_ratio"].to_numpy(
-        dtype=np.float64
-    )
+    prediction_ratio = frame["prediction_log_height_ratio"].to_numpy(dtype=np.float64)
     target_negative = frame["target_negative"].to_numpy(dtype=bool)
     prediction_negative = frame["prediction_negative"].to_numpy(dtype=bool)
     clip = model.config.ttc_clip_seconds
-    saturation_rate = float(
-        np.mean(np.abs(prediction_ttc) >= clip * (1.0 - 1.0e-6))
-    )
+    saturation_rate = float(np.mean(np.abs(prediction_ttc) >= clip * (1.0 - 1.0e-6)))
     return frame, {
         "metrics": _metrics(frame),
         "ttc_health": prediction_health(target_ttc, prediction_ttc),
@@ -597,12 +558,8 @@ def _evaluate(
         "log_abs_inverse_mae": float(
             np.mean(
                 np.abs(
-                    frame["target_log_abs_inverse_ttc"].to_numpy(
-                        dtype=np.float64
-                    )
-                    - frame["prediction_log_abs_inverse_ttc"].to_numpy(
-                        dtype=np.float64
-                    )
+                    frame["target_log_abs_inverse_ttc"].to_numpy(dtype=np.float64)
+                    - frame["prediction_log_abs_inverse_ttc"].to_numpy(dtype=np.float64)
                 )
             )
         ),
@@ -635,12 +592,10 @@ def _eligible(
         "selection_epoch": epoch >= config.selection_start_epoch,
         "inverse_variation": float(inverse_health["prediction_std_ratio"])
         >= config.min_inverse_std_ratio,
-        "ratio_correlation": float(ratio_health["pearson"])
-        >= config.min_log_ratio_pearson,
+        "ratio_correlation": float(ratio_health["pearson"]) >= config.min_log_ratio_pearson,
         "balanced_sign": balanced is not None
         and float(balanced) >= config.min_balanced_sign_accuracy,
-        "saturation": float(evaluation["ttc_saturation_rate"])
-        <= config.max_ttc_saturation_rate,
+        "saturation": float(evaluation["ttc_saturation_rate"]) <= config.max_ttc_saturation_rate,
     }
     return all(gates.values()), gates
 
@@ -819,8 +774,7 @@ def train(
         )
         collapsed = (
             epoch >= train_config.selection_start_epoch
-            and float(inverse_health["prediction_std_ratio"])
-            < train_config.min_inverse_std_ratio
+            and float(inverse_health["prediction_std_ratio"]) < train_config.min_inverse_std_ratio
         )
         collapse_streak = collapse_streak + 1 if collapsed else 0
         improved = eligible and math.isfinite(score) and score < best_score
@@ -839,14 +793,10 @@ def train(
             "learning_rates": learning_rates,
             "validation_sequence_macro_paper_MiD_overall": score,
             "validation_ttc_health": evaluation["ttc_health"],
-            "validation_signed_inverse_health": evaluation[
-                "signed_inverse_health"
-            ],
+            "validation_signed_inverse_health": evaluation["signed_inverse_health"],
             "validation_log_ratio_health": evaluation["log_ratio_health"],
             "validation_direction": evaluation["direction"],
-            "validation_ttc_saturation_rate": evaluation[
-                "ttc_saturation_rate"
-            ],
+            "validation_ttc_saturation_rate": evaluation["ttc_saturation_rate"],
             "selection_gates": gates,
             "checkpoint_selection_eligible": eligible,
             "collapsed": collapsed,
@@ -886,16 +836,11 @@ def train(
                 "Object-expansion inverse-TTC output remained collapsed; "
                 f"std_ratio={inverse_health['prediction_std_ratio']}"
             )
-        if (
-            epoch >= train_config.minimum_epochs
-            and stale >= train_config.early_stopping_patience
-        ):
+        if epoch >= train_config.minimum_epochs and stale >= train_config.early_stopping_patience:
             break
 
     if not best_path.is_file():
-        raise RuntimeError(
-            "No Object-expansion checkpoint passed all validation gates"
-        )
+        raise RuntimeError("No Object-expansion checkpoint passed all validation gates")
     if last_evaluation is None or last_predictions is None:
         raise RuntimeError("Training completed without a validation evaluation")
 
@@ -922,9 +867,7 @@ def train(
         "python_version": platform.python_version(),
         "torch_version": torch.__version__,
         "cuda_version": torch.version.cuda,
-        "gpu_name": (
-            torch.cuda.get_device_name(device) if device.type == "cuda" else None
-        ),
+        "gpu_name": (torch.cuda.get_device_name(device) if device.type == "cuda" else None),
         "device": str(device),
         "seed": train_config.seed,
         "model_config": asdict(model_config),
@@ -984,9 +927,7 @@ def main() -> int:
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
     try:
-        model_config, train_config, loss_config, provenance = load_spec(
-            args.config.resolve()
-        )
+        model_config, train_config, loss_config, provenance = load_spec(args.config.resolve())
         overrides = {
             "seed": args.seed,
             "epochs": args.epochs,
@@ -996,11 +937,7 @@ def main() -> int:
         }
         train_config = replace(
             train_config,
-            **{
-                key: value
-                for key, value in overrides.items()
-                if value is not None
-            },
+            **{key: value for key, value in overrides.items() if value is not None},
         )
         result = train(
             manifest_path=args.cache_manifest.resolve(),

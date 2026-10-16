@@ -28,18 +28,10 @@ from e_jepa_ttc.artifacts.hashing import sign_artifact
 
 TEACHER_REVISIONS = {
     "facebook/dinov2-large": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
-    "facebook/dinov3-convnext-tiny-pretrain-lvd1689m": (
-        "10d30274b4d445111e2d5bf75ac93bbd94db274b"
-    ),
-    "facebook/dinov3-vitl16-pretrain-lvd1689m": (
-        "ea8dc2863c51be0a264bab82070e3e8836b02d51"
-    ),
-    "facebook/dinov3-vitl16-pretrain-sat493m": (
-        "f692fa42da72c6797b67cd73494a168d1120d3ee"
-    ),
-    "facebook/dinov3-vits16-pretrain-lvd1689m": (
-        "114c1379950215c8b35dfcd4e90a5c251dde0d32"
-    ),
+    "facebook/dinov3-convnext-tiny-pretrain-lvd1689m": ("10d30274b4d445111e2d5bf75ac93bbd94db274b"),
+    "facebook/dinov3-vitl16-pretrain-lvd1689m": ("ea8dc2863c51be0a264bab82070e3e8836b02d51"),
+    "facebook/dinov3-vitl16-pretrain-sat493m": ("f692fa42da72c6797b67cd73494a168d1120d3ee"),
+    "facebook/dinov3-vits16-pretrain-lvd1689m": ("114c1379950215c8b35dfcd4e90a5c251dde0d32"),
     "facebook/sam-vit-large": "6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
 }
 

@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import sys
 from collections import defaultdict
@@ -34,7 +33,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
-from e_jepa_ttc.data.dinov3_relational_teacher_cache import DINOv3RelationalTeacherDataset  # noqa: E402
+from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    DINOv3RelationalTeacherDataset,  # noqa: E402
+)
 from e_jepa_ttc.data.object_event_v4 import (  # noqa: E402
     GarlTTCObjectEventV4Dataset,
     collate_object_event_v4,
@@ -44,7 +45,10 @@ from e_jepa_ttc.distillation.dinov3_relational import (  # noqa: E402
     local_relational_distillation_loss,
     local_relational_temporal_delta_loss,
 )
-from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig, causal_scale_ttc_loss  # noqa: E402
+from e_jepa_ttc.losses.causal_scale_ttc import (  # noqa: E402
+    CausalScaleTTCLossConfig,
+    causal_scale_ttc_loss,
+)
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig  # noqa: E402
 from e_jepa_ttc.models.local_transport import (  # noqa: E402
     local_correlation_match,
@@ -53,9 +57,15 @@ from e_jepa_ttc.models.local_transport import (  # noqa: E402
 from e_jepa_ttc.reproducibility import resolve_device, seed_everything  # noqa: E402
 from e_jepa_ttc.training.causal_scale_eap import _targets  # noqa: E402
 
-DEFAULT_CONFIG = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4d_dinov3_temporal_delta_v1.yaml"
-DEFAULT_CHECKPOINT = ROOT / "artifacts/runs/causal_scale_eap_screen_a4d_dinov3_temporal_delta_seed7/model_best.pt"
-DEFAULT_CONTRACT_CONFIG = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1.yaml"
+DEFAULT_CONFIG = ROOT / (
+    "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4d_dinov3_temporal_delta_v1.yaml"
+)
+DEFAULT_CHECKPOINT = (
+    ROOT / "artifacts/runs/causal_scale_eap_screen_a4d_dinov3_temporal_delta_seed7/model_best.pt"
+)
+DEFAULT_CONTRACT_CONFIG = (
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1.yaml"
+)
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -80,7 +90,9 @@ def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     os.replace(tmp, path)
 
 
-def _candidate_offsets(radius: int, device: torch.device, dtype: torch.dtype) -> tuple[torch.Tensor, torch.Tensor]:
+def _candidate_offsets(
+    radius: int, device: torch.device, dtype: torch.dtype
+) -> tuple[torch.Tensor, torch.Tensor]:
     offsets = torch.arange(-radius, radius + 1, device=device, dtype=dtype)
     dy, dx = torch.meshgrid(offsets, offsets, indexing="ij")
     return dx.reshape(-1), dy.reshape(-1)
@@ -96,7 +108,7 @@ def _teacher_relation_match(
     temperature: float = 0.02,
     minimum_relation_count: int = 3,
 ) -> dict[str, torch.Tensor]:
-    """Local p->q matching using the cached six-dimensional DINO relation vector."""
+    "Local p->q matching using the cached six-dimensional DINO relation vector."
     if relation_t1.shape != relation_t2.shape or relation_t1.ndim != 4:
         raise ValueError("teacher relation endpoints must share [B,K,H,W]")
     if valid_t1.shape != relation_t1.shape or valid_t2.shape != relation_t2.shape:
@@ -104,12 +116,15 @@ def _teacher_relation_match(
     batch, relation_count, height, width = relation_t1.shape
     kernel = 2 * radius + 1
     candidate_count = kernel * kernel
-    t2_patches = functional.unfold(
-        relation_t2.float(), kernel_size=kernel, padding=radius
-    ).reshape(batch, relation_count, candidate_count, height, width)
-    v2_patches = functional.unfold(
-        valid_t2.float(), kernel_size=kernel, padding=radius
-    ).reshape(batch, relation_count, candidate_count, height, width) > 0.5
+    t2_patches = functional.unfold(relation_t2.float(), kernel_size=kernel, padding=radius).reshape(
+        batch, relation_count, candidate_count, height, width
+    )
+    v2_patches = (
+        functional.unfold(valid_t2.float(), kernel_size=kernel, padding=radius).reshape(
+            batch, relation_count, candidate_count, height, width
+        )
+        > 0.5
+    )
     common = valid_t1[:, :, None].bool() & v2_patches
     counts = common.sum(dim=1)
     error = ((t2_patches - relation_t1.float()[:, :, None]).abs() * common.float()).sum(dim=1)
@@ -121,7 +136,9 @@ def _teacher_relation_match(
     top2 = masked_error.topk(k=2, dim=1, largest=False).values
     margin = (top2[:, 1] - top2[:, 0]).clamp_min(0.0)
 
-    logits = (-masked_error / float(temperature)).masked_fill(~candidate_valid, torch.finfo(error.dtype).min)
+    logits = (-masked_error / float(temperature)).masked_fill(
+        ~candidate_valid, torch.finfo(error.dtype).min
+    )
     probability = torch.softmax(logits, dim=1) * candidate_valid.float()
     probability = probability / probability.sum(dim=1, keepdim=True).clamp_min(1.0e-8)
     dx_values, dy_values = _candidate_offsets(radius, error.device, error.dtype)
@@ -132,7 +149,9 @@ def _teacher_relation_match(
 
     fixed_common = valid_t1.bool() & valid_t2.bool()
     fixed_count = fixed_common.sum(dim=1)
-    fixed_error = ((relation_t2.float() - relation_t1.float()).abs() * fixed_common.float()).sum(dim=1)
+    fixed_error = ((relation_t2.float() - relation_t1.float()).abs() * fixed_common.float()).sum(
+        dim=1
+    )
     fixed_error = fixed_error / fixed_count.clamp_min(1).float()
     fixed_valid = fixed_count >= int(minimum_relation_count)
     local_valid = candidate_valid.any(dim=1)
@@ -147,7 +166,6 @@ def _teacher_relation_match(
         "entropy": entropy.clamp(0.0, 1.0),
         "best_index": best_index,
     }
-
 
 
 def _cycle_error_map(
@@ -175,10 +193,8 @@ def _cycle_error_map(
     grid_y, grid_x = torch.meshgrid(ys, xs, indexing="ij")
     sample_grid = torch.stack(
         (
-            grid_x[None].expand(batch, -1, -1)
-            + (2.0 / float(max(width - 1, 1))) * dx,
-            grid_y[None].expand(batch, -1, -1)
-            + (2.0 / float(max(height - 1, 1))) * dy,
+            grid_x[None].expand(batch, -1, -1) + (2.0 / float(max(width - 1, 1))) * dx,
+            grid_y[None].expand(batch, -1, -1) + (2.0 / float(max(height - 1, 1))) * dy,
         ),
         dim=-1,
     )
@@ -190,21 +206,29 @@ def _cycle_error_map(
         padding_mode="zeros",
         align_corners=True,
     )
-    reverse_valid = functional.grid_sample(
-        reverse["local_valid"][:, None].float(),
-        sample_grid,
-        mode="nearest",
-        padding_mode="zeros",
-        align_corners=True,
-    )[:, 0] > 0.5
+    reverse_valid = (
+        functional.grid_sample(
+            reverse["local_valid"][:, None].float(),
+            sample_grid,
+            mode="nearest",
+            padding_mode="zeros",
+            align_corners=True,
+        )[:, 0]
+        > 0.5
+    )
     valid = forward["local_valid"] & reverse_valid
     cycle = torch.sqrt(
         (dx + sampled[:, 0]).square() + (dy + sampled[:, 1]).square() + 1.0e-12
     ) / float(max(radius, 1))
     return cycle, valid
 
-def _feature_bbox_mask(boxes: torch.Tensor, source_h: int, source_w: int, feat_h: int, feat_w: int) -> torch.Tensor:
-    scale = boxes.new_tensor([feat_w / source_w, feat_h / source_h, feat_w / source_w, feat_h / source_h])
+
+def _feature_bbox_mask(
+    boxes: torch.Tensor, source_h: int, source_w: int, feat_h: int, feat_w: int
+) -> torch.Tensor:
+    scale = boxes.new_tensor(
+        [feat_w / source_w, feat_h / source_h, feat_w / source_w, feat_h / source_h]
+    )
     scaled = boxes * scale
     masks, valid = weak_box_masks(scaled[:, None], height=feat_h, width=feat_w)
     return masks[:, 0, 0].bool() & valid[:, 0, None, None]
@@ -220,7 +244,9 @@ def _median(values: torch.Tensor, mask: torch.Tensor) -> float:
     return float(selected.median().item()) if selected.numel() else float("nan")
 
 
-def _grad_vector(loss: torch.Tensor, named_parameters: list[tuple[str, torch.nn.Parameter]]) -> torch.Tensor:
+def _grad_vector(
+    loss: torch.Tensor, named_parameters: list[tuple[str, torch.nn.Parameter]]
+) -> torch.Tensor:
     grads = torch.autograd.grad(
         loss,
         [p for _, p in named_parameters],
@@ -253,8 +279,12 @@ def _loss_groups(
     dense = output.endpoint_dense_features[:, 1:3]
     if batch.dinov3_relation_targets is None or batch.dinov3_relation_valid is None:
         raise RuntimeError("preflight requires train-only DINO relation targets")
-    a4_raw = local_relational_distillation_loss(dense, batch.dinov3_relation_targets, batch.dinov3_relation_valid)
-    a4d_raw = local_relational_temporal_delta_loss(dense, batch.dinov3_relation_targets, batch.dinov3_relation_valid)
+    a4_raw = local_relational_distillation_loss(
+        dense, batch.dinov3_relation_targets, batch.dinov3_relation_valid
+    )
+    a4d_raw = local_relational_temporal_delta_loss(
+        dense, batch.dinov3_relation_targets, batch.dinov3_relation_valid
+    )
     causal = causal_scale_ttc_loss(
         output,
         target_ttc_seconds=batch.target_ttc_s,
@@ -307,9 +337,17 @@ def run(
     data = raw.get("data")
     training = raw.get("training")
     loss_raw = raw.get("loss")
-    if not isinstance(data, dict) or not isinstance(training, dict) or not isinstance(loss_raw, dict):
+    if (
+        not isinstance(data, dict)
+        or not isinstance(training, dict)
+        or not isinstance(loss_raw, dict)
+    ):
         raise ValueError("A4D config lacks data/training/loss mappings")
-    if data.get("official_test_opened") is not False or data.get("codabench_opened") is not False or data.get("evttc_test_opened") is not False:
+    if (
+        data.get("official_test_opened") is not False
+        or data.get("codabench_opened") is not False
+        or data.get("evttc_test_opened") is not False
+    ):
         raise ValueError("preflight refuses any config that authorizes private/test access")
     if training.get("representation_supervision") != "dinov3_local_relational_temporal_delta":
         raise ValueError("preflight source must be frozen A4D")
@@ -330,10 +368,20 @@ def run(
     )
     sample_count = min(int(samples), len(dataset))
     subset = Subset(dataset, list(range(sample_count)))
-    loader = DataLoader(subset, batch_size=batch_size, shuffle=False, num_workers=0, collate_fn=collate_object_event_v4)
+    loader = DataLoader(
+        subset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=0,
+        collate_fn=collate_object_event_v4,
+    )
 
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
-    if not isinstance(checkpoint, dict) or "model_state_dict" not in checkpoint or "model_config" not in checkpoint:
+    if (
+        not isinstance(checkpoint, dict)
+        or "model_state_dict" not in checkpoint
+        or "model_config" not in checkpoint
+    ):
         raise ValueError("checkpoint is not causal-scale model_best.pt")
     model_cfg_raw = dict(checkpoint["model_config"])
     if model_cfg_raw.get("transport_enabled", False):
@@ -349,11 +397,13 @@ def run(
     radius_rows: dict[int, list[dict[str, float]]] = defaultdict(list)
     sample_rows: list[dict[str, Any]] = []
     gradient_rows: list[dict[str, float]] = []
-    encoder_params = [(n, p) for n, p in model.named_parameters() if n.startswith("encoder.") and p.requires_grad]
+    encoder_params = [
+        (n, p) for n, p in model.named_parameters() if n.startswith("encoder.") and p.requires_grad
+    ]
 
     for batch_index, host_batch in enumerate(loader):
         batch = host_batch.to(device)
-        delta = batch.delta_t_s[:, None].expand(-1, batch.events.shape[1] - 1)
+        _delta = batch.delta_t_s[:, None].expand(-1, batch.events.shape[1] - 1)
         with torch.enable_grad():
             groups, output = _loss_groups(model, batch, loss_config, endpoint_weight, delta_weight)
             if batch_index < gradient_batches:
@@ -397,15 +447,19 @@ def run(
         )
 
         for radius in radii:
-            tm = _teacher_relation_match(relation_t1, relation_t2, valid_t1, valid_t2, radius=radius)
+            tm = _teacher_relation_match(
+                relation_t1, relation_t2, valid_t1, valid_t2, radius=radius
+            )
             tm_reverse = _teacher_relation_match(
                 relation_t2, relation_t1, valid_t2, valid_t1, radius=radius
             )
-            teacher_cycle, teacher_cycle_valid = _cycle_error_map(
-                tm, tm_reverse, radius=radius
+            teacher_cycle, teacher_cycle_valid = _cycle_error_map(tm, tm_reverse, radius=radius)
+            student_forward = local_correlation_match(
+                student_t1, student_t2, radius=radius, temperature=0.07
             )
-            student_forward = local_correlation_match(student_t1, student_t2, radius=radius, temperature=0.07)
-            student_reverse = local_correlation_match(student_t2, student_t1, radius=radius, temperature=0.07)
+            student_reverse = local_correlation_match(
+                student_t2, student_t1, radius=radius, temperature=0.07
+            )
             student_summary = transport_physical_features(
                 student_forward,
                 student_reverse,
@@ -421,7 +475,9 @@ def run(
             best_fg = _mean(tm["best_error"], fg)
             fixed_bg = _mean(tm["fixed_error"], bg)
             best_bg = _mean(tm["best_error"], bg)
-            reduction_global = (fixed_global - best_global) / fixed_global if fixed_global > 0 else float("nan")
+            reduction_global = (
+                (fixed_global - best_global) / fixed_global if fixed_global > 0 else float("nan")
+            )
             reduction_fg = (fixed_fg - best_fg) / fixed_fg if fixed_fg > 0 else float("nan")
             reduction_bg = (fixed_bg - best_bg) / fixed_bg if fixed_bg > 0 else float("nan")
             teacher_flow_mag = torch.sqrt(tm["dx"].square() + tm["dy"].square())
@@ -440,7 +496,9 @@ def run(
                 "teacher_margin": _mean(tm["margin"], teacher_valid_pos),
                 "teacher_entropy": _mean(tm["entropy"], teacher_valid_pos),
                 "teacher_displacement": _mean(teacher_flow_mag, teacher_valid_pos),
-                "teacher_cycle_error": _mean(teacher_cycle, teacher_valid_pos & teacher_cycle_valid),
+                "teacher_cycle_error": _mean(
+                    teacher_cycle, teacher_valid_pos & teacher_cycle_valid
+                ),
                 "teacher_fg_cycle_error": _mean(teacher_cycle, fg & teacher_cycle_valid),
                 "teacher_bg_cycle_error": _mean(teacher_cycle, bg & teacher_cycle_valid),
                 "student_margin": _mean(student_forward.confidence_margin, student_forward.valid),
@@ -470,13 +528,24 @@ def run(
                             teacher_cycle[local_index],
                             valid_row & teacher_cycle_valid[local_index],
                         ),
-                        "student_displacement": _mean(student_flow_mag[local_index], student_forward.valid[local_index]),
-                        "student_entropy": _mean(student_forward.entropy[local_index], student_forward.valid[local_index]),
-                        "student_confidence_margin": _mean(student_forward.confidence_margin[local_index], student_forward.valid[local_index]),
+                        "student_displacement": _mean(
+                            student_flow_mag[local_index], student_forward.valid[local_index]
+                        ),
+                        "student_entropy": _mean(
+                            student_forward.entropy[local_index], student_forward.valid[local_index]
+                        ),
+                        "student_confidence_margin": _mean(
+                            student_forward.confidence_margin[local_index],
+                            student_forward.valid[local_index],
+                        ),
                         "student_divergence_y": float(student_summary[local_index, 3].item()),
-                        "student_divergence_isotropic": float(student_summary[local_index, 4].item()),
+                        "student_divergence_isotropic": float(
+                            student_summary[local_index, 4].item()
+                        ),
                         "student_fg_divergence_y": float(student_summary[local_index, 12].item()),
-                        "student_fg_divergence_isotropic": float(student_summary[local_index, 13].item()),
+                        "student_fg_divergence_isotropic": float(
+                            student_summary[local_index, 13].item()
+                        ),
                     }
                 )
 
@@ -507,18 +576,29 @@ def run(
     if list(preflight_contract.get("radii", [])) != list(radii):
         raise ValueError("runtime radii differ from preregistered A5 radii")
     thresholds = {
-        "teacher_r4_global_error_reduction_min": float(preflight_contract["teacher_r4_global_error_reduction_min"]),
-        "teacher_r4_foreground_error_reduction_min": float(preflight_contract["teacher_r4_foreground_error_reduction_min"]),
+        "teacher_r4_global_error_reduction_min": float(
+            preflight_contract["teacher_r4_global_error_reduction_min"]
+        ),
+        "teacher_r4_foreground_error_reduction_min": float(
+            preflight_contract["teacher_r4_foreground_error_reduction_min"]
+        ),
         "student_r4_entropy_max": float(preflight_contract["student_r4_entropy_max"]),
-        "student_r4_confidence_margin_min": float(preflight_contract["student_r4_confidence_margin_min"]),
+        "student_r4_confidence_margin_min": float(
+            preflight_contract["student_r4_confidence_margin_min"]
+        ),
     }
     checks = {
-        "teacher_global_transport": float(r4["teacher_error_reduction"]) >= thresholds["teacher_r4_global_error_reduction_min"],
-        "teacher_foreground_transport": float(r4["teacher_fg_error_reduction"]) >= thresholds["teacher_r4_foreground_error_reduction_min"],
+        "teacher_global_transport": float(r4["teacher_error_reduction"])
+        >= thresholds["teacher_r4_global_error_reduction_min"],
+        "teacher_foreground_transport": float(r4["teacher_fg_error_reduction"])
+        >= thresholds["teacher_r4_foreground_error_reduction_min"],
         "student_entropy": float(r4["student_entropy"]) <= thresholds["student_r4_entropy_max"],
-        "student_confidence": float(r4["student_margin"]) >= thresholds["student_r4_confidence_margin_min"],
+        "student_confidence": float(r4["student_margin"])
+        >= thresholds["student_r4_confidence_margin_min"],
     }
-    transport_supported = checks["teacher_global_transport"] and checks["teacher_foreground_transport"]
+    transport_supported = (
+        checks["teacher_global_transport"] and checks["teacher_foreground_transport"]
+    )
     student_match_supported = checks["student_entropy"] and checks["student_confidence"]
     authorized = transport_supported and student_match_supported
 
@@ -598,12 +678,17 @@ def main() -> int:
         gradient_batches=args.gradient_batches,
         radii=(1, 2, 4),
     )
-    print(json.dumps({
-        "a5_corr_authorized": payload["a5_corr_authorized"],
-        "transport_supported": payload["transport_supported"],
-        "student_match_supported": payload["student_match_supported"],
-        "r4": payload["teacher_transport"]["4"],
-    }, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "a5_corr_authorized": payload["a5_corr_authorized"],
+                "transport_supported": payload["transport_supported"],
+                "student_match_supported": payload["student_match_supported"],
+                "r4": payload["teacher_transport"]["4"],
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if payload["a5_corr_authorized"] else 3
 
 

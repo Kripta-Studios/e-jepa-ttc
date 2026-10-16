@@ -11,7 +11,9 @@ def _gaussian(radius: float, center_x: float = 0.0) -> torch.Tensor:
     return torch.exp(-((xx - center_x).square() + yy.square()) / (2.0 * radius**2))
 
 
-def _events(radii: tuple[float, float, float], centers: tuple[float, float, float] = (0, 0, 0)) -> torch.Tensor:
+def _events(
+    radii: tuple[float, float, float], centers: tuple[float, float, float] = (0, 0, 0)
+) -> torch.Tensor:
     events = torch.zeros(1, 3, 12, 64, 64)
     for step, (radius, center) in enumerate(zip(radii, centers, strict=True)):
         events[0, step, 0] = _gaussian(radius, center)
@@ -28,9 +30,7 @@ def test_geometry_proxy_has_correct_looming_sign() -> None:
 
 
 def test_translation_does_not_masquerade_as_radial_expansion() -> None:
-    translated = event_geometry_features(
-        _events((0.22, 0.22, 0.22), centers=(-0.25, 0.0, 0.25))
-    )
+    translated = event_geometry_features(_events((0.22, 0.22, 0.22), centers=(-0.25, 0.0, 0.25)))
     proxy = GEOMETRY_FEATURE_NAMES.index("geometry_proxy")
     motion = GEOMETRY_FEATURE_NAMES.index("centroid_motion_02")
     assert abs(float(translated[0, proxy])) < 1.0e-3

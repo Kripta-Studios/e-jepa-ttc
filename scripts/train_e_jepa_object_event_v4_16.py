@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Train Object Event TTC v4.16 causal temporal sign + magnitude heads."""
+"Train Object Event TTC v4.16 causal temporal sign + magnitude heads."
+
 from __future__ import annotations
 
 import argparse
@@ -18,8 +19,8 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 import torch
-from torch.nn import functional
 import yaml
+from torch.nn import functional
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -27,25 +28,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
-    _git_commit,
-    _json_safe,
-    _resolve_device,
-    _seed,
-    _sha256,
-)
-from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
-    IDENTITY_COLUMNS,
-    _align_ensemble,
-    _balanced_subset_indices,
-    _load_backbone,
-    _load_probe_config,
-    _per_sequence,
-    _read_ensemble,
-    _sample_weights,
-)
 from e_jepa_ttc.models.object_event_v4_12 import ObjectEventTTCV412  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_15 import (  # noqa: E402
     ObjectEventTTCV415,
@@ -65,10 +47,28 @@ from e_jepa_ttc.training.object_event_v4_16 import (  # noqa: E402
     causal_window_indices,
     gather_scalar_windows,
     gather_windows,
-    sign_statistics,
     temporal_dual_head_loss,
     uniform_epoch_indices,
     v416_screen_gates,
+)
+from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
+    _git_commit,
+    _json_safe,
+    _resolve_device,
+    _seed,
+    _sha256,
+)
+from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
+    IDENTITY_COLUMNS,
+    _align_ensemble,
+    _balanced_subset_indices,
+    _load_backbone,
+    _load_probe_config,
+    _per_sequence,
+    _read_ensemble,
+    _sample_weights,
 )
 
 
@@ -126,12 +126,8 @@ def _load_config(
     if not isinstance(raw, dict):
         raise ValueError("v4.16 config must be a mapping")
     model = _construct(ObjectEventV416Config, cast(Mapping[str, Any], raw.get("model", {})))
-    train = _construct(
-        ObjectEventV416TrainConfig, cast(Mapping[str, Any], raw.get("train", {}))
-    )
-    loss = _construct(
-        ObjectEventV416LossConfig, cast(Mapping[str, Any], raw.get("loss", {}))
-    )
+    train = _construct(ObjectEventV416TrainConfig, cast(Mapping[str, Any], raw.get("train", {})))
+    loss = _construct(ObjectEventV416LossConfig, cast(Mapping[str, Any], raw.get("loss", {})))
     gates_raw = raw.get("screen_gates", {})
     if not isinstance(gates_raw, dict) or not gates_raw:
         raise ValueError("screen_gates must be a non-empty mapping")
@@ -219,9 +215,7 @@ def _extract_features(
             descriptors.append(descriptor)
             magnitudes.append(expansion)
         stacked = torch.stack(descriptors, dim=0)
-        consensus = torch.cat(
-            (stacked.mean(dim=0), stacked.median(dim=0).values), dim=1
-        )
+        consensus = torch.cat((stacked.mean(dim=0), stacked.median(dim=0).values), dim=1)
         anchor = torch.stack(magnitudes, dim=0).median(dim=0).values
         descriptor_values.append(consensus.float().cpu())
         anchor_values.append(anchor.float().cpu())
@@ -275,9 +269,7 @@ def _train_head(
     seed: int,
     epoch_callback: Any | None = None,
 ) -> tuple[dict[str, torch.Tensor], list[dict[str, float]]]:
-    optimizer = torch.optim.AdamW(
-        model.parameters(), lr=learning_rate, weight_decay=weight_decay
-    )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     generator = torch.Generator().manual_seed(seed)
     history: list[dict[str, float]] = []
     for epoch in range(1, epochs + 1):
@@ -483,9 +475,7 @@ def run(
         cache_manifest, "validation", input_size=base_config.input_size
     )
     train_frame = _align_ensemble(train_split, _read_ensemble(ensemble_train_path))
-    validation_frame = _align_ensemble(
-        validation_split, _read_ensemble(ensemble_validation_path)
-    )
+    validation_frame = _align_ensemble(validation_split, _read_ensemble(ensemble_validation_path))
 
     train_descriptor, train_anchor = _extract_features(
         frozen,
@@ -501,9 +491,7 @@ def run(
     )
     train_windows = gather_windows(train_descriptor, train_window_index, train_window_mask_np)
     train_window_mask = torch.as_tensor(train_window_mask_np, dtype=torch.bool)
-    train_target = torch.as_tensor(
-        train_frame["target_expansion"].to_numpy(dtype=np.float32)
-    )
+    train_target = torch.as_tensor(train_frame["target_expansion"].to_numpy(dtype=np.float32))
     train_history_target = gather_scalar_windows(
         train_target, train_window_index, train_window_mask_np
     )
@@ -567,9 +555,7 @@ def run(
 
             history_row.update(
                 {
-                    "eval_balanced_sign_accuracy": float(
-                        metrics["balanced_sign_accuracy"]
-                    ),
+                    "eval_balanced_sign_accuracy": float(metrics["balanced_sign_accuracy"]),
                     "eval_negative_accuracy": float(metrics["negative_accuracy"]),
                     "eval_expansion_mae": float(metrics["expansion_mae"]),
                     "eval_pearson": float(metrics["pearson"]),
@@ -618,7 +604,9 @@ def run(
 
         passed = gate_state is not None
         if passed:
-            assert gate_metrics is not None and gate_diagnostics is not None and gate_gates is not None
+            assert (
+                gate_metrics is not None and gate_diagnostics is not None and gate_gates is not None
+            )
             selected_state = gate_state
             selected_epoch = gate_epoch
             metrics = gate_metrics
@@ -628,7 +616,9 @@ def run(
             selection_reason = "first_gate_passing_epoch"
         else:
             assert best_state is not None
-            assert best_metrics is not None and best_diagnostics is not None and best_gates is not None
+            assert (
+                best_metrics is not None and best_diagnostics is not None and best_gates is not None
+            )
             selected_state = best_state
             selected_epoch = best_epoch
             metrics = best_metrics
@@ -648,9 +638,7 @@ def run(
             },
             output_dir / checkpoint_name,
         )
-        pd.DataFrame(history).to_json(
-            output_dir / "history.jsonl", orient="records", lines=True
-        )
+        pd.DataFrame(history).to_json(output_dir / "history.jsonl", orient="records", lines=True)
         result: dict[str, Any] = {
             "artifact_type": "object_event_v4_16_temporal_dual_head",
             "status": "overfit_passed" if passed else "overfit_failed",
@@ -687,8 +675,8 @@ def run(
         seed=train_config.seed + 1,
         maximum_magnitude=model_config.maximum_magnitude,
     )
-    validation_window_index, validation_window_mask_np, validation_history_length = causal_window_indices(
-        validation_frame, window_size=model_config.window_size
+    validation_window_index, validation_window_mask_np, validation_history_length = (
+        causal_window_indices(validation_frame, window_size=model_config.window_size)
     )
     validation_windows = gather_windows(
         validation_descriptor, validation_window_index, validation_window_mask_np
@@ -751,7 +739,9 @@ def run(
         fold_rows.append(
             {
                 "fold": fold_index,
-                "held_out_sequences": sorted(held_frame["sequence_id"].astype(str).unique().tolist()),
+                "held_out_sequences": sorted(
+                    held_frame["sequence_id"].astype(str).unique().tolist()
+                ),
                 "epochs": train_config.fold_epochs,
                 "final_loss": fold_history[-1]["loss"],
                 "metrics": fold_metrics,
@@ -876,12 +866,18 @@ def run(
         "sign_oddness_max_abs": float(validation_prediction["sign_oddness_max_abs"]),
         "magnitude_evenness_max_abs": float(validation_prediction["magnitude_evenness_max_abs"]),
         "mean_history_length": float(np.mean(validation_history_length)),
-        "full_history_fraction": float(np.mean(validation_history_length >= model_config.window_size)),
+        "full_history_fraction": float(
+            np.mean(validation_history_length >= model_config.window_size)
+        ),
         "mean_sign_temporal_weights": validation_prediction["mean_sign_temporal_weights"],
         "mean_magnitude_temporal_weights": validation_prediction["mean_magnitude_temporal_weights"],
         "mean_anchor_magnitude": float(np.mean(validation_anchor.numpy())),
-        "mean_predicted_magnitude": float(np.mean(cast(np.ndarray, validation_prediction["magnitude"]))),
-        "train_true_negative_rate": float(np.mean(train_frame["target_expansion"].to_numpy(dtype=np.float64) < 0.0)),
+        "mean_predicted_magnitude": float(
+            np.mean(cast(np.ndarray, validation_prediction["magnitude"]))
+        ),
+        "train_true_negative_rate": float(
+            np.mean(train_frame["target_expansion"].to_numpy(dtype=np.float64) < 0.0)
+        ),
         "oof_predicted_negative_rate": float(np.mean(oof_probability >= 0.5)),
         "validation_true_negative_rate": float(np.mean(target_validation < 0.0)),
         "validation_predicted_negative_rate": float(np.mean(temporal_probability >= 0.5)),
@@ -903,27 +899,41 @@ def run(
     )
     passed = all(gates.values())
 
-    validation_output = validation_frame.loc[:, list(IDENTITY_COLUMNS) + [
-        "delta_t_s",
-        "target_ttc_s",
-        "target_expansion",
-    ]].copy()
+    validation_output = validation_frame.loc[
+        :,
+        list(IDENTITY_COLUMNS)
+        + [
+            "delta_t_s",
+            "target_ttc_s",
+            "target_expansion",
+        ],
+    ].copy()
     validation_output["history_length"] = validation_history_length
     validation_output["baseline_prediction_expansion"] = baseline_prediction
     validation_output["v48_anchor_magnitude"] = validation_anchor.numpy()
-    validation_output["negative_probability"] = cast(np.ndarray, validation_prediction["probability"])
+    validation_output["negative_probability"] = cast(
+        np.ndarray, validation_prediction["probability"]
+    )
     validation_output["predicted_magnitude"] = cast(np.ndarray, validation_prediction["magnitude"])
     validation_output["magnitude_log_ratio"] = cast(np.ndarray, validation_prediction["log_ratio"])
     validation_output["prediction_expansion"] = prediction
-    validation_output["zero_events_prediction_expansion"] = cast(np.ndarray, zero_result["prediction"])
-    validation_output["shuffled_prediction_expansion"] = cast(np.ndarray, shuffled_result["prediction"])
+    validation_output["zero_events_prediction_expansion"] = cast(
+        np.ndarray, zero_result["prediction"]
+    )
+    validation_output["shuffled_prediction_expansion"] = cast(
+        np.ndarray, shuffled_result["prediction"]
+    )
     validation_output.to_csv(output_dir / "validation_predictions.csv", index=False)
     per_sequence.to_csv(output_dir / "validation_per_sequence.csv", index=False)
 
-    oof_output = train_frame.loc[:, list(IDENTITY_COLUMNS) + [
-        "target_expansion",
-        "fused_prediction_expansion",
-    ]].copy()
+    oof_output = train_frame.loc[
+        :,
+        list(IDENTITY_COLUMNS)
+        + [
+            "target_expansion",
+            "fused_prediction_expansion",
+        ],
+    ].copy()
     oof_output["history_length"] = train_history_length
     oof_output["oof_negative_probability"] = oof_probability
     oof_output["oof_prediction_expansion"] = oof_prediction
@@ -1022,7 +1032,9 @@ def main() -> int:
     parser.add_argument(
         "--v412-config",
         type=Path,
-        default=Path("configs/experiment/e_jepa_garl_object_event_directional_sign_probe_v4_12.yaml"),
+        default=Path(
+            "configs/experiment/e_jepa_garl_object_event_directional_sign_probe_v4_12.yaml"
+        ),
     )
     parser.add_argument(
         "--config",

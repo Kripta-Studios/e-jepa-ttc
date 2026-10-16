@@ -1,4 +1,5 @@
 """Oracle box-pseudoflow target audit helpers for Object Event TTC v4.21."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -19,7 +20,13 @@ class ObjectEventV421AuditConfig:
             raise ValueError("epsilon must be positive")
 
 
-def box_scale_proxies(boxes_xyxy: torch.Tensor, *, first_index: int = 1, second_index: int = 2, epsilon: float = 1.0e-6) -> dict[str, np.ndarray]:
+def box_scale_proxies(
+    boxes_xyxy: torch.Tensor,
+    *,
+    first_index: int = 1,
+    second_index: int = 2,
+    epsilon: float = 1.0e-6,
+) -> dict[str, np.ndarray]:
     """Return train/eval-only geometric proxies; boxes are never forward features."""
     if boxes_xyxy.ndim != 3 or boxes_xyxy.shape[-1] != 4:
         raise ValueError("boxes_xyxy must be [B,T,4]")

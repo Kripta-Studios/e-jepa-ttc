@@ -31,11 +31,11 @@ from torch.nn import functional
 # ---------------------------------------------------------------------------
 
 A4_RELATION_OFFSETS: tuple[tuple[int, int], ...] = (
-    (0, 1),   # horizontal 1
-    (1, 0),   # vertical 1
-    (0, 2),   # horizontal 2
-    (2, 0),   # vertical 2
-    (1, 1),   # diagonal ↘
+    (0, 1),  # horizontal 1
+    (1, 0),  # vertical 1
+    (0, 2),  # horizontal 2
+    (2, 0),  # vertical 2
+    (1, 1),  # diagonal ↘
     (1, -1),  # diagonal ↙
 )
 
@@ -43,6 +43,7 @@ A4_RELATION_OFFSETS: tuple[tuple[int, int], ...] = (
 # ---------------------------------------------------------------------------
 # Output container
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class LocalRelationMaps:
@@ -59,6 +60,7 @@ class LocalRelationMaps:
 # ---------------------------------------------------------------------------
 # Relation map computation
 # ---------------------------------------------------------------------------
+
 
 def local_cosine_relation_maps(
     features: torch.Tensor,
@@ -135,6 +137,7 @@ def local_cosine_relation_maps(
 # Distillation loss
 # ---------------------------------------------------------------------------
 
+
 def local_relational_distillation_loss(
     student_features: torch.Tensor,
     teacher_relations: torch.Tensor,
@@ -189,7 +192,8 @@ def local_relational_distillation_loss(
 
     # Compute student relations online in float32
     student_relations = local_cosine_relation_maps(
-        student_features, offsets=offsets,
+        student_features,
+        offsets=offsets,
     )
 
     # Combined validity
@@ -260,7 +264,8 @@ def local_relational_temporal_delta_loss(
         )
 
     student_relations = local_cosine_relation_maps(
-        student_features, offsets=offsets,
+        student_features,
+        offsets=offsets,
     )
     endpoint_valid = teacher_valid.bool() & student_relations.valid
     pair_valid = endpoint_valid[:, 0] & endpoint_valid[:, 1]
@@ -273,15 +278,17 @@ def local_relational_temporal_delta_loss(
     student_t1 = student_relations.values[:, 0]
     student_t2 = student_relations.values[:, 1]
 
-    if not torch.isfinite(teacher_t1[pair_valid]).all() or not torch.isfinite(
-        teacher_t2[pair_valid]
-    ).all():
+    if (
+        not torch.isfinite(teacher_t1[pair_valid]).all()
+        or not torch.isfinite(teacher_t2[pair_valid]).all()
+    ):
         raise ValueError(
             "teacher relation values contain non-finite entries in temporal valid region"
         )
-    if not torch.isfinite(student_t1[pair_valid]).all() or not torch.isfinite(
-        student_t2[pair_valid]
-    ).all():
+    if (
+        not torch.isfinite(student_t1[pair_valid]).all()
+        or not torch.isfinite(student_t2[pair_valid]).all()
+    ):
         raise ValueError(
             "student relation values contain non-finite entries in temporal valid region"
         )

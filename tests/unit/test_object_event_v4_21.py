@@ -12,10 +12,12 @@ from e_jepa_ttc.training.object_event_v4_21 import (
 
 
 def _boxes() -> torch.Tensor:
-    return torch.tensor([
-        [[10., 10., 30., 30.], [10., 10., 30., 30.], [8., 8., 32., 32.]],
-        [[10., 10., 30., 30.], [10., 10., 30., 30.], [12., 12., 28., 28.]],
-    ])
+    return torch.tensor(
+        [
+            [[10.0, 10.0, 30.0, 30.0], [10.0, 10.0, 30.0, 30.0], [8.0, 8.0, 32.0, 32.0]],
+            [[10.0, 10.0, 30.0, 30.0], [10.0, 10.0, 30.0, 30.0], [12.0, 12.0, 28.0, 28.0]],
+        ]
+    )
 
 
 def test_box_scale_proxies_detect_expansion_and_contraction() -> None:

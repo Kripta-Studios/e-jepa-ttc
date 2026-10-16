@@ -38,9 +38,7 @@ class _NonScalarModule(nn.Module):
 
 def test_scalar_safe_hash_matches_original_for_every_nonscalar_dtype() -> None:
     module = _NonScalarModule()
-    assert engine.scalar_safe_module_tensor_sha256(module) == training._module_tensor_sha256(
-        module
-    )
+    assert engine.scalar_safe_module_tensor_sha256(module) == training._module_tensor_sha256(module)
 
 
 def test_scalar_safe_hash_covers_real_checkpoint_full_model_on_cpu() -> None:
@@ -52,12 +50,8 @@ def test_scalar_safe_hash_covers_real_checkpoint_full_model_on_cpu() -> None:
     ]
     before = {path: digest(path) for path in protected}
     protocol = read(output / "TRAINING_PROTOCOL.json")
-    checkpoint = torch.load(
-        protected[0], map_location="cpu", weights_only=False
-    )
-    model = CausalScaleTTC(
-        CausalScaleTTCConfig(**protocol["producers"]["a5"]["model_config"])
-    )
+    checkpoint = torch.load(protected[0], map_location="cpu", weights_only=False)
+    model = CausalScaleTTC(CausalScaleTTCConfig(**protocol["producers"]["a5"]["model_config"]))
     model.load_state_dict(checkpoint["model_state_dict"], strict=True)
     state = model.state_dict()
     assert len(state) > 59
@@ -136,6 +130,4 @@ def test_freeze_binds_graph_freeze_and_qa(monkeypatch: pytest.MonkeyPatch, tmp_p
     scalar_safe_graph_freeze.run(output)
     frozen = read(output / "SCALAR_SAFE_GRAPH_FREEZE.json")
     assert frozen["additional_optimizer_updates"] == 0
-    assert frozen["graph_replay_freeze_sha256"] == digest(
-        output / "GRAPH_REPLAY_FREEZE.json"
-    )
+    assert frozen["graph_replay_freeze_sha256"] == digest(output / "GRAPH_REPLAY_FREEZE.json")

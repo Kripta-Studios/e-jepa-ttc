@@ -92,6 +92,7 @@ class _AtomicOutput(AbstractContextManager[Path]):
         os.replace(self.staging, self.target)
         return None
 
+
 def _model_config(path: Path) -> CausalScaleTTCConfig:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
@@ -172,9 +173,7 @@ def _dataset_identities(
 ) -> dict[str, str] | None:
     if configs is None:
         return None
-    return {
-        name: synthetic_scale_config_identity(config) for name, config in configs.items()
-    }
+    return {name: synthetic_scale_config_identity(config) for name, config in configs.items()}
 
 
 def _validate_protocol(raw: dict[str, Any]) -> dict[str, float]:
@@ -250,9 +249,7 @@ def run(
     validation_configs = _dataset_configs(raw, "validation")
     train_seeds = {config.seed for config in train_configs.values()}
     validation_seeds = {config.seed for config in validation_configs.values()}
-    if len(train_seeds) != len(train_configs) or len(validation_seeds) != len(
-        validation_configs
-    ):
+    if len(train_seeds) != len(train_configs) or len(validation_seeds) != len(validation_configs):
         raise ValueError("synthetic groups within a split must use unique seeds")
     if train_seeds & validation_seeds:
         raise ValueError("train and validation synthetic seed groups must differ")

@@ -51,11 +51,13 @@ def test_anchor_is_fixed_exactly_one():
 
 
 def test_track_metrics_detect_worst_negative_track():
-    frame = pd.DataFrame({
-        "sequence_id": ["s"] * 16,
-        "track_id": ["good"] * 8 + ["bad"] * 8,
-        "target_expansion": np.array([-1.0] * 8 + [-1.0] * 8),
-    })
+    frame = pd.DataFrame(
+        {
+            "sequence_id": ["s"] * 16,
+            "track_id": ["good"] * 8 + ["bad"] * 8,
+            "target_expansion": np.array([-1.0] * 8 + [-1.0] * 8),
+        }
+    )
     prediction = np.array([-1.0] * 8 + [1.0] * 8)
     metrics, per_track = track_metrics(
         frame,

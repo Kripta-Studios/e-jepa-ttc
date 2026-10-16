@@ -42,9 +42,7 @@ def materialize_manifest(baseline: Path, full: Path) -> dict[str, object]:
                 os.link(temporary, destination)
             except FileExistsError as error:
                 if not destination.is_file() or digest(destination) != expected:
-                    raise ValueError(
-                        f"Concurrent full manifest differs: {destination}"
-                    ) from error
+                    raise ValueError(f"Concurrent full manifest differs: {destination}") from error
         finally:
             if temporary is not None and temporary.exists():
                 temporary.unlink()

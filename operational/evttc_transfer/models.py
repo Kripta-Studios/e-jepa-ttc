@@ -97,9 +97,7 @@ class FrozenModels:
         result: dict[str, nn.Module] = {}
         bindings: dict[str, Any] = {"protocol_sha256": digest(protocol_path)}
         for arm, expected in (("a5", 49_932), ("c2f", 49_932), ("pair", 6_840)):
-            checkpoint, receipt = verified_endpoint(
-                self.campaign, f"{arm}_seed7", expected
-            )
+            checkpoint, receipt = verified_endpoint(self.campaign, f"{arm}_seed7", expected)
             payload = _complete_payload(checkpoint, expected)
             if arm == "pair":
                 dropout = float(payload["contract"]["model_config"]["dropout"])
@@ -110,9 +108,7 @@ class FrozenModels:
                     raise ValueError(f"{arm} checkpoint model configuration changed")
                 model = CausalScaleTTC(CausalScaleTTCConfig(**config))
             model.load_state_dict(payload["model_state_dict"], strict=True)
-            result[arm.upper()] = (
-                model.float().eval().requires_grad_(False).to(self.device)
-            )
+            result[arm.upper()] = model.float().eval().requires_grad_(False).to(self.device)
             bindings[arm] = {
                 "checkpoint_sha256": receipt["sha256"],
                 "committed_updates": receipt["committed_updates"],
@@ -128,9 +124,7 @@ class FrozenModels:
         result: dict[int, nn.Module] = {}
         bindings: dict[str, Any] = {}
         for seed in _H8_SEEDS:
-            checkpoint, receipt = verified_endpoint(
-                self.campaign, f"h8_seed{seed}", 2_500
-            )
+            checkpoint, receipt = verified_endpoint(self.campaign, f"h8_seed{seed}", 2_500)
             payload = _complete_payload(checkpoint, 2_500)
             contract = payload["contract"]
             if contract["fit"] != "H8" or contract["seed"] != seed:

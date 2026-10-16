@@ -13,13 +13,15 @@ from scripts.aggregate_object_event_v4_3_multiseed import (
 def _frame() -> pd.DataFrame:
     target = np.asarray([-0.04, -0.02, 0.01, 0.03, -0.03, 0.02], dtype=np.float64)
     prediction = np.asarray([-0.03, -0.01, 0.015, 0.025, -0.02, 0.018], dtype=np.float64)
-    return pd.DataFrame({
-        "sequence_id": ["a", "a", "a", "b", "b", "b"],
-        "track_id": ["a1", "a1", "a2", "b1", "b1", "b2"],
-        "delta_t_s": np.full(6, 0.1),
-        "target_expansion": target,
-        "ensemble_expansion": prediction,
-    })
+    return pd.DataFrame(
+        {
+            "sequence_id": ["a", "a", "a", "b", "b", "b"],
+            "track_id": ["a1", "a1", "a2", "b1", "b1", "b2"],
+            "delta_t_s": np.full(6, 0.1),
+            "target_expansion": target,
+            "ensemble_expansion": prediction,
+        }
+    )
 
 
 def test_v43_metrics_are_finite_and_sign_aware() -> None:

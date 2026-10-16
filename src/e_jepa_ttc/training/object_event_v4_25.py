@@ -1,9 +1,10 @@
 """Constrained train-only readout utilities for object-event v4.25."""
+
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from itertools import combinations
-from typing import Iterable
 
 import numpy as np
 
@@ -30,7 +31,9 @@ def pearson(x: np.ndarray, y: np.ndarray) -> float:
     return float(np.corrcoef(x, y)[0, 1])
 
 
-def fit_geometry_calibration(score: np.ndarray, target: np.ndarray, *, epsilon: float = 1e-12) -> GeometryCalibration:
+def fit_geometry_calibration(
+    score: np.ndarray, target: np.ndarray, *, epsilon: float = 1e-12
+) -> GeometryCalibration:
     score = np.asarray(score, dtype=np.float64)
     target = np.asarray(target, dtype=np.float64)
     p = pearson(score, target)
@@ -45,7 +48,9 @@ def apply_geometry_calibration(score: np.ndarray, calibration: GeometryCalibrati
     return calibration.orientation * calibration.slope * np.asarray(score, dtype=np.float64)
 
 
-def _ridge_objective(x: np.ndarray, y: np.ndarray, coefficients: np.ndarray, prior: np.ndarray, ridge: float) -> float:
+def _ridge_objective(
+    x: np.ndarray, y: np.ndarray, coefficients: np.ndarray, prior: np.ndarray, ridge: float
+) -> float:
     residual = x @ coefficients - y
     return float(np.mean(residual * residual) + ridge * np.sum((coefficients - prior) ** 2))
 

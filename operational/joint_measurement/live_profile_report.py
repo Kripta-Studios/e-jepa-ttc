@@ -53,7 +53,10 @@ def summarize(directory: Path) -> dict:
             ):
                 category = "input_batch_wait_or_submit"
             elif "step_backward" in names or any(
-                e["name"] == "backward" and e.get("file", "").endswith("phase_transport_loss.py")
+                e["name"] == "backward"
+                and e.get("file", "").endswith(
+                    ("phase_transport_loss.py", "captured_phase_loss.py")
+                )
                 for e in entries
             ):
                 category = "forward_loss_backward_including_host_sync"

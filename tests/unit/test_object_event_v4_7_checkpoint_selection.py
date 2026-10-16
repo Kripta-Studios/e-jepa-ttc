@@ -31,12 +31,8 @@ def _metrics(*, mask_iou: float, minimum_sequence_pearson: float = -1.0) -> dict
 def test_overfit_selection_ignores_sparse_per_sequence_terms() -> None:
     a = _metrics(mask_iou=0.81, minimum_sequence_pearson=-1.0)
     b = _metrics(mask_iou=0.81, minimum_sequence_pearson=0.9)
-    assert _selection_objective(a, mode="overfit") == _selection_objective(
-        b, mode="overfit"
-    )
-    assert _selection_objective(a, mode="screen") > _selection_objective(
-        b, mode="screen"
-    )
+    assert _selection_objective(a, mode="overfit") == _selection_objective(b, mode="overfit")
+    assert _selection_objective(a, mode="screen") > _selection_objective(b, mode="screen")
 
 
 def test_epoch_gates_accept_gate_passing_overfit_checkpoint() -> None:

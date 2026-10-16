@@ -16,36 +16,20 @@ PROFILES = {
     "screen": {
         "split": ROOT / "data" / "splits" / "eap_pilot12_v1.json",
         "experiment": (
-            ROOT
-            / "configs"
-            / "experiment"
-            / "e_jepa_garl_object_expansion_screen_v2.yaml"
+            ROOT / "configs" / "experiment" / "e_jepa_garl_object_expansion_screen_v2.yaml"
         ),
         "cache": ROOT / "artifacts" / "cache" / "garl_object_lhr_screen_v2",
-        "output": (
-            ROOT
-            / "artifacts"
-            / "runs"
-            / "e_jepa_garl_object_expansion_screen_v2"
-        ),
+        "output": (ROOT / "artifacts" / "runs" / "e_jepa_garl_object_expansion_screen_v2"),
         "max_samples": 2048,
         "seeds": (7,),
     },
     "full": {
         "split": ROOT / "data" / "splits" / "eap_train40_v1.json",
         "experiment": (
-            ROOT
-            / "configs"
-            / "experiment"
-            / "e_jepa_garl_object_expansion_full_v2.yaml"
+            ROOT / "configs" / "experiment" / "e_jepa_garl_object_expansion_full_v2.yaml"
         ),
         "cache": ROOT / "artifacts" / "cache" / "garl_object_lhr_full_v2",
-        "output": (
-            ROOT
-            / "artifacts"
-            / "runs"
-            / "e_jepa_garl_object_expansion_full_v2"
-        ),
+        "output": (ROOT / "artifacts" / "runs" / "e_jepa_garl_object_expansion_full_v2"),
         "max_samples": None,
         "seeds": (7, 13, 23),
     },
@@ -93,13 +77,9 @@ def main() -> int:
     seeds = tuple(args.seeds or profile["seeds"])
     allowed_seeds = set(profile["seeds"])
     if args.profile == "full" and not set(seeds).issubset(allowed_seeds):
-        raise ValueError(
-            f"Full profile seeds must be a subset of {sorted(allowed_seeds)}"
-        )
+        raise ValueError(f"Full profile seeds must be a subset of {sorted(allowed_seeds)}")
     if args.profile == "full" and args.pretrained is not None and len(seeds) != 1:
-        raise ValueError(
-            "Full transfer requires one seed-matched SSL checkpoint per run"
-        )
+        raise ValueError("Full transfer requires one seed-matched SSL checkpoint per run")
 
     if "cache" in args.stages:
         if args.eap_root is None or args.garlttc_root is None:
@@ -134,9 +114,7 @@ def main() -> int:
     if "train" in args.stages:
         manifest = cache_dir / "manifest.json"
         if not args.dry_run and not manifest.is_file():
-            raise FileNotFoundError(
-                f"Missing cache manifest {manifest}; build the v2 cache first"
-            )
+            raise FileNotFoundError(f"Missing cache manifest {manifest}; build the v2 cache first")
         arm = "level-transfer" if args.pretrained is not None else "scratch"
         for seed in seeds:
             command = [

@@ -16,9 +16,8 @@ latent endpoint predictor, rather than being used only as initialization.
 
 from __future__ import annotations
 
-import math
-from copy import deepcopy
 from collections.abc import Mapping
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any
 
@@ -85,9 +84,7 @@ class ObjectSignedExpansionConfig:
         if min(integers) <= 0:
             raise ValueError("Signed-expansion dimensions must be positive")
         if self.motion_dim != OBSERVABLE_MOTION_DIM:
-            raise ValueError(
-                f"motion_dim must match the cache contract ({OBSERVABLE_MOTION_DIM})"
-            )
+            raise ValueError(f"motion_dim must match the cache contract ({OBSERVABLE_MOTION_DIM})")
         if not 0.0 <= self.dropout < 1.0:
             raise ValueError("dropout must lie in [0,1)")
         if not 0.0 < self.max_abs_expansion < 1.0:
@@ -153,9 +150,7 @@ def reverse_observable_motion(motion: torch.Tensor) -> torch.Tensor:
     """
 
     if motion.ndim != 2 or motion.shape[1] != OBSERVABLE_MOTION_DIM:
-        raise ValueError(
-            f"motion must have shape [B,{OBSERVABLE_MOTION_DIM}]"
-        )
+        raise ValueError(f"motion must have shape [B,{OBSERVABLE_MOTION_DIM}]")
     reversed_motion = motion.clone()
     reversed_motion[:, list(SIGNED_MOTION_INDICES)] *= -1.0
     return reversed_motion
@@ -224,10 +219,7 @@ def geometry_prior_from_motion(
     This uses only the same observed boxes already required to define the ROI.
     """
 
-    if (
-        observable_motion.ndim != 2
-        or observable_motion.shape[1] != OBSERVABLE_MOTION_DIM
-    ):
+    if observable_motion.ndim != 2 or observable_motion.shape[1] != OBSERVABLE_MOTION_DIM:
         raise ValueError("observable_motion has an invalid shape")
     if delta_t_s.shape != (observable_motion.shape[0],):
         raise ValueError("delta_t_s must have shape [B]")
@@ -388,9 +380,7 @@ class ObjectCentricSignedExpansionTTC(nn.Module):
         motion_embedding: torch.Tensor,
         dt_features: torch.Tensor,
     ) -> torch.Tensor:
-        residual = self.latent_predictor(
-            torch.cat((source, motion_embedding, dt_features), dim=-1)
-        )
+        residual = self.latent_predictor(torch.cat((source, motion_embedding, dt_features), dim=-1))
         return source + residual
 
     def _ordered_pair_score(
@@ -450,9 +440,7 @@ class ObjectCentricSignedExpansionTTC(nn.Module):
         with torch.no_grad():
             target_features = self.target_encoder.forward_features(events)
             target_endpoints, _, _ = self._activity_pool(target_features, events)
-        endpoints = self.activity_fusion(
-            torch.cat((query_endpoints, activity_endpoints), dim=-1)
-        )
+        endpoints = self.activity_fusion(torch.cat((query_endpoints, activity_endpoints), dim=-1))
         adapted = endpoints + self.endpoint_adapter(endpoints)
         dt_features = self._dt_features(delta_t_s)
 
@@ -484,12 +472,8 @@ class ObjectCentricSignedExpansionTTC(nn.Module):
         )
 
         first, second = adapted[:, 0], adapted[:, 1]
-        predicted_second = self._predict_endpoint(
-            first, motion_embedding, dt_features
-        )
-        predicted_first = self._predict_endpoint(
-            second, reverse_motion_embedding, dt_features
-        )
+        predicted_second = self._predict_endpoint(first, motion_embedding, dt_features)
+        predicted_first = self._predict_endpoint(second, reverse_motion_embedding, dt_features)
         forward_score, forward_pair = self._ordered_pair_score(
             first,
             second,
@@ -513,14 +497,10 @@ class ObjectCentricSignedExpansionTTC(nn.Module):
             log_rate_scale=self.config.box_log_rate_scale,
             max_abs_expansion=self.config.max_abs_expansion,
         )
-        normalized_prior = (
-            prior_expansion / self.config.max_abs_expansion
-        ).clamp(-0.999, 0.999)
+        normalized_prior = (prior_expansion / self.config.max_abs_expansion).clamp(-0.999, 0.999)
         prior_raw = torch.atanh(normalized_prior)
         learned_raw = antisymmetric_event_score + geometry_score
-        signed_expansion = self.config.max_abs_expansion * torch.tanh(
-            prior_raw + learned_raw
-        )
+        signed_expansion = self.config.max_abs_expansion * torch.tanh(prior_raw + learned_raw)
         learned_residual = signed_expansion - prior_expansion
         signed_inverse = signed_expansion / delta_t_s
         ttc = safe_ttc_from_expansion(

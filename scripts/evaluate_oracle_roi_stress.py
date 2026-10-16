@@ -1,3 +1,5 @@
+# ruff: noqa: E402
+# CLI entry point: add the checkout to sys.path before importing project modules.
 #!/usr/bin/env python
 """Stress an E-JEPA checkpoint against synthetic common-ROI mis-localization proxies.
 
@@ -5,11 +7,11 @@ This does NOT simulate a detector. It applies deterministic affine perturbations
 already-materialized event ROI and quantifies sensitivity. The report labels the test
 accordingly so it cannot be confused with an end-to-end localization benchmark.
 """
+
 from __future__ import annotations
 
 import argparse
 import json
-import math
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -17,15 +19,26 @@ from typing import Any
 
 import numpy as np
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as functional
 from torch.utils.data import DataLoader
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from e_jepa_ttc.artifacts.hashing import sign_artifact
-from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset, collate_object_event_v4
-from e_jepa_ttc.evaluation.garl_ttc_protocol import sequence_macro_signed_metrics, signed_garl_metrics
-from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
+from e_jepa_ttc.artifacts.hashing import (
+    sign_artifact,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
+from e_jepa_ttc.data.object_event_v4 import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    GarlTTCObjectEventV4Dataset,
+    collate_object_event_v4,
+)
+from e_jepa_ttc.evaluation.garl_ttc_protocol import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    sequence_macro_signed_metrics,
+    signed_garl_metrics,
+)
+from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    CausalScaleTTC,
+    CausalScaleTTCConfig,
+)
 
 
 def _affine(events: torch.Tensor, tx: float, ty: float, sx: float, sy: float) -> torch.Tensor:
@@ -38,8 +51,10 @@ def _affine(events: torch.Tensor, tx: float, ty: float, sx: float, sy: float) ->
     theta[:, 1, 1] = 1.0 / sy
     theta[:, 0, 2] = tx
     theta[:, 1, 2] = ty
-    grid = F.affine_grid(theta, flat.shape, align_corners=False)
-    out = F.grid_sample(flat, grid, mode="bilinear", padding_mode="zeros", align_corners=False)
+    grid = functional.affine_grid(theta, flat.shape, align_corners=False)
+    out = functional.grid_sample(
+        flat, grid, mode="bilinear", padding_mode="zeros", align_corners=False
+    )
     return out.reshape(b, t, c, h, w)
 
 
@@ -50,7 +65,9 @@ def _pearson(x: np.ndarray, y: np.ndarray) -> float:
     return float(np.corrcoef(x[valid], y[valid])[0, 1])
 
 
-def _evaluate(model: CausalScaleTTC, loader: DataLoader, device: torch.device, spec: dict[str, float]) -> dict[str, Any]:
+def _evaluate(
+    model: CausalScaleTTC, loader: DataLoader, device: torch.device, spec: dict[str, float]
+) -> dict[str, Any]:
     targets: list[torch.Tensor] = []
     preds: list[torch.Tensor] = []
     ratios: list[torch.Tensor] = []
@@ -90,9 +107,21 @@ def _evaluate(model: CausalScaleTTC, loader: DataLoader, device: torch.device, s
     }
 
 
-def run(checkpoint: Path, validation_manifest: Path, output: Path, device_name: str, batch_size: int, workers: int, prefetch: int) -> dict[str, Any]:
+def run(
+    checkpoint: Path,
+    validation_manifest: Path,
+    output: Path,
+    device_name: str,
+    batch_size: int,
+    workers: int,
+    prefetch: int,
+) -> dict[str, Any]:
     payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
-    if not isinstance(payload, dict) or "model_config" not in payload or "model_state_dict" not in payload:
+    if (
+        not isinstance(payload, dict)
+        or "model_config" not in payload
+        or "model_state_dict" not in payload
+    ):
         raise ValueError("Unsupported E-JEPA checkpoint payload")
     cfg_raw = dict(payload["model_config"])
     thresholds = cfg_raw.get("risk_thresholds_s")
@@ -130,8 +159,10 @@ def run(checkpoint: Path, validation_manifest: Path, output: Path, device_name: 
     }
     results = {name: _evaluate(model, loader, device, spec) for name, spec in specs.items()}
     base_mid = float(results["baseline"]["sequence_macro"]["sequence_macro_paper_MiD_overall"])
-    for name, metrics in results.items():
-        metrics["delta_sequence_macro_MiD_vs_baseline"] = float(metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"]) - base_mid
+    for _name, metrics in results.items():
+        metrics["delta_sequence_macro_MiD_vs_baseline"] = (
+            float(metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"]) - base_mid
+        )
     report: dict[str, Any] = {
         "artifact_type": "oracle_roi_affine_stress_v1",
         "created_at_utc": datetime.now(UTC).isoformat(),
@@ -142,7 +173,7 @@ def run(checkpoint: Path, validation_manifest: Path, output: Path, device_name: 
         "method_limitations": [
             "not a detector simulation",
             "does not remove the oracle-box dependency",
-            "measures sensitivity to deterministic spatial mis-localization proxies",
+            ("measures sensitivity to deterministic spatial mis-localization proxies"),
         ],
         "results": results,
         "claim_contract": {
@@ -168,7 +199,15 @@ def main() -> int:
     p.add_argument("--prefetch-factor", type=int, default=2)
     args = p.parse_args()
     try:
-        report = run(args.checkpoint.resolve(), args.validation_manifest.resolve(), args.output.resolve(), args.device, args.batch_size, args.num_workers, args.prefetch_factor)
+        report = run(
+            args.checkpoint.resolve(),
+            args.validation_manifest.resolve(),
+            args.output.resolve(),
+            args.device,
+            args.batch_size,
+            args.num_workers,
+            args.prefetch_factor,
+        )
     except Exception as exc:
         print(f"ROI stress failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1

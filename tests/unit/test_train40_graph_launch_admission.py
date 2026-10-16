@@ -28,9 +28,7 @@ def test_compile_uses_only_explicit_cudagraphs_backend() -> None:
     compiled, elapsed = _compile_forward(forward, compiler)
     assert compiled is forward
     assert elapsed >= 0.0
-    assert calls == [
-        (forward, {"backend": BACKEND, "dynamic": False, "fullgraph": False})
-    ]
+    assert calls == [(forward, {"backend": BACKEND, "dynamic": False, "fullgraph": False})]
 
 
 def test_dispatcher_compiles_only_b32_and_keeps_b8_eager() -> None:
@@ -58,12 +56,11 @@ def test_dispatcher_compiles_only_b32_and_keeps_b8_eager() -> None:
 
 def test_admission_source_has_no_optimizer_or_default_inductor() -> None:
     source = (
-        Path(__file__).parents[2]
-        / "operational/train40_system/graph_launch_admission.py"
+        Path(__file__).parents[2] / "operational/train40_system/graph_launch_admission.py"
     ).read_text(encoding="utf-8")
     assert "optimizer.step(" not in source
     assert 'BACKEND = "cudagraphs"' in source
-    assert 'backend=BACKEND' in source
+    assert "backend=BACKEND" in source
     assert 'backend="inductor"' not in source
     assert "relation_reuse_admission" not in source
 

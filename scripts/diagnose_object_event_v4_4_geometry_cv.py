@@ -15,10 +15,11 @@ import math
 import shutil
 import sys
 import traceback
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, fields
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -218,7 +219,9 @@ def _cv_score(metrics: Mapping[str, object]) -> float:
     expansion = cast(Mapping[str, object], metrics["expansion"])
     official = cast(Mapping[str, object], metrics["official_eap"])
     weighted_mid = official.get("weighted_mid")
-    mid = float(weighted_mid) if weighted_mid is not None else float(official["mid_mean_unweighted"])
+    mid = (
+        float(weighted_mid) if weighted_mid is not None else float(official["mid_mean_unweighted"])
+    )
     balanced = float(expansion["balanced_sign_accuracy"])
     negative = float(expansion["negative_accuracy"])
     # MiD is the principal objective.  Sign terms prevent a low global MiD from
@@ -356,15 +359,15 @@ def run(
     config, sota_references = _load_config(config_path)
     train_predictions = _load_ensemble(run_root, config.seeds, "train")
     validation_predictions = _load_ensemble(run_root, config.seeds, "validation")
-    train_split, train_manifest = _materialize(cache_manifest, "train", input_size=config.input_size)
+    train_split, train_manifest = _materialize(
+        cache_manifest, "train", input_size=config.input_size
+    )
     train_geometry = _extract_geometry(train_split, batch_size=config.geometry_batch_size)
     del train_split
     validation_split, validation_manifest = _materialize(
         cache_manifest, "validation", input_size=config.input_size
     )
-    validation_geometry = _extract_geometry(
-        validation_split, batch_size=config.geometry_batch_size
-    )
+    validation_geometry = _extract_geometry(validation_split, batch_size=config.geometry_batch_size)
     del validation_split
     train = _attach_geometry(train_predictions, train_geometry)
     validation = _attach_geometry(validation_predictions, validation_geometry)
@@ -430,8 +433,7 @@ def run(
         "hybrid_min_sequence_negative_accuracy": minimum_sequence_negative
         >= config.hybrid_min_sequence_negative_accuracy_gate,
         "hybrid_mae": float(hybrid_expansion["expansion_mae"])
-        <= float(neural_expansion["expansion_mae"])
-        + config.hybrid_expansion_mae_tolerance,
+        <= float(neural_expansion["expansion_mae"]) + config.hybrid_expansion_mae_tolerance,
         "hybrid_saturation": float(hybrid_expansion["ttc_saturation_rate"])
         <= config.hybrid_saturation_gate,
     }
@@ -446,7 +448,12 @@ def run(
         "geometry": _serialize_model(geometry_model, list(GEOMETRY_FEATURE_NAMES)),
         "hybrid_residual": _serialize_model(
             hybrid_model,
-            [*GEOMETRY_FEATURE_NAMES, "neural_ensemble", "abs_neural_ensemble", "neural_x_geometry"],
+            [
+                *GEOMETRY_FEATURE_NAMES,
+                "neural_ensemble",
+                "abs_neural_ensemble",
+                "neural_x_geometry",
+            ],
         ),
     }
     (output_dir / "calibrators.json").write_text(

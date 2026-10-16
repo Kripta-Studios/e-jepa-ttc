@@ -70,9 +70,7 @@ def _fixture(output: Path, *, shards: int = 16, size: int | None = None) -> None
         )
         for path, entries in ((input_path, input_entries), (teacher_path, teacher_entries)):
             stat = path.stat()
-            entries.append(
-                {"name": path.name, "bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
-            )
+            entries.append({"name": path.name, "bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns})
         rows.extend(
             {
                 "sequence_id": "sequence",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed preflight for v4.10 true-seed fixed-fusion replication."""
+"Fail-closed preflight for v4.10 true-seed fixed-fusion replication."
 
 from __future__ import annotations
 
@@ -15,11 +15,21 @@ import yaml
 
 REQUIRED_BASE = "488b433857090e525c447bf2974ac72639f25194"
 CRITICAL_V49_HASHES = {
-    "src/e_jepa_ttc/object_event_v4_9.py": "d753582ddb8b54a537034237466c6b332b0b39f47e40128d549b794d837821af",
-    "scripts/analyze_object_event_v4_9_fixed_fusion.py": "d7cfefc21c26d825ab5052a8e575a1c59a13ec2031eaae7da3d9c5f2adaeed7a",
-    "scripts/run_object_event_v4_9_fixed_fusion.ps1": "d3f5bde365140821929491bd21e31ee4a808eaa40d21163427196ca958cb3ecd",
-    "scripts/preflight_object_event_v4_9.py": "52eb3738c0ca0bdcb663365fd114573b99a88bf7fcb7559ae38cf528a743780e",
-    "configs/experiment/e_jepa_garl_object_event_fixed_fusion_v4_9.yaml": "b4f48abeec469cfa2940c4b188b143d2d6f0072b4271314ae96c954813501b21",
+    "src/e_jepa_ttc/object_event_v4_9.py": (
+        "d753582ddb8b54a537034237466c6b332b0b39f47e40128d549b794d837821af"
+    ),
+    ("scripts/analyze_object_event_v4_9_fixed_fusion.py"): (
+        "d7cfefc21c26d825ab5052a8e575a1c59a13ec2031eaae7da3d9c5f2adaeed7a"
+    ),
+    "scripts/run_object_event_v4_9_fixed_fusion.ps1": (
+        "d3f5bde365140821929491bd21e31ee4a808eaa40d21163427196ca958cb3ecd"
+    ),
+    "scripts/preflight_object_event_v4_9.py": (
+        "52eb3738c0ca0bdcb663365fd114573b99a88bf7fcb7559ae38cf528a743780e"
+    ),
+    ("configs/experiment/e_jepa_garl_object_event_fixed_fusion_v4_9.yaml"): (
+        "b4f48abeec469cfa2940c4b188b143d2d6f0072b4271314ae96c954813501b21"
+    ),
 }
 
 
@@ -73,22 +83,14 @@ def assess_v42_replication_baseline(payload: dict[str, Any]) -> dict[str, Any]:
 
     minimum_checks = {
         "pearson": _finite_float(event.get("pearson"), default=-math.inf) >= 0.50,
-        "balanced_sign": _finite_float(
-            event.get("balanced_sign_accuracy"), default=-math.inf
-        )
+        "balanced_sign": _finite_float(event.get("balanced_sign_accuracy"), default=-math.inf)
         >= 0.68,
         "negative_accuracy_above_chance": _finite_float(
             event.get("negative_accuracy"), default=-math.inf
         )
         >= 0.50,
-        "expansion_mae": _finite_float(
-            event.get("expansion_mae"), default=math.inf
-        )
-        <= 0.025,
-        "saturation": _finite_float(
-            event.get("ttc_saturation_rate"), default=math.inf
-        )
-        <= 0.10,
+        "expansion_mae": _finite_float(event.get("expansion_mae"), default=math.inf) <= 0.025,
+        "saturation": _finite_float(event.get("ttc_saturation_rate"), default=math.inf) <= 0.10,
         "all_sequences_positive": _finite_float(
             per_sequence.get("minimum_pearson"), default=-math.inf
         )
@@ -103,9 +105,7 @@ def assess_v42_replication_baseline(payload: dict[str, Any]) -> dict[str, Any]:
         >= 0.10,
     }
     marginal_exception = (
-        not screen_passed
-        and failed_gates == ["negative_accuracy"]
-        and all(minimum_checks.values())
+        not screen_passed and failed_gates == ["negative_accuracy"] and all(minimum_checks.values())
     )
     accepted = screen_passed or marginal_exception
     return {
@@ -125,12 +125,8 @@ def assess_v42_replication_baseline(payload: dict[str, Any]) -> dict[str, Any]:
             "balanced_sign_accuracy": _finite_float(
                 event.get("balanced_sign_accuracy"), default=-math.inf
             ),
-            "negative_accuracy": _finite_float(
-                event.get("negative_accuracy"), default=-math.inf
-            ),
-            "expansion_mae": _finite_float(
-                event.get("expansion_mae"), default=math.inf
-            ),
+            "negative_accuracy": _finite_float(event.get("negative_accuracy"), default=-math.inf),
+            "expansion_mae": _finite_float(event.get("expansion_mae"), default=math.inf),
             "ttc_saturation_rate": _finite_float(
                 event.get("ttc_saturation_rate"), default=math.inf
             ),
@@ -147,9 +143,12 @@ def main() -> int:
     args = parser.parse_args()
 
     head = _git("rev-parse", "HEAD")
-    ancestor = subprocess.run(
-        ["git", "merge-base", "--is-ancestor", REQUIRED_BASE, head], check=False
-    ).returncode == 0
+    ancestor = (
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", REQUIRED_BASE, head], check=False
+        ).returncode
+        == 0
+    )
     if not ancestor:
         raise RuntimeError(f"HEAD {head} does not descend from {REQUIRED_BASE}")
     actual_hashes: dict[str, str] = {}
@@ -174,7 +173,12 @@ def main() -> int:
         checkpoint = v42_dir / "eligible.pt"
         if not checkpoint.is_file():
             checkpoint = v42_dir / "best_observed.pt"
-        for path in (summary, checkpoint, v42_dir / "train_predictions.csv", v42_dir / "validation_predictions.csv"):
+        for path in (
+            summary,
+            checkpoint,
+            v42_dir / "train_predictions.csv",
+            v42_dir / "validation_predictions.csv",
+        ):
             if not path.is_file():
                 raise FileNotFoundError(path)
         payload = json.loads(summary.read_text(encoding="utf-8"))

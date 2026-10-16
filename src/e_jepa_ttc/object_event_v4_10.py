@@ -93,9 +93,9 @@ def align_seed_fusions(seed_frames: dict[int, pd.DataFrame], *, split_name: str)
         result[f"zero_seed_{seed}"] = frame["fused_zero_events_expansion"].to_numpy(
             dtype=np.float64
         )
-        result[f"shuffled_seed_{seed}"] = frame[
-            "fused_shuffled_mean_expansion"
-        ].to_numpy(dtype=np.float64)
+        result[f"shuffled_seed_{seed}"] = frame["fused_shuffled_mean_expansion"].to_numpy(
+            dtype=np.float64
+        )
     prediction_columns = [f"prediction_seed_{seed}" for seed in seeds]
     zero_columns = [f"zero_seed_{seed}" for seed in seeds]
     shuffled_columns = [f"shuffled_seed_{seed}" for seed in seeds]
@@ -110,9 +110,7 @@ def pairwise_seed_metrics(seed_frames: dict[int, pd.DataFrame]) -> pd.DataFrame:
     rows: list[dict[str, float | int]] = []
     seeds = sorted(seed_frames)
     for index, seed_a in enumerate(seeds):
-        prediction_a = seed_frames[seed_a]["fused_prediction_expansion"].to_numpy(
-            dtype=np.float64
-        )
+        prediction_a = seed_frames[seed_a]["fused_prediction_expansion"].to_numpy(dtype=np.float64)
         for seed_b in seeds[index + 1 :]:
             prediction_b = seed_frames[seed_b]["fused_prediction_expansion"].to_numpy(
                 dtype=np.float64
@@ -123,9 +121,7 @@ def pairwise_seed_metrics(seed_frames: dict[int, pd.DataFrame]) -> pd.DataFrame:
                     "seed_b": seed_b,
                     "prediction_pearson": pearson(prediction_a, prediction_b),
                     "mean_abs_difference": float(np.mean(np.abs(prediction_a - prediction_b))),
-                    "sign_agreement": float(
-                        np.mean((prediction_a < 0.0) == (prediction_b < 0.0))
-                    ),
+                    "sign_agreement": float(np.mean((prediction_a < 0.0) == (prediction_b < 0.0))),
                 }
             )
     return pd.DataFrame.from_records(rows)
@@ -141,8 +137,7 @@ def track_cluster_bootstrap(
     cluster_keys = frame["sequence_id"].astype(str) + "|" + frame["track_id"].astype(str)
     unique_keys = np.asarray(sorted(cluster_keys.unique()), dtype=object)
     indices = {
-        str(key): np.flatnonzero(cluster_keys.to_numpy(dtype=object) == key)
-        for key in unique_keys
+        str(key): np.flatnonzero(cluster_keys.to_numpy(dtype=object) == key) for key in unique_keys
     }
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     prediction = frame[prediction_column].to_numpy(dtype=np.float64)
