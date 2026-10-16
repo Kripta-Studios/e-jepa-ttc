@@ -1,0 +1,51 @@
+{
+  "V": "Not opened by this evaluator; requires independent prospective H admission",
+  "bootstrap": "Existing2000 acquisition-group resamples; no window-IID claim",
+  "cohorts": [
+    "P",
+    "H"
+  ],
+  "cost": "Paired128 fixed P queries,20warmups,FP32batch1;prepared GPU input,not E2E",
+  "development_gates": {
+    "all_routes_band_ratio_max": 1.1,
+    "all_routes_sign_increase_max": 0.005,
+    "common_reference": "A5-P2-FROZEN",
+    "final_promotion": "V14 numerical gate unchanged vs matched full E_CTX on V; comparable E2E cost required; internal development only",
+    "mandatory_complete_coverage": true,
+    "max_integrations": 2,
+    "ranking": [
+      "overall_MiD",
+      "MiDc",
+      "fit_id"
+    ],
+    "routes": {
+      "cost_ratio_max": 0.7,
+      "cost_route_overall_ratio_max": 1.02,
+      "crucial_ratio_max": 0.95,
+      "crucial_route_overall_ratio_max": 1.02,
+      "overall_ratio_max": 0.97
+    }
+  },
+  "fits": [
+    "B1-CORRESPONDENCE-STAGE2-S7",
+    "B1-TTC-CONTROL-STAGE2-S7"
+  ],
+  "freeze": "Both stage2 and stage1 endpoints before any B1 H prediction",
+  "mechanism": "Original development metric rules applied versus paired TTC control",
+  "scientific_registration_sha256": "8c9d4c3ee43e244c5777657e4ecd14c9bfdfe7e5128ec40d8de7bfc8b2ef8479",
+  "sources": {
+    "operational/joint_measurement/bootstrap.py": "db9eb3bbc36a4a58117f08e63face89befe3438e757e09c444f3a6f452298459",
+    "operational/joint_measurement/correspondence_evaluate.py": "1cc6b6a78f25905b1658d1566a70268f35b7659b572263c9b9350bc42704734b",
+    "operational/joint_measurement/evaluate.py": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+    "operational/joint_measurement/export.py": "e8756299af965538fbc39e497614800292ea3051216ebe1dbe04dec06fbed41c",
+    "operational/joint_measurement/geometry_cost.py": "2c969ecb62541acdcec47eb6aa23374dfcc7deb0c20a30244b4a4d5ee8b54f81",
+    "operational/joint_measurement/geometry_evaluate.py": "82b329e917fb5028a98ab12c7c544a98909c0a2a2761a5fb1e0e1773720350ba",
+    "operational/joint_measurement/rgb_cost.py": "ebec40c99881b441759dd55643a8634353e612c23fabd9437377faf9ee1f35c6",
+    "operational/joint_measurement/scale_correspondence_diagnostic.py": "1f0d4507000b0569739f20570bca1d98c53266f21dedfe05dc079224baeabedf",
+    "operational/joint_measurement/verify_predictions.py": "635b510cd9865103e82bd5a6bd02d7c9c95969d1181370283ef8c8858b728f4e"
+  },
+  "stages": {
+    "1": 2000,
+    "2": 10000
+  }
+}

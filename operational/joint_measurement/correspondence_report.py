@@ -31,7 +31,10 @@ def build() -> dict:
         "Total nuevo:24.000 updates científicos. Los12.000 del padre se reutilizan; "
         "no se vuelven a contar. El control iguala updates, no FLOPs ni segundos GPU.",
         "",
-        "No se sintetizan etiquetas TTC ni se simula la física de una cámara. "
+        "El padre C1 ya recibió supervisión TTC; sólo la fase auxiliar de "
+        "correspondencia prescinde de esas etiquetas. No es preentrenamiento "
+        "independiente desde cero. No se sintetizan etiquetas TTC ni se simula la física "
+        "de una cámara. "
         "El régimen de correspondencia utiliza el último tensor event, cuatro warps "
         "fijos, volúmenes nativos32/16 y ambos sentidos. Las cuatro etapas completas "
         "se congelaron antes de cualquier inferencia H de esta comparación.",

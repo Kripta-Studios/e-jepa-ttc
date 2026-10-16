@@ -1,0 +1,24 @@
+{
+  "created_utc": "2026-10-16T04:56:00.774478+00:00",
+  "files": {
+    "CPU_PROTOTYPE.json": {
+      "bytes": 3489,
+      "sha256": "ef555d7d96104d5cec225084dc55442bfd90a3bf6a8e4d185a0cfa31be74e3d6",
+      "source": "adaptive/B1_correspondence/prototype/CPU.json"
+    },
+    "EVALUATION_REGISTRATION.json": {
+      "bytes": 2461,
+      "sha256": "e3e2cf171c27293fd1adbcb456d7f6e9b2fbc923e23505b53457a15dce0884c5",
+      "source": "adaptive/B1_correspondence/evaluation/REGISTRATION.json"
+    },
+    "REGISTRATION.json": {
+      "bytes": 7744,
+      "sha256": "8c9d4c3ee43e244c5777657e4ecd14c9bfdfe7e5128ec40d8de7bfc8b2ef8479",
+      "source": "adaptive/B1_correspondence/REGISTRATION.json"
+    }
+  },
+  "scientific_updates": 0,
+  "status": "REVISION2_BEFORE_ALL_B1_OPTIMIZER_UPDATES",
+  "supersedes_registration_sha256": "200909db729a0f2747e7f6cb3c11e8bed5a160336a5d5145899faf9dccc40395",
+  "technical_optimizer_updates": 0
+}

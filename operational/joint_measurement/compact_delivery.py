@@ -38,8 +38,11 @@ def collect() -> tuple[dict[str, Path], list[dict]]:
             or ".pending" in path.name
         )
         portable = "exports" in relative.parts and path.suffix in {".pt", ".npz", ".npy"}
+        historical_source = "admission_revisions" in relative.parts and path.suffix == ".py"
         table = path.name == "predictions.parquet"
-        include = not ephemeral and (path.suffix in TEXT | {".png", ".pdf"} or portable or table)
+        include = not ephemeral and (
+            path.suffix in TEXT | {".png", ".pdf"} or portable or table or historical_source
+        )
         if include:
             files["campaign/" + relative.as_posix()] = path
         else:
@@ -96,6 +99,7 @@ def build(output: Path) -> dict:
         "RESULTS_TABLES.md",
         "FUSION_REPLICATION_RESULTS.md",
         "FUSION_RESULTS.md",
+        "FUSION_COST_DIAGNOSTIC.md",
         "C1_RESULTS.md",
         "RGB_RESULTS.md",
         "D1_RESULTS.md",
