@@ -39,3 +39,5 @@ El primer arranque se detuvo antes de reservar GPU o hacer updates: el guard nue
 - `artifacts/decision_recovery_20261017/PIPELINE_STATE.json`
 
 El pipeline ejecuta L0 y LW hasta sus endpoints fijos y después evalúa P/H completos, exporta modelos batch1 y publica el informe con la decisión de réplica. Este documento acredita el runtime; no acredita todavía los resultados científicos de los entrenamientos.
+
+**Actualización de cierre, 17 de octubre:** el párrafo anterior describe el alcance de esta admisión histórica. Los dos entrenamientos y las cuatro evaluaciones ya terminaron; véanse [resultados L0/LW](LOSS_SCREEN_RESULTS.md) e [informe consolidado](INFORME_EJECUCION_Y_RESULTADOS.md). No se modifican los recibos de admisión originales.

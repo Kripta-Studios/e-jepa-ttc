@@ -1,5 +1,13 @@
 # E-JEPA-TTC
 
+> Actualización V19 del 17 de octubre de 2026:
+> [trabajo ejecutado, pruebas y resultados completos](docs/decision_recovery_20261017/INFORME_EJECUCION_Y_RESULTADOS.md).
+> Dos entrenamientos de 12.000 updates, evaluaciones P/H, selectores R0/R1,
+> diagnósticos de signo y gradientes y medición de runtime completados.
+> LW mejora negativos, MAE y signo, pero empeora agregado y crítico frente a L0.
+> Ninguna variante nueva satisface todos los criterios de promoción; no se afirma SOTA.
+> V18 permanece intacto. Los estados fechados debajo son históricos.
+
 > Actualización V14 del 12 de octubre de 2026:
 > [informes RANGE-TRANSFER y resultados](docs/range_transfer_results_20261012/README.md).
 > Seis fits event-only completos y evaluación interna V: **NO_CANDIDATE**.

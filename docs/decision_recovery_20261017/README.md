@@ -1,5 +1,7 @@
 # V19: recuperación del equilibrio de TTC
 
+**Informe consolidado:** [qué se implementó, entrenó, probó y obtuvo](INFORME_EJECUCION_Y_RESULTADOS.md), con [manifiesto SHA-256 de evidencia local](EVIDENCE_MANIFEST.md). El bloque registrado terminó el 17 de octubre a las 12:09; los resultados no habilitan una nueva promoción ni las réplicas condicionadas.
+
 Continuación autorizada el 17 de octubre de 2026, desde V18 `fb41681`, en una rama y un directorio de artefactos propios. El código CPU quedó registrado en `e768765` antes de ajustar los routers. V18 y sus resultados permanecen intactos.
 
 ## Preguntas y orden
@@ -31,7 +33,7 @@ La lectura lineal de signo sobre esos descriptores terminó tras una continuaci�
 
 La medición de inferencia desde P2 guardado también ha terminado: batch1 tiene una mediana de unos 20 ms; batch4, unos 37 ms por lote. Alcance, paridad y límites en [CACHED_RUNTIME_RESULTS.md](CACHED_RUNTIME_RESULTS.md). No son tiempos desde eventos crudos ni del sistema completo de dos expertos.
 
-El contraste L0/LW y las cuatro evaluaciones completas ya terminaron. LW mejora negativos, MAE y signo, pero empeora el agregado un 1,20% frente a L0: no habilita la replicación registrada. Véase [LOSS_SCREEN_RESULTS.md](LOSS_SCREEN_RESULTS.md). V19 continúa con diagnósticos de gradientes y lectura, y medición de coste; no se reanudan los endpoints ya completados.
+El contraste L0/LW y las cuatro evaluaciones completas ya terminaron. LW mejora negativos, MAE y signo, pero empeora el agregado un 1,20% frente a L0: no habilita la replicación registrada. Véase [LOSS_SCREEN_RESULTS.md](LOSS_SCREEN_RESULTS.md). Los diagnósticos de gradientes y lectura y la medición de coste desde P2 también terminaron; sus resultados se consolidan en el informe anterior. El coste del sistema completo desde sensores sigue sin medirse en este bloque.
 
 Se reutilizan las optimizaciones de V18: modelo y pérdida capturados con CUDA Graphs, sesión persistente, muestreo reproducible, precarga del siguiente lote, memoria pinned, decodificación paralela y caché acotada. Las optimizaciones adicionales de transferencias y workers se someten a paridad de datos, gradientes, RNG y reanudación antes de su uso científico. La compresión sensorial histórica permanece sin cambios. El tiempo de captura, calentamiento y QA se contabiliza separadamente del tiempo estable por update.
 

@@ -36,6 +36,6 @@ LW satisface la elegibilidad numérica de desarrollo frente a A5: el negativo em
 
 El disparador de replicación requería mejorar al menos un 3% el agregado frente a L0. Al empeorarlo un 1,20%, el resultado es `REPLICATION_NOT_ENABLED`. No se cambian retrospectivamente los umbrales ni se ejecutan automáticamente las semillas 13/23.
 
-Continúa el diagnóstico mecánico: gradientes por banda y bloque en un panel P fijo, prueba de recuperabilidad del signo desde características congeladas y medición del coste de ejecución. Estas tareas no modifican los endpoints terminados. Una siguiente intervención de aprendizaje se registrará por separado a partir de esas evidencias, sin un barrido de configuraciones sobre H.
+El diagnóstico posterior ya terminó: [gradientes por banda y bloque](GRADIENT_RESULTS.md), [lectura de signo](SIGN_PROBE_RESULTS.md) y [coste desde P2 guardado](CACHED_RUNTIME_RESULTS.md). Estas tareas no modificaron los endpoints. El [informe consolidado](INFORME_EJECUCION_Y_RESULTADOS.md) recoge también R0/R1 y la descomposición negativa. Una siguiente intervención de aprendizaje se registrará por separado a partir de esas evidencias, sin un barrido de configuraciones sobre H.
 
 Fuente ejecutada: `artifacts/decision_recovery_20261017/evaluation/REPORT.json`, SHA-256 `1073ab21e307ae266221816fd52422f5117f23b0fb7927429e89970a6d996927`. Incluye recibos de las cuatro evaluaciones completas, comparaciones y disparador. La precisión oficial y SOTA siguen sin establecerse.

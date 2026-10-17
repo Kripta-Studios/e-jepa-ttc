@@ -100,5 +100,6 @@ método de modificación de gradientes**. Antes de esa intervención haría falt
 que la oposición se repite a lo largo del entrenamiento y que predice daño fuera del
 panel, comparando después cualquier método con L0/LW bajo el mismo padre, presupuesto y
 salvaguardas. La evidencia actual sí favorece mantener como hipótesis una intervención
-dirigida al encoder o a su adaptación compartida, mientras el resultado causal de L0/LW
-decide si el cambio de masas ya resuelve el problema con menor complejidad.
+dirigida al encoder o a su adaptación compartida. El [contraste L0/LW ya completado](LOSS_SCREEN_RESULTS.md)
+mejora negativos, MAE y signo al aumentar su peso, pero empeora agregado y crítico:
+ese cambio de masas no resuelve conjuntamente los criterios registrados.
