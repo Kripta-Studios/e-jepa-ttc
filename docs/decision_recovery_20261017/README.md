@@ -23,6 +23,8 @@ Resultados completos: [ROUTER_RESULTS.md](ROUTER_RESULTS.md). Los intervalos de 
 
 La única extensión registrada R1, con 194 descriptores espaciales congelados adicionales, también ha terminado: agregado H 78,680 frente a 77,629 de R0 y negativo 79,091. Mejora ligeramente MAE y signo, pero no supera R0 ni la protección negativa. El contraste queda rechazado, sin habilitar otra extensión dentro de este protocolo. Véase [FEATURE_ROUTER_RESULTS.md](FEATURE_ROUTER_RESULTS.md).
 
+La lectura lineal de signo sobre esos descriptores terminó tras una continuación CPU registrada del límite de convergencia. Su error H es 17,381% frente a 5,607% del signo emitido por FULL: no justifica sustituir la lectura actual por este clasificador. La AUC 0,910 muestra señal accesible, pero no una mejora sobre FULL. Esto no prueba ausencia de información ni descarta todas las lecturas no lineales. Se conservaron íntegros los fallos técnicos y las 72.312 extracciones P/H con paridad exacta; véase [SIGN_PROBE_RESULTS.md](SIGN_PROBE_RESULTS.md).
+
 ## Rendimiento y reproducibilidad
 
 El contraste L0/LW y las cuatro evaluaciones completas ya terminaron. LW mejora negativos, MAE y signo, pero empeora el agregado un 1,20% frente a L0: no habilita la replicación registrada. Véase [LOSS_SCREEN_RESULTS.md](LOSS_SCREEN_RESULTS.md). V19 continúa con diagnósticos de gradientes y lectura, y medición de coste; no se reanudan los endpoints ya completados.
