@@ -21,6 +21,8 @@ El selector NATIVE/FULL reduce el agregado H de FULL de 78,920 a 77,629, el crí
 
 Resultados completos: [ROUTER_RESULTS.md](ROUTER_RESULTS.md). Los intervalos de los JSON remuestrean grupos sobre las predicciones OOF ya ajustadas; no son repeticiones independientes del aprendizaje. El modelo ALL_H exportado es de desarrollo y sus predicciones sobre H no sustituyen la evidencia OOF.
 
+La única extensión registrada R1, con 194 descriptores espaciales congelados adicionales, también ha terminado: agregado H 78,680 frente a 77,629 de R0 y negativo 79,091. Mejora ligeramente MAE y signo, pero no supera R0 ni la protección negativa. El contraste queda rechazado, sin habilitar otra extensión dentro de este protocolo. Véase [FEATURE_ROUTER_RESULTS.md](FEATURE_ROUTER_RESULTS.md).
+
 ## Rendimiento y reproducibilidad
 
 El contraste L0/LW y las cuatro evaluaciones completas ya terminaron. LW mejora negativos, MAE y signo, pero empeora el agregado un 1,20% frente a L0: no habilita la replicación registrada. Véase [LOSS_SCREEN_RESULTS.md](LOSS_SCREEN_RESULTS.md). V19 continúa con diagnósticos de gradientes y lectura, y medición de coste; no se reanudan los endpoints ya completados.
