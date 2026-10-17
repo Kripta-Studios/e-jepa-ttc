@@ -32,7 +32,7 @@ El mismo patrón aparece en entrenamiento: mejor negativo, MAE y signo, con peor
 
 ## Decisión registrada y continuación
 
-LW satisface la elegibilidad numérica de desarrollo frente a A5: el negativo empeora un 8,02%, dentro del margen del 10%. No satisface la protección más estricta del sistema, que exige conservar el negativo frente a A5. Estos dos controles son distintos y se informan por separado.
+LW satisface la elegibilidad numérica de desarrollo frente a A5: el negativo empeora un 8,02%, dentro del margen del 10% (límite H 72,072). No satisface la protección más estricta del sistema: `referencia + max(2, 5% de referencia)`, que aquí da 68,796. Estos dos controles son distintos y se informan por separado.
 
 El disparador de replicación requería mejorar al menos un 3% el agregado frente a L0. Al empeorarlo un 1,20%, el resultado es `REPLICATION_NOT_ENABLED`. No se cambian retrospectivamente los umbrales ni se ejecutan automáticamente las semillas 13/23.
 
