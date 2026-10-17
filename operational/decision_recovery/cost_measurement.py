@@ -29,7 +29,7 @@ QUERY_COUNT = 128
 PACK_ROWS = 256
 WARMUPS = 20
 GPU_RESERVE_SECONDS = 900
-DIRECTORY = training.destination("cost/batch1_cached_P2_to_TTC")
+DIRECTORY = training.destination("cost/batch1_cached_P2_to_TTC_v2")
 
 
 def protocol() -> dict[str, Any]:
@@ -302,6 +302,18 @@ def validate_cold(
     attempt_id: str,
 ) -> None:
     """Reject altered cold evidence before its hash can enter COMPLETE."""
+    from operational.range_transfer.common import digest
+
+    top_level = {
+        "registration",
+        "registration_sha256",
+        "attempt_id",
+        "cold",
+        "cold_model_load_order",
+        "cold_memory_scope",
+        "warmups_per_endpoint",
+        "optimizer_updates",
+    }
     required = {
         "torchscript_load_cpu_s",
         "model_to_cuda_s",
@@ -318,7 +330,9 @@ def validate_cold(
         "meaning",
     }
     if (
-        payload.get("registration_sha256") != registration_sha
+        set(payload) != top_level
+        or payload.get("registration") != digest(record)
+        or payload.get("registration_sha256") != registration_sha
         or payload.get("attempt_id") != attempt_id
         or payload.get("warmups_per_endpoint") != WARMUPS
         or payload.get("optimizer_updates") != 0

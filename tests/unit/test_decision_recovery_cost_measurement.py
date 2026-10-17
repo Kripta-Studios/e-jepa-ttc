@@ -71,6 +71,8 @@ def test_validate_and_summarize_complete_rows():
 
 
 def test_durable_output_and_cold_parity_fail_closed():
+    from operational.range_transfer.common import digest
+
     record = protocol()
     value = row(record, 0)
     index = value["P_index"]
@@ -103,7 +105,7 @@ def test_durable_output_and_cold_parity_fail_closed():
             "meaning": "application-cold; OS cache uncontrolled; descriptive single call",
         }
     payload = {
-        "registration": "digest",
+        "registration": digest(record),
         "registration_sha256": "a" * 64,
         "attempt_id": "a" * 16,
         "cold": cold,
