@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from operational.decision_recovery import sign_probe
@@ -134,6 +135,92 @@ def test_chunk_replay_rejects_target_fields_and_reordered_tokens(tmp_path, monke
         "native_delta_t_s",
         "log_native_delta_t_s",
     )
+
+
+def test_hash_bound_pandas_object_tokens_recover_to_unicode_without_mutation(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(sign_probe.common, "RUN", tmp_path)
+    directory = tmp_path / "sign_probe_v2"
+    monkeypatch.setattr(sign_probe, "DIRECTORY", directory)
+    amendment = directory / "TECHNICAL_RECOVERY.json"
+    monkeypatch.setattr(sign_probe, "AMENDMENT", amendment)
+    path = directory / "features/P/chunk_00000.npz"
+    path.parent.mkdir(parents=True)
+    tokens = pd.Series(["first", "secoñd"], dtype=object).to_numpy()
+    assert tokens.dtype == np.dtype(object)
+    features = np.zeros((2, sign_probe.FEATURE_COUNT), dtype=np.float32)
+    raw = np.array([-0.2, 0.3], dtype=np.float32)
+    prediction = np.array([-5.0, 4.0], dtype=np.float32)
+    np.savez_compressed(
+        path,
+        sample_token=tokens,
+        features=features,
+        raw_phase=raw,
+        prediction_ttc=prediction,
+    )
+    original_sha = sign_probe.common.sha(path)
+    sign_probe.common.write_json(
+        path.with_suffix(".json"),
+        {
+            "binding": "binding",
+            "start": 0,
+            "stop": 2,
+            "sha256": original_sha,
+            "parity": sign_probe._parity(raw, prediction, raw, prediction),
+        },
+    )
+    sign_probe.common.write_json(
+        amendment,
+        {
+            "status": "reviewed-test-fixture",
+            "original_P_chunks": {
+                path.name: original_sha,
+                path.with_suffix(".json").name: sign_probe.common.sha(path.with_suffix(".json")),
+            },
+        },
+    )
+
+    recovered = sign_probe._read_chunk(
+        path,
+        binding="binding",
+        begin=0,
+        stop=2,
+        tokens=np.asarray(tokens, dtype=str),
+    )
+    assert recovered["sample_token"].dtype.kind == "U"
+    assert recovered["sample_token"].tolist() == ["first", "secoñd"]
+    assert recovered["_legacy_sample_token"] is True
+    assert sign_probe.common.sha(path) == original_sha
+    with np.load(path, allow_pickle=False) as stored:
+        with pytest.raises(ValueError, match="Object arrays"):
+            stored["sample_token"]
+
+
+def test_new_chunks_store_pandas_object_tokens_as_pickle_free_unicode(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(sign_probe.common, "RUN", tmp_path)
+    path = tmp_path / "chunk_00000.npz"
+    tokens = pd.Series(["first", "secoñd"], dtype=object).to_numpy()
+    features = np.zeros((2, sign_probe.FEATURE_COUNT), dtype=np.float32)
+    raw = np.array([-0.2, 0.3], dtype=np.float32)
+    prediction = np.array([-5.0, 4.0], dtype=np.float32)
+    sign_probe._write_chunk(
+        path,
+        binding="binding",
+        begin=0,
+        stop=2,
+        tokens=tokens,
+        features=features,
+        raw_phase=raw,
+        prediction_ttc=prediction,
+        parity=sign_probe._parity(raw, prediction, raw, prediction),
+    )
+    with np.load(path, allow_pickle=False) as stored:
+        loaded = stored["sample_token"]
+    assert loaded.dtype.kind == "U"
+    assert loaded.tolist() == ["first", "secoñd"]
 
 
 def test_fixed_logistic_round_trip_is_finite_and_informative() -> None:

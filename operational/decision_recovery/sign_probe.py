@@ -28,6 +28,8 @@ if TYPE_CHECKING:
 
 DIRECTORY = common.RUN / "sign_probe_v2"
 REGISTRATION = DIRECTORY / "REGISTRATION.json"
+AMENDMENT = DIRECTORY / "TECHNICAL_RECOVERY.json"
+ERROR_LOG = common.RUN / "SIGN_PROBE_V2_ERROR.log"
 ENDPOINT = common.SOURCE_RUN / "adaptive/A1_adaptation_depth/fits/A1-FULL-S7/checkpoint_last.pt"
 FEATURE_NAMES = (
     *(f"spatial_mean_{index:03d}" for index in range(96)),
@@ -149,6 +151,116 @@ def _sources() -> dict[str, str]:
     return {path.relative_to(common.ROOT).as_posix(): common.sha(path) for path in paths}
 
 
+def _original_p_chunk_inventory(record: dict[str, Any]) -> dict[str, str]:
+    """Bind every pre-failure P chunk without opening its object token payload."""
+    rows = common.load_population("P", ["FULL"])["FULL"]
+    binding = _binding("P", record)
+    inventory = {}
+    for begin in range(0, len(rows), CHUNK):
+        path = _chunk_path("P", begin // CHUNK)
+        receipt_path = path.with_suffix(".json")
+        receipt = common.read_json(receipt_path)
+        stop = min(begin + CHUNK, len(rows))
+        if (
+            set(receipt) != {"binding", "start", "stop", "sha256", "parity"}
+            or receipt["binding"] != binding
+            or receipt["start"] != begin
+            or receipt["stop"] != stop
+            or receipt["sha256"] != common.sha(path)
+        ):
+            raise ValueError("Original P chunk inventory changed")
+        _validate_parity(receipt["parity"])
+        inventory[receipt_path.name] = common.sha(receipt_path)
+        inventory[path.name] = receipt["sha256"]
+    return inventory
+
+
+def write_recovery_amendment() -> dict[str, Any]:
+    """Record the reviewed serialization-only repair without replacing registration v1."""
+    record = common.read_json(REGISTRATION)
+    current_sources = _sources()
+    source_commit = training.committed_sources(current_sources)
+    changed = sorted(
+        name for name in current_sources if current_sources[name] != record["sources"].get(name)
+    )
+    allowed = {
+        "operational/decision_recovery/sign_probe.py",
+        "tests/unit/test_decision_recovery_sign_probe.py",
+    }
+    if set(current_sources) != set(record["sources"]) or not changed or set(changed) - allowed:
+        raise ValueError("Technical recovery changed sources outside its reviewed scope")
+    if not ERROR_LOG.is_file():
+        raise ValueError("The preserved v2 serialization failure log is missing")
+    amendment = {
+        "schema": "v19_sign_probe_v2_object_token_recovery_v1",
+        "status": "TECHNICALLY_REVIEWED_NO_SCIENTIFIC_CHANGE",
+        "utc": datetime.now(UTC).isoformat(),
+        "registration_sha256": common.sha(REGISTRATION),
+        "registered_source_commit": record["source_commit"],
+        "recovery_source_commit": source_commit,
+        "registered_sources": record["sources"],
+        "recovery_sources": current_sources,
+        "changed_sources": changed,
+        "failure_log": {
+            "path": ERROR_LOG.relative_to(common.RUN).as_posix(),
+            "sha256": common.sha(ERROR_LOG),
+        },
+        "original_P_chunks": _original_p_chunk_inventory(record),
+        "review": {
+            "finding": "sample_token was serialized as a pandas-derived object ndarray",
+            "repair": (
+                "After receipt and payload SHA verification, do not deserialize the legacy "
+                "object member; reconstruct identifiers from the registered population slice "
+                "and write derived/future caches as Unicode without object arrays"
+            ),
+            "unchanged": [
+                "endpoint",
+                "population and token order",
+                "descriptor values",
+                "raw phase and emitted TTC",
+                "parity thresholds",
+                "probe and evaluation contracts",
+                "original P chunk bytes and receipts",
+            ],
+            "encoder_optimizer_updates": 0,
+            "review_authority": "V19 campaign controller after recorded run failure",
+        },
+    }
+    if AMENDMENT.exists():
+        return verify_recovery_amendment(record)
+    common.write_json(AMENDMENT, amendment)
+    return amendment
+
+
+def verify_recovery_amendment(record: dict[str, Any]) -> dict[str, Any]:
+    """Admit only the narrow reviewed repair and unchanged original P evidence."""
+    amendment = common.read_json(AMENDMENT)
+    current_sources = _sources()
+    training.committed_sources(current_sources)
+    if (
+        amendment.get("schema") != "v19_sign_probe_v2_object_token_recovery_v1"
+        or amendment.get("status") != "TECHNICALLY_REVIEWED_NO_SCIENTIFIC_CHANGE"
+        or amendment.get("registration_sha256") != common.sha(REGISTRATION)
+        or amendment.get("registered_source_commit") != record["source_commit"]
+        or amendment.get("registered_sources") != record["sources"]
+        or amendment.get("recovery_sources") != current_sources
+        or set(amendment.get("changed_sources", []))
+        - {
+            "operational/decision_recovery/sign_probe.py",
+            "tests/unit/test_decision_recovery_sign_probe.py",
+        }
+        or amendment.get("failure_log")
+        != {
+            "path": ERROR_LOG.relative_to(common.RUN).as_posix(),
+            "sha256": common.sha(ERROR_LOG),
+        }
+        or amendment.get("original_P_chunks") != _original_p_chunk_inventory(record)
+        or amendment.get("review", {}).get("encoder_optimizer_updates") != 0
+    ):
+        raise ValueError("Sign-probe technical recovery evidence changed")
+    return amendment
+
+
 def _endpoint_binding() -> dict[str, Any]:
     fit = ENDPOINT.parent
     receipt = common.read_json(fit / "CHECKPOINT_RECEIPT.json")
@@ -257,7 +369,10 @@ def verify_registration() -> dict[str, Any]:
     record = common.read_json(REGISTRATION)
     registration.verify()
     training_record = training.registered()
-    training.committed_sources(record["sources"])
+    if record["sources"] == _sources():
+        training.committed_sources(record["sources"])
+    else:
+        verify_recovery_amendment(record)
     contracts = _contracts()
     if (
         record["schema"] != "v19_frozen_full_sign_probe_v1"
@@ -271,8 +386,8 @@ def verify_registration() -> dict[str, Any]:
         or record["software"] != _software()
     ):
         raise ValueError("Sign-probe registration contract changed")
-    if record["sources"] != _sources():
-        raise ValueError("Sign-probe registered source changed")
+    if record["sources"] != _sources() and not AMENDMENT.is_file():
+        raise ValueError("Sign-probe registered source changed without reviewed recovery")
     for role in POPULATIONS:
         if record["populations"][role] != _sensor_binding(role):
             raise ValueError(f"Registered sign-probe population changed: {role}")
@@ -406,9 +521,30 @@ def _validate_parity(value: dict[str, Any]) -> None:
         raise ValueError("Chunk parity evidence changed")
 
 
+def _recover_verified_legacy_tokens(
+    path: Path, expected_sha256: str, expected_tokens: np.ndarray
+) -> np.ndarray:
+    """Recover identifiers from registration without deserializing the object member."""
+    feature_root = (DIRECTORY / "features").resolve()
+    amendment = common.read_json(AMENDMENT) if AMENDMENT.is_file() else {}
+    inventory = amendment.get("original_P_chunks", {})
+    receipt_path = path.with_suffix(".json")
+    if (
+        not path.resolve().is_relative_to(feature_root)
+        or common.sha(path) != expected_sha256
+        or inventory.get(path.name) != expected_sha256
+        or inventory.get(receipt_path.name) != common.sha(receipt_path)
+    ):
+        raise ValueError("Legacy token recovery requires reviewed, hash-bound local evidence")
+    recovered = np.asarray(expected_tokens, dtype=np.str_)
+    if recovered.ndim != 1 or any(type(value) is not str for value in recovered.tolist()):
+        raise ValueError("Registered sample_token slice is invalid")
+    return recovered
+
+
 def _read_chunk(
     path: Path, *, binding: str, begin: int, stop: int, tokens: np.ndarray
-) -> dict[str, np.ndarray]:
+) -> dict[str, Any]:
     receipt = common.read_json(path.with_suffix(".json"))
     if (
         set(receipt) != {"binding", "start", "stop", "sha256", "parity"}
@@ -419,10 +555,20 @@ def _read_chunk(
     ):
         raise ValueError("Sign-probe feature chunk receipt changed")
     _validate_parity(receipt["parity"])
+    legacy_sample_token = False
     with np.load(path, allow_pickle=False) as stored:
         if set(stored.files) != {"sample_token", "features", "raw_phase", "prediction_ttc"}:
             raise ValueError("Unexpected sign-probe feature fields")
-        values = {name: stored[name] for name in stored.files}
+        values = {name: stored[name] for name in ("features", "raw_phase", "prediction_ttc")}
+        try:
+            values["sample_token"] = stored["sample_token"]
+        except ValueError as error:
+            if "Object arrays cannot be loaded" not in str(error):
+                raise
+            values["sample_token"] = _recover_verified_legacy_tokens(
+                path, receipt["sha256"], tokens[begin:stop]
+            )
+            legacy_sample_token = True
     count = stop - begin
     if (
         values["sample_token"].shape != (count,)
@@ -433,9 +579,12 @@ def _read_chunk(
         or values["raw_phase"].dtype != np.float32
         or values["prediction_ttc"].shape != (count,)
         or values["prediction_ttc"].dtype != np.float32
-        or not all(np.isfinite(values[name]).all() for name in values if name != "sample_token")
+        or not all(
+            np.isfinite(values[name]).all() for name in ("features", "raw_phase", "prediction_ttc")
+        )
     ):
         raise ValueError("Invalid sign-probe feature chunk")
+    values["_legacy_sample_token"] = legacy_sample_token
     return values
 
 
@@ -455,7 +604,7 @@ def _write_chunk(
     pending = path.with_name(path.stem + f".{os.getpid()}.pending.npz")
     np.savez_compressed(
         pending,
-        sample_token=tokens[begin:stop],
+        sample_token=np.asarray(tokens[begin:stop], dtype=np.str_),
         features=features,
         raw_phase=raw_phase,
         prediction_ttc=prediction_ttc,
@@ -508,6 +657,13 @@ def _finish_features(role: str, binding: str, rows: pd.DataFrame) -> dict[str, A
         "contains_targets": False,
         "encoder_optimizer_updates": 0,
         "parity": parity,
+        "token_storage": {
+            "final": "numpy_unicode_no_pickle",
+            "legacy_object_chunks_recovered": sum(
+                bool(piece["_legacy_sample_token"]) for piece in pieces
+            ),
+            "technical_recovery_sha256": common.sha(AMENDMENT),
+        },
         "chunks": {
             _chunk_path(role, begin // CHUNK).with_suffix(".json").name: common.sha(
                 _chunk_path(role, begin // CHUNK).with_suffix(".json")
@@ -540,18 +696,28 @@ def _admit_complete_features(role: str, binding: str, rows: pd.DataFrame) -> dic
         or receipt.get("contains_targets") is not False
         or receipt.get("encoder_optimizer_updates") != 0
         or "parity" not in receipt
+        or receipt.get("token_storage", {}).get("final") != "numpy_unicode_no_pickle"
+        or receipt.get("token_storage", {}).get("technical_recovery_sha256")
+        != common.sha(AMENDMENT)
         or receipt.get("chunks") != expected_chunks
     ):
         raise ValueError("Completed sign-probe feature receipt changed")
     tokens = rows.sample_token.astype(str).to_numpy()
+    replayed = []
     for begin in range(0, len(rows), CHUNK):
-        _read_chunk(
-            _chunk_path(role, begin // CHUNK),
-            binding=binding,
-            begin=begin,
-            stop=min(begin + CHUNK, len(rows)),
-            tokens=tokens,
+        replayed.append(
+            _read_chunk(
+                _chunk_path(role, begin // CHUNK),
+                binding=binding,
+                begin=begin,
+                stop=min(begin + CHUNK, len(rows)),
+                tokens=tokens,
+            )
         )
+    if receipt["token_storage"].get("legacy_object_chunks_recovered") != sum(
+        bool(piece["_legacy_sample_token"]) for piece in replayed
+    ):
+        raise ValueError("Completed feature token-recovery evidence changed")
     with np.load(final, allow_pickle=False) as stored:
         if set(stored.files) != {"sample_token", "features", "raw_phase", "prediction_ttc"}:
             raise ValueError("Completed feature cache fields changed")
@@ -1117,6 +1283,7 @@ def run_all() -> dict[str, Any]:
 
 
 __all__ = [
+    "AMENDMENT",
     "FEATURE_COUNT",
     "FEATURE_NAMES",
     "LOGISTIC",
@@ -1124,7 +1291,9 @@ __all__ = [
     "fit_and_evaluate",
     "register",
     "run_all",
+    "verify_recovery_amendment",
     "verify_registration",
+    "write_recovery_amendment",
 ]
 
 
@@ -1132,11 +1301,15 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("register", "extract", "fit", "runall"))
+    parser.add_argument("action", choices=("register", "amend", "extract", "fit", "runall"))
     parser.add_argument("--role", choices=tuple(POPULATIONS))
     arguments = parser.parse_args()
     if arguments.action == "register":
         value = register()
+    elif arguments.action == "amend":
+        if arguments.role is not None:
+            parser.error("amend does not accept --role")
+        value = write_recovery_amendment()
     elif arguments.action == "extract":
         if arguments.role is None:
             parser.error("extract requires --role P or H")
