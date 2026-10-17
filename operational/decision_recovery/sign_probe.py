@@ -175,6 +175,28 @@ def _original_p_chunk_inventory(record: dict[str, Any]) -> dict[str, str]:
     return inventory
 
 
+def _recovery_review() -> dict[str, Any]:
+    return {
+        "finding": "sample_token was serialized as a pandas-derived object ndarray",
+        "repair": (
+            "After receipt and payload SHA verification, do not deserialize the legacy "
+            "object member; reconstruct identifiers from the registered population slice "
+            "and write derived/future caches as Unicode without object arrays"
+        ),
+        "unchanged": [
+            "endpoint",
+            "population and token order",
+            "descriptor values",
+            "raw phase and emitted TTC",
+            "parity thresholds",
+            "probe and evaluation contracts",
+            "original P chunk bytes and receipts",
+        ],
+        "encoder_optimizer_updates": 0,
+        "review_authority": "V19 campaign controller after recorded run failure",
+    }
+
+
 def write_recovery_amendment() -> dict[str, Any]:
     """Record the reviewed serialization-only repair without replacing registration v1."""
     record = common.read_json(REGISTRATION)
@@ -187,7 +209,12 @@ def write_recovery_amendment() -> dict[str, Any]:
         "operational/decision_recovery/sign_probe.py",
         "tests/unit/test_decision_recovery_sign_probe.py",
     }
-    if set(current_sources) != set(record["sources"]) or not changed or set(changed) - allowed:
+    if (
+        record.get("schema") != "v19_frozen_full_sign_probe_v1"
+        or record.get("status") != "REGISTERED_BEFORE_DESCRIPTOR_EXTRACTION"
+        or set(current_sources) != set(record["sources"])
+        or set(changed) != allowed
+    ):
         raise ValueError("Technical recovery changed sources outside its reviewed scope")
     if not ERROR_LOG.is_file():
         raise ValueError("The preserved v2 serialization failure log is missing")
@@ -206,25 +233,7 @@ def write_recovery_amendment() -> dict[str, Any]:
             "sha256": common.sha(ERROR_LOG),
         },
         "original_P_chunks": _original_p_chunk_inventory(record),
-        "review": {
-            "finding": "sample_token was serialized as a pandas-derived object ndarray",
-            "repair": (
-                "After receipt and payload SHA verification, do not deserialize the legacy "
-                "object member; reconstruct identifiers from the registered population slice "
-                "and write derived/future caches as Unicode without object arrays"
-            ),
-            "unchanged": [
-                "endpoint",
-                "population and token order",
-                "descriptor values",
-                "raw phase and emitted TTC",
-                "parity thresholds",
-                "probe and evaluation contracts",
-                "original P chunk bytes and receipts",
-            ],
-            "encoder_optimizer_updates": 0,
-            "review_authority": "V19 campaign controller after recorded run failure",
-        },
+        "review": _recovery_review(),
     }
     if AMENDMENT.exists():
         return verify_recovery_amendment(record)
@@ -245,7 +254,7 @@ def verify_recovery_amendment(record: dict[str, Any]) -> dict[str, Any]:
         or amendment.get("registered_sources") != record["sources"]
         or amendment.get("recovery_sources") != current_sources
         or set(amendment.get("changed_sources", []))
-        - {
+        != {
             "operational/decision_recovery/sign_probe.py",
             "tests/unit/test_decision_recovery_sign_probe.py",
         }
@@ -255,7 +264,7 @@ def verify_recovery_amendment(record: dict[str, Any]) -> dict[str, Any]:
             "sha256": common.sha(ERROR_LOG),
         }
         or amendment.get("original_P_chunks") != _original_p_chunk_inventory(record)
-        or amendment.get("review", {}).get("encoder_optimizer_updates") != 0
+        or amendment.get("review") != _recovery_review()
     ):
         raise ValueError("Sign-probe technical recovery evidence changed")
     return amendment
