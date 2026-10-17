@@ -1,0 +1,93 @@
+{
+  "schema": "post_v18_candidate_registry_v1",
+  "path_base": "workspace_parent",
+  "historical_v18_status": "NO_CANDIDATE",
+  "new_optimizer_updates_authorized": 0,
+  "new_comparison_inference_authorized": false,
+  "official_SOTA": false,
+  "candidates": [
+    {
+      "id": "PHASE_ONLY_EVENT_S7",
+      "family": "V16",
+      "status": "FROZEN_OFFICIAL_EVALUATION_CANDIDATE",
+      "modalities": [
+        "RGB",
+        "event"
+      ],
+      "seed": 7,
+      "ensemble": false,
+      "model_freeze": {
+        "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/MODEL_INPUT_FREEZE.json",
+        "sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a"
+      },
+      "head_sha256": "7602bd42cf444c002e8d2afe09c13445661fd960754eb78fd96443e8298771bb",
+      "submission_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+      "genealogy": "V13 P producers/PAIR -> H normalizers/context refiners -> H PHASE_ONLY head; V exposed development",
+      "parent_hashes": {
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/E_A5_MATCHED/checkpoint_last.pt": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/E_C2F_MATCHED/checkpoint_last.pt": "468f69aee68a0a5f8e2b536ba8c790ed45620251682aa0c70108625c426b30ec",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/E_CTX_MATCHED/checkpoint_last.pt": "fb8dcc8f7645281bee7fc71788380272fbcd7a4485c70979651289148238e744",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/E_H1_MATCHED/checkpoint_last.pt": "3de31b0769f6dc3008f665a5671c28c7a71760aabf79fc1c013bd02b84c29fa2",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/F_TRUE/checkpoint_last.pt": "dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/F_ZERO/checkpoint_last.pt": "026691198731dac1ecef64b59ac035b189bb975264047fc4b3e139b16c2c05be",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/PAIR_E_MATCHED/checkpoint_last.pt": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/PAIR_R/checkpoint_last.pt": "160ceac8c6aadeecac759373baa731b9b292c5bfe6f4fb9b24271c2cd5ca0f78",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/R_A5/checkpoint_last.pt": "dc4882e0255083f8bf0bece0e83e5e7bfaa7b494197574704f3be11b700b4cc7",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/R_C2F/checkpoint_last.pt": "c8a6a0108167ea906de29225ac946fbfa65e6e58e2becc82e317547626969456",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/R_CTX/checkpoint_last.pt": "4838ffcd274254bd104250f116f447d2efca5ce75599d79479256091df8d65fc",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/fits/R_H1/checkpoint_last.pt": "ed38e2b298904318c31ceffe4ba6d8a46248c33e2e349eeb317bd08257419cc9",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json": "411cf04805ebb83d62ad8421a129c81d38baa838d9533a2269b7cfd51f2cba11",
+        "e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008/P_MANIFEST.json": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+        "e-jepa-ttc-v16-multimodal-validation/configs/rgb_port/producers.json": "9ffb221ebe540ee5fe0013d69be07012954f008ffdd988a15acc2b2d2106f0aa"
+      },
+      "eligibility": "Cross-sample causal history and account approval unconfirmed"
+    },
+    {
+      "id": "FUSION-C1-V18-S7",
+      "family": "V18",
+      "status": "PARTIAL_INTERNAL_IMPROVEMENT_NOT_PROMOTED",
+      "modalities": [
+        "RGB",
+        "event"
+      ],
+      "seed": 7,
+      "ensemble": false,
+      "endpoint": "936fd00cc3d37e669e93202a66895ebaf126fa436c689c6e29902ec1640d1cae",
+      "endpoints_receipt": {
+        "path": "e-jepa-ttc-v18-joint-measurement/artifacts/joint_measurement_20261012/fusion/ENDPOINTS.json",
+        "sha256": "4af197b4d9a0049d1434f3cd05353f8436465b1ca3b864c86e8948b8cc270c19"
+      },
+      "registration": {
+        "path": "e-jepa-ttc-v18-joint-measurement/artifacts/joint_measurement_20261012/fusion/REGISTRATION.json",
+        "sha256": "dab1d529feb89978759485cdb5c9875101436104d9a9eaf5c8b88ba163e03812"
+      },
+      "genealogy": "Shared P A5 -> P C1 adaptation; historical R_CTX; new H fusion head",
+      "replications": [
+        7,
+        13,
+        23
+      ],
+      "replication_limit": "Shared A5 and R_CTX; scalar metric means are not an ensemble",
+      "comparison_scope": "V exposed development only; interval vs V16 includes zero"
+    },
+    {
+      "id": "A1-FULL-S7",
+      "family": "V18",
+      "status": "POSITIVE_BAND_GAIN_NEGATIVE_BAND_REGRESSION",
+      "modalities": [
+        "event"
+      ],
+      "seed": 7,
+      "ensemble": false,
+      "endpoint": "72e0860e20abff01242219f4692bf88aa4ed3bfafeb1ccfac976d6398530742f",
+      "endpoints_receipt": {
+        "path": "e-jepa-ttc-v18-joint-measurement/artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/ENDPOINTS.json",
+        "sha256": "0bf82b1960d56db9832c889bcc1cfa5103e4dd1f25d75959d600953aaeffdbda"
+      },
+      "genealogy": "A5 -> C1 -> B1 correspondence stage1 -> FULL 12000 TTC updates on P",
+      "evaluation_role": "H",
+      "direct_score_comparison_to_fusion_V_allowed": false
+    }
+  ]
+}

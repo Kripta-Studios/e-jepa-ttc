@@ -1,0 +1,68 @@
+{
+  "schema": "post_v18_frozen_comparison_v1",
+  "status": "PROPOSED_NOT_AUTHORIZED_NOT_EXECUTED",
+  "hypothesis": "Does frozen V18 C1 fusion retain a descriptive advantage against frozen V16 outside V?",
+  "population": {
+    "name": "FCWD",
+    "path": "e-jepa-ttc-v12-efficient-context/artifacts/sota_campaign_20261008/fcwd_population/QUERY_MANIFEST.json",
+    "sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+    "rows": 630,
+    "selection": "Every registered query; no selection using new errors",
+    "exposure": "Previously observed transfer development; not blind confirmation",
+    "negative_band": "Not available; cannot establish negative-band protection or full signed benchmark promotion"
+  },
+  "models": [
+    "PHASE_ONLY_EVENT_S7",
+    "FUSION-C1-V18-S7",
+    "F_TRUE",
+    "R_CTX",
+    "Garl_RGB_event_official_checkpoint"
+  ],
+  "seed_policy": "seed7 fixed; no selection of seed13, no ensemble",
+  "identity_registry": "CANDIDATE_REGISTRY.json",
+  "new_endpoint_required": false,
+  "before_inference": [
+    "Separate explicit scope and compute-budget authorization",
+    "Seal complete producer/normalizer/adapter/checkpoint hashes for every route, including Garl",
+    "Verify native timestamp, ROI, calibration and causal history per query",
+    "Seal paired input coverage using sensor availability only; preserve full manifest and disclose every excluded/missing query",
+    "Keep historical-native and common-input comparability claims distinct"
+  ],
+  "sensor_contract": {
+    "query_anchor": "Frozen manifest reference time",
+    "future_sensor_access": false,
+    "history": "Declare each native route; same-object causal support at most 650ms for contextual systems",
+    "Garl": "Official preprocessing and native temporal pair; cost and historical support differ",
+    "modalities": "RGB+event where both present; fallback results reported separately, not silently mixed into paired multimodal comparison"
+  },
+  "metrics": [
+    "native overall_MiD with actual available bands declared",
+    "MiDc",
+    "MiDs",
+    "MiDl",
+    "MiDn=undefined_if_no_negative_targets",
+    "MAE_s",
+    "p95_absolute_error_s",
+    "sign_error",
+    "coverage",
+    "per_acquisition_group"
+  ],
+  "primary_contrast": "V18-S7 minus V16-S7 on identical query IDs",
+  "statistics": {
+    "paired_bootstrap_replicates": 2000,
+    "seed": 12345,
+    "unit": "acquisition_group",
+    "interpretation": "Descriptive conditional intervals on exposed transfer data; not independent replication"
+  },
+  "latency": "Separate authorized paired raw pipeline measurement; no reuse of prepared-forward milliseconds as E2E",
+  "decision_policy": {
+    "mechanistic_signal": "Report direction and uncertainty vs control",
+    "further_evaluation": "Report aggregate, every band, sign, coverage and cost separately; no automatic promotion",
+    "substantial_gain": "10% crucial remains a historical V18 goal, not a new retrospective admission rule",
+    "promotion": "Not available from this exposed positive-only cohort",
+    "SOTA": "Requires eligible official comparable evaluation"
+  },
+  "optimizer_updates": 0,
+  "inference_executed": false,
+  "autostart": false
+}

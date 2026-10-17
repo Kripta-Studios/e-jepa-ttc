@@ -1,11 +1,17 @@
 # V18 JOINT-MEASUREMENT: índice de evidencia
 
 **Entrega verificada el 17-10-2026:** [ZIP, replay y alcance](DELIVERY_VERIFIED_20261017.md).
+**Estado operativo: V18 cerrado, entrega completa, NO_CANDIDATE.** C1, D1, B1,
+A1 y las réplicas están terminados. No hay una cola V18 pendiente que reanudar.
+La [decisión posterior a V18](../post_v18_20261017/DECISION_POST_V18.md) separa
+el candidato V16, la alternativa de fusión y el diagnóstico A1. Su preparación
+autoriza cero nuevos optimizer updates y no modifica campañas posteriores.
+
 El corte previo a continuación se conserva como procedencia del paquete.
 
-Estado al 17-10-2026: programa científico cerrado sin candidato admitido; entrega independiente pendiente. A1 y las 64 consultas de coste están completos. La decisión de no habilitar refit/export está registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).
+**Corte histórico anterior a la entrega:** programa científico cerrado sin candidato admitido; en ese corte faltaba verificar la entrega independiente. A1 y las 64 consultas de coste estaban completos. La decisión de no habilitar refit/export permanece registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).
 
-El [estado regenerado](CURRENT_CONCLUSION.md) y la [auditoría de cierre](COMPLETION_AUDIT.md) separan la evidencia científica de la verificación posterior del paquete. No hay promoción del sistema ni confirmación SOTA. Los resultados negativos se conservan.
+El [estado regenerado](CURRENT_CONCLUSION.md) y la [auditoría de cierre](COMPLETION_AUDIT.md) conservan el corte previo al paquete. Sus pendientes de entrega quedan resueltos por el recibo posterior enlazado arriba. No hay promoción del sistema ni confirmación SOTA. Los resultados negativos se conservan.
 
 | Trabajo | Informe | Alcance |
 |---|---|---|
@@ -38,7 +44,8 @@ confirman los grafos y la caché persistentes, y documentan la reanudación desd
 1.425 updates sin pérdida. La investigación y validación de CI se registra
 en [ci_repair_20261016.md](../ci_repair_20261016.md).
 
-La ejecución y sus observadores finalizaron. Para repetir la auditoría CPU sin entrenar:
+La ejecución y sus observadores finalizaron. Referencia histórica para regenerar
+el corte científico previo al paquete; no es una tarea pendiente:
 
 ```powershell
 $env:PYTHONPATH = 'src;.'
@@ -47,6 +54,8 @@ $env:CUDA_VISIBLE_DEVICES = '-1'
 ```
 
 El comando está probado en este host. No reinicia entrenamientos ni consume updates.
+Reescribe el corte previo a la entrega; el recibo externo sigue siendo la autoridad
+sobre el ZIP verificado. Esta revisión posterior no ejecuta ese comando.
 Los comandos históricos de reanudación conservan su función de recuperación de checkpoints.
 
 La ampliación autorizada vigente fija 216.000 segundos acumulados de scopes GPU
@@ -54,14 +63,16 @@ propios y 1.000.000 updates físicos. Los scopes incluyen carga y guardado; no s
 tiempo exclusivo de kernels. Se conserva la contabilidad anterior y los límites
 de experimentos, replicación, recursos y acciones externas del programa.
 
-## Qué falta para la entrega
+## Corte histórico anterior al empaquetado
 
 A1 y el coste están completos. `DECISION_AFTER_A1.json` deshabilita refit y nuevo
 export test12 porque ninguna receta cumple el contrato completo. La familia de
-réplica autorizada ya se utilizó en C1/fusión. Falta certificar el ZIP final desde
-una extracción independiente; un recibo previo al ZIP no puede certificar sus bytes.
+réplica autorizada ya se utilizó en C1/fusión. En este corte faltaba certificar el
+ZIP desde una extracción independiente. El recibo posterior
+[DELIVERY_COMPLETE.json](delivery_evidence_20261017/DELIVERY_COMPLETE.json)
+certifica esa entrega; no queda pendiente repetirla.
 
-La entrega final deberá contener documentación, predicciones y pesos portables,
+La entrega final contiene documentación, predicciones y pesos portables,
 con replay desde otra extracción, manifiesto y SHA-256, en un ZIP de como máximo
 100.000.000 bytes. Los bundles anteriores son cortes históricos. Los datos crudos,
 estados completos de optimizador y padres externos permanecen locales; se declara
