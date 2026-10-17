@@ -29,7 +29,7 @@ QUERY_COUNT = 128
 PACK_ROWS = 256
 WARMUPS = 20
 GPU_RESERVE_SECONDS = 900
-DIRECTORY = training.destination("cost/batch1_cached_P2_to_TTC_v2")
+DIRECTORY = training.destination("cost/batch1_cached_P2_to_TTC_v3_eager_cuda")
 
 
 def protocol() -> dict[str, Any]:
@@ -37,7 +37,7 @@ def protocol() -> dict[str, Any]:
     rng = np.random.default_rng(QUERY_SEED)
     indices = rng.choice(PACK_ROWS, QUERY_COUNT, replace=False).tolist()
     return {
-        "schema": "v19_batch1_cached_P2_to_TTC_cost_v1",
+        "schema": "v19_batch1_cached_P2_to_TTC_cost_v3_eager_cuda",
         "arms": list(ARMS),
         "population": "P",
         "query_seed": QUERY_SEED,
@@ -50,7 +50,14 @@ def protocol() -> dict[str, Any]:
         "batch_size": 1,
         "warmups_per_endpoint": WARMUPS,
         "precision": "CUDA_FP32_no_TF32",
-        "deployment_route": "frozen TorchScript export; batch1; TTC and emitted phase",
+        "deployment_route": (
+            "native frozen endpoint loaded from its checkpoint; eager CUDA batch1; "
+            "raw phase converted to TTC and emitted phase"
+        ),
+        "historical_export_boundary": (
+            "The preserved TorchScript export has an explicit CPU contract and is not used "
+            "as a CUDA timing route; no retrace or export bytes are changed"
+        ),
         "input_scope": (
             "immutable V18 cached native P2 FP32 tensor (2x12x128x128) and native clock; "
             "does not include raw event-stream extraction or ROI construction"
@@ -163,7 +170,7 @@ def registration_payload(source_commit: str) -> dict[str, Any]:
     payload = protocol()
     payload.update(
         endpoints=endpoints,
-        exports={arm: _export_binding(arm) for arm in ARMS},
+        historical_CPU_exports={arm: _export_binding(arm) for arm in ARMS},
         P_predictions={arm: _prediction_binding(arm) for arm in ARMS},
         P_manifest_sha256=common.sha(training.manifest_path("P")),
         P_cache=_pack_binding(),
@@ -217,21 +224,28 @@ def _expected_outputs(record: dict[str, Any]) -> dict[str, dict[int, tuple[float
     return result
 
 
-def _load_export(arm: str) -> torch.jit.ScriptModule:
+def _load_eager(arm: str, record: dict[str, Any]) -> torch.nn.Module:
     import torch
 
-    path = training.destination(f"evaluation/exports/{arm}/model.torchscript.pt")
-    with path.open("rb") as stream:
-        return torch.jit.load(stream, map_location="cpu").eval()
+    path = training.destination(f"training/fits/FULL-{arm}-S7/checkpoint_last.pt")
+    if common.sha(path) != record["endpoints"][arm]["checkpoint_sha256"]:
+        raise ValueError("Frozen endpoint checkpoint changed before eager cost loading")
+    payload = torch.load(path, map_location="cpu", weights_only=False)
+    model = training.make_model()
+    model.load_state_dict(payload["model_state_dict"], strict=True)
+    return model.eval().requires_grad_(False)
 
 
 def _inference(
-    model: torch.jit.ScriptModule, events: torch.Tensor, delta: torch.Tensor
+    model: torch.nn.Module, events: torch.Tensor, delta: torch.Tensor
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    output = model(events, delta)
-    if not isinstance(output, tuple) or len(output) != 2:
-        raise ValueError("Deployment export output contract changed")
-    return output
+    from e_jepa_ttc.simplex_t.phase import phase_to_ttc, ttc_to_phase
+
+    output = model(events, delta.reshape(-1))
+    if not isinstance(output, dict) or "raw_phase" not in output:
+        raise ValueError("Native eager endpoint output contract changed")
+    prediction = phase_to_ttc(output["raw_phase"])
+    return prediction, ttc_to_phase(prediction)
 
 
 def validate_row(row: dict[str, Any], record: dict[str, Any], ordinal: int) -> None:
@@ -315,7 +329,7 @@ def validate_cold(
         "optimizer_updates",
     }
     required = {
-        "torchscript_load_cpu_s",
+        "checkpoint_load_eager_cpu_s",
         "model_to_cuda_s",
         "reader_init_s",
         "cached_P2_decode_s",
@@ -350,7 +364,7 @@ def validate_cold(
         if not np.isfinite(np.asarray(numeric, dtype=np.float64)).all() or any(
             value[name] <= 0
             for name in (
-                "torchscript_load_cpu_s",
+                "checkpoint_load_eager_cpu_s",
                 "model_to_cuda_s",
                 "reader_init_s",
                 "cached_P2_decode_s",
@@ -511,7 +525,7 @@ def measure() -> dict[str, Any]:
             torch.cuda.empty_cache()
             allocated = torch.cuda.memory_allocated()
             tick = time.perf_counter()
-            model = _load_export(arm)
+            model = _load_eager(arm, record)
             loaded = time.perf_counter()
             model = model.cuda()
             torch.cuda.synchronize()
@@ -543,7 +557,7 @@ def measure() -> dict[str, Any]:
                 ):
                     raise ValueError("Cold deployment output differs from frozen P prediction")
                 cold[arm] = {
-                    "torchscript_load_cpu_s": loaded - tick,
+                    "checkpoint_load_eager_cpu_s": loaded - tick,
                     "model_to_cuda_s": ready - loaded,
                     "reader_init_s": reader_ready - reader_tick,
                     "cached_P2_decode_s": decoded - decode_tick,

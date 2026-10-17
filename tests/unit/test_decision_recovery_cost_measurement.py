@@ -4,11 +4,14 @@ import copy
 
 import numpy as np
 import pytest
+import torch
+from torch import nn
 
 from operational.decision_recovery.cost_measurement import (
     ARMS,
     PACK_ROWS,
     QUERY_COUNT,
+    _inference,
     protocol,
     summarize,
     validate_cold,
@@ -52,6 +55,25 @@ def test_protocol_is_fixed_paired_batch1_and_zero_update():
     assert first["optimizer_updates"] == 0 and first["backward"] is False
     assert "cached native P2" in first["input_scope"]
     assert "raw event" in first["input_scope"]
+    assert "eager CUDA batch1" in first["deployment_route"]
+    assert "explicit CPU contract" in first["historical_export_boundary"]
+
+
+def test_eager_route_converts_native_raw_phase_to_deployment_outputs():
+    from e_jepa_ttc.simplex_t.phase import phase_to_ttc, ttc_to_phase
+
+    class Endpoint(nn.Module):
+        def forward(self, events, delta):
+            assert events.shape == (1, 2, 12, 128, 128)
+            assert delta.shape == (1,)
+            return {"raw_phase": torch.tensor([0.025], dtype=torch.float32)}
+
+    prediction, emitted = _inference(
+        Endpoint(), torch.zeros(1, 2, 12, 128, 128), torch.tensor([[0.03]])
+    )
+    expected = phase_to_ttc(torch.tensor([0.025], dtype=torch.float32))
+    assert torch.equal(prediction, expected)
+    assert torch.equal(emitted, ttc_to_phase(expected))
 
 
 def test_validate_and_summarize_complete_rows():
@@ -90,7 +112,7 @@ def test_durable_output_and_cold_parity_fail_closed():
     for arm in ARMS:
         ttc, phase = expected[arm][index]
         cold[arm] = {
-            "torchscript_load_cpu_s": 0.1,
+            "checkpoint_load_eager_cpu_s": 0.1,
             "model_to_cuda_s": 0.1,
             "reader_init_s": 0.1,
             "cached_P2_decode_s": 0.1,
