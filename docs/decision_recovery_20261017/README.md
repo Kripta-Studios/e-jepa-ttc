@@ -27,6 +27,8 @@ La lectura lineal de signo sobre esos descriptores terminó tras una continuaci�
 
 ## Rendimiento y reproducibilidad
 
+La medición de inferencia desde P2 guardado también ha terminado: batch1 tiene una mediana de unos 20 ms; batch4, unos 37 ms por lote. Alcance, paridad y límites en [CACHED_RUNTIME_RESULTS.md](CACHED_RUNTIME_RESULTS.md). No son tiempos desde eventos crudos ni del sistema completo de dos expertos.
+
 El contraste L0/LW y las cuatro evaluaciones completas ya terminaron. LW mejora negativos, MAE y signo, pero empeora el agregado un 1,20% frente a L0: no habilita la replicación registrada. Véase [LOSS_SCREEN_RESULTS.md](LOSS_SCREEN_RESULTS.md). V19 continúa con diagnósticos de gradientes y lectura, y medición de coste; no se reanudan los endpoints ya completados.
 
 Se reutilizan las optimizaciones de V18: modelo y pérdida capturados con CUDA Graphs, sesión persistente, muestreo reproducible, precarga del siguiente lote, memoria pinned, decodificación paralela y caché acotada. Las optimizaciones adicionales de transferencias y workers se someten a paridad de datos, gradientes, RNG y reanudación antes de su uso científico. La compresión sensorial histórica permanece sin cambios. El tiempo de captura, calentamiento y QA se contabiliza separadamente del tiempo estable por update.
