@@ -66,6 +66,7 @@ def test_shuffled_limit_records_completed_s1_without_scoring_h(tmp_path, monkeyp
     registration = tmp_path / "REGISTRATION.json"
     registration.write_text("{}", encoding="utf-8")
     monkeypatch.setattr(continuation, "REGISTRATION", registration)
+    monkeypatch.setattr(continuation.sign_probe, "REGISTRATION", registration)
     monkeypatch.setattr(continuation, "registered", lambda: {"flags": {}})
     features, label = _features(30)
 

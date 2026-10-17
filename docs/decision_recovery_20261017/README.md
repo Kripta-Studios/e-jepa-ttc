@@ -11,7 +11,7 @@ Continuación autorizada el 17 de octubre de 2026, desde V18 `fb41681`, en una r
 
 El protocolo ejecutable está en `configs/decision_recovery/protocol.json`. Los registros y recibos se guardan bajo `artifacts/decision_recovery_20261017`. El presupuesto inicial incluye un máximo de 100.000 updates físicos y 60.000 segundos de scopes GPU, con límites adicionales para QA y recuperación. No autoriza gasto en nube.
 
-El cierre ejecutado se conserva en `44f64831e93f9a09d351cc80149fd223b13aa805`. La corrección CI posterior únicamente reformatea una cadena de `campaign.py`, con AST idéntico. Los registros científicos mantienen sus hashes originales: para reproducir sus verificaciones estrictas se debe usar aquel commit y los artefactos locales correspondientes, sin sustituir los hashes por los de la revisión de formato.
+El cierre ejecutado se conserva en `44f64831e93f9a09d351cc80149fd223b13aa805`. Las correcciones CI posteriores reformatean una cadena de `campaign.py`, con AST idéntico, y aíslan el registro temporal de una prueba unitaria para eliminar su dependencia accidental de artefactos locales. Los registros científicos mantienen sus hashes originales: para reproducir sus verificaciones estrictas se debe usar aquel commit y los artefactos locales correspondientes, sin sustituir los hashes por los de las revisiones CI.
 
 ## Resultado CPU ejecutado
 
