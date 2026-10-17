@@ -52,6 +52,16 @@ def test_extraction_applies_native_runtime_setup_before_model_load(monkeypatch) 
     assert source.index("_setup_extraction_runtime()") < source.index("_load_model(record).cuda()")
 
 
+def test_ttc_replay_uses_the_same_cuda_backend_as_extraction() -> None:
+    assert sign_probe.DIRECTORY.name == "sign_probe_v2"
+    replay_source = inspect.getsource(sign_probe._phase_to_ttc_on_extraction_device)
+    assert "torch.from_numpy(raw_phase).cuda()" in replay_source
+    assert ").cpu().numpy().copy()" in replay_source
+    extraction_source = inspect.getsource(sign_probe._extract_registered)
+    assert "_phase_to_ttc_on_extraction_device(raw_array)" in extraction_source
+    assert "phase_to_ttc(torch.from_numpy(raw_array)).numpy()" not in extraction_source
+
+
 def test_parity_allows_only_bounded_sign_preserving_drift() -> None:
     expected_raw = np.array([-0.2, 0.3], dtype=np.float32)
     expected_ttc = np.array([-5.0, 4.0], dtype=np.float32)

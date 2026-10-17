@@ -26,7 +26,7 @@ from . import common, registration, training
 if TYPE_CHECKING:
     from operational.joint_measurement.geometry_model import GeometricPairMeasurement
 
-DIRECTORY = common.RUN / "sign_probe"
+DIRECTORY = common.RUN / "sign_probe_v2"
 REGISTRATION = DIRECTORY / "REGISTRATION.json"
 ENDPOINT = common.SOURCE_RUN / "adaptive/A1_adaptation_depth/fits/A1-FULL-S7/checkpoint_last.pt"
 FEATURE_NAMES = (
@@ -327,6 +327,18 @@ def _setup_extraction_runtime() -> None:
     setup(SEED)
 
 
+def _phase_to_ttc_on_extraction_device(raw_phase: np.ndarray) -> np.ndarray:
+    """Replay conversion on CUDA, the same backend used by ``extract_pair``."""
+    import torch
+
+    from e_jepa_ttc.simplex_t.phase import phase_to_ttc
+
+    raw_phase = np.asarray(raw_phase)
+    if raw_phase.ndim != 1 or raw_phase.dtype != np.float32 or not np.isfinite(raw_phase).all():
+        raise ValueError("CUDA TTC replay requires finite one-dimensional FP32 phase")
+    return phase_to_ttc(torch.from_numpy(raw_phase).cuda()).cpu().numpy().copy()
+
+
 def _chunk_path(role: str, index: int) -> Path:
     return DIRECTORY / "features" / role / f"chunk_{index:05d}.npz"
 
@@ -572,7 +584,6 @@ def _extract_registered(role: str) -> dict[str, Any]:
     """Extract complete frozen descriptors inside the admitted runtime context."""
     import torch
 
-    from e_jepa_ttc.simplex_t.phase import phase_to_ttc
     from operational.decision_recovery.sensor_runtime import make_evaluation_sensors
     from operational.joint_measurement.fusion_pair_extract import extract_pair
 
@@ -630,7 +641,7 @@ def _extract_registered(role: str) -> dict[str, Any]:
                     expected_raw = rows.raw_phase.iloc[begin:stop].to_numpy(dtype=np.float32)
                     expected_ttc = rows.prediction_ttc.iloc[begin:stop].to_numpy(dtype=np.float32)
                     parity = _parity(raw_array, prediction_array, expected_raw, expected_ttc)
-                    replay_ttc = phase_to_ttc(torch.from_numpy(raw_array)).numpy()
+                    replay_ttc = _phase_to_ttc_on_extraction_device(raw_array)
                     if not np.array_equal(replay_ttc, prediction_array):
                         raise ValueError("Extracted raw phase and emitted TTC are inconsistent")
                     _write_chunk(
