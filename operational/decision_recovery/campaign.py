@@ -106,8 +106,7 @@ def report() -> dict[str, Any]:
         else "NO_PRIMARY_ROUTER_CANDIDATE",
         "pairs": decisions,
         "scope": (
-            "Fixed-producer LOGO on repeatedly exposed H; "
-            "no cost or independent confirmation yet"
+            "Fixed-producer LOGO on repeatedly exposed H; no cost or independent confirmation yet"
         ),
         "loss_screen": "Independent registered L0/LW question remains authorized",
         "official_SOTA": False,
