@@ -166,6 +166,37 @@ def test_bucket_quarter_epoch_edges_are_half_open_and_storage_accounting_is_exac
     )
 
 
+@pytest.mark.parametrize("normalization", ["sort", "topk"])
+def test_packed_device_core_uses_new_roi_and_dynamic_epoch_phase_on_each_call(normalization):
+    raw = events(738, 640_738)
+    prefix = history(normalization=normalization)
+    prefix.initialize(window(raw, 738, 600_738), 738, 600_738)
+    for end in (600_738, 620_738, 640_738):
+        if end > 600_738:
+            prefix.ingest(window(raw, end - 20_000, end), end - 20_000, end)
+        for count in (1, 5, 20):
+            rois = [(i * 0.3, i * 0.1, 24.0 + i * 0.2, 20.0 + i * 0.1) for i in range(count)]
+            expected = prefix.query_many(rois).clone()
+            prefix._prepare_query_state(rois)
+            actual = prefix._execute_query_many_device(count)
+            torch.testing.assert_close(actual, expected, rtol=0.0, atol=0.0)
+    before = prefix._query_state.clone()
+    with pytest.raises(ValueError, match="ROI"):
+        prefix._prepare_query_state([(4.0, 0.0, 1.0, 4.0)])
+    torch.testing.assert_close(prefix._query_state, before, rtol=0.0, atol=0.0)
+
+
+def test_graph_option_rejects_cpu_and_requires_explicit_startup_priming():
+    with pytest.raises(ValueError, match="CUDA"):
+        history(graphs=True)
+    prefix = history()
+    with pytest.raises(ValueError, match="startup priming"):
+        prefix.prime_query_graphs([1])
+    assert prefix.stats["query_graph_allocated_before_bytes"] is None
+    assert prefix.stats["query_graph_reserved_before_bytes"] is None
+    assert prefix.stats["query_graph_reserved_delta_bytes"] == 0
+
+
 @pytest.mark.cuda_fp32
 @pytest.mark.skipif(os.environ.get("RUN_TRAIN40_CUDA_TESTS") != "1", reason="GPU slot opt-in")
 @pytest.mark.parametrize("async_transfers", [False, True])
@@ -179,3 +210,46 @@ def test_cuda_prefix_matches_canonical_through_epoch_boundary(async_transfers, n
     actual = prefix.query_many(rois).cpu()
     for index, roi in enumerate(rois):
         torch.testing.assert_close(actual[index], oracle(raw, 620_738, roi), rtol=0.0, atol=0.0)
+
+
+@pytest.mark.cuda_fp32
+@pytest.mark.skipif(os.environ.get("RUN_TRAIN40_CUDA_TESTS") != "1", reason="GPU slot opt-in")
+@pytest.mark.parametrize("async_transfers", [False, True])
+@pytest.mark.parametrize("normalization", ["sort", "topk"])
+def test_cuda_graph_query_matches_eager_for_dynamic_rois_phases_and_shape_switching(
+    async_transfers, normalization
+):
+    raw = events(738, 1_260_738, count=14000)
+    graphed = history(
+        device="cuda", async_transfers=async_transfers, normalization=normalization, graphs=True
+    )
+    eager = history(device="cuda", normalization=normalization)
+    graphed.prime_query_graphs([1, 5, 20])
+    assert graphed.stats["cuda_graph_captures"] == 3
+    assert graphed.stats["synthetic_query_priming_calls"] == 9
+    assert graphed.stats["query_graph_allocated_after_bytes"] is not None
+    assert graphed.stats["query_graph_reserved_after_bytes"] is not None
+    assert graphed.stats["queries"] == 0
+    assert not graphed.ready and graphed.end_us is None
+    for runtime in (graphed, eager):
+        runtime.initialize(window(raw, 738, 600_738), 738, 600_738)
+    with pytest.raises(ValueError, match="before any sensor history"):
+        graphed.prime_query_graphs([2])
+    with pytest.raises(ValueError, match="not explicitly primed"):
+        graphed.query_many([(0.0, 0.0, 32.0, 24.0)] * 2)
+    for end in range(600_738, 1_260_739, 20_000):
+        if end > 600_738:
+            for runtime in (graphed, eager):
+                runtime.ingest(window(raw, end - 20_000, end), end - 20_000, end)
+        if end not in (600_738, 620_738, 640_738, 1_180_738, 1_200_738, 1_220_738):
+            continue
+        for count in (20, 1, 5):
+            shift = (end - 600_738) / 100_000
+            rois = [
+                (i * 0.3 - shift, i * 0.1, 24.0 + i * 0.2, 20.0 + i * 0.1) for i in range(count)
+            ]
+            expected = eager.query_many(rois).cpu()
+            actual = graphed.query_many(rois).cpu()
+            torch.testing.assert_close(actual, expected, rtol=0.0, atol=0.0)
+            if count == 1:
+                torch.testing.assert_close(actual[0], oracle(raw, end, rois[0]), rtol=0.0, atol=0.0)

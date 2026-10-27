@@ -170,6 +170,7 @@ def run(args: argparse.Namespace) -> None:
         "objects": args.objects,
         "roi_size": args.roi_size,
         "normalization": args.normalization,
+        "query_graphs": args.query_graphs,
         "input_hashes": {
             key: hashlib.sha256(value.tobytes()).hexdigest() for key, value in raw.items()
         },
@@ -188,6 +189,7 @@ def run(args: argparse.Namespace) -> None:
                 options: dict[str, Any] = {}
                 if backend_type is TemporalPrefixEventHistory:
                     options["normalization"] = args.normalization
+                    options["graphs"] = args.query_graphs
                 backend = backend_type(
                     device=args.device,
                     width=args.width,
@@ -198,6 +200,11 @@ def run(args: argparse.Namespace) -> None:
                     roi_batch_size=min(args.roi_batch_size, object_count),
                     **options,
                 )
+                prime_begin = time.perf_counter()
+                if isinstance(backend, TemporalPrefixEventHistory) and args.query_graphs:
+                    backend.prime_query_graphs([object_count])
+                _sync(args.device)
+                priming_ms = (time.perf_counter() - prime_begin) * 1000
                 begin = time.perf_counter()
                 backend.initialize(initial, start, initial_end)
                 _sync(args.device)
@@ -245,6 +252,7 @@ def run(args: argparse.Namespace) -> None:
                     "backend": backend_type.__name__,
                     "objects": object_count,
                     "initialization_ms_excluded": initialization_ms,
+                    "synthetic_query_graph_priming_ms_excluded": priming_ms,
                     "latency_ms": latency_distribution(times),
                     "samples_ms": times,
                     "prefix_vs_bucket_bit_exact": exact_all
@@ -311,6 +319,7 @@ def main() -> None:
     parser.add_argument("--roi-size", type=int, default=128)
     parser.add_argument("--roi-batch-size", type=int, default=4)
     parser.add_argument("--normalization", choices=("sort", "topk"), default="sort")
+    parser.add_argument("--query-graphs", action="store_true")
     parser.add_argument("--max-packet-events", type=int, default=2_000_000)
     parser.add_argument("--max-reference-bytes", type=int, default=2 * 1024**3)
     parser.add_argument("--synthetic", action="store_true")

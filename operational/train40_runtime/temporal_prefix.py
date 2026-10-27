@@ -59,6 +59,7 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
     _left_relative: Tensor
     _cross: Tensor
     _boundary_offsets: Tensor
+    _query_state: Tensor
 
     def __init__(
         self,
@@ -73,6 +74,7 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
         max_objects: int = 20,
         roi_batch_size: int = 4,
         normalization: str = "sort",
+        graphs: bool = False,
     ) -> None:
         dimensions = (
             width,
@@ -99,6 +101,17 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
         self.async_transfers = bool(async_transfers)
         if self.async_transfers and self.device.type != "cuda":
             raise ValueError("asynchronous pinned transfers require a CUDA device")
+        if graphs and self.device.type != "cuda":
+            raise ValueError("query CUDA graphs require a CUDA device")
+        self.graphs = bool(graphs)
+        self._query_graphs: dict[int, torch.cuda.CUDAGraph] = {}
+        self._query_graph_allocated_delta = 0
+        self._query_graph_reserved_delta = 0
+        self._query_graph_allocated_before: int | None = None
+        self._query_graph_allocated_after: int | None = None
+        self._query_graph_reserved_before: int | None = None
+        self._query_graph_reserved_after: int | None = None
+        self._synthetic_query_priming_calls = 0
         if normalization not in ("sort", "topk"):
             raise ValueError("normalization must be the explicit sort or topk option")
         self.normalization = normalization
@@ -177,6 +190,9 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
         # Index arrays are built per query; account for their maximum retained
         # working extent, even though allocator temporaries are not retained.
         reserve("_address", (BOUNDARY_COUNT, 2, batch * roi_size * roi_size), torch.int64)
+        # One host-to-device transfer carries all ROI boundaries plus the current
+        # temporal phase. Graph replay must not capture a Python phase constant.
+        reserve("_query_state", (2 * max_objects * (roi_size + 1) + 1,), torch.int64, True)
         self.allocated_bytes = sum(
             int(np.prod(shape)) * torch.empty((), dtype=dtype).element_size()
             for _, shape, dtype, _ in self._specs
@@ -221,6 +237,15 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
         self._copy_pending = False
         self._roi_copy_pending = False
         self._staging_waits = 0
+        self._query_host = torch.zeros(
+            self._query_state.shape,
+            dtype=torch.int64,
+            device="cpu",
+            pin_memory=self.async_transfers,
+        )
+        self._query_host_array = self._query_host.numpy()
+        self._query_bounds = self._query_state[:-1].view(2, max_objects, roi_size + 1)
+        self._query_first_bucket = self._query_state[-1:]
         if self.async_transfers:
             self._pinned = {
                 key: torch.empty_like(value, device="cpu", pin_memory=True)
@@ -232,6 +257,7 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
                 )
             self._copy_event = torch.cuda.Event()
             self._roi_copy_event = torch.cuda.Event()
+            self._pinned["query_state"] = self._query_host
 
     @property
     def stats(self) -> dict[str, int | bool | str | None]:
@@ -256,8 +282,144 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
             * self.roi_batch_size
             * self.roi_size**2
             * 8,
+            cuda_graph_captures=len(self._query_graphs),
+            query_graphs=self.graphs,
+            query_graph_object_counts=",".join(map(str, sorted(self._query_graphs))),
+            query_graph_allocated_delta_bytes=self._query_graph_allocated_delta,
+            query_graph_reserved_delta_bytes=self._query_graph_reserved_delta,
+            query_graph_allocated_before_bytes=self._query_graph_allocated_before,
+            query_graph_allocated_after_bytes=self._query_graph_allocated_after,
+            query_graph_reserved_before_bytes=self._query_graph_reserved_before,
+            query_graph_reserved_after_bytes=self._query_graph_reserved_after,
+            query_graph_memory_scope="PYTORCH_PROCESS_ALLOCATOR_CHANGE_DURING_STARTUP",
+            query_graph_scope="ROI_QUERY_ONLY_EXCLUDES_INGESTION_AND_CPU_ROI_PACKING",
+            synthetic_query_priming_calls=self._synthetic_query_priming_calls,
+            query_host_staging_bytes=self._query_host.numel() * self._query_host.element_size(),
         )
         return result
+
+    @torch.inference_mode()
+    def prime_query_graphs(self, counts: Sequence[int]) -> None:
+        """Capture requested object counts using only zero startup buffers.
+
+        Call this explicitly after construction and before ``reset``,
+        ``initialize`` or ``ingest``. Graph priming is forbidden after any sensor
+        history has been installed; query data never becomes excluded warmup.
+        Each captured shape has its own private graph pool. Allocated and reserved
+        process-allocator changes are reported separately from the constructor's
+        buffer budget. Allocated bytes alone do not include the graph's reserved
+        scratch blocks. These deltas are observations, not exclusive ownership
+        accounting when another thread allocates during startup.
+        """
+        if not self.graphs or self.device.type != "cuda":
+            raise ValueError("enable graphs on CUDA before explicit startup priming")
+        if self.end_us is not None or self._ingested_packets or self._total_buckets:
+            raise ValueError("query graphs must be primed before any sensor history or reset")
+        if (
+            not counts
+            or any(
+                isinstance(count, bool)
+                or not isinstance(count, int)
+                or not 1 <= count <= self.max_objects
+                for count in counts
+            )
+            or len(set(counts)) != len(counts)
+        ):
+            raise ValueError(f"startup counts must be unique integers in 1..{self.max_objects}")
+        current = torch.cuda.current_stream(self.device)
+        for count in counts:
+            if count in self._query_graphs:
+                continue
+            # Bounds and phase remain zero. All prefix planes were zeroed by
+            # construction and no sensor-dependent method has run.
+            self._query_state.zero_()
+            capture_stream = torch.cuda.Stream(device=self.device)
+            capture_stream.wait_stream(current)
+            before = torch.cuda.memory_allocated(self.device)
+            reserved_before = torch.cuda.memory_reserved(self.device)
+            if self._query_graph_allocated_before is None:
+                self._query_graph_allocated_before = before
+                self._query_graph_reserved_before = reserved_before
+            with torch.cuda.stream(capture_stream):
+                for _ in range(2):
+                    self._execute_query_many_device(count)
+                    self._synthetic_query_priming_calls += 1
+            capture_stream.synchronize()
+            graph = torch.cuda.CUDAGraph()
+            with torch.cuda.graph(graph, stream=capture_stream):
+                self._execute_query_many_device(count)
+            self._synthetic_query_priming_calls += 1
+            capture_stream.synchronize()
+            current.wait_stream(capture_stream)
+            self._query_graphs[count] = graph
+            after = torch.cuda.memory_allocated(self.device)
+            reserved_after = torch.cuda.memory_reserved(self.device)
+            self._query_graph_allocated_after = after
+            self._query_graph_reserved_after = reserved_after
+            self._query_graph_allocated_delta += max(0, after - before)
+            self._query_graph_reserved_delta += max(0, reserved_after - reserved_before)
+
+    def query(self, roi: Sequence[float]) -> Tensor:
+        """Return one borrowed ROI tensor, using its preprimed graph if enabled."""
+        return self.query_many([roi])[0] if self.graphs else super().query(roi)
+
+    def query_many(self, rois: Sequence[Sequence[float]]) -> Tensor:
+        """Encode all ROIs, including current CPU packing and transfer in the call."""
+        if not self.graphs:
+            return super().query_many(rois)
+        if not self.ready:
+            raise ValueError("complete 600ms history required before querying")
+        count = len(rois)
+        if not 1 <= count <= self.max_objects:
+            raise ValueError(f"request must contain 1..{self.max_objects} object ROIs")
+        if count not in self._query_graphs:
+            raise ValueError("object count was not explicitly primed at synthetic startup")
+        self._prepare_query_state(rois)
+        self._query_graphs[count].replay()
+        self._queries += count
+        return self._many_output[:count]
+
+    def _prepare_query_state(self, rois: Sequence[Sequence[float]]) -> None:
+        """Pack canonical ROI bounds and current phase before a device execution."""
+        count = len(rois)
+        if not 1 <= count <= self.max_objects or any(len(roi) != 4 for roi in rois):
+            raise ValueError("ROI count is outside capacity or ROI lacks four coordinates")
+        boxes = [tuple(map(float, roi)) for roi in rois]
+        # Validate every ROI before mutating the shared staging state.
+        packed = np.stack(
+            [
+                np.stack([projection_bounds(self.width, b[0], b[2], self.roi_size) for b in boxes]),
+                np.stack(
+                    [projection_bounds(self.height, b[1], b[3], self.roi_size) for b in boxes]
+                ),
+            ]
+        )
+        if (
+            self._roi_copy_event is not None
+            and self._roi_copy_pending
+            and not self._roi_copy_event.query()
+        ):
+            self._roi_copy_event.synchronize()
+            self._staging_waits += 1
+        self._query_host_array[:-1].reshape(2, self.max_objects, self.roi_size + 1)[:, :count] = (
+            packed
+        )
+        self._query_host_array[-1] = self._total_buckets - BUCKET_COUNT
+        self._query_state.copy_(self._query_host, non_blocking=self.async_transfers)
+        if self._roi_copy_event is not None:
+            self._roi_copy_event.record(torch.cuda.current_stream(self.device))
+            self._roi_copy_pending = True
+
+    def _execute_query_many_device(self, count: int) -> Tensor:
+        """Static-shape device core; it never reads sensor state into Python."""
+        self._set_query_metadata(self._query_first_bucket)
+        for first in range(0, count, self.roi_batch_size):
+            last = min(count, first + self.roi_batch_size)
+            result = self._query_chunk_device(
+                self._query_bounds[0, first:last], self._query_bounds[1, first:last], last - first
+            )
+            self._many_output[first:last].copy_(result)
+        return self._many_output[:count]
 
     def reset(self, start_us: int) -> None:
         """Invalidate history and clear only the new epoch's accumulators."""
@@ -360,14 +522,13 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
         if self._roi_copy_event is not None:
             self._roi_copy_event.record(torch.cuda.current_stream(self.device))
             self._roi_copy_pending = True
-        xb, yb = bounds["xb"], bounds["yb"]
-        corners = [
-            (yb[:, yi : yi + size, None] * (self.width + 1) + xb[:, None, xi : xi + size]).reshape(
-                -1
-            )
-            for yi, xi in ((1, 1), (0, 1), (1, 0), (0, 0))
-        ]
-        first_bucket = self._total_buckets - BUCKET_COUNT
+        self._set_query_metadata(self._total_buckets - BUCKET_COUNT)
+        result = self._query_chunk_device(bounds["xb"], bounds["yb"], count)
+        self._queries += count
+        return result
+
+    def _set_query_metadata(self, first_bucket: int | Tensor) -> None:
+        """Keep phase-dependent values dynamic even inside a captured graph."""
         torch.add(self._boundary_offsets, first_bucket, out=self._slot_indices)
         self._left_relative.copy_(
             (self._slot_indices[:-1] % BUCKET_COUNT * BUCKET_US).view(1, QUARTER_COUNT, 1, 1, 1)
@@ -379,6 +540,16 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
             ).view(1, QUARTER_COUNT, 1, 1, 1)
         )
         self._slot_indices.remainder_(PREFIX_COUNT)
+
+    def _query_chunk_device(self, xb: Tensor, yb: Tensor, count: int) -> Tensor:
+        """Compute one workspace chunk with prepared resident bounds and phase."""
+        size = self.roi_size
+        corners = [
+            (yb[:, yi : yi + size, None] * (self.width + 1) + xb[:, None, xi : xi + size]).reshape(
+                -1
+            )
+            for yi, xi in ((1, 1), (0, 1), (1, 0), (0, 0))
+        ]
         plane_size = (self.height + 1) * (self.width + 1)
         elements = count * size * size
         address = self._address[..., :elements]
@@ -432,7 +603,6 @@ class TemporalPrefixEventHistory(IntegralEventHistory):
         torch.index_select(
             self._six[: count * 6], 0, self._triplets[: count * 12], out=self._output[: count * 12]
         )
-        self._queries += count
         return self._output[: count * 12].view(count, 4, 3, 12, size, size)
 
     def _normalize(self, objects: int) -> None:
