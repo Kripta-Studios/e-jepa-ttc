@@ -12,8 +12,9 @@ from __future__ import annotations
 import time
 import warnings
 from collections.abc import Mapping
-from copy import copy
+from copy import copy, deepcopy
 from dataclasses import dataclass
+from types import MethodType
 from typing import cast
 
 import torch
@@ -32,6 +33,68 @@ from operational.rgb_port.train_heads import pair_point_phase
 from operational.rgb_port_streaming.contracts import NativeObservation
 
 FEATURE_NAMES = ("token128", "prediction_ttc", "flow", "margin", "log_variance", "support", "known")
+
+
+class _ChannelsLastEndpointEncoder(nn.Module):
+    """Run a private encoder in NHWC storage and restore canonical output strides.
+
+    Returning contiguous tensors confines this experiment to the encoder. In
+    particular, it does not silently change the downstream correlation reduction
+    layout. Values can still differ through convolution/normalization algorithms;
+    the final TTC tolerance remains mandatory.
+    """
+
+    def __init__(self, encoder: nn.Module) -> None:
+        super().__init__()
+        # Module.to documents memory_format, but the installed stubs omit it.
+        self.encoder = encoder.to(memory_format=torch.channels_last)  # pyright: ignore[reportCallIssue]
+
+    def forward(
+        self, values: Tensor, *, return_dense_features: bool = False
+    ) -> tuple[Tensor, Tensor, Tensor | None]:
+        foreground, token, dense = self.encoder(
+            values.contiguous(memory_format=torch.channels_last),
+            return_dense_features=return_dense_features,
+        )
+        return (
+            foreground.contiguous(),
+            token.contiguous(),
+            dense.contiguous() if dense is not None else None,
+        )
+
+
+def clone_producer_models_for_layout(
+    models: Mapping[str, nn.Module], *, channels_last: bool
+) -> dict[str, nn.Module]:
+    """Copy frozen producers before experimenting with encoder memory format.
+
+    Producer parameters and buffers never alias the oracle. Other model types
+    (PAIR and context heads) remain shared and are not modified. No global cuDNN
+    flag or precision setting is changed. The default runtime does not call this
+    helper: each layout is an explicitly selected, separately admitted variant.
+    """
+    result = dict(models)
+    for name, model in models.items():
+        if not isinstance(model, CausalScaleTTC):
+            continue
+        if model.training or any(parameter.requires_grad for parameter in model.parameters()):
+            raise ValueError("Layout experiments require frozen eval producers")
+        if any(parameter.dtype != torch.float32 for parameter in model.parameters()):
+            raise ValueError("Layout experiments preserve FP32 producer weights")
+        proposed = deepcopy(model)
+        # Check values before wrapping changes state_dict paths. Neither copy
+        # nor storage conversion is permitted to alter a single weight value.
+        for key, original in model.state_dict().items():
+            if not torch.equal(original, proposed.state_dict()[key]):
+                raise ValueError(f"Producer copy changed frozen state: {name}/{key}")
+        if channels_last:
+            proposed._modules["encoder"] = _ChannelsLastEndpointEncoder(proposed.encoder)
+            if proposed.transport_encoder is not None:
+                proposed._modules["transport_encoder"] = _ChannelsLastEndpointEncoder(
+                    proposed.transport_encoder
+                )
+        result[name] = proposed
+    return result
 
 
 class ProducerTensorCore(nn.Module):
@@ -131,6 +194,7 @@ class _GraphEntry:
     replays: int = 0
     last_use: torch.cuda.Event | None = None
     history_group_size: int | None = None
+    capture_stream: torch.cuda.Stream | None = None
 
 
 @dataclass(frozen=True)
@@ -290,6 +354,11 @@ def reuse_endpoint_encoders(
         raise ValueError("Endpoint reuse requires frozen T2/T3 producers and a positive batch")
     view = copy(model)
     view._modules = model._modules.copy()
+    implementation = model.__dict__.get("_forward_impl")
+    if isinstance(implementation, MethodType):
+        # A private transport adapter may bind a rewritten forward to its own
+        # instance. Rebind that function so it sees this view's reused encoders.
+        object.__setattr__(view, "_forward_impl", MethodType(implementation.__func__, view))
     view._modules["encoder"] = _ReuseEndpointEncoder(
         model.encoder, batch, steps, history_group_size
     )
@@ -376,19 +445,30 @@ class ProducerRuntime:
         graphs: bool = True,
         block_graphs: bool = False,
         reuse_encodings: bool = False,
+        reuse_event_encodings: bool | None = None,
+        reuse_rgb_encodings: bool | None = None,
     ) -> None:
         self.models = models
         self.device = torch.device(device)
         self.graphs = graphs
         self.block_graphs = block_graphs
-        self.reuse_encodings = reuse_encodings
+        if any(
+            value is not None and not isinstance(value, bool)
+            for value in (reuse_event_encodings, reuse_rgb_encodings)
+        ):
+            raise ValueError("Per-modality endpoint reuse overrides must be boolean or None")
+        self.reuse_by_modality = {
+            "E": reuse_encodings if reuse_event_encodings is None else reuse_event_encodings,
+            "R": reuse_encodings if reuse_rgb_encodings is None else reuse_rgb_encodings,
+        }
+        self.reuse_encodings = any(self.reuse_by_modality.values())
         self.reuse_fallbacks = 0
         self._entries: dict[tuple[str, tuple[int, ...]], _GraphEntry] = {}
         if graphs and self.device.type != "cuda":
             raise ValueError("CUDA producer graphs require a CUDA device")
         if block_graphs and not graphs:
             raise ValueError("Whole expert-block graphs require graphs=True")
-        if reuse_encodings and not block_graphs:
+        if self.reuse_encodings and not block_graphs:
             raise ValueError("Endpoint encoding reuse requires whole expert-block graphs")
 
     def _producer(
@@ -423,7 +503,11 @@ class ProducerRuntime:
                     torch.cuda.current_stream(sensor.device).wait_stream(stream)
                     torch.cuda.synchronize(sensor.device)
                     graph = torch.cuda.CUDAGraph()
-                    with torch.cuda.graph(graph):
+                    # Capture on the same private stream used for warmup.
+                    # cuBLAS workspaces may be stream-local: capturing unrelated
+                    # blocks on the global capture stream can alias scratch
+                    # memory when those graphs are replayed concurrently.
+                    with torch.cuda.graph(graph, stream=stream):
                         output = cast(tuple[Tensor, ...], traced(static_sensor, static_delta))
                 graph.replay()
                 _exact_outputs(output, expected, "CUDA capture")
@@ -435,6 +519,7 @@ class ProducerRuntime:
                     traced,
                     messages,
                     time.perf_counter() - start,
+                    capture_stream=stream,
                 )
             entry = self._entries[key]
             entry.sensor.copy_(sensor)
@@ -473,8 +558,10 @@ class ProducerRuntime:
     def _block_graph(
         self, modality: str, sensor: Tensor, delta: Tensor, *, history_group_size: int
     ) -> tuple[Tensor, Tensor]:
-        reuse_active = self.reuse_encodings and overlapping_endpoints(sensor, history_group_size)
-        if self.reuse_encodings and not reuse_active:
+        reuse_active = self.reuse_by_modality[modality] and overlapping_endpoints(
+            sensor, history_group_size
+        )
+        if self.reuse_by_modality[modality] and not reuse_active:
             self.reuse_fallbacks += 1
         entry = self._block_entry(
             modality,
@@ -514,7 +601,7 @@ class ProducerRuntime:
         validate_inputs(first, sensor, delta, check_values=False)
         validate_inputs(second, sensor, delta, check_values=False)
         group_size = _history_group_size(len(sensor), history_group_size)
-        reuse_active = self.reuse_encodings and group_size > 1
+        reuse_active = self.reuse_by_modality[modality] and group_size > 1
         entry = self._block_entry(
             modality, sensor, delta, reuse_active=reuse_active, history_group_size=group_size
         )
@@ -591,7 +678,7 @@ class ProducerRuntime:
                 torch.cuda.current_stream(sensor.device).wait_stream(stream)
                 torch.cuda.synchronize(sensor.device)
                 graph = torch.cuda.CUDAGraph()
-                with torch.cuda.graph(graph):
+                with torch.cuda.graph(graph, stream=stream):
                     output = cast(tuple[Tensor, ...], traced(static_sensor, static_delta))
             graph.replay()
             _exact_outputs(output, expected, "whole-block capture")
@@ -604,6 +691,7 @@ class ProducerRuntime:
                 tuple(sorted({str(record.message) for record in records})),
                 time.perf_counter() - start,
                 history_group_size=history_group_size,
+                capture_stream=stream,
             )
         return self._entries[key]
 
@@ -625,7 +713,14 @@ class ProducerRuntime:
                 "jit_optimized_execution": False,
                 "endpoint_reuse": name.endswith("_REUSE"),
                 "endpoint_reuse_fallback_calls": self.reuse_fallbacks,
+                "endpoint_reuse_by_modality": dict(self.reuse_by_modality),
                 "history_group_size": entry.history_group_size,
+                "dedicated_capture_stream": entry.capture_stream is not None,
+                "capture_stream_id": (
+                    int(entry.capture_stream.cuda_stream)
+                    if entry.capture_stream is not None
+                    else None
+                ),
                 "precision": "FP32_TF32_DISABLED",
             }
             for (name, shape), entry in self._entries.items()

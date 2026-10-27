@@ -35,6 +35,8 @@ class PersistentTrain40Predictor:
         batch_rgb: bool = False,
         block_graphs: bool = False,
         reuse_encodings: bool = False,
+        reuse_event_encodings: bool | None = None,
+        reuse_rgb_encodings: bool | None = None,
         parallel_branches: bool = False,
         rgb_workers: int = 1,
         synchronize_stages: bool = False,
@@ -46,6 +48,10 @@ class PersistentTrain40Predictor:
             producer_options["block_graphs"] = True
         if reuse_encodings:
             producer_options["reuse_encodings"] = True
+        if reuse_event_encodings is not None:
+            producer_options["reuse_event_encodings"] = reuse_event_encodings
+        if reuse_rgb_encodings is not None:
+            producer_options["reuse_rgb_encodings"] = reuse_rgb_encodings
         self.producers = ProducerRuntime(dict(models), self.device, **producer_options)
         self.context = ContextRuntime(
             dict(models), dict(normalizers), self.device, graphs=context_graphs

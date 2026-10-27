@@ -56,6 +56,11 @@ SCOPE = "REGISTERED_SINGLE_OBJECT_LAST_PACKET_REPLAY_WITH_PER_QUERY_HISTORY_INIT
 
 def run(args: argparse.Namespace) -> None:
     """Keep full parity coverage and preserve original bytes even on failure."""
+    backend = getattr(args, "backend", "integral")
+    normalization = getattr(args, "normalization", "sort")
+    no_event_reuse = getattr(args, "no_event_reuse", False)
+    if backend == "integral" and normalization != "sort":
+        raise ValueError("Top-k normalization currently requires the prefix backend")
     _validate_output(args.output, [args.candidate, args.reference, args.manifest.parent])
     args.output.mkdir(parents=True, exist_ok=False)
     paths, binding = verify_candidate(args.candidate)
@@ -105,6 +110,9 @@ def run(args: argparse.Namespace) -> None:
             seed=7,
             rgb_workers=args.rgb_workers,
             parallel_branches=args.parallel,
+            representation_backend=backend,
+            normalization=normalization,
+            reuse_event_encodings=not no_event_reuse,
             input_boundary="last_required_raw_CPU_packet_and_RGB_frames_available",
             output_boundary="final_E_CTX_and_R_CTX_TTC_available_on_host",
             history_initialization_excluded=True,
@@ -123,10 +131,18 @@ def run(args: argparse.Namespace) -> None:
             batch_rgb=True,
             block_graphs=True,
             reuse_encodings=True,
+            reuse_event_encodings=False if no_event_reuse else None,
             parallel_branches=args.parallel,
             rgb_workers=args.rgb_workers,
         )
-        history = IntegralEventHistory(device="cuda", max_objects=1, roi_batch_size=1)
+        if backend == "prefix":
+            from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
+
+            history = TemporalPrefixEventHistory(
+                device="cuda", max_objects=1, roi_batch_size=1, normalization=normalization
+            )
+        else:
+            history = IntegralEventHistory(device="cuda", max_objects=1, roi_batch_size=1)
         # Prime only fixed shapes on artificial startup data, once per service.
         # No query-specific model execution is excluded after observations arrive.
         synthetic_query = {"anchor_us": 1_000_000}
@@ -274,6 +290,9 @@ def main() -> None:
     parser.add_argument("--indices", nargs="+", type=int)
     parser.add_argument("--rgb-workers", type=int, default=8)
     parser.add_argument("--parallel", action="store_true")
+    parser.add_argument("--backend", choices=("integral", "prefix"), default="integral")
+    parser.add_argument("--normalization", choices=("sort", "topk"), default="sort")
+    parser.add_argument("--no-event-reuse", action="store_true")
     parser.add_argument("--skip-input-check", action="store_true")
     run(parser.parse_args())
 
