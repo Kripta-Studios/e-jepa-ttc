@@ -70,6 +70,44 @@ class CausalScaleTTCLoss:
     counts: dict[str, int]
 
 
+@dataclass(frozen=True)
+class PreparedTargetCounts:
+    """Host-derived target support counts for an already validated batch."""
+
+    physical_ratio: int
+    supervised_ttc: int
+    foreground_extent: int
+    foreground_geometry: int
+    foreground_pair_ratio: int
+
+    def __post_init__(self) -> None:
+        if min(
+            self.physical_ratio,
+            self.supervised_ttc,
+            self.foreground_extent,
+            self.foreground_geometry,
+            self.foreground_pair_ratio,
+        ) < 0:
+            raise ValueError("prepared target counts must be non-negative")
+
+
+def _support_count(
+    valid: torch.Tensor,
+    prepared: int | None,
+    *,
+    name: str,
+) -> int:
+    """Use a host count without introducing a CUDA scalar synchronization."""
+    if prepared is None:
+        return int(valid.sum().item())
+    count = int(prepared)
+    if count < 0 or count > valid.numel():
+        raise ValueError(f"prepared {name} count is outside the valid mask population")
+    if valid.device.type == "cpu" and count != int(valid.sum().item()):
+        raise ValueError(f"prepared {name} count differs from the target-derived mask")
+    return count
+
+
 def _zero(reference: torch.Tensor) -> torch.Tensor:
     return reference.sum() * 0.0
 
@@ -110,10 +148,11 @@ def _foreground_extent_loss(
     *,
     beta: float,
     target_geometry: BoxGeometryTargets | None = None,
+    prepared_count: int | None = None,
 ) -> tuple[torch.Tensor, int]:
     if target_geometry is not None:
         valid = target_geometry.valid.bool()
-        count = int(valid.sum().item())
+        count = _support_count(valid, prepared_count, name="foreground_extent")
         if count == 0:
             return _zero(output.visible_height_normalized), 0
         return (
@@ -150,12 +189,13 @@ def _foreground_width_center_losses(
     target_geometry: BoxGeometryTargets | None,
     *,
     beta: float,
+    prepared_count: int | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor, int]:
     if target_geometry is None:
         zero = _zero(output.visible_width_normalized)
         return zero, zero, 0
     valid = target_geometry.valid.bool()
-    count = int(valid.sum().item())
+    count = _support_count(valid, prepared_count, name="foreground_geometry")
     if count == 0:
         zero = _zero(output.visible_width_normalized)
         return zero, zero, 0
@@ -193,11 +233,12 @@ def _foreground_pair_ratio_loss(
     *,
     beta: float,
     target_geometry: BoxGeometryTargets | None = None,
+    prepared_count: int | None = None,
 ) -> tuple[torch.Tensor, int]:
     if target_geometry is not None:
         endpoint_valid = target_geometry.valid.bool()
         pair_valid = endpoint_valid[:, :-1] & endpoint_valid[:, 1:]
-        count = int(pair_valid.sum().item())
+        count = _support_count(pair_valid, prepared_count, name="foreground_pair_ratio")
         if count == 0:
             return _zero(output.analytic_log_height_ratio), 0
         target_height = target_geometry.height_normalized.clamp_min(1.0e-6)
@@ -244,6 +285,7 @@ def causal_scale_ttc_loss(
     mask_valid: torch.Tensor | None = None,
     target_geometry: BoxGeometryTargets | None = None,
     config: CausalScaleTTCLossConfig | None = None,
+    prepared_counts: PreparedTargetCounts | None = None,
 ) -> CausalScaleTTCLoss:
     """Train foreground scale, uncertainty, risk, and an auxiliary direct readout.
 
@@ -269,7 +311,11 @@ def causal_scale_ttc_loss(
         if target_valid.shape != (batch,):
             raise ValueError("target_valid must have shape [B]")
         physical_valid = physical_valid & target_valid.bool()
-    valid_count = int(physical_valid.sum().item())
+    valid_count = _support_count(
+        physical_valid,
+        None if prepared_counts is None else prepared_counts.physical_ratio,
+        name="physical_ratio",
+    )
     if valid_count:
         ratio_prediction = (
             output.pair_log_height_ratio[:, -1]
@@ -301,7 +347,11 @@ def causal_scale_ttc_loss(
     finite_ttc = torch.isfinite(target_ttc_seconds) & (target_ttc_seconds.abs() > 1.0e-8)
     if target_valid is not None:
         finite_ttc = finite_ttc & target_valid.bool()
-    supervised_count = int(finite_ttc.sum().item())
+    supervised_count = _support_count(
+        finite_ttc,
+        None if prepared_counts is None else prepared_counts.supervised_ttc,
+        name="supervised_ttc",
+    )
     if supervised_count:
         inverse_target = target_ttc_seconds[finite_ttc].reciprocal()
         auxiliary = functional.smooth_l1_loss(
@@ -333,12 +383,18 @@ def causal_scale_ttc_loss(
         mask_valid,
         beta=cfg.smooth_l1_beta,
         target_geometry=target_geometry,
+        prepared_count=(
+            None if prepared_counts is None else prepared_counts.foreground_extent
+        ),
     )
     foreground_width, foreground_center, foreground_geometry_count = (
         _foreground_width_center_losses(
             output,
             target_geometry,
             beta=cfg.smooth_l1_beta,
+            prepared_count=(
+                None if prepared_counts is None else prepared_counts.foreground_geometry
+            ),
         )
     )
     foreground_pair_ratio, foreground_pair_ratio_count = _foreground_pair_ratio_loss(
@@ -347,6 +403,9 @@ def causal_scale_ttc_loss(
         mask_valid,
         beta=cfg.smooth_l1_beta,
         target_geometry=target_geometry,
+        prepared_count=(
+            None if prepared_counts is None else prepared_counts.foreground_pair_ratio
+        ),
     )
     residual_regularization = output.residual_log_height_ratio.square().mean()
     pair_known = output.diagnostics["pair_known"].bool()
@@ -415,5 +474,6 @@ def causal_scale_ttc_loss(
 __all__ = [
     "CausalScaleTTCLoss",
     "CausalScaleTTCLossConfig",
+    "PreparedTargetCounts",
     "causal_scale_ttc_loss",
 ]

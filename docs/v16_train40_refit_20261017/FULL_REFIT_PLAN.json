@@ -1,0 +1,659 @@
+{
+  "status": "PROPOSED_COMPLETE_REFIT_NOT_EXECUTABLE",
+  "training_started": false,
+  "optimizer_updates_this_task": 0,
+  "execution_enabled": false,
+  "submission_enabled": false,
+  "family": "V16 PHASE_ONLY RGB+event, seed7, no ensemble",
+  "population": {
+    "queries": 88744,
+    "groups": 40,
+    "roles": {
+      "P": {
+        "queries": 53890,
+        "groups": [
+          "2Y46OkK3ff",
+          "6WCDpro5rE",
+          "8SdieOgbva",
+          "8mNnrXjpVB",
+          "9ITOs4twfk",
+          "A1Nhv0KtmL",
+          "ClXqVoZOFu",
+          "DGqicHUGWb",
+          "EllUE6bwVp",
+          "EuFGqTcqIz",
+          "GjMYZjmSQb",
+          "LMHPShQkaU",
+          "OBneIVg4Cw",
+          "OYgB6RGWcq",
+          "Po6ePjWYAz",
+          "VLA3oBKFyX",
+          "eX8t2nGd6O",
+          "nRcwUlHyAd",
+          "pakWgyPNTL",
+          "q2k6O0X6JY",
+          "qoohcdtLDH",
+          "vWp9XNYQ9V",
+          "wE9MZUmiJP",
+          "xkiVthsGwf"
+        ]
+      },
+      "H": {
+        "queries": 18422,
+        "groups": [
+          "2JkLL5W891",
+          "34K84TaN11",
+          "CzyQ8HKP6X",
+          "JaGC4Q9pgU",
+          "L36QTEoVkB",
+          "mHGFBekt7X",
+          "pBqGOb2vYq",
+          "qGsgzl4Q8B"
+        ]
+      },
+      "V": {
+        "queries": 16432,
+        "groups": [
+          "2cyv0Oedzg",
+          "5ilM1PX2vz",
+          "6h5yRW2LGc",
+          "WbCh1DRerJ",
+          "Z30i8WuL2N",
+          "pzJcg1OCfc",
+          "rhYxPcU29n",
+          "t79dBxj1WS"
+        ]
+      }
+    }
+  },
+  "sources": {
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\P_MANIFEST.json": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+    "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\P_ROWS.parquet": "d0341f7aedede35e47ba2e8afa1452478fd39ba43615a85627804ab1fa183b94",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\H_MANIFEST.json": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+    "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\H_ROWS.parquet": "137420177757b802abd66b9077cb50ef0a37d8d55951dbcb8582d316d1ee60a1",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\V_MANIFEST.json": "f73aaab45d868fcab406f8d90aea65dc97c7bd702647677e7cc77b0781f9d720",
+    "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\V_ROWS.parquet": "c0344a33739e845a5e5f7ddd5d7098c1fbc08a2fb5b6ad426400ee07c8423402",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005\\TRAIN40_ROWS.parquet": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005\\TEACHER_MANIFEST.json": "646d5569671e9d8af9b21c84c12a55584be675ccfc77dc5e996ccea6fb8d38de",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005\\TEACHER_COMPLETE_ADMISSION.json": "7c770a0526b43d815b9327dbb01666bf40b329469b091ca40cf7aa43be5a0733",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005\\TEACHER_FREEZE.json": "a80896b73b241b5570861c381497585348196ff06dac180dd9e343af4d753fbb",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port\\recipe.py": "9f806fa2fe7efddb721cf2022f38a3c5e6ead2e21a5d792e94b1d3a5f260ed11",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port\\train_heads.py": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\plan_v16_train40_refit.py": "346eb04d3f3c205a72899ef6bfaf61eef422d39b9ef7640518dc46973b967ad9"
+  },
+  "teacher_cache": {
+    "status": "HISTORICAL_COMPLETE_RECEIPT_BOUND_NOT_REHASHED",
+    "rows": 88744,
+    "shards": 2774,
+    "bytes_previously_verified": 1543358592,
+    "generic_weights_sha256": "96ad081d5863ba14707d2e3bb734b7fa8dfbf3248cb67ddfcc74d86dd160d628",
+    "new_inference": false,
+    "next_check": "Verify current shard integrity and fold token mapping before reuse"
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "train_groups": [
+        "2Y46OkK3ff",
+        "2cyv0Oedzg",
+        "34K84TaN11",
+        "5ilM1PX2vz",
+        "6WCDpro5rE",
+        "8SdieOgbva",
+        "9ITOs4twfk",
+        "CzyQ8HKP6X",
+        "EllUE6bwVp",
+        "LMHPShQkaU",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "WbCh1DRerJ",
+        "Z30i8WuL2N",
+        "eX8t2nGd6O",
+        "nRcwUlHyAd",
+        "pBqGOb2vYq",
+        "pzJcg1OCfc",
+        "qGsgzl4Q8B",
+        "rhYxPcU29n",
+        "t79dBxj1WS",
+        "vWp9XNYQ9V",
+        "wE9MZUmiJP",
+        "xkiVthsGwf"
+      ],
+      "heldout_groups": [
+        "2JkLL5W891",
+        "6h5yRW2LGc",
+        "8mNnrXjpVB",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "DGqicHUGWb",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "mHGFBekt7X",
+        "pakWgyPNTL",
+        "q2k6O0X6JY",
+        "qoohcdtLDH"
+      ],
+      "train_queries": 58580,
+      "heldout_queries": 30164
+    },
+    {
+      "fold": 1,
+      "train_groups": [
+        "2JkLL5W891",
+        "2Y46OkK3ff",
+        "34K84TaN11",
+        "5ilM1PX2vz",
+        "6WCDpro5rE",
+        "6h5yRW2LGc",
+        "8mNnrXjpVB",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "DGqicHUGWb",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "LMHPShQkaU",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "Z30i8WuL2N",
+        "eX8t2nGd6O",
+        "mHGFBekt7X",
+        "pakWgyPNTL",
+        "q2k6O0X6JY",
+        "qoohcdtLDH",
+        "t79dBxj1WS",
+        "vWp9XNYQ9V",
+        "xkiVthsGwf"
+      ],
+      "heldout_groups": [
+        "2cyv0Oedzg",
+        "8SdieOgbva",
+        "9ITOs4twfk",
+        "CzyQ8HKP6X",
+        "EllUE6bwVp",
+        "OBneIVg4Cw",
+        "WbCh1DRerJ",
+        "nRcwUlHyAd",
+        "pBqGOb2vYq",
+        "pzJcg1OCfc",
+        "qGsgzl4Q8B",
+        "rhYxPcU29n",
+        "wE9MZUmiJP"
+      ],
+      "train_queries": 59457,
+      "heldout_queries": 29287
+    },
+    {
+      "fold": 2,
+      "train_groups": [
+        "2JkLL5W891",
+        "2cyv0Oedzg",
+        "6h5yRW2LGc",
+        "8SdieOgbva",
+        "8mNnrXjpVB",
+        "9ITOs4twfk",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "CzyQ8HKP6X",
+        "DGqicHUGWb",
+        "EllUE6bwVp",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "OBneIVg4Cw",
+        "WbCh1DRerJ",
+        "mHGFBekt7X",
+        "nRcwUlHyAd",
+        "pBqGOb2vYq",
+        "pakWgyPNTL",
+        "pzJcg1OCfc",
+        "q2k6O0X6JY",
+        "qGsgzl4Q8B",
+        "qoohcdtLDH",
+        "rhYxPcU29n",
+        "wE9MZUmiJP"
+      ],
+      "heldout_groups": [
+        "2Y46OkK3ff",
+        "34K84TaN11",
+        "5ilM1PX2vz",
+        "6WCDpro5rE",
+        "LMHPShQkaU",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "Z30i8WuL2N",
+        "eX8t2nGd6O",
+        "t79dBxj1WS",
+        "vWp9XNYQ9V",
+        "xkiVthsGwf"
+      ],
+      "train_queries": 59451,
+      "heldout_queries": 29293
+    }
+  ],
+  "trainable_tasks": [
+    {
+      "id": "fold0/E_A5_MATCHED",
+      "train_population": 58580,
+      "scientific_updates_proposed": 32958,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/E_C2F_MATCHED",
+      "train_population": 58580,
+      "scientific_updates_proposed": 32958,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/R_A5",
+      "train_population": 58580,
+      "scientific_updates_proposed": 32958,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/R_C2F",
+      "train_population": 58580,
+      "scientific_updates_proposed": 32958,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/PAIR_E_MATCHED",
+      "train_population": 58580,
+      "scientific_updates_proposed": 7436,
+      "batch_size": 32,
+      "depends_on": [
+        "fold0/E_A5_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/PAIR_R",
+      "train_population": 58580,
+      "scientific_updates_proposed": 7436,
+      "batch_size": 32,
+      "depends_on": [
+        "fold0/R_A5"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/E_CTX_MATCHED",
+      "train_population": 58580,
+      "scientific_updates_proposed": 7950,
+      "batch_size": 128,
+      "depends_on": [
+        "fold0/E_A5_MATCHED",
+        "fold0/E_C2F_MATCHED",
+        "fold0/PAIR_E_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold0/R_CTX",
+      "train_population": 58580,
+      "scientific_updates_proposed": 7950,
+      "batch_size": 128,
+      "depends_on": [
+        "fold0/R_A5",
+        "fold0/R_C2F",
+        "fold0/PAIR_R"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/E_A5_MATCHED",
+      "train_population": 59457,
+      "scientific_updates_proposed": 33462,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/E_C2F_MATCHED",
+      "train_population": 59457,
+      "scientific_updates_proposed": 33462,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/R_A5",
+      "train_population": 59457,
+      "scientific_updates_proposed": 33462,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/R_C2F",
+      "train_population": 59457,
+      "scientific_updates_proposed": 33462,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/PAIR_E_MATCHED",
+      "train_population": 59457,
+      "scientific_updates_proposed": 7547,
+      "batch_size": 32,
+      "depends_on": [
+        "fold1/E_A5_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/PAIR_R",
+      "train_population": 59457,
+      "scientific_updates_proposed": 7547,
+      "batch_size": 32,
+      "depends_on": [
+        "fold1/R_A5"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/E_CTX_MATCHED",
+      "train_population": 59457,
+      "scientific_updates_proposed": 8069,
+      "batch_size": 128,
+      "depends_on": [
+        "fold1/E_A5_MATCHED",
+        "fold1/E_C2F_MATCHED",
+        "fold1/PAIR_E_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold1/R_CTX",
+      "train_population": 59457,
+      "scientific_updates_proposed": 8069,
+      "batch_size": 128,
+      "depends_on": [
+        "fold1/R_A5",
+        "fold1/R_C2F",
+        "fold1/PAIR_R"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/E_A5_MATCHED",
+      "train_population": 59451,
+      "scientific_updates_proposed": 33444,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/E_C2F_MATCHED",
+      "train_population": 59451,
+      "scientific_updates_proposed": 33444,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/R_A5",
+      "train_population": 59451,
+      "scientific_updates_proposed": 33444,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/R_C2F",
+      "train_population": 59451,
+      "scientific_updates_proposed": 33444,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/PAIR_E_MATCHED",
+      "train_population": 59451,
+      "scientific_updates_proposed": 7546,
+      "batch_size": 32,
+      "depends_on": [
+        "fold2/E_A5_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/PAIR_R",
+      "train_population": 59451,
+      "scientific_updates_proposed": 7546,
+      "batch_size": 32,
+      "depends_on": [
+        "fold2/R_A5"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/E_CTX_MATCHED",
+      "train_population": 59451,
+      "scientific_updates_proposed": 8068,
+      "batch_size": 128,
+      "depends_on": [
+        "fold2/E_A5_MATCHED",
+        "fold2/E_C2F_MATCHED",
+        "fold2/PAIR_E_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "fold2/R_CTX",
+      "train_population": 59451,
+      "scientific_updates_proposed": 8068,
+      "batch_size": 128,
+      "depends_on": [
+        "fold2/R_A5",
+        "fold2/R_C2F",
+        "fold2/PAIR_R"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/E_A5_MATCHED",
+      "train_population": 88744,
+      "scientific_updates_proposed": 49932,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/E_C2F_MATCHED",
+      "train_population": 88744,
+      "scientific_updates_proposed": 49932,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/R_A5",
+      "train_population": 88744,
+      "scientific_updates_proposed": 49932,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/R_C2F",
+      "train_population": 88744,
+      "scientific_updates_proposed": 49932,
+      "batch_size": 32,
+      "depends_on": [],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/PAIR_E_MATCHED",
+      "train_population": 88744,
+      "scientific_updates_proposed": 11264,
+      "batch_size": 32,
+      "depends_on": [
+        "final/E_A5_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/PAIR_R",
+      "train_population": 88744,
+      "scientific_updates_proposed": 11264,
+      "batch_size": 32,
+      "depends_on": [
+        "final/R_A5"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/E_CTX_MATCHED",
+      "train_population": 88744,
+      "scientific_updates_proposed": 12044,
+      "batch_size": 128,
+      "depends_on": [
+        "final/E_A5_MATCHED",
+        "final/E_C2F_MATCHED",
+        "final/PAIR_E_MATCHED"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "final/R_CTX",
+      "train_population": 88744,
+      "scientific_updates_proposed": 12044,
+      "batch_size": 128,
+      "depends_on": [
+        "final/R_A5",
+        "final/R_C2F",
+        "final/PAIR_R"
+      ],
+      "fresh_initialization": true,
+      "seed": 7
+    },
+    {
+      "id": "PHASE_ONLY_EVENT_S7_TRAIN40",
+      "train_population": 88744,
+      "scientific_updates_proposed": 12044,
+      "batch_size": 128,
+      "depends_on": [
+        "fold0/E_CTX_MATCHED",
+        "fold0/R_CTX",
+        "fold1/E_CTX_MATCHED",
+        "fold1/R_CTX",
+        "fold2/E_CTX_MATCHED",
+        "fold2/R_CTX"
+      ],
+      "fresh_initialization": true,
+      "seed": 7,
+      "input": "sealed complete OOF states"
+    }
+  ],
+  "stacking": {
+    "strategy": "Three complete lower-chain group folds plus all-TRAIN final chain",
+    "fold_chain": "Fresh producers -> PAIR -> fold normalizers -> CTX -> heldout states",
+    "within_fold_upper_training": "Sequential in-sample; not OOF within train groups",
+    "OOF_boundary": "Every learned ancestor excludes the output query acquisition group",
+    "historical_supervised_parents_allowed_for_folds": false,
+    "head": "Fresh PHASE_ONLY on heldout-fold states; recompute group-balanced mass",
+    "deployment": "One all-TRAIN chain plus OOF-trained head; no fold ensemble",
+    "risk": "OOF-to-final features can shift; improvement is not guaranteed",
+    "evaluation": "OOF states are head TRAIN; fitted head scores on them are not test",
+    "teachers": "Generic frozen DINO on train pixels; verify coverage and ancestry"
+  },
+  "exposure": {
+    "producers": "18 epochs, effective batch32, fresh initialization; local recipe",
+    "PAIR": "ceil(6840*N/53890), batch32; grouped sampler; approximate exposure",
+    "CTX_and_head": "ceil(2500*N/18422), batch128; recompute group mass on fit population",
+    "schedulers": "Producer epochs; constant PAIR LR; scale CTX/head warmup and cosine",
+    "checkpoint": "Fixed final endpoint, no selecting checkpoints on H/V/EvTTC/test12"
+  },
+  "budget": {
+    "fit_count": 33,
+    "scientific_updates_proposed": 751076,
+    "producer_updates": 599184,
+    "single_chain_in_sample_alternative_updates": 258388,
+    "single_chain_alternative_fit_count": 9,
+    "alternative_selected": false,
+    "alternative_limit": "Cheaper declared in-sample stacking; no OOF head inputs",
+    "GPU_hours": null,
+    "technical_and_recovery_cap": null,
+    "total_storage_bytes": null,
+    "status": "Update arithmetic; no measured resource budget or execution authorization",
+    "profiling_needed": "Fixtures per modality/producer type; extraction and storage"
+  },
+  "excluded_fits": [
+    "E_H1_MATCHED",
+    "R_H1",
+    "F_TRUE",
+    "F_ZERO",
+    "C1",
+    "A1",
+    "V19"
+  ],
+  "readiness": {
+    "P_H_V_union_and_group_identity": "PASS",
+    "raw_media_full_validation": "NOT_REPEATED",
+    "teacher_all_TRAIN40_coverage": "HISTORICAL_COMPLETE_RECEIPT_BOUND_NOT_REHASHED",
+    "temporal_history_eligibility": "UNCONFIRMED",
+    "full_refit_training_adapter": "NOT_IMPLEMENTED",
+    "CPU_GPU_resume_and_export_validation": "NOT_EXECUTED_FOR_NEW_CHAIN",
+    "historical_trainer_compatibility": "Old trainers enforce P/H and fixed endpoints; cannot launch this unchanged"
+  },
+  "delivery_order": [
+    "Confirm RGB+event causal history eligibility using the draft question",
+    "Bind raw input and teacher coverage, licenses, generic teacher and source hashes",
+    "Implement separate refit adapter and role contracts; preserve historical runners",
+    "Measure technical runtime/storage, set complete cap and exact resumption tests",
+    "Register selected strategy and budget before optimizer updates",
+    "Fit complete folds, seal OOF states; fit final chain and PHASE_ONLY head",
+    "Freeze endpoint, verify full sensor/export parity and coverage",
+    "Generate one final test12 package; manual user submission per existing instruction"
+  ],
+  "official_history_question": "Does the RGB+event track allow causal same-object history across samples, up to eight observations and 650 ms, without future sensors or test TTC? Does it permit generic frozen DINO representation supervision during TRAIN only? How should these be declared in the factsheet?"
+}

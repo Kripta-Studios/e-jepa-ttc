@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "manifest_sha256": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31",
+  "queries": 554,
+  "physical_unique_queries": 554,
+  "historical_exact_original_row_fields": 46,
+  "extended_queries": 512,
+  "overlap": 4,
+  "extended_new": 508,
+  "sequences": 32,
+  "families": {
+    "CCRm": 103,
+    "CCRs-1": 144,
+    "CCRs-2": 83,
+    "CCRs-3": 32,
+    "CCRs-side": 48,
+    "CPLA": 48,
+    "CPNA": 48,
+    "CPNAO": 48
+  },
+  "target_types": {
+    "car": 410,
+    "pedestrian": 144
+  },
+  "exclusion_reasons": {
+    "AMBIGUOUS_OR_NONPRIMARY_SCENARIO_TARGET": 45,
+    "INCOMPLETE_TARGET_ROI_TRIPLET": 204
+  },
+  "metadata_sha_checks": 554,
+  "targets_read": false,
+  "model_inference": false,
+  "all_gt_paths_exist": true
+}

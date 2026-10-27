@@ -1,0 +1,19 @@
+{
+  "query_id": "CCRs2-medium:11600319",
+  "registration_sha256": "46784d99adff5a2b80bc052d435e8fd8bdd3c9f62c15e6197d3365b648b73467",
+  "predictions": {
+    "C1_event": 1.564583420753479,
+    "R_CTX": 1.2487270832061768,
+    "F_TRUE": 1.6027146577835083,
+    "PHASE_ONLY_V16_S7": 1.287313461303711,
+    "FUSION_C1_V18_S7": 1.290530800819397
+  },
+  "rgb_history_length": 5,
+  "seconds": {
+    "preprocess": 0.470338700019056,
+    "all_models_shared_compute": 0.5259876000054646,
+    "total": 0.9963263000245206
+  },
+  "targets_read": false,
+  "optimizer_updates": 0
+}

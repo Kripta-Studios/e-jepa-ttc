@@ -1,0 +1,38 @@
+{
+  "queries": 64,
+  "groups": 8,
+  "selection": "Eight evenly spaced sorted IDs per V group; no label/error selection",
+  "manifest_sha256": "ced7ef3572935032418396911ce73c11ae41f1baf3a44d69c731f7c3a5b85437",
+  "V_manifest_sha256": "f73aaab45d868fcab406f8d90aea65dc97c7bd702647677e7cc77b0781f9d720",
+  "native_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c",
+  "public_train_sha256": "f2d3925f0fea9e6596788098838f8aef8ce512911eaa94a4ee2f22debe95e1a9",
+  "V_groups_in_public_train": [
+    "2cyv0Oedzg",
+    "5ilM1PX2vz",
+    "6h5yRW2LGc",
+    "WbCh1DRerJ",
+    "Z30i8WuL2N",
+    "pzJcg1OCfc",
+    "rhYxPcU29n",
+    "t79dBxj1WS"
+  ],
+  "independent_generalization_for_public_Garl": false,
+  "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+  "sources": {
+    "scripts\\post_v18_eap_compare.py": "3b6b26437f6d0cbb5f110c91d78fb5d4fc86dfcf3d3dcb1a106e0e205cff1eb5",
+    "operational\\sota_eval\\garl_parity.py": "0933daea78aa3f5518c0877eabce058c4d18bd86ef22dc5bcabe4bc36d9e4e4e",
+    "operational\\evttc_rgb_transfer\\model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7"
+  },
+  "local_helpers": {
+    "src\\e_jepa_ttc\\data\\garl_official_preprocessing.py": "10e8cc2bbb998144006a81e276942b76d8620a51b9ba778b62577d23ed8edd7e",
+    "src\\e_jepa_ttc\\efficient_context\\garl_input.py": "915153f34b6de0803059c709fbb668958a1ee843dabf09265393b9830a22449d",
+    "src\\e_jepa_ttc\\simplex_t\\cached_event_reader.py": "3d98509354694fd8688bb611014a9d69c55c1db65541f63db41d7f272e31db85",
+    "operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f"
+  },
+  "device": "CPU_FP32_two_threads",
+  "optimizer_updates": 0,
+  "max_wall_seconds": 7200,
+  "error_policy": "Keep every query, including missing/nonfinite output; no replacement",
+  "preprocessing_parity": "Bit-exact upstream-vs-local sensors on first query of each group before scoring",
+  "own_predictions": "Exact sealed V16 seed7 and V18 seed7 predictions joined only after full Garl seal"
+}

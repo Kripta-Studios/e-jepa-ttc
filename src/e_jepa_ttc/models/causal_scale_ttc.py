@@ -724,6 +724,7 @@ class CausalScaleTTC(nn.Module):
     def __init__(self, config: CausalScaleTTCConfig | None = None) -> None:
         super().__init__()
         self.config = config or CausalScaleTTCConfig()
+        self.runtime_reuse_reverse_sample = False
         self.temporal_channel_gate: nn.Module | None = (
             _AdaptiveTemporalChannelGate(
                 channels=self.config.in_channels,
@@ -1016,6 +1017,7 @@ class CausalScaleTTC(nn.Module):
                 foreground_weight=foreground_previous,
                 radius=fine_radius,
                 deterministic_sampling=self.config.deterministic_transport_sampling,
+                reuse_reverse_sample=self.runtime_reuse_reverse_sample,
             )
             fine_reverse = transport_physical_features(
                 reverse_match,
@@ -1023,6 +1025,7 @@ class CausalScaleTTC(nn.Module):
                 foreground_weight=foreground_current,
                 radius=fine_radius,
                 deterministic_sampling=self.config.deterministic_transport_sampling,
+                reuse_reverse_sample=self.runtime_reuse_reverse_sample,
             )
             fine_weight: torch.Tensor | None = None
             coarse_forward: torch.Tensor | None = None
@@ -1070,6 +1073,7 @@ class CausalScaleTTC(nn.Module):
                     foreground_weight=coarse_foreground_previous,
                     radius=coarse_radius,
                     deterministic_sampling=self.config.deterministic_transport_sampling,
+                    reuse_reverse_sample=self.runtime_reuse_reverse_sample,
                 )
                 coarse_reverse = transport_physical_features(
                     coarse_reverse_match,
@@ -1077,6 +1081,7 @@ class CausalScaleTTC(nn.Module):
                     foreground_weight=coarse_foreground_current,
                     radius=coarse_radius,
                     deterministic_sampling=self.config.deterministic_transport_sampling,
+                    reuse_reverse_sample=self.runtime_reuse_reverse_sample,
                 )
                 pair_inputs = inputs[:, 1:].reshape(
                     batch * pair_count,

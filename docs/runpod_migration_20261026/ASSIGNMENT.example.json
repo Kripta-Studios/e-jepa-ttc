@@ -1,0 +1,11 @@
+{
+  "schema": "ejepa_cloud_assignment_v1",
+  "execution_authorized": false,
+  "maximum_compute_usd": 0,
+  "execution_deadline_utc": "REPLACE_WITH_APPROVED_UTC_DEADLINE",
+  "technical_update_cap": 8,
+  "migration_binding_sha256": "REPLACE_AFTER_REMOTE_PREFLIGHT",
+  "local_queue_exclusion_receipt_sha256": "REPLACE_AFTER_REAL_LOCAL_EXCLUSION",
+  "tasks": [{"rotation": 4, "fit": "R_A5"}],
+  "billing_note": "Worker pause does not stop Pod billing. Manage resource shutdown separately."
+}

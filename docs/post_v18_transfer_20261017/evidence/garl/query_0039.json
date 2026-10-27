@@ -1,0 +1,20 @@
+{
+  "query_id": "CCRm-medium-overlap100:21600549",
+  "registration_sha256": "46784d99adff5a2b80bc052d435e8fd8bdd3c9f62c15e6197d3365b648b73467",
+  "status": "PREDICTED",
+  "predictions": {
+    "Garl_full": 1.8166204690933228
+  },
+  "input_sha256": "be7eeb04fbde28d55502b01021b73cf47657d67e61c1ef2b01e59026d2170aa2",
+  "heights": [
+    96.89564514160156,
+    102.54020690917969
+  ],
+  "seconds": {
+    "preprocess": 0.2881661000137683,
+    "model": 0.4415664999978617,
+    "total": 0.72973260001163
+  },
+  "targets_read": false,
+  "optimizer_updates": 0
+}

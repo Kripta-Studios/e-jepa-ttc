@@ -1,0 +1,12 @@
+{
+  "sample_token": "WbCh1DRerJ_004756_9688400000",
+  "group_id": "WbCh1DRerJ",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": 2.819908857345581,
+  "sensor_sha256": "a2bd6c1f6d854d037a37f99f310780d9d961988ff1896871950318bf2d2924ee",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.4387325999850873,
+  "seconds_preprocess_including_parity": 1.0436044000089169,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

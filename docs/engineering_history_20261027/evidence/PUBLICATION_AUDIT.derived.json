@@ -1,0 +1,117 @@
+{
+  "evidence_kind": "derived_summary",
+  "source": {
+    "source_locator": "artifacts/publication_20261027/SUMMARY.json",
+    "source_sha256": "2e33c48280fe3787c721b4548218c43727f5c0aa8482021659d7258eb0f4ec64",
+    "source_bytes": 5765
+  },
+  "recorded": {
+    "schema": "publication_audit_summary_v1",
+    "timestamp": "2026-10-27T18:55:12.375900+00:00",
+    "snapshot_head": "771c96a23784e1f3955cec21ba1f4d9a063a9145",
+    "pending_files": 677,
+    "pending_bytes": 9288069,
+    "tracked_modified": 6,
+    "untracked_nonignored": 671,
+    "largest_file_bytes": 2063815,
+    "confirmed_secrets_found": 0,
+    "secret_scan_scope": "677 pending Git-visible files, specific credential/private-key patterns plus secondary context and literal-assignment inspection; not a proof of absence",
+    "secret_false_positives": "dataset sample_token fields, identity/schema constants and runtime retrieval of Jupyter token; no secret values saved/output",
+    "findings": [
+      {
+        "severity": "HIGH",
+        "kind": "byte_identity_changes_on_git_add",
+        "paths": [
+          ".gitattributes:1",
+          "scripts/final_train40_transfer_garl.py:1",
+          "scripts/runpod_final_queue.py:1",
+          "docs/final_refit_20261017/NESTED_ROTATION_REVIEW.json:1"
+        ],
+        "evidence": "39 pending files contain CRLF; 3 hashes are directly referenced by pending published records. Git attributes default eol=lf changes their bytes. Preserve exact admitted source/evidence via narrow -text attributes before staging; do not silently rewrite historical hashes."
+      },
+      {
+        "severity": "HIGH",
+        "kind": "ci_lint_format_failure",
+        "paths": [
+          ".github/workflows/ci.yaml:15",
+          ".github/workflows/ci.yaml:16"
+        ],
+        "evidence": "Executed read-only ruff check:495 findings. Executed ruff format --check:148 files would change. Hash-bound scientific/operational sources must not be mass-reformatted; classify immutable evidence/runtime boundaries explicitly and keep runnable wrappers linted."
+      },
+      {
+        "severity": "HIGH",
+        "kind": "clean_clone_tests_require_ignored_artifacts",
+        "paths": [
+          "tests/unit/test_runpod_rgb_context_v8.py:17",
+          "tests/unit/test_runpod_rgb_context_v8.py:18",
+          "tests/unit/test_runpod_rgb_context_v8.py:51",
+          "tests/unit/test_runpod_rgb_context_v9.py:16",
+          "tests/unit/test_runpod_rgb_context_v9.py:30"
+        ],
+        "evidence": "Tests unconditionally read ignored artifacts manifests/configs. Fresh GitHub checkout lacks these files; provide small synthetic portable fixtures or mark genuine external-data checks with explicit skips, retaining portable unit coverage."
+      },
+      {
+        "severity": "MEDIUM",
+        "kind": "local_transport_helpers_import_ignored_rpc",
+        "paths": [
+          "scripts/runpod_transfer_file.py:13",
+          "scripts/runpod_transfer_file.py:14",
+          "scripts/runpod_transfer_file.py:26"
+        ],
+        "evidence": "One-off uploader imports rpc from ignored artifacts and embeds a Pod endpoint. No token literal found, but not portable in clean checkout. Keep deployment scripts documented as historical operational entrypoints or provide a safe parameterized public transport adapter, without publishing local credentials."
+      },
+      {
+        "severity": "MEDIUM",
+        "kind": "typing_ci_scope_narrow",
+        "paths": [
+          "pyrightconfig.json:2",
+          ".github/workflows/ci.yaml:17"
+        ],
+        "evidence": "Default pyright include covers only five pre-existing files, not the 671 new pending files. A green default typing job is not validation of the entire migration/final-refit implementation."
+      },
+      {
+        "severity": "MEDIUM",
+        "kind": "scientific_source_mutations_need_attribution",
+        "paths": [
+          "operational/rgb_port/train_producers.py:1",
+          "operational/rgb_port_revision/loss.py:1",
+          "src/e_jepa_ttc/losses/causal_scale_ttc.py:1",
+          "src/e_jepa_ttc/models/causal_scale_ttc.py:1",
+          "src/e_jepa_ttc/models/local_transport.py:1"
+        ],
+        "evidence": "Five tracked runtime/model/loss files have genuine optimization changes (host counts/prepared batch/reused reverse transport); they are not only documentation. Preserve old V18 code/bundle identities and publish later runtime bindings/parity evidence rather than relabeling historical training code."
+      },
+      {
+        "severity": "INFO",
+        "kind": "external_dataset_model_roots",
+        "paths": [
+          "scripts/final_train40_transfer_garl.py:263",
+          "scripts/final_train40_transfer_garl.py:266"
+        ],
+        "evidence": "Default official Garl checkpoint lives in sibling checkout and native code in E drive. CLI overrides exist, but reproduction also needs pinned public release assets and a documented setup; raw datasets/weights correctly remain outside Git."
+      }
+    ],
+    "recommend_exclusions": [
+      "Keep existing artifacts/, datasets/, data/cache/, venvs, raw media and checkpoint files excluded; do not force-add private operational credentials or full artifacts trees.",
+      "No pending file exceeds GitHub 100MB; largest is 2.06MB, so no large-file exclusion is needed for the current inventory.",
+      "Publish small scientific evidence/manifests needed to reproduce reported tables via explicit reviewed docs paths or release bundles, not arbitrary artifact directories."
+    ],
+    "no_stage_commit_push": true,
+    "no_source_edits": true,
+    "checks_executed": [
+      "git status/diff/list-files",
+      "sha256+size of677pendingfiles",
+      "credential-pattern scan",
+      "CRLF+hash reference audit",
+      "ruff check read-only",
+      "ruff format --check read-only"
+    ],
+    "checks_not_executed": [
+      "Full test suite",
+      "Clean checkout integration",
+      "Training/inference",
+      "Remote actions"
+    ]
+  },
+  "scope": "Historical pre-publication audit snapshot; subsequent CI fixes must be checked separately. No claim that these counts describe the final commit."
+}

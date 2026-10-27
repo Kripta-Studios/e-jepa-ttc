@@ -243,6 +243,7 @@ def _summarise_one(
     spatial_weight: torch.Tensor,
     radius: int,
     deterministic_sampling: bool = False,
+    reverse_sample: tuple[torch.Tensor, torch.Tensor, torch.Tensor] | None = None,
 ) -> torch.Tensor:
     batch, height, width = forward.dx.shape
     dtype = forward.dx.dtype
@@ -276,8 +277,12 @@ def _summarise_one(
     confidence = _weighted_mean(forward.confidence_margin, base_weight)
     entropy = _weighted_mean(forward.entropy, base_weight)
 
-    reverse_dx, reverse_dy, reverse_valid = _sample_reverse_flow(
-        reverse, forward, deterministic_sampling=deterministic_sampling
+    reverse_dx, reverse_dy, reverse_valid = (
+        _sample_reverse_flow(
+            reverse, forward, deterministic_sampling=deterministic_sampling
+        )
+        if reverse_sample is None
+        else reverse_sample
     )
     cycle_valid = forward.valid & reverse_valid
     cycle_weight = spatial_weight.float().clamp_min(0.0) * cycle_valid.float()
@@ -309,6 +314,7 @@ def transport_physical_features(
     foreground_weight: torch.Tensor | None,
     radius: int,
     deterministic_sampling: bool = False,
+    reuse_reverse_sample: bool = False,
 ) -> torch.Tensor:
     """Return 18 interpretable per-pair transport scalars.
 
@@ -331,12 +337,21 @@ def transport_physical_features(
     if foreground_weight.shape != (batch, height, width):
         raise ValueError("foreground_weight must have shape [B,H,W] or [B,1,H,W]")
 
+    reverse_sample = (
+        _sample_reverse_flow(
+            reverse, forward, deterministic_sampling=deterministic_sampling
+        )
+        if reuse_reverse_sample
+        else None
+    )
+
     global_features = _summarise_one(
         forward,
         reverse,
         spatial_weight=global_weight,
         radius=radius,
         deterministic_sampling=deterministic_sampling,
+        reverse_sample=reverse_sample,
     )
     foreground_features = _summarise_one(
         forward,
@@ -344,6 +359,7 @@ def transport_physical_features(
         spatial_weight=foreground_weight,
         radius=radius,
         deterministic_sampling=deterministic_sampling,
+        reverse_sample=reverse_sample,
     )
     features = torch.cat((global_features, foreground_features), dim=-1)
     if features.shape[-1] != len(TRANSPORT_FEATURE_NAMES):

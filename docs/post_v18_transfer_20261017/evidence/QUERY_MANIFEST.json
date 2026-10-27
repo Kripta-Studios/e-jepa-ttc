@@ -1,0 +1,5582 @@
+{
+  "rows": [
+    {
+      "query_id": "CCRs2-medium:9600275",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 9600275,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9300275,
+          9400275
+        ],
+        [
+          9400275,
+          9500275
+        ],
+        [
+          9500275,
+          9600275
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          590.3687999584988,
+          318.33563971361036,
+          673.106661825301,
+          386.24937309108947
+        ],
+        [
+          589.6547156789389,
+          317.6124895549908,
+          675.2491004356278,
+          388.3817975357171
+        ],
+        [
+          588.235769794189,
+          317.59364362383866,
+          678.1008771466742,
+          390.5189598470854
+        ]
+      ],
+      "square_xyxy": [
+        565.7694929560677,
+        286.65747122109815,
+        700.5671539847955,
+        421.45513224982597
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0188.json",
+          "sha256": "2d96802451f72baef37121f56c88bb35557d9a1896f086c4059d9d25f5fb346a",
+          "frame_index": 188,
+          "timestamp_us": 9400270,
+          "available_us": 9400270,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0190.json",
+          "sha256": "3db416896505461018b6cc330c7ddf87f56c4e5f9f7c3bcd991927e242950f55",
+          "frame_index": 190,
+          "timestamp_us": 9500268,
+          "available_us": 9500268,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0192.json",
+          "sha256": "21798caf82d172580d0389eff96ad6b60e6f441d3e395a4090b5890997721191",
+          "frame_index": 192,
+          "timestamp_us": 9600275,
+          "available_us": 9600275,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          931.0,
+          538.0,
+          1047.0,
+          633.0
+        ],
+        [
+          930.0,
+          537.0,
+          1050.0,
+          636.0
+        ],
+        [
+          928.0,
+          537.0,
+          1054.0,
+          639.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        188,
+        190,
+        192
+      ],
+      "rgb_timestamps_us": [
+        9400270,
+        9500268,
+        9600275
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "68118cf6adda832058d384b068e2945aab275f39ba0673ee211acbe7a0283d48"
+    },
+    {
+      "query_id": "CCRs2-medium:9700274",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 9700274,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9400274,
+          9500274
+        ],
+        [
+          9500274,
+          9600274
+        ],
+        [
+          9600274,
+          9700274
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          589.6547156789389,
+          317.6124895549908,
+          675.2491004356278,
+          388.3817975357171
+        ],
+        [
+          588.235769794189,
+          317.59364362383866,
+          678.1008771466742,
+          390.5189598470854
+        ],
+        [
+          587.4848414630175,
+          311.1936851913205,
+          680.9237015392935,
+          388.3959603306132
+        ]
+      ],
+      "square_xyxy": [
+        564.1251264439485,
+        280.77717746199596,
+        704.2834165583625,
+        420.93546757641
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0190.json",
+          "sha256": "3db416896505461018b6cc330c7ddf87f56c4e5f9f7c3bcd991927e242950f55",
+          "frame_index": 190,
+          "timestamp_us": 9500268,
+          "available_us": 9500268,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0192.json",
+          "sha256": "21798caf82d172580d0389eff96ad6b60e6f441d3e395a4090b5890997721191",
+          "frame_index": 192,
+          "timestamp_us": 9600275,
+          "available_us": 9600275,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0194.json",
+          "sha256": "77ec6f155e664140c56f6929395f76f46ce732e5219ddbbaa42af35fd6c70385",
+          "frame_index": 194,
+          "timestamp_us": 9700274,
+          "available_us": 9700274,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          930.0,
+          537.0,
+          1050.0,
+          636.0
+        ],
+        [
+          928.0,
+          537.0,
+          1054.0,
+          639.0
+        ],
+        [
+          927.0,
+          528.0,
+          1058.0,
+          636.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        190,
+        192,
+        194
+      ],
+      "rgb_timestamps_us": [
+        9500268,
+        9600275,
+        9700274
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "66a6ad749c928aed8c4de7f190f011c6aff8cfa6cef0f9ee61b485c0e438f840"
+    },
+    {
+      "query_id": "CCRs2-medium:9800281",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 9800281,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9500281,
+          9600281
+        ],
+        [
+          9600281,
+          9700281
+        ],
+        [
+          9700281,
+          9800281
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          588.235769794189,
+          317.59364362383866,
+          678.1008771466742,
+          390.5189598470854
+        ],
+        [
+          587.4848414630175,
+          311.1936851913205,
+          680.9237015392935,
+          388.3959603306132
+        ],
+        [
+          586.024546479241,
+          304.7938322681172,
+          683.7320322041378,
+          384.149944162065
+        ]
+      ],
+      "square_xyxy": [
+        561.5976750480169,
+        273.3142820056927,
+        708.158903635362,
+        419.8755105930378
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0192.json",
+          "sha256": "21798caf82d172580d0389eff96ad6b60e6f441d3e395a4090b5890997721191",
+          "frame_index": 192,
+          "timestamp_us": 9600275,
+          "available_us": 9600275,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0194.json",
+          "sha256": "77ec6f155e664140c56f6929395f76f46ce732e5219ddbbaa42af35fd6c70385",
+          "frame_index": 194,
+          "timestamp_us": 9700274,
+          "available_us": 9700274,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0196.json",
+          "sha256": "f15536e43150c319f9572f1b018ff1464fa3035868e1d70469205418969b2509",
+          "frame_index": 196,
+          "timestamp_us": 9800281,
+          "available_us": 9800281,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          928.0,
+          537.0,
+          1054.0,
+          639.0
+        ],
+        [
+          927.0,
+          528.0,
+          1058.0,
+          636.0
+        ],
+        [
+          925.0,
+          519.0,
+          1062.0,
+          630.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        192,
+        194,
+        196
+      ],
+      "rgb_timestamps_us": [
+        9600275,
+        9700274,
+        9800281
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "246adb4b9c21d4c7a064ee4ac3982ba5a9300c72d51f5f2241e1e4ebb424cbc7"
+    },
+    {
+      "query_id": "CCRs2-medium:9900279",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 9900279,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9600279,
+          9700279
+        ],
+        [
+          9700279,
+          9800279
+        ],
+        [
+          9800279,
+          9900279
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          587.4848414630175,
+          311.1936851913205,
+          680.9237015392935,
+          388.3959603306132
+        ],
+        [
+          586.024546479241,
+          304.7938322681172,
+          683.7320322041378,
+          384.149944162065
+        ],
+        [
+          585.2921473134609,
+          301.2253642342936,
+          687.2833712683084,
+          384.8638942178541
+        ]
+      ],
+      "square_xyxy": [
+        559.794341324749,
+        266.5512112599382,
+        712.7811772570203,
+        419.53804719220955
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0194.json",
+          "sha256": "77ec6f155e664140c56f6929395f76f46ce732e5219ddbbaa42af35fd6c70385",
+          "frame_index": 194,
+          "timestamp_us": 9700274,
+          "available_us": 9700274,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0196.json",
+          "sha256": "f15536e43150c319f9572f1b018ff1464fa3035868e1d70469205418969b2509",
+          "frame_index": 196,
+          "timestamp_us": 9800281,
+          "available_us": 9800281,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0198.json",
+          "sha256": "41636140b058903ad278b770cf651dfac4d1122c24573f16d0edcd1f456e0a37",
+          "frame_index": 198,
+          "timestamp_us": 9900279,
+          "available_us": 9900279,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          927.0,
+          528.0,
+          1058.0,
+          636.0
+        ],
+        [
+          925.0,
+          519.0,
+          1062.0,
+          630.0
+        ],
+        [
+          924.0,
+          514.0,
+          1067.0,
+          631.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        194,
+        196,
+        198
+      ],
+      "rgb_timestamps_us": [
+        9700274,
+        9800281,
+        9900279
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "e5938534112ef6b0961f970d8fe3497a77c42ca64eecbf0682dc97b139a9f6a2"
+    },
+    {
+      "query_id": "CCRs2-medium:10000286",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10000286,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9700286,
+          9800286
+        ],
+        [
+          9800286,
+          9900286
+        ],
+        [
+          9900286,
+          10000286
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          586.024546479241,
+          304.7938322681172,
+          683.7320322041378,
+          384.149944162065
+        ],
+        [
+          585.2921473134609,
+          301.2253642342936,
+          687.2833712683084,
+          384.8638942178541
+        ],
+        [
+          583.1820726333106,
+          304.0472289031207,
+          689.4064390540037,
+          384.16876830070316
+        ]
+      ],
+      "square_xyxy": [
+        556.6259810281372,
+        263.376354410554,
+        715.962530659177,
+        422.7129040415938
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0196.json",
+          "sha256": "f15536e43150c319f9572f1b018ff1464fa3035868e1d70469205418969b2509",
+          "frame_index": 196,
+          "timestamp_us": 9800281,
+          "available_us": 9800281,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0198.json",
+          "sha256": "41636140b058903ad278b770cf651dfac4d1122c24573f16d0edcd1f456e0a37",
+          "frame_index": 198,
+          "timestamp_us": 9900279,
+          "available_us": 9900279,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0200.json",
+          "sha256": "fcba187522e66d6e09ee743d737b711f4d33366e6b70f1a41d1db2ecfa69d23d",
+          "frame_index": 200,
+          "timestamp_us": 10000286,
+          "available_us": 10000286,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          925.0,
+          519.0,
+          1062.0,
+          630.0
+        ],
+        [
+          924.0,
+          514.0,
+          1067.0,
+          631.0
+        ],
+        [
+          921.0,
+          518.0,
+          1070.0,
+          630.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        196,
+        198,
+        200
+      ],
+      "rgb_timestamps_us": [
+        9800281,
+        9900279,
+        10000286
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "0075f0b481fd06ed0722b67ccd1accb7583d13b9a784697fac46f707f5eec561"
+    },
+    {
+      "query_id": "CCRs2-medium:10100284",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10100284,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9800284,
+          9900284
+        ],
+        [
+          9900284,
+          10000284
+        ],
+        [
+          10000284,
+          10100284
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          585.2921473134609,
+          301.2253642342936,
+          687.2833712683084,
+          384.8638942178541
+        ],
+        [
+          583.1820726333106,
+          304.0472289031207,
+          689.4064390540037,
+          384.16876830070316
+        ],
+        [
+          580.3533249228578,
+          305.4322277412229,
+          694.4780061258238,
+          399.79125664332565
+        ]
+      ],
+      "square_xyxy": [
+        551.8221546221163,
+        266.32573187099877,
+        723.0091764265652,
+        437.5127536754476
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0198.json",
+          "sha256": "41636140b058903ad278b770cf651dfac4d1122c24573f16d0edcd1f456e0a37",
+          "frame_index": 198,
+          "timestamp_us": 9900279,
+          "available_us": 9900279,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0200.json",
+          "sha256": "fcba187522e66d6e09ee743d737b711f4d33366e6b70f1a41d1db2ecfa69d23d",
+          "frame_index": 200,
+          "timestamp_us": 10000286,
+          "available_us": 10000286,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0202.json",
+          "sha256": "aec9f307e867c34a1d07518d456f3c2d1b311a005f35823dfdb3cfb1599515d5",
+          "frame_index": 202,
+          "timestamp_us": 10100284,
+          "available_us": 10100284,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          924.0,
+          514.0,
+          1067.0,
+          631.0
+        ],
+        [
+          921.0,
+          518.0,
+          1070.0,
+          630.0
+        ],
+        [
+          917.0,
+          520.0,
+          1077.0,
+          652.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        198,
+        200,
+        202
+      ],
+      "rgb_timestamps_us": [
+        9900279,
+        10000286,
+        10100284
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "7eafe6a600b528b4a92e4275dcf826a225b2d1e5203eda4c3025c589fd600629"
+    },
+    {
+      "query_id": "CCRs2-medium:10200282",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10200282,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          9900282,
+          10000282
+        ],
+        [
+          10000282,
+          10100282
+        ],
+        [
+          10100282,
+          10200282
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          583.1820726333106,
+          304.0472289031207,
+          689.4064390540037,
+          384.16876830070316
+        ],
+        [
+          580.3533249228578,
+          305.4322277412229,
+          694.4780061258238,
+          399.79125664332565
+        ],
+        [
+          578.94352237577,
+          306.84074987616805,
+          695.8480842653028,
+          392.70807761071643
+        ]
+      ],
+      "square_xyxy": [
+        549.7173819033869,
+        264.93332077512474,
+        725.0742247376859,
+        440.2901636094238
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0200.json",
+          "sha256": "fcba187522e66d6e09ee743d737b711f4d33366e6b70f1a41d1db2ecfa69d23d",
+          "frame_index": 200,
+          "timestamp_us": 10000286,
+          "available_us": 10000286,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0202.json",
+          "sha256": "aec9f307e867c34a1d07518d456f3c2d1b311a005f35823dfdb3cfb1599515d5",
+          "frame_index": 202,
+          "timestamp_us": 10100284,
+          "available_us": 10100284,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0204.json",
+          "sha256": "817fe1fc0194c9760dcd6eb89318e88915dd6d9a35d58f33a564cb9a3baec41d",
+          "frame_index": 204,
+          "timestamp_us": 10200282,
+          "available_us": 10200282,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          921.0,
+          518.0,
+          1070.0,
+          630.0
+        ],
+        [
+          917.0,
+          520.0,
+          1077.0,
+          652.0
+        ],
+        [
+          915.0,
+          522.0,
+          1079.0,
+          642.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        200,
+        202,
+        204
+      ],
+      "rgb_timestamps_us": [
+        10000286,
+        10100284,
+        10200282
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "7ad4e4c982aaeb2aecdd85fe44f8c80c5d4d4f71cf02546d5cd061cc4fe862fb"
+    },
+    {
+      "query_id": "CCRs2-medium:10300289",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10300289,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10000289,
+          10100289
+        ],
+        [
+          10100289,
+          10200289
+        ],
+        [
+          10200289,
+          10300289
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          580.3533249228578,
+          305.4322277412229,
+          694.4780061258238,
+          399.79125664332565
+        ],
+        [
+          578.94352237577,
+          306.84074987616805,
+          695.8480842653028,
+          392.70807761071643
+        ],
+        [
+          576.0826472559055,
+          303.26756147204117,
+          700.1912948225068,
+          405.49383723167585
+        ]
+      ],
+      "square_xyxy": [
+        545.0554853642552,
+        261.2992136769075,
+        731.2184567141571,
+        447.46218502680955
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0202.json",
+          "sha256": "aec9f307e867c34a1d07518d456f3c2d1b311a005f35823dfdb3cfb1599515d5",
+          "frame_index": 202,
+          "timestamp_us": 10100284,
+          "available_us": 10100284,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0204.json",
+          "sha256": "817fe1fc0194c9760dcd6eb89318e88915dd6d9a35d58f33a564cb9a3baec41d",
+          "frame_index": 204,
+          "timestamp_us": 10200282,
+          "available_us": 10200282,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0206.json",
+          "sha256": "a594daa2de2f82f6fb7e0b716590ca065a92c16a32ac6dba7f3e0b49d319c518",
+          "frame_index": 206,
+          "timestamp_us": 10300289,
+          "available_us": 10300289,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          917.0,
+          520.0,
+          1077.0,
+          652.0
+        ],
+        [
+          915.0,
+          522.0,
+          1079.0,
+          642.0
+        ],
+        [
+          911.0,
+          517.0,
+          1085.0,
+          660.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        202,
+        204,
+        206
+      ],
+      "rgb_timestamps_us": [
+        10100284,
+        10200282,
+        10300289
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "9bfd50877822fa9aa9d931929f9bf311a9a4d078ad6a4311cfa9ff47095ed3b3"
+    },
+    {
+      "query_id": "CCRs2-medium:10400287",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10400287,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10100287,
+          10200287
+        ],
+        [
+          10200287,
+          10300287
+        ],
+        [
+          10300287,
+          10400287
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          578.94352237577,
+          306.84074987616805,
+          695.8480842653028,
+          392.70807761071643
+        ],
+        [
+          576.0826472559055,
+          303.26756147204117,
+          700.1912948225068,
+          405.49383723167585
+        ],
+        [
+          572.5351543053031,
+          303.24867116622215,
+          703.0284555127487,
+          405.51751901146804
+        ]
+      ],
+      "square_xyxy": [
+        539.9118290034417,
+        256.51311918326087,
+        735.65178081461,
+        452.2530709944293
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0204.json",
+          "sha256": "817fe1fc0194c9760dcd6eb89318e88915dd6d9a35d58f33a564cb9a3baec41d",
+          "frame_index": 204,
+          "timestamp_us": 10200282,
+          "available_us": 10200282,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0206.json",
+          "sha256": "a594daa2de2f82f6fb7e0b716590ca065a92c16a32ac6dba7f3e0b49d319c518",
+          "frame_index": 206,
+          "timestamp_us": 10300289,
+          "available_us": 10300289,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0208.json",
+          "sha256": "5490c19f5ddd00882f1190101ea9fd1c670c39e623b58ea01f82820161479b73",
+          "frame_index": 208,
+          "timestamp_us": 10400287,
+          "available_us": 10400287,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          915.0,
+          522.0,
+          1079.0,
+          642.0
+        ],
+        [
+          911.0,
+          517.0,
+          1085.0,
+          660.0
+        ],
+        [
+          906.0,
+          517.0,
+          1089.0,
+          660.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        204,
+        206,
+        208
+      ],
+      "rgb_timestamps_us": [
+        10200282,
+        10300289,
+        10400287
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "3dbbd8624a8685ed5bd374e0b16b1962d8755ce1749ea1f8c6f504bb65500a28"
+    },
+    {
+      "query_id": "CCRs2-medium:10500295",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10500295,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10200295,
+          10300295
+        ],
+        [
+          10300295,
+          10400295
+        ],
+        [
+          10400295,
+          10500295
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          576.0826472559055,
+          303.26756147204117,
+          700.1912948225068,
+          405.49383723167585
+        ],
+        [
+          572.5351543053031,
+          303.24867116622215,
+          703.0284555127487,
+          405.51751901146804
+        ],
+        [
+          570.3837878667,
+          299.6802582080683,
+          706.6481994267664,
+          416.1711215290182
+        ]
+      ],
+      "square_xyxy": [
+        536.3176849766835,
+        255.72738119849348,
+        740.714302316783,
+        460.123998538593
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0206.json",
+          "sha256": "a594daa2de2f82f6fb7e0b716590ca065a92c16a32ac6dba7f3e0b49d319c518",
+          "frame_index": 206,
+          "timestamp_us": 10300289,
+          "available_us": 10300289,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0208.json",
+          "sha256": "5490c19f5ddd00882f1190101ea9fd1c670c39e623b58ea01f82820161479b73",
+          "frame_index": 208,
+          "timestamp_us": 10400287,
+          "available_us": 10400287,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0210.json",
+          "sha256": "557dd4c8fb782ef1bd10f9e17b729db40799eb070d569e316325e40cd5423845",
+          "frame_index": 210,
+          "timestamp_us": 10500295,
+          "available_us": 10500295,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          911.0,
+          517.0,
+          1085.0,
+          660.0
+        ],
+        [
+          906.0,
+          517.0,
+          1089.0,
+          660.0
+        ],
+        [
+          903.0,
+          512.0,
+          1094.0,
+          675.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        206,
+        208,
+        210
+      ],
+      "rgb_timestamps_us": [
+        10300289,
+        10400287,
+        10500295
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "258d442b63b5eb6d0bf1285906d0cd6fdc59575da3e24e343fdf6f35569e5cca"
+    },
+    {
+      "query_id": "CCRs2-medium:10600293",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10600293,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10300293,
+          10400293
+        ],
+        [
+          10400293,
+          10500293
+        ],
+        [
+          10500293,
+          10600293
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          572.5351543053031,
+          303.24867116622215,
+          703.0284555127487,
+          405.51751901146804
+        ],
+        [
+          570.3837878667,
+          299.6802582080683,
+          706.6481994267664,
+          416.1711215290182
+        ],
+        [
+          566.854495519206,
+          302.48768295445825,
+          710.9431744109451,
+          421.86934091725567
+        ]
+      ],
+      "square_xyxy": [
+        530.8323257962713,
+        252.7082903938577,
+        746.9653441338799,
+        468.84130873146626
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0208.json",
+          "sha256": "5490c19f5ddd00882f1190101ea9fd1c670c39e623b58ea01f82820161479b73",
+          "frame_index": 208,
+          "timestamp_us": 10400287,
+          "available_us": 10400287,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0210.json",
+          "sha256": "557dd4c8fb782ef1bd10f9e17b729db40799eb070d569e316325e40cd5423845",
+          "frame_index": 210,
+          "timestamp_us": 10500295,
+          "available_us": 10500295,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0212.json",
+          "sha256": "a550f849e5f0703e2a6963f857e7e836dcb86473c034a30d717d3bb4c59d4735",
+          "frame_index": 212,
+          "timestamp_us": 10600293,
+          "available_us": 10600293,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          906.0,
+          517.0,
+          1089.0,
+          660.0
+        ],
+        [
+          903.0,
+          512.0,
+          1094.0,
+          675.0
+        ],
+        [
+          898.0,
+          516.0,
+          1100.0,
+          683.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        208,
+        210,
+        212
+      ],
+      "rgb_timestamps_us": [
+        10400287,
+        10500295,
+        10600293
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "a40950b64043c7109dc94e50331249e7756914c8285e2c362b7a57ab27797590"
+    },
+    {
+      "query_id": "CCRs2-medium:10700300",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10700300,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10400300,
+          10500300
+        ],
+        [
+          10500300,
+          10600300
+        ],
+        [
+          10600300,
+          10700300
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          570.3837878667,
+          299.6802582080683,
+          706.6481994267664,
+          416.1711215290182
+        ],
+        [
+          566.854495519206,
+          302.48768295445825,
+          710.9431744109451,
+          421.86934091725567
+        ],
+        [
+          561.8741337157895,
+          300.3324337407385,
+          715.2431737427859,
+          428.28655621604196
+        ]
+      ],
+      "square_xyxy": [
+        523.5318737090404,
+        249.282714958143,
+        753.585433749535,
+        479.3362749986375
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0210.json",
+          "sha256": "557dd4c8fb782ef1bd10f9e17b729db40799eb070d569e316325e40cd5423845",
+          "frame_index": 210,
+          "timestamp_us": 10500295,
+          "available_us": 10500295,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0212.json",
+          "sha256": "a550f849e5f0703e2a6963f857e7e836dcb86473c034a30d717d3bb4c59d4735",
+          "frame_index": 212,
+          "timestamp_us": 10600293,
+          "available_us": 10600293,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0214.json",
+          "sha256": "3526a689f5d874fd10c620d1f7db96e4f0dab7b522edb83f65fca3326045a251",
+          "frame_index": 214,
+          "timestamp_us": 10700300,
+          "available_us": 10700300,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          903.0,
+          512.0,
+          1094.0,
+          675.0
+        ],
+        [
+          898.0,
+          516.0,
+          1100.0,
+          683.0
+        ],
+        [
+          891.0,
+          513.0,
+          1106.0,
+          692.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        210,
+        212,
+        214
+      ],
+      "rgb_timestamps_us": [
+        10500295,
+        10600293,
+        10700300
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "e40db763291f535e37f21611dcab1b9fe82e8b4a8491905898047724043f7f5a"
+    },
+    {
+      "query_id": "CCRs2-medium:10800298",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10800298,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10500298,
+          10600298
+        ],
+        [
+          10600298,
+          10700298
+        ],
+        [
+          10700298,
+          10800298
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          566.854495519206,
+          302.48768295445825,
+          710.9431744109451,
+          421.86934091725567
+        ],
+        [
+          561.8741337157895,
+          300.3324337407385,
+          715.2431737427859,
+          428.28655621604196
+        ],
+        [
+          555.4791749715895,
+          298.86240033545704,
+          723.0699124610602,
+          431.87613274668263
+        ]
+      ],
+      "square_xyxy": [
+        513.5814905992218,
+        239.67621342396677,
+        764.9675968334279,
+        491.06231965817284
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0212.json",
+          "sha256": "a550f849e5f0703e2a6963f857e7e836dcb86473c034a30d717d3bb4c59d4735",
+          "frame_index": 212,
+          "timestamp_us": 10600293,
+          "available_us": 10600293,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0214.json",
+          "sha256": "3526a689f5d874fd10c620d1f7db96e4f0dab7b522edb83f65fca3326045a251",
+          "frame_index": 214,
+          "timestamp_us": 10700300,
+          "available_us": 10700300,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0216.json",
+          "sha256": "e81ae9ea79f9103ed30881ebffee4ab81483eb025bf1b2aec0bb1e07ad9ab3bf",
+          "frame_index": 216,
+          "timestamp_us": 10800298,
+          "available_us": 10800298,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          898.0,
+          516.0,
+          1100.0,
+          683.0
+        ],
+        [
+          891.0,
+          513.0,
+          1106.0,
+          692.0
+        ],
+        [
+          882.0,
+          511.0,
+          1117.0,
+          697.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        212,
+        214,
+        216
+      ],
+      "rgb_timestamps_us": [
+        10600293,
+        10700300,
+        10800298
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "d3271df4d1f26fc01e2530fe23c1a962cea9aedc91086c853af5442f421bbbba"
+    },
+    {
+      "query_id": "CCRs2-medium:10900305",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 10900305,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10600305,
+          10700305
+        ],
+        [
+          10700305,
+          10800305
+        ],
+        [
+          10800305,
+          10900305
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          561.8741337157895,
+          300.3324337407385,
+          715.2431737427859,
+          428.28655621604196
+        ],
+        [
+          555.4791749715895,
+          298.86240033545704,
+          723.0699124610602,
+          431.87613274668263
+        ],
+        [
+          550.5032057469444,
+          297.41131457133963,
+          728.1240465774395,
+          444.67795712786904
+        ]
+      ],
+      "square_xyxy": [
+        506.09799553932066,
+        237.82900522673307,
+        772.5292567850631,
+        504.26026647247556
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0214.json",
+          "sha256": "3526a689f5d874fd10c620d1f7db96e4f0dab7b522edb83f65fca3326045a251",
+          "frame_index": 214,
+          "timestamp_us": 10700300,
+          "available_us": 10700300,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0216.json",
+          "sha256": "e81ae9ea79f9103ed30881ebffee4ab81483eb025bf1b2aec0bb1e07ad9ab3bf",
+          "frame_index": 216,
+          "timestamp_us": 10800298,
+          "available_us": 10800298,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0218.json",
+          "sha256": "ad94b878c23beac01c6d77df52b8688e7a0707bfd0f2f1f804593066fe17cba2",
+          "frame_index": 218,
+          "timestamp_us": 10900305,
+          "available_us": 10900305,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          891.0,
+          513.0,
+          1106.0,
+          692.0
+        ],
+        [
+          882.0,
+          511.0,
+          1117.0,
+          697.0
+        ],
+        [
+          875.0,
+          509.0,
+          1124.0,
+          715.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        214,
+        216,
+        218
+      ],
+      "rgb_timestamps_us": [
+        10700300,
+        10800298,
+        10900305
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "0ac9e0be32efc463606d10a4a2139b2e82085c6967d160a3c06158a2cafcb0be"
+    },
+    {
+      "query_id": "CCRs2-medium:11000303",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11000303,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10700303,
+          10800303
+        ],
+        [
+          10800303,
+          10900303
+        ],
+        [
+          10900303,
+          11000303
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          555.4791749715895,
+          298.86240033545704,
+          723.0699124610602,
+          431.87613274668263
+        ],
+        [
+          550.5032057469444,
+          297.41131457133963,
+          728.1240465774395,
+          444.67795712786904
+        ],
+        [
+          546.9599230280735,
+          298.096440858558,
+          731.7202077781296,
+          451.79565400883064
+        ]
+      ],
+      "square_xyxy": [
+        500.76985184055945,
+        236.03327072754303,
+        777.9102789656437,
+        513.1736978526272
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0216.json",
+          "sha256": "e81ae9ea79f9103ed30881ebffee4ab81483eb025bf1b2aec0bb1e07ad9ab3bf",
+          "frame_index": 216,
+          "timestamp_us": 10800298,
+          "available_us": 10800298,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0218.json",
+          "sha256": "ad94b878c23beac01c6d77df52b8688e7a0707bfd0f2f1f804593066fe17cba2",
+          "frame_index": 218,
+          "timestamp_us": 10900305,
+          "available_us": 10900305,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0220.json",
+          "sha256": "ba423dcebb8e9431a6f76ad9891bf82cb00cac5af2963bee85dc9d334548ebad",
+          "frame_index": 220,
+          "timestamp_us": 11000303,
+          "available_us": 11000303,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          882.0,
+          511.0,
+          1117.0,
+          697.0
+        ],
+        [
+          875.0,
+          509.0,
+          1124.0,
+          715.0
+        ],
+        [
+          870.0,
+          510.0,
+          1129.0,
+          725.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        216,
+        218,
+        220
+      ],
+      "rgb_timestamps_us": [
+        10800298,
+        10900305,
+        11000303
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "4281b18d3b7764e312ba03c8bff4981b9315c7fd96c676e601ff57c851e843ff"
+    },
+    {
+      "query_id": "CCRs2-medium:11100310",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11100310,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10800310,
+          10900310
+        ],
+        [
+          10900310,
+          11000310
+        ],
+        [
+          11000310,
+          11100310
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          550.5032057469444,
+          297.41131457133963,
+          728.1240465774395,
+          444.67795712786904
+        ],
+        [
+          546.9599230280735,
+          298.096440858558,
+          731.7202077781296,
+          451.79565400883064
+        ],
+        [
+          539.8822638604923,
+          300.8891278214256,
+          738.1586249243901,
+          459.6469832528452
+        ]
+      ],
+      "square_xyxy": [
+        490.31317359451793,
+        230.1644412577783,
+        787.7277151903646,
+        527.5789828536249
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0218.json",
+          "sha256": "ad94b878c23beac01c6d77df52b8688e7a0707bfd0f2f1f804593066fe17cba2",
+          "frame_index": 218,
+          "timestamp_us": 10900305,
+          "available_us": 10900305,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0220.json",
+          "sha256": "ba423dcebb8e9431a6f76ad9891bf82cb00cac5af2963bee85dc9d334548ebad",
+          "frame_index": 220,
+          "timestamp_us": 11000303,
+          "available_us": 11000303,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0222.json",
+          "sha256": "f3fea2c34ea589886a4dbe6845eba3a154e725d5571bafa443d576bbc2d968df",
+          "frame_index": 222,
+          "timestamp_us": 11100310,
+          "available_us": 11100310,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          875.0,
+          509.0,
+          1124.0,
+          715.0
+        ],
+        [
+          870.0,
+          510.0,
+          1129.0,
+          725.0
+        ],
+        [
+          860.0,
+          514.0,
+          1138.0,
+          736.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        218,
+        220,
+        222
+      ],
+      "rgb_timestamps_us": [
+        10900305,
+        11000303,
+        11100310
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "73f370a163da605e8c97146537a64bbcb59acba9daf965a024340621cbd32313"
+    },
+    {
+      "query_id": "CCRs2-medium:11200308",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11200308,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          10900308,
+          11000308
+        ],
+        [
+          11000308,
+          11100308
+        ],
+        [
+          11100308,
+          11200308
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          546.9599230280735,
+          298.096440858558,
+          731.7202077781296,
+          451.79565400883064
+        ],
+        [
+          539.8822638604923,
+          300.8891278214256,
+          738.1586249243901,
+          459.6469832528452
+        ],
+        [
+          537.0438719184398,
+          300.85088877349074,
+          743.8929824029001,
+          468.17917251503263
+        ]
+      ],
+      "square_xyxy": [
+        485.3315942973247,
+        229.37819778091645,
+        795.6052600240153,
+        539.6518635076069
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0220.json",
+          "sha256": "ba423dcebb8e9431a6f76ad9891bf82cb00cac5af2963bee85dc9d334548ebad",
+          "frame_index": 220,
+          "timestamp_us": 11000303,
+          "available_us": 11000303,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0222.json",
+          "sha256": "f3fea2c34ea589886a4dbe6845eba3a154e725d5571bafa443d576bbc2d968df",
+          "frame_index": 222,
+          "timestamp_us": 11100310,
+          "available_us": 11100310,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0224.json",
+          "sha256": "dd047c456228fe15fba60b8de3515fa9104a363faf60b05b68b0d8171211afcd",
+          "frame_index": 224,
+          "timestamp_us": 11200308,
+          "available_us": 11200308,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          870.0,
+          510.0,
+          1129.0,
+          725.0
+        ],
+        [
+          860.0,
+          514.0,
+          1138.0,
+          736.0
+        ],
+        [
+          856.0,
+          514.0,
+          1146.0,
+          748.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        220,
+        222,
+        224
+      ],
+      "rgb_timestamps_us": [
+        11000303,
+        11100310,
+        11200308
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "39259f88d72120a128d08d1dca460e1e0773034c3c46435bafc879a4cc7aa73c"
+    },
+    {
+      "query_id": "CCRs2-medium:11300316",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11300316,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          11000316,
+          11100316
+        ],
+        [
+          11100316,
+          11200316
+        ],
+        [
+          11200316,
+          11300316
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          539.8822638604923,
+          300.8891278214256,
+          738.1586249243901,
+          459.6469832528452
+        ],
+        [
+          537.0438719184398,
+          300.85088877349074,
+          743.8929824029001,
+          468.17917251503263
+        ],
+        [
+          532.0630152702829,
+          298.6668025841446,
+          752.4444030677801,
+          473.8883513432189
+        ]
+      ],
+      "square_xyxy": [
+        476.9676683209086,
+        220.99153611555892,
+        807.5397500171543,
+        551.5636178118046
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0222.json",
+          "sha256": "f3fea2c34ea589886a4dbe6845eba3a154e725d5571bafa443d576bbc2d968df",
+          "frame_index": 222,
+          "timestamp_us": 11100310,
+          "available_us": 11100310,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0224.json",
+          "sha256": "dd047c456228fe15fba60b8de3515fa9104a363faf60b05b68b0d8171211afcd",
+          "frame_index": 224,
+          "timestamp_us": 11200308,
+          "available_us": 11200308,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0226.json",
+          "sha256": "75f519eff82198a6d626a79261afaac211ead597e49dde86095094e6239b6418",
+          "frame_index": 226,
+          "timestamp_us": 11300316,
+          "available_us": 11300316,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          860.0,
+          514.0,
+          1138.0,
+          736.0
+        ],
+        [
+          856.0,
+          514.0,
+          1146.0,
+          748.0
+        ],
+        [
+          849.0,
+          511.0,
+          1158.0,
+          756.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        222,
+        224,
+        226
+      ],
+      "rgb_timestamps_us": [
+        11100310,
+        11200308,
+        11300316
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "347b4b2054d98ad5b5a207007d5c113e447a7117c25a78a7019d76e01f6e0e40"
+    },
+    {
+      "query_id": "CCRs2-medium:11400314",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11400314,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          11100314,
+          11200314
+        ],
+        [
+          11200314,
+          11300314
+        ],
+        [
+          11300314,
+          11400314
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          537.0438719184398,
+          300.85088877349074,
+          743.8929824029001,
+          468.17917251503263
+        ],
+        [
+          532.0630152702829,
+          298.6668025841446,
+          752.4444030677801,
+          473.8883513432189
+        ],
+        [
+          524.9486853681317,
+          295.77861386007805,
+          760.3170002403438,
+          483.86895726213277
+        ]
+      ],
+      "square_xyxy": [
+        466.1066066500787,
+        213.29754940694636,
+        819.1590789583968,
+        566.3500217152645
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0224.json",
+          "sha256": "dd047c456228fe15fba60b8de3515fa9104a363faf60b05b68b0d8171211afcd",
+          "frame_index": 224,
+          "timestamp_us": 11200308,
+          "available_us": 11200308,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0226.json",
+          "sha256": "75f519eff82198a6d626a79261afaac211ead597e49dde86095094e6239b6418",
+          "frame_index": 226,
+          "timestamp_us": 11300316,
+          "available_us": 11300316,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0228.json",
+          "sha256": "ce83f93c71da00726029cfa2bab0cf5abc3675ec92e859bd78fbad18001f794c",
+          "frame_index": 228,
+          "timestamp_us": 11400314,
+          "available_us": 11400314,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          856.0,
+          514.0,
+          1146.0,
+          748.0
+        ],
+        [
+          849.0,
+          511.0,
+          1158.0,
+          756.0
+        ],
+        [
+          839.0,
+          507.0,
+          1169.0,
+          770.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        224,
+        226,
+        228
+      ],
+      "rgb_timestamps_us": [
+        11200308,
+        11300316,
+        11400314
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "1366236c21398c16c2e9a891e6a95f4fd71b6ebcc29147c274c1393a963c4e5b"
+    },
+    {
+      "query_id": "CCRs2-medium:11500321",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11500321,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          11200321,
+          11300321
+        ],
+        [
+          11300321,
+          11400321
+        ],
+        [
+          11400321,
+          11500321
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          532.0630152702829,
+          298.6668025841446,
+          752.4444030677801,
+          473.8883513432189
+        ],
+        [
+          524.9486853681317,
+          295.77861386007805,
+          760.3170002403438,
+          483.86895726213277
+        ],
+        [
+          519.2715549693758,
+          295.7305599896256,
+          767.4857385013115,
+          494.54984416057766
+        ]
+      ],
+      "square_xyxy": [
+        457.2180090863918,
+        208.9795644261498,
+        829.5392843842955,
+        581.3008397240535
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0226.json",
+          "sha256": "75f519eff82198a6d626a79261afaac211ead597e49dde86095094e6239b6418",
+          "frame_index": 226,
+          "timestamp_us": 11300316,
+          "available_us": 11300316,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0228.json",
+          "sha256": "ce83f93c71da00726029cfa2bab0cf5abc3675ec92e859bd78fbad18001f794c",
+          "frame_index": 228,
+          "timestamp_us": 11400314,
+          "available_us": 11400314,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0230.json",
+          "sha256": "36aa227245bd09070de3e3a8bafb9856b6343bd786d31b6f5549a28d84e62585",
+          "frame_index": 230,
+          "timestamp_us": 11500321,
+          "available_us": 11500321,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          849.0,
+          511.0,
+          1158.0,
+          756.0
+        ],
+        [
+          839.0,
+          507.0,
+          1169.0,
+          770.0
+        ],
+        [
+          831.0,
+          507.0,
+          1179.0,
+          785.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        226,
+        228,
+        230
+      ],
+      "rgb_timestamps_us": [
+        11300316,
+        11400314,
+        11500321
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "2ec76f7dac81be3a1095feb733ac9a5d99fdbaaade17587bd38a0ee9596ffaa2"
+    },
+    {
+      "query_id": "CCRs2-medium:11600319",
+      "sequence_id": "CCRs2-medium",
+      "anchor_us": 11600319,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "windows_us": [
+        [
+          11300319,
+          11400319
+        ],
+        [
+          11400319,
+          11500319
+        ],
+        [
+          11500319,
+          11600319
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          524.9486853681317,
+          295.77861386007805,
+          760.3170002403438,
+          483.86895726213277
+        ],
+        [
+          519.2715549693758,
+          295.7305599896256,
+          767.4857385013115,
+          494.54984416057766
+        ],
+        [
+          510.74209681865045,
+          293.5462998720184,
+          776.0938016170161,
+          508.08877933655435
+        ]
+      ],
+      "square_xyxy": [
+        444.40417061905896,
+        201.80376100551214,
+        842.4317278166075,
+        599.8313182030606
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0228.json",
+          "sha256": "ce83f93c71da00726029cfa2bab0cf5abc3675ec92e859bd78fbad18001f794c",
+          "frame_index": 228,
+          "timestamp_us": 11400314,
+          "available_us": 11400314,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0230.json",
+          "sha256": "36aa227245bd09070de3e3a8bafb9856b6343bd786d31b6f5549a28d84e62585",
+          "frame_index": 230,
+          "timestamp_us": 11500321,
+          "available_us": 11500321,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\leftlabel\\0232.json",
+          "sha256": "1ba96f567db2906a67476d36d56aff3d36bfefb11fc23678a039b706699b229f",
+          "frame_index": 232,
+          "timestamp_us": 11600319,
+          "available_us": 11600319,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          839.0,
+          507.0,
+          1169.0,
+          770.0
+        ],
+        [
+          831.0,
+          507.0,
+          1179.0,
+          785.0
+        ],
+        [
+          819.0,
+          504.0,
+          1191.0,
+          804.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        228,
+        230,
+        232
+      ],
+      "rgb_timestamps_us": [
+        11400314,
+        11500321,
+        11600319
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "16544c6bcd314c2a052d20840e718bc6887ddc88892beb8d99ec3ee2a8c86a93"
+    },
+    {
+      "query_id": "CCRs2-high:15700397",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 15700397,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          15400397,
+          15500397
+        ],
+        [
+          15500397,
+          15600397
+        ],
+        [
+          15600397,
+          15700397
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          593.1375264114876,
+          307.6298395720545,
+          683.717583288498,
+          381.9751347051931
+        ],
+        [
+          590.9494727689533,
+          298.3800117435509,
+          688.6537815413349,
+          377.73390896668064
+        ],
+        [
+          588.784496102228,
+          292.6940573335961,
+          690.7623916913699,
+          374.91109220305185
+        ]
+      ],
+      "square_xyxy": [
+        563.2900222049425,
+        258.73056145828195,
+        716.2568655886553,
+        411.69740484199474
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0310.json",
+          "sha256": "fdd0a54c79f236bbfd42882335fd51eff43b47d8cc1d1b3dc42b2dcc5f3d3622",
+          "frame_index": 310,
+          "timestamp_us": 15500392,
+          "available_us": 15500392,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0312.json",
+          "sha256": "25cd703535af0362ac20e76f337104de856f86d0b6204d501776dc6438d974e9",
+          "frame_index": 312,
+          "timestamp_us": 15600399,
+          "available_us": 15600399,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0314.json",
+          "sha256": "15243f6c384dfb3d77bafa227829227f2aa85c62f5b1f98905c57cf4b726ddd5",
+          "frame_index": 314,
+          "timestamp_us": 15700397,
+          "available_us": 15700397,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          935.0,
+          523.0,
+          1062.0,
+          627.0
+        ],
+        [
+          932.0,
+          510.0,
+          1069.0,
+          621.0
+        ],
+        [
+          929.0,
+          502.0,
+          1072.0,
+          617.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        310,
+        312,
+        314
+      ],
+      "rgb_timestamps_us": [
+        15500392,
+        15600399,
+        15700397
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "d61af908d77cc94ebb792d43c69a3d85461c9d1cf08c49901ff809bf5e9dfedb"
+    },
+    {
+      "query_id": "CCRs2-high:15800405",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 15800405,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          15500405,
+          15600405
+        ],
+        [
+          15600405,
+          15700405
+        ],
+        [
+          15700405,
+          15800405
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          590.9494727689533,
+          298.3800117435509,
+          688.6537815413349,
+          377.73390896668064
+        ],
+        [
+          588.784496102228,
+          292.6940573335961,
+          690.7623916913699,
+          374.91109220305185
+        ],
+        [
+          586.6652858004902,
+          294.10264741501527,
+          692.2291269177683,
+          382.01752011257594
+        ]
+      ],
+      "square_xyxy": [
+        560.2743255211707,
+        258.1829078851274,
+        718.6200871970879,
+        416.5286695610446
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0312.json",
+          "sha256": "25cd703535af0362ac20e76f337104de856f86d0b6204d501776dc6438d974e9",
+          "frame_index": 312,
+          "timestamp_us": 15600399,
+          "available_us": 15600399,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0314.json",
+          "sha256": "15243f6c384dfb3d77bafa227829227f2aa85c62f5b1f98905c57cf4b726ddd5",
+          "frame_index": 314,
+          "timestamp_us": 15700397,
+          "available_us": 15700397,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0316.json",
+          "sha256": "8611296056ffbf1c8f43c9626463b2ba6d1b452fd2bc93776bd7049b42270fe5",
+          "frame_index": 316,
+          "timestamp_us": 15800405,
+          "available_us": 15800405,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          932.0,
+          510.0,
+          1069.0,
+          621.0
+        ],
+        [
+          929.0,
+          502.0,
+          1072.0,
+          617.0
+        ],
+        [
+          926.0,
+          504.0,
+          1074.0,
+          627.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        312,
+        314,
+        316
+      ],
+      "rgb_timestamps_us": [
+        15600399,
+        15700397,
+        15800405
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "8be04a77f7868c132ef1ea24b96e23a28f6506706d8310b65b85801027504b58"
+    },
+    {
+      "query_id": "CCRs2-high:15900403",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 15900403,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          15600403,
+          15700403
+        ],
+        [
+          15700403,
+          15800403
+        ],
+        [
+          15800403,
+          15900403
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          588.784496102228,
+          292.6940573335961,
+          690.7623916913699,
+          374.91109220305185
+        ],
+        [
+          586.6652858004902,
+          294.10264741501527,
+          692.2291269177683,
+          382.01752011257594
+        ],
+        [
+          583.1316976107989,
+          296.21080670941336,
+          695.0952386335462,
+          386.29651063897086
+        ]
+      ],
+      "square_xyxy": [
+        555.1408123551121,
+        256.2269232599327,
+        723.086123889233,
+        424.1722347940535
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0314.json",
+          "sha256": "15243f6c384dfb3d77bafa227829227f2aa85c62f5b1f98905c57cf4b726ddd5",
+          "frame_index": 314,
+          "timestamp_us": 15700397,
+          "available_us": 15700397,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0316.json",
+          "sha256": "8611296056ffbf1c8f43c9626463b2ba6d1b452fd2bc93776bd7049b42270fe5",
+          "frame_index": 316,
+          "timestamp_us": 15800405,
+          "available_us": 15800405,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0318.json",
+          "sha256": "b3d5d9bb85dc1218ce11e07558c7eb1deb29465078462c857b8662e998990025",
+          "frame_index": 318,
+          "timestamp_us": 15900403,
+          "available_us": 15900403,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          929.0,
+          502.0,
+          1072.0,
+          617.0
+        ],
+        [
+          926.0,
+          504.0,
+          1074.0,
+          627.0
+        ],
+        [
+          921.0,
+          507.0,
+          1078.0,
+          633.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        314,
+        316,
+        318
+      ],
+      "rgb_timestamps_us": [
+        15700397,
+        15800405,
+        15900403
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "aea17553ba3889c22d6e3fd3c32d8a7721b7616adf9261134db0f24affc6abd8"
+    },
+    {
+      "query_id": "CCRs2-high:16000401",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16000401,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          15700401,
+          15800401
+        ],
+        [
+          15800401,
+          15900401
+        ],
+        [
+          15900401,
+          16000401
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          586.6652858004902,
+          294.10264741501527,
+          692.2291269177683,
+          382.01752011257594
+        ],
+        [
+          583.1316976107989,
+          296.21080670941336,
+          695.0952386335462,
+          386.29651063897086
+        ],
+        [
+          580.2938119836092,
+          296.17318434452073,
+          700.8130680082966,
+          392.69864398667147
+        ]
+      ],
+      "square_xyxy": [
+        550.1639979774374,
+        254.04647214708058,
+        730.9428820144684,
+        434.8253561841116
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0316.json",
+          "sha256": "8611296056ffbf1c8f43c9626463b2ba6d1b452fd2bc93776bd7049b42270fe5",
+          "frame_index": 316,
+          "timestamp_us": 15800405,
+          "available_us": 15800405,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0318.json",
+          "sha256": "b3d5d9bb85dc1218ce11e07558c7eb1deb29465078462c857b8662e998990025",
+          "frame_index": 318,
+          "timestamp_us": 15900403,
+          "available_us": 15900403,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0320.json",
+          "sha256": "4d3892258bfeb8e3690f337f15efd3455eb48c352f37f8733974c93a3a902882",
+          "frame_index": 320,
+          "timestamp_us": 16000401,
+          "available_us": 16000401,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          926.0,
+          504.0,
+          1074.0,
+          627.0
+        ],
+        [
+          921.0,
+          507.0,
+          1078.0,
+          633.0
+        ],
+        [
+          917.0,
+          507.0,
+          1086.0,
+          642.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        316,
+        318,
+        320
+      ],
+      "rgb_timestamps_us": [
+        15800405,
+        15900403,
+        16000401
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "68470058130e3034a99e9d5683c436ac3468bd2520eebccac469c806acb84518"
+    },
+    {
+      "query_id": "CCRs2-high:16100408",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16100408,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          15800408,
+          15900408
+        ],
+        [
+          15900408,
+          16000408
+        ],
+        [
+          16000408,
+          16100408
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          583.1316976107989,
+          296.21080670941336,
+          695.0952386335462,
+          386.29651063897086
+        ],
+        [
+          580.2938119836092,
+          296.17318434452073,
+          700.8130680082966,
+          392.69864398667147
+        ],
+        [
+          578.1836611594063,
+          298.9901830054434,
+          703.7085058465194,
+          401.22398899835997
+        ]
+      ],
+      "square_xyxy": [
+        546.802449987628,
+        254.55495315610548,
+        735.0897170182977,
+        442.8422201867752
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0318.json",
+          "sha256": "b3d5d9bb85dc1218ce11e07558c7eb1deb29465078462c857b8662e998990025",
+          "frame_index": 318,
+          "timestamp_us": 15900403,
+          "available_us": 15900403,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0320.json",
+          "sha256": "4d3892258bfeb8e3690f337f15efd3455eb48c352f37f8733974c93a3a902882",
+          "frame_index": 320,
+          "timestamp_us": 16000401,
+          "available_us": 16000401,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0322.json",
+          "sha256": "445152f33a87c0d6e64a23ea1cc4a431ddb1b11f538bf6b5d375bcd573e539f2",
+          "frame_index": 322,
+          "timestamp_us": 16100408,
+          "available_us": 16100408,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          921.0,
+          507.0,
+          1078.0,
+          633.0
+        ],
+        [
+          917.0,
+          507.0,
+          1086.0,
+          642.0
+        ],
+        [
+          914.0,
+          511.0,
+          1090.0,
+          654.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        318,
+        320,
+        322
+      ],
+      "rgb_timestamps_us": [
+        15900403,
+        16000401,
+        16100408
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "213afe407a544581e725852a5e36fbdcf88f04a7655a81b2a79f3bb30eef5930"
+    },
+    {
+      "query_id": "CCRs2-high:16200406",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16200406,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          15900406,
+          16000406
+        ],
+        [
+          16000406,
+          16100406
+        ],
+        [
+          16100406,
+          16200406
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          580.2938119836092,
+          296.17318434452073,
+          700.8130680082966,
+          392.69864398667147
+        ],
+        [
+          578.1836611594063,
+          298.9901830054434,
+          703.7085058465194,
+          401.22398899835997
+        ],
+        [
+          574.6270807133355,
+          297.5439556697888,
+          708.0178453090576,
+          409.0497217761756
+        ]
+      ],
+      "square_xyxy": [
+        541.2793895644049,
+        253.25376527619065,
+        741.3655364579881,
+        453.3399121697738
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0320.json",
+          "sha256": "4d3892258bfeb8e3690f337f15efd3455eb48c352f37f8733974c93a3a902882",
+          "frame_index": 320,
+          "timestamp_us": 16000401,
+          "available_us": 16000401,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0322.json",
+          "sha256": "445152f33a87c0d6e64a23ea1cc4a431ddb1b11f538bf6b5d375bcd573e539f2",
+          "frame_index": 322,
+          "timestamp_us": 16100408,
+          "available_us": 16100408,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0324.json",
+          "sha256": "a73c206c01ada059b6eb1111e44fe4b6eed30a87712d9444a0ce48d69d2de282",
+          "frame_index": 324,
+          "timestamp_us": 16200406,
+          "available_us": 16200406,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          917.0,
+          507.0,
+          1086.0,
+          642.0
+        ],
+        [
+          914.0,
+          511.0,
+          1090.0,
+          654.0
+        ],
+        [
+          909.0,
+          509.0,
+          1096.0,
+          665.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        320,
+        322,
+        324
+      ],
+      "rgb_timestamps_us": [
+        16000401,
+        16100408,
+        16200406
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "3a30890eb393a1200d7c664d8a3d3529c450a9926e9ee66099567f32722502a1"
+    },
+    {
+      "query_id": "CCRs2-high:16300413",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16300413,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16000413,
+          16100413
+        ],
+        [
+          16100413,
+          16200413
+        ],
+        [
+          16200413,
+          16300413
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          578.1836611594063,
+          298.9901830054434,
+          703.7085058465194,
+          401.22398899835997
+        ],
+        [
+          574.6270807133355,
+          297.5439556697888,
+          708.0178453090576,
+          409.0497217761756
+        ],
+        [
+          571.7526131642487,
+          291.83935810169163,
+          712.9876571701312,
+          409.7779810108542
+        ]
+      ],
+      "square_xyxy": [
+        536.4438521627782,
+        244.882386551861,
+        748.2964181716019,
+        456.73495256068475
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0322.json",
+          "sha256": "445152f33a87c0d6e64a23ea1cc4a431ddb1b11f538bf6b5d375bcd573e539f2",
+          "frame_index": 322,
+          "timestamp_us": 16100408,
+          "available_us": 16100408,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0324.json",
+          "sha256": "a73c206c01ada059b6eb1111e44fe4b6eed30a87712d9444a0ce48d69d2de282",
+          "frame_index": 324,
+          "timestamp_us": 16200406,
+          "available_us": 16200406,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0326.json",
+          "sha256": "938e65de4181f164085ff176b6546be9af15e7a91b381c6f602614fce950e57a",
+          "frame_index": 326,
+          "timestamp_us": 16300413,
+          "available_us": 16300413,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          914.0,
+          511.0,
+          1090.0,
+          654.0
+        ],
+        [
+          909.0,
+          509.0,
+          1096.0,
+          665.0
+        ],
+        [
+          905.0,
+          501.0,
+          1103.0,
+          666.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        322,
+        324,
+        326
+      ],
+      "rgb_timestamps_us": [
+        16100408,
+        16200406,
+        16300413
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "1a7bc216206e5ec3bd602ae9f7dcd47b1517bb2c90ad7d3aa9b4642c98a8a993"
+    },
+    {
+      "query_id": "CCRs2-high:16400411",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16400411,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16100411,
+          16200411
+        ],
+        [
+          16200411,
+          16300411
+        ],
+        [
+          16300411,
+          16400411
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          574.6270807133355,
+          297.5439556697888,
+          708.0178453090576,
+          409.0497217761756
+        ],
+        [
+          571.7526131642487,
+          291.83935810169163,
+          712.9876571701312,
+          409.7779810108542
+        ],
+        [
+          566.7815524760352,
+          291.07846779982776,
+          720.818960210992,
+          414.0669621992207
+        ]
+      ],
+      "square_xyxy": [
+        528.2722005422961,
+        237.04465919830665,
+        759.3283121447312,
+        468.1007708007418
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0324.json",
+          "sha256": "a73c206c01ada059b6eb1111e44fe4b6eed30a87712d9444a0ce48d69d2de282",
+          "frame_index": 324,
+          "timestamp_us": 16200406,
+          "available_us": 16200406,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0326.json",
+          "sha256": "938e65de4181f164085ff176b6546be9af15e7a91b381c6f602614fce950e57a",
+          "frame_index": 326,
+          "timestamp_us": 16300413,
+          "available_us": 16300413,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0328.json",
+          "sha256": "3fa689d48f355fcd08f76a5d75e591c5d088eed91470a4686c533f0f8440f982",
+          "frame_index": 328,
+          "timestamp_us": 16400411,
+          "available_us": 16400411,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          909.0,
+          509.0,
+          1096.0,
+          665.0
+        ],
+        [
+          905.0,
+          501.0,
+          1103.0,
+          666.0
+        ],
+        [
+          898.0,
+          500.0,
+          1114.0,
+          672.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        324,
+        326,
+        328
+      ],
+      "rgb_timestamps_us": [
+        16200406,
+        16300413,
+        16400411
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "62543d7a33a9de5ed89c3390c0cde25d317768863ff0406fbeee9cba3b80088a"
+    },
+    {
+      "query_id": "CCRs2-high:16500418",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16500418,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16200418,
+          16300418
+        ],
+        [
+          16300418,
+          16400418
+        ],
+        [
+          16400418,
+          16500418
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          571.7526131642487,
+          291.83935810169163,
+          712.9876571701312,
+          409.7779810108542
+        ],
+        [
+          566.7815524760352,
+          291.07846779982776,
+          720.818960210992,
+          414.0669621992207
+        ],
+        [
+          562.5335655688044,
+          292.47737853188363,
+          723.7248762344885,
+          424.02584850302406
+        ]
+      ],
+      "square_xyxy": [
+        522.2357379023833,
+        236.65867515216286,
+        764.0227039009096,
+        478.445641150689
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0326.json",
+          "sha256": "938e65de4181f164085ff176b6546be9af15e7a91b381c6f602614fce950e57a",
+          "frame_index": 326,
+          "timestamp_us": 16300413,
+          "available_us": 16300413,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0328.json",
+          "sha256": "3fa689d48f355fcd08f76a5d75e591c5d088eed91470a4686c533f0f8440f982",
+          "frame_index": 328,
+          "timestamp_us": 16400411,
+          "available_us": 16400411,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0330.json",
+          "sha256": "a7f38ec2e66e35e9929dd9d24ccb5f1c576a17bd098f1918f8484a8150d53f92",
+          "frame_index": 330,
+          "timestamp_us": 16500418,
+          "available_us": 16500418,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          905.0,
+          501.0,
+          1103.0,
+          666.0
+        ],
+        [
+          898.0,
+          500.0,
+          1114.0,
+          672.0
+        ],
+        [
+          892.0,
+          502.0,
+          1118.0,
+          686.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        326,
+        328,
+        330
+      ],
+      "rgb_timestamps_us": [
+        16300413,
+        16400411,
+        16500418
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "d3443e9202d314351a58dbe098357123263c2b2f7df5dd64141d998c5dc03ee6"
+    },
+    {
+      "query_id": "CCRs2-high:16600417",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16600417,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16300417,
+          16400417
+        ],
+        [
+          16400417,
+          16500417
+        ],
+        [
+          16500417,
+          16600417
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          566.7815524760352,
+          291.07846779982776,
+          720.818960210992,
+          414.0669621992207
+        ],
+        [
+          562.5335655688044,
+          292.47737853188363,
+          723.7248762344885,
+          424.02584850302406
+        ],
+        [
+          561.1190673782604,
+          293.1531051502162,
+          728.7291914623131,
+          429.7099808448244
+        ]
+      ],
+      "square_xyxy": [
+        519.2165363572473,
+        235.38608662531445,
+        770.6317224833264,
+        486.8012727513935
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0328.json",
+          "sha256": "3fa689d48f355fcd08f76a5d75e591c5d088eed91470a4686c533f0f8440f982",
+          "frame_index": 328,
+          "timestamp_us": 16400411,
+          "available_us": 16400411,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0330.json",
+          "sha256": "a7f38ec2e66e35e9929dd9d24ccb5f1c576a17bd098f1918f8484a8150d53f92",
+          "frame_index": 330,
+          "timestamp_us": 16500418,
+          "available_us": 16500418,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0332.json",
+          "sha256": "cdf35e36c7098024cadef10af5ded0e473007e1f73159bd7706e5ec0d618fd2f",
+          "frame_index": 332,
+          "timestamp_us": 16600417,
+          "available_us": 16600417,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          898.0,
+          500.0,
+          1114.0,
+          672.0
+        ],
+        [
+          892.0,
+          502.0,
+          1118.0,
+          686.0
+        ],
+        [
+          890.0,
+          503.0,
+          1125.0,
+          694.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        328,
+        330,
+        332
+      ],
+      "rgb_timestamps_us": [
+        16400411,
+        16500418,
+        16600417
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "fe4da0f5541ab03ad979d8fdc2ba793e6bcff7cf59b779620d87253b98920756"
+    },
+    {
+      "query_id": "CCRs2-high:16700423",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16700423,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16400423,
+          16500423
+        ],
+        [
+          16500423,
+          16600423
+        ],
+        [
+          16600423,
+          16700423
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          562.5335655688044,
+          292.47737853188363,
+          723.7248762344885,
+          424.02584850302406
+        ],
+        [
+          561.1190673782604,
+          293.1531051502162,
+          728.7291914623131,
+          429.7099808448244
+        ],
+        [
+          551.9177760304948,
+          296.65483269410703,
+          735.1918368963088,
+          441.1215736162918
+        ]
+      ],
+      "square_xyxy": [
+        506.09926081404126,
+        229.6817937338935,
+        781.0103521127622,
+        504.5928850326145
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0330.json",
+          "sha256": "a7f38ec2e66e35e9929dd9d24ccb5f1c576a17bd098f1918f8484a8150d53f92",
+          "frame_index": 330,
+          "timestamp_us": 16500418,
+          "available_us": 16500418,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0332.json",
+          "sha256": "cdf35e36c7098024cadef10af5ded0e473007e1f73159bd7706e5ec0d618fd2f",
+          "frame_index": 332,
+          "timestamp_us": 16600417,
+          "available_us": 16600417,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0334.json",
+          "sha256": "f006ccf8731140892434e78067537eb05e7ed746175afa641c91130db27e945d",
+          "frame_index": 334,
+          "timestamp_us": 16700423,
+          "available_us": 16700423,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          892.0,
+          502.0,
+          1118.0,
+          686.0
+        ],
+        [
+          890.0,
+          503.0,
+          1125.0,
+          694.0
+        ],
+        [
+          877.0,
+          508.0,
+          1134.0,
+          710.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        330,
+        332,
+        334
+      ],
+      "rgb_timestamps_us": [
+        16500418,
+        16600417,
+        16700423
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "51ad052311d1e1c2a9a4248f8ef1d4ae7925ea1d1dec64e047afd783b74c2749"
+    },
+    {
+      "query_id": "CCRs2-high:16800422",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16800422,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16500422,
+          16600422
+        ],
+        [
+          16600422,
+          16700422
+        ],
+        [
+          16700422,
+          16800422
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          561.1190673782604,
+          293.1531051502162,
+          728.7291914623131,
+          429.7099808448244
+        ],
+        [
+          551.9177760304948,
+          296.65483269410703,
+          735.1918368963088,
+          441.1215736162918
+        ],
+        [
+          547.6558693125762,
+          295.89826769423416,
+          742.3441594242247,
+          449.662721076303
+        ]
+      ],
+      "square_xyxy": [
+        498.9837967846641,
+        226.76427680153222,
+        791.0162319521369,
+        518.796711969005
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0332.json",
+          "sha256": "cdf35e36c7098024cadef10af5ded0e473007e1f73159bd7706e5ec0d618fd2f",
+          "frame_index": 332,
+          "timestamp_us": 16600417,
+          "available_us": 16600417,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0334.json",
+          "sha256": "f006ccf8731140892434e78067537eb05e7ed746175afa641c91130db27e945d",
+          "frame_index": 334,
+          "timestamp_us": 16700423,
+          "available_us": 16700423,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0336.json",
+          "sha256": "eda2b14f2af0ad983aaa671e22bc1ffa106ec637bbedb78b5d098109875aafe5",
+          "frame_index": 336,
+          "timestamp_us": 16800422,
+          "available_us": 16800422,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          890.0,
+          503.0,
+          1125.0,
+          694.0
+        ],
+        [
+          877.0,
+          508.0,
+          1134.0,
+          710.0
+        ],
+        [
+          871.0,
+          507.0,
+          1144.0,
+          722.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        332,
+        334,
+        336
+      ],
+      "rgb_timestamps_us": [
+        16600417,
+        16700423,
+        16800422
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "f3c002e8ba4e8b5d592e9a95a9e456441d1add96cc12b0f86be067477b98c5fe"
+    },
+    {
+      "query_id": "CCRs2-high:16900429",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 16900429,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16600429,
+          16700429
+        ],
+        [
+          16700429,
+          16800429
+        ],
+        [
+          16800429,
+          16900429
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          551.9177760304948,
+          296.65483269410703,
+          735.1918368963088,
+          441.1215736162918
+        ],
+        [
+          547.6558693125762,
+          295.89826769423416,
+          742.3441594242247,
+          449.662721076303
+        ],
+        [
+          543.3712401258408,
+          291.59727907640894,
+          749.4615957806916,
+          453.2384078362661
+        ]
+      ],
+      "square_xyxy": [
+        491.8486512121281,
+        217.85007671519946,
+        800.9841846944043,
+        526.9856101974756
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0334.json",
+          "sha256": "f006ccf8731140892434e78067537eb05e7ed746175afa641c91130db27e945d",
+          "frame_index": 334,
+          "timestamp_us": 16700423,
+          "available_us": 16700423,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0336.json",
+          "sha256": "eda2b14f2af0ad983aaa671e22bc1ffa106ec637bbedb78b5d098109875aafe5",
+          "frame_index": 336,
+          "timestamp_us": 16800422,
+          "available_us": 16800422,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0338.json",
+          "sha256": "c99361113ac8bfe780ffbc477e3d3be1644ebed42ec10131a25d91a6fbfd903c",
+          "frame_index": 338,
+          "timestamp_us": 16900429,
+          "available_us": 16900429,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          877.0,
+          508.0,
+          1134.0,
+          710.0
+        ],
+        [
+          871.0,
+          507.0,
+          1144.0,
+          722.0
+        ],
+        [
+          865.0,
+          501.0,
+          1154.0,
+          727.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        334,
+        336,
+        338
+      ],
+      "rgb_timestamps_us": [
+        16700423,
+        16800422,
+        16900429
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "3ff3ce1ce63e0e553ee82542cbdaed3dd24c6a556c4309f70085dd28ffec8ae9"
+    },
+    {
+      "query_id": "CCRs2-high:17000427",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 17000427,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16700427,
+          16800427
+        ],
+        [
+          16800427,
+          16900427
+        ],
+        [
+          16900427,
+          17000427
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          547.6558693125762,
+          295.89826769423416,
+          742.3441594242247,
+          449.662721076303
+        ],
+        [
+          543.3712401258408,
+          291.59727907640894,
+          749.4615957806916,
+          453.2384078362661
+        ],
+        [
+          539.1092304428632,
+          290.83583486009445,
+          757.3284377173829,
+          462.48941650529406
+        ]
+      ],
+      "square_xyxy": [
+        484.5544286242333,
+        212.9982202268045,
+        811.8832395360129,
+        540.3270311385841
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0336.json",
+          "sha256": "eda2b14f2af0ad983aaa671e22bc1ffa106ec637bbedb78b5d098109875aafe5",
+          "frame_index": 336,
+          "timestamp_us": 16800422,
+          "available_us": 16800422,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0338.json",
+          "sha256": "c99361113ac8bfe780ffbc477e3d3be1644ebed42ec10131a25d91a6fbfd903c",
+          "frame_index": 338,
+          "timestamp_us": 16900429,
+          "available_us": 16900429,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0340.json",
+          "sha256": "43cb0ac8eb19585eaecad69ff3533d1a561e8d0e6572e570194c2f7056fd29b2",
+          "frame_index": 340,
+          "timestamp_us": 17000427,
+          "available_us": 17000427,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          871.0,
+          507.0,
+          1144.0,
+          722.0
+        ],
+        [
+          865.0,
+          501.0,
+          1154.0,
+          727.0
+        ],
+        [
+          859.0,
+          500.0,
+          1165.0,
+          740.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        336,
+        338,
+        340
+      ],
+      "rgb_timestamps_us": [
+        16800422,
+        16900429,
+        17000427
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "24a8d06d88b5772c4d2a13b0aa0f5893d34a23da019cdb4967a5951a57a2ee13"
+    },
+    {
+      "query_id": "CCRs2-high:17100434",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 17100434,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16800434,
+          16900434
+        ],
+        [
+          16900434,
+          17000434
+        ],
+        [
+          17000434,
+          17100434
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          543.3712401258408,
+          291.59727907640894,
+          749.4615957806916,
+          453.2384078362661
+        ],
+        [
+          539.1092304428632,
+          290.83583486009445,
+          757.3284377173829,
+          462.48941650529406
+        ],
+        [
+          537.6088201587844,
+          278.01456070484323,
+          766.61901828897,
+          472.4308716120364
+        ]
+      ],
+      "square_xyxy": [
+        480.35627062623803,
+        203.46506756080063,
+        823.8715678215165,
+        546.980364756079
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0338.json",
+          "sha256": "c99361113ac8bfe780ffbc477e3d3be1644ebed42ec10131a25d91a6fbfd903c",
+          "frame_index": 338,
+          "timestamp_us": 16900429,
+          "available_us": 16900429,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0340.json",
+          "sha256": "43cb0ac8eb19585eaecad69ff3533d1a561e8d0e6572e570194c2f7056fd29b2",
+          "frame_index": 340,
+          "timestamp_us": 17000427,
+          "available_us": 17000427,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0342.json",
+          "sha256": "cc5efcbd2b08ccc55ce359c18b6ab462b4f6a0031c8b4444d04f42919ddbf825",
+          "frame_index": 342,
+          "timestamp_us": 17100434,
+          "available_us": 17100434,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          865.0,
+          501.0,
+          1154.0,
+          727.0
+        ],
+        [
+          859.0,
+          500.0,
+          1165.0,
+          740.0
+        ],
+        [
+          857.0,
+          482.0,
+          1178.0,
+          754.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        338,
+        340,
+        342
+      ],
+      "rgb_timestamps_us": [
+        16900429,
+        17000427,
+        17100434
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "38c1609dd6d2525a7bffb6e4a482cf0444166ddfce3bc7cd5cecda73f29d39c4"
+    },
+    {
+      "query_id": "CCRs2-high:17200432",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 17200432,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          16900432,
+          17000432
+        ],
+        [
+          17000432,
+          17100432
+        ],
+        [
+          17100432,
+          17200432
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          539.1092304428632,
+          290.83583486009445,
+          757.3284377173829,
+          462.48941650529406
+        ],
+        [
+          537.6088201587844,
+          278.01456070484323,
+          766.61901828897,
+          472.4308716120364
+        ],
+        [
+          531.213537754882,
+          276.53477490698947,
+          775.9200264430032,
+          483.8253785967007
+        ]
+      ],
+      "square_xyxy": [
+        470.03691558285186,
+        196.65021023575426,
+        837.0966486150335,
+        563.709943267936
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0340.json",
+          "sha256": "43cb0ac8eb19585eaecad69ff3533d1a561e8d0e6572e570194c2f7056fd29b2",
+          "frame_index": 340,
+          "timestamp_us": 17000427,
+          "available_us": 17000427,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0342.json",
+          "sha256": "cc5efcbd2b08ccc55ce359c18b6ab462b4f6a0031c8b4444d04f42919ddbf825",
+          "frame_index": 342,
+          "timestamp_us": 17100434,
+          "available_us": 17100434,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0344.json",
+          "sha256": "deb86bc2b3185764bfe6f61075b45a44f06c0ff398d3ee7d9f23c67b077db89d",
+          "frame_index": 344,
+          "timestamp_us": 17200432,
+          "available_us": 17200432,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          859.0,
+          500.0,
+          1165.0,
+          740.0
+        ],
+        [
+          857.0,
+          482.0,
+          1178.0,
+          754.0
+        ],
+        [
+          848.0,
+          480.0,
+          1191.0,
+          770.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        340,
+        342,
+        344
+      ],
+      "rgb_timestamps_us": [
+        17000427,
+        17100434,
+        17200432
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "df2e8d4d6073b667968f274244a1ab5840dba2e77152ab5973b42e22609d7d16"
+    },
+    {
+      "query_id": "CCRs2-high:17300439",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 17300439,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          17000439,
+          17100439
+        ],
+        [
+          17100439,
+          17200439
+        ],
+        [
+          17200439,
+          17300439
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          537.6088201587844,
+          278.01456070484323,
+          766.61901828897,
+          472.4308716120364
+        ],
+        [
+          531.213537754882,
+          276.53477490698947,
+          775.9200264430032,
+          483.8253785967007
+        ],
+        [
+          527.6700253048784,
+          277.181256358243,
+          785.2111488281583,
+          493.78206282088905
+        ]
+      ],
+      "square_xyxy": [
+        463.28474442405854,
+        192.0025762214793,
+        849.5964297089783,
+        578.3142615063991
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0342.json",
+          "sha256": "cc5efcbd2b08ccc55ce359c18b6ab462b4f6a0031c8b4444d04f42919ddbf825",
+          "frame_index": 342,
+          "timestamp_us": 17100434,
+          "available_us": 17100434,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0344.json",
+          "sha256": "deb86bc2b3185764bfe6f61075b45a44f06c0ff398d3ee7d9f23c67b077db89d",
+          "frame_index": 344,
+          "timestamp_us": 17200432,
+          "available_us": 17200432,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0346.json",
+          "sha256": "a44a5e6053c8e919f1ae2bc0ce2cc5cb965c9092b0b11c4e4048eece4a6ac52f",
+          "frame_index": 346,
+          "timestamp_us": 17300439,
+          "available_us": 17300439,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          857.0,
+          482.0,
+          1178.0,
+          754.0
+        ],
+        [
+          848.0,
+          480.0,
+          1191.0,
+          770.0
+        ],
+        [
+          843.0,
+          481.0,
+          1204.0,
+          784.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        342,
+        344,
+        346
+      ],
+      "rgb_timestamps_us": [
+        17100434,
+        17200432,
+        17300439
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "0726595a745e3f75e5c0c545f3098a6829c78b324be78094c9fc2f8f42d20daa"
+    },
+    {
+      "query_id": "CCRs2-high:17400438",
+      "sequence_id": "CCRs2-high",
+      "anchor_us": 17400438,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "windows_us": [
+        [
+          17100438,
+          17200438
+        ],
+        [
+          17200438,
+          17300438
+        ],
+        [
+          17300438,
+          17400438
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          531.213537754882,
+          276.53477490698947,
+          775.9200264430032,
+          483.8253785967007
+        ],
+        [
+          527.6700253048784,
+          277.181256358243,
+          785.2111488281583,
+          493.78206282088905
+        ],
+        [
+          524.1174755027735,
+          276.4099721661495,
+          794.5282318650194,
+          507.28654190897976
+        ]
+      ],
+      "square_xyxy": [
+        456.51478641221206,
+        189.04018976588017,
+        862.1309209555809,
+        594.656324309249
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0344.json",
+          "sha256": "deb86bc2b3185764bfe6f61075b45a44f06c0ff398d3ee7d9f23c67b077db89d",
+          "frame_index": 344,
+          "timestamp_us": 17200432,
+          "available_us": 17200432,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0346.json",
+          "sha256": "a44a5e6053c8e919f1ae2bc0ce2cc5cb965c9092b0b11c4e4048eece4a6ac52f",
+          "frame_index": 346,
+          "timestamp_us": 17300439,
+          "available_us": 17300439,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\leftlabel\\0348.json",
+          "sha256": "4439d829801581b6ebc576c683d817a42e20c3da9fcfcb935067d0f140f7d0f3",
+          "frame_index": 348,
+          "timestamp_us": 17400438,
+          "available_us": 17400438,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          848.0,
+          480.0,
+          1191.0,
+          770.0
+        ],
+        [
+          843.0,
+          481.0,
+          1204.0,
+          784.0
+        ],
+        [
+          838.0,
+          480.0,
+          1217.0,
+          803.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        344,
+        346,
+        348
+      ],
+      "rgb_timestamps_us": [
+        17200432,
+        17300439,
+        17400438
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "a047ebb592444c4a49a1548d5a68ec82b889718197fb79685abe277bfd6dc95a"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:21600549",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 21600549,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21300549,
+          21400549
+        ],
+        [
+          21400549,
+          21500549
+        ],
+        [
+          21500549,
+          21600549
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          569.7337315736241,
+          309.0666584585374,
+          681.0106977696787,
+          401.28070922120406
+        ],
+        [
+          569.0150568836148,
+          307.62513615856415,
+          684.5864490346341,
+          405.54117481982973
+        ],
+        [
+          564.7716413964308,
+          309.74272129283025,
+          686.0342658059752,
+          409.8253481759556
+        ]
+      ],
+      "square_xyxy": [
+        534.4559852940448,
+        267.77827386010154,
+        716.3499219083614,
+        449.6722104744182
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0428.json",
+          "sha256": "7ce8d3cfd17b8e897c510f1670de973a01c9d39903030d668839df764ae079bc",
+          "frame_index": 428,
+          "timestamp_us": 21400544,
+          "available_us": 21400544,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0430.json",
+          "sha256": "25858f8e26ba7e13ec60f6b0673a5b2f37302b8de886a322953f0cec67e50adf",
+          "frame_index": 430,
+          "timestamp_us": 21500551,
+          "available_us": 21500551,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0432.json",
+          "sha256": "5b79a03066579a2c3c89dd11c3352b95b4026899656b210b24c6851ea936e8fc",
+          "frame_index": 432,
+          "timestamp_us": 21600549,
+          "available_us": 21600549,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          902.0,
+          525.0,
+          1058.0,
+          654.0
+        ],
+        [
+          901.0,
+          523.0,
+          1063.0,
+          660.0
+        ],
+        [
+          895.0,
+          526.0,
+          1065.0,
+          666.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        428,
+        430,
+        432
+      ],
+      "rgb_timestamps_us": [
+        21400544,
+        21500551,
+        21600549
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "cd628e149c621c8778b71616eda18a92fb3f28304d78dfa061c72bce7954b975"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:21700548",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 21700548,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21400548,
+          21500548
+        ],
+        [
+          21500548,
+          21600548
+        ],
+        [
+          21600548,
+          21700548
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          569.0150568836148,
+          307.62513615856415,
+          684.5864490346341,
+          405.54117481982973
+        ],
+        [
+          564.7716413964308,
+          309.74272129283025,
+          686.0342658059752,
+          409.8253481759556
+        ],
+        [
+          561.9289269988648,
+          309.0148772495501,
+          688.9007991808875,
+          414.1001439301098
+        ]
+      ],
+      "square_xyxy": [
+        530.1859589533591,
+        266.32860645331294,
+        720.6437672263932,
+        456.786414726347
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0430.json",
+          "sha256": "25858f8e26ba7e13ec60f6b0673a5b2f37302b8de886a322953f0cec67e50adf",
+          "frame_index": 430,
+          "timestamp_us": 21500551,
+          "available_us": 21500551,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0432.json",
+          "sha256": "5b79a03066579a2c3c89dd11c3352b95b4026899656b210b24c6851ea936e8fc",
+          "frame_index": 432,
+          "timestamp_us": 21600549,
+          "available_us": 21600549,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0434.json",
+          "sha256": "a0533e1ce0fba9a86b85cb594b34831dc3a6aba432529c06fdb84ebb5c4f0098",
+          "frame_index": 434,
+          "timestamp_us": 21700548,
+          "available_us": 21700548,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          901.0,
+          523.0,
+          1063.0,
+          660.0
+        ],
+        [
+          895.0,
+          526.0,
+          1065.0,
+          666.0
+        ],
+        [
+          891.0,
+          525.0,
+          1069.0,
+          672.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        430,
+        432,
+        434
+      ],
+      "rgb_timestamps_us": [
+        21500551,
+        21600549,
+        21700548
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "3330d7ab91264f5f10c2a13fce19fe1d8eb0d400c93319ff0a3fde945d2f2c3e"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:21800555",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 21800555,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21500555,
+          21600555
+        ],
+        [
+          21600555,
+          21700555
+        ],
+        [
+          21700555,
+          21800555
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          564.7716413964308,
+          309.74272129283025,
+          686.0342658059752,
+          409.8253481759556
+        ],
+        [
+          561.9289269988648,
+          309.0148772495501,
+          688.9007991808875,
+          414.1001439301098
+        ],
+        [
+          559.0633570606727,
+          304.74209501770923,
+          691.7527391148296,
+          416.2470474460909
+        ]
+      ],
+      "square_xyxy": [
+        525.8910115471335,
+        260.97753469128236,
+        724.925084628369,
+        460.0116077725178
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0432.json",
+          "sha256": "5b79a03066579a2c3c89dd11c3352b95b4026899656b210b24c6851ea936e8fc",
+          "frame_index": 432,
+          "timestamp_us": 21600549,
+          "available_us": 21600549,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0434.json",
+          "sha256": "a0533e1ce0fba9a86b85cb594b34831dc3a6aba432529c06fdb84ebb5c4f0098",
+          "frame_index": 434,
+          "timestamp_us": 21700548,
+          "available_us": 21700548,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0436.json",
+          "sha256": "94ea40704b7a751cfc5958cb202a9422ea1b1fe78c23d9b9f6259bd8a72b7eb8",
+          "frame_index": 436,
+          "timestamp_us": 21800555,
+          "available_us": 21800555,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          895.0,
+          526.0,
+          1065.0,
+          666.0
+        ],
+        [
+          891.0,
+          525.0,
+          1069.0,
+          672.0
+        ],
+        [
+          887.0,
+          519.0,
+          1073.0,
+          675.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        432,
+        434,
+        436
+      ],
+      "rgb_timestamps_us": [
+        21600549,
+        21700548,
+        21800555
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "0d70ae9ae39068c3e3111921cbaa90570471208dc0ebf0716f9fd06653591bc2"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:21900553",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 21900553,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21600553,
+          21700553
+        ],
+        [
+          21700553,
+          21800553
+        ],
+        [
+          21800553,
+          21900553
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          561.9289269988648,
+          309.0148772495501,
+          688.9007991808875,
+          414.1001439301098
+        ],
+        [
+          559.0633570606727,
+          304.74209501770923,
+          691.7527391148296,
+          416.2470474460909
+        ],
+        [
+          556.2023817330027,
+          301.1783503691157,
+          694.6144613518072,
+          419.8126390574643
+        ]
+      ],
+      "square_xyxy": [
+        521.5993618283015,
+        256.68643499918653,
+        729.2174812565084,
+        464.30455442739344
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0434.json",
+          "sha256": "a0533e1ce0fba9a86b85cb594b34831dc3a6aba432529c06fdb84ebb5c4f0098",
+          "frame_index": 434,
+          "timestamp_us": 21700548,
+          "available_us": 21700548,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0436.json",
+          "sha256": "94ea40704b7a751cfc5958cb202a9422ea1b1fe78c23d9b9f6259bd8a72b7eb8",
+          "frame_index": 436,
+          "timestamp_us": 21800555,
+          "available_us": 21800555,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0438.json",
+          "sha256": "07ec97d62f514dc91b50a826344c6b478d35145bd93a190a5a6d79bd3073c352",
+          "frame_index": 438,
+          "timestamp_us": 21900553,
+          "available_us": 21900553,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          891.0,
+          525.0,
+          1069.0,
+          672.0
+        ],
+        [
+          887.0,
+          519.0,
+          1073.0,
+          675.0
+        ],
+        [
+          883.0,
+          514.0,
+          1077.0,
+          680.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        434,
+        436,
+        438
+      ],
+      "rgb_timestamps_us": [
+        21700548,
+        21800555,
+        21900553
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "adeabcf2e4edb21fd85701e892d8d7dd8afa3b53df926de9bffd534356675809"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:22000560",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 22000560,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21700560,
+          21800560
+        ],
+        [
+          21800560,
+          21900560
+        ],
+        [
+          21900560,
+          22000560
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          559.0633570606727,
+          304.74209501770923,
+          691.7527391148296,
+          416.2470474460909
+        ],
+        [
+          556.2023817330027,
+          301.1783503691157,
+          694.6144613518072,
+          419.8126390574643
+        ],
+        [
+          550.5122966244727,
+          299.00433041193196,
+          701.7272044633681,
+          422.68791376268615
+        ]
+      ],
+      "square_xyxy": [
+        512.7085696647489,
+        247.43494120813745,
+        739.5309314230919,
+        474.2573029664806
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0436.json",
+          "sha256": "94ea40704b7a751cfc5958cb202a9422ea1b1fe78c23d9b9f6259bd8a72b7eb8",
+          "frame_index": 436,
+          "timestamp_us": 21800555,
+          "available_us": 21800555,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0438.json",
+          "sha256": "07ec97d62f514dc91b50a826344c6b478d35145bd93a190a5a6d79bd3073c352",
+          "frame_index": 438,
+          "timestamp_us": 21900553,
+          "available_us": 21900553,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0440.json",
+          "sha256": "f25477417459ae11e798e99652ec45bc081a936227ce3723f17109d49c6ca557",
+          "frame_index": 440,
+          "timestamp_us": 22000560,
+          "available_us": 22000560,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          887.0,
+          519.0,
+          1073.0,
+          675.0
+        ],
+        [
+          883.0,
+          514.0,
+          1077.0,
+          680.0
+        ],
+        [
+          875.0,
+          511.0,
+          1087.0,
+          684.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        436,
+        438,
+        440
+      ],
+      "rgb_timestamps_us": [
+        21800555,
+        21900553,
+        22000560
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "f164609188d2953c10164b99a3a687a71526c6ab3fd869a6833d8b5780732f8f"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:22100558",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 22100558,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21800558,
+          21900558
+        ],
+        [
+          21900558,
+          22000558
+        ],
+        [
+          22000558,
+          22100558
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          556.2023817330027,
+          301.1783503691157,
+          694.6144613518072,
+          419.8126390574643
+        ],
+        [
+          550.5122966244727,
+          299.00433041193196,
+          701.7272044633681,
+          422.68791376268615
+        ],
+        [
+          546.9326901313084,
+          294.0415884411357,
+          701.6929118491049,
+          417.7461297704194
+        ]
+      ],
+      "square_xyxy": [
+        508.23406154829354,
+        242.26886535286607,
+        740.4258330463831,
+        474.46063685095567
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0438.json",
+          "sha256": "07ec97d62f514dc91b50a826344c6b478d35145bd93a190a5a6d79bd3073c352",
+          "frame_index": 438,
+          "timestamp_us": 21900553,
+          "available_us": 21900553,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0440.json",
+          "sha256": "f25477417459ae11e798e99652ec45bc081a936227ce3723f17109d49c6ca557",
+          "frame_index": 440,
+          "timestamp_us": 22000560,
+          "available_us": 22000560,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0442.json",
+          "sha256": "ca76dda16d9f85ee9100f70873620f32b49e4852c19fee2939ba0e064de28b57",
+          "frame_index": 442,
+          "timestamp_us": 22100558,
+          "available_us": 22100558,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          883.0,
+          514.0,
+          1077.0,
+          680.0
+        ],
+        [
+          875.0,
+          511.0,
+          1087.0,
+          684.0
+        ],
+        [
+          870.0,
+          504.0,
+          1087.0,
+          677.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        438,
+        440,
+        442
+      ],
+      "rgb_timestamps_us": [
+        21900553,
+        22000560,
+        22100558
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "70f2e4bb47267359f813a7a5a165f964c7d3f7abc54d376cce6d54aacf3aef05"
+    },
+    {
+      "query_id": "CCRm-medium-overlap100:22200565",
+      "sequence_id": "CCRm-medium-overlap100",
+      "anchor_us": 22200565,
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "windows_us": [
+        [
+          21900565,
+          22000565
+        ],
+        [
+          22000565,
+          22100565
+        ],
+        [
+          22100565,
+          22200565
+        ]
+      ],
+      "boxes_xyxy3": [
+        [
+          550.5122966244727,
+          299.00433041193196,
+          701.7272044633681,
+          422.68791376268615
+        ],
+        [
+          546.9326901313084,
+          294.0415884411357,
+          701.6929118491049,
+          417.7461297704194
+        ],
+        [
+          541.2742216898496,
+          296.8491600259489,
+          706.0125000328513,
+          427.0056434674614
+        ]
+      ],
+      "square_xyxy": [
+        500.08965210409906,
+        236.9699071970472,
+        747.1970696186017,
+        484.07732471154986
+      ],
+      "bbox_sources": [
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0440.json",
+          "sha256": "f25477417459ae11e798e99652ec45bc081a936227ce3723f17109d49c6ca557",
+          "frame_index": 440,
+          "timestamp_us": 22000560,
+          "available_us": 22000560,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0442.json",
+          "sha256": "ca76dda16d9f85ee9100f70873620f32b49e4852c19fee2939ba0e064de28b57",
+          "frame_index": 442,
+          "timestamp_us": 22100558,
+          "available_us": 22100558,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        },
+        {
+          "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0444.json",
+          "sha256": "a3e29c4f48c903c1943bec8be8f432328ad9bca3b101232f59f40d49d2608376",
+          "frame_index": 444,
+          "timestamp_us": 22200565,
+          "available_us": 22200565,
+          "category": "car",
+          "group": 1,
+          "object_index": 0
+        }
+      ],
+      "rgb_boxes": [
+        [
+          875.0,
+          511.0,
+          1087.0,
+          684.0
+        ],
+        [
+          870.0,
+          504.0,
+          1087.0,
+          677.0
+        ],
+        [
+          862.0,
+          508.0,
+          1093.0,
+          690.0
+        ]
+      ],
+      "rgb_frame_indices": [
+        440,
+        442,
+        444
+      ],
+      "rgb_timestamps_us": [
+        22000560,
+        22100558,
+        22200565
+      ],
+      "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+      "multiple_car_objects": false,
+      "metadata_sha256": "0fd0c48ef3b43818b2908452a9d9c6402034c3fe861adbd999261211216cd50a"
+    }
+  ],
+  "excluded": [
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21400000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21500000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21600000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21700000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21800000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21900000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 22000000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 22100000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 22200000,
+      "stage": "frame",
+      "reason": "MISSING_ANNOTATION"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21600000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21700000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21800000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 21900000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 22000000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 22100000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap0",
+      "grid_us": 22200000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21400000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21500000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21600000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21700000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21800000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21900000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 22000000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 22100000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 22200000,
+      "stage": "frame",
+      "reason": "NO_RGB_FRAME_WITHIN_1MS_OF_REGISTERED_GRID"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21600000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21700000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21800000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 21900000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 22000000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 22100000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    },
+    {
+      "case": "CCRm-medium-overlap50",
+      "grid_us": 22200000,
+      "stage": "query",
+      "reason": "INCOMPLETE_TRIPLET"
+    }
+  ],
+  "inventory": {
+    "CCRs2-medium": {
+      "relative_directory": "CCRs-2/medium-100/overlap-100",
+      "interval_seconds": [
+        9.4,
+        11.6
+      ],
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "sensor_range_us": [
+        24,
+        20650554
+      ],
+      "grid_frames": 23,
+      "complete_queries": 21
+    },
+    "CCRs2-high": {
+      "relative_directory": "CCRs-2/high-100/overlap-100",
+      "interval_seconds": [
+        15.5,
+        17.4
+      ],
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "sensor_range_us": [
+        17,
+        22350560
+      ],
+      "grid_frames": 20,
+      "complete_queries": 18
+    },
+    "CCRm-medium-overlap0": {
+      "relative_directory": "CCRm/medium-0/overlap-0",
+      "interval_seconds": [
+        21.4,
+        22.2
+      ],
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-0\\overlap-0\\2024-08-08-10-54-42.hdf5",
+      "raw_stat": {
+        "size_bytes": 6950377080,
+        "mtime_ns": 1785101170874177700
+      },
+      "sensor_range_us": [
+        28,
+        23250588
+      ],
+      "grid_frames": 9,
+      "complete_queries": 0
+    },
+    "CCRm-medium-overlap50": {
+      "relative_directory": "CCRm/medium-50/overlap-50",
+      "interval_seconds": [
+        21.4,
+        22.2
+      ],
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-50\\overlap-50\\2024-08-08-11-00-43.hdf5",
+      "raw_stat": {
+        "size_bytes": 5838091801,
+        "mtime_ns": 1785100552971907000
+      },
+      "sensor_range_us": [
+        21,
+        19400492
+      ],
+      "grid_frames": 9,
+      "complete_queries": 0
+    },
+    "CCRm-medium-overlap100": {
+      "relative_directory": "CCRm/medium-100/overlap-100",
+      "interval_seconds": [
+        21.4,
+        22.2
+      ],
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "sensor_range_us": [
+        29,
+        28800720
+      ],
+      "grid_frames": 9,
+      "complete_queries": 7
+    }
+  },
+  "targets_read": false,
+  "optimizer_updates": 0
+}

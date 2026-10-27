@@ -1,0 +1,74 @@
+{
+  "scope": "Descriptive diagnostics of frozen, already-scored predictions",
+  "source_sha256": "dedf2bc0db2db1ff335a90587113d4c7bfe35ab8a24dd5c55d9cd9bfefd479c1",
+  "script_sha256": "a7a4c4450a22f346507da846c63bd2a37da4aaff8d62ac76dd32befbe715186b",
+  "physical_sequences": 32,
+  "own_wins_against_garl": 26,
+  "own_losses_against_garl": {
+    "CCRs-1-low-100-overlap-100": {
+      "PHASE_ONLY_TRAIN40_S7": 395.6288962028264,
+      "Garl_full": 378.7808187604588,
+      "R_CTX_TRAIN40": 273.53259690953905
+    },
+    "CCRs-1-medium-100-overlap-100": {
+      "PHASE_ONLY_TRAIN40_S7": 111.2781294520201,
+      "Garl_full": 83.18994251284646,
+      "R_CTX_TRAIN40": 131.87407243249302
+    },
+    "CCRs-3-medium-100-overlap-100": {
+      "PHASE_ONLY_TRAIN40_S7": 15.323820309475453,
+      "Garl_full": 9.907856018023343,
+      "R_CTX_TRAIN40": 18.538500691374693
+    },
+    "CCRs-side-high": {
+      "PHASE_ONLY_TRAIN40_S7": 21.53910670900081,
+      "Garl_full": 15.771299049333033,
+      "R_CTX_TRAIN40": 25.26242738741334
+    },
+    "CCRs-side-low": {
+      "PHASE_ONLY_TRAIN40_S7": 41.76042108463126,
+      "Garl_full": 24.48488040406871,
+      "R_CTX_TRAIN40": 63.28259752635908
+    },
+    "CCRs-side-medium": {
+      "PHASE_ONLY_TRAIN40_S7": 46.05906575216415,
+      "Garl_full": 27.916039037798328,
+      "R_CTX_TRAIN40": 65.10672367804163
+    }
+  },
+  "median_sequence_mean_RTE_pct": {
+    "PHASE_ONLY_TRAIN40_S7": 19.95714887576383,
+    "Garl_full": 29.748676184276324,
+    "R_CTX_TRAIN40": 19.737187118838207
+  },
+  "largest_garl_sequence_errors": {
+    "CPNAO-low": {
+      "PHASE_ONLY_TRAIN40_S7": 46.95452576383269,
+      "Garl_full": 1283.2638262863716,
+      "R_CTX_TRAIN40": 41.09475968244504
+    },
+    "CPLA-medium": {
+      "PHASE_ONLY_TRAIN40_S7": 45.430391950558175,
+      "Garl_full": 1265.9817143196717,
+      "R_CTX_TRAIN40": 35.53101147845597
+    },
+    "CCRs-1-low-100-overlap-100": {
+      "PHASE_ONLY_TRAIN40_S7": 395.6288962028264,
+      "Garl_full": 378.7808187604588,
+      "R_CTX_TRAIN40": 273.53259690953905
+    },
+    "CPNA-high": {
+      "PHASE_ONLY_TRAIN40_S7": 66.50266624697414,
+      "Garl_full": 150.70845356628902,
+      "R_CTX_TRAIN40": 66.14193076695354
+    }
+  },
+  "interpretation": [
+    "Pooled error differences are influenced by large errors; no outliers removed.",
+    "Garl wins on all three lateral CCRs-side sequences in this sample.",
+    "RGB context has lower pooled errors than final fusion; no checkpoint selected.",
+    "Median sequence mean RTE is a descriptive diagnostic, not the primary metric."
+  ],
+  "optimizer_updates": 0,
+  "inference_reexecuted": false
+}

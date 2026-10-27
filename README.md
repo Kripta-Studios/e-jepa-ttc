@@ -1,5 +1,18 @@
 # E-JEPA-TTC
 
+**Actualización del 27 de octubre de 2026:** candidato multimodal TRAIN40 con
+entradas fuera de muestra, nueve componentes identificados y 6.762 predicciones
+Test12 preparadas; todavía no enviado a CodaBench. La comparación EvTTC final,
+sus límites y las mediciones de latencia están documentados. V18 conserva su
+cierre histórico `NO_CANDIDATE`.
+
+La [historia científica y de ingeniería de junio a octubre](docs/engineering_history_20261027/README.md)
+recoge entrenamientos, CUDA Graphs, BF16, cachés, prefetch, concurrencia,
+recuperación, migración Runpod y preservación de resultados en diez capítulos.
+La [evaluación final frente a Garl](docs/final_train40_transfer_20261027/REPORT.md)
+incluye resultados por secuencia; no se afirma SOTA oficial.
+Los estados fechados que siguen son históricos.
+
 > Actualización V14 del 12 de octubre de 2026:
 > [informes RANGE-TRANSFER y resultados](docs/range_transfer_results_20261012/README.md).
 > Seis fits event-only completos y evaluación interna V: **NO_CANDIDATE**.

@@ -7,6 +7,28 @@ La [decisión posterior a V18](../post_v18_20261017/DECISION_POST_V18.md) separa
 el candidato V16, la alternativa de fusión y el diagnóstico A1. Su preparación
 autoriza cero nuevos optimizer updates y no modifica campañas posteriores.
 
+**Comparación posterior autorizada y ejecutada:**
+[Garl, EvTTC y eAP con pesos congelados](../post_v18_transfer_20261017/REPORT.md).
+La nueva autorización habilitó inferencia, no entrenamiento ni envío oficial.
+V18 continúa cerrado; la comparación conserva todas sus limitaciones de población.
+
+**Preparación del refit final V16:**
+[inventario, particiones y exposición propuesta](../v16_train40_refit_20261017/FULL_REFIT_PLAN.json).
+TRAIN40 verifica 88.744 consultas y 40 grupos. Es un plan de viabilidad con cero
+updates ejecutados; requiere adaptador, elegibilidad y presupuesto medido antes del fit.
+
+**Continuación posterior del refit TRAIN40, autorizada por separado:**
+el plan de viabilidad anterior queda como documento histórico. La ejecución
+actual de los productores RGB A5 y C2F utiliza el runtime v6 con
+[reservas física y de commit de 2 GiB autorizadas](../final_refit_20261017/RAM_RESERVE_2GIB.md);
+véase [optimización aplicada y medición concurrente](../final_refit_20261017/RUNTIME_V4_APPLIED.md).
+El localizador operativo es `artifacts/final_refit_20261017/ACTIVE_RUNTIME.json`.
+El [supervisor de reanudación por recursos](../final_refit_20261017/AUTO_MEMORY_RESUME.md)
+reanuda cada productor tras una pausa limpia de memoria o inventario caducado,
+cuando los recursos y el inventario firmado vuelven a ser válidos;
+conserva las pausas manuales y bloquea los errores de integridad o checkpoint.
+Esta ejecución no reabre V18 ni constituye una evaluación oficial.
+
 El corte previo a continuación se conserva como procedencia del paquete.
 
 **Corte histórico anterior a la entrega:** programa científico cerrado sin candidato admitido; en ese corte faltaba verificar la entrega independiente. A1 y las 64 consultas de coste estaban completos. La decisión de no habilitar refit/export permanece registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).

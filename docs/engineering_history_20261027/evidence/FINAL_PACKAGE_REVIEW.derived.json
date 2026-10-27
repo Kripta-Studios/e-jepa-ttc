@@ -1,0 +1,41 @@
+{
+  "evidence_kind": "derived_summary",
+  "source": {
+    "source_locator": "artifacts/final_diagnostics_20261027/FINAL_PACKAGE_REVIEW.json",
+    "source_sha256": "e447c5147e4e1c25cd4b210689445fafcaf453eb8b2386d51184bd3a6807fad1",
+    "source_bytes": 1798
+  },
+  "recorded": {
+    "status": "PASS_LOCAL_FINAL_PACKAGE_REVIEW",
+    "audit_utc": "2026-10-27T17:38:35.475346+00:00",
+    "zip_sha256": "5eb69749de7aff682eea640d843ee635379702337d929c86f50472264f1d88bc",
+    "zip_member": "submission.json",
+    "schema": "garlttc_prediction_v1",
+    "official_input_sha256": "aedb9da5484ceedb642ef1cbc7cf6115dcf7f368e4444b55de947989fc19a362",
+    "exact_official_token_set_match": true,
+    "official_rows": 6762,
+    "finite_predictions": 6762,
+    "duplicate_json_keys": false,
+    "physical_predictions": 5805,
+    "all_alias_values_equal_saved_physical_predictions_at_float32_precision": true,
+    "serialization_float64_differing_values": 589,
+    "serialization_max_difference_seconds": 7.105427357601002e-15,
+    "serialization_explanation": "Historical packager pandas.read_csv roundtrip, scientific_oof_final.py:1169; all values identical at original float32 precision; ZIP not altered.",
+    "complete_sequence_receipts": 12,
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "nine_checkpoint_and_two_normalizer_hash_checks": "PASS_previous_local_prepackage_check",
+    "all_query_history_same_object_causal_check": "PASS_previous_local_prepackage_check",
+    "max_history_span_us_observed": 600006,
+    "private_target_read_flags": false,
+    "external_submission": false,
+    "fallback_count": 0,
+    "inference_or_training_rerun": false,
+    "tests_rerun": false,
+    "limitations": [
+      "Technical integrity review does not establish official benchmark score or SOTA.",
+      "Causal-history benchmark eligibility remains a separate organizer/rules question.",
+      "Preservation agent owns completeness of full archive and raw/cached-data backup."
+    ]
+  },
+  "publication_scope": "Local archive path omitted; all technical findings retained verbatim as fields."
+}

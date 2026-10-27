@@ -1,0 +1,12 @@
+{
+  "sample_token": "6h5yRW2LGc_004795_5410500000",
+  "group_id": "6h5yRW2LGc",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": 4.039928436279297,
+  "sensor_sha256": "f8b67d83166fd7d8c8c72c1905d7e5b5db350ae839b27c1af7a106b180db3abd",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.4056094999832567,
+  "seconds_preprocess_including_parity": 1.0884597999975085,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

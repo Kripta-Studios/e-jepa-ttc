@@ -1,0 +1,70 @@
+{
+  "authorized_immediate_training_scope": "two final TRAIN40 RGB producers only",
+  "excludes": [
+    "H/V RGB cache preparation",
+    "feature and history extraction",
+    "all event producer fits for new OOF rotations",
+    "PAIR/context/final readout fitting",
+    "technical admission and recovery",
+    "export and final Test12 inference"
+  ],
+  "final_rgb_training_hours_from_optimized_interval": 15.393074953095923,
+  "final_rgb_training_hours_from_provenance_interval": 28.419503387890213,
+  "not_a_full_refit_budget": true,
+  "not_a_guaranteed_completion_time": true,
+  "producer_updates": 99864,
+  "producers": {
+    "R_A5": {
+      "all_new_rgb_hours_from_optimized_interval": 22.162367678393945,
+      "all_new_rgb_hours_from_provenance_interval": 63.419188473376195,
+      "auxiliary_updates_if_rotation0_reused": 119484,
+      "final_training_hours_from_optimized_interval": 6.531917545671994,
+      "final_training_hours_from_provenance_interval": 18.691545774027368,
+      "final_updates": 49932,
+      "historical_optimized_scope": {
+        "scope": "saved overlap-runtime interval since checkpoint restore",
+        "seconds": 1772.1417249000515,
+        "seconds_per_update": 0.4709385397023788,
+        "updates": 3763
+      },
+      "historical_provenance_scope": {
+        "scope": "whole historical start/end interval; may include pauses",
+        "seconds": 40873.437875,
+        "seconds_per_update": 1.3476240644576327,
+        "updates": 30330
+      }
+    },
+    "R_C2F": {
+      "all_new_rgb_hours_from_optimized_interval": 30.065325709687826,
+      "all_new_rgb_hours_from_provenance_interval": 33.006321940042206,
+      "auxiliary_updates_if_rotation0_reused": 119484,
+      "final_training_hours_from_optimized_interval": 8.86115740742393,
+      "final_training_hours_from_provenance_interval": 9.727957613862845,
+      "final_updates": 49932,
+      "historical_optimized_scope": {
+        "scope": "saved overlap-runtime interval since checkpoint restore",
+        "seconds": 19269.024409900012,
+        "seconds_per_update": 0.6388721995258781,
+        "updates": 30161
+      },
+      "historical_provenance_scope": {
+        "scope": "whole historical start/end interval; may include pauses",
+        "seconds": 21272.455258,
+        "seconds_per_update": 0.7013668070557205,
+        "updates": 30330
+      }
+    }
+  },
+  "schema": "final_refit_scoped_budget_v1",
+  "scientific_endpoint_policy": "fixed 18-epoch endpoints, no score-based selection",
+  "scientific_updates_executed_by_budget_script": 0,
+  "shared_cache_policy": "one lossless input cache; no duplication per fold",
+  "source_bindings": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_A5\\RGB_OVERLAP_RUNTIME.json": "8cdc2afec3dc2c71a5b1a7a9b63b8ae435edf81330bf81aa761798c0008dd6f0",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_A5\\RUN_PROVENANCE.json": "36373d79523401abd1b7df1370d2e00a809c9bcb08295e143191e40db3373535",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_C2F\\RGB_OVERLAP_RUNTIME.json": "1b298f6a1708139c68ec441673d0e38de54e7f9baaa9328a787f97ee871a5c9d",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_C2F\\RUN_PROVENANCE.json": "e970c5ae0b8c563a424df87fad3584593873be95bbebd2dae81d0199e054a359",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\docs\\final_refit_20261017\\NESTED_ROTATION_REVIEW.json": "12465d3b63dba27573461c098f2d19046e89c64c3d32444dfbf4b533fa5e8ec1"
+  },
+  "status": "SHARED_PRODUCER_ESTIMATE_FULL_OOF_EXTRACTION_UNPRICED"
+}

@@ -57,3 +57,52 @@ tests/fixtures/scientific_recovery_v8/dino_teacher_manifest.json -text
 tests/fixtures/scientific_recovery_v8/essential_results_manifest.json -text
 
 docs/ci_repair_evidence_20261016/** -text
+
+# October 27 publication preserves original executed/evidence CRLF bytes.
+# Public evidence catalog preserves the hashes of its original receipts.
+docs/engineering_history_20261027/evidence/** -text whitespace=cr-at-eol
+docs/final_refit_20261017/BUDGET_PROFILE.json -text whitespace=cr-at-eol
+docs/final_refit_20261017/NESTED_ROTATION_REVIEW.json -text whitespace=cr-at-eol
+docs/final_refit_20261017/RC2F_SLOWDOWN_20261025.md -text whitespace=cr-at-eol
+docs/final_refit_20261017/RUNTIME_V4_APPLIED.md -text whitespace=cr-at-eol
+docs/final_train40_transfer_20261027/DIAGNOSTICS.json -text whitespace=cr-at-eol
+docs/final_train40_transfer_20261027/METHODOLOGY.json -text whitespace=cr-at-eol
+docs/final_train40_transfer_20261027/REPORT.md -text whitespace=cr-at-eol
+docs/final_train40_transfer_20261027/RESULTS.json -text whitespace=cr-at-eol
+docs/joint_measurement_20261012/README.md -text whitespace=cr-at-eol
+operational/oof_transport_binding.py -text whitespace=cr-at-eol
+operational/oof_transport_cache.py -text whitespace=cr-at-eol
+operational/runpod_migration/ownership_c2f.py -text whitespace=cr-at-eol
+operational/scientific_oof_transport.py -text whitespace=cr-at-eol
+scripts/final_train40_transfer_garl.py -text whitespace=cr-at-eol
+scripts/probe_oof_transport_cache.py -text whitespace=cr-at-eol
+scripts/probe_oof_transport_steady.py -text whitespace=cr-at-eol
+scripts/probe_oof_validated_prefetch.py -text whitespace=cr-at-eol
+scripts/run_cloud_return_oof_stage.ps1 -text whitespace=cr-at-eol
+scripts/run_transport_oof_stage.ps1 -text whitespace=cr-at-eol
+scripts/runpod_backup_c2f_v1.py -text whitespace=cr-at-eol
+scripts/runpod_deadline_extension_0100_20261027.py -text whitespace=cr-at-eol
+scripts/runpod_deadline_extension_20261027.py -text whitespace=cr-at-eol
+scripts/runpod_event_context_overlap_v1.py -text whitespace=cr-at-eol
+scripts/runpod_event_extended_0100_20261027.py -text whitespace=cr-at-eol
+scripts/runpod_event_extended_parallel_20261027.py -text whitespace=cr-at-eol
+scripts/runpod_event_relocated_parallel_20261027.py -text whitespace=cr-at-eol
+scripts/runpod_event_resource_watchdog_v14.py -text whitespace=cr-at-eol
+scripts/runpod_event_transfer_v3.py -text whitespace=cr-at-eol
+scripts/runpod_final_diagnostics_history.py -text whitespace=cr-at-eol
+scripts/runpod_final_diagnostics_losses.py -text whitespace=cr-at-eol
+scripts/runpod_final_diagnostics_report.py -text whitespace=cr-at-eol
+scripts/runpod_final_diagnostics_telemetry.py -text whitespace=cr-at-eol
+scripts/runpod_final_queue.py -text whitespace=cr-at-eol
+scripts/runpod_prepare_c2f_v1.py -text whitespace=cr-at-eol
+scripts/runpod_resume_ram_v1.py -text whitespace=cr-at-eol
+scripts/runpod_snapshot_c2f_v1.py -text whitespace=cr-at-eol
+scripts/runpod_verify_windows_c2f_probe.py -text whitespace=cr-at-eol
+tests/unit/test_event_context_overlap.py -text whitespace=cr-at-eol
+tests/unit/test_oof_transport_binding.py -text whitespace=cr-at-eol
+docs/final_train40_transfer_20261027/PER_SEQUENCE.csv -text whitespace=cr-at-eol
+docs/final_train40_transfer_20261027/QUERIES.csv -text whitespace=cr-at-eol
+docs/post_v18_transfer_20261017/EAP_64_QUERIES.csv -text whitespace=cr-at-eol
+docs/post_v18_transfer_20261017/EAP_V_EXISTING_PREDICTIONS.csv -text whitespace=cr-at-eol
+docs/post_v18_transfer_20261017/EVTTC_QUERIES.csv -text whitespace=cr-at-eol
+docs/post_v18_transfer_20261017/EVTTC_TRAJECTORIES.svg -text whitespace=cr-at-eol

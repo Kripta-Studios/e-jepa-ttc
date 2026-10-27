@@ -1,0 +1,12 @@
+{
+  "sample_token": "rhYxPcU29n_003592_7463200000",
+  "group_id": "rhYxPcU29n",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": 5.305300235748291,
+  "sensor_sha256": "0835421b15623d9917724ccad370569112163314622a736b81e836c6955b388c",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.5005015000060666,
+  "seconds_preprocess_including_parity": 0.43786249999538995,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

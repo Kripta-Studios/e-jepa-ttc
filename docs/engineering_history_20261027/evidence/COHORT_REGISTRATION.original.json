@@ -1,0 +1,13 @@
+{
+  "schema": "final_train40_transfer_cohort_registration_v1",
+  "manifest_sha256": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31",
+  "source_manifest_sha256": "607f8faa2aebeaa95ac7b61fb5bbcbe105c9e3606152ee6584e2e8cb4621722c",
+  "historical_manifest_sha256": "b438c58b41dee6a825e6119eb7c977b3b7067413d843d6a65412b2df1a5f9e3f",
+  "builder_sha256": "14e76a53232031b1e0e6082fdf47023485744cdb76fba294410b9895fbe7b0cb",
+  "queries": 554,
+  "sequences": 32,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "seed_selection": false,
+  "external_submission": false
+}

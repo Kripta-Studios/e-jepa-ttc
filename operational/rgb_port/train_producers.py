@@ -28,6 +28,7 @@ from e_jepa_ttc.data.object_event_v4 import (
 from e_jepa_ttc.distillation.dinov3_relational import local_relational_distillation_loss
 from e_jepa_ttc.losses.causal_scale_ttc import (
     CausalScaleTTCLossConfig,
+    PreparedTargetCounts,
     causal_scale_ttc_loss,
 )
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
@@ -285,7 +286,16 @@ class ProducerCheckpoint:
 
     schema = "rgb_port_producer_checkpoint_v1"
 
-    def __init__(self, directory: Path, identity: Mapping[str, Any], updates: int) -> None:
+    def __init__(
+        self,
+        directory: Path,
+        identity: Mapping[str, Any],
+        updates: int,
+        *,
+        execution_binding_sha256: str | None = None,
+        execution_binding_origin_checkpoint_sha256: str | None = None,
+        execution_binding_origin_prior_sha256: str | None = None,
+    ) -> None:
         self.directory = directory
         self.path = directory / "checkpoint_last.pt"
         self.pointer = directory / "CHECKPOINT_POINTER.json"
@@ -299,6 +309,23 @@ class ProducerCheckpoint:
         self.durable = 0
         self.recovery_upper = 0
         self.pending = False
+        if (execution_binding_sha256 is None) != (
+            execution_binding_origin_checkpoint_sha256 is None
+        ) or any(
+            len(value) != 64 or any(character not in "0123456789abcdef" for character in value)
+            for value in (
+                execution_binding_sha256,
+                execution_binding_origin_checkpoint_sha256,
+                execution_binding_origin_prior_sha256,
+            )
+            if value is not None
+        ):
+            raise ValueError("Execution binding requires paired SHA-256 identities")
+        if execution_binding_origin_prior_sha256 is not None and execution_binding_sha256 is None:
+            raise ValueError("A prior execution binding requires a new execution binding")
+        self.execution_binding_sha256 = execution_binding_sha256
+        self.execution_binding_origin_checkpoint_sha256 = execution_binding_origin_checkpoint_sha256
+        self.execution_binding_origin_prior_sha256 = execution_binding_origin_prior_sha256
         directory.mkdir(parents=True, exist_ok=True)
         self.versions.mkdir(parents=True, exist_ok=True)
         if not self.journal.exists():
@@ -310,6 +337,7 @@ class ProducerCheckpoint:
             {
                 "schema": "rgb_port_update_journal_v1",
                 "identity_sha256": self.identity_sha256,
+                "execution_binding_sha256": self.execution_binding_sha256,
                 "completed_updates": self.completed,
                 "durable_updates": self.durable,
                 "recovery_upper": self.recovery_upper,
@@ -345,6 +373,7 @@ class ProducerCheckpoint:
         model_on_cuda = any(parameter.device.type == "cuda" for parameter in model.parameters())
         payload = {
             "schema": self.schema,
+            "execution_binding_sha256": self.execution_binding_sha256,
             "code_migration_sha256": (
                 file_sha256(self.directory.parent.parent / "AUDIT_CODE_MIGRATION.json")
                 if (self.directory.parent.parent / "AUDIT_CODE_MIGRATION.json").is_file()
@@ -378,6 +407,7 @@ class ProducerCheckpoint:
             {
                 "schema": "rgb_port_checkpoint_pointer_v1",
                 "identity_sha256": self.identity_sha256,
+                "execution_binding_sha256": self.execution_binding_sha256,
                 "completed_updates": self.completed,
                 "version": version.name,
                 "checkpoint_sha256": checkpoint_sha256,
@@ -405,6 +435,7 @@ class ProducerCheckpoint:
                 "completed_updates": self.completed,
                 "scientific_endpoint": status == "COMPLETE" and self.completed == self.updates,
                 "identity_sha256": self.identity_sha256,
+                "execution_binding_sha256": self.execution_binding_sha256,
                 "checkpoint_path": str(self.path.resolve()),
                 "checkpoint_sha256": checkpoint_sha256,
                 "complete_state": True,
@@ -429,7 +460,21 @@ class ProducerCheckpoint:
         version = self.versions / str(pointer["version"])
         if not version.is_file() or pointer.get("checkpoint_sha256") != file_sha256(version):
             raise ValueError("Producer checkpoint transaction is incomplete")
+        pointer_binding = pointer.get("execution_binding_sha256")
+        if not self._execution_binding_matches(pointer_binding, file_sha256(version)):
+            raise ValueError("Producer checkpoint pointer execution binding differs")
         return version, pointer
+
+    def _execution_binding_matches(self, stored: object, checkpoint_sha256: str) -> bool:
+        """Accept prior lineage only for the exact admitted immutable origin."""
+        if self.execution_binding_sha256 is None:
+            return stored is None
+        if stored == self.execution_binding_sha256:
+            return True
+        return (
+            checkpoint_sha256 == self.execution_binding_origin_checkpoint_sha256
+            and stored == self.execution_binding_origin_prior_sha256
+        )
 
     def restore(
         self,
@@ -455,10 +500,16 @@ class ProducerCheckpoint:
             or int(payload.get("accumulation_index", -1)) != 0
         ):
             raise ValueError("Producer checkpoint identity/state differs")
+        stored_execution_binding = payload.get("execution_binding_sha256")
+        if not self._execution_binding_matches(stored_execution_binding, file_sha256(version)):
+            raise ValueError("Producer checkpoint execution binding differs")
         # Receipt/alias may lag the atomic pointer after a crash. The immutable
         # pointed version is authoritative and repairs both without losing work.
         receipt = read_json_shared(self.receipt) if self.receipt.is_file() else {}
         journal = read_json_shared(self.journal)
+        journal_binding = journal.get("execution_binding_sha256")
+        if not self._execution_binding_matches(journal_binding, file_sha256(version)):
+            raise ValueError("Producer update journal execution binding differs")
         if int(pointer["completed_updates"]) != int(payload["completed_updates"]):
             raise ValueError("Producer checkpoint pointer cursor differs")
         self.completed = int(payload["completed_updates"])
@@ -495,6 +546,7 @@ class ProducerCheckpoint:
         if (
             receipt.get("checkpoint_sha256") != expected_sha
             or int(receipt.get("completed_updates", -1)) != self.completed
+            or receipt.get("execution_binding_sha256") != self.execution_binding_sha256
         ):
             _atomic_json(
                 self.receipt,
@@ -506,6 +558,7 @@ class ProducerCheckpoint:
                     "scientific_endpoint": payload["status"] == "COMPLETE"
                     and self.completed == self.updates,
                     "identity_sha256": self.identity_sha256,
+                    "execution_binding_sha256": self.execution_binding_sha256,
                     "checkpoint_path": str(self.path.resolve()),
                     "checkpoint_sha256": expected_sha,
                     "complete_state": True,
@@ -706,13 +759,23 @@ def _producer_loss(
     model: CausalScaleTTC,
     batch: ObjectEventV4Batch | EffectiveBatch,
     config: CausalScaleTTCLossConfig,
+    prepared_counts: PreparedTargetCounts | None = None,
 ) -> tuple[Tensor, dict[str, Tensor]]:
     """Historical objective with the RGB port's measured per-pair intervals."""
-    from operational.rgb_port_revision.loss import EffectiveBatch, effective_loss
+    from operational.rgb_port_revision.loss import (
+        EffectiveBatch,
+        effective_loss,
+        validate_prepared_part,
+    )
 
     if isinstance(batch, EffectiveBatch):
         if len(batch.parts) == 1:
-            return _producer_loss(model, batch.parts[0], config)
+            prepared = None
+            if batch.prepared is not None:
+                if len(batch.prepared) != 1:
+                    raise ValueError("prepared host-loss metadata must align with the single part")
+                prepared = validate_prepared_part(batch.parts[0], batch.prepared[0])
+            return _producer_loss(model, batch.parts[0], config, prepared_counts=prepared)
         return effective_loss(model, batch, config)
     batch_size, steps = batch.events.shape[:2]
     delta = _pair_intervals(batch.delta_t_s, batch_size=batch_size, steps=steps)
@@ -736,6 +799,7 @@ def _producer_loss(
         target_valid=target_valid,
         target_geometry=geometry,
         config=config,
+        prepared_counts=prepared_counts,
     )
     if batch.dinov3_relation_targets is None or batch.dinov3_relation_valid is None:
         raise ValueError("Frozen DINO relation targets are required")

@@ -1,0 +1,106 @@
+{
+  "authorization": "User: haz esos analisis y comparaciones; Garl, EvTTC y eAP locales",
+  "status": "AUTHORIZED_FROZEN_COMPARISON",
+  "optimizer_updates": 0,
+  "model_selection": false,
+  "seed": 7,
+  "test12_labels_or_submission": false,
+  "population": "All complete author-interval 100ms triplets; every CCRm variant retained",
+  "queries": 46,
+  "cases": {
+    "CCRs2-medium": [
+      "CCRs-2/medium-100/overlap-100",
+      9.4,
+      11.6
+    ],
+    "CCRs2-high": [
+      "CCRs-2/high-100/overlap-100",
+      15.5,
+      17.4
+    ],
+    "CCRm-medium-overlap0": [
+      "CCRm/medium-0/overlap-0",
+      21.4,
+      22.2
+    ],
+    "CCRm-medium-overlap50": [
+      "CCRm/medium-50/overlap-50",
+      21.4,
+      22.2
+    ],
+    "CCRm-medium-overlap100": [
+      "CCRm/medium-100/overlap-100",
+      21.4,
+      22.2
+    ]
+  },
+  "manifest_sha256": "b438c58b41dee6a825e6119eb7c977b3b7067413d843d6a65412b2df1a5f9e3f",
+  "sources": {
+    "scripts/post_v18_transfer_inputs.py": "dd7f9b600378b5136d6f165b485a00a880b9964a58e8bd6fe6c89fbd6f91c133",
+    "scripts/post_v18_transfer_compare.py": "5012004135b661d53810d48471ea19eb96a080d325c3e930d62632a245d00552",
+    "operational/evttc_transfer/inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "operational/evttc_rgb_transfer/model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+    "operational/rgb_port/transfer.py": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73",
+    "operational/rgb_port_revision/transfer_inputs.py": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+    "operational/joint_measurement/fusion_pair_extract.py": "6492f3c499a5128197505b391a048607b8ffbadaa72e695306fc318aaf3573fd",
+    "operational/joint_measurement/fusion_history_extract.py": "407c41feae9a52fdf228b1945db18cfbcb588936ea14b382d46d45104aa399cf",
+    "operational/joint_measurement/geometry_model.py": "63b0d2642f0e8f8558b798603a8b480272630104e8822c5eec46cb619ce90312"
+  },
+  "bindings": {
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\checkpoint_last.pt": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\checkpoint_last.pt": "468f69aee68a0a5f8e2b536ba8c790ed45620251682aa0c70108625c426b30ec",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_CTX_MATCHED\\checkpoint_last.pt": "fb8dcc8f7645281bee7fc71788380272fbcd7a4485c70979651289148238e744",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_H1_MATCHED\\checkpoint_last.pt": "3de31b0769f6dc3008f665a5671c28c7a71760aabf79fc1c013bd02b84c29fa2",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\F_TRUE\\checkpoint_last.pt": "dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\F_ZERO\\checkpoint_last.pt": "026691198731dac1ecef64b59ac035b189bb975264047fc4b3e139b16c2c05be",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_E_MATCHED\\checkpoint_last.pt": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_R\\checkpoint_last.pt": "160ceac8c6aadeecac759373baa731b9b292c5bfe6f4fb9b24271c2cd5ca0f78",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_A5\\checkpoint_last.pt": "dc4882e0255083f8bf0bece0e83e5e7bfaa7b494197574704f3be11b700b4cc7",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_C2F\\checkpoint_last.pt": "c8a6a0108167ea906de29225ac946fbfa65e6e58e2becc82e317547626969456",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_CTX\\checkpoint_last.pt": "4838ffcd274254bd104250f116f447d2efca5ce75599d79479256091df8d65fc",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_H1\\checkpoint_last.pt": "ed38e2b298904318c31ceffe4ba6d8a46248c33e2e349eeb317bd08257419cc9",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\E_NORMALIZER.json": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\R_NORMALIZER.json": "411cf04805ebb83d62ad8421a129c81d38baa838d9533a2269b7cfd51f2cba11",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\P_MANIFEST.json": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\configs\\rgb_port\\producers.json": "9ffb221ebe540ee5fe0013d69be07012954f008ffdd988a15acc2b2d2106f0aa",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\configs\\ablation\\ours_full.yaml": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_PHASE_ONLY_EVENT_S7\\checkpoint_last.pt": "7602bd42cf444c002e8d2afe09c13445661fd960754eb78fd96443e8298771bb",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\C1_geometry\\fits\\PAIR-CORR-GEOMETRY-S7\\checkpoint_last.pt": "76ba6e75ce6d877a7ab1de3b7e22585aadc2450b44868bc310ae1413696bbd1f",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\fusion\\exports\\FUSION-TRUE-S7\\model.torchscript.pt": "d5baab95219484a06caa77439766e7e8466702d85f80604dc4b25200d6b95b00",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\fusion\\exports\\FUSION-TRUE-S7\\BINDING.json": "911fe5f4a536440a808eaae6a4e478f03f2a9b541097ca6e4722d78ac43344ae"
+  },
+  "device": "CPU_FP32_two_threads",
+  "GPU_seconds": 0,
+  "max_wall_seconds_per_route": 7200,
+  "models": [
+    "Garl_full",
+    "PHASE_ONLY_V16_S7",
+    "FUSION_C1_V18_S7",
+    "F_TRUE",
+    "R_CTX",
+    "C1_event"
+  ],
+  "primary_contrast": "FUSION_C1_V18_S7 minus PHASE_ONLY_V16_S7",
+  "metrics": [
+    "RTE_percent",
+    "MAE_seconds",
+    "sign_error",
+    "coverage",
+    "per_sequence"
+  ],
+  "statistics": "Paired sequence differences; sequence bootstrap seed7 2000 draws; exploratory with three covered sequences",
+  "GT": "Read after both prediction seals; ttc.csv column1 seconds, column4 TTC; nearest <=50ms; exclude nonfinite/zero targets explicitly",
+  "native_own_route": "Historical event/RGB shared ROI margin0.25 and context <=650ms; new C1 takes latest event pair",
+  "Garl_route": "Last two RGB frames and actual event segments of sliding triples; factor1 common max-edge squares; fixed published dT=.1",
+  "mapping": "Calibrated rotation-only four-corner mapping; translation omitted without depth. Author's exact mapping math is unspecified.",
+  "track_selection": "Nearest previous car-box center; first box nearest image center; source-index tie break",
+  "limitations": [
+    "Not an exact Table VI reproduction: query list/checkpoint provenance unknown",
+    "EvTTC already exposed development; no blind confirmation",
+    "System comparison preserves different native ROIs and temporal support",
+    "CCRm overlap variant not identified by author; no choice based on scores",
+    "CPU timings describe this run, not Table VI hardware or an optimized service"
+  ],
+  "eAP_scope": "Reuse complete sealed internal V comparisons; public Garl TRAIN exposure prevents an independent same-V generalization claim"
+}

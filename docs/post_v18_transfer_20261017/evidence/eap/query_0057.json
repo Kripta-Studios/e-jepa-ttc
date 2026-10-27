@@ -1,0 +1,12 @@
+{
+  "sample_token": "t79dBxj1WS_000442_7905400000",
+  "group_id": "t79dBxj1WS",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": -6.271153450012207,
+  "sensor_sha256": "b496e825330216c7637c0b2a0787cb6a775a33055488a3a7b88f759d62f4a514",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.34295859999838285,
+  "seconds_preprocess_including_parity": 0.8634163000097033,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

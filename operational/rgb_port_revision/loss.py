@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -14,6 +15,7 @@ from torch import Tensor
 from torch.nn import functional
 
 from e_jepa_ttc.distillation.dinov3_relational import local_cosine_relation_maps
+from e_jepa_ttc.losses.causal_scale_ttc import PreparedTargetCounts
 from operational.rgb_port import train_producers as original
 
 
@@ -43,9 +45,72 @@ class EffectiveBatch:
     """Keep real temporal lengths; no padded frame reaches a producer."""
 
     parts: list[Any]
+    prepared: list[PreparedEffectivePart] | None = None
 
     def to(self, device: torch.device) -> EffectiveBatch:
-        return EffectiveBatch([part.to(device) for part in self.parts])
+        if self.prepared is not None:
+            if len(self.prepared) != len(self.parts):
+                raise ValueError("prepared host-loss metadata must align one-to-one with parts")
+            for part, metadata in zip(self.parts, self.prepared, strict=True):
+                validate_prepared_part(part, metadata)
+        return EffectiveBatch([part.to(device) for part in self.parts], prepared=self.prepared)
+
+
+@dataclass(frozen=True)
+class PreparedEffectivePart:
+    sample_tokens: tuple[str, ...]
+    sequence_ids: tuple[str, ...]
+    track_ids: tuple[str, ...]
+    event_shape: tuple[int, ...]
+    delta_shape: tuple[int, ...]
+    target_shape: tuple[int, ...]
+    target_support_sha256: str
+    counts: PreparedTargetCounts
+
+
+def target_support_sha256(target_ttc: Tensor, delta_t: Tensor, boxes: Tensor) -> str:
+    """Bind all tensors from which the prepared support counts are derived."""
+    values = {"target_ttc": target_ttc, "delta_t": delta_t, "boxes": boxes}
+    if any(value.device.type != "cpu" for value in values.values()):
+        raise ValueError("target support fingerprinting is restricted to host tensors")
+    digest = hashlib.sha256(b"runtime_v3_target_support_float32_v1\0")
+    for name, value in values.items():
+        array = value.detach().contiguous().numpy()
+        digest.update(name.encode())
+        digest.update(str(array.dtype).encode())
+        digest.update(repr(tuple(array.shape)).encode())
+        digest.update(array.tobytes(order="C"))
+    return digest.hexdigest()
+
+
+def validate_prepared_part(item: Any, prepared: PreparedEffectivePart) -> PreparedTargetCounts:
+    if (
+        tuple(str(value) for value in item.sample_tokens) != prepared.sample_tokens
+        or tuple(str(value) for value in item.sequence_ids) != prepared.sequence_ids
+        or tuple(str(value) for value in item.track_ids) != prepared.track_ids
+        or tuple(item.events.shape) != prepared.event_shape
+        or tuple(item.delta_t_s.shape) != prepared.delta_shape
+        or tuple(item.target_ttc_s.shape) != prepared.target_shape
+        or (
+            item.target_ttc_s.device.type == "cpu"
+            and target_support_sha256(
+                item.target_ttc_s, item.delta_t_s, item.boxes_xyxy
+            )
+            != prepared.target_support_sha256
+        )
+    ):
+        raise ValueError("prepared host-loss metadata differs from the effective batch part")
+    return prepared.counts
+
+
+def collect_loss_scalars(total: Tensor, components: Mapping[str, Tensor]) -> dict[str, float]:
+    """Copy all detached loss scalars to the host in one tensor transfer."""
+    names = ["total", *sorted(components)]
+    tensors = [total, *(components[name] for name in names[1:])]
+    if any(value.numel() != 1 for value in tensors):
+        raise ValueError("loss scalar collection requires scalar tensors")
+    values = torch.stack([value.detach().float() for value in tensors]).cpu().tolist()
+    return dict(zip(names, (float(value) for value in values), strict=True))
 
 
 class EffectiveSource:
@@ -91,8 +156,13 @@ def effective_loss(
     """Combine all differentiable component numerators before one backward pass."""
     from e_jepa_ttc.models.causal_scale_ttc import target_log_ratio_from_ttc
 
+    if batch.prepared is not None and len(batch.prepared) != len(batch.parts):
+        raise ValueError("prepared host-loss metadata must align one-to-one with parts")
     parts = []
-    for item in batch.parts:
+    for index, item in enumerate(batch.parts):
+        prepared = None if batch.prepared is None else batch.prepared[index]
+        if prepared is not None:
+            validate_prepared_part(item, prepared)
         size, steps = item.events.shape[:2]
         delta = original._pair_intervals(item.delta_t_s, batch_size=size, steps=steps)
         endpoint_valid = torch.ones(
@@ -115,6 +185,7 @@ def effective_loss(
             target_valid=valid,
             target_geometry=geometry,
             config=config,
+            prepared_counts=None if prepared is None else prepared.counts,
         )
         target, physical = target_log_ratio_from_ttc(item.target_ttc_s, delta[:, -1])
         physical &= valid
@@ -175,3 +246,15 @@ def effective_loss(
         )
     components["dinov3_relational_weighted"] = 8 * components["dinov3_relational_raw"]
     return total, {name: value.detach() for name, value in components.items()}
+
+
+__all__ = [
+    "EffectiveBatch",
+    "EffectiveSource",
+    "PreparedEffectivePart",
+    "collect_loss_scalars",
+    "effective_loss",
+    "reduce_parts",
+    "target_support_sha256",
+    "validate_prepared_part",
+]

@@ -1,0 +1,12 @@
+{
+  "sample_token": "2cyv0Oedzg_001282_19554500000",
+  "group_id": "2cyv0Oedzg",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": 3.781087875366211,
+  "sensor_sha256": "bcdb1222e843bfb90ca5d38bbc74387efe079fc20a65eb7b7b53ffff8801b5dd",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.36200699998880737,
+  "seconds_preprocess_including_parity": 0.47421710001071915,
+  "targets_read": false,
+  "optimizer_updates": 0
+}
