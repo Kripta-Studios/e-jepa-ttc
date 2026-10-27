@@ -2,6 +2,7 @@
 
 # TRAIN40 runtime receipts and source snapshots are bound by byte-level SHA-256.
 docs/train40_runtime_handoff_20261027/evidence/** -text -whitespace
+docs/train40_runtime_resume_20261027/evidence/** -text -whitespace
 
 *.png binary
 *.jpg binary
