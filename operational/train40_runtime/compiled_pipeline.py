@@ -23,7 +23,7 @@ from operational.train40_runtime.compiled_transport import (
     TransportPairTensorCore,
     attach_transport_pair_core,
 )
-from operational.train40_runtime.producers import ProducerRuntime
+from operational.train40_runtime.producers import AsyncExpertBlock, ProducerRuntime
 
 OPERATOR_NAME = "train40_compiled_pipeline::transport_pair"
 _HANDLES = itertools.count(1)
@@ -164,6 +164,26 @@ class CompiledTransportProducerRuntime(ProducerRuntime):
             block_graphs=True,
             reuse_event_encodings=reuse_event_encodings,
             reuse_rgb_encodings=reuse_rgb_encodings,
+        )
+
+    def expert_block_async(
+        self,
+        modality: str,
+        sensor: Tensor,
+        delta: Tensor,
+        *,
+        history_group_size: int | None = None,
+    ) -> AsyncExpertBlock:
+        """Retain compiled executors with each outstanding asynchronous ticket."""
+        ticket = super().expert_block_async(
+            modality, sensor, delta, history_group_size=history_group_size
+        )
+        return AsyncExpertBlock(
+            ticket.raw,
+            ticket.experts,
+            ticket.guard,
+            ticket.modality,
+            (*ticket._lifetime, self),
         )
 
     def diagnostics(self) -> list[dict[str, object]]:

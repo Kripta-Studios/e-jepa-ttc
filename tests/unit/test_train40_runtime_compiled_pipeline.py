@@ -11,6 +11,7 @@ from torch import nn
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
 from operational.train40_runtime.compiled_pipeline import (
     OPERATOR_NAME,
+    CompiledTransportProducerRuntime,
     OpaqueCompiledTransport,
     attach_opaque_compiled_transport,
 )
@@ -18,6 +19,7 @@ from operational.train40_runtime.compiled_transport import TransportPairTensorCo
 from operational.train40_runtime.producers import (
     AsyncExpertBlock,
     ExpertBlockTensorCore,
+    ProducerRuntime,
     validate_async_blocks,
 )
 
@@ -236,3 +238,16 @@ def test_compiler_inventory_tracks_cache_bytes_separately_from_results(tmp_path)
     after = compiler_cache_inventory(tmp_path)
     assert len(before) == len(after) == 1
     assert next(iter(before.values()))["sha256"] != next(iter(after.values()))["sha256"]
+
+
+def test_async_ticket_retains_compiler_owner_until_consumption(monkeypatch):
+    marker = object()
+    original = AsyncExpertBlock(
+        torch.zeros(1, 17), torch.zeros(1, 3), torch.tensor(True), "E", (marker,)
+    )
+    monkeypatch.setattr(ProducerRuntime, "expert_block_async", lambda *args, **kwargs: original)
+    runtime = object.__new__(CompiledTransportProducerRuntime)
+    actual = runtime.expert_block_async("E", torch.empty(0), torch.empty(0), history_group_size=4)
+    assert actual._lifetime == (marker, runtime)
+    assert actual.raw is original.raw and actual.experts is original.experts
+    assert actual.guard is original.guard
