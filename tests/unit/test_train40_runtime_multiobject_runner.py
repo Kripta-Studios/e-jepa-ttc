@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import sys
+from types import ModuleType
 
 import numpy as np
 import pytest
@@ -103,6 +105,7 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, mon
         event_query_graphs=False,
         event_normalization="sort",
         rgb_feature_cache=False,
+        rgb_uint8=False,
     )
     with pytest.raises(RuntimeError, match="priming failure"):
         runner.run(args)
@@ -163,3 +166,13 @@ def test_cache_experiment_requires_an_exercised_hit_after_stored_miss(mode):
     result = runner.cache_exercise_receipt(records)
     assert result["eligible"]
     assert result["passed"] == (mode == "valid")
+
+
+def test_runtime_import_closure_detects_a_late_experimental_dependency(monkeypatch):
+    before = runner.imported_runtime_paths()
+    name = "operational.train40_runtime.new_late_test_module"
+    module = ModuleType(name)
+    module.__file__ = str(runner.ROOT / "operational/train40_runtime/new_late_test_module.py")
+    monkeypatch.setitem(sys.modules, name, module)
+    added = runner.imported_runtime_paths() - before
+    assert added == {runner.ROOT / "operational/train40_runtime/new_late_test_module.py"}

@@ -468,6 +468,20 @@ class RGBUInt8Runtime:
                 self._state = "IDLE"
             raise
 
+    def discard(self, packed: PackedRGBUInt8) -> None:
+        """Discard an unassembled CPU packet after another update stage fails.
+
+        Packing has enqueued no CUDA work and already joined its CPU tasks.
+        Only the owner may discard its latest packed packet; no GPU fence is
+        necessary. This does not release an already assembled output lease.
+        """
+        self._owner()
+        with self._lock:
+            if self._state != "PACKED" or packed is not self._active_packed:
+                raise ValueError("Only this runtime's latest unassembled packet may be discarded")
+            self._active_packed = None
+            self._state = "IDLE"
+
     def prepare(self, objects: Sequence[ObjectRegion], history: RawRGBHistory) -> PreparedRGBUInt8:
         """Pack then assemble on the owner thread; source loading is caller work."""
         self._owner()

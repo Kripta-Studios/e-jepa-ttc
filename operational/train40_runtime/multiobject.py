@@ -27,9 +27,29 @@ from operational.train40_runtime.producers import ProducerRuntime
 
 if TYPE_CHECKING:
     from operational.train40_runtime.multiobject_cache import RGBBatchCache
+    from operational.train40_runtime.rgb_uint8 import PackedRGBUInt8, PreparedRGBUInt8
 
 Square = tuple[float, float, float, float]
 RGBObservation = tuple[np.ndarray, dict[str, Any]]
+
+
+def _effective_device(device: str | torch.device) -> torch.device:
+    selected = torch.device(device)
+    if selected.type == "cuda" and selected.index is None:
+        return torch.device("cuda", torch.cuda.current_device())
+    return selected
+
+
+def _validate_producer_device(runtime: ProducerRuntime, device: torch.device) -> None:
+    """Resolve implicit CUDA ordinals and inspect actual resident model tensors."""
+    if _effective_device(runtime.device) != device:
+        raise ValueError("Injected producers must use the service device")
+    if any(
+        tensor.device != device
+        for model in runtime.models.values()
+        for tensor in (*model.parameters(), *model.buffers())
+    ):
+        raise ValueError("Injected producer model tensors must reside on the service device")
 
 
 def _normalized_pil_crop(image: Image.Image, bounds: tuple[int, int, int, int]) -> np.ndarray:
@@ -88,6 +108,7 @@ class PreparedRGBBatch:
     metadata: Sequence[Sequence[dict[str, Any]]]
     pixels: Tensor | None = None
     features: tuple[Tensor, Tensor] | None = None
+    delta: Tensor | None = None
 
 
 def rgb_metadata(
@@ -208,6 +229,8 @@ class MultiObjectTrain40Service:
         rgb_object_chunk_size: int | None = None,
         parallel_preprocessing: bool = True,
         rgb_feature_cache: RGBBatchCache | None = None,
+        rgb_uint8: bool = False,
+        producer_runtime: ProducerRuntime | None = None,
     ) -> None:
         if not isinstance(max_objects, int) or not 1 <= max_objects <= 20:
             raise ValueError("max_objects must be between one and twenty")
@@ -223,7 +246,11 @@ class MultiObjectTrain40Service:
             rgb_feature_cache.rgb_object_chunk_size != rgb_object_chunk_size
         ):
             raise ValueError("RGB feature cache chunk shape must match the producer configuration")
-        self.device = torch.device(device)
+        if rgb_feature_cache is not None and producer_runtime is not None:
+            raise ValueError(
+                "Injected producers with RGB cache require a separately bound backend contract"
+            )
+        self.device = _effective_device(device)
         if parallel_branches and (not graphs or self.device.type != "cuda"):
             raise ValueError("Parallel branches require CUDA block graphs")
         self.history = history
@@ -232,8 +259,20 @@ class MultiObjectTrain40Service:
         self.rgb_object_chunk_size = rgb_object_chunk_size
         self.parallel_preprocessing = parallel_preprocessing
         self.rgb_feature_cache = rgb_feature_cache
+        if rgb_feature_cache is not None:
+            # A new service owns a new producer/configuration lifetime. Never
+            # carry features across instances, even when a caller reuses a cache.
+            rgb_feature_cache.clear()
         self.last_rgb_profile: dict[str, float | int] = {}
-        self.producers = ProducerRuntime(
+        if producer_runtime is not None:
+            _validate_producer_device(producer_runtime, self.device)
+            if parallel_branches and not producer_runtime.block_graphs:
+                raise ValueError("Parallel injected producers require block graphs")
+            if reuse_event_encodings is not None and (
+                producer_runtime.reuse_by_modality["E"] != reuse_event_encodings
+            ):
+                raise ValueError("Injected producers differ from requested event reuse mode")
+        self.producers = producer_runtime or ProducerRuntime(
             dict(models),
             self.device,
             graphs=graphs,
@@ -261,12 +300,40 @@ class MultiObjectTrain40Service:
         self.last_event_inputs: Tensor | None = None
         self.last_rgb_producer_features: tuple[Tensor, Tensor] | None = None
         self.last_rgb_cache_receipt: dict[str, Any] | None = None
+        self.last_rgb_prepared_inputs: PreparedRGBBatch | None = None
+        self.last_rgb_input_delta: Tensor | None = None
+        self._diagnostic_rgb_lease: PreparedRGBUInt8 | None = None
+        self._rgb_uint8 = None
+        if rgb_uint8:
+            from operational.train40_runtime.rgb_uint8 import RGBUInt8Runtime
+
+            self._rgb_uint8 = RGBUInt8Runtime(
+                self.device,
+                max_objects=max_objects,
+                crop_workers=rgb_workers,
+                shared_images=shared_rgb_images,
+            )
 
     def close(self) -> None:
         """Wait for owned host workers; do not close the caller's sensor reader."""
         self._preprocess.shutdown(wait=True, cancel_futures=True)
         self._crops.shutdown(wait=True, cancel_futures=True)
+        if self._diagnostic_rgb_lease is not None:
+            self._diagnostic_rgb_lease.release()
+            self._diagnostic_rgb_lease = None
+        if self._rgb_uint8 is not None:
+            self._rgb_uint8.close()
         self._closed = True
+
+    def _pack_rgb(
+        self, objects: Sequence[ObjectRegion], history: RawRGBHistory
+    ) -> list[list[RGBObservation]] | PackedRGBUInt8:
+        """Perform CPU work only, allowing event dispatch to overlap."""
+        return (
+            self._rgb(objects, history)
+            if self._rgb_uint8 is None
+            else self._rgb_uint8.pack(objects, history)
+        )
 
     def _rgb(
         self, objects: Sequence[ObjectRegion], history: RawRGBHistory
@@ -370,6 +437,7 @@ class MultiObjectTrain40Service:
             )
         rraw = rexperts = None
         self.last_rgb_producer_features = None
+        self.last_rgb_input_delta = None
         cached = rgb.features if isinstance(rgb, PreparedRGBBatch) else None
         if isinstance(rgb, PreparedRGBBatch) and rgb.pixels is not None and cached is not None:
             raise ValueError("RGB batch must supply pixels or features, not both")
@@ -400,11 +468,20 @@ class MultiObjectTrain40Service:
                 rsensor = torch.stack(
                     [torch.from_numpy(pixels) for index in present for pixels, _ in rgb[index]]
                 ).to(self.device)
-            rdelta = torch.tensor(
-                [meta["delta_t_s"] for index in present for meta in metadata[index]],
-                dtype=torch.float32,
-                device=self.device,
-            )
+            if isinstance(rgb, PreparedRGBBatch) and rgb.delta is not None:
+                rdelta = rgb.delta.to(self.device)
+                if (
+                    rdelta.shape != (len(rsensor), rsensor.shape[1] - 1)
+                    or rdelta.dtype != torch.float32
+                ):
+                    raise ValueError("Prepared RGB delta must match native FP32 temporal rows")
+            else:
+                rdelta = torch.tensor(
+                    [meta["delta_t_s"] for index in present for meta in metadata[index]],
+                    dtype=torch.float32,
+                    device=self.device,
+                )
+            self.last_rgb_input_delta = rdelta
             chunk_objects = self.rgb_object_chunk_size or len(present)
             chunk_rows = chunk_objects * group_size
             chunks = [
@@ -511,10 +588,15 @@ class MultiObjectTrain40Service:
         started_ns = time.perf_counter_ns()
         if self._closed:
             raise RuntimeError("Service is closed")
+        if self._diagnostic_rgb_lease is not None:
+            self._diagnostic_rgb_lease.release()
+            self._diagnostic_rgb_lease = None
         self.last_rgb_inputs = None
+        self.last_rgb_prepared_inputs = None
         self.last_event_inputs = None
         self.last_rgb_cache_receipt = None
         self.last_rgb_producer_features = None
+        self.last_rgb_input_delta = None
         _validate_regions(objects, self.max_objects)
         _validate_rgb(rgb_history, end_us)
         ticket = (
@@ -527,10 +609,13 @@ class MultiObjectTrain40Service:
                 "present_indices": list(ticket.present_indices),
             }
         pending = (
-            self._preprocess.submit(self._rgb, objects, rgb_history)
+            self._preprocess.submit(self._pack_rgb, objects, rgb_history)
             if self.parallel_preprocessing and not hit
             else None
         )
+        packed = None
+        prepared_lease = None
+        assembly_started = False
         try:
             rgb: Sequence[Sequence[RGBObservation]] | PreparedRGBBatch | None
             if hit:
@@ -546,7 +631,8 @@ class MultiObjectTrain40Service:
                 rgb = PreparedRGBBatch(rgb_metadata(objects, rgb_history), features=features)
                 self.last_rgb_profile = {"cache_hit_skipped_pixels": 1, "roi_frame_tasks": 0}
             else:
-                rgb = self._rgb(objects, rgb_history) if pending is None else None
+                packed = self._pack_rgb(objects, rgb_history) if pending is None else None
+                rgb = None
             event_dispatch_start_ns = time.perf_counter_ns()
             self.history.ingest(raw_packet, start_us, end_us)
             event = self.history.query_many([item.event_square for item in objects])
@@ -554,10 +640,26 @@ class MultiObjectTrain40Service:
                 self.last_event_inputs = event
             event_enqueued_ns = time.perf_counter_ns()
             if pending is not None:
-                rgb = pending.result()
+                packed = pending.result()
+            if not hit:
+                assert packed is not None
+                if self._rgb_uint8 is None:
+                    rgb = cast(list[list[RGBObservation]], packed)
+                else:
+                    assembly_started = True
+                    prepared_lease = self._rgb_uint8.assemble(cast("PackedRGBUInt8", packed))
+                    prepared_lease.assert_valid()
+                    rgb = PreparedRGBBatch(
+                        prepared_lease.metadata,
+                        pixels=prepared_lease.pixels,
+                        delta=prepared_lease.delta,
+                    )
+                    self.last_rgb_profile = dict(prepared_lease.receipt)
             assert rgb is not None
             if self.retain_input_diagnostics and not isinstance(rgb, PreparedRGBBatch):
                 self.last_rgb_inputs = [list(rows) for rows in rgb]
+            elif self.retain_input_diagnostics and isinstance(rgb, PreparedRGBBatch):
+                self.last_rgb_prepared_inputs = rgb
             prepared_ns = time.perf_counter_ns()
             outputs = self.infer_prepared(
                 objects, end_us, event, rgb, rgb_history.unavailable_reason
@@ -573,10 +675,23 @@ class MultiObjectTrain40Service:
                 )
             if self.device.type == "cuda":
                 torch.cuda.synchronize(self.device)
+            if prepared_lease is not None:
+                if self.retain_input_diagnostics:
+                    self._diagnostic_rgb_lease = prepared_lease
+                else:
+                    prepared_lease.release()
         except BaseException:
             if pending is not None:
                 pending.cancel()
                 wait([pending])
+                if not pending.cancelled() and pending.exception() is None:
+                    packed = pending.result()
+            if prepared_lease is not None:
+                if self.device.type == "cuda":
+                    torch.cuda.synchronize(self.device)
+                prepared_lease.release()
+            elif self._rgb_uint8 is not None and packed is not None and not assembly_started:
+                self._rgb_uint8.discard(cast("PackedRGBUInt8", packed))
             raise
         completed_ns = time.perf_counter_ns()
         return {
@@ -590,6 +705,8 @@ class MultiObjectTrain40Service:
             "preprocessing_ready_host_ms": (prepared_ns - started_ns) / 1e6,
             "rgb_preprocess": dict(self.last_rgb_profile),
             "rgb_feature_cache": self.last_rgb_cache_receipt,
+            "rgb_uint8": self._rgb_uint8 is not None,
+            "rgb_diagnostic_lease_retained": self._diagnostic_rgb_lease is not None,
             "parallel_preprocessing": self.parallel_preprocessing,
             "input_boundary": "last_required_raw_CPU_packet_and_RGB_frames_available",
             "output_boundary": "all_object_TTC_values_available_on_host",

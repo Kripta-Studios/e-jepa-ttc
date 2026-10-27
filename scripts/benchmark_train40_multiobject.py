@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import gc
 import hashlib
+import importlib
 import json
 import platform
 import subprocess
@@ -66,6 +67,20 @@ from scripts.final_train40_transfer import (  # noqa: E402
 )
 
 SCOPE = "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE"
+
+
+def imported_runtime_paths() -> set[Path]:
+    """Snapshot actual runtime module files, excluding unrelated experiments."""
+    runtime_root = ROOT / "operational/train40_runtime"
+    paths = set()
+    for name, module in tuple(sys.modules.items()):
+        if name == "operational.train40_runtime" or name.startswith("operational.train40_runtime."):
+            filename = getattr(module, "__file__", None)
+            if filename is not None:
+                path = Path(filename).resolve()
+                if path.parent == runtime_root:
+                    paths.add(path)
+    return paths
 
 
 def artificial_regions(event_square: Any, rgb_square: Any, count: int) -> list[ObjectRegion]:
@@ -162,6 +177,17 @@ def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
     assert service.last_event_inputs is not None
     event = service.last_event_inputs.cpu().numpy()
     receipt = service.last_rgb_cache_receipt or {}
+    prepared = service.last_rgb_prepared_inputs
+    pixel_hashes: dict[int, list[str]] = {}
+    if prepared is not None and prepared.pixels is not None:
+        prepared_pixels = prepared.pixels.cpu().numpy()
+        position = 0
+        for index, metadata in enumerate(prepared.metadata):
+            pixel_hashes[index] = [
+                hashlib.sha256(np.ascontiguousarray(prepared_pixels[position + offset])).hexdigest()
+                for offset in range(len(metadata))
+            ]
+            position += len(metadata)
     keys = dict(
         zip(receipt.get("present_indices", []), receipt.get("key_digests", []), strict=True)
     )
@@ -169,9 +195,25 @@ def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
     present = (
         receipt.get("present_indices", [])
         if receipt
-        else [index for index, rows in enumerate(service.last_rgb_inputs or []) if rows]
+        else [
+            index
+            for index, rows in enumerate(
+                prepared.metadata if prepared is not None else service.last_rgb_inputs or []
+            )
+            if rows
+        ]
     )
     feature_hashes = {}
+    delta_hashes = {}
+    if service.last_rgb_input_delta is not None:
+        deltas = service.last_rgb_input_delta.cpu().numpy()
+        groups = len(deltas) // len(present)
+        delta_hashes = {
+            index: hashlib.sha256(
+                np.ascontiguousarray(deltas[position * groups : (position + 1) * groups])
+            ).hexdigest()
+            for position, index in enumerate(present)
+        }
     if features is not None:
         raw, experts = (tensor.cpu().numpy() for tensor in features)
         groups = len(raw) // len(present)
@@ -189,7 +231,8 @@ def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
                 for pixels, _ in service.last_rgb_inputs[index]
             ]
             if service.last_rgb_inputs is not None
-            else None,
+            else pixel_hashes.get(index),
+            "rgb_delta_sha256": delta_hashes.get(index),
             "rgb_producer_features": feature_hashes.get(index),
             "rgb_cache_key": keys.get(index),
         }
@@ -284,24 +327,19 @@ def run(args: argparse.Namespace) -> None:
     if args.rgb_feature_cache:
         # Import enabled dependencies before source inventory/exclusion decisions.
         from operational.train40_runtime.multiobject_cache import RGBBatchCache
+    if args.rgb_uint8:
+        importlib.import_module("operational.train40_runtime.rgb_uint8")
+    if args.backend == "prefix":
+        importlib.import_module("operational.train40_runtime.temporal_prefix")
     inventory = _source_inventory(frozen, reference_binding)
-    # These independent experiments are neither imported nor enabled by this
-    # runner. Excluding them permits unrelated agents to edit their own modules.
-    # Any later import of an excluded module invalidates this run's admission.
-    unrelated = {
-        "compiled_pipeline.py",
-        "compiled_encoder.py",
-        "compiled_transport.py",
-        "feature_cache.py",
-        "multiobject_cache.py",
-        "rgb_uint8.py",
-    }
+    # Load optional paths above, then bind their actual import closure. A new
+    # runtime import later in this run invalidates admission, even if that file
+    # did not exist when the initial inventory was built.
+    loaded_runtime = imported_runtime_paths()
     excluded = [
         path
         for path in inventory
-        if path.parent == ROOT / "operational/train40_runtime"
-        and path.name in unrelated
-        and f"operational.train40_runtime.{path.stem}" not in sys.modules
+        if path.parent == ROOT / "operational/train40_runtime" and path not in loaded_runtime
     ]
     sources = [*[path for path in inventory if path not in excluded], Path(__file__).resolve()]
     originals = snapshot_files(
@@ -348,6 +386,7 @@ def run(args: argparse.Namespace) -> None:
             event_query_graphs=args.event_query_graphs,
             event_normalization=args.event_normalization,
             rgb_feature_cache=args.rgb_feature_cache,
+            rgb_uint8=args.rgb_uint8,
             cache_scope="PER_CASE_COLD_MISS_THEN_IDENTICAL_RAW_REPEATS"
             if args.rgb_feature_cache
             else None,
@@ -375,6 +414,7 @@ def run(args: argparse.Namespace) -> None:
                             "shared_rgb_images": args.shared_rgb_images,
                             "parallel": args.parallel,
                             "rgb_endpoint_reuse": True,
+                            "rgb_uint8": args.rgb_uint8,
                         },
                         sort_keys=True,
                     ).encode()
@@ -430,8 +470,19 @@ def run(args: argparse.Namespace) -> None:
                 rgb_object_chunk_size=args.rgb_object_chunk_size,
                 parallel_preprocessing=not args.serial_preprocessing,
                 rgb_feature_cache=feature_cache,
+                rgb_uint8=args.rgb_uint8,
             )
-            startup.append({"objects": count, "synthetic_priming_seconds": prime(service, count)})
+            startup.append(
+                {
+                    "objects": count,
+                    "synthetic_priming_seconds": prime(service, count),
+                    "rgb_uint8_allocation": (
+                        service._rgb_uint8.allocation_receipt
+                        if service._rgb_uint8 is not None
+                        else None
+                    ),
+                }
+            )
             _write(args.output / "startup.json", startup)
             for index in args.indices:
                 if feature_cache is not None:
@@ -495,6 +546,16 @@ def run(args: argparse.Namespace) -> None:
                         for result in timings
                         if result["input_digests"][position]["rgb_sha256"] is not None
                     ]
+                    expected_delta_digest = hashlib.sha256(
+                        np.asarray(
+                            [meta["delta_t_s"] for _, meta in reference_pixels], dtype=np.float32
+                        )
+                    ).hexdigest()
+                    actual_delta_digests = [
+                        result["input_digests"][position]["rgb_delta_sha256"]
+                        for result in timings
+                        if result["input_digests"][position]["rgb_delta_sha256"] is not None
+                    ]
                     input_checks.append(
                         {
                             "object_id": obj.object_id,
@@ -512,6 +573,10 @@ def run(args: argparse.Namespace) -> None:
                             "rgb_exact": (bool(actual_pixel_digests) or not expected_pixels)
                             and all(actual == expected_pixels for actual in actual_pixel_digests),
                             "rgb_validation": "SHA256_OF_ACTUAL_MISSES_AND_CANONICAL_PIXELS",
+                            "rgb_delta_exact": (bool(actual_delta_digests) or not expected_pixels)
+                            and all(
+                                actual == expected_delta_digest for actual in actual_delta_digests
+                            ),
                         }
                     )
                     with (
@@ -570,15 +635,16 @@ def run(args: argparse.Namespace) -> None:
                 except BaseException as exc:
                     cleanup_errors.append(f"{type(exc).__name__}: {exc}")
         intact = verify_snapshot(originals)
-        unexpected_imports = [
-            str(path.relative_to(ROOT))
-            for path in excluded
-            if f"operational.train40_runtime.{path.stem}" in sys.modules
-        ]
+        unexpected_imports = sorted(
+            str(path.relative_to(ROOT)) for path in imported_runtime_paths() - loaded_runtime
+        )
         admitted = bool(records) and all(
             record["parity"]["passed"]
             and record["preserved_primary_parity"]["passed"]
-            and all(row["event_passed"] and row["rgb_exact"] for row in record["input_parity"])
+            and all(
+                row["event_passed"] and row["rgb_exact"] and row["rgb_delta_exact"]
+                for row in record["input_parity"]
+            )
             and record["same_inputs_as_tensor_checked_repeat"]
             and all(record["history_receipts_exact"])
             and (not args.rgb_feature_cache or record["cache_exercise"]["passed"])
@@ -672,6 +738,11 @@ def main() -> None:
         "--rgb-feature-cache",
         action="store_true",
         help="Measure a cold miss then identical-history feature hits; context always recomputed",
+    )
+    parser.add_argument(
+        "--rgb-uint8",
+        action="store_true",
+        help="Transfer unique uint8 crops with exact FP32 LUT and bounded buffer leases",
     )
     run(parser.parse_args())
 

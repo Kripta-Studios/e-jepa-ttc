@@ -61,6 +61,36 @@ def runtime_for(regions, packet, **kwargs):
     )
 
 
+def test_discard_recovers_after_another_stage_fails_and_rejects_stale_packets():
+    packet, regions = history(), objects()
+    with runtime_for(regions, packet) as runtime:
+        packed = runtime.pack(regions, packet)
+        runtime.discard(packed)
+        with pytest.raises(ValueError, match="unassembled"):
+            runtime.discard(packed)
+        with pytest.raises(ValueError, match="packed"):
+            runtime.assemble(packed)
+        batch = runtime.prepare(regions, packet)
+        assert_original_exact(batch, regions, packet)
+        with pytest.raises(ValueError, match="unassembled"):
+            runtime.discard(packed)
+        batch.release()
+
+
+def test_discard_rejects_foreign_packet_and_worker_thread():
+    packet, regions = history(), objects()
+    with runtime_for(regions, packet) as runtime, runtime_for(regions, packet) as other:
+        packed = runtime.pack(regions, packet)
+        foreign = other.pack(regions, packet)
+        with pytest.raises(ValueError, match="unassembled"):
+            runtime.discard(foreign)
+        with ThreadPoolExecutor(max_workers=1) as worker:
+            with pytest.raises(RuntimeError, match="owning thread"):
+                worker.submit(runtime.discard, packed).result()
+        runtime.discard(packed)
+        other.discard(foreign)
+
+
 def assert_original_exact(batch, regions, packet):
     present = tuple(
         index

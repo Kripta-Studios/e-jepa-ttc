@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -15,11 +16,14 @@ from operational.train40_runtime.multiobject import (
     ObjectRegion,
     PreparedRGBBatch,
     RawRGBHistory,
+    _effective_device,
+    _validate_producer_device,
     _validate_regions,
     _validate_rgb,
     rgb_metadata,
 )
 from operational.train40_runtime.multiobject_cache import RGBBatchCache
+from operational.train40_runtime.rgb_uint8 import RGBUInt8Runtime
 
 
 def regions():
@@ -31,9 +35,12 @@ def regions():
 
 def raw_rgb(query=1_000_000):
     frame = np.tile(np.arange(32, dtype=np.uint8)[None, :, None], (32, 1, 3))
+    frames = {i: frame + i for i in range(7)}
+    for value in frames.values():
+        value.setflags(write=False)
     return RawRGBHistory(
         query,
-        {i: frame + i for i in range(7)},
+        frames,
         {i: query - (6 - i) * 100_000 for i in range(7)},
         [(i, i + 1, i + 2) for i in range(5)],
     )
@@ -42,6 +49,10 @@ def raw_rgb(query=1_000_000):
 class FakeProducers:
     def __init__(self):
         self.calls = []
+        self.device = torch.device("cpu")
+        self.block_graphs = False
+        self.reuse_by_modality = {"E": False, "R": True}
+        self.models = {}
 
     def expert_block(self, modality, sensor, delta, *, history_group_size):
         self.calls.append((modality, tuple(sensor.shape), history_group_size))
@@ -92,6 +103,10 @@ def service():
     value._closed = False
     value.retain_input_diagnostics = False
     value.last_rgb_inputs = None
+    value.last_rgb_prepared_inputs = None
+    value.last_rgb_input_delta = None
+    value._diagnostic_rgb_lease = None
+    value._rgb_uint8 = None
     value._crops = ThreadPoolExecutor(max_workers=2)
     value._preprocess = ThreadPoolExecutor(max_workers=1)
     yield value
@@ -321,3 +336,153 @@ def test_cache_chunk_identity_must_match_actual_producer_configuration():
             rgb_object_chunk_size=None,
             rgb_feature_cache=cache,
         )
+
+
+@pytest.mark.parametrize("count", [1, 2])
+def test_uint8_full_update_matches_original_pixels_delta_and_lease(service, count):
+    from scripts.benchmark_train40_multiobject import input_digests, reference_rgb
+
+    service._rgb_uint8 = RGBUInt8Runtime(
+        "cpu", max_objects=count, crop_workers=2, shared_images=False
+    )
+    service.retain_input_diagnostics = True
+    objects = regions()[:count]
+    history = raw_rgb()
+    result = service.update({}, 980_000, 1_000_000, objects, history)
+    assert result["rgb_uint8"] and result["rgb_diagnostic_lease_retained"]
+    lease = service._diagnostic_rgb_lease
+    lease.assert_valid()
+    assert service.last_rgb_inputs is None
+    assert len(input_digests(service)) == count
+    for position, obj in enumerate(objects):
+        expected = reference_rgb(history, obj)
+        actual = service.last_rgb_prepared_inputs.pixels[position * 5 : (position + 1) * 5]
+        np.testing.assert_array_equal(actual.numpy(), np.stack([pixels for pixels, _ in expected]))
+        np.testing.assert_array_equal(
+            service.last_rgb_input_delta[position * 5 : (position + 1) * 5].numpy(),
+            np.asarray([meta["delta_t_s"] for _, meta in expected], dtype=np.float32),
+        )
+    service.update({}, 1_000_000, 1_020_000, objects, raw_rgb(1_020_000))
+    with pytest.raises(ValueError, match="released"):
+        lease.assert_valid()
+
+
+def test_uint8_gap_discards_finished_cpu_pack_and_recovers(service):
+    service._rgb_uint8 = RGBUInt8Runtime("cpu", max_objects=2)
+    with pytest.raises(ValueError, match="nonconsecutive"):
+        service.update({}, 960_000, 980_000, regions(), raw_rgb(980_000))
+    result = service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    assert result["object_count"] == 2
+    assert not result["rgb_diagnostic_lease_retained"]
+
+
+def test_uint8_context_failure_releases_borrowed_buffers(service, monkeypatch):
+    service._rgb_uint8 = RGBUInt8Runtime("cpu", max_objects=2)
+    original = service.context.predict_many
+
+    def fail_context(*args):
+        raise RuntimeError("context failure")
+
+    monkeypatch.setattr(service.context, "predict_many", fail_context)
+    with pytest.raises(RuntimeError, match="context failure"):
+        service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    monkeypatch.setattr(service.context, "predict_many", original)
+    assert (
+        service.update({}, 1_000_000, 1_020_000, regions(), raw_rgb(1_020_000))["object_count"] == 2
+    )
+
+
+def test_uint8_cache_hit_has_no_pixel_lease_and_fresh_context(service):
+    service._rgb_uint8 = RGBUInt8Runtime("cpu", max_objects=2)
+    service.retain_input_diagnostics = True
+    history = enable_cache(service)
+    service.update({}, 980_000, 1_000_000, regions(), history)
+    old_lease = service._diagnostic_rgb_lease
+    result = service.update(
+        {}, 1_000_000, 1_020_000, regions(), replace(history, query_us=1_020_000)
+    )
+    assert result["rgb_feature_cache"]["status"] == "HIT"
+    assert service.last_rgb_prepared_inputs.pixels is None
+    assert service._diagnostic_rgb_lease is None
+    assert all(item.query_us == 1_020_000 for item in service.context.observations)
+    with pytest.raises(ValueError, match="released"):
+        old_lease.assert_valid()
+
+
+def test_new_service_invalidates_cache_from_previous_producer_lifetime(service, monkeypatch):
+    from operational.train40_runtime import multiobject
+
+    history = enable_cache(service)
+    service.update({}, 980_000, 1_000_000, regions(), history)
+    cache = service.rgb_feature_cache
+    assert cache.stats["entries"] == 2
+    monkeypatch.setattr(multiobject, "BatchedContextRuntime", lambda *args, **kwargs: FakeContext())
+    monkeypatch.setattr(multiobject, "ProducerRuntime", lambda *args, **kwargs: FakeProducers())
+    fresh = MultiObjectTrain40Service(
+        {},
+        {},
+        FakeHistory(),
+        device="cpu",
+        graphs=False,
+        parallel_branches=False,
+        rgb_feature_cache=cache,
+    )
+    try:
+        assert cache.stats["entries"] == 0
+    finally:
+        fresh.close()
+
+
+def test_external_producer_and_cache_cannot_claim_unbound_shared_identity():
+    cache = RGBBatchCache(model_sha256="a" * 64, runtime_sha256="b" * 64)
+    with pytest.raises(ValueError, match="separately bound backend"):
+        MultiObjectTrain40Service(
+            {},
+            {},
+            FakeHistory(),
+            device="cpu",
+            graphs=False,
+            parallel_branches=False,
+            producer_runtime=FakeProducers(),
+            rgb_feature_cache=cache,
+        )
+
+
+def test_external_producer_can_be_injected_without_feature_cache(monkeypatch):
+    from operational.train40_runtime import multiobject
+
+    monkeypatch.setattr(multiobject, "BatchedContextRuntime", lambda *args, **kwargs: FakeContext())
+    injected = FakeProducers()
+    fresh = MultiObjectTrain40Service(
+        {},
+        {},
+        FakeHistory(),
+        device="cpu",
+        graphs=False,
+        parallel_branches=False,
+        producer_runtime=injected,
+    )
+    try:
+        assert fresh.producers is injected
+    finally:
+        fresh.close()
+
+
+@pytest.mark.parametrize(
+    "runtime_device,current,model_device",
+    [
+        ("cuda:1", 0, "cuda:1"),
+        ("cuda", 1, "cuda:1"),
+        ("cuda", 0, "cuda:1"),
+    ],
+)
+def test_injected_cuda_device_rejects_implicit_and_resident_mismatch_without_gpu(
+    monkeypatch, runtime_device, current, model_device
+):
+    monkeypatch.setattr(torch.cuda, "current_device", lambda: current)
+    tensor = SimpleNamespace(device=torch.device(model_device))
+    model = SimpleNamespace(parameters=lambda: iter([tensor]), buffers=lambda: iter([]))
+    runtime = SimpleNamespace(device=torch.device(runtime_device), models={"model": model})
+    with pytest.raises(ValueError, match="service device"):
+        _validate_producer_device(runtime, torch.device("cuda:0"))
+    assert _effective_device("cuda") == torch.device("cuda", current)
