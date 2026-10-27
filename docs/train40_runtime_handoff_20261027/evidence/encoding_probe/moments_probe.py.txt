@@ -1,0 +1,71 @@
+"""Unadmitted integer-moment alternative; this file is research evidence only."""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[3]
+sys.path[:0]=[str(ROOT/'src'),str(ROOT),str(Path(__file__).parent)]
+import numpy as np
+import torch
+from cpu_probe import timed
+from e_jepa_ttc.efficient_context.mapped_union import encode_mapped,map_roi
+from e_jepa_ttc.simplex_t.context_raw_union import _read_crop
+from operational.evttc_transfer.inputs import EvTTCEventReader
+from e_jepa_ttc.representations.voxel_grid import robust_normalize
+
+
+def moments_encode(mapped,start,end,size):
+    assert end-start==100000
+    lo,hi=np.searchsorted(mapped['t'],[start,end],side='left')
+    elapsed=mapped['t'][lo:hi]-start
+    count=len(elapsed)
+    out=np.zeros((12,size,size),dtype=np.float32)
+    if count:
+        bins=elapsed//25000
+        remainder=elapsed%25000
+        spatial=mapped['y'][lo:hi].astype(np.int32)*size+mapped['x'][lo:hi].astype(np.int32)
+        polarity=np.where(mapped['p'][lo:hi]>0,0,4).astype(np.int32)
+        indices=(bins+polarity)*size*size+spatial
+        counts=np.bincount(indices,minlength=8*size*size).reshape(2,4,size,size)
+        sums=np.bincount(indices,weights=remainder,minlength=8*size*size).reshape(2,4,size,size)
+        upper=sums/25000.
+        lower=counts-upper
+        voxel=np.zeros((2,5,size,size),np.float64)
+        voxel[:,:4]=lower
+        voxel[:,1:]+=upper
+        out[:10]=robust_normalize(voxel.reshape(10,size,size))
+    out[10]=np.log1p(count)
+    out[11]=np.log1p(count/.1)
+    return out
+
+
+def main():
+    torch.set_num_threads(2)
+    rows=json.loads((ROOT/'artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json').read_text(encoding='utf-8'))['rows']
+    records=[]
+    for index in (0,200,553):
+        row=rows[index]
+        start=int(row['anchor_us'])-600000
+        end=int(row['anchor_us'])
+        square=tuple(row['square_xyxy'])
+        with EvTTCEventReader(row['raw_path']) as reader:
+            raw=_read_crop(reader,start,end,square,0.,1024*1024**2)
+        mapped=map_roi(raw,square,128,0.)
+        del raw
+        windows=[]
+        for left in range(start,end,100000):
+            ref=encode_mapped(mapped,left,left+100000,128,'probe').numpy()
+            out,times=timed(moments_encode,mapped,left,left+100000,128)
+            difference=np.abs(ref-out)
+            windows.append({'start':left,'ms':times,'equal':bool(np.array_equal(out,ref)),
+                            'different_values':int(np.count_nonzero(difference)),
+                            'max_abs':float(difference.max()),
+                            'allclose_1e5':bool(np.allclose(ref,out,rtol=1e-5,atol=1e-5))})
+        records.append({'index':index,'events':len(mapped['t']),'windows':windows})
+        print(json.dumps(records[-1]),flush=True)
+    (Path(__file__).parent/'moments_results.json').write_text(json.dumps({'status':'UNADMITTED_ARITHMETIC_CHANGE','records':records},indent=2))
+
+
+if __name__=='__main__':main()

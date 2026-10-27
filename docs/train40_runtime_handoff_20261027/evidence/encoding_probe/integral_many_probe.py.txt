@@ -1,0 +1,54 @@
+"""Declared 20-distinct-ROI throughput probe; ROIs are stress fixtures, not GT objects."""
+from __future__ import annotations
+import json
+import sys
+import time
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]
+sys.path[:0]=[str(ROOT/'src'),str(ROOT)]
+import numpy as np
+import torch
+from operational.evttc_transfer.inputs import EvTTCEventReader
+from operational.train40_runtime.integral import IntegralEventHistory
+
+
+def main():
+    torch.set_num_threads(2)
+    rows=json.loads((ROOT/'artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json').read_text(encoding='utf-8'))['rows']
+    row=rows[553]
+    anchor=int(row['anchor_us'])
+    with EvTTCEventReader(row['raw_path']) as reader:
+        startup=reader.read_window(anchor-620000,anchor-20000)
+        packet=reader.read_window(anchor-20000,anchor)
+    # Unique non-overlapping sensor rectangles; no identical tensor aliases.
+    rois=[(float(x*256),float(y*180),float((x+1)*256),float((y+1)*180))
+          for y in range(4) for x in range(5)]
+    runtime=IntegralEventHistory(async_transfers=True)
+    runtime.initialize(startup,anchor-620000,anchor-20000)
+    for _ in range(2):runtime.query_many(rois)
+    torch.cuda.synchronize()
+    begin=time.perf_counter()
+    runtime.ingest(packet,anchor-20000,anchor)
+    output=runtime.query_many(rois)
+    torch.cuda.synchronize()
+    update_ms=1000*(time.perf_counter()-begin)
+    results={}
+    for objects in (1,2,5,10,20):
+        times=[]
+        runtime.query_many(rois[:objects])
+        for _ in range(5):
+            torch.cuda.synchronize()
+            begin=time.perf_counter()
+            runtime.query_many(rois[:objects])
+            torch.cuda.synchronize()
+            times.append(1000*(time.perf_counter()-begin))
+        results[str(objects)]=times
+    record={'scope':'20_DISTINCT_SENSOR_TILE_ROI_STRESS_NOT_20_ANNOTATED_OBJECTS',
+            'index':553,'rois':rois,'packet_events':len(packet['t']),
+            'new20ms_ingest_and_all20_roi_ms':update_ms,'query_only_ms':results,
+            'stats':runtime.stats,'all20_output_shape':list(output.shape),
+            'finite_all20':bool(torch.isfinite(output).all().cpu())}
+    (Path(__file__).parent/'integral_many_results.json').write_text(json.dumps(record,indent=2))
+    print(json.dumps(record),flush=True)
+
+if __name__=='__main__':main()

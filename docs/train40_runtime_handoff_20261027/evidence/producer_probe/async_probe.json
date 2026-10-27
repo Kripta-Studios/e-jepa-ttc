@@ -1,0 +1,197 @@
+{
+  "scope": "GPU-resident sensor tensors through joined expert-block outputs; includes deferred guards, excludes raw preprocessing and H2D",
+  "records": [
+    {
+      "index": 0,
+      "times": {
+        "serial": [
+          0.016150100011145696,
+          0.014319499983685091,
+          0.014307000004919246,
+          0.014583900017896667,
+          0.014377100014826283,
+          0.014351999998325482,
+          0.014536500006215647,
+          0.014676499995402992,
+          0.014269100007368252,
+          0.014496699994197115
+        ],
+        "parallel": [
+          0.01127799999085255,
+          0.0105178999947384,
+          0.010820499999681488,
+          0.010435500007588416,
+          0.011016600008588284,
+          0.010484400001587346,
+          0.010416599980089813,
+          0.0104157000023406,
+          0.01037999999243766,
+          0.011123200005386025
+        ]
+      },
+      "features_exact": true,
+      "context_exact": true,
+      "serial_predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 4.8032355308532715,
+        "E_CTX_TRAIN40": 5.410685062408447,
+        "R_CTX_TRAIN40": 4.977667808532715
+      },
+      "parallel_predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 4.8032355308532715,
+        "E_CTX_TRAIN40": 5.410685062408447,
+        "R_CTX_TRAIN40": 4.977667808532715
+      }
+    },
+    {
+      "index": 200,
+      "times": {
+        "serial": [
+          0.014952899975469336,
+          0.014437000005273148,
+          0.014223700010916218,
+          0.014505999977700412,
+          0.014484999992419034,
+          0.014153600001009181,
+          0.014405099995201454,
+          0.015117699978873134,
+          0.014436099998420104,
+          0.014807800005655736
+        ],
+        "parallel": [
+          0.010798099974635988,
+          0.010219200019491836,
+          0.010236100002657622,
+          0.010170800000196323,
+          0.010145599982934073,
+          0.010809500003233552,
+          0.01028970000334084,
+          0.010137300007045269,
+          0.010203600017121062,
+          0.010614800004987046
+        ]
+      },
+      "features_exact": true,
+      "context_exact": true,
+      "serial_predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 3.9659364223480225,
+        "E_CTX_TRAIN40": 5.096071720123291,
+        "R_CTX_TRAIN40": 3.9927408695220947
+      },
+      "parallel_predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 3.9659364223480225,
+        "E_CTX_TRAIN40": 5.096071720123291,
+        "R_CTX_TRAIN40": 3.9927408695220947
+      }
+    },
+    {
+      "index": 553,
+      "times": {
+        "serial": [
+          0.014599000016460195,
+          0.015218799991998821,
+          0.01466339998296462,
+          0.014122199994744733,
+          0.014620800007833168,
+          0.01440710001043044,
+          0.014548200007993728,
+          0.014794799993978813,
+          0.014661199995316565,
+          0.014437500009080395
+        ],
+        "parallel": [
+          0.010878800007048994,
+          0.010623199981637299,
+          0.010297700006049126,
+          0.010264299984555691,
+          0.011121899995487183,
+          0.010340700013330206,
+          0.01033109999843873,
+          0.01027040000190027,
+          0.010263900010613725,
+          0.01113000002806075
+        ]
+      },
+      "features_exact": true,
+      "context_exact": true,
+      "serial_predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 2.6881885528564453,
+        "E_CTX_TRAIN40": 1.3136835098266602,
+        "R_CTX_TRAIN40": 7.966533184051514
+      },
+      "parallel_predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 2.6881885528564453,
+        "E_CTX_TRAIN40": 1.3136835098266602,
+        "R_CTX_TRAIN40": 7.966533184051514
+      }
+    }
+  ],
+  "lifetime_exact": true,
+  "invalid_inputs": [
+    {
+      "kind": "sensor_nan",
+      "rejected": true,
+      "error": "Asynchronous expert-block sensor/clock/overlap/output guard failed: ['E']"
+    },
+    {
+      "kind": "clock_zero",
+      "rejected": true,
+      "error": "Asynchronous expert-block sensor/clock/overlap/output guard failed: ['E']"
+    },
+    {
+      "kind": "overlap",
+      "rejected": true,
+      "error": "Asynchronous expert-block sensor/clock/overlap/output guard failed: ['E']"
+    }
+  ],
+  "recovery_exact": true,
+  "graphs": [
+    {
+      "producer": "E_EXPERT_BLOCK_REUSE",
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "setup_seconds": 1.5820138000126462,
+      "replays": 70,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "initial_exact_parity": true,
+      "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+      "jit_optimized_execution": false,
+      "endpoint_reuse": true,
+      "endpoint_reuse_fallback_calls": 0,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_EXPERT_BLOCK_REUSE",
+      "shape": [
+        5,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 1.4323945000069216,
+      "replays": 63,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "initial_exact_parity": true,
+      "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+      "jit_optimized_execution": false,
+      "endpoint_reuse": true,
+      "endpoint_reuse_fallback_calls": 0,
+      "precision": "FP32_TF32_DISABLED"
+    }
+  ]
+}

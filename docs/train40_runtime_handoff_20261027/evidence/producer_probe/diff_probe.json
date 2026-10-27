@@ -1,0 +1,116 @@
+[
+  {
+    "optimize": true,
+    "diffs": {
+      "token128": {
+        "exact": false,
+        "max": 3.814697265625e-06
+      },
+      "prediction_ttc": {
+        "exact": false,
+        "max": 9.5367431640625e-07
+      },
+      "flow": {
+        "exact": true,
+        "max": 0.0
+      },
+      "margin": {
+        "exact": false,
+        "max": 1.9073486328125e-06
+      },
+      "log_variance": {
+        "exact": false,
+        "max": 1.9073486328125e-06
+      },
+      "support": {
+        "exact": true,
+        "max": 0.0
+      },
+      "known": {
+        "exact": true,
+        "max": 0.0
+      },
+      "point_phase": {
+        "exact": false,
+        "max": 1.862645149230957e-09
+      }
+    },
+    "eager_repeat": {
+      "token128": true,
+      "prediction_ttc": true,
+      "flow": true,
+      "margin": true,
+      "log_variance": true,
+      "support": true,
+      "known": true,
+      "point_phase": true
+    },
+    "graph_repeat": {
+      "token128": true,
+      "prediction_ttc": true,
+      "flow": true,
+      "margin": true,
+      "log_variance": true,
+      "support": true,
+      "known": true,
+      "point_phase": true
+    }
+  },
+  {
+    "optimize": false,
+    "diffs": {
+      "token128": {
+        "exact": true,
+        "max": 0.0
+      },
+      "prediction_ttc": {
+        "exact": true,
+        "max": 0.0
+      },
+      "flow": {
+        "exact": true,
+        "max": 0.0
+      },
+      "margin": {
+        "exact": true,
+        "max": 0.0
+      },
+      "log_variance": {
+        "exact": true,
+        "max": 0.0
+      },
+      "support": {
+        "exact": true,
+        "max": 0.0
+      },
+      "known": {
+        "exact": true,
+        "max": 0.0
+      },
+      "point_phase": {
+        "exact": true,
+        "max": 0.0
+      }
+    },
+    "eager_repeat": {
+      "token128": true,
+      "prediction_ttc": true,
+      "flow": true,
+      "margin": true,
+      "log_variance": true,
+      "support": true,
+      "known": true,
+      "point_phase": true
+    },
+    "graph_repeat": {
+      "token128": true,
+      "prediction_ttc": true,
+      "flow": true,
+      "margin": true,
+      "log_variance": true,
+      "support": true,
+      "known": true,
+      "point_phase": true
+    }
+  }
+]

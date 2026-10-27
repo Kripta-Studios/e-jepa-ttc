@@ -1,0 +1,11 @@
+{
+  "bytes": 47401354,
+  "sha256": "369a47ed3ca25f6d405387a058b8fbc62e6ff4592bbf87b0c5f6de372ab68931",
+  "pypi_metadata": "https://pypi.org/pypi/triton-windows/3.6.0.post26/json",
+  "filename": "triton_windows-3.6.0.post26-cp311-cp311-win_amd64.whl",
+  "version": "3.6.0.post26",
+  "installation_scope": "isolated artifact --target, no dependency installation",
+  "package": "triton-windows",
+  "source": "https://files.pythonhosted.org/packages/5e/20/acab7b4f50abe68d93f632b2e29cfb9e76284eaf9b4041a6eabbbd4afdc7/triton_windows-3.6.0.post26-cp311-cp311-win_amd64.whl",
+  "installed_at_utc": "2026-10-27T19:37:07.0358406Z"
+}

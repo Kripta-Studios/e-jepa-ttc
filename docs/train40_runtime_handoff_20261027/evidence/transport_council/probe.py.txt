@@ -1,0 +1,84 @@
+"""Read-only council probe: exact reverse-volume reuse on CPU fixtures."""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import torch
+from torch.nn import functional as F
+
+from e_jepa_ttc.models.local_transport import (
+    LocalTransportMatch,
+    _candidate_displacements,
+    local_correlation_match,
+)
+
+
+def correlations(a, b, radius):
+    batch, _, height, width = a.shape
+    a, b = F.normalize(a.float(), dim=1, eps=1e-6), F.normalize(b.float(), dim=1, eps=1e-6)
+    padded = F.pad(b, (radius,) * 4)
+    corr, masks = [], []
+    yy, xx = torch.arange(height, device=a.device), torch.arange(width, device=a.device)
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            shifted = padded[:, :, radius+dy:radius+dy+height, radius+dx:radius+dx+width]
+            corr.append((a * shifted).sum(1))
+            valid = ((yy+dy >= 0) & (yy+dy < height))[:, None] & ((xx+dx >= 0) & (xx+dx < width))[None]
+            masks.append(valid[None].expand(batch, -1, -1))
+    return torch.stack(corr, 1), torch.stack(masks, 1)
+
+
+def reverse_correlation(forward, radius):
+    _, k, height, width = forward.shape
+    padded = F.pad(forward, (radius,) * 4)
+    reverse = []
+    for index, (dy, dx) in enumerate((dy, dx) for dy in range(-radius, radius+1) for dx in range(-radius, radius+1)):
+        reverse.append(padded[:, k-1-index, radius+dy:radius+dy+height, radius+dx:radius+dx+width])
+    return torch.stack(reverse, 1)
+
+
+def finish(correlation, candidate_valid, radius, temperature):
+    masked = correlation.masked_fill(~candidate_valid, torch.finfo(correlation.dtype).min)
+    probability = torch.softmax(masked / float(temperature), dim=1)
+    probability = probability * candidate_valid.to(probability.dtype)
+    probability = probability / probability.sum(dim=1, keepdim=True).clamp_min(1e-8)
+    dxv, dyv = _candidate_displacements(radius, device=correlation.device, dtype=correlation.dtype)
+    dx = (probability*dxv[None, :, None, None]).sum(1)
+    dy = (probability*dyv[None, :, None, None]).sum(1)
+    top2 = masked.topk(k=2, dim=1).values
+    margin = (top2[:, 0]-top2[:, 1]).clamp_min(0)
+    valid_count = candidate_valid.sum(1).clamp_min(2).to(probability.dtype)
+    entropy = -(probability.clamp_min(1e-12).log()*probability).sum(1)
+    entropy = (entropy/valid_count.log()).clamp(0, 1)
+    return LocalTransportMatch(dx, dy, margin, entropy, candidate_valid.any(1), probability)
+
+
+def main():
+    torch.set_num_threads(2)
+    torch.manual_seed(7)
+    records = []
+    for batch, size, radius in ((1,32,1),(4,32,1),(3,16,2),(2,32,4)):
+        for kind in ("random", "zero", "constant", "shift"):
+            a = torch.randn(batch,64,size,size)
+            b = torch.randn_like(a)
+            if kind == "zero": a.zero_(); b.zero_()
+            if kind == "constant": a.fill_(1); b.fill_(0.25)
+            if kind == "shift": b = torch.roll(a,(1,-1),(-2,-1))
+            f, valid = correlations(a,b,radius)
+            expected, _ = correlations(b,a,radius)
+            derived = reverse_correlation(f,radius)
+            ref = local_correlation_match(b,a,radius=radius,temperature=.02,return_probability=True)
+            result = finish(derived,valid,radius,.02)
+            checks = {name: bool(torch.equal(getattr(ref,name),getattr(result,name))) for name in ("dx","dy","confidence_margin","entropy","valid","probability")}
+            records.append({"batch":batch,"size":size,"radius":radius,"kind":kind,"reverse_volume_exact":bool(torch.equal(expected,derived)),"fields_exact":checks})
+    assert all(r["reverse_volume_exact"] and all(r["fields_exact"].values()) for r in records)
+    path = Path(__file__).with_suffix(".json")
+    path.write_text(json.dumps({"scope":"CPU synthetic fixtures only; no GPU admission", "cases":records}, indent=2),encoding="utf-8")
+    print(json.dumps({"status":"PASS", "cases":len(records), "all_fields_exact":True,"evidence":str(path)}))
+
+if __name__ == "__main__": main()

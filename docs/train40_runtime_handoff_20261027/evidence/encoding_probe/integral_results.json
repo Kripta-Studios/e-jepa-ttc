@@ -1,0 +1,72 @@
+{
+  "status": "UNADMITTED_INTEGER_MOMENT_REORDERING",
+  "scope": "CPU raw packet availability to GPU voxel, model excluded",
+  "records": [
+    {
+      "index": 0,
+      "startup_ms": 251.8123000045307,
+      "startup_events": 10474444,
+      "packet_events": 262595,
+      "actual20ms_ingest_and_current_roi_ms": 5.719500011764467,
+      "query_only_ms": [
+        3.269999986514449,
+        2.987499989103526,
+        3.129899996565655,
+        3.073600004427135,
+        3.1729000038467348,
+        3.0491999932564795,
+        2.9118999955244362,
+        3.0286999826785177
+      ],
+      "equal": true,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "allclose_1e5": true,
+      "peak_cuda_bytes": 3091191296
+    },
+    {
+      "index": 200,
+      "startup_ms": 102.20819999813102,
+      "startup_events": 3268829,
+      "packet_events": 181469,
+      "actual20ms_ingest_and_current_roi_ms": 5.951200000708923,
+      "query_only_ms": [
+        3.192400006810203,
+        3.208300011465326,
+        3.1048999808263034,
+        3.217200021026656,
+        3.1101999920792878,
+        3.3981000015046448,
+        3.386199998203665,
+        3.2642000005580485
+      ],
+      "equal": true,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "allclose_1e5": true,
+      "peak_cuda_bytes": 3091191296
+    },
+    {
+      "index": 553,
+      "startup_ms": 139.42329998826608,
+      "startup_events": 15569734,
+      "packet_events": 510778,
+      "actual20ms_ingest_and_current_roi_ms": 7.004599989159033,
+      "query_only_ms": [
+        3.6179000162519515,
+        3.7355000094976276,
+        3.6151999956928194,
+        3.497900004731491,
+        3.6361000093165785,
+        4.118100012419745,
+        3.6361000093165785,
+        3.618199989432469
+      ],
+      "equal": true,
+      "different_values": 0,
+      "max_abs": 0.0,
+      "allclose_1e5": true,
+      "peak_cuda_bytes": 3300918784
+    }
+  ]
+}

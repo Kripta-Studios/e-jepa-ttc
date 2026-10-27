@@ -1,0 +1,32 @@
+"""Architecture-only exact Conv2d MAC inventory; no GPU or model fitting."""
+import json
+import sys
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]
+sys.path[:0]=[str(ROOT/'src'),str(ROOT)]
+import torch
+from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC,CausalScaleTTCConfig
+
+torch.set_num_threads(2)
+paths=json.loads(Path('D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE/PORTABLE_PATHS.json').read_text(encoding='utf-8'))['components']
+rows=[]
+for name in ('E_A5','E_C2F','R_A5','R_C2F'):
+    payload=torch.load(paths[name]['local_path'],map_location='cpu',weights_only=False)
+    config=payload.get('contract',payload.get('identity'))['model_config']
+    model=CausalScaleTTC(CausalScaleTTCConfig(**config)).eval()
+    layers=[]
+    hooks=[]
+    for label,module in model.encoder.named_modules():
+        if isinstance(module,torch.nn.Conv2d):
+            def hook(module,inputs,output,label=label):
+                macs=output.numel()*(module.in_channels//module.groups)*module.kernel_size[0]*module.kernel_size[1]
+                layers.append({'name':label,'input':list(inputs[0].shape),'output':list(output.shape),'macs':macs})
+            hooks.append(module.register_forward_hook(hook))
+    with torch.inference_mode():model.encoder(torch.zeros(1,config['in_channels'],128,128),return_dense_features=True)
+    for hook in hooks:hook.remove()
+    rows.append({'producer':name,'conv_macs_per_endpoint':sum(item['macs'] for item in layers),'layers':layers})
+naive=sum(row['conv_macs_per_endpoint']*(12 if row['producer'].startswith('E') else 15) for row in rows)
+unique=sum(row['conv_macs_per_endpoint']*(6 if row['producer'].startswith('E') else 7) for row in rows)
+result={'scope':'Exact Conv2d multiply-accumulate counts from sealed architectures, not timing or total model FLOPs','producers':rows,'per_object_naive_conv_macs':naive,'per_object_unique_conv_macs':unique,'twenty_objects_unique_conv_flops_2_per_mac':40*unique,'minimum_required_effective_tflops_for_20ms_conv_only':40*unique/.020/1e12}
+Path(__file__).with_suffix('.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+print(json.dumps({k:v for k,v in result.items() if k!='producers'}))

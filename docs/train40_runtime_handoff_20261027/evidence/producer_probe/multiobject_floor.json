@@ -1,0 +1,183 @@
+{
+  "scope": "Prepared GPU sensor tensors through every producer/PAIR/PHASE17 for all objects, guards and copies included; excludes preprocessing,H2D,context and final TTC. Compute capacity probe only, not20-real-object accuracy evidence.",
+  "inputs": "Real query0 sensor histories scaled perobject: event*(1+0.001*i),RGB*(1-0.001*i). Distinct inputs, no aliases; every object has4event and5RGB histories.",
+  "precision": "FP32 TF32disabled",
+  "reuse_encodings": false,
+  "records": [
+    {
+      "objects": 1,
+      "event_shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        5,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 2.8822251000092365,
+      "times": {
+        "serial": [
+          0.0204428999859374,
+          0.019308999995701015,
+          0.018639400019310415,
+          0.019471600011456758
+        ],
+        "parallel": [
+          0.014588299993192777,
+          0.014298699999926612,
+          0.015358500008005649,
+          0.014267999998992309
+        ]
+      },
+      "serial_parallel_exact": true,
+      "peak_allocated_bytes": 134836736,
+      "peak_reserved_bytes": 329252864
+    },
+    {
+      "objects": 2,
+      "event_shape": [
+        8,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        10,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 2.707835899986094,
+      "times": {
+        "serial": [
+          0.028238400002010167,
+          0.026415000000270084,
+          0.025660700019216165,
+          0.025868299999274313
+        ],
+        "parallel": [
+          0.020664900017436594,
+          0.02140749999671243,
+          0.020400700013851747,
+          0.021882800007006153
+        ]
+      },
+      "serial_parallel_exact": true,
+      "peak_allocated_bytes": 211914240,
+      "peak_reserved_bytes": 511705088
+    },
+    {
+      "objects": 5,
+      "event_shape": [
+        20,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        25,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 2.810367400001269,
+      "times": {
+        "serial": [
+          0.06345609997515567,
+          0.05992930001229979,
+          0.06172250001691282,
+          0.060499199986224994
+        ],
+        "parallel": [
+          0.05532499999389984,
+          0.055372799979522824,
+          0.05482839999604039,
+          0.0576567999960389
+        ]
+      },
+      "serial_parallel_exact": true,
+      "peak_allocated_bytes": 449518592,
+      "peak_reserved_bytes": 1306525696
+    },
+    {
+      "objects": 10,
+      "event_shape": [
+        40,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        50,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 3.2917522999923676,
+      "times": {
+        "serial": [
+          0.12806889999774285,
+          0.12410619997535832,
+          0.1339899000013247,
+          0.14234140000189655
+        ],
+        "parallel": [
+          0.12935090000974014,
+          0.13201719999779016,
+          0.12866119999671355,
+          0.11482389998855069
+        ]
+      },
+      "serial_parallel_exact": true,
+      "peak_allocated_bytes": 806020096,
+      "peak_reserved_bytes": 2267021312
+    },
+    {
+      "objects": 20,
+      "event_shape": [
+        80,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        100,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 4.171231299987994,
+      "times": {
+        "serial": [
+          0.2668812999909278,
+          0.2855863999866415,
+          0.28665920000639744,
+          0.2858776999928523
+        ],
+        "parallel": [
+          0.2641793000220787,
+          0.26484859999618493,
+          0.2675118999904953,
+          0.26261360000353307
+        ]
+      },
+      "serial_parallel_exact": true,
+      "peak_allocated_bytes": 1502444544,
+      "peak_reserved_bytes": 4206886912
+    }
+  ]
+}

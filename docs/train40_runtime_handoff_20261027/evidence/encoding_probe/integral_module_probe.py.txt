@@ -1,0 +1,69 @@
+"""Real-input comparison of the new bounded module, not an acceptance report."""
+from __future__ import annotations
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[3]
+sys.path[:0]=[str(ROOT/'src'),str(ROOT)]
+import numpy as np
+import torch
+from e_jepa_ttc.efficient_context.mapped_union import encode_mapped,map_roi
+from operational.evttc_transfer.inputs import EvTTCEventReader
+from operational.train40_runtime.integral import IntegralEventHistory
+
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--indices',nargs='+',type=int,default=[0,200,553])
+    args=parser.parse_args()
+    torch.set_num_threads(2)
+    rows=json.loads((ROOT/'artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json').read_text(encoding='utf-8'))['rows']
+    records=[]
+    for index in args.indices:
+        row=rows[index]
+        anchor=int(row['anchor_us'])
+        square=tuple(row['square_xyxy'])
+        with EvTTCEventReader(row['raw_path']) as reader:
+            startup=reader.read_window(anchor-620000,anchor-20000)
+            packet=reader.read_window(anchor-20000,anchor)
+        raw={k:np.concatenate((startup[k],packet[k])) for k in startup}
+        mapped=map_roi(raw,square,128,0.)
+        six=np.stack([encode_mapped(mapped,left,left+100000,128,'probe').numpy() for left in range(anchor-600000,anchor,100000)])
+        reference=np.stack([six[i:i+3] for i in range(4)])
+        del raw,mapped,six
+        begin=time.perf_counter()
+        runtime=IntegralEventHistory()
+        runtime.initialize(startup,anchor-620000,anchor-20000)
+        torch.cuda.synchronize()
+        startup_ms=1000*(time.perf_counter()-begin)
+        for _ in range(3):runtime.query(square)
+        torch.cuda.synchronize()
+        begin=time.perf_counter()
+        runtime.ingest(packet,anchor-20000,anchor)
+        output=runtime.query(square)
+        torch.cuda.synchronize()
+        update_ms=1000*(time.perf_counter()-begin)
+        actual=output.cpu().numpy()
+        difference=np.abs(actual-reference)
+        query_ms=[]
+        for _ in range(8):
+            torch.cuda.synchronize()
+            begin=time.perf_counter()
+            runtime.query(square)
+            torch.cuda.synchronize()
+            query_ms.append(1000*(time.perf_counter()-begin))
+        record={'index':index,'startup_ms':startup_ms,'new20ms_packet_events':len(packet['t']),
+                'ingest_validation_h2d_and_query_ms':update_ms,'query_only_ms':query_ms,
+                'equal':bool(np.array_equal(actual,reference)),
+                'max_abs':float(difference.max()),'different_values':int(np.count_nonzero(difference)),
+                'stats':runtime.stats}
+        records.append(record)
+        print(json.dumps(record),flush=True)
+        del runtime,startup,packet,output,actual,reference
+        torch.cuda.empty_cache()
+    (Path(__file__).parent/'integral_module_results.json').write_text(json.dumps({'status':'PARTIAL_THREE_QUERY_INPUT_PARITY_ONLY','records':records},indent=2))
+
+if __name__=='__main__':main()

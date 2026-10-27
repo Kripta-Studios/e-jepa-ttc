@@ -1,0 +1,104 @@
+{
+  "status": "PARTIAL_THREE_QUERY_INPUT_PARITY_ONLY",
+  "records": [
+    {
+      "index": 0,
+      "startup_ms": 353.0563000240363,
+      "new20ms_packet_events": 262595,
+      "ingest_validation_h2d_and_query_ms": 6.89540000166744,
+      "query_only_ms": [
+        3.406500007258728,
+        3.035500005353242,
+        2.9249000072013587,
+        3.624500008299947,
+        3.0621000041719526,
+        3.1052999838721007,
+        2.99429998267442,
+        2.968300017528236
+      ],
+      "equal": true,
+      "max_abs": 0.0,
+      "different_values": 0,
+      "stats": {
+        "allocated_bytes": 3055239816,
+        "max_packet_events": 2000000,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 14350374,
+        "ready": true,
+        "ingested_packets": 31,
+        "queries": 12,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": true,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION"
+      }
+    },
+    {
+      "index": 200,
+      "startup_ms": 126.76309997914359,
+      "new20ms_packet_events": 181469,
+      "ingest_validation_h2d_and_query_ms": 5.790399998659268,
+      "query_only_ms": [
+        3.524900006595999,
+        3.1300999980885535,
+        3.2008000125642866,
+        3.113899991149083,
+        3.1790999928489327,
+        3.04320000577718,
+        3.3847000158857554,
+        3.144099988276139
+      ],
+      "equal": true,
+      "max_abs": 0.0,
+      "different_values": 0,
+      "stats": {
+        "allocated_bytes": 3055239816,
+        "max_packet_events": 2000000,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 11650489,
+        "ready": true,
+        "ingested_packets": 31,
+        "queries": 12,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": true,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION"
+      }
+    },
+    {
+      "index": 553,
+      "startup_ms": 174.0509000082966,
+      "new20ms_packet_events": 510778,
+      "ingest_validation_h2d_and_query_ms": 7.502499996917322,
+      "query_only_ms": [
+        3.612300002714619,
+        3.4660999954212457,
+        3.8551000179722905,
+        3.6620000028051436,
+        4.184499994153157,
+        3.418500011321157,
+        3.6168000078760087,
+        3.5561000113375485
+      ],
+      "equal": true,
+      "max_abs": 0.0,
+      "different_values": 0,
+      "stats": {
+        "allocated_bytes": 3055239816,
+        "max_packet_events": 2000000,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 20200738,
+        "ready": true,
+        "ingested_packets": 31,
+        "queries": 12,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": true,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION"
+      }
+    }
+  ]
+}

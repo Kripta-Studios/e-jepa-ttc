@@ -1,0 +1,252 @@
+{
+  "records": [
+    {
+      "index": 0,
+      "event_exact": [
+        true,
+        true
+      ],
+      "rgb_single_exact": [
+        true,
+        true
+      ],
+      "rgb_batch_diff": [
+        {
+          "exact": false,
+          "max": 5.435943603515625e-05
+        },
+        {
+          "exact": false,
+          "max": 1.1175870895385742e-07
+        }
+      ],
+      "times": {
+        "event": [
+          0.012576699984492734,
+          0.012319400004344061,
+          0.011878200020873919,
+          0.011801499989815056,
+          0.012579499976709485
+        ],
+        "rgb_loop": [
+          0.05432749999454245,
+          0.054892799991648644,
+          0.054554400005145,
+          0.052734199998667464,
+          0.05285820001154207
+        ],
+        "rgb_batch": [
+          0.01383069998701103,
+          0.013065199978882447,
+          0.013120699994033203,
+          0.013224000023910776,
+          0.014248099992983043
+        ]
+      }
+    },
+    {
+      "index": 200,
+      "event_exact": [
+        true,
+        true
+      ],
+      "rgb_single_exact": [
+        true,
+        true
+      ],
+      "rgb_batch_diff": [
+        {
+          "exact": false,
+          "max": 7.915496826171875e-05
+        },
+        {
+          "exact": false,
+          "max": 1.6577541828155518e-07
+        }
+      ],
+      "times": {
+        "event": [
+          0.011958899995079264,
+          0.011884600011399016,
+          0.011469899996882305,
+          0.012677399994572625,
+          0.01128239999525249
+        ],
+        "rgb_loop": [
+          0.05361820000689477,
+          0.05369779997272417,
+          0.054377299995394424,
+          0.05360280000604689,
+          0.0542194000154268
+        ],
+        "rgb_batch": [
+          0.013211200013756752,
+          0.013282100000651553,
+          0.01436569998622872,
+          0.013501200010068715,
+          0.013440799986710772
+        ]
+      }
+    },
+    {
+      "index": 553,
+      "event_exact": [
+        true,
+        true
+      ],
+      "rgb_single_exact": [
+        true,
+        true
+      ],
+      "rgb_batch_diff": [
+        {
+          "exact": false,
+          "max": 5.340576171875e-05
+        },
+        {
+          "exact": false,
+          "max": 1.341104507446289e-07
+        }
+      ],
+      "times": {
+        "event": [
+          0.013336300005903468,
+          0.012086700007785112,
+          0.014443399995798245,
+          0.013610399997560307,
+          0.013045200001215562
+        ],
+        "rgb_loop": [
+          0.05909490000340156,
+          0.054648100020131096,
+          0.054454199998872355,
+          0.05520339999930002,
+          0.052931099984562024
+        ],
+        "rgb_batch": [
+          0.013151199993444607,
+          0.013994699984323233,
+          0.013677699986146763,
+          0.013619400007883087,
+          0.013328700006240979
+        ]
+      }
+    }
+  ],
+  "graphs": [
+    {
+      "producer": "E_A5_MATCHED",
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "setup_seconds": 0.37051530001917854,
+      "replays": 18,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!"
+      ],
+      "initial_exact_parity": true,
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "E_C2F_MATCHED",
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "setup_seconds": 0.7078458000032697,
+      "replays": 18,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!"
+      ],
+      "initial_exact_parity": true,
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_A5",
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 0.43949860002612695,
+      "replays": 90,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!"
+      ],
+      "initial_exact_parity": true,
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_C2F",
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 0.946046800003387,
+      "replays": 90,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!"
+      ],
+      "initial_exact_parity": true,
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_A5",
+      "shape": [
+        5,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 0.47082079999381676,
+      "replays": 18,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!"
+      ],
+      "initial_exact_parity": true,
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_C2F",
+      "shape": [
+        5,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 0.9393741000094451,
+      "replays": 18,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!"
+      ],
+      "initial_exact_parity": true,
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED"
+    }
+  ]
+}
