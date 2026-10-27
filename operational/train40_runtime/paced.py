@@ -9,6 +9,7 @@ it does not certify that a sensor or twenty real tracks produced the payloads.
 from __future__ import annotations
 
 import math
+import platform
 import queue
 import threading
 import time
@@ -23,6 +24,58 @@ from operational.train40_runtime.measurement import (
 )
 
 Payload = TypeVar("Payload")
+SLEEP_STOP_POLL_SECONDS = 0.010
+
+
+def pacing_clock_metadata(wait_strategy: str) -> dict[str, Any]:
+    """Describe the actual Python/clock path without claiming observed precision."""
+    if wait_strategy not in ("event", "sleep"):
+        raise ValueError("wait_strategy must be 'event' or 'sleep'")
+    clock = time.get_clock_info("perf_counter")
+    return {
+        "wait_strategy": wait_strategy,
+        "wait_primitive": "threading.Event.wait" if wait_strategy == "event" else "time.sleep",
+        "python_version": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+        "platform": platform.platform(),
+        "deadline_clock": "time.perf_counter_ns",
+        "clock_implementation": clock.implementation,
+        "clock_monotonic": clock.monotonic,
+        "clock_adjustable": clock.adjustable,
+        "clock_resolution_seconds": clock.resolution,
+        "sleep_stop_poll_seconds": SLEEP_STOP_POLL_SECONDS if wait_strategy == "sleep" else None,
+        "deadlines_absolute": True,
+        "busy_spin": False,
+        "scheduler_lateness_subtracted": False,
+    }
+
+
+def wait_until_deadline(
+    deadline_ns: int,
+    stop: threading.Event,
+    *,
+    wait_strategy: str,
+    clock_ns: Callable[[], int] = time.perf_counter_ns,
+    sleep: Callable[[float], None] = time.sleep,
+) -> bool:
+    """Wait for an absolute deadline; return True if cancellation was requested.
+
+    The legacy Event path is unchanged. The opt-in sleep path uses Python's
+    time.sleep (a high-resolution waitable timer on Windows with Python 3.11+),
+    recalculating the remaining time after every wake. Sleep requests are at
+    most 10ms so cancellation is polled without a busy spin. OS scheduling may
+    delay any wake, so this is not a guaranteed wall-clock cancellation bound.
+    """
+    if wait_strategy == "event":
+        return stop.wait(max(0.0, (deadline_ns - clock_ns()) / 1e9))
+    if wait_strategy != "sleep":
+        raise ValueError("wait_strategy must be 'event' or 'sleep'")
+    while not stop.is_set():
+        remaining_ns = deadline_ns - clock_ns()
+        if remaining_ns <= 0:
+            return False
+        sleep(min(remaining_ns / 1e9, SLEEP_STOP_POLL_SECONDS))
+    return True
 
 
 @dataclass(frozen=True)
@@ -64,6 +117,7 @@ def run_paced_replay(
     rate_hz: float = 50.0,
     queue_capacity: int = 2,
     startup_lead_s: float = 0.05,
+    wait_strategy: str = "event",
 ) -> dict[str, Any]:
     """Measure all scheduled arrivals, retaining failures and overload drops.
 
@@ -81,6 +135,9 @@ def run_paced_replay(
     the new update with an explicit receipt. It does not postpone future arrivals
     or silently replace pending observations. Exceptions become failed receipts.
     An incomplete/drop/source-error run cannot pass the capacity checks.
+    ``wait_strategy='event'`` preserves the v1 scheduler. Explicit ``'sleep'``
+    uses bounded time.sleep waits against the same absolute deadlines. All
+    scheduler lateness remains inside both acquisition and response receipts.
     """
     ids = tuple(object_ids)
     if not ids or any(not isinstance(x, str) or not x for x in ids) or len(set(ids)) != len(ids):
@@ -97,6 +154,7 @@ def run_paced_replay(
         raise ValueError("rate_hz must be finite and positive")
     if not math.isfinite(startup_lead_s) or startup_lead_s < 0:
         raise ValueError("startup_lead_s must be finite and nonnegative")
+    scheduler = pacing_clock_metadata(wait_strategy)
     first_ns = time.perf_counter_ns() + round(startup_lead_s * 1e9)
     pending: queue.Queue[Arrival[Payload]] = queue.Queue(maxsize=queue_capacity)
     stop, done = threading.Event(), threading.Event()
@@ -108,8 +166,7 @@ def run_paced_replay(
         try:
             for index in range(updates):
                 deadline = first_ns + round(index * 1e9 / rate_hz)
-                delay_s = (deadline - time.perf_counter_ns()) / 1e9
-                if stop.wait(max(0.0, delay_s)):
+                if wait_until_deadline(deadline, stop, wait_strategy=wait_strategy):
                     break
                 begin = time.perf_counter_ns()
                 receipt: dict[str, Any] = {
@@ -240,6 +297,8 @@ def run_paced_replay(
         "offered_duration_s": updates / rate_hz,
         "actual_wall_duration_s": (finish_ns - first_ns) / 1e9,
         "queue_capacity": queue_capacity,
+        "wait_strategy": wait_strategy,
+        "scheduler": scheduler,
         "object_ids": list(ids),
         "arrival_receipts": receipts,
         "object_records": records,
