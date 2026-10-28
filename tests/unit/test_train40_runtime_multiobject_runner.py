@@ -41,9 +41,9 @@ def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_i
     assert options.event_normalization == "topk" and options.parallel
     assert not options.rgb_uint8 and not options.rgb_feature_cache
     assert not options.shared_rgb_images and not options.serial_preprocessing
-    assert not options.overlap_event_with_rgb_preparation
+    assert options.overlap_event_with_rgb_preparation
     assert not options.immutable_rgb_history
-    assert not options.rgb_crop_cache and options.transport_reuse == "original"
+    assert not options.rgb_crop_cache and options.transport_reuse == "reverse-summaries"
     experimental = runner.parser().parse_args(
         arguments + ["--event-reuse", "--rgb-uint8", "--overlap-event-with-rgb-preparation"]
     )
@@ -65,6 +65,10 @@ def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_i
     )
     runner.validate_crop_admission_options(crop)
     assert crop.transport_reuse == "reverse-summaries"
+    control = runner.parser().parse_args(
+        arguments + ["--no-overlap-event-with-rgb-preparation", "--transport-reuse", "original"]
+    )
+    assert not control.overlap_event_with_rgb_preparation and control.transport_reuse == "original"
 
 
 def admission_history():

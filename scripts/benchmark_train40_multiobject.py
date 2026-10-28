@@ -1222,7 +1222,14 @@ def parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--overlap-event-with-rgb-preparation",
         action="store_true",
-        help="Experimental: launch unchanged event producers while CPU RGB crops finish",
+        default=DEFAULT_PROFILE.overlap_event_with_rgb_preparation,
+        help="Launch unchanged event producers while CPU RGB crops finish",
+    )
+    parser.add_argument(
+        "--no-overlap-event-with-rgb-preparation",
+        dest="overlap_event_with_rgb_preparation",
+        action="store_false",
+        help="Control: wait for RGB preparation; also required with serial execution",
     )
     parser.add_argument(
         "--event-query-graphs",
@@ -1250,8 +1257,8 @@ def parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--transport-reuse",
         choices=TRANSPORT_REUSE_MODES,
-        default="original",
-        help="Opt-in exact transport reuse with unchanged producer batches",
+        default=DEFAULT_PROFILE.transport_reuse,
+        help="Exact transport reuse with unchanged batches; original selects the control",
     )
     parser.add_argument(
         "--immutable-rgb-history",

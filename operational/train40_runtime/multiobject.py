@@ -234,14 +234,16 @@ class MultiObjectTrain40Service:
         max_objects: int = DEFAULT_PROFILE.max_objects,
         retain_input_diagnostics: bool = False,
         reuse_event_encodings: bool | None = DEFAULT_PROFILE.reuse_event_encodings,
-        shared_rgb_images: bool = False,
+        shared_rgb_images: bool = DEFAULT_PROFILE.shared_rgb_images,
         rgb_object_chunk_size: int | None = DEFAULT_PROFILE.rgb_object_chunk_size,
         parallel_preprocessing: bool = True,
         rgb_feature_cache: RGBBatchCache | None = None,
         rgb_uint8: bool = DEFAULT_PROFILE.rgb_uint8,
         producer_runtime: ProducerRuntime | None = None,
-        overlap_event_with_rgb_preparation: bool = False,
-        transport_reuse: str = "original",
+        overlap_event_with_rgb_preparation: bool = (
+            DEFAULT_PROFILE.overlap_event_with_rgb_preparation
+        ),
+        transport_reuse: str = DEFAULT_PROFILE.transport_reuse,
         rgb_crop_cache: bool = False,
     ) -> None:
         transport_reuse_contract(transport_reuse)

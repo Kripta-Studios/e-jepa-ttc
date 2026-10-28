@@ -623,11 +623,13 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
     assert args.event_query_graphs and args.event_normalization == "topk"
     assert args.verify_parity is False
     assert args.wait_strategy == "sleep"
-    assert args.raw_source == "disk"
+    assert args.raw_source == "memory"
     assert args.max_preloaded_source_bytes == 2 * 1024**3
-    assert not args.rgb_feature_cache and not args.shared_rgb_images
-    assert not args.overlap_event_with_rgb_preparation
-    assert not args.prime_native_histories
+    assert args.rgb_feature_cache and not args.shared_rgb_images
+    assert args.overlap_event_with_rgb_preparation
+    assert args.prime_native_histories
+    assert args.transport_reuse == "reverse-summaries"
+    assert not args.rgb_crop_cache
     options = runner.service_options(args)
     assert options["shared_rgb_images"] == runner.DEFAULT_PROFILE.shared_rgb_images is False
     assert options["rgb_object_chunk_size"] == 1
@@ -647,11 +649,19 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
             "sequence",
             "--wait-strategy",
             "event",
-            "--prime-native-histories",
+            "--no-prime-native-histories",
+            "--no-rgb-feature-cache",
+            "--no-overlap-event-with-rgb-preparation",
+            "--raw-source",
+            "disk",
+            "--transport-reuse",
+            "original",
         ]
     )
     assert legacy.wait_strategy == "event"
-    assert legacy.prime_native_histories
+    assert not legacy.prime_native_histories
+    assert not legacy.rgb_feature_cache and not legacy.overlap_event_with_rgb_preparation
+    assert legacy.raw_source == "disk" and legacy.transport_reuse == "original"
     with pytest.raises(SystemExit) as caught:
         runner.parser().parse_args(["--help"])
     assert caught.value.code == 0

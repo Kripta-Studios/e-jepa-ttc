@@ -654,6 +654,8 @@ def test_new_service_invalidates_cache_from_previous_producer_lifetime(service, 
         parallel_branches=False,
         rgb_feature_cache=cache,
         rgb_object_chunk_size=cache.rgb_object_chunk_size,
+        overlap_event_with_rgb_preparation=False,
+        transport_reuse="original",
     )
     try:
         assert cache.stats["entries"] == 0
@@ -689,6 +691,8 @@ def test_external_producer_can_be_injected_without_feature_cache(monkeypatch):
         graphs=False,
         parallel_branches=False,
         producer_runtime=injected,
+        overlap_event_with_rgb_preparation=False,
+        transport_reuse="original",
     )
     try:
         assert fresh.producers is injected

@@ -1370,7 +1370,14 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument(
         "--prime-native-histories",
         action="store_true",
+        default=DEFAULT_PROFILE.paced_prime_native_histories,
         help="Prime all declared native RGB history shapes using synthetic startup data",
+    )
+    result.add_argument(
+        "--no-prime-native-histories",
+        dest="prime_native_histories",
+        action="store_false",
+        help="Control: retain the older single-shape synthetic priming",
     )
     result.add_argument(
         "--wait-strategy",
@@ -1383,7 +1390,7 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument(
         "--raw-source",
         choices=("disk", "persistent", "immutable", "memory"),
-        default="disk",
+        default=DEFAULT_PROFILE.paced_raw_source,
         help="Disk/persistent controls, immutable frames, or privately preloaded RAW CPU arrivals",
     )
     result.add_argument(
@@ -1422,18 +1429,32 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument(
         "--rgb-feature-cache",
         action="store_true",
+        default=DEFAULT_PROFILE.paced_rgb_feature_cache,
         help="Exact RGB producer features only; admission requires a stored MISS then real HIT",
+    )
+    result.add_argument(
+        "--no-rgb-feature-cache",
+        dest="rgb_feature_cache",
+        action="store_false",
+        help="Control: recompute the complete RGB producer on every update",
     )
     result.add_argument(
         "--transport-reuse",
         choices=TRANSPORT_REUSE_MODES,
-        default="original",
-        help="Opt-in exact transport work reuse, before endpoint reuse; no adjacent pair dedup",
+        default=DEFAULT_PROFILE.transport_reuse,
+        help="Exact transport work reuse; original retains the control producer path",
     )
     result.add_argument(
         "--overlap-event-with-rgb-preparation",
         action="store_true",
-        help="Experimental event producer dispatch before CPU RGB preparation completes",
+        default=DEFAULT_PROFILE.overlap_event_with_rgb_preparation,
+        help="Dispatch the unchanged event producer while CPU RGB preparation completes",
+    )
+    result.add_argument(
+        "--no-overlap-event-with-rgb-preparation",
+        dest="overlap_event_with_rgb_preparation",
+        action="store_false",
+        help="Control: join CPU RGB preparation before event producer dispatch",
     )
     result.add_argument(
         "--verify-parity",

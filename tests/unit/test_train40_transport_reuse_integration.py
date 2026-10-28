@@ -183,7 +183,14 @@ def test_service_forwards_transport_selection_without_changing_cpu_execution(
     _fake_context(monkeypatch)
     history = cast(Any, object())
     service = MultiObjectTrain40Service(
-        {}, {}, history, "cpu", graphs=False, parallel_branches=False, transport_reuse=mode
+        {},
+        {},
+        history,
+        "cpu",
+        graphs=False,
+        parallel_branches=False,
+        transport_reuse=mode,
+        overlap_event_with_rgb_preparation=False,
     )
     try:
         assert service.transport_reuse == mode
@@ -209,6 +216,7 @@ def test_matching_injected_transport_is_retained_without_rewrapping(
         parallel_branches=False,
         producer_runtime=injected,
         transport_reuse=mode,
+        overlap_event_with_rgb_preparation=False,
     )
     try:
         assert service.producers is injected
@@ -234,6 +242,7 @@ def test_service_rejects_injected_transport_contract_mismatch(
             parallel_branches=False,
             producer_runtime=_injected(injected),
             transport_reuse=requested,
+            overlap_event_with_rgb_preparation=False,
         )
 
 
@@ -249,6 +258,8 @@ def test_service_requires_explicit_injected_transport_identity() -> None:
             graphs=False,
             parallel_branches=False,
             producer_runtime=injected,
+            overlap_event_with_rgb_preparation=False,
+            transport_reuse="original",
         )
 
 
@@ -279,12 +290,14 @@ def test_paced_default_and_cache_hash_bind_explicit_transport_mode(
     monkeypatch.setattr(runner.torch.backends.cudnn, "version", lambda: 90000)
     binding = {"candidate": {"weights": "unchanged"}, "sources": {"runtime": "same-source-hash"}}
     default = _arguments()
-    assert default.transport_reuse == "original"
-    assert runner.service_options(default)["transport_reuse"] == "original"
+    assert default.transport_reuse == "reverse-summaries"
+    assert runner.service_options(default)["transport_reuse"] == "reverse-summaries"
     baseline = runner.cache_identity(binding, default)
-    assert baseline == runner.cache_identity(binding, _arguments("--transport-reuse", "original"))
+    assert baseline == runner.cache_identity(
+        binding, _arguments("--transport-reuse", "reverse-summaries")
+    )
     alternatives = []
-    for mode in ("reverse", "reverse-summaries"):
+    for mode in ("original", "reverse"):
         args = _arguments("--transport-reuse", mode)
         assert runner.service_options(args)["transport_reuse"] == mode
         identity = runner.cache_identity(binding, args)

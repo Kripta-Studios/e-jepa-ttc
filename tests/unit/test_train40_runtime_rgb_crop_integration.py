@@ -69,6 +69,8 @@ def services(monkeypatch):
             max_objects=2,
             rgb_workers=2,
             rgb_crop_cache=enabled,
+            overlap_event_with_rgb_preparation=False,
+            transport_reuse="original",
             **kwargs,
         )
         values.append(value)
