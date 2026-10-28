@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 from dataclasses import replace
+from threading import Event
 from types import SimpleNamespace
 
 import numpy as np
@@ -98,6 +100,12 @@ def service():
     value.shared_rgb_images = False
     value.rgb_object_chunk_size = None
     value.parallel_preprocessing = True
+    value.overlap_event_with_rgb_preparation = False
+    value._event_overlap_inflight = False
+    value._event_overlap_ticket = None
+    value._event_overlap_inputs = None
+    value._streams = None
+    value._warm_signatures = set()
     value.rgb_feature_cache = None
     value.last_rgb_profile = {}
     value._closed = False
@@ -248,6 +256,206 @@ def test_serial_preprocessing_remains_inside_complete_clock(service):
     assert result["complete_wall_ms"] >= job["total_seconds"] * 1000
 
 
+def enable_fake_event_overlap(service, monkeypatch):
+    """Exercise stream ordering without CUDA or timing-dependent sleep assertions."""
+    from operational.train40_runtime.producers import AsyncExpertBlock
+
+    calls = []
+    launched = Event()
+
+    class Stream:
+        def __init__(self, name):
+            self.name = name
+
+        def wait_stream(self, other):
+            calls.append(("wait", self.name, other.name))
+
+        def synchronize(self):
+            calls.append(("sync", self.name))
+
+    current, event, rgb = (Stream(name) for name in ("current", "event", "rgb"))
+    monkeypatch.setattr(torch.cuda, "current_stream", lambda *_: current)
+    monkeypatch.setattr(torch.cuda, "stream", lambda stream: nullcontext(stream))
+    service.parallel_branches = True
+    service.overlap_event_with_rgb_preparation = True
+    service._streams = event, rgb
+    service.rgb_object_chunk_size = 1
+
+    def launch(modality, sensor, delta, *, history_group_size):
+        calls.append(("launch", modality, tuple(sensor.shape), history_group_size))
+        raw, experts = service.producers.expert_block(
+            modality, sensor, delta, history_group_size=history_group_size
+        )
+        if modality == "E":
+            launched.set()
+        return AsyncExpertBlock(raw, experts, torch.tensor(True), modality, (sensor, delta))
+
+    def validate(*tickets):
+        calls.append(("validate", *(ticket.modality for ticket in tickets)))
+        assert all(bool(ticket.guard) for ticket in tickets)
+
+    monkeypatch.setattr(service.producers, "expert_block_async", launch, raising=False)
+    monkeypatch.setattr(service.producers, "validate_async_blocks", validate, raising=False)
+    return calls, launched
+
+
+@pytest.mark.parametrize("count", [1, 2])
+def test_event_overlap_launches_unchanged_batch_before_rgb_is_ready(service, monkeypatch, count):
+    calls, launched = enable_fake_event_overlap(service, monkeypatch)
+    pack = service._pack_rgb
+
+    def delayed_rgb(objects, history):
+        assert launched.wait(timeout=2), "RGB must not finish before the event launch"
+        result = pack(objects, history)
+        calls.append(("rgb_ready",))
+        return result
+
+    monkeypatch.setattr(service, "_pack_rgb", delayed_rgb)
+    output = service.update({}, 980_000, 1_000_000, regions()[:count], raw_rgb())
+    launches = [call for call in calls if call[0] == "launch"]
+    assert launches[0] == ("launch", "E", (count * 4, 3, 12, 128, 128), 4)
+    assert len([call for call in launches if call[1] == "E"]) == 1
+    assert len([call for call in service.producers.calls if call[0] == "E"]) == 1
+    assert calls.index(launches[0]) < calls.index(("rgb_ready",))
+    assert calls.index(("rgb_ready",)) < calls.index(launches[1])
+    assert ("validate", "E", *(["R"] * count)) in calls
+    assert output["object_count"] == count
+    assert output["event_producer_launched_before_rgb_join"]
+    assert service._event_overlap_ticket is None
+    assert service._event_overlap_inputs is None
+    assert not service._event_overlap_inflight
+
+
+def test_event_overlap_rgb_failure_drains_launched_stream_and_recovers(service, monkeypatch):
+    calls, launched = enable_fake_event_overlap(service, monkeypatch)
+    pack = service._pack_rgb
+
+    def failed_rgb(*_):
+        assert launched.wait(timeout=2), "RGB failure must follow event launch"
+        raise RuntimeError("RGB failed after event launch")
+
+    monkeypatch.setattr(service, "_pack_rgb", failed_rgb)
+    with pytest.raises(RuntimeError, match="RGB failed after event launch"):
+        service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    assert ("sync", "event") in calls
+    assert service._event_overlap_ticket is None
+    assert service._event_overlap_inputs is None
+    assert not service._event_overlap_inflight
+    monkeypatch.setattr(service, "_pack_rgb", pack)
+    assert (
+        service.update({}, 1_000_000, 1_020_000, regions(), raw_rgb(1_020_000))["object_count"] == 2
+    )
+
+
+def test_event_overlap_missing_rgb_joins_and_validates_event(service, monkeypatch):
+    calls, _ = enable_fake_event_overlap(service, monkeypatch)
+    objects = [replace(item, rgb_square=None) for item in regions()]
+    result = service.update({}, 980_000, 1_000_000, objects, raw_rgb())
+    assert [call[1] for call in calls if call[0] == "launch"] == ["E"]
+    assert ("wait", "current", "event") in calls
+    assert ("validate", "E") in calls
+    assert all(
+        item["rgb_unavailable_reason"] == "RGB_ROI_UNAVAILABLE" for item in result["objects"]
+    )
+    assert all(item.rgb_raw is None for item in service.context.observations)
+
+
+def test_event_overlap_guard_failure_drains_both_streams_without_context(service, monkeypatch):
+    calls, _ = enable_fake_event_overlap(service, monkeypatch)
+
+    def invalid_guard(*_):
+        raise ValueError("event guard rejected")
+
+    monkeypatch.setattr(service.producers, "validate_async_blocks", invalid_guard)
+    with pytest.raises(ValueError, match="event guard rejected"):
+        service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    assert ("sync", "event") in calls and ("sync", "rgb") in calls
+    assert service.context.observations == []
+    assert service._event_overlap_inputs is None
+    assert service._event_overlap_ticket is None
+
+
+def test_event_overlap_enqueue_failure_retains_inputs_until_close_drains(service, monkeypatch):
+    calls, _ = enable_fake_event_overlap(service, monkeypatch)
+
+    def partial_enqueue(*_args, **_kwargs):
+        raise RuntimeError("enqueue failed before ticket")
+
+    monkeypatch.setattr(service.producers, "expert_block_async", partial_enqueue)
+    with pytest.raises(RuntimeError, match="enqueue failed before ticket"):
+        service._enqueue_event_overlap(torch.zeros((1, 4, 3, 12, 128, 128)), 1)
+    assert service._event_overlap_ticket is None
+    assert service._event_overlap_inflight
+    assert service._event_overlap_inputs[0].shape == (4, 3, 12, 128, 128)
+    assert service._event_overlap_inputs[1].shape == (4, 2)
+    with pytest.raises(RuntimeError, match="must be drained"):
+        service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    assert not service.history.ingested
+    service.close()
+    assert ("sync", "event") in calls and ("sync", "rgb") in calls
+    assert service._event_overlap_inputs is None
+    assert not service._event_overlap_inflight
+
+
+def test_event_overlap_failed_drain_keeps_lifetimes_and_blocks_new_update(service, monkeypatch):
+    enable_fake_event_overlap(service, monkeypatch)
+    service._enqueue_event_overlap(torch.zeros((1, 4, 3, 12, 128, 128)), 1)
+    stream = service._streams[0]
+    synchronize = stream.synchronize
+
+    def failed_sync():
+        raise RuntimeError("stream completion unknown")
+
+    monkeypatch.setattr(stream, "synchronize", failed_sync)
+    with pytest.raises(RuntimeError, match="completion unknown"):
+        service._drain_event_overlap()
+    assert service._event_overlap_ticket is not None
+    assert service._event_overlap_inputs is not None
+    assert service._event_overlap_inflight
+    assert service._closed
+    with pytest.raises(RuntimeError, match="Service is closed"):
+        service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    assert not service.history.ingested
+    monkeypatch.setattr(stream, "synchronize", synchronize)
+    service._drain_event_overlap()
+
+
+def test_event_overlap_requires_parallel_branches_before_model_creation():
+    with pytest.raises(ValueError, match="requires parallel branches and preparation"):
+        MultiObjectTrain40Service(
+            {},
+            {},
+            FakeHistory(),
+            device="cpu",
+            graphs=False,
+            parallel_branches=False,
+            overlap_event_with_rgb_preparation=True,
+        )
+
+
+def test_event_overlap_rgb_failure_preserves_primary_error_when_drain_fails(service, monkeypatch):
+    _, launched = enable_fake_event_overlap(service, monkeypatch)
+    stream = service._streams[0]
+    synchronize = stream.synchronize
+
+    def failed_rgb(*_):
+        assert launched.wait(timeout=2)
+        raise RuntimeError("original RGB failure")
+
+    def failed_sync():
+        raise OSError("completion unknown")
+
+    monkeypatch.setattr(service, "_pack_rgb", failed_rgb)
+    monkeypatch.setattr(stream, "synchronize", failed_sync)
+    with pytest.raises(RuntimeError, match="original RGB failure") as caught:
+        service.update({}, 980_000, 1_000_000, regions(), raw_rgb())
+    assert isinstance(caught.value.__cause__, OSError)
+    assert any("buffer lifetimes are retained" in note for note in caught.value.__notes__)
+    assert service._closed and service._event_overlap_inputs is not None
+    monkeypatch.setattr(stream, "synchronize", synchronize)
+    service.close()
+
+
 def enable_cache(service):
     service.rgb_feature_cache = RGBBatchCache(
         model_sha256="a" * 64,
@@ -258,6 +466,23 @@ def enable_cache(service):
     for frame in history.frames.values():
         frame.setflags(write=False)
     return history
+
+
+def test_event_overlap_cache_hit_skips_early_launch_and_rebuilds_context(service, monkeypatch):
+    calls, _ = enable_fake_event_overlap(service, monkeypatch)
+    history = enable_cache(service)
+    first = service.update({}, 980_000, 1_000_000, regions(), history)
+    assert first["event_producer_launched_before_rgb_join"]
+    calls.clear()
+    service.producers.calls.clear()
+    second = service.update(
+        {}, 1_000_000, 1_020_000, regions(), replace(history, query_us=1_020_000)
+    )
+    assert second["rgb_feature_cache"]["status"] == "HIT"
+    assert not second["event_producer_launched_before_rgb_join"]
+    assert not [call for call in calls if call[0] == "launch"]
+    assert service.producers.calls == [("E", (8, 3, 12, 128, 128), 4)]
+    assert all(item.query_us == 1_020_000 for item in service.context.observations)
 
 
 def test_exact_cache_hit_skips_pixels_and_rgb_but_rebuilds_current_context(service, monkeypatch):

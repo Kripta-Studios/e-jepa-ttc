@@ -22,6 +22,7 @@ class RuntimeDefaults:
     rgb_object_chunk_size: int = 1
     parallel_branches: bool = True
     rgb_workers: int = 8
+    shared_rgb_images: bool = False
     rgb_uint8: bool = False
 
 

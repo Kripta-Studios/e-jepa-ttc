@@ -38,8 +38,12 @@ def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_i
     assert options.event_normalization == "topk" and options.parallel
     assert not options.rgb_uint8 and not options.rgb_feature_cache
     assert not options.shared_rgb_images and not options.serial_preprocessing
-    experimental = runner.parser().parse_args(arguments + ["--event-reuse", "--rgb-uint8"])
+    assert not options.overlap_event_with_rgb_preparation
+    experimental = runner.parser().parse_args(
+        arguments + ["--event-reuse", "--rgb-uint8", "--overlap-event-with-rgb-preparation"]
+    )
     assert not experimental.no_event_reuse and experimental.rgb_uint8
+    assert experimental.overlap_event_with_rgb_preparation
 
 
 def test_artificial_population_keeps_primary_and_creates_distinct_regions():
@@ -124,6 +128,7 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, mon
         shared_rgb_images=False,
         rgb_object_chunk_size=None,
         serial_preprocessing=False,
+        overlap_event_with_rgb_preparation=False,
         event_query_graphs=False,
         event_normalization="sort",
         rgb_feature_cache=False,

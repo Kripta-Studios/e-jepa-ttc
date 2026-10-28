@@ -24,7 +24,7 @@ from operational.rgb_port_revision.transfer_inputs import sensor_triplets
 from operational.train40_runtime.batched_context import BatchedContextRuntime, ContextObservation
 from operational.train40_runtime.defaults import DEFAULT_PROFILE
 from operational.train40_runtime.inputs import PersistentSensorInputs, _normalized_crop
-from operational.train40_runtime.producers import ProducerRuntime
+from operational.train40_runtime.producers import AsyncExpertBlock, ProducerRuntime
 
 if TYPE_CHECKING:
     from operational.train40_runtime.multiobject_cache import RGBBatchCache
@@ -211,6 +211,9 @@ class MultiObjectTrain40Service:
     ``update`` includes current ROI processing, event ingestion, transfers, all
     producers and context heads, and the host availability of every result.
     This single-owner service does not cache embeddings across changing ROIs.
+    The opt-in event overlap enqueues the original event batch before joining
+    RGB host preparation. Cold graph setup remains inside that update unless
+    the caller explicitly primed its shapes with synthetic startup inputs.
     """
 
     def __init__(
@@ -232,6 +235,7 @@ class MultiObjectTrain40Service:
         rgb_feature_cache: RGBBatchCache | None = None,
         rgb_uint8: bool = DEFAULT_PROFILE.rgb_uint8,
         producer_runtime: ProducerRuntime | None = None,
+        overlap_event_with_rgb_preparation: bool = False,
     ) -> None:
         if not isinstance(max_objects, int) or not 1 <= max_objects <= 20:
             raise ValueError("max_objects must be between one and twenty")
@@ -254,11 +258,23 @@ class MultiObjectTrain40Service:
         self.device = _effective_device(device)
         if parallel_branches and (not graphs or self.device.type != "cuda"):
             raise ValueError("Parallel branches require CUDA block graphs")
+        if not isinstance(overlap_event_with_rgb_preparation, bool):
+            raise ValueError("Event/RGB preparation overlap must be an explicit boolean")
+        if overlap_event_with_rgb_preparation and not (
+            parallel_branches and parallel_preprocessing
+        ):
+            raise ValueError(
+                "Event/RGB preparation overlap requires parallel branches and preparation"
+            )
         self.history = history
         self.max_objects = max_objects
         self.shared_rgb_images = shared_rgb_images
         self.rgb_object_chunk_size = rgb_object_chunk_size
         self.parallel_preprocessing = parallel_preprocessing
+        self.overlap_event_with_rgb_preparation = overlap_event_with_rgb_preparation
+        self._event_overlap_inflight = False
+        self._event_overlap_ticket: AsyncExpertBlock | None = None
+        self._event_overlap_inputs: tuple[Tensor, Tensor] | None = None
         self.rgb_feature_cache = rgb_feature_cache
         if rgb_feature_cache is not None:
             # A new service owns a new producer/configuration lifetime. Never
@@ -316,15 +332,53 @@ class MultiObjectTrain40Service:
             )
 
     def close(self) -> None:
-        """Wait for owned host workers; do not close the caller's sensor reader."""
+        """Drain owned work; do not close the caller's sensor reader."""
         self._preprocess.shutdown(wait=True, cancel_futures=True)
         self._crops.shutdown(wait=True, cancel_futures=True)
+        self._drain_event_overlap()
         if self._diagnostic_rgb_lease is not None:
             self._diagnostic_rgb_lease.release()
             self._diagnostic_rgb_lease = None
         if self._rgb_uint8 is not None:
             self._rgb_uint8.close()
         self._closed = True
+
+    @torch.inference_mode()
+    def _enqueue_event_overlap(self, event: Tensor, count: int) -> AsyncExpertBlock:
+        """Start the unchanged event batch on its owner stream before RGB is ready."""
+        if self._event_overlap_inflight or self._streams is None:
+            raise RuntimeError("Event overlap requires idle owned producer streams")
+        if tuple(event.shape) != (count, 4, 3, 12, 128, 128):
+            raise ValueError("Events must have shape [objects,4,3,12,128,128]")
+        sensor = event.reshape(-1, 3, 12, 128, 128).to(self.device)
+        delta = torch.full((len(sensor), 2), 0.1, dtype=torch.float32, device=self.device)
+        current = torch.cuda.current_stream(self.device)
+        event_stream = self._streams[0]
+        event_stream.wait_stream(current)
+        # Keep the stream marked until completion even if a cold capture or
+        # enqueue fails before returning a ticket. update/close must still drain it.
+        self._event_overlap_inflight = True
+        self._event_overlap_inputs = sensor, delta
+        with torch.cuda.stream(event_stream):
+            ticket = self.producers.expert_block_async("E", sensor, delta, history_group_size=4)
+        self._event_overlap_ticket = ticket
+        return ticket
+
+    def _drain_event_overlap(self) -> None:
+        """Finish potentially enqueued work before releasing its lifetime references."""
+        if self._event_overlap_inflight:
+            assert self._streams is not None
+            try:
+                for stream in self._streams:
+                    stream.synchronize()
+            except BaseException:
+                # Completion is unknown: prohibit another update and retain
+                # inputs/tickets. A later close may retry the drain safely.
+                self._closed = True
+                raise
+            self._event_overlap_inflight = False
+        self._event_overlap_ticket = None
+        self._event_overlap_inputs = None
 
     def _pack_rgb(
         self, objects: Sequence[ObjectRegion], history: RawRGBHistory
@@ -416,6 +470,8 @@ class MultiObjectTrain40Service:
         event: Tensor,
         rgb: Sequence[Sequence[RGBObservation]] | PreparedRGBBatch,
         unavailable_reason: str = "",
+        *,
+        _event_ticket: AsyncExpertBlock | None = None,
     ) -> list[dict[str, Any]]:
         """Run grouped producers and object-isolated contexts; no sensor timing claim."""
         _validate_regions(objects, self.max_objects)
@@ -429,7 +485,20 @@ class MultiObjectTrain40Service:
         if len(metadata) != len(objects):
             raise ValueError("RGB histories must align with object order")
         sensor = event.reshape(-1, 3, 12, 128, 128).to(self.device)
-        delta = torch.full((len(sensor), 2), 0.1, dtype=torch.float32, device=self.device)
+        delta = (
+            torch.full((len(sensor), 2), 0.1, dtype=torch.float32, device=self.device)
+            if _event_ticket is None
+            else None
+        )
+        if _event_ticket is not None and (
+            not self.parallel_branches
+            or _event_ticket is not self._event_overlap_ticket
+            or not self._event_overlap_inflight
+            or _event_ticket.modality != "E"
+            or _event_ticket.raw.shape != (len(sensor), 17)
+            or _event_ticket.experts.shape != (len(sensor), 3)
+        ):
+            raise ValueError("Prepared event ticket must belong to the current service update")
         present = [index for index, observations in enumerate(metadata) if observations]
         counts = {len(metadata[index]) for index in present}
         if len(counts) > 1:
@@ -455,7 +524,16 @@ class MultiObjectTrain40Service:
                 or rexperts.dtype != torch.float32
             ):
                 raise ValueError("Cached RGB features must match resident FP32 metadata rows")
-            eraw, eexperts = self.producers.expert_block("E", sensor, delta, history_group_size=4)
+            if _event_ticket is None:
+                assert delta is not None
+                eraw, eexperts = self.producers.expert_block(
+                    "E", sensor, delta, history_group_size=4
+                )
+            else:
+                assert self._streams is not None
+                torch.cuda.current_stream(self.device).wait_stream(self._streams[0])
+                self.producers.validate_async_blocks(_event_ticket)
+                eraw, eexperts = _event_ticket.raw, _event_ticket.experts
         elif present:
             group_size = next(iter(counts))
             if isinstance(rgb, PreparedRGBBatch):
@@ -493,7 +571,9 @@ class MultiObjectTrain40Service:
                 for chunk, clocks in chunks:
                     signature = (tuple(sensor.shape), tuple(chunk.shape), group_size)
                     if signature not in self._warm_signatures:
-                        self.producers.expert_block("E", sensor, delta, history_group_size=4)
+                        if _event_ticket is None:
+                            assert delta is not None
+                            self.producers.expert_block("E", sensor, delta, history_group_size=4)
                         self.producers.expert_block(
                             "R", chunk, clocks, history_group_size=group_size
                         )
@@ -501,12 +581,16 @@ class MultiObjectTrain40Service:
                 assert self._streams is not None
                 current = torch.cuda.current_stream(self.device)
                 event_stream, rgb_stream = self._streams
-                event_stream.wait_stream(current)
                 rgb_stream.wait_stream(current)
-                with torch.cuda.stream(event_stream):
-                    eticket = self.producers.expert_block_async(
-                        "E", sensor, delta, history_group_size=4
-                    )
+                if _event_ticket is None:
+                    assert delta is not None
+                    event_stream.wait_stream(current)
+                    with torch.cuda.stream(event_stream):
+                        eticket = self.producers.expert_block_async(
+                            "E", sensor, delta, history_group_size=4
+                        )
+                else:
+                    eticket = _event_ticket
                 with torch.cuda.stream(rgb_stream):
                     rtickets = [
                         self.producers.expert_block_async(
@@ -521,6 +605,7 @@ class MultiObjectTrain40Service:
                 rraw = torch.cat([ticket.raw for ticket in rtickets])
                 rexperts = torch.cat([ticket.experts for ticket in rtickets])
             else:
+                assert delta is not None
                 eraw, eexperts = self.producers.expert_block(
                     "E", sensor, delta, history_group_size=4
                 )
@@ -530,7 +615,16 @@ class MultiObjectTrain40Service:
                 ]
                 rraw, rexperts = (torch.cat([block[index] for block in blocks]) for index in (0, 1))
         else:
-            eraw, eexperts = self.producers.expert_block("E", sensor, delta, history_group_size=4)
+            if _event_ticket is None:
+                assert delta is not None
+                eraw, eexperts = self.producers.expert_block(
+                    "E", sensor, delta, history_group_size=4
+                )
+            else:
+                assert self._streams is not None
+                torch.cuda.current_stream(self.device).wait_stream(self._streams[0])
+                self.producers.validate_async_blocks(_event_ticket)
+                eraw, eexperts = _event_ticket.raw, _event_ticket.experts
         if rraw is not None and rexperts is not None:
             self.last_rgb_producer_features = rraw, rexperts
         rposition = {index: position for position, index in enumerate(present)}
@@ -589,6 +683,8 @@ class MultiObjectTrain40Service:
         started_ns = time.perf_counter_ns()
         if self._closed:
             raise RuntimeError("Service is closed")
+        if self._event_overlap_inflight:
+            raise RuntimeError("Pending event overlap must be drained before another update")
         if self._diagnostic_rgb_lease is not None:
             self._diagnostic_rgb_lease.release()
             self._diagnostic_rgb_lease = None
@@ -617,6 +713,7 @@ class MultiObjectTrain40Service:
         packed = None
         prepared_lease = None
         assembly_started = False
+        event_ticket = None
         try:
             rgb: Sequence[Sequence[RGBObservation]] | PreparedRGBBatch | None
             if hit:
@@ -640,6 +737,8 @@ class MultiObjectTrain40Service:
             if self.retain_input_diagnostics:
                 self.last_event_inputs = event
             event_enqueued_ns = time.perf_counter_ns()
+            if self.overlap_event_with_rgb_preparation and pending is not None:
+                event_ticket = self._enqueue_event_overlap(event, len(objects))
             if pending is not None:
                 packed = pending.result()
             if not hit:
@@ -663,7 +762,12 @@ class MultiObjectTrain40Service:
                 self.last_rgb_prepared_inputs = rgb
             prepared_ns = time.perf_counter_ns()
             outputs = self.infer_prepared(
-                objects, end_us, event, rgb, rgb_history.unavailable_reason
+                objects,
+                end_us,
+                event,
+                rgb,
+                rgb_history.unavailable_reason,
+                _event_ticket=event_ticket,
             )
             if ticket is not None and not hit and ticket.present_indices:
                 assert self.rgb_feature_cache is not None
@@ -676,17 +780,30 @@ class MultiObjectTrain40Service:
                 )
             if self.device.type == "cuda":
                 torch.cuda.synchronize(self.device)
+            self._event_overlap_inflight = False
+            self._event_overlap_ticket = None
+            self._event_overlap_inputs = None
             if prepared_lease is not None:
                 if self.retain_input_diagnostics:
                     self._diagnostic_rgb_lease = prepared_lease
                 else:
                     prepared_lease.release()
-        except BaseException:
+        except BaseException as error:
             if pending is not None:
                 pending.cancel()
                 wait([pending])
                 if not pending.cancelled() and pending.exception() is None:
                     packed = pending.result()
+            try:
+                self._drain_event_overlap()
+            except BaseException as cleanup_error:
+                if prepared_lease is not None:
+                    self._diagnostic_rgb_lease = prepared_lease
+                error.add_note(
+                    "Event overlap cleanup failed; service is closed and buffer lifetimes "
+                    f"are retained: {type(cleanup_error).__name__}: {cleanup_error}"
+                )
+                raise error from cleanup_error
             if prepared_lease is not None:
                 if self.device.type == "cuda":
                     torch.cuda.synchronize(self.device)
@@ -709,6 +826,7 @@ class MultiObjectTrain40Service:
             "rgb_uint8": self._rgb_uint8 is not None,
             "rgb_diagnostic_lease_retained": self._diagnostic_rgb_lease is not None,
             "parallel_preprocessing": self.parallel_preprocessing,
+            "event_producer_launched_before_rgb_join": event_ticket is not None,
             "input_boundary": "last_required_raw_CPU_packet_and_RGB_frames_available",
             "output_boundary": "all_object_TTC_values_available_on_host",
             "targets_read": False,

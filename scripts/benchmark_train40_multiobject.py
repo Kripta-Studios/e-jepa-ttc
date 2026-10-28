@@ -384,6 +384,7 @@ def run(args: argparse.Namespace) -> None:
             shared_rgb_images=args.shared_rgb_images,
             rgb_object_chunk_size=args.rgb_object_chunk_size,
             parallel_preprocessing=not args.serial_preprocessing,
+            overlap_event_with_rgb_preparation=args.overlap_event_with_rgb_preparation,
             event_query_graphs=args.event_query_graphs,
             event_normalization=args.event_normalization,
             rgb_feature_cache=args.rgb_feature_cache,
@@ -414,6 +415,9 @@ def run(args: argparse.Namespace) -> None:
                             "rgb_object_chunk_size": args.rgb_object_chunk_size,
                             "shared_rgb_images": args.shared_rgb_images,
                             "parallel": args.parallel,
+                            "overlap_event_with_rgb_preparation": (
+                                args.overlap_event_with_rgb_preparation
+                            ),
                             "rgb_endpoint_reuse": True,
                             "rgb_uint8": args.rgb_uint8,
                         },
@@ -470,6 +474,7 @@ def run(args: argparse.Namespace) -> None:
                 shared_rgb_images=args.shared_rgb_images,
                 rgb_object_chunk_size=args.rgb_object_chunk_size,
                 parallel_preprocessing=not args.serial_preprocessing,
+                overlap_event_with_rgb_preparation=args.overlap_event_with_rgb_preparation,
                 rgb_feature_cache=feature_cache,
                 rgb_uint8=args.rgb_uint8,
             )
@@ -729,6 +734,7 @@ def parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--shared-rgb-images",
         action="store_true",
+        default=DEFAULT_PROFILE.shared_rgb_images,
         help="Convert each shared raw RGB frame to PIL once per update",
     )
     parser.add_argument(
@@ -741,6 +747,11 @@ def parser() -> argparse.ArgumentParser:
         "--serial-preprocessing",
         action="store_true",
         help="Prepare RGB before event dispatch, with both inside the update clock",
+    )
+    parser.add_argument(
+        "--overlap-event-with-rgb-preparation",
+        action="store_true",
+        help="Experimental: launch unchanged event producers while CPU RGB crops finish",
     )
     parser.add_argument(
         "--event-query-graphs",
