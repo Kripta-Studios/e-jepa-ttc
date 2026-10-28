@@ -1,6 +1,8 @@
 """CPU proofs for opaque compilation and unchanged guards; no CUDA admission."""
 
 import gc
+import inspect
+import textwrap
 import warnings
 
 import numpy as np
@@ -12,7 +14,9 @@ from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCCon
 from operational.train40_runtime.compiled_pipeline import (
     OPERATOR_NAME,
     CompiledTransportProducerRuntime,
+    NativeLogTransportPairTensorCore,
     OpaqueCompiledTransport,
+    _rewritten_native_log_match,
     attach_opaque_compiled_transport,
 )
 from operational.train40_runtime.compiled_transport import TransportPairTensorCore
@@ -251,3 +255,45 @@ def test_async_ticket_retains_compiler_owner_until_consumption(monkeypatch):
     assert actual._lifetime == (marker, runtime)
     assert actual.raw is original.raw and actual.experts is original.experts
     assert actual.guard is original.guard
+
+
+@pytest.mark.parametrize("radius", [1, 4])
+def test_native_entropy_log_core_is_exact_and_compiles_as_one_eager_graph(radius):
+    torch.manual_seed(183)
+    original = TransportPairTensorCore(radius, 0.02, deterministic_sampling=True)
+    core = NativeLogTransportPairTensorCore(original)
+    compiled = OpaqueCompiledTransport(core, backend="eager")
+    inputs = (
+        torch.randn(2, 8, 12, 12),
+        torch.randn(2, 8, 12, 12),
+        torch.rand(2, 1, 12, 12),
+        torch.rand(2, 1, 12, 12),
+    )
+    with torch.inference_mode():
+        traced = torch.jit.trace(compiled, inputs, check_trace=False)
+        for values in (inputs, tuple(value * 0 for value in inputs)):
+            expected, actual = original(*values), traced(*values)
+            assert all(torch.equal(a, b) for a, b in zip(actual, expected, strict=True))
+    diagnostics = compiled.diagnostics()
+    assert diagnostics["native_log_binding"]["native_log_replacements"] == 2
+    assert diagnostics["native_log_dispatcher_calls_process"] > 0
+
+
+def test_native_entropy_log_rewrite_fails_closed_when_audited_statements_change():
+    from e_jepa_ttc.models.local_transport import local_correlation_match
+
+    source = textwrap.dedent(inspect.getsource(local_correlation_match))
+    changed = source.replace("valid_count.log()", "torch.log(valid_count)")
+    with pytest.raises(ValueError, match="two exact replacements"):
+        _rewritten_native_log_match(changed)
+
+
+def test_native_entropy_log_custom_operator_schema_and_fake_metadata():
+    with torch.inference_mode():
+        for values in (torch.rand(3, 4) + 0.01, torch.rand(3, 4).T + 0.01):
+            checked = torch.library.opcheck(
+                torch.ops.train40_compiled_pipeline.native_log.default,
+                (values,),
+                test_utils=("test_schema", "test_faketensor"),
+            )
+            assert all(value == "SUCCESS" for value in checked.values())

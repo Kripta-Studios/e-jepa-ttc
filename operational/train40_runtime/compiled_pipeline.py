@@ -9,15 +9,23 @@ admitted for deployment until final TTC parity is measured independently.
 
 from __future__ import annotations
 
+import ast
+import hashlib
+import inspect
 import itertools
+import sys
+import textwrap
+import types
 import weakref
 from collections.abc import Mapping
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any, cast
 
 import torch
 from torch import Tensor, nn
 
+from e_jepa_ttc.models import local_transport as transport_oracle
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
 from operational.train40_runtime.compiled_transport import (
     TransportPairTensorCore,
@@ -27,12 +35,124 @@ from operational.train40_runtime.producers import AsyncExpertBlock, ProducerRunt
 
 OPERATOR_NAME = "train40_compiled_pipeline::transport_pair"
 _HANDLES = itertools.count(1)
+_NATIVE_LOG_CALLS = 0
+
+
+@torch.library.custom_op("train40_compiled_pipeline::native_log", mutates_args=())
+def _native_log(values: Tensor) -> Tensor:
+    """Keep exactly the original ATen log arithmetic outside Inductor lowering."""
+    global _NATIVE_LOG_CALLS
+    if values.dtype != torch.float32:
+        raise ValueError("Frozen entropy log expects FP32 inputs")
+    _NATIVE_LOG_CALLS += 1
+    return torch.log(values)
+
+
+@_native_log.register_fake
+def _native_log_fake(values: Tensor) -> Tensor:
+    if values.dtype != torch.float32:
+        raise ValueError("Frozen entropy log expects FP32 inputs")
+    return torch.empty_like(values)
+
+
+@lru_cache(maxsize=4)
+def _rewritten_native_log_match(source: str) -> tuple[Any, dict[str, Any]]:
+    """Replace exactly the two audited entropy logs in a private function view."""
+    expected = {
+        ast.dump(ast.parse(expression, mode="eval").body)
+        for expression in ("probability.clamp_min(1.0e-12).log()", "valid_count.log()")
+    }
+
+    class Rewrite(ast.NodeTransformer):
+        count = 0
+
+        def visit_Call(self, node: ast.Call) -> ast.AST:  # noqa: N802
+            if ast.dump(node) in expected:
+                self.count += 1
+                return ast.copy_location(
+                    ast.Call(
+                        func=ast.Name(id="_train40_native_log", ctx=ast.Load()),
+                        args=[cast(ast.Attribute, node.func).value],
+                        keywords=[],
+                    ),
+                    node,
+                )
+            return self.generic_visit(node)
+
+    rewrite = Rewrite()
+    parsed = rewrite.visit(ast.parse(source))
+    if rewrite.count != 2:
+        raise ValueError("Frozen entropy log statements changed; expected two exact replacements")
+    ast.fix_missing_locations(parsed)
+    source_hash = hashlib.sha256(source.encode()).hexdigest()
+    name = f"_train40_native_log_match_{source_hash[:16]}"
+    module = types.ModuleType(name)
+    module.__dict__.update(transport_oracle.local_correlation_match.__globals__)
+    module.__name__, module.__package__, module.__spec__ = name, "", None
+    sys.modules[name] = module
+    # Dynamo resolves function globals through __module__. A private registered
+    # module prevents guards from looking for new names in scientific sources.
+    scope = module.__dict__
+    scope["_train40_native_log"] = _native_log
+    exec(compile(parsed, __file__, "exec"), scope)  # noqa: S102
+    return scope["local_correlation_match"], {
+        "original_match_sha256": source_hash,
+        "rewritten_match_ast_sha256": hashlib.sha256(ast.dump(parsed).encode()).hexdigest(),
+        "native_log_replacements": rewrite.count,
+    }
+
+
+class NativeLogTransportPairTensorCore(TransportPairTensorCore):
+    """Compile the transport block while preserving its two original ATen logs."""
+
+    def __init__(self, original: TransportPairTensorCore) -> None:
+        if original.reuse_reverse:
+            raise ValueError("Native-log admission preserves original bidirectional matching")
+        super().__init__(
+            original.radius,
+            original.temperature,
+            deterministic_sampling=original.deterministic_sampling,
+            reuse_reverse=False,
+            reuse_samples=original.reuse_samples,
+        )
+        source = textwrap.dedent(inspect.getsource(transport_oracle.local_correlation_match))
+        self.match, self.native_log_binding = _rewritten_native_log_match(source)
+
+    def forward(
+        self,
+        previous: Tensor,
+        current: Tensor,
+        foreground_previous: Tensor,
+        foreground_current: Tensor,
+    ) -> tuple[Tensor, Tensor]:
+        """Keep all original correlations and summaries with native entropy logs."""
+        forward = self.match(previous, current, radius=self.radius, temperature=self.temperature)
+        reverse = self.match(current, previous, radius=self.radius, temperature=self.temperature)
+        return (
+            transport_oracle.transport_physical_features(
+                forward,
+                reverse,
+                foreground_weight=foreground_previous,
+                radius=self.radius,
+                deterministic_sampling=self.deterministic_sampling,
+                reuse_reverse_sample=self.reuse_samples,
+            ),
+            transport_oracle.transport_physical_features(
+                reverse,
+                forward,
+                foreground_weight=foreground_current,
+                radius=self.radius,
+                deterministic_sampling=self.deterministic_sampling,
+                reuse_reverse_sample=self.reuse_samples,
+            ),
+        )
 
 
 @dataclass(eq=False)
 class _Executor:
     callable: Any
     backend: str
+    native_log_binding: dict[str, Any] | None = None
     calls: int = 0
     traced_calls: int = 0
 
@@ -86,6 +206,11 @@ class OpaqueCompiledTransport(nn.Module):
                 options=dict(options) if options is not None else None,
             ),
             backend,
+            native_log_binding=(
+                dict(core.native_log_binding)
+                if isinstance(core, NativeLogTransportPairTensorCore)
+                else None
+            ),
         )
         object.__setattr__(self, "_executor", executor)
         _EXECUTORS[self.handle] = executor
@@ -114,6 +239,10 @@ class OpaqueCompiledTransport(nn.Module):
             "compile_backend": executor.backend,
             "dispatcher_calls": executor.calls,
             "nested_jit_tracing_calls": executor.traced_calls,
+            "native_log_binding": executor.native_log_binding,
+            "native_log_dispatcher_calls_process": (
+                _NATIVE_LOG_CALLS if executor.native_log_binding is not None else None
+            ),
         }
 
 
@@ -122,12 +251,15 @@ def attach_opaque_compiled_transport(
     *,
     backend: str = "inductor",
     options: Mapping[str, Any] | None = None,
+    native_log: bool = False,
 ) -> CausalScaleTTC:
     """Share frozen weights and replace only audited transport blocks privately."""
     view = attach_transport_pair_core(model, reuse_reverse=False)
     for scale in ("fine", "coarse"):
         name = f"_train40_transport_{scale}"
         core = cast(TransportPairTensorCore, view._modules[name])
+        if native_log:
+            core = NativeLogTransportPairTensorCore(core).eval()
         view._modules[name] = OpaqueCompiledTransport(core, backend=backend, options=options)
     return view
 
@@ -150,9 +282,12 @@ class CompiledTransportProducerRuntime(ProducerRuntime):
         options: Mapping[str, Any] | None = None,
         reuse_event_encodings: bool = False,
         reuse_rgb_encodings: bool = True,
+        native_log: bool = False,
     ) -> None:
         proposed = {
-            name: attach_opaque_compiled_transport(model, backend=backend, options=options)
+            name: attach_opaque_compiled_transport(
+                model, backend=backend, options=options, native_log=native_log
+            )
             if isinstance(model, CausalScaleTTC) and model.config.transport_enabled
             else model
             for name, model in models.items()

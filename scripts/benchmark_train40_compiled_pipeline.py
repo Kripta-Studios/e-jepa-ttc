@@ -141,6 +141,7 @@ def run(args: argparse.Namespace) -> None:
         import torch
 
         from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
+        from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
         from operational.rgb_port import transfer as engine
         from operational.train40_runtime.compiled_pipeline import CompiledTransportProducerRuntime
         from operational.train40_runtime.context import ContextRuntime
@@ -151,7 +152,12 @@ def run(args: argparse.Namespace) -> None:
             snapshot_files,
             verify_snapshot,
         )
-        from operational.train40_runtime.producers import ProducerRuntime
+        from operational.train40_runtime.producers import (
+            FEATURE_NAMES,
+            ProducerRuntime,
+            ProducerTensorCore,
+            reuse_endpoint_encoders,
+        )
         from scripts.benchmark_train40_producer_variants import (
             _preserve_source_bytes,
             _weight_values,
@@ -253,7 +259,10 @@ def run(args: argparse.Namespace) -> None:
         if args.precision_mode == "no-fma-exact-div":
             compiler_options["eager_numerics.division_rounding"] = True
         summary["binding"]["compiler_options"] = compiler_options
-        compiled = CompiledTransportProducerRuntime(models, "cuda", options=compiler_options)
+        summary["binding"]["native_entropy_log"] = args.native_log
+        compiled = CompiledTransportProducerRuntime(
+            models, "cuda", options=compiler_options, native_log=args.native_log
+        )
         variants = {"original_graph": baseline, "compiled_transport_graph": compiled}
 
         def route(runtime: ProducerRuntime, inputs: Any, *, historical: bool = False) -> Any:
@@ -331,6 +340,59 @@ def run(args: argparse.Namespace) -> None:
                 "rgb": rgb,
             }
 
+        def producer_attribution(inputs: Any) -> list[dict[str, Any]]:
+            """Isolate compiler drift before PAIR/context under matched batching."""
+            event, delta, rgbs = inputs
+            probes = []
+            chunk = args.event_object_chunk_size or len(rgbs)
+            for start in range(0, len(rgbs), chunk):
+                end = min(start + chunk, len(rgbs))
+                probes.append(("E", start, event[start * 4 : end * 4], delta[start * 4 : end * 4]))
+            probes.extend(
+                ("R", index, sensor, clock)
+                for index, (sensor, clock, _) in enumerate(rgbs)
+                if sensor is not None
+            )
+            result = []
+            for modality, start, sensor, clock in probes:
+                names = ("E_A5_MATCHED", "E_C2F_MATCHED") if modality == "E" else ("R_A5", "R_C2F")
+                for name in names:
+                    original, proposed = models[name], compiled.models[name]
+                    if not isinstance(original, CausalScaleTTC) or not isinstance(
+                        proposed, CausalScaleTTC
+                    ):
+                        raise TypeError(
+                            f"Producer attribution requires frozen CausalScaleTTC: {name}"
+                        )
+                    if modality == "R" and len(sensor) > 1:
+                        original = reuse_endpoint_encoders(
+                            original,
+                            len(sensor),
+                            int(sensor.shape[1]),
+                            history_group_size=len(sensor),
+                        )
+                        proposed = reuse_endpoint_encoders(
+                            proposed,
+                            len(sensor),
+                            int(sensor.shape[1]),
+                            history_group_size=len(sensor),
+                        )
+                    expected = ProducerTensorCore(original)(sensor, clock)
+                    actual = ProducerTensorCore(proposed)(sensor, clock)
+                    result.append(
+                        {
+                            "producer": name,
+                            "object_chunk_start": start,
+                            "reference": "EAGER_PRODUCER_MATCHED_ENCODER_REUSE_AND_BATCH_SHAPE",
+                            "shape": list(sensor.shape),
+                            "features": {
+                                key: tensor_comparison(a, b)
+                                for key, a, b in zip(FEATURE_NAMES, actual, expected, strict=True)
+                            },
+                        }
+                    )
+            return result
+
         with torch.inference_mode(), PersistentSensorInputs() as sensors:
             for objects in args.objects:
                 for index in args.indices:
@@ -405,6 +467,7 @@ def run(args: argparse.Namespace) -> None:
                         }
                         ids = [region.object_id for region in regions]
                         transport_after_replays = compiled.transport_diagnostics()
+                        attribution = producer_attribution(inputs)
                         record.update(
                             status="MEASURED",
                             setup_seconds=cold,
@@ -423,6 +486,7 @@ def run(args: argparse.Namespace) -> None:
                             ),
                             transport_dispatcher_before_replays=transport_before_replays,
                             transport_dispatcher_after_replays=transport_after_replays,
+                            producer_attribution=attribution,
                             feature_parity={
                                 name: compare_features(value, oracle_features)
                                 for name, value in outputs.items()
@@ -532,6 +596,11 @@ def main() -> None:
     parser.add_argument("--objects", nargs="+", type=int, default=[1])
     parser.add_argument("--repeats", type=int, default=20)
     parser.add_argument("--warmup", type=int, default=3)
+    parser.add_argument(
+        "--native-log",
+        action="store_true",
+        help="Keep the two entropy logs as original ATen operations",
+    )
     parser.add_argument(
         "--precision-mode",
         choices=("default", "no-fma", "no-fma-exact-div"),
