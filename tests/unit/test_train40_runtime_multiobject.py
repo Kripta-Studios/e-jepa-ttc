@@ -426,6 +426,7 @@ def test_new_service_invalidates_cache_from_previous_producer_lifetime(service, 
         graphs=False,
         parallel_branches=False,
         rgb_feature_cache=cache,
+        rgb_object_chunk_size=cache.rgb_object_chunk_size,
     )
     try:
         assert cache.stats["entries"] == 0
@@ -434,7 +435,7 @@ def test_new_service_invalidates_cache_from_previous_producer_lifetime(service, 
 
 
 def test_external_producer_and_cache_cannot_claim_unbound_shared_identity():
-    cache = RGBBatchCache(model_sha256="a" * 64, runtime_sha256="b" * 64)
+    cache = RGBBatchCache(model_sha256="a" * 64, runtime_sha256="b" * 64, rgb_object_chunk_size=1)
     with pytest.raises(ValueError, match="separately bound backend"):
         MultiObjectTrain40Service(
             {},

@@ -20,6 +20,28 @@ from scripts.benchmark_train40_multiobject import (
 )
 
 
+def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_in():
+    arguments = [
+        "--candidate",
+        "candidate",
+        "--manifest",
+        "manifest",
+        "--reference",
+        "reference",
+        "--output",
+        "fresh",
+    ]
+    options = runner.parser().parse_args(arguments)
+    assert options.counts == [1, 2]
+    assert options.no_event_reuse and options.rgb_object_chunk_size == 1
+    assert options.backend == "prefix" and options.event_query_graphs
+    assert options.event_normalization == "topk" and options.parallel
+    assert not options.rgb_uint8 and not options.rgb_feature_cache
+    assert not options.shared_rgb_images and not options.serial_preprocessing
+    experimental = runner.parser().parse_args(arguments + ["--event-reuse", "--rgb-uint8"])
+    assert not experimental.no_event_reuse and experimental.rgb_uint8
+
+
 def test_artificial_population_keeps_primary_and_creates_distinct_regions():
     event, rgb = [10.0, 20.0, 100.0, 110.0], [2.0, 3.0, 92.0, 93.0]
     original = copy.deepcopy((event, rgb))

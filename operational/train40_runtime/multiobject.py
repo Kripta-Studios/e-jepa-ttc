@@ -22,6 +22,7 @@ from e_jepa_ttc.rgb_port.data import RGB_SIZE, _effective_square
 from operational.rgb_port import transfer as engine
 from operational.rgb_port_revision.transfer_inputs import sensor_triplets
 from operational.train40_runtime.batched_context import BatchedContextRuntime, ContextObservation
+from operational.train40_runtime.defaults import DEFAULT_PROFILE
 from operational.train40_runtime.inputs import PersistentSensorInputs, _normalized_crop
 from operational.train40_runtime.producers import ProducerRuntime
 
@@ -220,16 +221,16 @@ class MultiObjectTrain40Service:
         device: str | torch.device = "cuda",
         *,
         graphs: bool = True,
-        parallel_branches: bool = True,
-        rgb_workers: int = 8,
-        max_objects: int = 20,
+        parallel_branches: bool = DEFAULT_PROFILE.parallel_branches,
+        rgb_workers: int = DEFAULT_PROFILE.rgb_workers,
+        max_objects: int = DEFAULT_PROFILE.max_objects,
         retain_input_diagnostics: bool = False,
-        reuse_event_encodings: bool | None = None,
+        reuse_event_encodings: bool | None = DEFAULT_PROFILE.reuse_event_encodings,
         shared_rgb_images: bool = False,
-        rgb_object_chunk_size: int | None = None,
+        rgb_object_chunk_size: int | None = DEFAULT_PROFILE.rgb_object_chunk_size,
         parallel_preprocessing: bool = True,
         rgb_feature_cache: RGBBatchCache | None = None,
-        rgb_uint8: bool = False,
+        rgb_uint8: bool = DEFAULT_PROFILE.rgb_uint8,
         producer_runtime: ProducerRuntime | None = None,
     ) -> None:
         if not isinstance(max_objects, int) or not 1 <= max_objects <= 20:

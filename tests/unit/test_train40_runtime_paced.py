@@ -272,3 +272,110 @@ def test_default_wait_strategy_is_still_legacy_event():
         lambda index: index, lambda item: {"a": prediction()}, ["a"], updates=1, startup_lead_s=0
     )
     assert result["wait_strategy"] == "event"
+
+
+def test_source_lifecycle_owns_one_thread_and_starts_deadlines_after_warmup():
+    main = threading.get_ident()
+    calls = []
+    warmup_end = []
+
+    def warmup():
+        calls.append(("warmup", threading.get_ident()))
+        warmup_end.append(time.perf_counter_ns())
+        return {"causal_prefill": True}
+
+    def acquire(index):
+        calls.append(("acquire", threading.get_ident()))
+        return index
+
+    def finalize():
+        calls.append(("finalize", threading.get_ident()))
+        return {"closed": True}
+
+    result = run_paced_replay(
+        acquire,
+        lambda item: {"a": prediction()},
+        ["a"],
+        updates=2,
+        rate_hz=100,
+        wait_strategy="sleep",
+        source_warmup=warmup,
+        source_finalize=finalize,
+    )
+    assert [name for name, _ in calls] == ["warmup", "acquire", "acquire", "finalize"]
+    assert len({identity for _, identity in calls}) == 1
+    assert calls[0][1] != main
+    assert result["first_scheduled_ns"] >= warmup_end[0] + 50_000_000
+    assert result["source_lifecycle"]["warmup"]["result"] == {"causal_prefill": True}
+    assert result["source_lifecycle"]["finalize"]["result"] == {"closed": True}
+    assert result["capacity_checks"]["source_lifecycle_succeeded"]
+
+
+@pytest.mark.parametrize("failure", ["warmup", "acquire", "finalize"])
+def test_lifecycle_finalization_survives_source_failures(failure):
+    calls = []
+
+    def warmup():
+        calls.append("warmup")
+        if failure == "warmup":
+            raise RuntimeError("cannot open")
+
+    def acquire(index):
+        calls.append("acquire")
+        if failure == "acquire":
+            raise RuntimeError("cannot read")
+        return index
+
+    def finalize():
+        calls.append("finalize")
+        if failure == "finalize":
+            raise RuntimeError("cannot close")
+
+    result = run_paced_replay(
+        acquire,
+        lambda item: {"a": prediction()},
+        ["a"],
+        updates=1,
+        startup_lead_s=0,
+        source_warmup=warmup,
+        source_finalize=finalize,
+    )
+    assert calls[-1] == "finalize"
+    assert not result["capacity_checks_passed"]
+    if failure == "warmup":
+        assert calls == ["warmup", "finalize"]
+        assert result["missing_arrival_ids"] == ["update-0"]
+    if failure == "acquire":
+        assert result["source_errors"] == 1
+    else:
+        assert not result["capacity_checks"]["source_lifecycle_succeeded"]
+        assert result["source_lifecycle"]["errors"][0]["phase"] == failure
+
+
+def test_caller_cancellation_still_finalizes_source_on_producer_thread():
+    ids = {}
+
+    class Cancelled(BaseException):
+        pass
+
+    def acquire(index):
+        ids["acquire"] = threading.get_ident()
+        return index
+
+    def infer(arrival):
+        raise Cancelled()
+
+    def finalize():
+        ids["finalize"] = threading.get_ident()
+
+    with pytest.raises(Cancelled):
+        run_paced_replay(
+            acquire,
+            infer,
+            ["a"],
+            updates=1000,
+            startup_lead_s=0,
+            wait_strategy="sleep",
+            source_finalize=finalize,
+        )
+    assert ids["acquire"] == ids["finalize"] != threading.get_ident()

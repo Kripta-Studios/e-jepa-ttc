@@ -11,6 +11,7 @@ import h5py
 import numpy as np
 import pytest
 
+from operational.train40_runtime import inputs as input_module
 from operational.train40_runtime.measurement import PREDICTION_COMPONENTS
 from operational.train40_runtime.paced import Arrival, run_paced_replay
 from scripts import benchmark_train40_paced as runner
@@ -85,16 +86,26 @@ def source_fixture(tmp_path, monkeypatch):
     reads = []
 
     class Reader:
+        intervals_seen = []
+        closes = []
+
         def __init__(self, path):
             self.path = path
             self.layout = SimpleNamespace(t="event_t")
 
         def __enter__(self):
+            return self.open()
+
+        def open(self):
             reads.append(threading.get_ident())
             self.handle = h5py.File(self.path, "r")
             return self
 
         def __exit__(self, *args):
+            self.close()
+
+        def close(self):
+            self.closes.append(threading.get_ident())
             self.handle.close()
 
         def _require_handle(self):
@@ -104,6 +115,7 @@ def source_fixture(tmp_path, monkeypatch):
             return 0, 2
 
         def iter_window_chunks(self, start, end):
+            self.intervals_seen.append((start, end))
             yield {
                 "x": np.array([0, 1], dtype=np.int32),
                 "y": np.array([0, 1], dtype=np.int32),
@@ -112,6 +124,10 @@ def source_fixture(tmp_path, monkeypatch):
             }
 
     monkeypatch.setattr(runner, "EvTTCEventReader", Reader)
+    monkeypatch.setattr(input_module, "EvTTCEventReader", Reader)
+    monkeypatch.setattr(
+        runner.PersistentSensorInputs, "_box", lambda self, item: runner._rgb_box(item)
+    )
     monkeypatch.setattr(runner, "_rgb_box", lambda item: (0.0, 0.0, 3.0, 3.0))
     monkeypatch.setattr(runner, "_calibration", lambda handle: {"test": np.eye(2)})
     monkeypatch.setattr(runner, "_calibration_sha256", lambda value: "calibration")
@@ -191,6 +207,175 @@ def test_raw_arrays_are_owned_readonly_and_do_not_expose_handles(source_fixture)
     with pytest.raises(TypeError):
         payload.rgb.frames[0] = np.zeros(1)
     assert not hasattr(payload, "reader")
+
+
+def twenty_hz_schedule(source):
+    """Two alternating native100ms cohorts, without reading a real dataset."""
+    path = source.schedule[0]["raw_path"]
+    clock = np.arange(300_000, 1_300_001, 50_000, dtype=np.int64)
+    with h5py.File(path, "a") as handle:
+        del handle["blackflys/left/data"]
+        del handle["blackflys/left/ts"]
+        handle["blackflys/left/data"] = np.stack(
+            [np.full((4, 4, 3), index, dtype=np.uint8) for index in range(len(clock))]
+        )
+        handle["blackflys/left/ts"] = clock
+    stat = runner.Path(path).stat()
+    rows = []
+    for index in range(10):
+        row = copy.deepcopy(source.schedule[0])
+        row["anchor_us"] = 1_000_000 + index * 20_000
+        row["query_id"] = f"query-{index}"
+        row["raw_stat"] = {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+        rows.append(row)
+    return rows
+
+
+def test_persistent_raw_matches_disk_and_reads_each_causal_frame_once(source_fixture):
+    disk, reads, geometry = source_fixture
+    schedule = twenty_hz_schedule(disk)
+    source = runner.PersistentRawSource(schedule, 10_000, max_frame_bytes=16 * 48)
+    payloads = []
+
+    def infer(arrival):
+        payloads.append(arrival.payload)
+        return {
+            "a": {"success": True, "predictions": {name: 1.0 for name in PREDICTION_COMPONENTS}}
+        }
+
+    result = run_paced_replay(
+        source.acquire_raw,
+        infer,
+        ["a"],
+        updates=10,
+        rate_hz=200,
+        queue_capacity=10,
+        wait_strategy="sleep",
+        source_warmup=source.warmup,
+        source_finalize=source.finalize,
+    )
+    assert result["grouped"]["passed"]
+    assert result["capacity_checks"]["source_lifecycle_succeeded"]
+    assert source.closed and source.stats["closed_on_owner_thread"]
+    assert source.stats["input_stats"]["source_opens"] == 1
+    assert len(reads) == 1 and reads[0] != threading.get_ident()
+    assert source.stats["warmup_cutoff_us"] == 980_000
+    assert source.stats["warmup_frames"] == 13  # <=950ms, never the 1000ms frame.
+    assert source.stats["unique_frames_read"] == 17
+    assert source.stats["peak_frame_cache_count"] == 14
+    assert source.stats["peak_frame_cache_bytes"] <= 16 * 48
+    assert runner.EvTTCEventReader.intervals_seen == [
+        (980_000 + index * 20_000, 1_000_000 + index * 20_000) for index in range(10)
+    ]
+    assert geometry == []  # No ROI/projection work in acquisition or warmup.
+    assert payloads[0].source_diagnostics["new_frames_read"] == 1
+    assert payloads[1].source_diagnostics["new_frames_read"] == 0
+    assert payloads[3].source_diagnostics["new_frames_read"] == 1
+    control = runner.DiskRawSource(schedule, 10_000)
+    for index, actual in enumerate(payloads):
+        expected = control.acquire_raw(index)
+        assert actual.row_json == expected.row_json
+        assert actual.rgb.triplets == expected.rgb.triplets
+        assert actual.boxes == expected.boxes
+        assert actual.byte_count == expected.byte_count
+        for key in actual.events:
+            np.testing.assert_array_equal(actual.events[key], expected.events[key])
+        for key in actual.rgb.frames:
+            np.testing.assert_array_equal(actual.rgb.frames[key], expected.rgb.frames[key])
+            assert actual.rgb.timestamps_us[key] <= actual.rgb.query_us
+            assert (
+                actual.rgb.frames[key].flags.owndata and not actual.rgb.frames[key].flags.writeable
+            )
+    common = next(iter(payloads[0].rgb.frames))
+    assert not np.shares_memory(payloads[0].rgb.frames[common], payloads[1].rgb.frames[common])
+
+
+def test_persistent_raw_overflow_fails_and_closes_without_truncation(source_fixture):
+    disk, _, _ = source_fixture
+    source = runner.PersistentRawSource(twenty_hz_schedule(disk), 10_000, max_frame_bytes=12 * 48)
+    result = run_paced_replay(
+        source.acquire_raw,
+        lambda item: pytest.fail("Warmup should fail"),
+        ["a"],
+        updates=1,
+        source_warmup=source.warmup,
+        source_finalize=source.finalize,
+    )
+    assert source.closed
+    assert result["source_lifecycle"]["errors"][0]["phase"] == "warmup"
+    assert "BYTE_LIMIT" in result["source_lifecycle"]["errors"][0]["error"]
+    assert not result["capacity_checks"]["source_lifecycle_succeeded"]
+    assert not result["grouped"]["passed"]
+
+
+def test_persistent_raw_refuses_unowned_access_and_reopening_after_close(source_fixture):
+    disk, _, _ = source_fixture
+    source = runner.PersistentRawSource(disk.schedule, 10_000)
+    with pytest.raises(RuntimeError, match="owner thread"):
+        source.acquire_raw(0)
+    source.warmup()
+    errors = []
+
+    def wrong_thread():
+        for method in (lambda: source.acquire_raw(0), source.finalize):
+            try:
+                method()
+            except RuntimeError as exc:
+                errors.append(str(exc))
+
+    worker = threading.Thread(target=wrong_thread)
+    worker.start()
+    worker.join()
+    assert len(errors) == 2
+    source.finalize()
+    with pytest.raises(RuntimeError, match="only once"):
+        source.warmup()
+
+
+def test_persistent_raw_closes_on_caller_cancellation(source_fixture):
+    disk, _, _ = source_fixture
+    source = runner.PersistentRawSource(disk.schedule, 10_000)
+
+    class Cancelled(BaseException):
+        pass
+
+    def infer(arrival):
+        raise Cancelled()
+
+    with pytest.raises(Cancelled):
+        run_paced_replay(
+            source.acquire_raw,
+            infer,
+            ["a"],
+            updates=3,
+            source_warmup=source.warmup,
+            source_finalize=source.finalize,
+            wait_strategy="sleep",
+        )
+    assert source.closed and source.stats["closed_on_owner_thread"]
+    assert source.inputs._reader is None
+
+
+def test_persistent_raw_closes_after_acquisition_errors(source_fixture, monkeypatch):
+    disk, _, _ = source_fixture
+    source = runner.PersistentRawSource(disk.schedule, 10_000)
+
+    def broken_box(item):
+        raise ValueError("annotation changed")
+
+    monkeypatch.setattr(runner, "_rgb_box", broken_box)
+    result = run_paced_replay(
+        source.acquire_raw,
+        lambda item: pytest.fail("No usable payload"),
+        ["a"],
+        updates=3,
+        source_warmup=source.warmup,
+        source_finalize=source.finalize,
+        wait_strategy="sleep",
+    )
+    assert result["source_errors"] == 3
+    assert source.closed and source.stats["closed_on_owner_thread"]
+    assert not result["grouped"]["passed"]
 
 
 def test_source_and_geometry_run_on_separate_threads_with_contiguous_updates(source_fixture):
@@ -289,7 +474,18 @@ def test_future_bbox_is_rejected_before_reading_sensor(source_fixture):
 
 @pytest.mark.parametrize(
     "failure",
-    [None, "drop", "source", "coverage", "arrival", "short", "parity", "unchecked", "originals"],
+    [
+        None,
+        "drop",
+        "source",
+        "coverage",
+        "arrival",
+        "short",
+        "parity",
+        "unchecked",
+        "originals",
+        "lifecycle",
+    ],
 )
 def test_capacity_requires_every_gate_including_final_drops(failure):
     paced = {
@@ -322,9 +518,11 @@ def test_capacity_requires_every_gate_including_final_drops(failure):
         parity["passed"] = False
     elif failure == "unchecked":
         parity["performed"] = False
+    elif failure == "lifecycle":
+        paced["capacity_checks"]["source_lifecycle_succeeded"] = False
     result = runner.capacity_admission(paced, parity, failure != "originals")
     assert result["capacity_with_parity_passed"] == (failure is None)
-    if failure in ("drop", "source", "coverage", "arrival"):
+    if failure in ("drop", "source", "coverage", "arrival", "lifecycle"):
         assert not result["complete_measurement_coverage"]
 
 
@@ -421,7 +619,8 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
             "sequence",
         ]
     )
-    assert args.objects == 20 and args.queue_capacity == 2
+    assert args.objects == 1 and args.queue_capacity == 2
+    assert args.event_query_graphs and args.event_normalization == "topk"
     assert args.verify_parity is False
     assert args.wait_strategy == "sleep"
     legacy = runner.parser().parse_args(

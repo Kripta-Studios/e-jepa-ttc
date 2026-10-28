@@ -16,7 +16,8 @@ import threading
 import time
 from collections.abc import Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from contextlib import AbstractContextManager, nullcontext
+from dataclasses import dataclass, replace
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
@@ -40,6 +41,8 @@ from operational.evttc_transfer.inputs import (  # noqa: E402
 )
 from operational.rgb_port import transfer as engine  # noqa: E402
 from operational.rgb_port_revision.transfer_inputs import sensor_triplets  # noqa: E402
+from operational.train40_runtime.defaults import DEFAULT_PROFILE  # noqa: E402
+from operational.train40_runtime.inputs import PersistentSensorInputs  # noqa: E402
 from operational.train40_runtime.measurement import (  # noqa: E402
     PREDICTION_COMPONENTS,
     prediction_parity,
@@ -92,6 +95,7 @@ MILESTONE_CHECKS = (
     "no_prior_work_at_scheduled_arrivals",
     "finished_before_end_of_last_period",
     "offered_50hz_for_at_least_60s",
+    "source_lifecycle_succeeded",
 )
 
 
@@ -189,6 +193,7 @@ class RawUpdate:
     calibration: Mapping[str, np.ndarray]
     byte_count: int
     acquisition_thread: int
+    source_diagnostics: Mapping[str, Any] | None = None
 
 
 class DiskRawSource:
@@ -199,6 +204,26 @@ class DiskRawSource:
             raise ValueError("max_payload_bytes must be positive")
         self.schedule = schedule
         self.max_payload_bytes = max_payload_bytes
+
+    def _reader(self, row: Mapping[str, Any]) -> AbstractContextManager[EvTTCEventReader]:
+        return EvTTCEventReader(Path(row["raw_path"]))
+
+    def _boxes(self, sources: Sequence[Mapping[str, Any]]) -> tuple[Any, ...]:
+        return tuple(_rgb_box(item) for item in sources)
+
+    def _calibration(self, handle: h5py.File) -> dict[str, np.ndarray]:
+        return {key: _own_readonly(value) for key, value in _calibration(handle).items()}
+
+    def _clock(self, stamps: h5py.Dataset) -> np.ndarray:
+        if stamps.ndim != 1 or len(stamps) * 8 > self.max_payload_bytes:
+            raise ValueError("RAW_CLOCK_BYTE_LIMIT")
+        return np.asarray(stamps, dtype=np.int64)
+
+    def _prepare_frames(self, data: h5py.Dataset, clock: np.ndarray, query_us: int) -> None:
+        """Disk control deliberately rereads its selected raw frames each query."""
+
+    def _frame(self, data: h5py.Dataset, index: int) -> np.ndarray:
+        return _own_readonly(data[index], np.uint8)
 
     def acquire_raw(self, index: int) -> RawUpdate:
         """Read only the current raw packet, causal RGB frames and bbox metadata."""
@@ -219,7 +244,7 @@ class DiskRawSource:
             raise ValueError("RAW_ANNOTATION_BYTE_LIMIT")
         # Validation reads metadata only; projection and square construction are
         # deliberately postponed until the consuming thread's inference clock.
-        boxes = tuple(_rgb_box(item) for item in sources)
+        boxes = self._boxes(sources)
         path = Path(row["raw_path"])
         before = path.stat()
         if any(
@@ -227,9 +252,9 @@ class DiskRawSource:
             for key, value in (("size_bytes", before.st_size), ("mtime_ns", before.st_mtime_ns))
         ):
             raise ValueError("Raw source changed since replay manifest generation")
-        with EvTTCEventReader(path) as reader:
+        with self._reader(row) as reader:
             handle = reader._require_handle()
-            calibration = {key: _own_readonly(value) for key, value in _calibration(handle).items()}
+            calibration = self._calibration(handle)
             if _calibration_sha256(calibration) != row["calibration_sha256"]:
                 raise ValueError("Raw calibration differs from replay selection")
             used = len(row_json) + sum(value.nbytes for value in calibration.values())
@@ -241,9 +266,7 @@ class DiskRawSource:
             groups: list[tuple[int, ...]] = []
             reason = "RGB_DATASET_MISSING"
             if isinstance(data, h5py.Dataset) and isinstance(stamps, h5py.Dataset):
-                if stamps.ndim != 1 or len(stamps) * 8 > self.max_payload_bytes:
-                    raise ValueError("RAW_CLOCK_BYTE_LIMIT")
-                clock = np.asarray(stamps, dtype=np.int64)
+                clock = self._clock(stamps)
                 groups = [
                     tuple(int(item) for item in group) for group in sensor_triplets(clock, query)
                 ]
@@ -258,8 +281,9 @@ class DiskRawSource:
                 frame_bytes = int(np.prod(data.shape[1:]))
                 if used + frame_bytes * len(ids) > self.max_payload_bytes:
                     raise ValueError("RAW_PAYLOAD_BYTE_LIMIT: RGB frames cannot be truncated")
+                self._prepare_frames(data, clock, query)
                 for frame_id in ids:
-                    frames[frame_id] = _own_readonly(data[frame_id], np.uint8)
+                    frames[frame_id] = self._frame(data, frame_id)
                     timestamps[frame_id] = int(clock[frame_id])
                 used += sum(value.nbytes for value in frames.values())
                 reason = "" if groups else "INSUFFICIENT_CAUSAL_RGB_HISTORY"
@@ -295,6 +319,183 @@ class DiskRawSource:
             if int(clock[0]) > end - 600_000 or int(clock[-1]) < end:
                 raise ValueError("Startup requires the full preceding 600ms of sensor support")
             return bounded_events(reader, end - 600_000, end, max_bytes)
+
+
+class PersistentRawSource(DiskRawSource):
+    """One producer-owned reader and a bounded complete causal raw RGB ring.
+
+    Cache all native frames in the last 650ms, not just one selected triplet
+    cohort: a 20Hz sensor can alternate two native-100ms cohorts. Every payload
+    still gets independent readonly frame copies; no lifetime sharing with GPU.
+    """
+
+    def __init__(
+        self,
+        schedule: Sequence[Mapping[str, Any]],
+        max_payload_bytes: int,
+        *,
+        max_frame_bytes: int = 128 * 1024**2,
+    ) -> None:
+        super().__init__(schedule, max_payload_bytes)
+        if max_frame_bytes <= 0:
+            raise ValueError("RAW frame cache byte budget must be positive")
+        self.max_frame_bytes = max_frame_bytes
+        self.inputs: PersistentSensorInputs | None = None
+        self.owner_thread: int | None = None
+        self._calibration_cache: dict[str, np.ndarray] | None = None
+        self._clock_cache: np.ndarray | None = None
+        self._loaded_through = -1
+        self._last_frame_query: int | None = None
+        self._next_index = 0
+        self.closed = False
+        self.stats: dict[str, Any] = {
+            "acquired_updates": 0,
+            "event_packet_read_bytes": 0,
+            "unique_frames_read": 0,
+            "copied_payload_frame_bytes": 0,
+            "peak_frame_cache_bytes": 0,
+            "peak_frame_cache_count": 0,
+            "frame_cache_budget_bytes": max_frame_bytes,
+        }
+
+    def _require_owner(self) -> PersistentSensorInputs:
+        if self.closed or self.inputs is None or threading.get_ident() != self.owner_thread:
+            raise RuntimeError("Persistent RAW source requires its live producer owner thread")
+        return self.inputs
+
+    def _reader(self, row: Mapping[str, Any]) -> AbstractContextManager[EvTTCEventReader]:
+        return nullcontext(self._require_owner()._source(row))
+
+    def _boxes(self, sources: Sequence[Mapping[str, Any]]) -> tuple[Any, ...]:
+        inputs = self._require_owner()
+        return tuple(inputs._box(item) for item in sources)
+
+    def _calibration(self, handle: h5py.File) -> dict[str, np.ndarray]:
+        self._require_owner()
+        if self._calibration_cache is None:
+            self._calibration_cache = super()._calibration(handle)
+            if sum(value.nbytes for value in self._calibration_cache.values()) > 1024**2:
+                raise ValueError("RAW_CALIBRATION_CACHE_BYTE_LIMIT")
+        return {key: _own_readonly(value) for key, value in self._calibration_cache.items()}
+
+    def _clock(self, stamps: h5py.Dataset) -> np.ndarray:
+        self._require_owner()
+        if self._clock_cache is None:
+            self._clock_cache = super()._clock(stamps)
+            if len(self._clock_cache) > 1 and np.any(np.diff(self._clock_cache) <= 0):
+                raise ValueError("RGB sensor clock must be strictly increasing")
+            self._clock_cache.setflags(write=False)
+        return self._clock_cache
+
+    def _prepare_frames(self, data: h5py.Dataset, clock: np.ndarray, query_us: int) -> None:
+        inputs = self._require_owner()
+        if self._last_frame_query is not None and query_us < self._last_frame_query:
+            raise ValueError("Persistent RAW frame clock cannot roll back")
+        if data.dtype != np.uint8 or len(data.shape) != 4 or data.shape[-1] != 3:
+            raise ValueError("Raw RGB must be uint8 HWC frames")
+        first = int(np.searchsorted(clock, query_us - 650_000, side="left"))
+        end = int(np.searchsorted(clock, query_us, side="right"))
+        frame_bytes = int(np.prod(data.shape[1:]))
+        if (end - first) * frame_bytes > self.max_frame_bytes:
+            raise ValueError("RAW_FRAME_CACHE_BYTE_LIMIT: complete causal history must fit")
+        for index in list(inputs._frames):
+            if index < first:
+                inputs._frame_bytes -= inputs._frames.pop(index).nbytes
+        for index in range(first, end):
+            if index not in inputs._frames:
+                if index <= self._loaded_through:
+                    raise ValueError("RAW_FRAME_REREAD: cache lost a still-causal native frame")
+                inputs._frame(data, index)
+                self.stats["unique_frames_read"] += 1
+                self._loaded_through = index
+        self._last_frame_query = query_us
+        self.stats["peak_frame_cache_bytes"] = max(
+            self.stats["peak_frame_cache_bytes"], inputs._frame_bytes
+        )
+        self.stats["peak_frame_cache_count"] = max(
+            self.stats["peak_frame_cache_count"], len(inputs._frames)
+        )
+
+    def _frame(self, data: h5py.Dataset, index: int) -> np.ndarray:
+        inputs = self._require_owner()
+        if index not in inputs._frames:
+            raise ValueError("Required RGB frame was not acquired by its causal deadline")
+        result = _own_readonly(inputs._frame(data, index), np.uint8)
+        self.stats["copied_payload_frame_bytes"] += result.nbytes
+        return result
+
+    def warmup(self) -> dict[str, Any]:
+        """Open on the producer and fill only RAW frames available at t0−20ms."""
+        if self.owner_thread is not None or self.closed:
+            raise RuntimeError("Persistent RAW source can be warmed only once")
+        self.owner_thread = threading.get_ident()
+        self.inputs = PersistentSensorInputs(
+            max_raw_bytes=0,
+            max_frame_bytes=self.max_frame_bytes,
+            rgb_workers=1,
+            max_bbox_entries=128,
+        )
+        row = self.schedule[0]
+        if "reason" in row:
+            raise ValueError("Cannot warm an excluded first replay slot")
+        cutoff = int(row["anchor_us"]) - STEP_US
+        with self._reader(row) as reader:
+            handle = reader._require_handle()
+            calibration = self._calibration(handle)
+            if _calibration_sha256(calibration) != row["calibration_sha256"]:
+                raise ValueError("Raw calibration differs from replay selection")
+            data, stamps = handle.get("blackflys/left/data"), handle.get("blackflys/left/ts")
+            if isinstance(data, h5py.Dataset) and isinstance(stamps, h5py.Dataset):
+                self._prepare_frames(data, self._clock(stamps), cutoff)
+        self.stats["warmup_cutoff_us"] = cutoff
+        self.stats["warmup_frames"] = len(self.inputs._frames)
+        return {
+            **self.stats,
+            "owner_thread": self.owner_thread,
+            "future_pixels_preloaded": False,
+            "representations_precomputed": False,
+        }
+
+    def acquire_raw(self, index: int) -> RawUpdate:
+        """Read only new packets/frames; preserve the default payload byte contract."""
+        self._require_owner()
+        if index != self._next_index:
+            raise ValueError("Persistent RAW acquisition indices must be contiguous")
+        self._next_index += 1
+        before = int(self.stats["unique_frames_read"])
+        payload = super().acquire_raw(index)
+        self.stats["acquired_updates"] += 1
+        self.stats["event_packet_read_bytes"] += sum(
+            value.nbytes for value in payload.events.values()
+        )
+        return replace(
+            payload,
+            source_diagnostics=MappingProxyType(
+                {
+                    "source_mode": "persistent",
+                    "new_frames_read": self.stats["unique_frames_read"] - before,
+                    "frame_cache_bytes": self._require_owner()._frame_bytes,
+                    "frame_cache_count": len(self._require_owner()._frames),
+                }
+            ),
+        )
+
+    def finalize(self) -> dict[str, Any]:
+        """Close the reader/cache on its owner, even after partial warmup failure."""
+        if self.owner_thread is not None and threading.get_ident() != self.owner_thread:
+            raise RuntimeError("Persistent RAW finalization must run on its owner thread")
+        if self.inputs is not None:
+            self.stats["input_stats"] = dict(self.inputs.stats)
+            try:
+                self.inputs.close()
+            finally:
+                self.closed = True
+        else:
+            self.closed = True
+        self._clock_cache = None
+        self._calibration_cache = None
+        self.stats["closed_on_owner_thread"] = threading.get_ident() == self.owner_thread
+        return dict(self.stats)
 
 
 def current_regions(payload: RawUpdate, count: int) -> list[ObjectRegion]:
@@ -365,6 +566,7 @@ class ContinuousConsumer:
                     "query_id": row["query_id"],
                     "anchor_us": query,
                     "raw_payload_bytes": payload.byte_count,
+                    "raw_source": dict(payload.source_diagnostics or {"source_mode": "disk"}),
                     "acquisition_thread": payload.acquisition_thread,
                     "inference_thread": threading.get_ident(),
                 }
@@ -455,6 +657,7 @@ def capacity_admission(
         and paced["dropped_updates"] == 0
         and paced["source_errors"] == 0
         and paced["capacity_checks"]["all_scheduled_arrivals_recorded"]
+        and paced["capacity_checks"].get("source_lifecycle_succeeded", True)
     )
     checks = {
         name: bool(paced and paced.get("capacity_checks", {}).get(name) is True)
@@ -512,6 +715,11 @@ def run(args: argparse.Namespace) -> None:
     consumer = None
     schedule: list[dict[str, Any]] = []
     startup: dict[str, Any] = {}
+    scope = (
+        SCOPE
+        if args.raw_source == "disk"
+        else "PACED_PERSISTENT_RAW_REPLAY_ARTIFICIAL_DISTINCT_ROIS_ALL_HOST_TTC"
+    )
     try:
         if args.queue_capacity < 1 or args.max_initial_bytes < 1:
             raise ValueError("Queue capacity and initial raw byte budget must be positive")
@@ -529,7 +737,13 @@ def run(args: argparse.Namespace) -> None:
         if manifest["provenance"]["base_manifest_canonical_sha256"] != _canonical_sha256(base):
             raise ValueError("Replay provenance does not bind the preserved base manifest")
         schedule = replay_schedule(manifest, args.sequence, args.updates)
-        source = DiskRawSource(schedule, args.max_payload_bytes)
+        source = (
+            PersistentRawSource(
+                schedule, args.max_payload_bytes, max_frame_bytes=args.max_raw_frame_cache_bytes
+            )
+            if args.raw_source == "persistent"
+            else DiskRawSource(schedule, args.max_payload_bytes)
+        )
         if args.backend == "prefix":
             from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
 
@@ -578,7 +792,7 @@ def run(args: argparse.Namespace) -> None:
         torch.manual_seed(7)
         binding = {
             "schema": "train40_paced_service_binding_v1",
-            "scope": SCOPE,
+            "scope": scope,
             "candidate": candidate_binding,
             "manifest_sha256": sha(args.manifest),
             "base_manifest_sha256": sha(args.base_manifest),
@@ -601,6 +815,16 @@ def run(args: argparse.Namespace) -> None:
             },
             "initialization_excluded": "preceding 600ms, model loading, synthetic shape priming",
             "raw_io_included": True,
+            "raw_source_mode": args.raw_source,
+            "persistent_raw_numeric_cache_upper_bound_bytes": (
+                args.max_raw_frame_cache_bytes + args.max_payload_bytes + 1024**2
+                if args.raw_source == "persistent"
+                else 0
+            ),
+            "persistent_bbox_cache_entries_max": 128 if args.raw_source == "persistent" else 0,
+            "source_warmup_excluded": "RAW frames available by first_anchor-20000us"
+            if args.raw_source == "persistent"
+            else None,
             "roi_geometry_in_inference": True,
             "precomputed_representations": False,
             "queue_byte_upper_bound": args.queue_capacity * args.max_payload_bytes,
@@ -668,11 +892,17 @@ def run(args: argparse.Namespace) -> None:
             rate_hz=50.0,
             queue_capacity=args.queue_capacity,
             wait_strategy=args.wait_strategy,
+            source_warmup=source.warmup if isinstance(source, PersistentRawSource) else None,
+            source_finalize=source.finalize if isinstance(source, PersistentRawSource) else None,
         )
+        startup["source_lifecycle"] = paced["source_lifecycle"]
+        _write(args.output / "startup.json", startup)
         _write(args.output / "paced.json", paced)
         _write(args.output / "service_updates.json", consumer.service_receipts)
         if args.verify_parity:
-            parity = separate_parity(source, consumer, models, norms)
+            parity = separate_parity(
+                DiskRawSource(schedule, args.max_payload_bytes), consumer, models, norms
+            )
             _write(args.output / "parity.json", parity)
     except BaseException as exc:
         caught = exc
@@ -712,7 +942,7 @@ def run(args: argparse.Namespace) -> None:
         capacity = bool(valid and admission["capacity_with_parity_passed"])
         summary = {
             "schema": "train40_paced_service_summary_v1",
-            "scope": SCOPE,
+            "scope": scope,
             "status": "COMPLETE"
             if valid and (not args.verify_parity or parity["passed"])
             else "FAILED",
@@ -757,7 +987,9 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument(
         "--sequence", required=True, help="One physical sequence ID from the causal replay manifest"
     )
-    result.add_argument("--objects", type=int, choices=range(1, 21), default=20)
+    result.add_argument(
+        "--objects", type=int, choices=range(1, 21), default=DEFAULT_PROFILE.replay_objects
+    )
     result.add_argument("--updates", type=int, help="Declared prefix only; no sampling or looping")
     result.add_argument("--queue-capacity", type=int, default=2)
     result.add_argument(
@@ -768,10 +1000,28 @@ def parser() -> argparse.ArgumentParser:
     )
     result.add_argument("--max-payload-bytes", type=int, default=128 * 1024**2)
     result.add_argument("--max-initial-bytes", type=int, default=512 * 1024**2)
-    result.add_argument("--backend", choices=("integral", "prefix"), default="prefix")
-    result.add_argument("--event-query-graphs", action="store_true")
-    result.add_argument("--event-normalization", choices=("sort", "topk"), default="sort")
-    result.add_argument("--rgb-workers", type=int, choices=range(1, 9), default=8)
+    result.add_argument(
+        "--raw-source",
+        choices=("disk", "persistent"),
+        default="disk",
+        help="Disk control or bounded owner-thread RAW cache (no ROI/features)",
+    )
+    result.add_argument("--max-raw-frame-cache-bytes", type=int, default=128 * 1024**2)
+    result.add_argument(
+        "--backend", choices=("integral", "prefix"), default=DEFAULT_PROFILE.backend
+    )
+    result.add_argument(
+        "--event-query-graphs", action="store_true", default=DEFAULT_PROFILE.event_query_graphs
+    )
+    result.add_argument("--no-event-query-graphs", dest="event_query_graphs", action="store_false")
+    result.add_argument(
+        "--event-normalization",
+        choices=("sort", "topk"),
+        default=DEFAULT_PROFILE.event_normalization,
+    )
+    result.add_argument(
+        "--rgb-workers", type=int, choices=range(1, 9), default=DEFAULT_PROFILE.rgb_workers
+    )
     result.add_argument(
         "--verify-parity",
         action="store_true",

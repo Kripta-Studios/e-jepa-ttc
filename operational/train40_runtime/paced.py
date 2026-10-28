@@ -118,6 +118,8 @@ def run_paced_replay(
     queue_capacity: int = 2,
     startup_lead_s: float = 0.05,
     wait_strategy: str = "event",
+    source_warmup: Callable[[], Mapping[str, Any] | None] | None = None,
+    source_finalize: Callable[[], Mapping[str, Any] | None] | None = None,
 ) -> dict[str, Any]:
     """Measure all scheduled arrivals, retaining failures and overload drops.
 
@@ -138,6 +140,10 @@ def run_paced_replay(
     ``wait_strategy='event'`` preserves the v1 scheduler. Explicit ``'sleep'``
     uses bounded time.sleep waits against the same absolute deadlines. All
     scheduler lateness remains inside both acquisition and response receipts.
+    Optional source lifecycle callbacks execute on the producer thread. A
+    successful warmup sets the first deadline once, after its declared startup
+    work; later deadlines remain fixed. Finalization always runs in that same
+    thread, including after warmup/acquisition failure or caller cancellation.
     """
     ids = tuple(object_ids)
     if not ids or any(not isinstance(x, str) or not x for x in ids) or len(set(ids)) != len(ids):
@@ -161,9 +167,30 @@ def run_paced_replay(
     receipts: list[dict[str, Any]] = []
     records: list[dict[str, Any]] = []
     expected = {f"update-{index}": list(ids) for index in range(updates)}
+    lifecycle: dict[str, Any] = {"warmup": None, "finalize": None, "errors": []}
+
+    def source_callback(name: str, callback: Callable[[], Mapping[str, Any] | None]) -> None:
+        receipt: dict[str, Any] = {
+            "started_ns": time.perf_counter_ns(),
+            "thread_id": threading.get_ident(),
+        }
+        lifecycle[name] = receipt
+        try:
+            result = callback()
+            if result is not None and not isinstance(result, Mapping):
+                raise TypeError("Source lifecycle callbacks must return a mapping or None")
+            receipt["result"] = dict(result) if result is not None else None
+        finally:
+            receipt["ended_ns"] = time.perf_counter_ns()
 
     def produce() -> None:
+        nonlocal first_ns
+        phase = "warmup"
         try:
+            if source_warmup is not None:
+                source_callback("warmup", source_warmup)
+                first_ns = time.perf_counter_ns() + round(startup_lead_s * 1e9)
+            phase = "acquisition"
             for index in range(updates):
                 deadline = first_ns + round(index * 1e9 / rate_hz)
                 if wait_until_deadline(deadline, stop, wait_strategy=wait_strategy):
@@ -193,7 +220,16 @@ def run_paced_replay(
                 except queue.Full:
                     receipt["status"] = "DROPPED_QUEUE_FULL"
                 receipts.append(receipt)
+        except BaseException as exc:
+            lifecycle["errors"].append({"phase": phase, "error": f"{type(exc).__name__}: {exc}"})
         finally:
+            if source_finalize is not None:
+                try:
+                    source_callback("finalize", source_finalize)
+                except BaseException as exc:
+                    lifecycle["errors"].append(
+                        {"phase": "finalize", "error": f"{type(exc).__name__}: {exc}"}
+                    )
             done.set()
 
     producer = threading.Thread(target=produce, name="train40-raw-arrivals", daemon=True)
@@ -285,6 +321,7 @@ def run_paced_replay(
         and max(end_times) < first_ns + round(updates * 1e9 / rate_hz),
         "offered_50hz_for_at_least_60s": rate_hz == 50.0 and updates / rate_hz >= 60.0,
         "twenty_distinct_objects_per_update": len(ids) == 20,
+        "source_lifecycle_succeeded": not lifecycle["errors"],
     }
     return {
         "schema": "train40_paced_raw_replay_v1",
@@ -299,6 +336,8 @@ def run_paced_replay(
         "queue_capacity": queue_capacity,
         "wait_strategy": wait_strategy,
         "scheduler": scheduler,
+        "first_scheduled_ns": first_ns,
+        "source_lifecycle": lifecycle,
         "object_ids": list(ids),
         "arrival_receipts": receipts,
         "object_records": records,

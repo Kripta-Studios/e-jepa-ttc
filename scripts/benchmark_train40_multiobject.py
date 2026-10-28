@@ -34,6 +34,7 @@ from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes  # noqa: 
 from e_jepa_ttc.rgb_port.data import crop_uint8  # noqa: E402
 from operational.evttc_transfer.inputs import EvTTCEventReader  # noqa: E402
 from operational.rgb_port import transfer as engine  # noqa: E402
+from operational.train40_runtime.defaults import DEFAULT_PROFILE  # noqa: E402
 from operational.train40_runtime.inputs import PersistentSensorInputs  # noqa: E402
 from operational.train40_runtime.integral import IntegralEventHistory  # noqa: E402
 from operational.train40_runtime.measurement import (  # noqa: E402
@@ -695,24 +696,36 @@ def run(args: argparse.Namespace) -> None:
         raise RuntimeError("Multiobject pilot failed; inspect preserved summary and case files")
 
 
-def main() -> None:
-    """Parse an explicitly artificial population and fresh output directory."""
+def parser() -> argparse.ArgumentParser:
+    """Build the persistent profile CLI without initializing CUDA."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--reference", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--counts", nargs="+", type=int, default=[1, 2, 5, 10, 20])
-    parser.add_argument("--indices", nargs="+", type=int, default=[0, 200, 553])
+    parser.add_argument("--counts", nargs="+", type=int, default=[1, 2])
+    parser.add_argument("--indices", nargs="+", type=int, default=[0, 137, 553])
     parser.add_argument("--repeats", type=int, default=3)
-    parser.add_argument("--rgb-workers", type=int, default=8)
-    parser.add_argument("--parallel", action="store_true")
+    parser.add_argument("--rgb-workers", type=int, default=DEFAULT_PROFILE.rgb_workers)
+    parser.add_argument(
+        "--parallel", action="store_true", default=DEFAULT_PROFILE.parallel_branches
+    )
+    parser.add_argument("--serial", dest="parallel", action="store_false")
     parser.add_argument(
         "--no-event-reuse",
         action="store_true",
+        default=not DEFAULT_PROFILE.reuse_event_encodings,
         help="Preserve original event encoder batch; retain RGB endpoint reuse",
     )
-    parser.add_argument("--backend", choices=["integral", "prefix"], default="integral")
+    parser.add_argument(
+        "--event-reuse",
+        dest="no_event_reuse",
+        action="store_false",
+        help="Experimental: changes event encoder batch and requires parity admission",
+    )
+    parser.add_argument(
+        "--backend", choices=["integral", "prefix"], default=DEFAULT_PROFILE.backend
+    )
     parser.add_argument(
         "--shared-rgb-images",
         action="store_true",
@@ -721,6 +734,7 @@ def main() -> None:
     parser.add_argument(
         "--rgb-object-chunk-size",
         type=int,
+        default=DEFAULT_PROFILE.rgb_object_chunk_size,
         help="Run RGB producers on this many objects per call; one preserves B7 encoders",
     )
     parser.add_argument(
@@ -731,9 +745,15 @@ def main() -> None:
     parser.add_argument(
         "--event-query-graphs",
         action="store_true",
+        default=DEFAULT_PROFILE.event_query_graphs,
         help="Prime prefix ROI query graphs using synthetic data at startup",
     )
-    parser.add_argument("--event-normalization", choices=["sort", "topk"], default="sort")
+    parser.add_argument("--no-event-query-graphs", dest="event_query_graphs", action="store_false")
+    parser.add_argument(
+        "--event-normalization",
+        choices=["sort", "topk"],
+        default=DEFAULT_PROFILE.event_normalization,
+    )
     parser.add_argument(
         "--rgb-feature-cache",
         action="store_true",
@@ -742,9 +762,15 @@ def main() -> None:
     parser.add_argument(
         "--rgb-uint8",
         action="store_true",
+        default=DEFAULT_PROFILE.rgb_uint8,
         help="Transfer unique uint8 crops with exact FP32 LUT and bounded buffer leases",
     )
-    run(parser.parse_args())
+    return parser
+
+
+def main() -> None:
+    """Parse an explicitly artificial population and fresh output directory."""
+    run(parser().parse_args())
 
 
 if __name__ == "__main__":
