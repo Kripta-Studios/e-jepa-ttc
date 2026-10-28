@@ -6,10 +6,12 @@ import argparse
 import copy
 import json
 import sys
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
+from typing import Any, cast
 
 import numpy as np
 import pytest
+import torch
 
 from operational.train40_runtime.multiobject import ObjectRegion, RawRGBHistory
 from scripts import benchmark_train40_multiobject as runner
@@ -39,11 +41,119 @@ def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_i
     assert not options.rgb_uint8 and not options.rgb_feature_cache
     assert not options.shared_rgb_images and not options.serial_preprocessing
     assert not options.overlap_event_with_rgb_preparation
+    assert not options.immutable_rgb_history
     experimental = runner.parser().parse_args(
         arguments + ["--event-reuse", "--rgb-uint8", "--overlap-event-with-rgb-preparation"]
     )
     assert not experimental.no_event_reuse and experimental.rgb_uint8
     assert experimental.overlap_event_with_rgb_preparation
+    immutable = runner.parser().parse_args(
+        arguments + ["--immutable-rgb-history", "--rgb-feature-cache"]
+    )
+    assert immutable.immutable_rgb_history and immutable.rgb_feature_cache
+
+
+def admission_history():
+    frames = {i: np.full((7, 9, 3), i, dtype=np.uint8) for i in (3, 5, 7)}
+    history = RawRGBHistory(300, frames, {3: 100, 5: 200, 7: 300}, [(3, 5, 7)])
+    row = {
+        "anchor_us": 300,
+        "raw_path": "source.hdf5",
+        "raw_stat": {"size_bytes": 123, "mtime_ns": 456},
+        "calibration_sha256": "a" * 64,
+    }
+    return history, row
+
+
+def test_immutable_admission_seals_real_factory_tokens_and_preserves_independent_raw():
+    from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory
+
+    history, row = admission_history()
+    originals = {key: value.copy() for key, value in history.frames.items()}
+    frozen, receipt = runner.immutable_history_for_admission(history, row, "b" * 64)
+    assert type(frozen) is FrozenRGBHistory
+    assert receipt["all_raw_frames_exact"]
+    assert [item["timestamp_us"] for item in receipt["frames"]] == [100, 200, 300]
+    assert receipt["hashed_bytes"] == sum(frame.nbytes for frame in history.frames.values())
+    assert receipt["sealing_excluded_from_internal_update_clock"]
+    assert not receipt["arrival_stream_simulated"]
+    assert not receipt["source_revision_is_full_hdf5_hash"]
+    for key, frame in history.frames.items():
+        np.testing.assert_array_equal(frame, originals[key])
+        np.testing.assert_array_equal(frozen.frames[key], originals[key])
+        assert not np.shares_memory(frame, frozen.frames[key])
+    history.frames[7][:] = 99
+    np.testing.assert_array_equal(frozen.frames[7], originals[7])
+
+
+def test_future_frame_is_rejected_before_any_factory_hash(monkeypatch):
+    from operational.train40_runtime import rgb_raw_ring
+
+    history, row = admission_history()
+    cast(dict[int, int], history.timestamps_us)[7] = 301
+    monkeypatch.setattr(
+        rgb_raw_ring, "freeze_rgb_frame", lambda *args, **kwargs: pytest.fail("future hash")
+    )
+    with pytest.raises(ValueError, match="Future RGB"):
+        runner.immutable_history_for_admission(history, row, "b" * 64)
+
+
+def test_producer_capture_observes_actual_arguments_and_restores_methods_on_failure():
+    pixels, delta = torch.zeros((1, 3, 3, 128, 128)), torch.ones((1, 2))
+
+    def block(modality, sensor, clocks, **kwargs):
+        return sensor, clocks
+
+    def async_block(modality, sensor, clocks, **kwargs):
+        raise RuntimeError("producer failure")
+
+    producer = SimpleNamespace(expert_block=block, expert_block_async=async_block)
+    service = SimpleNamespace(producers=producer)
+    with pytest.raises(RuntimeError, match="producer failure"):
+        with runner.capture_rgb_producer_inputs(cast(Any, service)) as captured:
+            producer.expert_block("E", pixels, delta)
+            producer.expert_block("R", pixels, delta)
+            producer.expert_block_async("R", pixels, delta)
+    assert producer.expert_block is block and producer.expert_block_async is async_block
+    assert len(captured) == 2
+    assert captured[0]["sensor"] is pixels and captured[0]["delta"] is delta
+    assert [row["route"] for row in runner.captured_rgb_digests(captured)] == [
+        "expert_block",
+        "expert_block_async",
+    ]
+
+
+@pytest.mark.parametrize("count", [1, 2])
+@pytest.mark.parametrize("tamper", [None, "pixels", "deltas", "missing_chunk", "hit_calls"])
+def test_actual_device_argument_attestation_cannot_substitute_cpu_reconstruction(count, tamper):
+    references = [
+        [(np.full((3, 3, 128, 128), index / 255, np.float32), {"delta_t_s": [0.1, 0.100001]})]
+        for index in range(1, count + 1)
+    ]
+    captured = [
+        {
+            "route": "expert_block_async",
+            "sensor": torch.from_numpy(pixels[None].copy()),
+            "delta": torch.tensor([meta["delta_t_s"]], dtype=torch.float32),
+        }
+        for group in references
+        for pixels, meta in group
+    ]
+    if tamper == "pixels":
+        captured[0]["sensor"][0, 0, 0, 0, 0] = 1
+    elif tamper == "deltas":
+        captured[0]["delta"][0, 0] = 0.5
+    elif tamper == "missing_chunk":
+        captured.pop()
+    result = {
+        "rgb_feature_cache": {"status": "HIT" if tamper == "hit_calls" else "MISS"},
+        "actual_rgb_producer_inputs": runner.captured_rgb_digests(captured),
+    }
+    check = runner.attest_actual_rgb_calls(result, references, 1)
+    assert check["passed"] == (tamper is None)
+    result["rgb_feature_cache"]["status"] = "HIT"
+    result["actual_rgb_producer_inputs"] = []
+    assert runner.attest_actual_rgb_calls(result, references, 1)["passed"]
 
 
 def test_artificial_population_keeps_primary_and_creates_distinct_regions():
@@ -83,7 +193,10 @@ def test_reference_receipt_binds_exact_windows_and_frame_ids():
     assert pixels[0][0].dtype == np.float32
 
 
-def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, monkeypatch):
+@pytest.mark.parametrize("immutable_history", [False, True])
+def test_cleanup_failures_still_verify_originals_and_write_summary(
+    tmp_path, monkeypatch, immutable_history
+):
     class BrokenCloser:
         def __init__(self, *args, **kwargs):
             pass
@@ -92,9 +205,18 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, mon
             raise RuntimeError("close failure")
 
     checked = []
-    monkeypatch.setattr(runner, "verify_candidate", lambda path: ({}, {}))
+    raw_path = tmp_path / "raw.hdf5"
+    raw_path.write_bytes(b"fixture never opened")
+    stat = raw_path.stat()
+    row = {
+        "query_id": "q",
+        "raw_path": str(raw_path),
+        "bbox_sources": [],
+        "raw_stat": {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns},
+    }
+    monkeypatch.setattr(runner, "verify_candidate", lambda path: ({}, {"components": {}}))
     monkeypatch.setattr(runner, "verify_frozen_runtime", lambda path: {})
-    monkeypatch.setattr(runner, "read", lambda path: {"rows": [{"query_id": "q"}]})
+    monkeypatch.setattr(runner, "read", lambda path: {"rows": [row]})
     monkeypatch.setattr(runner, "_validate_reference", lambda *args: ([{}], [], {}))
     monkeypatch.setattr(runner, "_source_inventory", lambda *args: [])
     monkeypatch.setattr(runner, "_candidate_inventory", lambda *args: [])
@@ -120,7 +242,7 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, mon
         output=tmp_path / "result",
         indices=[0],
         counts=[1],
-        repeats=1,
+        repeats=2 if immutable_history else 1,
         backend="integral",
         parallel=False,
         rgb_workers=1,
@@ -131,8 +253,9 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, mon
         overlap_event_with_rgb_preparation=False,
         event_query_graphs=False,
         event_normalization="sort",
-        rgb_feature_cache=False,
+        rgb_feature_cache=immutable_history,
         rgb_uint8=False,
+        immutable_rgb_history=immutable_history,
     )
     with pytest.raises(RuntimeError, match="priming failure"):
         runner.run(args)
@@ -141,6 +264,11 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(tmp_path, mon
     assert summary["originals"]["passed"] is True
     assert summary["cleanup_errors"] == ["RuntimeError: close failure"] * 2
     assert checked == [{"sentinel": {}}]
+    assert summary["immutable_rgb_history"] is immutable_history
+    if immutable_history:
+        assert summary["scope"] == runner.IMMUTABLE_ADMISSION_SCOPE
+        assert summary["raw_source_stat_checks"][0]["passed"]
+        assert not summary["schedule_exact"]
 
 
 @pytest.mark.parametrize("tamper", [None, "pixels", "features", "key", "event", "missing_miss"])

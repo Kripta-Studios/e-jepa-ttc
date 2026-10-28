@@ -19,6 +19,8 @@ import platform
 import subprocess
 import sys
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager, nullcontext
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, cast
@@ -68,6 +70,177 @@ from scripts.final_train40_transfer import (  # noqa: E402
 )
 
 SCOPE = "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE"
+IMMUTABLE_ADMISSION_SCOPE = (
+    "IMMUTABLE_RGB_CACHE_INPUT_ADMISSION_FIXED_QUERY_REPEATS_NO_ARRIVAL_TIMING"
+)
+
+
+def _array_sha256(value: np.ndarray) -> str:
+    # NumPy implements the buffer protocol; its stubs do not expose __buffer__.
+    return hashlib.sha256(memoryview(cast(Any, np.ascontiguousarray(value)))).hexdigest()
+
+
+def immutable_history_for_admission(
+    history: RawRGBHistory, row: dict[str, Any], manifest_sha256: str
+) -> tuple[RawRGBHistory, dict[str, Any]]:
+    """Seal only available frames; preserve the independent RAW oracle untouched.
+
+    This diagnostic reconstructs one fixed causal history. Its sealing receipt is
+    outside the internal update clock and must not be presented as paced timing.
+    """
+    from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory
+    from operational.train40_runtime.rgb_raw_ring import RGBSourceIdentity, freeze_rgb_frame
+
+    required = {index for group in history.triplets for index in group}
+    if set(history.frames) != required or set(history.timestamps_us) != required:
+        raise ValueError("Immutable admission requires exactly the referenced RAW frames")
+    if history.query_us != int(row["anchor_us"]) or any(
+        history.timestamps_us[index] > history.query_us for index in required
+    ):
+        raise ValueError("Future RGB observation cannot enter immutable admission")
+    descriptor = {
+        "raw_path": str(Path(row["raw_path"]).resolve()),
+        "raw_stat": dict(row["raw_stat"]),
+        "calibration_sha256": row["calibration_sha256"],
+        "manifest_sha256": manifest_sha256,
+        "dataset": "blackflys/left/data",
+    }
+    origin = RGBSourceIdentity(
+        descriptor["raw_path"] + "::blackflys/left/data",
+        hashlib.sha256(json.dumps(descriptor, sort_keys=True).encode()).hexdigest(),
+    )
+    started = time.perf_counter()
+    tokens = {
+        index: freeze_rgb_frame(
+            history.frames[index], index, int(history.timestamps_us[index]), origin
+        )
+        for index in sorted(required, key=lambda index: (history.timestamps_us[index], index))
+    }
+    frozen = FrozenRGBHistory(
+        history.query_us, tokens, history.triplets, history.unavailable_reason
+    )
+    receipt = {
+        "schema": "train40_immutable_rgb_history_admission_v1",
+        "query_us": history.query_us,
+        "source_descriptor": descriptor,
+        "source_revision_sha256": origin.revision_sha256,
+        "source_revision_is_full_hdf5_hash": False,
+        "arrival_stream_simulated": False,
+        "sealing_excluded_from_internal_update_clock": True,
+        "freeze_wall_seconds": time.perf_counter() - started,
+        "hashed_bytes": sum(token.hashed_bytes for token in tokens.values()),
+        "all_raw_frames_exact": all(
+            np.array_equal(token.array, history.frames[index]) for index, token in tokens.items()
+        ),
+        "frames": [
+            {
+                "frame_id": index,
+                "timestamp_us": token.timestamp_us,
+                "shape": list(token.shape),
+                "content_sha256": token.content_sha256,
+                "identity_sha256": token.identity_sha256,
+                "bytes": token.hashed_bytes,
+                "freeze_seconds": token.freeze_seconds,
+            }
+            for index, token in tokens.items()
+        ],
+    }
+    return frozen, receipt
+
+
+@contextmanager
+def capture_rgb_producer_inputs(
+    service: MultiObjectTrain40Service,
+) -> Iterator[list[dict[str, Any]]]:
+    """Retain actual producer arguments; hash them only after update synchronization."""
+    captured: list[dict[str, Any]] = []
+    synchronous = service.producers.expert_block
+    asynchronous = service.producers.expert_block_async
+
+    def sync(modality: str, sensor: torch.Tensor, delta: torch.Tensor, **kwargs: Any) -> Any:
+        if modality == "R":
+            captured.append({"route": "expert_block", "sensor": sensor, "delta": delta})
+        return synchronous(modality, sensor, delta, **kwargs)
+
+    def asynchronous_call(
+        modality: str, sensor: torch.Tensor, delta: torch.Tensor, **kwargs: Any
+    ) -> Any:
+        if modality == "R":
+            captured.append({"route": "expert_block_async", "sensor": sensor, "delta": delta})
+        return asynchronous(modality, sensor, delta, **kwargs)
+
+    with (
+        patch.object(service.producers, "expert_block", side_effect=sync),
+        patch.object(service.producers, "expert_block_async", side_effect=asynchronous_call),
+    ):
+        yield captured
+
+
+def captured_rgb_digests(captured: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Record hashes of actual device producer pixels and deltas after the final fence."""
+    result = []
+    for call in captured:
+        pixels = call["sensor"].detach().cpu().numpy()
+        deltas = call["delta"].detach().cpu().numpy()
+        result.append(
+            {
+                "route": call["route"],
+                "pixel_shape": list(pixels.shape),
+                "pixel_dtype": str(pixels.dtype),
+                "delta_shape": list(deltas.shape),
+                "delta_dtype": str(deltas.dtype),
+                "pixel_row_sha256": [_array_sha256(row) for row in pixels],
+                "delta_row_sha256": [_array_sha256(row) for row in deltas],
+            }
+        )
+    return result
+
+
+def attest_actual_rgb_calls(
+    result: dict[str, Any], references: list[list[Any]], chunk_size: int | None
+) -> dict[str, Any]:
+    """Require every observed producer call to equal a canonical object chunk.
+
+    Startup paths may execute the same native chunk more than once. Each must
+    match, and every expected chunk must occur on MISS. HIT must have no R call.
+    """
+    calls = result["actual_rgb_producer_inputs"]
+    status = (result.get("rgb_feature_cache") or {}).get("status")
+    present = [observations for observations in references if observations]
+    width = chunk_size or len(present) or 1
+    expected = []
+    for start in range(0, len(present), width):
+        rows = [row for observations in present[start : start + width] for row in observations]
+        expected.append(
+            {
+                "pixel_shape": [len(rows), *rows[0][0].shape],
+                "pixel_dtype": "float32",
+                "delta_shape": [len(rows), len(rows[0][1]["delta_t_s"])],
+                "delta_dtype": "float32",
+                "pixel_row_sha256": [_array_sha256(pixels) for pixels, _ in rows],
+                "delta_row_sha256": [
+                    _array_sha256(np.asarray(meta["delta_t_s"], dtype=np.float32))
+                    for _, meta in rows
+                ],
+            }
+        )
+    observed = [{key: value for key, value in call.items() if key != "route"} for call in calls]
+    checks = [call in expected for call in observed]
+    covered = [chunk in observed for chunk in expected]
+    passed = (
+        not calls
+        if status in {"HIT", "NO_RGB"}
+        else status == "MISS" and bool(expected) and all(checks) and all(covered)
+    )
+    return {
+        "passed": passed,
+        "cache_status": status,
+        "producer_calls": len(calls),
+        "every_actual_pixel_and_delta_exact": all(checks),
+        "expected_miss_chunks_observed": covered if status == "MISS" else None,
+        "hit_has_no_rgb_producer_call": not calls if status == "HIT" else None,
+        "scope": "ACTUAL_PRODUCER_ARGUMENTS_AFTER_SYNC_VS_INDEPENDENT_RAW_PIL_ORACLE",
+    }
 
 
 def imported_runtime_paths() -> set[Path]:
@@ -185,8 +358,7 @@ def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
         position = 0
         for index, metadata in enumerate(prepared.metadata):
             pixel_hashes[index] = [
-                hashlib.sha256(np.ascontiguousarray(prepared_pixels[position + offset])).hexdigest()
-                for offset in range(len(metadata))
+                _array_sha256(prepared_pixels[position + offset]) for offset in range(len(metadata))
             ]
             position += len(metadata)
     keys = dict(
@@ -210,9 +382,7 @@ def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
         deltas = service.last_rgb_input_delta.cpu().numpy()
         groups = len(deltas) // len(present)
         delta_hashes = {
-            index: hashlib.sha256(
-                np.ascontiguousarray(deltas[position * groups : (position + 1) * groups])
-            ).hexdigest()
+            index: _array_sha256(deltas[position * groups : (position + 1) * groups])
             for position, index in enumerate(present)
         }
     if features is not None:
@@ -221,16 +391,13 @@ def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
         for position, index in enumerate(present):
             begin, end = position * groups, (position + 1) * groups
             feature_hashes[index] = {
-                "raw": hashlib.sha256(np.ascontiguousarray(raw[begin:end])).hexdigest(),
-                "experts": hashlib.sha256(np.ascontiguousarray(experts[begin:end])).hexdigest(),
+                "raw": _array_sha256(raw[begin:end]),
+                "experts": _array_sha256(experts[begin:end]),
             }
     return [
         {
-            "event_sha256": hashlib.sha256(np.ascontiguousarray(event[index])).hexdigest(),
-            "rgb_sha256": [
-                hashlib.sha256(np.ascontiguousarray(pixels)).hexdigest()
-                for pixels, _ in service.last_rgb_inputs[index]
-            ]
+            "event_sha256": _array_sha256(event[index]),
+            "rgb_sha256": [_array_sha256(pixels) for pixels, _ in service.last_rgb_inputs[index]]
             if service.last_rgb_inputs is not None
             else pixel_hashes.get(index),
             "rgb_delta_sha256": delta_hashes.get(index),
@@ -303,6 +470,8 @@ def cache_exercise_receipt(timings: list[dict[str, Any]]) -> dict[str, Any]:
 
 def run(args: argparse.Namespace) -> None:
     """Persist failures, partial results and immutable-candidate checks."""
+    immutable_history = bool(getattr(args, "immutable_rgb_history", False))
+    scope = IMMUTABLE_ADMISSION_SCOPE if immutable_history else SCOPE
     _validate_output(args.output, [args.candidate, args.reference, args.manifest.parent])
     args.output.mkdir(parents=True, exist_ok=False)
     paths, binding = verify_candidate(args.candidate)
@@ -321,15 +490,19 @@ def run(args: argparse.Namespace) -> None:
         or any(not 1 <= count <= 20 for count in args.counts)
         or args.repeats < 1
         or (args.rgb_feature_cache and args.repeats < 2)
+        or (immutable_history and not args.rgb_feature_cache)
     ):
         raise ValueError(
-            "Unique valid indices/counts and positive repeats are required; cache needs >=2 repeats"
+            "Unique valid indices/counts and positive repeats required; cache needs >=2 repeats; "
+            "immutable RGB admission requires --rgb-feature-cache"
         )
     if args.rgb_feature_cache:
         # Import enabled dependencies before source inventory/exclusion decisions.
         from operational.train40_runtime.multiobject_cache import RGBBatchCache
     if args.rgb_uint8:
         importlib.import_module("operational.train40_runtime.rgb_uint8")
+    if immutable_history:
+        importlib.import_module("operational.train40_runtime.rgb_immutable_history")
     if args.backend == "prefix":
         importlib.import_module("operational.train40_runtime.temporal_prefix")
     inventory = _source_inventory(frozen, reference_binding)
@@ -343,8 +516,19 @@ def run(args: argparse.Namespace) -> None:
         if path.parent == ROOT / "operational/train40_runtime" and path not in loaded_runtime
     ]
     sources = [*[path for path in inventory if path not in excluded], Path(__file__).resolve()]
+    metadata_paths = (
+        [Path(source["path"]) for index in args.indices for source in rows[index]["bbox_sources"]]
+        if immutable_history
+        else []
+    )
     originals = snapshot_files(
-        [*_candidate_inventory(args.candidate), *reference_files, args.manifest, *sources]
+        [
+            *_candidate_inventory(args.candidate),
+            *reference_files,
+            args.manifest,
+            *sources,
+            *metadata_paths,
+        ]
     )
     _write(args.output / "original_snapshot.json", originals)
     records: list[dict[str, Any]] = []
@@ -353,14 +537,27 @@ def run(args: argparse.Namespace) -> None:
     service = None
     inputs = PersistentSensorInputs(rgb_workers=1)
     finished = False
+    raw_before: dict[Path, dict[str, int]] = {}
     try:
+        if immutable_history:
+            for index in args.indices:
+                row = rows[index]
+                raw_path = Path(row["raw_path"]).resolve()
+                stat = raw_path.stat()
+                actual_stat = {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+                if actual_stat != row["raw_stat"]:
+                    raise ValueError("RAW source differs from the immutable-admission manifest")
+                raw_before[raw_path] = actual_stat
+                for source in row["bbox_sources"]:
+                    if sha(Path(source["path"])) != source["sha256"]:
+                        raise ValueError("Annotation differs from immutable-admission manifest")
         torch.set_num_threads(2)
         torch.backends.cuda.matmul.allow_tf32 = False
         torch.backends.cudnn.allow_tf32 = False
         torch.backends.cudnn.benchmark = False
         torch.manual_seed(7)
         binding.update(
-            scope=SCOPE,
+            scope=scope,
             source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
             sources={str(path.relative_to(ROOT)): sha(path) for path in sources},
             indices=args.indices,
@@ -376,7 +573,7 @@ def run(args: argparse.Namespace) -> None:
             seed=7,
             twenty_real_annotated_tracks=False,
             physical_50hz_goal_demonstrated=False,
-            last_packet_timing=True,
+            last_packet_timing=not immutable_history,
             disk_and_initial_history_excluded=True,
             future_frames_or_representations_precomputed=False,
             target_20_objects_50hz_demonstrated=False,
@@ -389,6 +586,10 @@ def run(args: argparse.Namespace) -> None:
             event_normalization=args.event_normalization,
             rgb_feature_cache=args.rgb_feature_cache,
             rgb_uint8=args.rgb_uint8,
+            immutable_rgb_history=immutable_history,
+            immutable_history_sealing_excluded_from_update_clock=immutable_history,
+            actual_producer_input_capture=immutable_history,
+            latency_is_paced_or_arrival_measurement=False,
             cache_scope="PER_CASE_COLD_MISS_THEN_IDENTICAL_RAW_REPEATS"
             if args.rgb_feature_cache
             else None,
@@ -420,6 +621,7 @@ def run(args: argparse.Namespace) -> None:
                             ),
                             "rgb_endpoint_reuse": True,
                             "rgb_uint8": args.rgb_uint8,
+                            "immutable_rgb_history": immutable_history,
                         },
                         sort_keys=True,
                     ).encode()
@@ -498,7 +700,13 @@ def run(args: argparse.Namespace) -> None:
                 boxes = [inputs._box(source) for source in list(row["bbox_sources"])[-2:]]
                 rgb_square = common_square_from_boxes(boxes, (0, 1), margin_fraction=0.25)
                 objects = artificial_regions(row["square_xyxy"], rgb_square, count)
-                raw_rgb = read_raw_rgb_history(inputs, row)
+                raw_rgb_control = read_raw_rgb_history(inputs, row)
+                raw_rgb = raw_rgb_control
+                immutable_receipt = None
+                if immutable_history:
+                    raw_rgb, immutable_receipt = immutable_history_for_admission(
+                        raw_rgb_control, row, binding["manifest_sha256"]
+                    )
                 with EvTTCEventReader(Path(row["raw_path"])) as reader:
                     old = reader.read_window(anchor - 620_000, anchor - 20_000)
                     packet = reader.read_window(anchor - 20_000, anchor)
@@ -506,17 +714,25 @@ def run(args: argparse.Namespace) -> None:
                 for repetition in range(args.repeats):
                     history.initialize(old, anchor - 620_000, anchor - 20_000)
                     torch.cuda.synchronize()
-                    result = service.update(packet, anchor - 20_000, anchor, objects, raw_rgb)
+                    with (
+                        capture_rgb_producer_inputs(service)
+                        if immutable_history
+                        else nullcontext([])
+                    ) as captured:
+                        result = service.update(packet, anchor - 20_000, anchor, objects, raw_rgb)
                     result.update(
                         index=index,
                         repetition=repetition,
                         regions=[asdict(x) for x in objects],
-                        scope=SCOPE,
+                        scope=scope,
                         packet_events=len(packet["t"]),
                         ring=history.stats,
                         diagnostic_tensor_hashes_outside_clock=True,
                     )
                     result["input_digests"] = input_digests(service)
+                    if immutable_history:
+                        result["immutable_rgb_history"] = immutable_receipt
+                        result["actual_rgb_producer_inputs"] = captured_rgb_digests(captured)
                     # Recorded immediately: later parity failures do not erase measured cases.
                     timings.append(result)
                     with (args.output / "updates.jsonl").open("a", encoding="utf-8") as stream:
@@ -538,25 +754,24 @@ def run(args: argparse.Namespace) -> None:
                 input_checks = []
                 receipts = []
                 expected_rgb_digests = []
+                canonical_rgb = []
                 for position, obj in enumerate(objects):
                     modified = {**row, "square_xyxy": list(obj.event_square)}
                     raw = engine.prepare_event(modified)
-                    reference_pixels = reference_rgb(raw_rgb, obj)
-                    expected_pixels = [
-                        hashlib.sha256(np.ascontiguousarray(pixels)).hexdigest()
-                        for pixels, _ in reference_pixels
-                    ]
+                    reference_pixels = reference_rgb(raw_rgb_control, obj)
+                    canonical_rgb.append(reference_pixels)
+                    expected_pixels = [_array_sha256(pixels) for pixels, _ in reference_pixels]
                     expected_rgb_digests.append(expected_pixels)
                     actual_pixel_digests = [
                         result["input_digests"][position]["rgb_sha256"]
                         for result in timings
                         if result["input_digests"][position]["rgb_sha256"] is not None
                     ]
-                    expected_delta_digest = hashlib.sha256(
+                    expected_delta_digest = _array_sha256(
                         np.asarray(
                             [meta["delta_t_s"] for _, meta in reference_pixels], dtype=np.float32
                         )
-                    ).hexdigest()
+                    )
                     actual_delta_digests = [
                         result["input_digests"][position]["rgb_delta_sha256"]
                         for result in timings
@@ -590,7 +805,7 @@ def run(args: argparse.Namespace) -> None:
                         patch.object(
                             engine,
                             "raw_rgb_observations",
-                            return_value=(reference_pixels, raw_rgb.unavailable_reason),
+                            return_value=(reference_pixels, raw_rgb_control.unavailable_reason),
                         ),
                     ):
                         expected = oracle.predict(modified)
@@ -600,6 +815,10 @@ def run(args: argparse.Namespace) -> None:
                 attest_cached_inputs(timings, expected_rgb_digests)
                 cache_exercise = cache_exercise_receipt(timings) if args.rgb_feature_cache else None
                 for result in timings:
+                    if immutable_history:
+                        result["actual_rgb_producer_input_attestation"] = attest_actual_rgb_calls(
+                            result, canonical_rgb, args.rgb_object_chunk_size
+                        )
                     result["cache_exercise"] = cache_exercise
                     candidates = [
                         {**output, "query_id": output["object_id"]} for output in result["objects"]
@@ -641,6 +860,28 @@ def run(args: argparse.Namespace) -> None:
                 except BaseException as exc:
                     cleanup_errors.append(f"{type(exc).__name__}: {exc}")
         intact = verify_snapshot(originals)
+        raw_checks = []
+        for raw_path, before in raw_before.items():
+            try:
+                stat = raw_path.stat()
+                after = {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+                raw_checks.append(
+                    {
+                        "path": str(raw_path),
+                        "before": before,
+                        "after": after,
+                        "passed": before == after,
+                    }
+                )
+            except OSError as exc:
+                raw_checks.append(
+                    {
+                        "path": str(raw_path),
+                        "before": before,
+                        "passed": False,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
         unexpected_imports = sorted(
             str(path.relative_to(ROOT)) for path in imported_runtime_paths() - loaded_runtime
         )
@@ -654,6 +895,14 @@ def run(args: argparse.Namespace) -> None:
             and record["same_inputs_as_tensor_checked_repeat"]
             and all(record["history_receipts_exact"])
             and (not args.rgb_feature_cache or record["cache_exercise"]["passed"])
+            and (
+                not immutable_history
+                or (
+                    record["immutable_rgb_history"]["all_raw_frames_exact"]
+                    and record["actual_rgb_producer_input_attestation"]["passed"]
+                    and record["rgb_feature_cache"]["hashed_bytes"] == 0
+                )
+            )
             for record in records
         )
         cache_hit_updates = sum(
@@ -662,6 +911,15 @@ def run(args: argparse.Namespace) -> None:
         if args.rgb_feature_cache:
             admitted = admitted and cache_hit_updates > 0
         complete_count = len(args.counts) * len(args.indices) * args.repeats
+        expected_schedule = [
+            (count, index, repetition)
+            for count in args.counts
+            for index in args.indices
+            for repetition in range(args.repeats)
+        ]
+        recorded_schedule = [
+            (row["object_count"], row["index"], row["repetition"]) for row in records
+        ]
         passed = (
             finished
             and admitted
@@ -669,13 +927,27 @@ def run(args: argparse.Namespace) -> None:
             and intact["passed"]
             and not cleanup_errors
             and not unexpected_imports
+            and (
+                not immutable_history
+                or (
+                    recorded_schedule == expected_schedule
+                    and len(raw_checks)
+                    == len({Path(rows[index]["raw_path"]).resolve() for index in args.indices})
+                    and all(check["passed"] for check in raw_checks)
+                )
+            )
         )
         summary = {
             "status": "COMPLETE" if passed else "FAILED",
             "passed": passed,
-            "scope": SCOPE,
+            "scope": scope,
             "expected_updates": complete_count,
             "validated_updates": len(records),
+            "immutable_rgb_history": immutable_history,
+            "raw_source_stat_checks": raw_checks,
+            "schedule_exact": recorded_schedule == expected_schedule,
+            "expected_case_schedule": [list(item) for item in expected_schedule],
+            "observed_case_schedule": [list(item) for item in recorded_schedule],
             "originals": intact,
             "cleanup_errors": cleanup_errors,
             "unexpected_excluded_source_imports": unexpected_imports,
@@ -769,6 +1041,12 @@ def parser() -> argparse.ArgumentParser:
         "--rgb-feature-cache",
         action="store_true",
         help="Measure a cold miss then identical-history feature hits; context always recomputed",
+    )
+    parser.add_argument(
+        "--immutable-rgb-history",
+        action="store_true",
+        help="Diagnostic cache admission with causal immutable tokens and actual device inputs; "
+        "requires --rgb-feature-cache and excludes history sealing from internal timing",
     )
     parser.add_argument(
         "--rgb-uint8",
