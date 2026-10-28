@@ -60,6 +60,7 @@ from operational.train40_runtime.paced import (  # noqa: E402
     pacing_clock_metadata,
     run_paced_replay,
 )
+from operational.train40_runtime.priming import prime_supported_histories  # noqa: E402
 from operational.train40_runtime.replay_inputs import SCHEMA  # noqa: E402
 from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory  # noqa: E402
 from operational.train40_runtime.rgb_raw_ring import (  # noqa: E402
@@ -1096,8 +1097,19 @@ def run(args: argparse.Namespace) -> None:
             ),
         )
         startup["model_and_service_seconds"] = time.perf_counter() - begin
-        startup["synthetic_shape_priming_seconds"] = prime(service, args.objects)
-        startup["synthetic_primed_rgb_triplets"] = 5
+        if args.prime_native_histories:
+            startup["synthetic_shape_priming"] = {}
+            prime_supported_histories(
+                service,
+                object_counts=[args.objects],
+                receipt=startup["synthetic_shape_priming"],
+            )
+            startup["synthetic_shape_priming_seconds"] = startup["synthetic_shape_priming"][
+                "total_seconds"
+            ]
+        else:
+            startup["synthetic_shape_priming_seconds"] = prime(service, args.objects)
+            startup["synthetic_primed_rgb_triplets"] = 5
         startup["unprimed_shapes_remain_inside_measurement"] = True
         begin = time.perf_counter()
         with ThreadPoolExecutor(max_workers=1, thread_name_prefix="train40-startup-raw") as pool:
@@ -1236,6 +1248,11 @@ def parser() -> argparse.ArgumentParser:
     )
     result.add_argument("--updates", type=int, help="Declared prefix only; no sampling or looping")
     result.add_argument("--queue-capacity", type=int, default=2)
+    result.add_argument(
+        "--prime-native-histories",
+        action="store_true",
+        help="Prime all declared native RGB history shapes using synthetic startup data",
+    )
     result.add_argument(
         "--wait-strategy",
         choices=("event", "sleep"),

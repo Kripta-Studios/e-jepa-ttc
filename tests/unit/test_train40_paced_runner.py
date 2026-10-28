@@ -626,6 +626,7 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
     assert args.raw_source == "disk"
     assert not args.rgb_feature_cache and not args.shared_rgb_images
     assert not args.overlap_event_with_rgb_preparation
+    assert not args.prime_native_histories
     options = runner.service_options(args)
     assert options["shared_rgb_images"] == runner.DEFAULT_PROFILE.shared_rgb_images is False
     assert options["rgb_object_chunk_size"] == 1
@@ -645,9 +646,11 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
             "sequence",
             "--wait-strategy",
             "event",
+            "--prime-native-histories",
         ]
     )
     assert legacy.wait_strategy == "event"
+    assert legacy.prime_native_histories
     with pytest.raises(SystemExit) as caught:
         runner.parser().parse_args(["--help"])
     assert caught.value.code == 0
