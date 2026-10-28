@@ -22,6 +22,7 @@ from operational.train40_runtime.measurement import (
     group_updates,
     latency_distribution,
 )
+from operational.train40_runtime.paced_statistics import paced_latency_populations
 
 Payload = TypeVar("Payload")
 SLEEP_STOP_POLL_SECONDS = 0.010
@@ -323,7 +324,7 @@ def run_paced_replay(
         "twenty_distinct_objects_per_update": len(ids) == 20,
         "source_lifecycle_succeeded": not lifecycle["errors"],
     }
-    return {
+    summary: dict[str, Any] = {
         "schema": "train40_paced_raw_replay_v1",
         "scope": "HOST_PACED_RAW_REPLAY_CAPACITY_NOT_PHYSICAL_SENSOR_CERTIFICATION",
         "physical_goal_demonstrated": False,
@@ -351,5 +352,9 @@ def run_paced_replay(
             [(row["observation_available_ns"] - row["scheduled_ns"]) / 1e6 for row in available]
         ),
         "prior_work_at_each_scheduled_arrival": pending_at_deadlines,
-        "timing_note": "All-object host completion; no division by number of objects",
+        "legacy_response_population": "ALL_RESPONSES_INCLUDING_FAILURES",
+        "timing_note": "Legacy responses include failed acknowledgements; valid all-object "
+        "TTC distributions are separate in latency_populations. No division by object count.",
     }
+    summary["latency_populations"] = paced_latency_populations(summary)
+    return summary

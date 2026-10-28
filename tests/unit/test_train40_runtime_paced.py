@@ -12,6 +12,7 @@ from operational.train40_runtime.paced import (
     run_paced_replay,
     wait_until_deadline,
 )
+from operational.train40_runtime.paced_statistics import paced_latency_populations
 
 
 def prediction(value=1.0):
@@ -46,6 +47,10 @@ def test_raw_producer_runs_independently_and_preserves_all_object_identities():
     assert set(compute_ids) == {main_id}
     assert result["physical_goal_demonstrated"] is False
     assert not result["capacity_checks_passed"]
+    populations = result["latency_populations"]
+    assert populations["counts_consistent"]
+    assert populations["counts"]["successful_all_object_ttc"] == 3
+    assert populations["counts"]["failed_acknowledgements"] == 0
     arrivals = result["arrival_receipts"]
     assert arrivals[2]["scheduled_ns"] - arrivals[0]["scheduled_ns"] == 10_000_000
     for row in result["object_records"]:
@@ -146,6 +151,77 @@ def test_success_without_predictions_is_rejected():
         startup_lead_s=0,
     )
     assert not result["grouped"]["passed"]
+    populations = result["latency_populations"]
+    assert populations["counts"]["successful_all_object_ttc"] == 0
+    assert populations["counts"]["failed_acknowledgements"] == 1
+    assert populations["populations"]["successful_all_object_ttc"]["deadline_response_ms"] is None
+
+
+def test_failure_acknowledgements_do_not_reduce_valid_ttc_percentiles():
+    arrivals, updates = [], []
+    for index, (passed, duration) in enumerate(((True, 30), (False, 1), (False, 2))):
+        scheduled = 1_000_000_000 + index * 100_000_000
+        arrivals.append(
+            {
+                "update_id": str(index),
+                "scheduled_ns": scheduled,
+                "observation_available_ns": scheduled + 500_000,
+                "status": "ENQUEUED",
+            }
+        )
+        updates.append(
+            {
+                "update_id": str(index),
+                "passed": passed,
+                "coverage": {"passed": True},
+                "started_ns": scheduled + 500_000,
+                "completed_ns": scheduled + duration * 1_000_000,
+            }
+        )
+    arrivals.append({"update_id": "3", "status": "DROPPED_QUEUE_FULL"})
+    updates.extend([{"update_id": "3", "passed": False}, {"update_id": "4", "passed": False}])
+    result = paced_latency_populations(
+        {
+            "offered_updates": 5,
+            "arrival_receipts": arrivals,
+            "grouped": {"expected_updates": 5, "passed": False, "updates": updates},
+        }
+    )
+    assert result is not None and result["counts_consistent"]
+    assert result["counts"]["dropped_updates"] == result["counts"]["missing_arrival_receipts"] == 1
+    assert result["counts"]["updates_without_completion"] == 2
+    populations = result["populations"]
+    assert populations["successful_all_object_ttc"]["deadline_response_ms"]["p50_ms"] == 30
+    assert populations["failed_acknowledgements"]["deadline_response_ms"]["p50_ms"] == 1.5
+    assert populations["failed_acknowledgements"]["deadline_response_ms"]["p95_ms"] == 1.95
+    assert populations["all_responses_including_failures"]["deadline_response_ms"]["p50_ms"] == 2
+
+
+def test_success_population_rejects_contradictory_coverage():
+    with pytest.raises(ValueError, match="incomplete coverage"):
+        paced_latency_populations(
+            {
+                "arrival_receipts": [
+                    {
+                        "update_id": "a",
+                        "status": "ENQUEUED",
+                        "scheduled_ns": 0,
+                        "observation_available_ns": 0,
+                    }
+                ],
+                "grouped": {
+                    "updates": [
+                        {
+                            "update_id": "a",
+                            "passed": True,
+                            "started_ns": 0,
+                            "completed_ns": 1,
+                            "coverage": {"passed": False},
+                        }
+                    ]
+                },
+            }
+        )
 
 
 def test_sleep_wait_uses_absolute_remainder_without_busy_spin():
@@ -213,12 +289,13 @@ def test_sleep_past_deadline_does_not_issue_a_zero_or_negative_wait(deadline_ns)
 
 
 def test_event_wait_preserves_original_timeout_and_cancellation_result():
-    class Event:
+    class Event(threading.Event):
         def __init__(self):
+            super().__init__()
             self.waits = []
 
-        def wait(self, seconds):
-            self.waits.append(seconds)
+        def wait(self, timeout=None):
+            self.waits.append(timeout)
             return True
 
     stop = Event()

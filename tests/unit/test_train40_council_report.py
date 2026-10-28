@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -187,6 +189,107 @@ def test_paced_initialization_failure_is_preserved_without_fabricated_timings():
     text = "\n".join(report.paced_section(receipt))
     assert "No hay distribuciones" in text and "SOURCE_ERROR" in text
     assert "| rate_hz declarado | — |" in text
+
+
+def test_historical_paced_report_separates_slow_ttc_from_fast_failed_acks(tmp_path):
+    result = paced_receipt()
+    paced = result["paced"]
+    paced["offered_updates"] = 4
+    paced["grouped"].update(expected_updates=4, updates=[])
+    paced["arrival_receipts"] = []
+    for index, (passed, duration) in enumerate(((True, 30), (False, 1), (False, 2))):
+        start = index * 100_000_000
+        paced["grouped"]["updates"].append(
+            {
+                "update_id": str(index),
+                "passed": passed,
+                "coverage": {"passed": True},
+                "started_ns": start,
+                "completed_ns": start + duration * 1_000_000,
+            }
+        )
+        paced["arrival_receipts"].append(
+            {
+                "update_id": str(index),
+                "scheduled_ns": start,
+                "observation_available_ns": start,
+                "status": "ENQUEUED",
+            }
+        )
+    paced["grouped"]["updates"].append({"update_id": "3", "passed": False})
+    paced["arrival_receipts"].append({"update_id": "3", "status": "DROPPED_QUEUE_FULL"})
+    source = tmp_path / "source"
+    raw = write_receipt(source, "run/summary.json", result)
+    before = raw.read_bytes()
+    output = tmp_path / "report.md"
+    report.generate(source, output)
+    text = output.read_text(encoding="utf-8")
+    assert "| successful_all_object_ttc | 1 | deadline_response_ms | 1 | 30 | 30 |" in text
+    assert "| failed_acknowledgements | 1 | deadline_response_ms | 2 | 1.5 | 1.5 |" in text
+    assert "| ALL_RESPONSES_INCLUDING_FAILURES |" in text
+    assert "| updates_without_completion | 1 |" in text
+    assert "| cobertura completa | no |" in text
+    assert raw.read_bytes() == before
+    for row in paced["grouped"]["updates"]:
+        row["passed"] = False
+    write_receipt(source, "run/summary.json", result)
+    report.generate(source, output)
+    assert "distribuciones TTC nulas" in output.read_text(encoding="utf-8")
+
+
+def test_report_cli_runs_isolated_with_stdlib_and_no_torch_or_pil(tmp_path):
+    source = tmp_path / "source"
+    write_receipt(source, "run/summary.json", paced_receipt())
+    output = tmp_path / "report.md"
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-c",
+            "import runpy,sys; script=sys.argv.pop(1); runpy.run_path(script,run_name='__main__'); "
+            "assert not any(name in sys.modules for name in ('torch','PIL','numpy'))",
+            str(Path(report.__file__).resolve()),
+            "--source",
+            str(source),
+            "--output",
+            str(output),
+        ],
+        cwd=tmp_path,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert output.is_file()
+
+
+def test_archive_retains_council_preflight_qa_and_exact_metadata_snapshots(tmp_path):
+    source, target = tmp_path / "source", tmp_path / "archive"
+    for name in (
+        "preflight.json",
+        "run_preflight.json",
+        "commands.json",
+        "cpu_qa.json",
+        "measurement_audit_v1/raw_sequence_inventory.json",
+        "measurement_audit_v1/causal_pilot_manifest.json",
+        "measurement_audit_v1/manifest_generation_receipt.json",
+        "memory_raw_parity_v1/summary.json",
+        "memory_raw_parity_v1/binding.json",
+        "memory_raw_parity_v1/sources/0001_metadata.json.txt",
+    ):
+        write_receipt(source, name, {"retained": name})
+    (source / "runtime_pytest.txt").write_text("3 passed", encoding="utf-8")
+    (source / "observations.json.txt").write_text("private RAW not selected", encoding="utf-8")
+    (source / "frame.npy").write_bytes(b"RAW")
+    (source / "weights.pt").write_bytes(b"weights")
+    manifest = report.copy_evidence(source, target)
+    paths = {row["published"] for row in manifest["files"]}
+    assert len(paths) == 11
+    assert "runtime_pytest.txt" in paths
+    assert "memory_raw_parity_v1/sources/0001_metadata.json.txt" in paths
+    assert not {"observations.json.txt", "frame.npy", "weights.pt"} & paths
+    for row in manifest["files"]:
+        assert report.sha((target / row["published"]).read_bytes()) == row["sha256"]
 
 
 def test_compact_limit_accepts_new_summary_size_and_still_excludes_binaries(tmp_path):

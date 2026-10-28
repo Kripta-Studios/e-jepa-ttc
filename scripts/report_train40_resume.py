@@ -12,6 +12,7 @@ import json
 import math
 import os
 import shutil
+import sys
 import uuid
 from collections import Counter
 from dataclasses import dataclass
@@ -19,6 +20,11 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from operational.train40_runtime.paced_statistics import paced_latency_populations  # noqa: E402
+
 DEFAULT_SOURCE = ROOT / "artifacts/train40_runtime_resume_20261027"
 DEFAULT_OUTPUT = ROOT / "docs/train40_runtime_resume_20261027/RESULTS_GENERATED.md"
 MAX_RECEIPT_BYTES = 8_000_000
@@ -97,6 +103,11 @@ COMPACT_NAMES = {
     "raw_sequence_inventory.json",
     "manifest_generation_receipt.json",
     "causal_pilot_manifest.json",
+    "preflight.json",
+    "commands.json",
+    "qa.json",
+    "qa.txt",
+    "cpu_qa.json",
 }
 FORBIDDEN_PARTS = {
     "deps",
@@ -486,13 +497,46 @@ def paced_section(receipt: Receipt) -> list[str]:
     )
     gate = parity.get("passed") if parity.get("performed") is True else None
     timings = []
+    populations = paced_latency_populations(paced)
+    if populations is not None:
+        lines += table(
+            ["Población derivada de recibos", "Recuento"],
+            [[name, value] for name, value in populations["counts"].items()]
+            + [["counts_consistent", populations["counts_consistent"]]],
+        )
+        for name in ("successful_all_object_ttc", "failed_acknowledgements"):
+            population = populations["populations"][name]
+            timings.extend(
+                timing_cells(
+                    name, objects, route, timing, gate if name.startswith("successful") else None
+                )
+                for route, timing in latency_rows(population)
+            )
+        if populations["populations"]["successful_all_object_ttc"]["count"] == 0:
+            lines += [
+                "Cero actualizaciones con todos los TTC válidos: distribuciones TTC nulas.",
+                "",
+            ]
+    else:
+        lines += [
+            "Sin recibos por actualización suficientes para separar TTC válidos y fallos.",
+            "",
+        ]
     for name in (
         "deadline_response_ms",
         "raw_availability_response_ms",
         "raw_availability_lateness_ms",
     ):
         timings.extend(
-            timing_cells("recibos del replay", objects, route, timing, gate)
+            timing_cells(
+                "ALL_RESPONSES_INCLUDING_FAILURES"
+                if name != "raw_availability_lateness_ms"
+                else "RAW_ARRIVALS_INCLUDING_DROPS",
+                objects,
+                route,
+                timing,
+                None,
+            )
             for route, timing in latency_rows(paced.get(name), name)
         )
     if timings:
@@ -527,7 +571,11 @@ def paced_section(receipt: Receipt) -> list[str]:
         "Los gates se muestran tal como quedaron registrados, sin recalcular admisión desde "
         "medias ni suponer una frecuencia ausente. COMPLETE no equivale a tiempo real. "
         "La distribución deadline_response_ms incluye adquisición y colas; "
-        "raw_availability_response_ms comienza después de preparar el payload RAW.",
+        "raw_availability_response_ms comienza después de preparar el payload RAW. "
+        "Las filas primarias successful_all_object_ttc se derivan de los recibos originales "
+        "con cuantiles lineales; failed_acknowledgements son respuestas de error. "
+        "Los campos legacy ALL_RESPONSES_INCLUDING_FAILURES mezclan ambas poblaciones "
+        "y no representan una distribución de TTC válidos. No se modifica el gate registrado.",
         "",
     ]
     return lines
@@ -999,7 +1047,9 @@ def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
         name = path.name
         wanted = (
             name in COMPACT_NAMES
-            or name.endswith(("_command.json", "_exit.json", ".py.txt"))
+            or name.endswith(("_command.json", "_exit.json", "_preflight.json", ".py.txt"))
+            or name.endswith(("_pytest.txt", "_ruff.txt", "_pyright.txt", "_qa.json"))
+            or ("sources" in relative.parts and name.endswith(".json.txt"))
             or (name.startswith("case_") and name.endswith(".json"))
             or path.suffix == ".py"
         )
@@ -1009,7 +1059,7 @@ def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
         raw = path.read_bytes()
         if len(raw) > MAX_RECEIPT_BYTES:
             raise ValueError(f"Selected receipt exceeds compact limit: {relative}")
-        if path.suffix == ".json":
+        if path.suffix == ".json" or name.endswith(".json.txt"):
             json.loads(raw.decode("utf-8-sig"))
         else:
             raw.decode("utf-8-sig")
