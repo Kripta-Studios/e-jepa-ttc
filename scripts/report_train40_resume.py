@@ -33,6 +33,10 @@ EXACT_TRANSPORT_SCOPE = "PREPARED_ONE_OBJECT_EXACT_TRANSPORT_ALL_EXPLICIT_CALLS_
 IMMUTABLE_ADMISSION_SCOPE = (
     "IMMUTABLE_RGB_CACHE_INPUT_ADMISSION_FIXED_QUERY_REPEATS_NO_ARRIVAL_TIMING"
 )
+CROP_ADMISSION_SCOPE = (
+    "IMMUTABLE_RGB_CROP_AND_FEATURE_CACHE_ADMISSION_FORCED_MISS_NO_ARRIVAL_TIMING"
+)
+SUBPACKET_SCOPE = "REAL_RAW_SUBPACKET_STATE_AND_REPRESENTATION_DIAGNOSTIC_FINAL_TTC_ONLY"
 FAMILIES = (
     "producers",
     "prefix",
@@ -43,6 +47,8 @@ FAMILIES = (
     "compiled_pipeline",
     "exact_transport",
     "immutable_rgb_admission",
+    "crop_rgb_admission",
+    "subpacket",
     "rgb_uint8",
     "rgb_exact",
     "scheduler",
@@ -63,6 +69,12 @@ SCOPES = {
     "immutable_rgb_admission": "Admisión de inputs y caché RGB inmutable a consulta fija. "
     "Incluye MISS y HIT comprobados contra RAW independiente; el sellado precede al reloj "
     "interno. No se incluyen sus tiempos en comparaciones de actualizaciones completas.",
+    "crop_rgb_admission": "Admisión de crops exactos y features RGB sobre RAW independiente. "
+    "La secuencia MISS, HIT y borrado de features con HIT de crops usa una consulta fija. "
+    "Sellado y borrado forzado preceden al reloj interno; no admite latencia ni 50 Hz.",
+    "subpacket": "Diagnóstico RAW real de ingestión 5 ms frente a 20 ms: estado retenido, "
+    "representaciones en cada frontera completa y TTC sólo al anchor final. No mide latencia "
+    "ni una fuente paced; no demuestra ahorro de tres cuartos ni servicio a 50 Hz.",
     "rgb_uint8": "Preparación RGB sintética; incluye el tramo declarado en cada recibo. "
     "No incluye modelos ni TTC. Bytes propuestos no equivalen a transferencias ejecutadas.",
     "rgb_exact": "RAW RGB disponible en CPU a crops exactos preparados en el dispositivo; "
@@ -94,6 +106,7 @@ COMPACT_NAMES = {
     "startup.json",
     "source_manifest.json",
     "source_snapshots.json",
+    "sources.json",
     "MANIFEST.json",
     "NOTES.md",
     "IMPLEMENTATION.md",
@@ -120,6 +133,7 @@ COMPACT_NAMES = {
     "qa.json",
     "qa.txt",
     "cpu_qa.json",
+    "QA_RECEIPT.json",
 }
 FORBIDDEN_PARTS = {
     "deps",
@@ -277,8 +291,14 @@ class Sources:
                 family = "rgb_exact"
             if result.get("scope") == EXACT_TRANSPORT_SCOPE:
                 family = "exact_transport"
-            if result.get("scope") == IMMUTABLE_ADMISSION_SCOPE:
-                family = "immutable_rgb_admission"
+            if result.get("scope") == SUBPACKET_SCOPE:
+                family = "subpacket"
+            if result.get("scope") in (IMMUTABLE_ADMISSION_SCOPE, CROP_ADMISSION_SCOPE):
+                family = (
+                    "crop_rgb_admission"
+                    if result.get("scope") == CROP_ADMISSION_SCOPE
+                    else "immutable_rgb_admission"
+                )
                 result = {
                     **result,
                     "case_receipts": [
@@ -498,9 +518,29 @@ def paced_section(receipt: Receipt) -> list[str]:
             ["actualizaciones ofertadas", paced.get("offered_updates")],
             ["duración ofertada s", paced.get("offered_duration_s")],
             ["duración wall s", paced.get("actual_wall_duration_s")],
+            ["wall real incluyendo startup s", paced.get("real_run_wall_duration_s")],
+            ["primera oferta establecida", paced.get("first_offering_established")],
+            [
+                "último TTC válido desde primer deadline s",
+                paced.get("last_successful_all_object_ttc_duration_s"),
+            ],
+            [
+                "wall incluye cierre/join",
+                paced.get("actual_wall_duration_includes_source_finalize_and_join"),
+            ],
             ["capacidad cola", paced.get("queue_capacity")],
             ["wait_strategy", paced.get("wait_strategy")],
             ["raw_source_mode", binding.get("raw_source_mode")],
+            [
+                "fuente RAW cota numérica bytes",
+                mapping(binding.get("preloaded_source_envelope")).get(
+                    "source_total_upper_bound_bytes"
+                ),
+            ],
+            [
+                "fuente RAW presupuesto declarado bytes",
+                mapping(binding.get("preloaded_source_envelope")).get("max_total_bytes"),
+            ],
             ["service_options", binding.get("service_options")],
             ["updates esperados", grouped.get("expected_updates")],
             ["resultados objeto esperados", grouped.get("expected_object_results")],
@@ -518,6 +558,44 @@ def paced_section(receipt: Receipt) -> list[str]:
         ],
     )
     gate = parity.get("passed") if parity.get("performed") is True else None
+    backlog = paced.get("prior_work_at_each_scheduled_arrival")
+    if (
+        isinstance(backlog, list)
+        and backlog
+        and all(
+            isinstance(value, int) and not isinstance(value, bool) and value >= 0
+            for value in backlog
+        )
+    ):
+        lines += table(
+            ["Updates previos aún pendientes en deadline", "Deadlines observados"],
+            [[count, occurrences] for count, occurrences in sorted(Counter(backlog).items())],
+        )
+        lines += [
+            "El conteo describe acumulación observada en este ensayo; no prueba estabilidad "
+            "fuera de su duración ni sustituye el gate de ausencia de trabajo previo.",
+            "",
+        ]
+    lifecycle = mapping(paced.get("source_lifecycle"))
+    if lifecycle.get("schema"):
+        lines += table(
+            ["Lifecycle registrado", "Valor"],
+            [
+                [key, lifecycle.get(key)]
+                for key in (
+                    "schema",
+                    "order",
+                    "offering_ended_ns",
+                    "consumer_drain_completed_ns",
+                    "finalize_permitted_ns",
+                    "producer_finished_ns",
+                )
+            ]
+            + [
+                ["finalize.started_ns", mapping(lifecycle.get("finalize")).get("started_ns")],
+                ["finalize.ended_ns", mapping(lifecycle.get("finalize")).get("ended_ns")],
+            ],
+        )
     timings = []
     populations = paced_latency_populations(paced)
     if populations is not None:
@@ -659,6 +737,75 @@ def immutable_admission_section(receipt: Receipt) -> list[str]:
             ],
             rows,
         )
+    if receipt.family == "crop_rgb_admission":
+        matrix = mapping(result.get("crop_admission_matrix"))
+        lines += table(
+            ["Matriz de crops", "Valor"],
+            [
+                [name, matrix.get(name)]
+                for name in (
+                    "passed",
+                    "required_cases",
+                    "missing_cases",
+                    "arrival_or_latency_claim",
+                )
+            ],
+        )
+        crop_rows = []
+        for case in result.get("case_receipts", []):
+            for update in mapping(case).get("updates", []):
+                row = mapping(update)
+                crop = mapping(row.get("rgb_preprocess"))
+                reset = mapping(row.get("forced_feature_cache_reset"))
+                exercise = mapping(row.get("crop_cache_exercise"))
+                crop_rows.append(
+                    [
+                        row.get("index"),
+                        row.get("object_count"),
+                        row.get("repetition"),
+                        crop.get("crop_cache_hits"),
+                        crop.get("crop_cache_misses"),
+                        crop.get("crop_cache_stored_crops"),
+                        crop.get("crop_cache_bypassed_frames"),
+                        reset.get("action"),
+                        reset.get("crop_cache_unchanged"),
+                        mapping(row.get("actual_rgb_producer_input_attestation")).get(
+                            "every_actual_pixel_and_delta_exact"
+                        ),
+                        exercise.get("passed"),
+                        ", ".join(
+                            name
+                            for name, passed in mapping(exercise.get("checks")).items()
+                            if passed is not True
+                        )
+                        or ("ninguno" if exercise.get("checks") else "ausentes"),
+                    ]
+                )
+        if crop_rows:
+            lines += table(
+                [
+                    "Índice",
+                    "ROI",
+                    "Repetición",
+                    "Crop HIT",
+                    "Crop MISS",
+                    "Crops guardados",
+                    "Bypass",
+                    "Borrado forzado",
+                    "Crops conservados",
+                    "Píxeles/deltas reales",
+                    "Ejercicio completo",
+                    "Checks no aprobados",
+                ],
+                crop_rows,
+            )
+        lines += [
+            "El borrado forzado afecta únicamente a features y se registra fuera del reloj "
+            "interno. Los HIT completos no ejecutan el productor RGB; sus features se vinculan "
+            "al MISS verificado. El tercer paso comprueba los argumentos reales del productor "
+            "tras recuperar crops. Esta matriz no acredita comportamiento paced.",
+            "",
+        ]
     lines += [
         "Los tiempos internos instrumentados se conservan en el JSON original y no se "
         "presentan como latencia de llegada ni como evidencia de 50 Hz. Las repeticiones "
@@ -668,6 +815,101 @@ def immutable_admission_section(receipt: Receipt) -> list[str]:
     for name in ("error", "cleanup_errors"):
         if result.get(name):
             lines += [f"{name}: `{cell(result[name])}`", ""]
+    return lines
+
+
+def subpacket_section(receipt: Receipt) -> list[str]:
+    """Preserve setup failures and every boundary gate without inventing timing evidence."""
+    result = receipt.result
+    lines = [
+        f"### `{receipt.relative}`",
+        "",
+        f"Estado: **{cell(receipt.status)}**. Alcance: `{cell(receipt.scope)}`.",
+        "",
+    ]
+    lines += table(
+        ["Gate declarado", "Valor"],
+        [
+            [name, result.get(name)]
+            for name in (
+                "coverage_exact",
+                "all_backend_gates_passed",
+                "all_canonical_inputs_passed",
+                "all_final_ttc_passed",
+                "raw_stats_preserved",
+                "weights_unchanged",
+                "normalizers_unchanged",
+                "latency_measured",
+                "complete_update_admitted",
+                "target_50hz_demonstrated",
+                "three_quarters_latency_saving_claimed",
+            )
+        ]
+        + [["preservación", preservation(result)]],
+    )
+    rows = []
+    for record in result.get("records", []):
+        checkpoints = record.get("checkpoints", [])
+        guards = record.get("partial_guards", [])
+        state_ok = sum(mapping(row.get("state")).get("passed") is True for row in checkpoints)
+        reps_ok = sum(
+            mapping(row.get("representation")).get("passed") is True
+            and mapping(row.get("representation")).get("exact") is True
+            for row in checkpoints
+        )
+        guards_ok = sum(row.get("passed") is True for row in guards)
+        canonical = mapping(record.get("canonical_input_parity"))
+        final = mapping(record.get("final_ttc_parity"))
+        rows.append(
+            [
+                record.get("index"),
+                record.get("passed"),
+                len(checkpoints),
+                state_ok,
+                reps_ok,
+                record.get("boundary_coverage_exact"),
+                len(guards),
+                guards_ok,
+                record.get("partial_guard_coverage_exact"),
+                all(
+                    mapping(canonical.get(name)).get("passed") is True
+                    and mapping(canonical.get(name)).get("exact") is True
+                    for name in ("original_20ms", "subpacket_5ms")
+                ),
+                all(
+                    mapping(final.get(name)).get("passed") is True
+                    for name in ("original_20ms", "subpacket_5ms")
+                ),
+                record.get("final_predictions_between_backends_exact"),
+                record.get("query_graph_count_unchanged"),
+            ]
+        )
+    if rows:
+        lines += table(
+            [
+                "Índice",
+                "Gate",
+                "Fronteras",
+                "Estados aprobados",
+                "Repr. exactas",
+                "Cobertura fronteras",
+                "Guardas",
+                "Guardas aprobadas",
+                "Cobertura guardas",
+                "Inputs canónicos exactos",
+                "TTC ambos backends",
+                "TTC entre backends exacto",
+                "Graphs sin cambios",
+            ],
+            rows,
+        )
+    if result.get("error"):
+        lines += [f"Error conservado: `{cell(result['error'])}`.", ""]
+    lines += [
+        "La paridad TTC corresponde sólo a las consultas finales. "
+        "No se infiere paridad TTC en las fronteras intermedias ni latencia paced.",
+        "",
+    ]
     return lines
 
 
@@ -1010,7 +1252,7 @@ def compact_overview(receipts: list[Receipt]) -> list[str]:
                 )
                 if isinstance(count, int) and not isinstance(count, bool):
                     counts.append(count)
-            if item.family == "immutable_rgb_admission":
+            if item.family in {"immutable_rgb_admission", "crop_rgb_admission"}:
                 for case in item.result.get("case_receipts", []):
                     for row in mapping(case).get("updates", []):
                         count = mapping(row).get("object_count")
@@ -1106,8 +1348,10 @@ def generate(source: Path, output: Path) -> dict[str, Any]:
                 lines += paced_section(receipt)
             elif family == "rgb_exact":
                 lines += rgb_exact_section(receipt)
-            elif family == "immutable_rgb_admission":
+            elif family in {"immutable_rgb_admission", "crop_rgb_admission"}:
                 lines += immutable_admission_section(receipt)
+            elif family == "subpacket":
+                lines += subpacket_section(receipt)
             else:
                 lines += run_section(receipt)
     unknown = [r for r in receipts if r.family not in {"baseline", *FAMILIES}]
@@ -1152,6 +1396,9 @@ def executed_source_snapshots(
     """Snapshot source files only when current bytes match an executed receipt SHA."""
     selected: dict[str, tuple[Path, Path, bytes]] = {}
     unavailable: dict[str, dict[str, Any]] = {}
+    archived_digests = {
+        sha(raw) for _, relative, raw in receipts if relative.name.endswith(".py.txt")
+    }
     for _, relative, raw in receipts:
         if relative.name not in {"binding.json", "summary.json"}:
             continue
@@ -1160,6 +1407,8 @@ def executed_source_snapshots(
         for name, digest in digests.items():
             path = Path(name)
             if path.suffix != ".py" or not isinstance(digest, str) or len(digest) != 64:
+                continue
+            if digest in archived_digests:
                 continue
             path = path if path.is_absolute() else ROOT / path
             key = f"{name}:{digest}"
@@ -1187,7 +1436,9 @@ def executed_source_snapshots(
     return list(selected.values()), list(unavailable.values())
 
 
-def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
+def copy_evidence(
+    source: Path, destination: Path, *, exclude_top_level: tuple[str, ...] = ()
+) -> dict[str, Any]:
     """Copy a fresh compact receipt bundle; never copy weights, raw data or caches."""
     source = source.resolve(strict=True)
     destination = destination.resolve()
@@ -1202,6 +1453,8 @@ def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
         if not path.is_file():
             continue
         relative = path.relative_to(source)
+        if relative.parts[0] in exclude_top_level:
+            continue
         if any(part.lower() in FORBIDDEN_PARTS for part in relative.parts):
             continue
         name = path.name
@@ -1209,6 +1462,7 @@ def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
             name in COMPACT_NAMES
             or name.endswith(("_command.json", "_exit.json", "_preflight.json", ".py.txt"))
             or name.endswith(("_pytest.txt", "_ruff.txt", "_pyright.txt", "_qa.json"))
+            or name.endswith((".stdout.txt", ".stderr.txt"))
             or ("sources" in relative.parts and name.endswith(".json.txt"))
             or (name.startswith("case_") and name.endswith(".json"))
             or path.suffix == ".py"
@@ -1261,6 +1515,7 @@ def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
         "raw_data_weights_dependencies_included": False,
         "jsonl_query_streams_included": False,
         "maximum_file_bytes": MAX_RECEIPT_BYTES,
+        "excluded_top_level": list(exclude_top_level),
     }
     write_atomic(
         destination / "MANIFEST.json", (json.dumps(manifest, indent=2) + "\n").encode("utf-8")

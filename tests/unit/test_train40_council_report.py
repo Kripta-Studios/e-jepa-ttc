@@ -273,6 +273,7 @@ def test_archive_retains_council_preflight_qa_and_exact_metadata_snapshots(tmp_p
         "measurement_audit_v1/raw_sequence_inventory.json",
         "measurement_audit_v1/causal_pilot_manifest.json",
         "measurement_audit_v1/manifest_generation_receipt.json",
+        "frame_sealing_cpu/run/sources.json",
         "memory_raw_parity_v1/summary.json",
         "memory_raw_parity_v1/binding.json",
         "memory_raw_parity_v1/sources/0001_metadata.json.txt",
@@ -284,7 +285,7 @@ def test_archive_retains_council_preflight_qa_and_exact_metadata_snapshots(tmp_p
     (source / "weights.pt").write_bytes(b"weights")
     manifest = report.copy_evidence(source, target)
     paths = {row["published"] for row in manifest["files"]}
-    assert len(paths) == 11
+    assert len(paths) == 12
     assert "runtime_pytest.txt" in paths
     assert "memory_raw_parity_v1/sources/0001_metadata.json.txt" in paths
     assert not {"observations.json.txt", "frame.npy", "weights.pt"} & paths
@@ -436,3 +437,148 @@ def test_exact_transport_preserves_first_feature_failure_and_prepared_scope(tmp_
     assert "| 488 | compiled_transport_graph | 2 | 1 | no |" in text
     assert "| complete_update_admitted | no |" in text
     assert "no se extrapola al servicio completo" in text
+
+
+def test_paced_null_clock_and_backlog_are_explicit_without_clamping():
+    result = paced_receipt()
+    result["paced"].update(
+        actual_wall_duration_s=None,
+        real_run_wall_duration_s=0.01,
+        first_offering_established=False,
+        prior_work_at_each_scheduled_arrival=[0, 1, 1],
+    )
+    receipt = report.Receipt("run/summary.json", result, {}, "paced")
+    text = "\n".join(report.paced_section(receipt))
+    assert "| duración wall s | — |" in text
+    assert "| wall real incluyendo startup s | 0.01 |" in text
+    assert "| primera oferta establecida | no |" in text
+    assert "| 0 | 1 |" in text and "| 1 | 2 |" in text
+
+
+def test_crop_admission_retains_repeat_failure_and_forced_clear_without_latency(tmp_path):
+    source = tmp_path / "source"
+    write_receipt(
+        source,
+        "other_name/summary.json",
+        {
+            "scope": report.CROP_ADMISSION_SCOPE,
+            "status": "FAILED",
+            "passed": False,
+            "expected_updates": 3,
+            "validated_updates": 3,
+            "crop_admission_matrix": {
+                "passed": False,
+                "required_cases": [[1, 0]],
+                "missing_cases": [[1, 0]],
+                "arrival_or_latency_claim": False,
+            },
+            "latency_by_count_ms": {"1": timing(9876.54321)},
+        },
+    )
+    rows = []
+    for repetition, status in enumerate(("MISS", "HIT", "MISS")):
+        rows.append(
+            {
+                "index": 0,
+                "object_count": 1,
+                "repetition": repetition,
+                "rgb_feature_cache": {"status": status},
+                "immutable_rgb_history": {"all_raw_frames_exact": True},
+                "actual_rgb_producer_input_attestation": {
+                    "passed": repetition != 0,
+                    "every_actual_pixel_and_delta_exact": repetition != 0,
+                },
+                "same_inputs_as_tensor_checked_repeat": True,
+                "parity": {"passed": True},
+                "preserved_primary_parity": {"passed": True},
+                "rgb_preprocess": {
+                    "crop_cache_hits": 7 if repetition == 2 else 0,
+                    "crop_cache_misses": 7 if repetition == 0 else 0,
+                    "crop_cache_stored_crops": 7 if repetition == 0 else 0,
+                    "crop_cache_bypassed_frames": 0,
+                },
+                "forced_feature_cache_reset": {
+                    "action": "CLEAR_FEATURE_CACHE_ONLY",
+                    "crop_cache_unchanged": True,
+                }
+                if repetition == 2
+                else None,
+                "crop_cache_exercise": {
+                    "passed": repetition != 0,
+                    "checks": {"pixels": repetition != 0},
+                },
+            }
+        )
+    case = write_receipt(source, "other_name/case_01_00000.json", {"updates": rows})
+    output = tmp_path / "report.md"
+    manifest = report.generate(source, output)
+    rendered = output.read_text(encoding="utf-8")
+    assert report.Sources(source).discover()[0].family == "crop_rgb_admission"
+    assert "| 0 | 1 | 0 | MISS | sí | no | sí | sí | sí |" in rendered
+    assert "| 0 | 1 | 0 | 0 | 7 | 7 | 0 | — | — | no | no | pixels |" in rendered
+    assert (
+        "| 0 | 1 | 2 | 7 | 0 | 0 | 0 | CLEAR_FEATURE_CACHE_ONLY | sí | sí | sí | ninguno |"
+        in rendered
+    )
+    assert "9876.54321" not in rendered
+    assert "RAW disponible → último TTC" not in rendered
+    assert "| missing_cases | [[1, 0]] |" in rendered
+    assert any(row["sha256"] == report.sha(case.read_bytes()) for row in manifest["sources"])
+
+
+def test_subpacket_keeps_setup_failure_and_all_boundaries_without_latency(tmp_path):
+    write_receipt(
+        tmp_path,
+        "event/v1/summary.json",
+        {
+            "scope": report.SUBPACKET_SCOPE,
+            "status": "FAILED",
+            "records": [],
+            "error": "RAW archive exceeds explicit budget",
+            "latency_measured": False,
+        },
+    )
+    write_receipt(
+        tmp_path,
+        "event/v2/summary.json",
+        {
+            "scope": report.SUBPACKET_SCOPE,
+            "status": "FAILED",
+            "latency_measured": False,
+            "records": [
+                {
+                    "index": 0,
+                    "passed": False,
+                    "boundary_coverage_exact": True,
+                    "checkpoints": [
+                        {
+                            "state": {"passed": False},
+                            "representation": {"passed": True, "exact": False},
+                        },
+                        {
+                            "state": {"passed": True},
+                            "representation": {"passed": True, "exact": True},
+                        },
+                    ],
+                    "partial_guards": [{"passed": True}],
+                    "partial_guard_coverage_exact": True,
+                    "final_predictions_between_backends_exact": True,
+                    "query_graph_count_unchanged": True,
+                    "canonical_input_parity": {
+                        name: {"passed": True, "exact": True}
+                        for name in ("original_20ms", "subpacket_5ms")
+                    },
+                    "final_ttc_parity": {
+                        name: {"passed": True} for name in ("original_20ms", "subpacket_5ms")
+                    },
+                }
+            ],
+        },
+    )
+    receipts = report.Sources(tmp_path).discover()
+    assert all(row.family == "subpacket" for row in receipts)
+    assert "RAW archive exceeds explicit budget" in "\n".join(report.subpacket_section(receipts[0]))
+    rendered = "\n".join(report.subpacket_section(receipts[1]))
+    assert "| 0 | no | 2 | 1 | 1 | sí | 1 | 1 | sí | sí | sí | sí | sí |" in rendered
+    assert "| latency_measured | no |" in rendered
+    assert "sólo a las consultas finales" in rendered

@@ -67,6 +67,7 @@ extend-exclude = [
   # Executed, hash-bound historical evidence is data, not editable source.
   "docs/joint_measurement_20261012/evidence_A1_loss_graph_20261016",
   "docs/rgb_port_streaming_20261010/evidence",
+  "docs/train40_runtime_council_20261028/evidence",
   "docs/sota_campaign_20261008",
   # These executed V4.9 entry points have explicit immutable SHA-256 contracts.
   "scripts/preflight_object_event_v4_9.py",
