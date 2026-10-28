@@ -6,6 +6,7 @@ import argparse
 import copy
 import json
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from types import ModuleType, SimpleNamespace
 from typing import Any, cast
 
@@ -42,6 +43,7 @@ def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_i
     assert not options.shared_rgb_images and not options.serial_preprocessing
     assert not options.overlap_event_with_rgb_preparation
     assert not options.immutable_rgb_history
+    assert not options.rgb_crop_cache and options.transport_reuse == "original"
     experimental = runner.parser().parse_args(
         arguments + ["--event-reuse", "--rgb-uint8", "--overlap-event-with-rgb-preparation"]
     )
@@ -51,6 +53,18 @@ def test_default_profile_preserves_admitted_batches_and_leaves_experiments_opt_i
         arguments + ["--immutable-rgb-history", "--rgb-feature-cache"]
     )
     assert immutable.immutable_rgb_history and immutable.rgb_feature_cache
+    crop = runner.parser().parse_args(
+        arguments
+        + [
+            "--rgb-crop-cache",
+            "--immutable-rgb-history",
+            "--rgb-feature-cache",
+            "--transport-reuse",
+            "reverse-summaries",
+        ]
+    )
+    runner.validate_crop_admission_options(crop)
+    assert crop.transport_reuse == "reverse-summaries"
 
 
 def admission_history():
@@ -256,6 +270,8 @@ def test_cleanup_failures_still_verify_originals_and_write_summary(
         rgb_feature_cache=immutable_history,
         rgb_uint8=False,
         immutable_rgb_history=immutable_history,
+        rgb_crop_cache=False,
+        transport_reuse="original",
     )
     with pytest.raises(RuntimeError, match="priming failure"):
         runner.run(args)
@@ -331,3 +347,176 @@ def test_runtime_import_closure_detects_a_late_experimental_dependency(monkeypat
     monkeypatch.setitem(sys.modules, name, module)
     added = runner.imported_runtime_paths() - before
     assert added == {runner.ROOT / "operational/train40_runtime/new_late_test_module.py"}
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"immutable_rgb_history": False},
+        {"rgb_feature_cache": False},
+        {"repeats": 2},
+        {"rgb_uint8": True},
+        {"shared_rgb_images": True},
+        {"rgb_object_chunk_size": 2},
+        {"no_event_reuse": False},
+    ],
+)
+def test_crop_admission_rejects_missing_routes_or_changed_batches(change):
+    args = argparse.Namespace(
+        rgb_crop_cache=True,
+        immutable_rgb_history=True,
+        rgb_feature_cache=True,
+        repeats=3,
+        rgb_uint8=False,
+        shared_rgb_images=False,
+        rgb_object_chunk_size=1,
+        no_event_reuse=True,
+    )
+    for key, value in change.items():
+        setattr(args, key, value)
+    with pytest.raises(ValueError, match="RGB crop admission"):
+        runner.validate_crop_admission_options(args)
+
+
+class DiagnosticCache:
+    def __init__(self, kind):
+        self.kind = kind
+        self.clears = 0
+
+    @property
+    def stats(self):
+        return {
+            "entries": 0 if self.clears else 7,
+            self.kind: 0 if self.clears else 1000,
+            "clears": self.clears,
+        }
+
+    def clear(self):
+        self.clears += 1
+
+
+def test_diagnostic_clear_touches_only_features_before_repeat_two():
+    features, crops = DiagnosticCache("tensor_bytes"), DiagnosticCache("crop_bytes")
+    service = SimpleNamespace(rgb_feature_cache=features, rgb_crop_cache_stats=crops.stats)
+    assert runner.force_feature_miss_for_crop_admission(cast(Any, service), 0) is None
+    assert runner.force_feature_miss_for_crop_admission(cast(Any, service), 1) is None
+    receipt = runner.force_feature_miss_for_crop_admission(cast(Any, service), 2)
+    assert features.clears == 1 and crops.clears == 0
+    assert receipt["outside_update_clock"] and receipt["crop_cache_unchanged"]
+    assert receipt["features_were_resident"] and receipt["features_empty_after"]
+    assert receipt["completed_ns"] >= receipt["started_ns"]
+    assert runner.force_feature_miss_for_crop_admission(cast(Any, service), 3) is None
+
+
+@pytest.mark.parametrize("parallel", [False, True])
+def test_case_crop_reset_is_explicit_and_runs_on_preprocessing_owner(parallel):
+    cache = DiagnosticCache("crop_bytes")
+    with ThreadPoolExecutor(max_workers=1) as owner:
+        service = SimpleNamespace(
+            _rgb_crop_cache=cache,
+            _preprocess=owner,
+            parallel_preprocessing=parallel,
+        )
+        receipt = runner.reset_case_crop_cache(cast(Any, service))
+    assert cache.clears == 1
+    assert receipt["empty_after"] and receipt["outside_update_clock"]
+    assert receipt["action"] == "CASE_START_CROP_CACHE_CLEAR"
+
+
+def crop_admission_rows():
+    cold = {
+        "crop_cache_hits": 0,
+        "crop_cache_misses": 7,
+        "crop_cache_stored_crops": 7,
+        "roi_frame_tasks": 7,
+        "crop_cache_bypassed_frames": 0,
+    }
+    feature_hit = dict.fromkeys(cold, 0)
+    crop_hit = {**feature_hit, "crop_cache_hits": 7}
+    forced = {
+        "action": "CLEAR_FEATURE_CACHE_ONLY",
+        "repetition": 2,
+        "outside_update_clock": True,
+        "crop_cache_unchanged": True,
+        "features_were_resident": True,
+        "features_empty_after": True,
+    }
+    return [
+        {
+            "rgb_feature_cache": {"status": status, "stored": status == "MISS"},
+            "rgb_preprocess": profile,
+            "case_crop_cache_reset": {"empty_after": True, "outside_update_clock": True},
+            "forced_feature_cache_reset": forced if index == 2 else None,
+        }
+        for index, (status, profile) in enumerate(
+            zip(["MISS", "HIT", "MISS"], [cold, feature_hit, crop_hit], strict=True)
+        )
+    ]
+
+
+@pytest.mark.parametrize(
+    "tamper",
+    [
+        None,
+        "no_third",
+        "all_hits",
+        "cold_hit",
+        "no_store",
+        "hit_work",
+        "forced_crops_changed",
+        "forced_inside_clock",
+        "forced_missing",
+        "third_crop_miss",
+        "bypass",
+        "case_warm",
+    ],
+)
+def test_crop_admission_gate_requires_exact_miss_hit_forced_miss_evidence(tamper):
+    rows = crop_admission_rows()
+    if tamper == "no_third":
+        rows.pop()
+    elif tamper == "all_hits":
+        rows[2]["rgb_feature_cache"]["status"] = "HIT"
+    elif tamper == "cold_hit":
+        rows[0]["rgb_preprocess"]["crop_cache_hits"] = 1
+    elif tamper == "no_store":
+        rows[0]["rgb_preprocess"]["crop_cache_stored_crops"] = 0
+    elif tamper == "hit_work":
+        rows[1]["rgb_preprocess"]["roi_frame_tasks"] = 1
+    elif tamper == "forced_crops_changed":
+        rows[2]["forced_feature_cache_reset"]["crop_cache_unchanged"] = False
+    elif tamper == "forced_inside_clock":
+        rows[2]["forced_feature_cache_reset"]["outside_update_clock"] = False
+    elif tamper == "forced_missing":
+        rows[2]["forced_feature_cache_reset"] = None
+    elif tamper == "third_crop_miss":
+        rows[2]["rgb_preprocess"]["crop_cache_misses"] = 1
+    elif tamper == "bypass":
+        rows[2]["rgb_preprocess"]["crop_cache_bypassed_frames"] = 1
+    elif tamper == "case_warm":
+        rows[0]["case_crop_cache_reset"]["empty_after"] = False
+    assert runner.crop_cache_exercise_receipt(rows)["passed"] is (tamper is None)
+
+
+@pytest.mark.parametrize("missing", [None, "case", "repeat", "failed"])
+def test_crop_admission_matrix_requires_six_cases_and_three_repeats(missing):
+    rows = [
+        {
+            "object_count": count,
+            "index": index,
+            "repetition": repetition,
+            "crop_cache_exercise": {"passed": True},
+        }
+        for count, index in runner.CROP_REQUIRED_CASES
+        for repetition in range(3)
+    ]
+    if missing == "case":
+        rows = rows[:-3]
+    elif missing == "repeat":
+        rows.pop()
+    elif missing == "failed":
+        rows[-1]["crop_cache_exercise"]["passed"] = False
+    receipt = runner.crop_admission_matrix(rows)
+    assert receipt["passed"] is (missing is None)
+    assert not receipt["arrival_or_latency_claim"]
+    assert receipt["required_cases"] == [[n, i] for n in (1, 2) for i in (0, 137, 553)]

@@ -52,6 +52,11 @@ from operational.train40_runtime.multiobject import (  # noqa: E402
     Square,
     read_raw_rgb_history,
 )
+from operational.train40_runtime.producers import (  # noqa: E402
+    TRANSPORT_REUSE_MODES,
+    transport_reuse_contract,
+)
+from operational.train40_runtime.rgb_crop_cache import CROP_ABI, CROP_BYTES  # noqa: E402
 from scripts.benchmark_train40_runtime import (  # noqa: E402
     _candidate_inventory,
     _source_inventory,
@@ -73,6 +78,10 @@ SCOPE = "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE"
 IMMUTABLE_ADMISSION_SCOPE = (
     "IMMUTABLE_RGB_CACHE_INPUT_ADMISSION_FIXED_QUERY_REPEATS_NO_ARRIVAL_TIMING"
 )
+CROP_ADMISSION_SCOPE = (
+    "IMMUTABLE_RGB_CROP_AND_FEATURE_CACHE_ADMISSION_FORCED_MISS_NO_ARRIVAL_TIMING"
+)
+CROP_REQUIRED_CASES = tuple((count, index) for count in (1, 2) for index in (0, 137, 553))
 
 
 def _array_sha256(value: np.ndarray) -> str:
@@ -468,10 +477,164 @@ def cache_exercise_receipt(timings: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def validate_crop_admission_options(args: argparse.Namespace) -> None:
+    """Reject a crop diagnostic that changes the admitted pixels or R/E batches."""
+    if not args.rgb_crop_cache:
+        return
+    if not args.immutable_rgb_history or not args.rgb_feature_cache or args.repeats < 3:
+        raise ValueError(
+            "RGB crop admission requires --immutable-rgb-history, --rgb-feature-cache "
+            "and at least three repeats"
+        )
+    if (
+        args.rgb_uint8
+        or args.shared_rgb_images
+        or args.rgb_object_chunk_size != 1
+        or not args.no_event_reuse
+    ):
+        raise ValueError(
+            "RGB crop admission preserves ROI-first PIL, RGB object chunks of one "
+            "and original event encoder batches"
+        )
+
+
+def reset_case_crop_cache(service: MultiObjectTrain40Service) -> dict[str, Any]:
+    """Clear crops on their owner between diagnostic cases, outside every update clock."""
+    cache = service._rgb_crop_cache
+    if cache is None:
+        raise ValueError("Crop admission requires an enabled crop cache")
+    before = cache.stats
+    if service.parallel_preprocessing:
+        service._preprocess.submit(cache.clear).result()
+    else:
+        cache.clear()
+    after = cache.stats
+    return {
+        "action": "CASE_START_CROP_CACHE_CLEAR",
+        "outside_update_clock": True,
+        "before": before,
+        "after": after,
+        "empty_after": after["entries"] == 0 and after["crop_bytes"] == 0,
+    }
+
+
+def force_feature_miss_for_crop_admission(
+    service: MultiObjectTrain40Service, repetition: int
+) -> dict[str, Any] | None:
+    """On repeat two, clear only features so the unchanged producer consumes crop hits."""
+    if repetition != 2:
+        return None
+    cache = service.rgb_feature_cache
+    if cache is None or service.rgb_crop_cache_stats is None:
+        raise ValueError("Forced feature MISS requires both feature and crop caches")
+    crop_before = service.rgb_crop_cache_stats
+    before = cache.stats
+    started_ns = time.perf_counter_ns()
+    cache.clear()
+    completed_ns = time.perf_counter_ns()
+    after = cache.stats
+    crop_after = service.rgb_crop_cache_stats
+    return {
+        "action": "CLEAR_FEATURE_CACHE_ONLY",
+        "repetition": repetition,
+        "outside_update_clock": True,
+        "started_ns": started_ns,
+        "completed_ns": completed_ns,
+        "feature_before": before,
+        "feature_after": after,
+        "crop_before": crop_before,
+        "crop_after": crop_after,
+        "crop_cache_unchanged": crop_before == crop_after,
+        "features_were_resident": before["entries"] > 0,
+        "features_empty_after": after["entries"] == 0 and after["tensor_bytes"] == 0,
+    }
+
+
+def crop_cache_exercise_receipt(timings: list[dict[str, Any]]) -> dict[str, Any]:
+    """Attest MISS, whole-feature HIT, then forced feature MISS with exact crop HIT."""
+    statuses = [(row.get("rgb_feature_cache") or {}).get("status") for row in timings]
+    expected = ["MISS", "HIT", "MISS", *(["HIT"] * max(0, len(timings) - 3))]
+    first, second, third = (
+        [row.get("rgb_preprocess") or {} for row in timings[:3]]
+        if (len(timings) >= 3)
+        else ({}, {}, {})
+    )
+    forced = timings[2].get("forced_feature_cache_reset") or {} if len(timings) >= 3 else {}
+    reset = timings[0].get("case_crop_cache_reset") or {} if timings else {}
+    cold_misses = first.get("crop_cache_misses", 0)
+    zero_work = (
+        "crop_cache_hits",
+        "crop_cache_misses",
+        "crop_cache_stored_crops",
+        "roi_frame_tasks",
+    )
+    checks = {
+        "exact_feature_sequence": len(timings) >= 3 and statuses == expected,
+        "case_starts_empty": reset.get("empty_after") is True
+        and reset.get("outside_update_clock") is True,
+        "cold_crops_stored": cold_misses > 0
+        and first.get("crop_cache_stored_crops") == cold_misses
+        and first.get("crop_cache_hits") == 0
+        and first.get("roi_frame_tasks") == cold_misses,
+        "whole_feature_hit_skips_all_crops": all(second.get(key) == 0 for key in zero_work),
+        "forced_clear_only_features": forced.get("action") == "CLEAR_FEATURE_CACHE_ONLY"
+        and forced.get("repetition") == 2
+        and forced.get("outside_update_clock") is True
+        and forced.get("crop_cache_unchanged") is True
+        and forced.get("features_were_resident") is True
+        and forced.get("features_empty_after") is True,
+        "forced_miss_uses_only_crop_hits": cold_misses > 0
+        and third.get("crop_cache_hits") == cold_misses
+        and all(third.get(key) == 0 for key in zero_work[1:]),
+        "feature_misses_stored": all(
+            row["rgb_feature_cache"].get("stored") is True
+            for row in timings
+            if (row.get("rgb_feature_cache") or {}).get("status") == "MISS"
+        ),
+        "immutable_frames_never_bypassed": bool(timings)
+        and all(
+            (row.get("rgb_preprocess") or {}).get("crop_cache_bypassed_frames") == 0
+            for row in timings
+        ),
+    }
+    return {
+        "passed": all(checks.values()),
+        "checks": checks,
+        "statuses": statuses,
+        "cold_crop_misses": cold_misses,
+        "forced_crop_hits": third.get("crop_cache_hits", 0),
+        "scope": CROP_ADMISSION_SCOPE,
+    }
+
+
+def crop_admission_matrix(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Require all six declared numerical companion cases; never infer streaming capacity."""
+    available = set()
+    for case in CROP_REQUIRED_CASES:
+        rows = [row for row in records if (row["object_count"], row["index"]) == case]
+        if {row["repetition"] for row in rows} >= {0, 1, 2} and all(
+            (row.get("crop_cache_exercise") or {}).get("passed") is True for row in rows
+        ):
+            available.add(case)
+    missing = [list(case) for case in CROP_REQUIRED_CASES if case not in available]
+    return {
+        "passed": not missing,
+        "required_cases": [list(case) for case in CROP_REQUIRED_CASES],
+        "missing_cases": missing,
+        "arrival_or_latency_claim": False,
+    }
+
+
 def run(args: argparse.Namespace) -> None:
     """Persist failures, partial results and immutable-candidate checks."""
     immutable_history = bool(getattr(args, "immutable_rgb_history", False))
-    scope = IMMUTABLE_ADMISSION_SCOPE if immutable_history else SCOPE
+    validate_crop_admission_options(args)
+    transport_contract = transport_reuse_contract(args.transport_reuse)
+    scope = (
+        CROP_ADMISSION_SCOPE
+        if args.rgb_crop_cache
+        else (IMMUTABLE_ADMISSION_SCOPE if immutable_history else SCOPE)
+    )
     _validate_output(args.output, [args.candidate, args.reference, args.manifest.parent])
     args.output.mkdir(parents=True, exist_ok=False)
     paths, binding = verify_candidate(args.candidate)
@@ -585,11 +748,22 @@ def run(args: argparse.Namespace) -> None:
             event_query_graphs=args.event_query_graphs,
             event_normalization=args.event_normalization,
             rgb_feature_cache=args.rgb_feature_cache,
+            rgb_crop_cache=args.rgb_crop_cache,
+            rgb_crop_abi=list(CROP_ABI),
+            rgb_crop_memory_upper_bound_bytes=(max(args.counts) * 16 + 1) * CROP_BYTES
+            if args.rgb_crop_cache
+            else 0,
+            rgb_crop_memory_exclusions="Original PIL/stack workspace and Python metadata",
+            transport_reuse=transport_contract,
             rgb_uint8=args.rgb_uint8,
             immutable_rgb_history=immutable_history,
             immutable_history_sealing_excluded_from_update_clock=immutable_history,
             actual_producer_input_capture=immutable_history,
             latency_is_paced_or_arrival_measurement=False,
+            forced_feature_clear_outside_update_clock=args.rgb_crop_cache,
+            crop_admission_required_cases=[list(case) for case in CROP_REQUIRED_CASES]
+            if args.rgb_crop_cache
+            else None,
             cache_scope="PER_CASE_COLD_MISS_THEN_IDENTICAL_RAW_REPEATS"
             if args.rgb_feature_cache
             else None,
@@ -622,6 +796,9 @@ def run(args: argparse.Namespace) -> None:
                             "rgb_endpoint_reuse": True,
                             "rgb_uint8": args.rgb_uint8,
                             "immutable_rgb_history": immutable_history,
+                            "rgb_crop_cache": args.rgb_crop_cache,
+                            "rgb_crop_abi": list(CROP_ABI),
+                            "transport_reuse": transport_contract,
                         },
                         sort_keys=True,
                     ).encode()
@@ -679,6 +856,8 @@ def run(args: argparse.Namespace) -> None:
                 overlap_event_with_rgb_preparation=args.overlap_event_with_rgb_preparation,
                 rgb_feature_cache=feature_cache,
                 rgb_uint8=args.rgb_uint8,
+                rgb_crop_cache=args.rgb_crop_cache,
+                transport_reuse=args.transport_reuse,
             )
             startup.append(
                 {
@@ -695,6 +874,7 @@ def run(args: argparse.Namespace) -> None:
             for index in args.indices:
                 if feature_cache is not None:
                     feature_cache.clear()
+                case_crop_reset = reset_case_crop_cache(service) if args.rgb_crop_cache else None
                 row = rows[index]
                 anchor = int(row["anchor_us"])
                 boxes = [inputs._box(source) for source in list(row["bbox_sources"])[-2:]]
@@ -712,6 +892,11 @@ def run(args: argparse.Namespace) -> None:
                     packet = reader.read_window(anchor - 20_000, anchor)
                 timings = []
                 for repetition in range(args.repeats):
+                    forced_feature_reset = (
+                        force_feature_miss_for_crop_admission(service, repetition)
+                        if args.rgb_crop_cache
+                        else None
+                    )
                     history.initialize(old, anchor - 620_000, anchor - 20_000)
                     torch.cuda.synchronize()
                     with (
@@ -728,6 +913,8 @@ def run(args: argparse.Namespace) -> None:
                         packet_events=len(packet["t"]),
                         ring=history.stats,
                         diagnostic_tensor_hashes_outside_clock=True,
+                        case_crop_cache_reset=case_crop_reset,
+                        forced_feature_cache_reset=forced_feature_reset,
                     )
                     result["input_digests"] = input_digests(service)
                     if immutable_history:
@@ -814,12 +1001,16 @@ def run(args: argparse.Namespace) -> None:
                     receipts.append(reference_receipt(row, obj, reference_pixels))
                 attest_cached_inputs(timings, expected_rgb_digests)
                 cache_exercise = cache_exercise_receipt(timings) if args.rgb_feature_cache else None
+                crop_exercise = (
+                    crop_cache_exercise_receipt(timings) if args.rgb_crop_cache else None
+                )
                 for result in timings:
                     if immutable_history:
                         result["actual_rgb_producer_input_attestation"] = attest_actual_rgb_calls(
                             result, canonical_rgb, args.rgb_object_chunk_size
                         )
                     result["cache_exercise"] = cache_exercise
+                    result["crop_cache_exercise"] = crop_exercise
                     candidates = [
                         {**output, "query_id": output["object_id"]} for output in result["objects"]
                     ]
@@ -895,6 +1086,7 @@ def run(args: argparse.Namespace) -> None:
             and record["same_inputs_as_tensor_checked_repeat"]
             and all(record["history_receipts_exact"])
             and (not args.rgb_feature_cache or record["cache_exercise"]["passed"])
+            and (not args.rgb_crop_cache or record["crop_cache_exercise"]["passed"])
             and (
                 not immutable_history
                 or (
@@ -910,6 +1102,9 @@ def run(args: argparse.Namespace) -> None:
         )
         if args.rgb_feature_cache:
             admitted = admitted and cache_hit_updates > 0
+        crop_matrix = crop_admission_matrix(records) if args.rgb_crop_cache else None
+        if crop_matrix is not None:
+            admitted = admitted and crop_matrix["passed"]
         complete_count = len(args.counts) * len(args.indices) * args.repeats
         expected_schedule = [
             (count, index, repetition)
@@ -944,6 +1139,10 @@ def run(args: argparse.Namespace) -> None:
             "expected_updates": complete_count,
             "validated_updates": len(records),
             "immutable_rgb_history": immutable_history,
+            "rgb_crop_cache": args.rgb_crop_cache,
+            "transport_reuse": transport_contract,
+            "crop_admission_matrix": crop_matrix,
+            "latency_is_paced_or_arrival_measurement": False,
             "raw_source_stat_checks": raw_checks,
             "schedule_exact": recorded_schedule == expected_schedule,
             "expected_case_schedule": [list(item) for item in expected_schedule],
@@ -1041,6 +1240,18 @@ def parser() -> argparse.ArgumentParser:
         "--rgb-feature-cache",
         action="store_true",
         help="Measure a cold miss then identical-history feature hits; context always recomputed",
+    )
+    parser.add_argument(
+        "--rgb-crop-cache",
+        action="store_true",
+        help="Diagnostic crop MISS/HIT admission; requires immutable history, feature cache "
+        "and >=3 repeats; clears only features before repeat 2 outside the update clock",
+    )
+    parser.add_argument(
+        "--transport-reuse",
+        choices=TRANSPORT_REUSE_MODES,
+        default="original",
+        help="Opt-in exact transport reuse with unchanged producer batches",
     )
     parser.add_argument(
         "--immutable-rgb-history",
