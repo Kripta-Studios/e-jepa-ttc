@@ -144,7 +144,10 @@ def run_paced_replay(
     Optional source lifecycle callbacks execute on the producer thread. A
     successful warmup sets the first deadline once, after its declared startup
     work; later deadlines remain fixed. Finalization always runs in that same
-    thread, including after warmup/acquisition failure or caller cancellation.
+    thread, after the consumer drains offered work or aborts. The producer marks
+    offering complete before waiting for finalization permission, so its cleanup
+    cannot compete with the last inference. This also applies after warmup or
+    acquisition failure. Caller cancellation releases the producer in finally.
     """
     ids = tuple(object_ids)
     if not ids or any(not isinstance(x, str) or not x for x in ids) or len(set(ids)) != len(ids):
@@ -164,11 +167,23 @@ def run_paced_replay(
     scheduler = pacing_clock_metadata(wait_strategy)
     first_ns = time.perf_counter_ns() + round(startup_lead_s * 1e9)
     pending: queue.Queue[Arrival[Payload]] = queue.Queue(maxsize=queue_capacity)
-    stop, done = threading.Event(), threading.Event()
+    stop, offering_done, permit_finalize = (threading.Event(), threading.Event(), threading.Event())
     receipts: list[dict[str, Any]] = []
     records: list[dict[str, Any]] = []
     expected = {f"update-{index}": list(ids) for index in range(updates)}
-    lifecycle: dict[str, Any] = {"warmup": None, "finalize": None, "errors": []}
+    lifecycle: dict[str, Any] = {
+        "schema": "train40_paced_source_lifecycle_v2",
+        "order": "OFFERING_DONE_THEN_CONSUMER_DRAIN_OR_ABORT_THEN_FINALIZE",
+        "warmup": None,
+        "finalize": None,
+        "errors": [],
+        "offering_ended_ns": None,
+        "consumer_drain_completed_ns": None,
+        "consumer_stopped_ns": None,
+        "consumer_queue_drained": False,
+        "finalize_permitted_ns": None,
+        "producer_finished_ns": None,
+    }
 
     def source_callback(name: str, callback: Callable[[], Mapping[str, Any] | None]) -> None:
         receipt: dict[str, Any] = {
@@ -224,6 +239,11 @@ def run_paced_replay(
         except BaseException as exc:
             lifecycle["errors"].append({"phase": phase, "error": f"{type(exc).__name__}: {exc}"})
         finally:
+            lifecycle["offering_ended_ns"] = time.perf_counter_ns()
+            offering_done.set()
+            # Keep source ownership and local payloads alive until the consumer
+            # finishes. offering_done, not finalization, terminates its loop.
+            permit_finalize.wait()
             if source_finalize is not None:
                 try:
                     source_callback("finalize", source_finalize)
@@ -231,12 +251,13 @@ def run_paced_replay(
                     lifecycle["errors"].append(
                         {"phase": "finalize", "error": f"{type(exc).__name__}: {exc}"}
                     )
-            done.set()
+            lifecycle["producer_finished_ns"] = time.perf_counter_ns()
 
     producer = threading.Thread(target=produce, name="train40-raw-arrivals", daemon=True)
     producer.start()
+    consumer_drained = False
     try:
-        while not done.is_set() or not pending.empty():
+        while not offering_done.is_set() or not pending.empty():
             try:
                 arrival = pending.get(timeout=0.01)
             except queue.Empty:
@@ -274,8 +295,15 @@ def run_paced_replay(
                     }
                 )
             pending.task_done()
+        consumer_drained = True
     finally:
         stop.set()
+        stopped_ns = time.perf_counter_ns()
+        lifecycle["consumer_stopped_ns"] = stopped_ns
+        lifecycle["consumer_queue_drained"] = consumer_drained
+        lifecycle["consumer_drain_completed_ns"] = stopped_ns if consumer_drained else None
+        lifecycle["finalize_permitted_ns"] = time.perf_counter_ns()
+        permit_finalize.set()
         producer.join()
     finish_ns = time.perf_counter_ns()
     grouped = group_updates(records, expected)
@@ -295,6 +323,9 @@ def run_paced_replay(
         for row in processed
     ]
     end_times = [row["completed_ns"] for row in grouped["updates"] if "completed_ns" in row]
+    successful_end_times = [
+        row["completed_ns"] for row in grouped["updates"] if row["passed"] is True
+    ]
     pending_at_deadlines = [
         sum(
             prior["scheduled_ns"] < row["scheduled_ns"] < prior["completed_ns"]
@@ -334,6 +365,11 @@ def run_paced_replay(
         "offered_updates": updates,
         "offered_duration_s": updates / rate_hz,
         "actual_wall_duration_s": (finish_ns - first_ns) / 1e9,
+        "actual_wall_duration_includes_source_finalize_and_join": True,
+        "last_response_duration_s": (max(end_times) - first_ns) / 1e9 if end_times else None,
+        "last_successful_all_object_ttc_duration_s": (
+            (max(successful_end_times) - first_ns) / 1e9 if successful_end_times else None
+        ),
         "queue_capacity": queue_capacity,
         "wait_strategy": wait_strategy,
         "scheduler": scheduler,

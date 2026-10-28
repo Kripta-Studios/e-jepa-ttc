@@ -7,6 +7,7 @@ import time
 
 import pytest
 
+from operational.train40_runtime import paced as paced_module
 from operational.train40_runtime.paced import (
     pacing_clock_metadata,
     run_paced_replay,
@@ -70,11 +71,22 @@ def test_overload_keeps_fixed_schedule_and_records_drops_without_postponing_arri
         assert fourth_arrival.wait(2.0)
         return {"a": prediction()}
 
-    result = run_paced_replay(acquire, infer, ["a"], updates=7, rate_hz=500, queue_capacity=1)
+    result = run_paced_replay(
+        acquire,
+        infer,
+        ["a"],
+        updates=7,
+        rate_hz=500,
+        queue_capacity=1,
+        source_finalize=lambda: {"closed": True},
+    )
     assert result["dropped_updates"] > 0
     assert len(result["arrival_receipts"]) == 7
     assert not result["grouped"]["passed"]
     assert not result["capacity_checks"]["no_drops_or_source_errors"]
+    assert result["source_lifecycle"]["finalize"]["started_ns"] >= max(
+        row["completed_ns"] for row in result["object_records"]
+    )
     assert (
         result["arrival_receipts"][-1]["scheduled_ns"]
         - result["arrival_receipts"][0]["scheduled_ns"]
@@ -386,6 +398,75 @@ def test_source_lifecycle_owns_one_thread_and_starts_deadlines_after_warmup():
     assert result["source_lifecycle"]["warmup"]["result"] == {"causal_prefill": True}
     assert result["source_lifecycle"]["finalize"]["result"] == {"closed": True}
     assert result["capacity_checks"]["source_lifecycle_succeeded"]
+    lifecycle = result["source_lifecycle"]
+    assert lifecycle["schema"] == "train40_paced_source_lifecycle_v2"
+    assert lifecycle["consumer_queue_drained"]
+    assert lifecycle["offering_ended_ns"] <= lifecycle["consumer_drain_completed_ns"]
+    assert lifecycle["consumer_drain_completed_ns"] <= lifecycle["finalize_permitted_ns"]
+    assert lifecycle["finalize_permitted_ns"] <= lifecycle["finalize"]["started_ns"]
+    assert lifecycle["finalize"]["ended_ns"] <= lifecycle["producer_finished_ns"]
+    assert result["actual_wall_duration_includes_source_finalize_and_join"]
+    assert result["actual_wall_duration_s"] >= result["last_successful_all_object_ttc_duration_s"]
+
+
+@pytest.mark.parametrize("with_finalizer", [False, True])
+def test_offering_finishes_before_drain_but_finalize_waits_for_all_completions(
+    monkeypatch, with_finalizer
+):
+    # Observe the runner's real Events, without sleeps or relying on scheduling
+    # delays. Event 1 is offering_done; Thread's internal Event is created later.
+    real_event = threading.Event
+    events = []
+    finalized = real_event()
+    final_inference_exited = real_event()
+    owners = {}
+
+    def event_factory():
+        event = real_event()
+        events.append(event)
+        return event
+
+    monkeypatch.setattr(paced_module.threading, "Event", event_factory)
+
+    def acquire(index):
+        owners["source"] = threading.get_ident()
+        return index
+
+    def infer(arrival):
+        # The source must publish offering_done while this inference is live,
+        # but must not close its archive until both completions are recorded.
+        assert events[1].wait(2.0)
+        assert not finalized.is_set()
+        if arrival.payload == 1:
+            final_inference_exited.set()
+        return {"a": prediction()}
+
+    def finalize():
+        owners["finalize"] = threading.get_ident()
+        finalized.set()
+
+    result = run_paced_replay(
+        acquire,
+        infer,
+        ["a"],
+        updates=2,
+        rate_hz=500,
+        queue_capacity=2,
+        startup_lead_s=0,
+        source_finalize=finalize if with_finalizer else None,
+    )
+    assert result["grouped"]["passed"] and final_inference_exited.is_set()
+    lifecycle = result["source_lifecycle"]
+    assert lifecycle["consumer_queue_drained"]
+    last_completion = max(row["completed_ns"] for row in result["object_records"])
+    assert last_completion <= lifecycle["consumer_drain_completed_ns"]
+    assert lifecycle["producer_finished_ns"] >= lifecycle["finalize_permitted_ns"]
+    if with_finalizer:
+        assert finalized.is_set()
+        assert owners["source"] == owners["finalize"] != threading.get_ident()
+        assert lifecycle["finalize"]["started_ns"] >= last_completion
+    else:
+        assert lifecycle["finalize"] is None and not finalized.is_set()
 
 
 @pytest.mark.parametrize("failure", ["warmup", "acquire", "finalize"])
@@ -419,6 +500,10 @@ def test_lifecycle_finalization_survives_source_failures(failure):
     )
     assert calls[-1] == "finalize"
     assert not result["capacity_checks_passed"]
+    lifecycle = result["source_lifecycle"]
+    assert lifecycle["consumer_queue_drained"]
+    assert lifecycle["offering_ended_ns"] <= lifecycle["consumer_drain_completed_ns"]
+    assert lifecycle["finalize_permitted_ns"] <= lifecycle["finalize"]["started_ns"]
     if failure == "warmup":
         assert calls == ["warmup", "finalize"]
         assert result["missing_arrival_ids"] == ["update-0"]
@@ -429,7 +514,8 @@ def test_lifecycle_finalization_survives_source_failures(failure):
         assert result["source_lifecycle"]["errors"][0]["phase"] == failure
 
 
-def test_caller_cancellation_still_finalizes_source_on_producer_thread():
+@pytest.mark.parametrize("keyboard_interrupt", [False, True])
+def test_caller_cancellation_still_finalizes_source_on_producer_thread(keyboard_interrupt):
     ids = {}
 
     class Cancelled(BaseException):
@@ -440,12 +526,12 @@ def test_caller_cancellation_still_finalizes_source_on_producer_thread():
         return index
 
     def infer(arrival):
-        raise Cancelled()
+        raise KeyboardInterrupt() if keyboard_interrupt else Cancelled()
 
     def finalize():
         ids["finalize"] = threading.get_ident()
 
-    with pytest.raises(Cancelled):
+    with pytest.raises(KeyboardInterrupt if keyboard_interrupt else Cancelled):
         run_paced_replay(
             acquire,
             infer,
