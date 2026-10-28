@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-28T10:12:22.0737756Z",
+  "git_commit": "fcac4c1f5fe04677d8f0fceb6234f98ac17ebfee",
+  "gpu": [
+    "name, memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 3647 MiB, 3 %, 23.35 W, 72"
+  ],
+  "os": {
+    "FreePhysicalMemory": 8827276,
+    "FreeVirtualMemory": 11054916
+  },
+  "note": "Root exclusive GPU; no council CPU tests; complete paced memory plus immutable RGB features, early E dispatch and exact reverse-summaries transport; crop cache module not enabled"
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "train40_rgb_pil_exact_probe_v1",
+  "status": "FAILED",
+  "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+  "complete_update_admitted": false,
+  "sustained_50hz_demonstrated": false,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "weights_or_normalizers_loaded": false,
+  "records": [],
+  "cold_records": [],
+  "startup": [],
+  "cleanup": [],
+  "compiler_environment": {
+    "TRITON_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~4\\RGB_EX~1\\IDX553~1\\triton_cache",
+    "TORCHINDUCTOR_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~4\\RGB_EX~1\\IDX553~1\\inductor_cache",
+    "CUDA_PATH": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\backends\\nvidia",
+    "CC": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\runtime\\tcc\\tcc.exe"
+  },
+  "error": "FileNotFoundError: [WinError 2] El sistema no puede encontrar el archivo especificado: 'C:\\\\Users\\\\\u00c1lvaro Schwiedop\\\\Desktop\\\\KriptaStudios\\\\EVOCON_JEPA_Codex_Handoff\\\\e-jepa-ttc-v18-joint-measurement\\\\_classes.py'",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\benchmark_train40_rgb_pil_exact.py\", line 344, in run\n    original = snapshot_files([manifest, *sources])\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\train40_runtime\\measurement.py\", line 463, in snapshot_files\n    for path in sorted({path.resolve(strict=True) for path in paths}):\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\train40_runtime\\measurement.py\", line 463, in <setcomp>\n    for path in sorted({path.resolve(strict=True) for path in paths}):\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\Lib\\pathlib.py\", line 993, in resolve\n    s = os.path.realpath(self, strict=strict)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen ntpath>\", line 664, in realpath\nFileNotFoundError: [WinError 2] El sistema no puede encontrar el archivo especificado: 'C:\\\\Users\\\\\u00c1lvaro Schwiedop\\\\Desktop\\\\KriptaStudios\\\\EVOCON_JEPA_Codex_Handoff\\\\e-jepa-ttc-v18-joint-measurement\\\\_classes.py'\n"
+}

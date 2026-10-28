@@ -1,0 +1,79 @@
+{
+  "schema": "train40_measurement_cpu_qa_v1",
+  "started_utc": "2026-10-28T09:52:18.500156+00:00",
+  "git_commit": "93e38678ddabce44d4c19f4a7aa95c3f45a6037e",
+  "sources": {
+    "operational/train40_runtime/paced_statistics.py": "dc278265315cf1957b14ec73042cec4cd7f9629131777102f84e0d015ccb3822",
+    "operational/train40_runtime/paced.py": "8ded5adc953812b1bc7363a07acc1239f2f2a86514e4bff2b4bf8a87bf0affd0",
+    "scripts/report_train40_resume.py": "c879b8a14d5ad894f1c2aa8a8a451eca2d23b9e468c7450a16516ad8ea643fb8",
+    "tests/unit/test_train40_runtime_paced.py": "110bf8f24ee8304786c696144e9a203005ae835bc17c61a99f9da3800aba7870",
+    "tests/unit/test_train40_council_report.py": "c95d70d7a74f266d2c23115f941a6881330b9720e8fec58f1bf9e32de6f8cdba"
+  },
+  "commands": [
+    {
+      "name": "pytest",
+      "argv": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/unit/test_train40_runtime_paced.py",
+        "tests/unit/test_train40_council_report.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.2651562999817543,
+      "log": "pytest.txt",
+      "log_sha256": "4cf2124032e464147e816ec20702b3b32e3647b01af12dd56f695de26cf6f779"
+    },
+    {
+      "name": "ruff",
+      "argv": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "operational/train40_runtime/paced_statistics.py",
+        "operational/train40_runtime/paced.py",
+        "scripts/report_train40_resume.py",
+        "tests/unit/test_train40_runtime_paced.py",
+        "tests/unit/test_train40_council_report.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.16457780002383515,
+      "log": "ruff.txt",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "pyright",
+      "argv": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pyright",
+        "operational/train40_runtime/paced_statistics.py",
+        "operational/train40_runtime/paced.py",
+        "scripts/report_train40_resume.py",
+        "tests/unit/test_train40_runtime_paced.py",
+        "tests/unit/test_train40_council_report.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.683874599984847,
+      "log": "pyright.txt",
+      "log_sha256": "f552d237ad0bd249c05f97eb62dbc65d2d0e4a5fe2346608e10fb7838dba9ed1"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.05395720002707094,
+      "log": "format.txt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "gpu_used": false,
+  "passed": true,
+  "ended_utc": "2026-10-28T09:52:22.700553+00:00"
+}

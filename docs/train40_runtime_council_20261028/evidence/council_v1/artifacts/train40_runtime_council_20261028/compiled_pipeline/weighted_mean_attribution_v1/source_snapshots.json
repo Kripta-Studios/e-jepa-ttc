@@ -1,0 +1,13 @@
+{
+  "sources\\operational\\train40_runtime\\compiled_pipeline.py.txt": "80cb83349a83eaa62708d9366bc62b99209f7d7828526b0583f7b5bff79076ca",
+  "sources\\operational\\train40_runtime\\compiled_transport.py.txt": "0ff211ab33df33b1a5a9e8ccb27c8391ed03b73eac0828673415275b4a14d3c9",
+  "sources\\operational\\train40_runtime\\measurement.py.txt": "448cd81437f165f5c3b399f790f8be2867c75113ef11ec2fc123ea56fbf5bb42",
+  "sources\\scripts\\benchmark_train40_compiled_pipeline.py.txt": "1488173ebf470e9a7cd54cfa828dfd29ca1784965dfe0755f88b55d6d3d2b97a",
+  "sources\\scripts\\benchmark_train40_encoder.py.txt": "424100ae161ff84e3bbec69467933bbad9d34506bf21307e16b679a94c95c5f5",
+  "sources\\scripts\\benchmark_train40_producer_variants.py.txt": "94658e5bc23553fd6961199158296e308f11c12db67b171ebe2dc5f7f34695ce",
+  "sources\\scripts\\benchmark_train40_runtime.py.txt": "190aae46d5568ab1ea0e392e8f45b9c9a5eeb645ce5fcbcabd617a7b076a7ad2",
+  "sources\\scripts\\diagnose_train40_transport_summaries.py.txt": "d9f6f0252b6199dd4b9f7bb21583910594921849a02f1b4dd91ade61df6f33a9",
+  "sources\\scripts\\diagnose_train40_weighted_mean.py.txt": "96e6513f9edaef5496c4b909e38c018c000e0fe5316b16973a12e3249d284e4e",
+  "sources\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py.txt": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+  "sources\\src\\e_jepa_ttc\\models\\local_transport.py.txt": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d"
+}

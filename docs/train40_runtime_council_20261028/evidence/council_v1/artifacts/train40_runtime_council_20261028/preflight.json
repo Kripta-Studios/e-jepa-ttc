@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-28T08:47:03.4152182Z",
+  "git_commit": "2521de1a585f515d4d4a7d184fce5193ffc65658",
+  "git_status": [],
+  "gpu": [
+    "name, memory.total [MiB], memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 12227 MiB, 3711 MiB, 9 %, 23.00 W, 69"
+  ],
+  "os": {
+    "FreePhysicalMemory": 7301248,
+    "TotalVisibleMemorySize": 32698612,
+    "FreeVirtualMemory": 14402272,
+    "TotalVirtualMemorySize": 83081220
+  },
+  "note": "Single GPU owner root; council read-only, no parallel CPU tests; no processes stopped; weights and normalizers unchanged"
+}

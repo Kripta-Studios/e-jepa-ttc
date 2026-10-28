@@ -1,0 +1,788 @@
+"""Opt-in frozen TRAIN40 producer graphs without changing scientific source files.
+
+The default captures fixed-shape producer cores and retains historical CPU
+float64 phase conversion. Separate opt-ins capture whole expert blocks and
+reuse overlapping endpoint encodings. Those require final TTC parity admission.
+Input guards run outside tracing/capture on every call. Capture checks compare
+against the corresponding eager core; they do not replace sensor-to-TTC parity.
+"""
+
+from __future__ import annotations
+
+import time
+import warnings
+from collections.abc import Mapping
+from copy import copy, deepcopy
+from dataclasses import asdict, dataclass
+from types import MethodType
+from typing import Any, cast
+
+import torch
+from torch import Tensor, nn
+
+from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
+from e_jepa_ttc.rgb_port.features import (
+    event_phase17,
+    event_statistics_from_channels12,
+    pair133,
+    rgb_phase17,
+)
+from e_jepa_ttc.simplex_t.expert_phase import expert_phase_from_ttc
+from e_jepa_ttc.simplex_t.phase import emitted_phase
+from operational.rgb_port.train_heads import pair_point_phase
+from operational.rgb_port_streaming.contracts import NativeObservation
+from operational.train40_runtime.compiled_transport import (
+    TransportCoreBinding,
+    attach_transport_pair_core,
+)
+from operational.train40_runtime.transport import TransportReuseOptions, attach_transport_reuse
+
+FEATURE_NAMES = ("token128", "prediction_ttc", "flow", "margin", "log_variance", "support", "known")
+TRANSPORT_REUSE_MODES = ("original", "reverse", "reverse-summaries")
+
+
+def transport_reuse_contract(mode: str) -> dict[str, Any]:
+    """Describe an explicit inference adapter without changing the original model."""
+    if not isinstance(mode, str) or mode not in TRANSPORT_REUSE_MODES:
+        raise ValueError("Transport reuse must be original, reverse or reverse-summaries")
+    return {
+        "mode": mode,
+        "reverse_correlation_reuse": mode != "original",
+        "reverse_sample_reuse": mode != "original",
+        "weighted_summary_reuse": mode == "reverse-summaries",
+        "history_group_size": None,
+        "adjacent_pair_deduplication": False,
+        "adapter_before_endpoint_reuse": True,
+        "compile_backend": None,
+    }
+
+
+def _transport_model_views(
+    models: Mapping[str, nn.Module], mode: str
+) -> tuple[Mapping[str, nn.Module], dict[str, Any]]:
+    """Use the exactly audited private views before endpoint encoder adaptation."""
+    if mode == "original":
+        return models, {}
+    proposed: dict[str, nn.Module] = {}
+    bindings: dict[str, Any] = {}
+    for name, model in models.items():
+        if model.training or any(parameter.requires_grad for parameter in model.parameters()):
+            raise ValueError(f"Transport reuse requires frozen eval models: {name}")
+        view = model
+        if isinstance(model, CausalScaleTTC):
+            if mode == "reverse":
+                view = attach_transport_pair_core(model, reuse_reverse=True)
+                adapter = view._train40_transport_binding
+                if not isinstance(adapter, TransportCoreBinding):
+                    raise TypeError("Transport-pair view did not bind its adapter identity")
+                bindings[name] = asdict(adapter)
+            else:
+                view = attach_transport_reuse(model, history_group_size=None, summaries=True)
+                options = view._train40_transport_options
+                if not isinstance(options, TransportReuseOptions):
+                    raise TypeError("Transport-reuse view did not bind its adapter options")
+                bindings[name] = asdict(options)
+        parameters, view_parameters = dict(model.named_parameters()), dict(view.named_parameters())
+        if parameters.keys() != view_parameters.keys() or any(
+            value is not view_parameters[key] for key, value in parameters.items()
+        ):
+            raise ValueError(f"Transport view did not share exact frozen parameters: {name}")
+        proposed[name] = view
+    return proposed, bindings
+
+
+class _ChannelsLastEndpointEncoder(nn.Module):
+    """Run a private encoder in NHWC storage and restore canonical output strides.
+
+    Returning contiguous tensors confines this experiment to the encoder. In
+    particular, it does not silently change the downstream correlation reduction
+    layout. Values can still differ through convolution/normalization algorithms;
+    the final TTC tolerance remains mandatory.
+    """
+
+    def __init__(self, encoder: nn.Module) -> None:
+        super().__init__()
+        # Module.to documents memory_format, but the installed stubs omit it.
+        self.encoder = encoder.to(memory_format=torch.channels_last)  # pyright: ignore[reportCallIssue]
+
+    def forward(
+        self, values: Tensor, *, return_dense_features: bool = False
+    ) -> tuple[Tensor, Tensor, Tensor | None]:
+        foreground, token, dense = self.encoder(
+            values.contiguous(memory_format=torch.channels_last),
+            return_dense_features=return_dense_features,
+        )
+        return (
+            foreground.contiguous(),
+            token.contiguous(),
+            dense.contiguous() if dense is not None else None,
+        )
+
+
+def clone_producer_models_for_layout(
+    models: Mapping[str, nn.Module], *, channels_last: bool
+) -> dict[str, nn.Module]:
+    """Copy frozen producers before experimenting with encoder memory format.
+
+    Producer parameters and buffers never alias the oracle. Other model types
+    (PAIR and context heads) remain shared and are not modified. No global cuDNN
+    flag or precision setting is changed. The default runtime does not call this
+    helper: each layout is an explicitly selected, separately admitted variant.
+    """
+    result = dict(models)
+    for name, model in models.items():
+        if not isinstance(model, CausalScaleTTC):
+            continue
+        if model.training or any(parameter.requires_grad for parameter in model.parameters()):
+            raise ValueError("Layout experiments require frozen eval producers")
+        if any(parameter.dtype != torch.float32 for parameter in model.parameters()):
+            raise ValueError("Layout experiments preserve FP32 producer weights")
+        proposed = deepcopy(model)
+        # Check values before wrapping changes state_dict paths. Neither copy
+        # nor storage conversion is permitted to alter a single weight value.
+        for key, original in model.state_dict().items():
+            if not torch.equal(original, proposed.state_dict()[key]):
+                raise ValueError(f"Producer copy changed frozen state: {name}/{key}")
+        if channels_last:
+            proposed._modules["encoder"] = _ChannelsLastEndpointEncoder(proposed.encoder)
+            if proposed.transport_encoder is not None:
+                proposed._modules["transport_encoder"] = _ChannelsLastEndpointEncoder(
+                    proposed.transport_encoder
+                )
+        result[name] = proposed
+    return result
+
+
+class ProducerTensorCore(nn.Module):
+    """Expose precisely the small tensor outputs consumed by frozen PHASE17."""
+
+    def __init__(self, model: CausalScaleTTC) -> None:
+        super().__init__()
+        self.model = model
+
+    def forward(self, sensor: Tensor, delta: Tensor) -> tuple[Tensor, ...]:
+        """Keep original producer arithmetic and remove unused diagnostic returns."""
+        output = self.model(sensor, delta, return_dense_features=False)
+        margin = torch.minimum(
+            output.log_height_ratio[:, -1].abs().float() / 0.002,
+            output.sensor_support[:, -1].float() / 0.0001,
+        )
+        return (
+            output.pair_tokens[:, -1].float(),
+            output.ttc_mean_seconds.float(),
+            output.diagnostics["transport_flow_magnitude"][:, -1].float(),
+            margin,
+            output.ttc_log_variance.float(),
+            output.sensor_support.float(),
+            output.known_mask,
+        )
+
+
+def validate_inputs(
+    model: CausalScaleTTC, sensor: Tensor, delta: Tensor, *, check_values: bool = True
+) -> None:
+    """Validate traced-away shape/value guards before each producer invocation."""
+    if model.training or torch.is_grad_enabled():
+        raise ValueError("Producer runtime requires eval mode and torch.inference_mode()")
+    if sensor.ndim != 5 or sensor.shape[1] not in (2, 3):
+        raise ValueError("Frozen producers require [B,T=2/3,C,H,W] sensor tensors")
+    if sensor.shape[0] == 0 or sensor.shape[2] != model.config.in_channels:
+        raise ValueError("Producer batch or channel count differs from its frozen architecture")
+    if sensor.dtype != torch.float32 or delta.dtype != torch.float32:
+        raise ValueError("Producer runtime preserves FP32 sensor and clock inputs")
+    if delta.shape != (len(sensor), sensor.shape[1] - 1):
+        raise ValueError("Producer clock must have shape [B,T-1]")
+    parameter = next(model.parameters())
+    if sensor.device != parameter.device or delta.device != sensor.device:
+        raise ValueError("Producer, sensors and clocks must share a device")
+    if parameter.dtype != torch.float32:
+        raise ValueError("Producer weights must retain FP32 execution precision")
+    if not check_values:
+        return
+    checks = [torch.isfinite(sensor).all(), torch.isfinite(delta).all(), (delta > 0).all()]
+    if model.config.modality == "rgb":
+        checks.extend(((sensor >= 0).all(), (sensor <= 1).all()))
+    if not bool(torch.stack(checks).all()):
+        raise ValueError("Nonfinite sensor/clock, nonpositive clock or RGB outside raw [0,1]")
+
+
+def _exact_outputs(actual: tuple[Tensor, ...], expected: tuple[Tensor, ...], stage: str) -> None:
+    if len(actual) != len(expected) or any(
+        not torch.equal(a, b) for a, b in zip(actual, expected, strict=True)
+    ):
+        raise ValueError(f"Producer {stage} failed exact frozen-output parity")
+
+
+def trace_core(
+    model: CausalScaleTTC, sensor: Tensor, delta: Tensor
+) -> tuple[torch.jit.ScriptModule, tuple[str, ...]]:
+    """Trace one validated fixed signature and require exact initial output parity.
+
+    The original model's Python branches are architecture/shape choices and
+    input guards. Value guards are reproduced by ``validate_inputs``. Warnings
+    remain in the runtime receipt, rather than being hidden from the caller.
+    No freeze, precision conversion or optimize-for-inference pass is applied.
+    """
+    validate_inputs(model, sensor, delta)
+    core = ProducerTensorCore(model).eval()
+    expected = core(sensor, delta)
+    with warnings.catch_warnings(record=True) as records:
+        warnings.simplefilter("always")
+        traced = cast(
+            torch.jit.ScriptModule,
+            torch.jit.trace(core, (sensor, delta), check_trace=False, strict=True),
+        )
+    actual = cast(tuple[Tensor, ...], traced(sensor, delta))
+    _exact_outputs(actual, expected, "trace")
+    messages = tuple(sorted({str(record.message) for record in records}))
+    return traced, messages
+
+
+@dataclass
+class _GraphEntry:
+    graph: torch.cuda.CUDAGraph
+    sensor: Tensor
+    delta: Tensor
+    output: tuple[Tensor, ...]
+    traced: torch.jit.ScriptModule
+    trace_warnings: tuple[str, ...]
+    setup_seconds: float
+    replays: int = 0
+    last_use: torch.cuda.Event | None = None
+    history_group_size: int | None = None
+    capture_stream: torch.cuda.Stream | None = None
+
+
+@dataclass(frozen=True)
+class AsyncExpertBlock:
+    """Owned graph outputs plus deferred guard and input/buffer lifetime references.
+
+    The caller must join the producing stream and check ``guard`` before a TTC
+    is returned. ``validate_async_blocks`` checks several tickets in one CPU
+    transfer. Keeping this ticket alive retains the source copy dependencies.
+    """
+
+    raw: Tensor
+    experts: Tensor
+    guard: Tensor
+    modality: str
+    _lifetime: tuple[object, ...] = ()
+
+
+def validate_async_blocks(*tickets: AsyncExpertBlock) -> None:
+    """Check all joined-stream guards together before publishing any prediction."""
+    if not tickets:
+        raise ValueError("At least one asynchronous expert-block ticket is required")
+    if any(ticket.guard.shape != () or ticket.guard.dtype != torch.bool for ticket in tickets):
+        raise ValueError("Asynchronous expert-block guards must be scalar booleans")
+    flags = torch.stack([ticket.guard for ticket in tickets]).cpu().tolist()
+    failures = [ticket.modality for ticket, valid in zip(tickets, flags, strict=True) if not valid]
+    if failures:
+        raise ValueError(
+            f"Asynchronous expert-block sensor/clock/overlap/output guard failed: {failures}"
+        )
+
+
+class ExpertBlockTensorCore(nn.Module):
+    """Graphable PAIR/PHASE17 path with explicitly float64 phase intermediate.
+
+    This is a separate opt-in optimization: CUDA and CPU log1p may round
+    differently, so final sensor-to-TTC parity must be measured before use.
+    """
+
+    def __init__(
+        self,
+        models: Mapping[str, nn.Module],
+        modality: str,
+        *,
+        reuse_shape: tuple[int, int] | None = None,
+        history_group_size: int | None = None,
+    ) -> None:
+        super().__init__()
+        names = _names(modality)
+        producers = [cast(CausalScaleTTC, models[name]) for name in names[:2]]
+        if reuse_shape is not None:
+            producers = [
+                reuse_endpoint_encoders(model, *reuse_shape, history_group_size=history_group_size)
+                for model in producers
+            ]
+        self.a5 = ProducerTensorCore(producers[0])
+        self.c2f = ProducerTensorCore(producers[1])
+        self.pair = models[names[2]]
+        self.modality = modality
+        self.reuse_shape = reuse_shape
+        self.history_group_size = (
+            _history_group_size(reuse_shape[0], history_group_size) if reuse_shape else None
+        )
+
+    def forward(self, sensor: Tensor, delta: Tensor) -> tuple[Tensor, Tensor, Tensor]:
+        """Return raw/expert features and a guard materialized outside the graph."""
+        outputs = []
+        input_checks = [
+            torch.isfinite(sensor).all(),
+            torch.isfinite(delta).all(),
+            (delta > 0).all(),
+        ]
+        if self.modality == "R":
+            input_checks.extend(((sensor >= 0).all(), (sensor <= 1).all()))
+        if self.reuse_shape is not None:
+            grouped = sensor.reshape(-1, cast(int, self.history_group_size), *sensor.shape[1:])
+            input_checks.append((grouped[:, :-1, 1:] == grouped[:, 1:, :-1]).all())
+        input_valid = torch.stack(input_checks).all()
+        # Invalid asynchronous inputs must not reach gather indexing in local
+        # transport. Use harmless tensors for evaluation and retain a false
+        # guard; no caller may publish the resulting placeholder prediction.
+        sensor = torch.where(input_valid, sensor, torch.zeros_like(sensor))
+        delta = torch.where(input_valid, delta, torch.full_like(delta, 0.1))
+        guards = [input_valid]
+        for producer in (self.a5, self.c2f):
+            result: dict[str, Tensor] = dict(
+                zip(FEATURE_NAMES, producer(sensor, delta), strict=True)
+            )
+            ttc = result["prediction_ttc"]
+            valid = torch.isfinite(ttc) & ((ttc < 0) | (ttc > 0.1))
+            # The historical conversion promotes stored FP32 TTC to float64
+            # before dividing/log1p, then rounds the phase back to float32.
+            result["point_phase"] = (-torch.log1p(-0.1 / ttc.double())).float()
+            guards.extend(
+                (
+                    valid.all(),
+                    torch.isfinite(result["token128"]).all(),
+                    ((result["support"] >= 0) & (result["support"] <= 1)).all(),
+                )
+            )
+            outputs.append(result)
+        raw, expert = _finish_expert_block(
+            self.pair, self.modality, sensor, delta, outputs, native_validation=False
+        )
+        guards.extend((torch.isfinite(raw).all(), torch.isfinite(expert).all()))
+        return raw, expert, torch.stack(guards).all()
+
+
+class _ReuseEndpointEncoder(nn.Module):
+    """Encode a chronological chain once, then restore original endpoint order."""
+
+    def __init__(
+        self, encoder: nn.Module, batch: int, steps: int, history_group_size: int | None
+    ) -> None:
+        super().__init__()
+        self.encoder = encoder
+        self.steps = steps
+        self.history_group_size = _history_group_size(batch, history_group_size)
+        self.groups = batch // self.history_group_size
+        device = next(encoder.parameters()).device
+        offsets = torch.arange(self.groups, device=device) * (self.history_group_size + steps - 1)
+        self.register_buffer(
+            "gather_indices",
+            (
+                offsets[:, None, None]
+                + torch.arange(self.history_group_size, device=device)[None, :, None]
+                + torch.arange(steps, device=device)[None, None, :]
+            ).flatten(),
+            persistent=False,
+        )
+
+    def forward(
+        self, values: Tensor, *, return_dense_features: bool = False
+    ) -> tuple[Tensor, Tensor, Tensor | None]:
+        grouped = values.reshape(
+            self.groups, self.history_group_size, self.steps, *values.shape[1:]
+        )
+        unique = torch.cat((grouped[:, 0], grouped[:, 1:, -1]), dim=1).flatten(0, 1)
+        foreground, token, dense = self.encoder(unique, return_dense_features=return_dense_features)
+        return (
+            foreground.index_select(0, self.gather_indices),
+            token.index_select(0, self.gather_indices),
+            dense.index_select(0, self.gather_indices) if dense is not None else None,
+        )
+
+
+def reuse_endpoint_encoders(
+    model: CausalScaleTTC, batch: int, steps: int, *, history_group_size: int | None = None
+) -> CausalScaleTTC:
+    """Return a runtime view sharing frozen weights without altering the source model.
+
+    The caller must verify exact overlapping sensor endpoints on every call.
+    Reducing the convolution batch can change FP32 reduction rounding; this
+    opt-in path still requires the independent final TTC parity gate.
+    """
+    if model.training or batch < 1 or steps not in (2, 3):
+        raise ValueError("Endpoint reuse requires frozen T2/T3 producers and a positive batch")
+    view = copy(model)
+    view._modules = model._modules.copy()
+    implementation = model.__dict__.get("_forward_impl")
+    if isinstance(implementation, MethodType):
+        # A private transport adapter may bind a rewritten forward to its own
+        # instance. Rebind that function so it sees this view's reused encoders.
+        object.__setattr__(view, "_forward_impl", MethodType(implementation.__func__, view))
+    view._modules["encoder"] = _ReuseEndpointEncoder(
+        model.encoder, batch, steps, history_group_size
+    )
+    if model.transport_encoder is not None:
+        view._modules["transport_encoder"] = _ReuseEndpointEncoder(
+            model.transport_encoder, batch, steps, history_group_size
+        )
+    return view
+
+
+def _history_group_size(batch: int, history_group_size: int | None) -> int:
+    size = batch if history_group_size is None else history_group_size
+    if not isinstance(size, int) or isinstance(size, bool) or size < 1 or batch % size:
+        raise ValueError("history_group_size must be positive and divide the observation batch")
+    return size
+
+
+def overlapping_endpoints(sensor: Tensor, history_group_size: int | None = None) -> bool:
+    """Admit exact overlap within each object's history, never across objects."""
+    size = _history_group_size(len(sensor), history_group_size)
+    grouped = sensor.reshape(-1, size, *sensor.shape[1:])
+    return size > 1 and torch.equal(grouped[:, :-1, 1:], grouped[:, 1:, :-1])
+
+
+def _names(modality: str) -> tuple[str, str, str]:
+    if modality == "R":
+        return "R_A5", "R_C2F", "PAIR_R"
+    if modality == "E":
+        return "E_A5_MATCHED", "E_C2F_MATCHED", "PAIR_E_MATCHED"
+    raise ValueError("Producer modality must be E or R")
+
+
+def _finish_expert_block(
+    pair: nn.Module,
+    modality: str,
+    sensor: Tensor,
+    delta: Tensor,
+    outputs: list[dict[str, Tensor]],
+    *,
+    native_validation: bool = True,
+) -> tuple[Tensor, Tensor]:
+    if native_validation:
+        pair_features = NativeObservation.from_output(outputs[0]).pair_input(delta[:, -1])
+    else:
+        # NativeObservation.validate uses set membership on tensor-derived
+        # dimensions, which cannot be traced. Retain its exact pair arithmetic;
+        # shape guards run before capture and value guards are returned above.
+        current = outputs[0]["support"][..., -1]
+        minimum = torch.minimum(outputs[0]["support"][..., -2], current)
+        pair_features = pair133(
+            outputs[0]["token128"], delta[:, -1], torch.stack((current, minimum), -1)
+        )
+    pair_phase = emitted_phase(pair_point_phase(pair, pair_features))
+    expert = torch.stack((outputs[0]["point_phase"], outputs[1]["point_phase"], pair_phase), -1)
+    diagnostics = [
+        torch.stack((out["flow"], out["margin"], out["log_variance"]), -1) for out in outputs
+    ]
+    features = (
+        rgb_phase17(sensor[:, -1], diagnostics[0], diagnostics[1], expert)
+        if modality == "R"
+        else event_phase17(
+            event_statistics_from_channels12(sensor[:, -1]),
+            diagnostics[0],
+            diagnostics[1],
+            expert,
+        )
+    )
+    return features, expert
+
+
+class ProducerRuntime:
+    """Reuse static producer graphs; retain historical feature/PAIR operations.
+
+    ``graphs=False`` is the explicit eager reference. ``graphs=True`` requires
+    CUDA and never silently falls back after a parity or capture failure.
+    The owner must serialize access: graph buffers are reused between calls.
+    """
+
+    def __init__(
+        self,
+        models: Mapping[str, nn.Module],
+        device: str | torch.device,
+        *,
+        graphs: bool = True,
+        block_graphs: bool = False,
+        reuse_encodings: bool = False,
+        reuse_event_encodings: bool | None = None,
+        reuse_rgb_encodings: bool | None = None,
+        transport_reuse: str = "original",
+    ) -> None:
+        self.transport_contract = transport_reuse_contract(transport_reuse)
+        self.transport_reuse = transport_reuse
+        self.device = torch.device(device)
+        self.graphs = graphs
+        self.block_graphs = block_graphs
+        if any(
+            value is not None and not isinstance(value, bool)
+            for value in (reuse_event_encodings, reuse_rgb_encodings)
+        ):
+            raise ValueError("Per-modality endpoint reuse overrides must be boolean or None")
+        self.reuse_by_modality = {
+            "E": reuse_encodings if reuse_event_encodings is None else reuse_event_encodings,
+            "R": reuse_encodings if reuse_rgb_encodings is None else reuse_rgb_encodings,
+        }
+        self.reuse_encodings = any(self.reuse_by_modality.values())
+        self.reuse_fallbacks = 0
+        self._entries: dict[tuple[str, tuple[int, ...]], _GraphEntry] = {}
+        if graphs and self.device.type != "cuda":
+            raise ValueError("CUDA producer graphs require a CUDA device")
+        if block_graphs and not graphs:
+            raise ValueError("Whole expert-block graphs require graphs=True")
+        if self.reuse_encodings and not block_graphs:
+            raise ValueError("Endpoint encoding reuse requires whole expert-block graphs")
+        self.models, self.transport_bindings = _transport_model_views(models, transport_reuse)
+
+    def _producer(
+        self, name: str, sensor: Tensor, delta: Tensor, *, values_checked: bool = False
+    ) -> dict[str, Tensor]:
+        model = cast(CausalScaleTTC, self.models[name])
+        validate_inputs(model, sensor, delta, check_values=not values_checked)
+        if sensor.device.type == "cuda" and (
+            torch.backends.cuda.matmul.allow_tf32 or torch.backends.cudnn.allow_tf32
+        ):
+            raise ValueError("Frozen TRAIN40 graph admission requires TF32 disabled")
+        if not self.graphs:
+            values = ProducerTensorCore(model)(sensor, delta)
+        else:
+            key = name, tuple(sensor.shape)
+            if key not in self._entries:
+                start = time.perf_counter()
+                static_sensor, static_delta = sensor.clone(), delta.clone()
+                # The profiling executor may specialize/fuse after its first
+                # execution and alter FP32 rounding. Disable those passes for
+                # trace, warmup and capture; graph replay needs no JIT executor.
+                with torch.jit.optimized_execution(False):  # pyright: ignore[reportPrivateImportUsage]
+                    traced, messages = trace_core(model, static_sensor, static_delta)
+                    expected = tuple(
+                        value.clone() for value in ProducerTensorCore(model)(sensor, delta)
+                    )
+                    stream = torch.cuda.Stream(device=sensor.device)
+                    stream.wait_stream(torch.cuda.current_stream(sensor.device))
+                    with torch.cuda.stream(stream):
+                        for _ in range(3):
+                            traced(static_sensor, static_delta)
+                    torch.cuda.current_stream(sensor.device).wait_stream(stream)
+                    torch.cuda.synchronize(sensor.device)
+                    graph = torch.cuda.CUDAGraph()
+                    # Capture on the same private stream used for warmup.
+                    # cuBLAS workspaces may be stream-local: capturing unrelated
+                    # blocks on the global capture stream can alias scratch
+                    # memory when those graphs are replayed concurrently.
+                    with torch.cuda.graph(graph, stream=stream):
+                        output = cast(tuple[Tensor, ...], traced(static_sensor, static_delta))
+                graph.replay()
+                _exact_outputs(output, expected, "CUDA capture")
+                self._entries[key] = _GraphEntry(
+                    graph,
+                    static_sensor,
+                    static_delta,
+                    output,
+                    traced,
+                    messages,
+                    time.perf_counter() - start,
+                    capture_stream=stream,
+                )
+            entry = self._entries[key]
+            entry.sensor.copy_(sensor)
+            entry.delta.copy_(delta)
+            entry.graph.replay()
+            entry.replays += 1
+            # Callers retain feature histories across later replays.
+            values = tuple(value.clone() for value in entry.output)
+        result: dict[str, Tensor] = dict(zip(FEATURE_NAMES, values, strict=True))
+        phase = expert_phase_from_ttc(result["prediction_ttc"].detach().cpu().numpy())
+        result["point_phase"] = torch.from_numpy(phase).to(self.device, dtype=torch.float32)
+        return result
+
+    def expert_block(
+        self,
+        modality: str,
+        sensor: Tensor,
+        delta: Tensor,
+        *,
+        history_group_size: int | None = None,
+    ) -> tuple[Tensor, Tensor]:
+        """Return raw PHASE17 features and expert phases for the selected runtime."""
+        names = _names(modality)
+        first = cast(CausalScaleTTC, self.models[names[0]])
+        second = cast(CausalScaleTTC, self.models[names[1]])
+        if first.config.modality != second.config.modality:
+            raise ValueError("Expert producers must share a sensor modality")
+        validate_inputs(first, sensor, delta)
+        validate_inputs(second, sensor, delta, check_values=False)
+        group_size = _history_group_size(len(sensor), history_group_size)
+        if self.block_graphs:
+            return self._block_graph(modality, sensor, delta, history_group_size=group_size)
+        outputs = [self._producer(name, sensor, delta, values_checked=True) for name in names[:2]]
+        return _finish_expert_block(self.models[names[2]], modality, sensor, delta, outputs)
+
+    def _block_graph(
+        self, modality: str, sensor: Tensor, delta: Tensor, *, history_group_size: int
+    ) -> tuple[Tensor, Tensor]:
+        reuse_active = self.reuse_by_modality[modality] and overlapping_endpoints(
+            sensor, history_group_size
+        )
+        if self.reuse_by_modality[modality] and not reuse_active:
+            self.reuse_fallbacks += 1
+        entry = self._block_entry(
+            modality,
+            sensor,
+            delta,
+            reuse_active=reuse_active,
+            history_group_size=history_group_size,
+        )
+        raw, experts, guard = self._enqueue_block(entry, sensor, delta)
+        if not bool(guard):
+            raise ValueError("Whole-block producer emitted invalid sensor/clock/overlap/output")
+        return raw, experts
+
+    def expert_block_async(
+        self,
+        modality: str,
+        sensor: Tensor,
+        delta: Tensor,
+        *,
+        history_group_size: int | None = None,
+    ) -> AsyncExpertBlock:
+        """Enqueue a whole block on the current stream without warm host synchronization.
+
+        Caller-owned streams must wait for input production, then be joined
+        before context use and guard validation. Cold signatures synchronously
+        validate/capture once. With endpoint reuse, nonoverlapping inputs are
+        rejected through the deferred guard; there is no silent reuse fallback.
+        """
+        if not self.block_graphs:
+            raise ValueError("Asynchronous expert blocks require whole-block CUDA graphs")
+        if sensor.device.type != "cuda":
+            raise ValueError("Asynchronous expert blocks require CUDA inputs")
+        names = _names(modality)
+        first, second = (cast(CausalScaleTTC, self.models[name]) for name in names[:2])
+        if first.config.modality != second.config.modality:
+            raise ValueError("Expert producers must share a sensor modality")
+        validate_inputs(first, sensor, delta, check_values=False)
+        validate_inputs(second, sensor, delta, check_values=False)
+        group_size = _history_group_size(len(sensor), history_group_size)
+        reuse_active = self.reuse_by_modality[modality] and group_size > 1
+        entry = self._block_entry(
+            modality, sensor, delta, reuse_active=reuse_active, history_group_size=group_size
+        )
+        raw, experts, guard = self._enqueue_block(entry, sensor, delta)
+        return AsyncExpertBlock(raw, experts, guard, modality, (entry, sensor, delta))
+
+    @staticmethod
+    def validate_async_blocks(*tickets: AsyncExpertBlock) -> None:
+        """Validate joined asynchronous outputs with one grouped guard transfer."""
+        validate_async_blocks(*tickets)
+
+    @staticmethod
+    def _enqueue_block(
+        entry: _GraphEntry, sensor: Tensor, delta: Tensor
+    ) -> tuple[Tensor, Tensor, Tensor]:
+        stream = torch.cuda.current_stream(sensor.device)
+        if entry.last_use is not None:
+            # A later call on another stream must not overwrite static buffers
+            # before the prior call's output clones have completed.
+            stream.wait_event(entry.last_use)
+        entry.sensor.copy_(sensor)
+        entry.delta.copy_(delta)
+        entry.graph.replay()
+        entry.replays += 1
+        raw, experts, guard = (value.clone() for value in entry.output)
+        if entry.last_use is None:
+            entry.last_use = torch.cuda.Event()
+        entry.last_use.record(stream)
+        return raw, experts, guard
+
+    def _block_entry(
+        self,
+        modality: str,
+        sensor: Tensor,
+        delta: Tensor,
+        *,
+        reuse_active: bool,
+        history_group_size: int,
+    ) -> _GraphEntry:
+        if torch.backends.cuda.matmul.allow_tf32 or torch.backends.cudnn.allow_tf32:
+            raise ValueError("Frozen TRAIN40 graph admission requires TF32 disabled")
+        group_suffix = f"_GROUP{history_group_size}" if history_group_size != len(sensor) else ""
+        name = f"{modality}_EXPERT_BLOCK{group_suffix}" + ("_REUSE" if reuse_active else "")
+        key = name, tuple(sensor.shape)
+        if key not in self._entries:
+            # Cold setup is allowed to synchronize. No host value checks occur
+            # on the established async signature's steady path.
+            validate_inputs(cast(CausalScaleTTC, self.models[_names(modality)[0]]), sensor, delta)
+            if reuse_active and not overlapping_endpoints(sensor, history_group_size):
+                raise ValueError("Cold asynchronous reuse signature requires overlapping endpoints")
+            start = time.perf_counter()
+            static_sensor, static_delta = sensor.clone(), delta.clone()
+            core = ExpertBlockTensorCore(
+                self.models,
+                modality,
+                reuse_shape=(len(sensor), int(sensor.shape[1])) if reuse_active else None,
+                history_group_size=history_group_size,
+            ).eval()
+            with torch.jit.optimized_execution(False):  # pyright: ignore[reportPrivateImportUsage]
+                expected = tuple(value.clone() for value in core(static_sensor, static_delta))
+                with warnings.catch_warnings(record=True) as records:
+                    warnings.simplefilter("always")
+                    traced = cast(
+                        torch.jit.ScriptModule,
+                        torch.jit.trace(
+                            core, (static_sensor, static_delta), check_trace=False, strict=True
+                        ),
+                    )
+                stream = torch.cuda.Stream(device=sensor.device)
+                stream.wait_stream(torch.cuda.current_stream(sensor.device))
+                with torch.cuda.stream(stream):
+                    for _ in range(3):
+                        traced(static_sensor, static_delta)
+                torch.cuda.current_stream(sensor.device).wait_stream(stream)
+                torch.cuda.synchronize(sensor.device)
+                graph = torch.cuda.CUDAGraph()
+                with torch.cuda.graph(graph, stream=stream):
+                    output = cast(tuple[Tensor, ...], traced(static_sensor, static_delta))
+            graph.replay()
+            _exact_outputs(output, expected, "whole-block capture")
+            self._entries[key] = _GraphEntry(
+                graph,
+                static_sensor,
+                static_delta,
+                output,
+                traced,
+                tuple(sorted({str(record.message) for record in records})),
+                time.perf_counter() - start,
+                history_group_size=history_group_size,
+                capture_stream=stream,
+            )
+        return self._entries[key]
+
+    def diagnostics(self) -> list[dict[str, object]]:
+        """Report actual captures and setup costs separately from warm replay."""
+        return [
+            {
+                "producer": name,
+                "shape": list(shape),
+                "setup_seconds": entry.setup_seconds,
+                "replays": entry.replays,
+                "trace_warnings": list(entry.trace_warnings),
+                "initial_exact_parity": True,
+                "initial_parity_reference": (
+                    "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE"
+                    if "EXPERT_BLOCK" in name
+                    else "ORIGINAL_PRODUCER_TENSOR_CORE"
+                ),
+                "jit_optimized_execution": False,
+                "endpoint_reuse": name.endswith("_REUSE"),
+                "endpoint_reuse_fallback_calls": self.reuse_fallbacks,
+                "endpoint_reuse_by_modality": dict(self.reuse_by_modality),
+                "transport_reuse": self.transport_reuse,
+                "transport_contract": dict(self.transport_contract),
+                "history_group_size": entry.history_group_size,
+                "dedicated_capture_stream": entry.capture_stream is not None,
+                "capture_stream_id": (
+                    int(entry.capture_stream.cuda_stream)
+                    if entry.capture_stream is not None
+                    else None
+                ),
+                "precision": "FP32_TF32_DISABLED",
+            }
+            for (name, shape), entry in self._entries.items()
+        ]

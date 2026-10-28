@@ -1,0 +1,1111 @@
+{
+  "schema": "train40_rgb_pil_exact_probe_v1",
+  "status": "COMPLETE",
+  "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+  "complete_update_admitted": false,
+  "sustained_50hz_demonstrated": false,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "weights_or_normalizers_loaded": false,
+  "records": [
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "full_history_miss",
+      "query_us": 20200738,
+      "prefix_cutoff_us": null,
+      "prefix_setup_seconds_excluded": 3.160000778734684e-05,
+      "prefix_receipt": null,
+      "newly_sealed_frame_ids": [
+        392,
+        394,
+        396,
+        398,
+        400,
+        402,
+        404
+      ],
+      "newly_sealed_bytes": 48384000,
+      "sealing_seconds_included": 0.02949269994860515,
+      "wall_ms": 36.54469997854903,
+      "new_compilations_inside_clock": 0,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 0,
+          "uploads": 7,
+          "evictions": 0,
+          "uploaded_bytes": 48384000,
+          "h2d_bytes": 48384000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 9.999494068324566e-07,
+          "bind_enqueue_host_seconds": 0.0037552000139839947,
+          "stats": {
+            "binds": 3,
+            "hits": 0,
+            "uploads": 21,
+            "uploaded_bytes": 145152000,
+            "h2d_bytes": 145152000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 4,
+            "invalidated_frames": 14,
+            "completion_waits": 2,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.005309400032274425,
+        "kernel_enqueue_host_seconds": 0.0015986999496817589,
+        "prepare_host_seconds": 0.006908299983479083,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "repeat": 0,
+      "phase": "synthetically_primed",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    },
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "causal_prefix_rebuilt",
+      "query_us": 20200738,
+      "prefix_cutoff_us": 20180738,
+      "prefix_setup_seconds_excluded": 0.02914319996489212,
+      "prefix_receipt": {
+        "hits": 0,
+        "uploads": 6,
+        "evictions": 0,
+        "uploaded_bytes": 41472000,
+        "h2d_bytes": 41472000,
+        "source_reset": false,
+        "query_rollback_reset": false,
+        "query_us": 20180738,
+        "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+        "frame_bytes_hashed_inside_bind": 0,
+        "wait_previous_host_seconds": 6.00004568696022e-07,
+        "bind_enqueue_host_seconds": 0.0031143000232987106,
+        "stats": {
+          "binds": 4,
+          "hits": 0,
+          "uploads": 27,
+          "uploaded_bytes": 186624000,
+          "h2d_bytes": 186624000,
+          "evictions": 0,
+          "source_resets": 0,
+          "rollback_resets": 0,
+          "explicit_resets": 5,
+          "invalidated_frames": 21,
+          "completion_waits": 3,
+          "failed_binds": 0,
+          "resident_frames": 6,
+          "resident_payload_bytes": 41472000,
+          "frame_bytes_hashed_inside_bind": 0
+        }
+      },
+      "newly_sealed_frame_ids": [
+        404
+      ],
+      "newly_sealed_bytes": 6912000,
+      "sealing_seconds_included": 0.004295699996873736,
+      "wall_ms": 8.783900004345924,
+      "new_compilations_inside_clock": 0,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 6,
+          "uploads": 1,
+          "evictions": 0,
+          "uploaded_bytes": 6912000,
+          "h2d_bytes": 6912000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 5.300040356814861e-06,
+          "bind_enqueue_host_seconds": 0.0005433000042103231,
+          "stats": {
+            "binds": 5,
+            "hits": 6,
+            "uploads": 28,
+            "uploaded_bytes": 193536000,
+            "h2d_bytes": 193536000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 5,
+            "invalidated_frames": 21,
+            "completion_waits": 4,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.0022658000234514475,
+        "kernel_enqueue_host_seconds": 0.0021180000039748847,
+        "prepare_host_seconds": 0.004384000028949231,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "repeat": 0,
+      "phase": "synthetically_primed",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    },
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "full_history_miss",
+      "query_us": 20200738,
+      "prefix_cutoff_us": null,
+      "prefix_setup_seconds_excluded": 2.489995677024126e-05,
+      "prefix_receipt": null,
+      "newly_sealed_frame_ids": [
+        392,
+        394,
+        396,
+        398,
+        400,
+        402,
+        404
+      ],
+      "newly_sealed_bytes": 48384000,
+      "sealing_seconds_included": 0.029357400024309754,
+      "wall_ms": 35.60010000364855,
+      "new_compilations_inside_clock": 0,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 0,
+          "uploads": 7,
+          "evictions": 0,
+          "uploaded_bytes": 48384000,
+          "h2d_bytes": 48384000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 5.00003807246685e-07,
+          "bind_enqueue_host_seconds": 0.0024473000084981322,
+          "stats": {
+            "binds": 6,
+            "hits": 6,
+            "uploads": 35,
+            "uploaded_bytes": 241920000,
+            "h2d_bytes": 241920000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 6,
+            "invalidated_frames": 28,
+            "completion_waits": 5,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.004618300008587539,
+        "kernel_enqueue_host_seconds": 0.001492900017183274,
+        "prepare_host_seconds": 0.006111400027293712,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "repeat": 1,
+      "phase": "synthetically_primed",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    },
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "causal_prefix_rebuilt",
+      "query_us": 20200738,
+      "prefix_cutoff_us": 20180738,
+      "prefix_setup_seconds_excluded": 0.027930399985052645,
+      "prefix_receipt": {
+        "hits": 0,
+        "uploads": 6,
+        "evictions": 0,
+        "uploaded_bytes": 41472000,
+        "h2d_bytes": 41472000,
+        "source_reset": false,
+        "query_rollback_reset": false,
+        "query_us": 20180738,
+        "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+        "frame_bytes_hashed_inside_bind": 0,
+        "wait_previous_host_seconds": 6.999471224844456e-07,
+        "bind_enqueue_host_seconds": 0.0022594999754801393,
+        "stats": {
+          "binds": 7,
+          "hits": 6,
+          "uploads": 41,
+          "uploaded_bytes": 283392000,
+          "h2d_bytes": 283392000,
+          "evictions": 0,
+          "source_resets": 0,
+          "rollback_resets": 0,
+          "explicit_resets": 7,
+          "invalidated_frames": 35,
+          "completion_waits": 6,
+          "failed_binds": 0,
+          "resident_frames": 6,
+          "resident_payload_bytes": 41472000,
+          "frame_bytes_hashed_inside_bind": 0
+        }
+      },
+      "newly_sealed_frame_ids": [
+        404
+      ],
+      "newly_sealed_bytes": 6912000,
+      "sealing_seconds_included": 0.00418410002021119,
+      "wall_ms": 8.686200017109513,
+      "new_compilations_inside_clock": 0,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 6,
+          "uploads": 1,
+          "evictions": 0,
+          "uploaded_bytes": 6912000,
+          "h2d_bytes": 6912000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 2.300017513334751e-06,
+          "bind_enqueue_host_seconds": 0.0003989000106230378,
+          "stats": {
+            "binds": 8,
+            "hits": 12,
+            "uploads": 42,
+            "uploaded_bytes": 290304000,
+            "h2d_bytes": 290304000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 7,
+            "invalidated_frames": 35,
+            "completion_waits": 7,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.0021147000370547175,
+        "kernel_enqueue_host_seconds": 0.0022113999584689736,
+        "prepare_host_seconds": 0.004326399997808039,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "repeat": 1,
+      "phase": "synthetically_primed",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    },
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "full_history_miss",
+      "query_us": 20200738,
+      "prefix_cutoff_us": null,
+      "prefix_setup_seconds_excluded": 2.7099973522126675e-05,
+      "prefix_receipt": null,
+      "newly_sealed_frame_ids": [
+        392,
+        394,
+        396,
+        398,
+        400,
+        402,
+        404
+      ],
+      "newly_sealed_bytes": 48384000,
+      "sealing_seconds_included": 0.03198390000034124,
+      "wall_ms": 39.863099984358996,
+      "new_compilations_inside_clock": 0,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 0,
+          "uploads": 7,
+          "evictions": 0,
+          "uploaded_bytes": 48384000,
+          "h2d_bytes": 48384000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 5.00003807246685e-07,
+          "bind_enqueue_host_seconds": 0.0032163000432774425,
+          "stats": {
+            "binds": 9,
+            "hits": 12,
+            "uploads": 49,
+            "uploaded_bytes": 338688000,
+            "h2d_bytes": 338688000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 8,
+            "invalidated_frames": 42,
+            "completion_waits": 8,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.005767399969045073,
+        "kernel_enqueue_host_seconds": 0.0019623999833129346,
+        "prepare_host_seconds": 0.0077300999546423554,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "repeat": 2,
+      "phase": "synthetically_primed",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    },
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "causal_prefix_rebuilt",
+      "query_us": 20200738,
+      "prefix_cutoff_us": 20180738,
+      "prefix_setup_seconds_excluded": 0.02981279999949038,
+      "prefix_receipt": {
+        "hits": 0,
+        "uploads": 6,
+        "evictions": 0,
+        "uploaded_bytes": 41472000,
+        "h2d_bytes": 41472000,
+        "source_reset": false,
+        "query_rollback_reset": false,
+        "query_us": 20180738,
+        "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+        "frame_bytes_hashed_inside_bind": 0,
+        "wait_previous_host_seconds": 6.00004568696022e-07,
+        "bind_enqueue_host_seconds": 0.0030002000275999308,
+        "stats": {
+          "binds": 10,
+          "hits": 12,
+          "uploads": 55,
+          "uploaded_bytes": 380160000,
+          "h2d_bytes": 380160000,
+          "evictions": 0,
+          "source_resets": 0,
+          "rollback_resets": 0,
+          "explicit_resets": 9,
+          "invalidated_frames": 49,
+          "completion_waits": 9,
+          "failed_binds": 0,
+          "resident_frames": 6,
+          "resident_payload_bytes": 41472000,
+          "frame_bytes_hashed_inside_bind": 0
+        }
+      },
+      "newly_sealed_frame_ids": [
+        404
+      ],
+      "newly_sealed_bytes": 6912000,
+      "sealing_seconds_included": 0.004434800008311868,
+      "wall_ms": 10.565600008703768,
+      "new_compilations_inside_clock": 0,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 6,
+          "uploads": 1,
+          "evictions": 0,
+          "uploaded_bytes": 6912000,
+          "h2d_bytes": 6912000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 3.400025889277458e-06,
+          "bind_enqueue_host_seconds": 0.0005067000165581703,
+          "stats": {
+            "binds": 11,
+            "hits": 18,
+            "uploads": 56,
+            "uploaded_bytes": 387072000,
+            "h2d_bytes": 387072000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 9,
+            "invalidated_frames": 49,
+            "completion_waits": 10,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.0030186999938450754,
+        "kernel_enqueue_host_seconds": 0.002607800008263439,
+        "prepare_host_seconds": 0.005626700003631413,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "repeat": 2,
+      "phase": "synthetically_primed",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    }
+  ],
+  "cold_records": [
+    {
+      "scope": "CPU_RAW_READY_TO_EXACT_RGB_DEVICE_READY_NO_MODELS_NO_TTC_NO_DISK",
+      "mode": "full_history_miss",
+      "query_us": 20200738,
+      "prefix_cutoff_us": null,
+      "prefix_setup_seconds_excluded": 3.879994619637728e-05,
+      "prefix_receipt": null,
+      "newly_sealed_frame_ids": [
+        392,
+        394,
+        396,
+        398,
+        400,
+        402,
+        404
+      ],
+      "newly_sealed_bytes": 48384000,
+      "sealing_seconds_included": 0.03090459998929873,
+      "wall_ms": 6631.424200022593,
+      "new_compilations_inside_clock": 2,
+      "prepare_receipt": {
+        "ring": {
+          "hits": 0,
+          "uploads": 7,
+          "evictions": 0,
+          "uploaded_bytes": 48384000,
+          "h2d_bytes": 48384000,
+          "source_reset": false,
+          "query_rollback_reset": false,
+          "query_us": 20200738,
+          "source_name": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+          "source_revision_sha256": "2a43370d85884d78406c09926b7779d4723498087640b2029a83d4a9e6873c09",
+          "frame_bytes_hashed_inside_bind": 0,
+          "wait_previous_host_seconds": 1.100008375942707e-06,
+          "bind_enqueue_host_seconds": 0.002830200013704598,
+          "stats": {
+            "binds": 1,
+            "hits": 0,
+            "uploads": 7,
+            "uploaded_bytes": 48384000,
+            "h2d_bytes": 48384000,
+            "evictions": 0,
+            "source_resets": 0,
+            "rollback_resets": 0,
+            "explicit_resets": 1,
+            "invalidated_frames": 0,
+            "completion_waits": 0,
+            "failed_binds": 0,
+            "resident_frames": 7,
+            "resident_payload_bytes": 48384000,
+            "frame_bytes_hashed_inside_bind": 0
+          }
+        },
+        "roi_table_candidate_h2d_bytes": 89696,
+        "roi_table_h2d_bytes": 89696,
+        "coefficient_and_ring_host_seconds": 0.004507600038778037,
+        "kernel_enqueue_host_seconds": 6.595818799978588,
+        "prepare_host_seconds": 6.600326900021173,
+        "unique_roi_frame_crops": 7,
+        "expanded_crops": 15,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ],
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "parity": {
+        "passed": true,
+        "normalized_fp32_exact": true,
+        "uint8_exact": true,
+        "delta_fp32_exact": true,
+        "different_normalized_values": 0,
+        "max_abs_normalized": 0.0,
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "actual_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b",
+        "expected_sha256": "5eefc35852259d8a16162fdad41ebf602c79b044e1b4c24110042f2286ec8e7b"
+      },
+      "index": 553,
+      "objects": 1,
+      "phase": "cold_first_actual_prepare",
+      "raw_stat": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      }
+    }
+  ],
+  "startup": [
+    {
+      "index": 553,
+      "objects": 1,
+      "synthetic_priming": {
+        "seconds": 0.03778579999925569,
+        "profile": "MANIFEST_ROI_SHAPES_DECLARED_AT_BENCHMARK_SETUP",
+        "real_pixels_used": false,
+        "covers_arbitrary_future_roi": false,
+        "shape_buckets": [
+          [
+            1200,
+            16,
+            21,
+            88473600
+          ]
+        ]
+      },
+      "allocation": {
+        "ring": {
+          "device": "cuda:0",
+          "capacity": 16,
+          "max_frames_per_bind": 10,
+          "frame_shape": [
+            1200,
+            1920,
+            3
+          ],
+          "frame_bytes": 6912000,
+          "resident_buffer_bytes": 110592000,
+          "pinned_host_buffer_bytes": 110592000,
+          "total_preallocated_tensor_bytes": 221184000,
+          "max_bytes_per_pool": 134217728,
+          "host_pinned": true,
+          "closed": false
+        },
+        "host_table_bytes": 89816,
+        "device_workspace_bytes": 7432920,
+        "max_eager_bytes": 268435456,
+        "max_objects": 1,
+        "max_history": 8,
+        "frame_chunk_size": 1,
+        "compile_kernels": true,
+        "compile_backend": "train40_pil_observer_f4fd40f302d3415dbc3dc3feec619267"
+      },
+      "memory": {
+        "peak_allocated_bytes": 156792832,
+        "peak_reserved_bytes": 171966464
+      }
+    }
+  ],
+  "cleanup": [
+    {
+      "cleanup_errors": [],
+      "raw_stat_check": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+        "passed": true
+      }
+    }
+  ],
+  "compiler_environment": {
+    "TRITON_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~4\\RGB_EX~1\\IDX553~2\\triton_cache",
+    "TORCHINDUCTOR_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~4\\RGB_EX~1\\IDX553~2\\inductor_cache",
+    "CUDA_PATH": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\backends\\nvidia",
+    "CC": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\runtime\\tcc\\tcc.exe"
+  },
+  "binding": {
+    "commit": "7bc350697ec61ac30f56c28abe478bed2f5e944d",
+    "command_argv": [
+      "scripts/benchmark_train40_rgb_pil_exact.py",
+      "--manifest",
+      "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json",
+      "--output",
+      "artifacts/train40_runtime_council_20261028/rgb_exact_gpu/idx553_v2",
+      "--indices",
+      "553",
+      "--objects",
+      "1",
+      "--repeats",
+      "3",
+      "--compile",
+      "--compiler-root",
+      "artifacts/train40_runtime_20261027/compiler_probe"
+    ],
+    "cwd": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+    "manifest": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\QUERY_MANIFEST.json",
+    "output": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\rgb_exact_gpu\\idx553_v2",
+    "compiler_root": "artifacts\\train40_runtime_20261027\\compiler_probe",
+    "python": "3.11.15",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "pillow": "12.3.0",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "seed": 7,
+    "torch_threads": 2,
+    "compile": true,
+    "frame_chunk_size": 1,
+    "ring_capacity": 16,
+    "indices": [
+      553
+    ],
+    "objects": [
+      1
+    ],
+    "repeats": 3,
+    "compile_limit_unchanged": true,
+    "cold_definition": "FIRST_REAL_PREPARE_PER_RUNTIME; compiler code/cache may already exist from preceding cases",
+    "warmed_definition": "EXPLICIT_SYNTHETIC_PRIMING_OF_DECLARED_CASE_SHAPES; all measured RAW misses retained",
+    "clock_excludes": [
+      "disk",
+      "prefix_rebuild",
+      "post_clock_D2H_parity",
+      "models",
+      "TTC"
+    ]
+  },
+  "compilations": [
+    {
+      "ordinal": 0,
+      "graph_sha256": "0c20e94ba5868955ea790919ff38f6d84b991191c5f929cb3dc4fe14aca467c6",
+      "inputs": [
+        {
+          "shape": [
+            1,
+            1200,
+            128,
+            3
+          ],
+          "stride": [
+            460800,
+            384,
+            3,
+            1
+          ],
+          "dtype": "torch.uint8",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            16,
+            1200,
+            1920,
+            3
+          ],
+          "stride": [
+            6912000,
+            5760,
+            3,
+            1
+          ],
+          "dtype": "torch.uint8",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            1
+          ],
+          "stride": [
+            1
+          ],
+          "dtype": "torch.int64",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            1200
+          ],
+          "stride": [
+            1
+          ],
+          "dtype": "torch.int64",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            128,
+            16
+          ],
+          "stride": [
+            31,
+            1
+          ],
+          "dtype": "torch.int64",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            128,
+            16
+          ],
+          "stride": [
+            31,
+            1
+          ],
+          "dtype": "torch.int32",
+          "device": "cuda:0",
+          "storage_offset": 0
+        }
+      ],
+      "backend_seconds": 4.235740999982227
+    },
+    {
+      "ordinal": 1,
+      "graph_sha256": "4ea3c9a57d09ec4e6f53e434e423653d91b6359e53ed055792b8de9a55bf1210",
+      "inputs": [
+        {
+          "shape": [
+            1,
+            3,
+            128,
+            128
+          ],
+          "stride": [
+            49152,
+            16384,
+            128,
+            1
+          ],
+          "dtype": "torch.float32",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            1,
+            1200,
+            128,
+            3
+          ],
+          "stride": [
+            460800,
+            384,
+            3,
+            1
+          ],
+          "dtype": "torch.uint8",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            128,
+            21
+          ],
+          "stride": [
+            21,
+            1
+          ],
+          "dtype": "torch.int64",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            128,
+            21
+          ],
+          "stride": [
+            21,
+            1
+          ],
+          "dtype": "torch.int32",
+          "device": "cuda:0",
+          "storage_offset": 0
+        },
+        {
+          "shape": [
+            256
+          ],
+          "stride": [
+            1
+          ],
+          "dtype": "torch.float32",
+          "device": "cuda:0",
+          "storage_offset": 0
+        }
+      ],
+      "backend_seconds": 1.5786097000236623
+    }
+  ],
+  "coverage": {
+    "expected": 7,
+    "measured": 7,
+    "passed": true
+  },
+  "all_exact": true,
+  "warmed_recompilations": 0,
+  "latency": [
+    {
+      "objects": 1,
+      "index": 553,
+      "mode": "full_history_miss",
+      "count": 3,
+      "mean_ms": 37.33596665551886,
+      "p50_ms": 36.54469997854903,
+      "p95_ms": 39.531259983778,
+      "p99_ms": 39.7967319842428,
+      "min_ms": 35.60010000364855,
+      "max_ms": 39.863099984358996,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 0,
+      "at_least_20ms_count": 3,
+      "over_50ms_count": 0,
+      "over_100ms_count": 0,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 26.783825077478845
+    },
+    {
+      "objects": 1,
+      "index": 553,
+      "mode": "causal_prefix_rebuilt",
+      "count": 3,
+      "mean_ms": 9.345233343386402,
+      "p50_ms": 8.783900004345924,
+      "p95_ms": 10.387430008267984,
+      "p99_ms": 10.529966008616611,
+      "min_ms": 8.686200017109513,
+      "max_ms": 10.565600008703768,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 3,
+      "at_least_20ms_count": 0,
+      "over_50ms_count": 0,
+      "over_100ms_count": 0,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 107.00642383720653
+    }
+  ],
+  "preservation": {
+    "passed": true,
+    "files": 175,
+    "changed": [],
+    "missing": []
+  }
+}

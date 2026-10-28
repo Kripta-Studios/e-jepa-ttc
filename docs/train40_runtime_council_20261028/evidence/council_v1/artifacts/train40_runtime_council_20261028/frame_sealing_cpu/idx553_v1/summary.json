@@ -1,0 +1,5463 @@
+{
+  "schema": "train40_frame_sealing_cpu_diagnostic_v1",
+  "scope": "CPU_ONLY_ORIGINAL_FRAME_FREEZE_VS_COPY_SHA_DESCRIPTOR_NO_RUNTIME_CHANGE",
+  "status": "COMPLETE",
+  "gpu_used": false,
+  "runtime_modified": false,
+  "weights_or_normalizers_loaded": false,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "sustained_or_causal_claim": false,
+  "records": [
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 27.112,
+      "split_total_ms": 26.9821,
+      "copy_ms": 5.4672,
+      "payload_sha256_ms": 21.3743,
+      "descriptor_ms": 0.092,
+      "split_wrapper_and_instrumentation_ms": 0.0486,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.9558999706059694,
+          "copy_ms": 0.9523,
+          "payload_sha256_ms": 3.0563,
+          "descriptor_ms": 0.0241,
+          "split_frame_ms": 4.0327
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.8645000313408673,
+          "copy_ms": 0.7856,
+          "payload_sha256_ms": 3.0468,
+          "descriptor_ms": 0.0108,
+          "split_frame_ms": 3.8432
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.115000017918646,
+          "copy_ms": 0.7434,
+          "payload_sha256_ms": 2.9877,
+          "descriptor_ms": 0.0085,
+          "split_frame_ms": 3.7396
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.033499979414046,
+          "copy_ms": 0.7472,
+          "payload_sha256_ms": 3.0075,
+          "descriptor_ms": 0.0091,
+          "split_frame_ms": 3.7638
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.7439000443555415,
+          "copy_ms": 0.6841,
+          "payload_sha256_ms": 3.2121,
+          "descriptor_ms": 0.023,
+          "split_frame_ms": 3.9192
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.6582000320777297,
+          "copy_ms": 0.7911,
+          "payload_sha256_ms": 3.0696,
+          "descriptor_ms": 0.0095,
+          "split_frame_ms": 3.8702
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.6823999835178256,
+          "copy_ms": 0.7635,
+          "payload_sha256_ms": 2.9943,
+          "descriptor_ms": 0.007,
+          "split_frame_ms": 3.7648
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "warmup",
+      "repeat": 0,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 27.1802,
+      "split_total_ms": 26.4541,
+      "copy_ms": 5.1365,
+      "payload_sha256_ms": 21.1777,
+      "descriptor_ms": 0.0923,
+      "split_wrapper_and_instrumentation_ms": 0.0476,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.924500022549182,
+          "copy_ms": 0.7775,
+          "payload_sha256_ms": 3.0015,
+          "descriptor_ms": 0.0239,
+          "split_frame_ms": 3.8029
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.8373999996110797,
+          "copy_ms": 0.7357,
+          "payload_sha256_ms": 2.986,
+          "descriptor_ms": 0.0119,
+          "split_frame_ms": 3.7336
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.8383000064641237,
+          "copy_ms": 0.7515,
+          "payload_sha256_ms": 3.0043,
+          "descriptor_ms": 0.0096,
+          "split_frame_ms": 3.7654
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.81799996830523,
+          "copy_ms": 0.6719,
+          "payload_sha256_ms": 3.1511,
+          "descriptor_ms": 0.0115,
+          "split_frame_ms": 3.8345
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.090799950063229,
+          "copy_ms": 0.8259,
+          "payload_sha256_ms": 3.0319,
+          "descriptor_ms": 0.0182,
+          "split_frame_ms": 3.876
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.807300003245473,
+          "copy_ms": 0.7054,
+          "payload_sha256_ms": 3.0018,
+          "descriptor_ms": 0.0103,
+          "split_frame_ms": 3.7175
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.798199992161244,
+          "copy_ms": 0.6686,
+          "payload_sha256_ms": 3.0011,
+          "descriptor_ms": 0.0069,
+          "split_frame_ms": 3.6766
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "warmup",
+      "repeat": 1,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 26.4677,
+      "split_total_ms": 26.8385,
+      "copy_ms": 5.0966,
+      "payload_sha256_ms": 21.6054,
+      "descriptor_ms": 0.0899,
+      "split_wrapper_and_instrumentation_ms": 0.0466,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.9620999596081674,
+          "copy_ms": 0.6804,
+          "payload_sha256_ms": 3.0752,
+          "descriptor_ms": 0.0069,
+          "split_frame_ms": 3.7625
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.705599985551089,
+          "copy_ms": 0.6815,
+          "payload_sha256_ms": 3.2029,
+          "descriptor_ms": 0.022,
+          "split_frame_ms": 3.9064
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.7680999957956374,
+          "copy_ms": 0.8549,
+          "payload_sha256_ms": 2.9696,
+          "descriptor_ms": 0.0126,
+          "split_frame_ms": 3.8371
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.7169999559409916,
+          "copy_ms": 0.6934,
+          "payload_sha256_ms": 3.1952,
+          "descriptor_ms": 0.0084,
+          "split_frame_ms": 3.897
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.8422999787144363,
+          "copy_ms": 0.7672,
+          "payload_sha256_ms": 3.0601,
+          "descriptor_ms": 0.0069,
+          "split_frame_ms": 3.8342
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.776300000026822,
+          "copy_ms": 0.6848,
+          "payload_sha256_ms": 3.1113,
+          "descriptor_ms": 0.0159,
+          "split_frame_ms": 3.812
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.6598999868147075,
+          "copy_ms": 0.7344,
+          "payload_sha256_ms": 2.9911,
+          "descriptor_ms": 0.0172,
+          "split_frame_ms": 3.7427
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 0,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 26.2937,
+      "split_total_ms": 26.3321,
+      "copy_ms": 5.2319,
+      "payload_sha256_ms": 20.9271,
+      "descriptor_ms": 0.1196,
+      "split_wrapper_and_instrumentation_ms": 0.0535,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.7536000018008053,
+          "copy_ms": 0.7474,
+          "payload_sha256_ms": 2.9855,
+          "descriptor_ms": 0.0267,
+          "split_frame_ms": 3.7596
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.690000041387975,
+          "copy_ms": 0.7294,
+          "payload_sha256_ms": 2.9717,
+          "descriptor_ms": 0.0239,
+          "split_frame_ms": 3.725
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.8072000024840236,
+          "copy_ms": 0.8282,
+          "payload_sha256_ms": 3.0089,
+          "descriptor_ms": 0.0192,
+          "split_frame_ms": 3.8563
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.8272999809123576,
+          "copy_ms": 0.7556,
+          "payload_sha256_ms": 2.9884,
+          "descriptor_ms": 0.0177,
+          "split_frame_ms": 3.7617
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.7110999692231417,
+          "copy_ms": 0.7375,
+          "payload_sha256_ms": 3.0056,
+          "descriptor_ms": 0.0164,
+          "split_frame_ms": 3.7595
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.716600011102855,
+          "copy_ms": 0.7643,
+          "payload_sha256_ms": 2.991,
+          "descriptor_ms": 0.0093,
+          "split_frame_ms": 3.7646
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.7327000172808766,
+          "copy_ms": 0.6695,
+          "payload_sha256_ms": 2.976,
+          "descriptor_ms": 0.0064,
+          "split_frame_ms": 3.6519
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 1,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 27.3406,
+      "split_total_ms": 27.7199,
+      "copy_ms": 5.4819,
+      "payload_sha256_ms": 22.0832,
+      "descriptor_ms": 0.1069,
+      "split_wrapper_and_instrumentation_ms": 0.0479,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.9585999911651015,
+          "copy_ms": 0.8632,
+          "payload_sha256_ms": 3.1818,
+          "descriptor_ms": 0.0133,
+          "split_frame_ms": 4.0583
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.875599999446422,
+          "copy_ms": 0.7955,
+          "payload_sha256_ms": 3.2152,
+          "descriptor_ms": 0.0102,
+          "split_frame_ms": 4.0209
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.911999985575676,
+          "copy_ms": 0.7427,
+          "payload_sha256_ms": 3.1451,
+          "descriptor_ms": 0.0179,
+          "split_frame_ms": 3.9057
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.923799959011376,
+          "copy_ms": 0.7491,
+          "payload_sha256_ms": 3.135,
+          "descriptor_ms": 0.019,
+          "split_frame_ms": 3.9031
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.8176000234670937,
+          "copy_ms": 0.8369,
+          "payload_sha256_ms": 3.1767,
+          "descriptor_ms": 0.0177,
+          "split_frame_ms": 4.0313
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.8636000244878232,
+          "copy_ms": 0.7459,
+          "payload_sha256_ms": 3.0877,
+          "descriptor_ms": 0.0097,
+          "split_frame_ms": 3.8433
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.922900010365993,
+          "copy_ms": 0.7486,
+          "payload_sha256_ms": 3.1417,
+          "descriptor_ms": 0.0191,
+          "split_frame_ms": 3.9094
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 2,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 27.5062,
+      "split_total_ms": 26.4627,
+      "copy_ms": 5.1318,
+      "payload_sha256_ms": 21.1978,
+      "descriptor_ms": 0.0912,
+      "split_wrapper_and_instrumentation_ms": 0.0419,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.9157000137493014,
+          "copy_ms": 0.7021,
+          "payload_sha256_ms": 3.0411,
+          "descriptor_ms": 0.0161,
+          "split_frame_ms": 3.7593
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.931300016120076,
+          "copy_ms": 0.7109,
+          "payload_sha256_ms": 3.045,
+          "descriptor_ms": 0.0157,
+          "split_frame_ms": 3.7716
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.9034999790601432,
+          "copy_ms": 0.7158,
+          "payload_sha256_ms": 3.0234,
+          "descriptor_ms": 0.0179,
+          "split_frame_ms": 3.7571
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.969100012909621,
+          "copy_ms": 0.7389,
+          "payload_sha256_ms": 3.0269,
+          "descriptor_ms": 0.0101,
+          "split_frame_ms": 3.7759
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.895799978636205,
+          "copy_ms": 0.7498,
+          "payload_sha256_ms": 3.0095,
+          "descriptor_ms": 0.007,
+          "split_frame_ms": 3.7663
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.933300031349063,
+          "copy_ms": 0.732,
+          "payload_sha256_ms": 2.9929,
+          "descriptor_ms": 0.0062,
+          "split_frame_ms": 3.7311
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.9004000136628747,
+          "copy_ms": 0.7823,
+          "payload_sha256_ms": 3.059,
+          "descriptor_ms": 0.0182,
+          "split_frame_ms": 3.8595
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 3,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.637,
+      "split_total_ms": 29.3894,
+      "copy_ms": 6.514,
+      "payload_sha256_ms": 22.6981,
+      "descriptor_ms": 0.117,
+      "split_wrapper_and_instrumentation_ms": 0.0603,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.129599954467267,
+          "copy_ms": 0.9156,
+          "payload_sha256_ms": 3.1732,
+          "descriptor_ms": 0.0183,
+          "split_frame_ms": 4.1071
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.085599968675524,
+          "copy_ms": 0.9251,
+          "payload_sha256_ms": 3.204,
+          "descriptor_ms": 0.0166,
+          "split_frame_ms": 4.1457
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.144800011999905,
+          "copy_ms": 0.9163,
+          "payload_sha256_ms": 3.208,
+          "descriptor_ms": 0.0125,
+          "split_frame_ms": 4.1368
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.97649995284155,
+          "copy_ms": 0.9077,
+          "payload_sha256_ms": 3.23,
+          "descriptor_ms": 0.0141,
+          "split_frame_ms": 4.1518
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.9261000347323716,
+          "copy_ms": 0.9528,
+          "payload_sha256_ms": 3.2812,
+          "descriptor_ms": 0.0145,
+          "split_frame_ms": 4.2485
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.162400029599667,
+          "copy_ms": 0.9689,
+          "payload_sha256_ms": 3.3302,
+          "descriptor_ms": 0.0242,
+          "split_frame_ms": 4.3233
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.121500009205192,
+          "copy_ms": 0.9276,
+          "payload_sha256_ms": 3.2715,
+          "descriptor_ms": 0.0168,
+          "split_frame_ms": 4.2159
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 4,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 31.1956,
+      "split_total_ms": 31.0152,
+      "copy_ms": 6.6296,
+      "payload_sha256_ms": 24.1163,
+      "descriptor_ms": 0.1948,
+      "split_wrapper_and_instrumentation_ms": 0.0745,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.232199979014695,
+          "copy_ms": 0.7838,
+          "payload_sha256_ms": 3.3672,
+          "descriptor_ms": 0.0265,
+          "split_frame_ms": 4.1775
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.113400005735457,
+          "copy_ms": 0.8497,
+          "payload_sha256_ms": 3.3174,
+          "descriptor_ms": 0.0237,
+          "split_frame_ms": 4.1908
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.267600015737116,
+          "copy_ms": 0.9431,
+          "payload_sha256_ms": 3.7608,
+          "descriptor_ms": 0.02,
+          "split_frame_ms": 4.7239
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.607600043527782,
+          "copy_ms": 1.3202,
+          "payload_sha256_ms": 3.1787,
+          "descriptor_ms": 0.0188,
+          "split_frame_ms": 4.5177
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.462699987925589,
+          "copy_ms": 0.9708,
+          "payload_sha256_ms": 3.9697,
+          "descriptor_ms": 0.0397,
+          "split_frame_ms": 4.9802
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.8522999859414995,
+          "copy_ms": 0.8693,
+          "payload_sha256_ms": 3.2164,
+          "descriptor_ms": 0.0268,
+          "split_frame_ms": 4.1125
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.512800020165741,
+          "copy_ms": 0.8927,
+          "payload_sha256_ms": 3.3061,
+          "descriptor_ms": 0.0393,
+          "split_frame_ms": 4.2381
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 5,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 30.4857,
+      "split_total_ms": 30.1029,
+      "copy_ms": 6.2536,
+      "payload_sha256_ms": 23.577,
+      "descriptor_ms": 0.1968,
+      "split_wrapper_and_instrumentation_ms": 0.0755,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.28640004247427,
+          "copy_ms": 0.8808,
+          "payload_sha256_ms": 3.1788,
+          "descriptor_ms": 0.0452,
+          "split_frame_ms": 4.1048
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.281300003640354,
+          "copy_ms": 0.7757,
+          "payload_sha256_ms": 4.1197,
+          "descriptor_ms": 0.0259,
+          "split_frame_ms": 4.9213
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.390899965073913,
+          "copy_ms": 1.1365,
+          "payload_sha256_ms": 3.3454,
+          "descriptor_ms": 0.0224,
+          "split_frame_ms": 4.5043
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.420600016601384,
+          "copy_ms": 0.8344,
+          "payload_sha256_ms": 3.3043,
+          "descriptor_ms": 0.0209,
+          "split_frame_ms": 4.1596
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.165699996519834,
+          "copy_ms": 0.8803,
+          "payload_sha256_ms": 3.1431,
+          "descriptor_ms": 0.043,
+          "split_frame_ms": 4.0664
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.30400000186637,
+          "copy_ms": 0.8616,
+          "payload_sha256_ms": 3.3139,
+          "descriptor_ms": 0.0197,
+          "split_frame_ms": 4.1952
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.519000009167939,
+          "copy_ms": 0.8843,
+          "payload_sha256_ms": 3.1718,
+          "descriptor_ms": 0.0197,
+          "split_frame_ms": 4.0758
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 6,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 30.4811,
+      "split_total_ms": 30.679,
+      "copy_ms": 6.4553,
+      "payload_sha256_ms": 23.8218,
+      "descriptor_ms": 0.2893,
+      "split_wrapper_and_instrumentation_ms": 0.1126,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.334800003562123,
+          "copy_ms": 0.8777,
+          "payload_sha256_ms": 3.3974,
+          "descriptor_ms": 0.0258,
+          "split_frame_ms": 4.3009
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.199100018013269,
+          "copy_ms": 0.8963,
+          "payload_sha256_ms": 3.3978,
+          "descriptor_ms": 0.0555,
+          "split_frame_ms": 4.3496
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.3320999830029905,
+          "copy_ms": 0.9668,
+          "payload_sha256_ms": 3.5787,
+          "descriptor_ms": 0.0491,
+          "split_frame_ms": 4.5946
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.328800016082823,
+          "copy_ms": 1.017,
+          "payload_sha256_ms": 3.3522,
+          "descriptor_ms": 0.0447,
+          "split_frame_ms": 4.4139
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.412100010085851,
+          "copy_ms": 0.9405,
+          "payload_sha256_ms": 3.3277,
+          "descriptor_ms": 0.0299,
+          "split_frame_ms": 4.2981
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.3880000011995435,
+          "copy_ms": 0.8534,
+          "payload_sha256_ms": 3.3626,
+          "descriptor_ms": 0.0395,
+          "split_frame_ms": 4.2555
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.375999968033284,
+          "copy_ms": 0.9036,
+          "payload_sha256_ms": 3.4054,
+          "descriptor_ms": 0.0448,
+          "split_frame_ms": 4.3538
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 7,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 30.5624,
+      "split_total_ms": 30.4673,
+      "copy_ms": 6.3665,
+      "payload_sha256_ms": 23.8951,
+      "descriptor_ms": 0.143,
+      "split_wrapper_and_instrumentation_ms": 0.0627,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.425899998750538,
+          "copy_ms": 0.9064,
+          "payload_sha256_ms": 3.4137,
+          "descriptor_ms": 0.0228,
+          "split_frame_ms": 4.3429
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.37370000872761,
+          "copy_ms": 0.9136,
+          "payload_sha256_ms": 3.3791,
+          "descriptor_ms": 0.019,
+          "split_frame_ms": 4.3117
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.380099999252707,
+          "copy_ms": 0.9239,
+          "payload_sha256_ms": 3.4206,
+          "descriptor_ms": 0.0206,
+          "split_frame_ms": 4.3651
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.315499973017722,
+          "copy_ms": 0.9124,
+          "payload_sha256_ms": 3.4136,
+          "descriptor_ms": 0.0195,
+          "split_frame_ms": 4.3455
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.328600014559925,
+          "copy_ms": 0.905,
+          "payload_sha256_ms": 3.4155,
+          "descriptor_ms": 0.0188,
+          "split_frame_ms": 4.3393
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.323699977248907,
+          "copy_ms": 0.9017,
+          "payload_sha256_ms": 3.4115,
+          "descriptor_ms": 0.0175,
+          "split_frame_ms": 4.3307
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.341499996371567,
+          "copy_ms": 0.9035,
+          "payload_sha256_ms": 3.4411,
+          "descriptor_ms": 0.0248,
+          "split_frame_ms": 4.3694
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 8,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.5166,
+      "split_total_ms": 28.4145,
+      "copy_ms": 5.6686,
+      "payload_sha256_ms": 22.5569,
+      "descriptor_ms": 0.1293,
+      "split_wrapper_and_instrumentation_ms": 0.0597,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.16040001437068,
+          "copy_ms": 0.8508,
+          "payload_sha256_ms": 3.3094,
+          "descriptor_ms": 0.0327,
+          "split_frame_ms": 4.1929
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.042099986691028,
+          "copy_ms": 0.8716,
+          "payload_sha256_ms": 3.2313,
+          "descriptor_ms": 0.0224,
+          "split_frame_ms": 4.1253
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.09509998280555,
+          "copy_ms": 0.7829,
+          "payload_sha256_ms": 3.1552,
+          "descriptor_ms": 0.0102,
+          "split_frame_ms": 3.9483
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.9818999939598143,
+          "copy_ms": 0.7666,
+          "payload_sha256_ms": 3.164,
+          "descriptor_ms": 0.0078,
+          "split_frame_ms": 3.9384
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.034099983982742,
+          "copy_ms": 0.756,
+          "payload_sha256_ms": 3.2518,
+          "descriptor_ms": 0.0238,
+          "split_frame_ms": 4.0316
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.151200002525002,
+          "copy_ms": 0.8357,
+          "payload_sha256_ms": 3.2307,
+          "descriptor_ms": 0.0201,
+          "split_frame_ms": 4.0865
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.9946999750100076,
+          "copy_ms": 0.805,
+          "payload_sha256_ms": 3.2145,
+          "descriptor_ms": 0.0123,
+          "split_frame_ms": 4.0318
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 9,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.1669,
+      "split_total_ms": 27.5432,
+      "copy_ms": 5.6422,
+      "payload_sha256_ms": 21.7497,
+      "descriptor_ms": 0.1024,
+      "split_wrapper_and_instrumentation_ms": 0.0489,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.080099985003471,
+          "copy_ms": 0.7694,
+          "payload_sha256_ms": 3.1338,
+          "descriptor_ms": 0.0231,
+          "split_frame_ms": 3.9263
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.02239995310083,
+          "copy_ms": 0.8721,
+          "payload_sha256_ms": 3.1199,
+          "descriptor_ms": 0.0143,
+          "split_frame_ms": 4.0063
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.007399955298752,
+          "copy_ms": 0.8038,
+          "payload_sha256_ms": 3.1369,
+          "descriptor_ms": 0.0085,
+          "split_frame_ms": 3.9492
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.9751000003889203,
+          "copy_ms": 0.7895,
+          "payload_sha256_ms": 3.0808,
+          "descriptor_ms": 0.008,
+          "split_frame_ms": 3.8783
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.988899989053607,
+          "copy_ms": 0.7659,
+          "payload_sha256_ms": 3.0891,
+          "descriptor_ms": 0.0173,
+          "split_frame_ms": 3.8723
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.117700038477778,
+          "copy_ms": 0.8565,
+          "payload_sha256_ms": 3.1089,
+          "descriptor_ms": 0.0142,
+          "split_frame_ms": 3.9796
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.9278999902307987,
+          "copy_ms": 0.785,
+          "payload_sha256_ms": 3.0803,
+          "descriptor_ms": 0.017,
+          "split_frame_ms": 3.8823
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 10,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.3356,
+      "split_total_ms": 28.111,
+      "copy_ms": 5.3621,
+      "payload_sha256_ms": 22.6041,
+      "descriptor_ms": 0.0999,
+      "split_wrapper_and_instrumentation_ms": 0.0449,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.013500001747161,
+          "copy_ms": 0.7363,
+          "payload_sha256_ms": 3.2242,
+          "descriptor_ms": 0.02,
+          "split_frame_ms": 3.9805
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.009399970527738,
+          "copy_ms": 0.8199,
+          "payload_sha256_ms": 3.1717,
+          "descriptor_ms": 0.0238,
+          "split_frame_ms": 4.0154
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.9550000219605863,
+          "copy_ms": 0.7717,
+          "payload_sha256_ms": 3.1875,
+          "descriptor_ms": 0.0119,
+          "split_frame_ms": 3.9711
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.9541000151075423,
+          "copy_ms": 0.7386,
+          "payload_sha256_ms": 3.2121,
+          "descriptor_ms": 0.0183,
+          "split_frame_ms": 3.969
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.151100001763552,
+          "copy_ms": 0.768,
+          "payload_sha256_ms": 3.2046,
+          "descriptor_ms": 0.0104,
+          "split_frame_ms": 3.983
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.121999954804778,
+          "copy_ms": 0.7621,
+          "payload_sha256_ms": 3.4427,
+          "descriptor_ms": 0.0084,
+          "split_frame_ms": 4.2132
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.068700014613569,
+          "copy_ms": 0.7655,
+          "payload_sha256_ms": 3.1613,
+          "descriptor_ms": 0.0071,
+          "split_frame_ms": 3.9339
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 11,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.9662,
+      "split_total_ms": 29.7197,
+      "copy_ms": 6.2719,
+      "payload_sha256_ms": 23.1456,
+      "descriptor_ms": 0.2118,
+      "split_wrapper_and_instrumentation_ms": 0.0904,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.230499966070056,
+          "copy_ms": 0.8978,
+          "payload_sha256_ms": 3.2943,
+          "descriptor_ms": 0.0273,
+          "split_frame_ms": 4.2194
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.079100035596639,
+          "copy_ms": 0.9067,
+          "payload_sha256_ms": 3.323,
+          "descriptor_ms": 0.0258,
+          "split_frame_ms": 4.2555
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.076800018083304,
+          "copy_ms": 0.8576,
+          "payload_sha256_ms": 3.3712,
+          "descriptor_ms": 0.0393,
+          "split_frame_ms": 4.2681
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.145100014284253,
+          "copy_ms": 0.8845,
+          "payload_sha256_ms": 3.4021,
+          "descriptor_ms": 0.0332,
+          "split_frame_ms": 4.3198
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.209499980788678,
+          "copy_ms": 0.9411,
+          "payload_sha256_ms": 3.2967,
+          "descriptor_ms": 0.0331,
+          "split_frame_ms": 4.2709
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.061400017235428,
+          "copy_ms": 0.8929,
+          "payload_sha256_ms": 3.2296,
+          "descriptor_ms": 0.0308,
+          "split_frame_ms": 4.1533
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.090100002940744,
+          "copy_ms": 0.8913,
+          "payload_sha256_ms": 3.2287,
+          "descriptor_ms": 0.0223,
+          "split_frame_ms": 4.1423
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 12,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.8956,
+      "split_total_ms": 29.1006,
+      "copy_ms": 6.0008,
+      "payload_sha256_ms": 22.7986,
+      "descriptor_ms": 0.2135,
+      "split_wrapper_and_instrumentation_ms": 0.0877,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.219499998725951,
+          "copy_ms": 0.8258,
+          "payload_sha256_ms": 3.2759,
+          "descriptor_ms": 0.0384,
+          "split_frame_ms": 4.1401
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.0837000124156475,
+          "copy_ms": 0.8334,
+          "payload_sha256_ms": 3.2453,
+          "descriptor_ms": 0.0349,
+          "split_frame_ms": 4.1136
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.0018000290729105,
+          "copy_ms": 0.9005,
+          "payload_sha256_ms": 3.2121,
+          "descriptor_ms": 0.0329,
+          "split_frame_ms": 4.1455
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.0333999786525965,
+          "copy_ms": 0.8565,
+          "payload_sha256_ms": 3.2551,
+          "descriptor_ms": 0.0288,
+          "split_frame_ms": 4.1404
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.165799997281283,
+          "copy_ms": 0.8524,
+          "payload_sha256_ms": 3.287,
+          "descriptor_ms": 0.0213,
+          "split_frame_ms": 4.1607
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.14259999524802,
+          "copy_ms": 0.83,
+          "payload_sha256_ms": 3.2685,
+          "descriptor_ms": 0.029,
+          "split_frame_ms": 4.1275
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.153100016992539,
+          "copy_ms": 0.9022,
+          "payload_sha256_ms": 3.2547,
+          "descriptor_ms": 0.0282,
+          "split_frame_ms": 4.1851
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 13,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 29.2729,
+      "split_total_ms": 29.0185,
+      "copy_ms": 6.1657,
+      "payload_sha256_ms": 22.5953,
+      "descriptor_ms": 0.1837,
+      "split_wrapper_and_instrumentation_ms": 0.0738,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.195499990601093,
+          "copy_ms": 0.9057,
+          "payload_sha256_ms": 3.227,
+          "descriptor_ms": 0.0289,
+          "split_frame_ms": 4.1616
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.129500011913478,
+          "copy_ms": 0.856,
+          "payload_sha256_ms": 3.2126,
+          "descriptor_ms": 0.0269,
+          "split_frame_ms": 4.0955
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.177699971478432,
+          "copy_ms": 0.8465,
+          "payload_sha256_ms": 3.2456,
+          "descriptor_ms": 0.0245,
+          "split_frame_ms": 4.1166
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.179299983661622,
+          "copy_ms": 0.9184,
+          "payload_sha256_ms": 3.254,
+          "descriptor_ms": 0.0261,
+          "split_frame_ms": 4.1985
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.121899954043329,
+          "copy_ms": 0.8744,
+          "payload_sha256_ms": 3.1961,
+          "descriptor_ms": 0.0254,
+          "split_frame_ms": 4.0959
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.171199980191886,
+          "copy_ms": 0.8973,
+          "payload_sha256_ms": 3.2381,
+          "descriptor_ms": 0.0251,
+          "split_frame_ms": 4.1605
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.218599991872907,
+          "copy_ms": 0.8674,
+          "payload_sha256_ms": 3.2219,
+          "descriptor_ms": 0.0268,
+          "split_frame_ms": 4.1161
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 14,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.8818,
+      "split_total_ms": 28.4756,
+      "copy_ms": 6.0014,
+      "payload_sha256_ms": 22.1644,
+      "descriptor_ms": 0.2237,
+      "split_wrapper_and_instrumentation_ms": 0.0861,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.174000001512468,
+          "copy_ms": 0.8329,
+          "payload_sha256_ms": 3.1674,
+          "descriptor_ms": 0.03,
+          "split_frame_ms": 4.0303
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.2146999621763825,
+          "copy_ms": 0.7946,
+          "payload_sha256_ms": 3.1974,
+          "descriptor_ms": 0.0363,
+          "split_frame_ms": 4.0283
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.142399993725121,
+          "copy_ms": 0.907,
+          "payload_sha256_ms": 3.1608,
+          "descriptor_ms": 0.0285,
+          "split_frame_ms": 4.0963
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.9844000129960477,
+          "copy_ms": 0.8266,
+          "payload_sha256_ms": 3.1384,
+          "descriptor_ms": 0.0322,
+          "split_frame_ms": 3.9972
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.022999957669526,
+          "copy_ms": 0.8044,
+          "payload_sha256_ms": 3.1581,
+          "descriptor_ms": 0.029,
+          "split_frame_ms": 3.9915
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.116599971894175,
+          "copy_ms": 0.918,
+          "payload_sha256_ms": 3.1716,
+          "descriptor_ms": 0.0322,
+          "split_frame_ms": 4.1218
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 4.122700018342584,
+          "copy_ms": 0.9179,
+          "payload_sha256_ms": 3.1707,
+          "descriptor_ms": 0.0355,
+          "split_frame_ms": 4.1241
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 15,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 27.3855,
+      "split_total_ms": 26.5317,
+      "copy_ms": 5.437,
+      "payload_sha256_ms": 20.928,
+      "descriptor_ms": 0.1147,
+      "split_wrapper_and_instrumentation_ms": 0.052,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.985699964687228,
+          "copy_ms": 0.78,
+          "payload_sha256_ms": 2.9523,
+          "descriptor_ms": 0.0114,
+          "split_frame_ms": 3.7437
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.053500015288591,
+          "copy_ms": 0.7462,
+          "payload_sha256_ms": 2.9691,
+          "descriptor_ms": 0.0186,
+          "split_frame_ms": 3.7339
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.8478999631479383,
+          "copy_ms": 0.741,
+          "payload_sha256_ms": 2.996,
+          "descriptor_ms": 0.018,
+          "split_frame_ms": 3.755
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.818899975158274,
+          "copy_ms": 0.8192,
+          "payload_sha256_ms": 2.9277,
+          "descriptor_ms": 0.0192,
+          "split_frame_ms": 3.7661
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.8864000234752893,
+          "copy_ms": 0.8441,
+          "payload_sha256_ms": 3.0197,
+          "descriptor_ms": 0.0085,
+          "split_frame_ms": 3.8723
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.894599969498813,
+          "copy_ms": 0.7483,
+          "payload_sha256_ms": 3.0421,
+          "descriptor_ms": 0.0191,
+          "split_frame_ms": 3.8095
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.8379000034183264,
+          "copy_ms": 0.7582,
+          "payload_sha256_ms": 3.0211,
+          "descriptor_ms": 0.0199,
+          "split_frame_ms": 3.7992
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 16,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.2771,
+      "split_total_ms": 27.3614,
+      "copy_ms": 5.6287,
+      "payload_sha256_ms": 21.5447,
+      "descriptor_ms": 0.1341,
+      "split_wrapper_and_instrumentation_ms": 0.0539,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.876200004015118,
+          "copy_ms": 0.7538,
+          "payload_sha256_ms": 3.0578,
+          "descriptor_ms": 0.0285,
+          "split_frame_ms": 3.8401
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 4.35439997818321,
+          "copy_ms": 0.8659,
+          "payload_sha256_ms": 3.1047,
+          "descriptor_ms": 0.011,
+          "split_frame_ms": 3.9816
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 4.098599951248616,
+          "copy_ms": 0.7665,
+          "payload_sha256_ms": 3.0522,
+          "descriptor_ms": 0.0096,
+          "split_frame_ms": 3.8283
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.320799955166876,
+          "copy_ms": 0.7377,
+          "payload_sha256_ms": 3.0574,
+          "descriptor_ms": 0.0206,
+          "split_frame_ms": 3.8157
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 3.7048000376671553,
+          "copy_ms": 0.8917,
+          "payload_sha256_ms": 3.1141,
+          "descriptor_ms": 0.0221,
+          "split_frame_ms": 4.0279
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.9015000220388174,
+          "copy_ms": 0.8044,
+          "payload_sha256_ms": 3.0654,
+          "descriptor_ms": 0.0228,
+          "split_frame_ms": 3.8926
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.9186999783851206,
+          "copy_ms": 0.8087,
+          "payload_sha256_ms": 3.0931,
+          "descriptor_ms": 0.0195,
+          "split_frame_ms": 3.9213
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 17,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "original",
+        "split"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.011,
+      "split_total_ms": 29.3505,
+      "copy_ms": 5.8318,
+      "payload_sha256_ms": 23.317,
+      "descriptor_ms": 0.1412,
+      "split_wrapper_and_instrumentation_ms": 0.0605,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 3.946600016206503,
+          "copy_ms": 0.7834,
+          "payload_sha256_ms": 3.1495,
+          "descriptor_ms": 0.0176,
+          "split_frame_ms": 3.9505
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.810900030657649,
+          "copy_ms": 0.8035,
+          "payload_sha256_ms": 3.0557,
+          "descriptor_ms": 0.0211,
+          "split_frame_ms": 3.8803
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.961100010201335,
+          "copy_ms": 0.819,
+          "payload_sha256_ms": 3.0346,
+          "descriptor_ms": 0.0134,
+          "split_frame_ms": 3.867
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 4.028800001833588,
+          "copy_ms": 0.8471,
+          "payload_sha256_ms": 3.1809,
+          "descriptor_ms": 0.0217,
+          "split_frame_ms": 4.0497
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.16190002579242,
+          "copy_ms": 0.8489,
+          "payload_sha256_ms": 3.7249,
+          "descriptor_ms": 0.0208,
+          "split_frame_ms": 4.5946
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 4.0623999666422606,
+          "copy_ms": 0.8818,
+          "payload_sha256_ms": 4.1922,
+          "descriptor_ms": 0.0359,
+          "split_frame_ms": 5.1099
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.9841000107116997,
+          "copy_ms": 0.8481,
+          "payload_sha256_ms": 2.9792,
+          "descriptor_ms": 0.0107,
+          "split_frame_ms": 3.838
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 18,
+      "same_loaded_source_pixels_as_first_pair": true
+    },
+    {
+      "order": [
+        "split",
+        "original"
+      ],
+      "passed": true,
+      "frames": 7,
+      "bytes": 48384000,
+      "original_ms": 28.5706,
+      "split_total_ms": 28.8885,
+      "copy_ms": 5.9097,
+      "payload_sha256_ms": 22.702,
+      "descriptor_ms": 0.2009,
+      "split_wrapper_and_instrumentation_ms": 0.0759,
+      "frame_checks": [
+        {
+          "frame_id": 392,
+          "timestamp_us": 19600731,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "split_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+          "original_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "split_identity_sha256": "a0a8bac229a3b0dd5ffedb02c7f6a3181e6b63f409e0b8cadb78c7742509ad5f",
+          "original_factory_reported_ms": 4.634000011719763,
+          "copy_ms": 0.865,
+          "payload_sha256_ms": 3.0706,
+          "descriptor_ms": 0.0305,
+          "split_frame_ms": 3.9661
+        },
+        {
+          "frame_id": 394,
+          "timestamp_us": 19700729,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "split_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+          "original_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "split_identity_sha256": "83cd1ab0a950857ade85b1af0d63bf04fa5e910971fcb2d990bbe5b039d526ab",
+          "original_factory_reported_ms": 3.855900024063885,
+          "copy_ms": 0.8588,
+          "payload_sha256_ms": 3.01,
+          "descriptor_ms": 0.0216,
+          "split_frame_ms": 3.8904
+        },
+        {
+          "frame_id": 396,
+          "timestamp_us": 19800727,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "split_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+          "original_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "split_identity_sha256": "2ef285ceecc473a5bd1290fb788f2b37b32d5d0cb7e5992ef5e909e0ddeb4437",
+          "original_factory_reported_ms": 3.8877000333741307,
+          "copy_ms": 0.7585,
+          "payload_sha256_ms": 3.0025,
+          "descriptor_ms": 0.015,
+          "split_frame_ms": 3.776
+        },
+        {
+          "frame_id": 398,
+          "timestamp_us": 19900735,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "split_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+          "original_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "split_identity_sha256": "0fd1e778a74bd9e9a13c78a59ab4e2f567692fa263879314fea24c030ff886f4",
+          "original_factory_reported_ms": 3.8843000074848533,
+          "copy_ms": 0.8558,
+          "payload_sha256_ms": 3.469,
+          "descriptor_ms": 0.0294,
+          "split_frame_ms": 4.3542
+        },
+        {
+          "frame_id": 400,
+          "timestamp_us": 20000733,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "split_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+          "original_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "split_identity_sha256": "70f69d0780c80d9a556e8a65cae2e405b345b0f2a4d71e4439d57eb65ecdd46d",
+          "original_factory_reported_ms": 4.584499984048307,
+          "copy_ms": 0.8756,
+          "payload_sha256_ms": 3.8079,
+          "descriptor_ms": 0.0386,
+          "split_frame_ms": 4.7221
+        },
+        {
+          "frame_id": 402,
+          "timestamp_us": 20100740,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "split_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+          "original_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "split_identity_sha256": "8cbbe3ddad90f89db9e1c5444450883dbac5142f98b29438d43a97c57c131830",
+          "original_factory_reported_ms": 3.8075000047683716,
+          "copy_ms": 0.8176,
+          "payload_sha256_ms": 3.0705,
+          "descriptor_ms": 0.0359,
+          "split_frame_ms": 3.924
+        },
+        {
+          "frame_id": 404,
+          "timestamp_us": 20200738,
+          "shape": [
+            1200,
+            1920,
+            3
+          ],
+          "strides": [
+            5760,
+            3,
+            1
+          ],
+          "dtype": "uint8",
+          "c_contiguous": true,
+          "bytes": 6912000,
+          "frame_id_and_clock_exact": true,
+          "payload_bytes_exact": true,
+          "pixels_exact": true,
+          "payload_sha256_exact": true,
+          "descriptor_sha256_exact": true,
+          "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "split_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+          "original_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "split_identity_sha256": "5edc1899254bb020e3b1f2e673dfaec7263601a38f17c71b5730e705ff02caef",
+          "original_factory_reported_ms": 3.8419999764300883,
+          "copy_ms": 0.8784,
+          "payload_sha256_ms": 3.2715,
+          "descriptor_ms": 0.0299,
+          "split_frame_ms": 4.1798
+        }
+      ],
+      "parity_outside_both_clocks": true,
+      "no_digest_reused_between_routes": true,
+      "phase": "measured",
+      "repeat": 19,
+      "same_loaded_source_pixels_as_first_pair": true
+    }
+  ],
+  "binding": {
+    "command_argv": [
+      "scripts/diagnose_train40_frame_sealing.py",
+      "--manifest",
+      "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json",
+      "--output",
+      "artifacts/train40_runtime_council_20261028/frame_sealing_cpu/idx553_v1",
+      "--index",
+      "553",
+      "--warmups",
+      "2",
+      "--repeats",
+      "20"
+    ],
+    "git_commit": "b593b0e92f9af4c04a7f7f3603bd99e60b03b045",
+    "git_status": [
+      " M scripts/report_train40_resume.py",
+      " M tests/unit/test_train40_council_report.py",
+      "?? docs/train40_runtime_council_20261028/COUNCIL.md",
+      "?? docs/train40_runtime_council_20261028/MEASUREMENT_AUDIT.md",
+      "?? docs/train40_runtime_council_20261028/MEMORY_RAW_PARITY.md",
+      "?? docs/train40_runtime_council_20261028/PRELOADED_RAW_CPU_ARRIVALS_PROPOSAL.md",
+      "?? docs/train40_runtime_council_20261028/RESULTS_GENERATED.md",
+      "?? docs/train40_runtime_council_20261028/RESULTS_SOURCES.json",
+      "?? docs/train40_runtime_council_20261028/REVIEW_CAUSAL_RUNTIME.md",
+      "?? docs/train40_runtime_council_20261028/RGB_GPU_FINDINGS.md",
+      "?? docs/train40_runtime_council_20261028/STRESS_REPLAY_V1_PROPOSAL.md",
+      "?? docs/train40_runtime_council_20261028/audit_and_build_manifest.py",
+      "?? operational/train40_runtime/rgb_crop_cache.py",
+      "?? scripts/diagnose_train40_linspace.py",
+      "?? tests/unit/test_train40_linspace_diagnostic.py",
+      "?? tests/unit/test_train40_runtime_rgb_crop_cache.py"
+    ],
+    "host": "DESKTOP-2N393IP",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+    "cpu_count": 32,
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "torch": "2.11.0+cu128",
+    "torch_threads": 2,
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "clock": {
+      "implementation": "QueryPerformanceCounter()",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-07
+    },
+    "index": 553,
+    "query_id": "EXTENDED:CPNAO-medium:20200738",
+    "query_us": 20200738,
+    "raw_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+    "raw_size_bytes": 6412206137,
+    "raw_mtime_ns": 1785101060214587300,
+    "source_revision_sha256": "ff5803ed3971fac00ccc3a1dd9c78474b5377c9625389f49e692be130fc82c9e",
+    "warmup_pairs": 2,
+    "measured_pairs": 20,
+    "quantile_method": "linear",
+    "paired_order": "AB then BA, alternating within warmup and measured populations",
+    "clock_excludes": "HDF5 read, verification, source snapshots, reporting",
+    "split_limitations": "No validation/record/registry/token publication; instrumented stages are diagnostic, not runtime V2",
+    "future_frames_prehashed": false
+  },
+  "distributions": {
+    "warmup": {
+      "original_ms": {
+        "count": 2,
+        "mean_ms": 27.146099999999997,
+        "median_ms": 27.146099999999997,
+        "p95_ms": 27.17679,
+        "p99_ms": 27.179517999999998,
+        "min_ms": 27.112,
+        "max_ms": 27.1802
+      },
+      "split_total_ms": {
+        "count": 2,
+        "mean_ms": 26.7181,
+        "median_ms": 26.7181,
+        "p95_ms": 26.9557,
+        "p99_ms": 26.97682,
+        "min_ms": 26.4541,
+        "max_ms": 26.9821
+      },
+      "copy_ms": {
+        "count": 2,
+        "mean_ms": 5.30185,
+        "median_ms": 5.30185,
+        "p95_ms": 5.450665,
+        "p99_ms": 5.463893,
+        "min_ms": 5.1365,
+        "max_ms": 5.4672
+      },
+      "payload_sha256_ms": {
+        "count": 2,
+        "mean_ms": 21.276000000000003,
+        "median_ms": 21.276000000000003,
+        "p95_ms": 21.36447,
+        "p99_ms": 21.372334000000002,
+        "min_ms": 21.1777,
+        "max_ms": 21.3743
+      },
+      "descriptor_ms": {
+        "count": 2,
+        "mean_ms": 0.09215,
+        "median_ms": 0.09215,
+        "p95_ms": 0.09228499999999999,
+        "p99_ms": 0.09229699999999999,
+        "min_ms": 0.092,
+        "max_ms": 0.0923
+      },
+      "split_wrapper_and_instrumentation_ms": {
+        "count": 2,
+        "mean_ms": 0.048100000000000004,
+        "median_ms": 0.048100000000000004,
+        "p95_ms": 0.048549999999999996,
+        "p99_ms": 0.048589999999999994,
+        "min_ms": 0.0476,
+        "max_ms": 0.0486
+      }
+    },
+    "measured": {
+      "original_ms": {
+        "count": 20,
+        "mean_ms": 28.612489999999998,
+        "median_ms": 28.543599999999998,
+        "p95_ms": 30.59406,
+        "p99_ms": 31.075291999999997,
+        "min_ms": 26.2937,
+        "max_ms": 31.1956
+      },
+      "split_total_ms": {
+        "count": 20,
+        "mean_ms": 28.57611,
+        "median_ms": 28.68205,
+        "p95_ms": 30.695809999999998,
+        "p99_ms": 30.951322,
+        "min_ms": 26.3321,
+        "max_ms": 31.0152
+      },
+      "copy_ms": {
+        "count": 20,
+        "mean_ms": 5.854055,
+        "median_ms": 5.87075,
+        "p95_ms": 6.51978,
+        "p99_ms": 6.607636,
+        "min_ms": 5.0966,
+        "max_ms": 6.6296
+      },
+      "payload_sha256_ms": {
+        "count": 20,
+        "mean_ms": 22.501405,
+        "median_ms": 22.5997,
+        "p95_ms": 23.90616,
+        "p99_ms": 24.074271999999997,
+        "min_ms": 20.9271,
+        "max_ms": 24.1163
+      },
+      "descriptor_ms": {
+        "count": 20,
+        "mean_ms": 0.155185,
+        "median_ms": 0.13765,
+        "p95_ms": 0.22698000000000004,
+        "p99_ms": 0.2768359999999999,
+        "min_ms": 0.0899,
+        "max_ms": 0.2893
+      },
+      "split_wrapper_and_instrumentation_ms": {
+        "count": 20,
+        "mean_ms": 0.06546500000000002,
+        "median_ms": 0.060399999999999995,
+        "p95_ms": 0.09151000000000001,
+        "p99_ms": 0.10838199999999998,
+        "min_ms": 0.0419,
+        "max_ms": 0.1126
+      }
+    }
+  },
+  "coverage": {
+    "expected_pairs": 22,
+    "recorded_pairs": 22,
+    "frames_per_pair": 7,
+    "passed": true
+  },
+  "all_parity_passed": true,
+  "preservation": {
+    "passed": true,
+    "files": 172,
+    "changed": [],
+    "missing": []
+  },
+  "raw_stat_preserved": true
+}

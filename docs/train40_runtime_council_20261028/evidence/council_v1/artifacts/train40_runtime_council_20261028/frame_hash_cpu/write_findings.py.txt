@@ -1,0 +1,211 @@
+"""Regenerate measured SHA-256/BLAKE3 distributions from preserved frame receipts."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import statistics
+from pathlib import Path
+
+
+def distribution(values: list[float]) -> dict[str, float | int]:
+    ordered = sorted(values)
+    if not ordered or not all(math.isfinite(value) for value in ordered):
+        raise ValueError("Nonempty finite measurements required")
+
+    def quantile(fraction: float) -> float:
+        position = (len(ordered) - 1) * fraction
+        low = math.floor(position)
+        high = min(low + 1, len(ordered) - 1)
+        return ordered[low] + (ordered[high] - ordered[low]) * (position - low)
+
+    return {
+        "count": len(ordered),
+        "mean_ms": statistics.fmean(ordered),
+        "median_ms": quantile(0.5),
+        "p95_ms": quantile(0.95),
+        "p99_ms": quantile(0.99),
+        "min_ms": ordered[0],
+        "max_ms": ordered[-1],
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--source", type=Path,
+        default=Path("artifacts/train40_runtime_council_20261028/frame_hash_cpu/idx553_v1/summary.json"),
+    )
+    parser.add_argument(
+        "--output", type=Path,
+        default=Path("docs/train40_runtime_council_20261028/FRAME_HASH_CPU_GENERATED.md"),
+    )
+    args = parser.parse_args()
+    source_bytes = args.source.read_bytes()
+    report = json.loads(source_bytes)
+    assert report["status"] == "COMPLETE" and report["all_parity_passed"]
+    assert report["preservation"]["passed"] and report["raw_stat_preserved"]
+    assert report["coverage"]["passed"]
+    measured = [pair for pair in report["records"] if pair["phase"] == "measured"]
+    assert len(measured) == 40
+    output = {
+        "source": args.source.as_posix(),
+        "source_sha256": hashlib.sha256(source_bytes).hexdigest(),
+        "scope": "CPU_MICRO_NOT_CAUSAL_OR_COMPLETE_TTC",
+        "quantile_method": "linear",
+        "population": "140 measured frame_checks per algorithm/scope, not history percentiles / 7",
+        "distributions": {},
+        "paired_sha_minus_blake3_ms": {},
+        "references": report["references"],
+        "dependency": report["dependency"],
+        "binding": report["binding"],
+        "preservation": report["preservation"],
+        "raw_stat_preserved": report["raw_stat_preserved"],
+        "runtime_v2_implemented": False,
+        "sustained_50hz_or_complete_20ms_demonstrated": False,
+    }
+    for copy_inside in (False, True):
+        scope = "copy_plus_hash" if copy_inside else "hash_only_preexisting_bytes"
+        pairs = [pair for pair in measured if pair["copy_inside"] == copy_inside]
+        assert len(pairs) == 20
+        scope_stats = {}
+        for algorithm in ("sha256", "blake3"):
+            routes = [
+                route for pair in pairs for route in pair["routes"]
+                if route["algorithm"] == algorithm
+            ]
+            frames = [frame for route in routes for frame in route["frame_checks"]]
+            assert len(frames) == 140
+            assert {tuple(frame["shape"]) for frame in frames} == {(1200, 1920, 3)}
+            assert {tuple(frame["strides"]) for frame in frames} == {(5760, 3, 1)}
+            assert {frame["bytes"] for frame in frames} == {6_912_000}
+            scope_stats[algorithm] = {
+                "history_wall_ms": distribution([route["wall_ms"] for route in routes]),
+                **{
+                    field: distribution([frame[field] for frame in frames])
+                    for field in ("copy_ms", "hash_ms", "frame_total_ms")
+                },
+                "by_frame_id": {
+                    str(frame_id): distribution([
+                        frame["frame_total_ms"] for frame in frames
+                        if frame["frame_id"] == frame_id
+                    ])
+                    for frame_id in sorted({frame["frame_id"] for frame in frames})
+                },
+            }
+        output["distributions"][scope] = scope_stats
+        differences = []
+        for pair in pairs:
+            by_algorithm = {
+                route["algorithm"]: {frame["frame_id"]: frame for frame in route["frame_checks"]}
+                for route in pair["routes"]
+            }
+            assert by_algorithm["sha256"].keys() == by_algorithm["blake3"].keys()
+            differences.extend(
+                by_algorithm["sha256"][index]["frame_total_ms"]
+                - by_algorithm["blake3"][index]["frame_total_ms"]
+                for index in by_algorithm["sha256"]
+            )
+        output["paired_sha_minus_blake3_ms"][scope] = distribution(differences)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.with_suffix(".json").write_text(
+        json.dumps(output, indent=2, allow_nan=False), encoding="utf-8"
+    )
+    table = [
+        "| Reloj por frame, ms | n | Media | Mediana | p95 | p99 | Máximo |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for scope, label, field in (
+        ("hash_only_preexisting_bytes", "Solo hash", "hash_ms"),
+        ("copy_plus_hash", "Copia + hash", "frame_total_ms"),
+    ):
+        for algorithm in ("sha256", "blake3"):
+            stats = output["distributions"][scope][algorithm][field]
+            table.append(
+                f"| {label}, {algorithm} | {stats['count']} | "
+                + " | ".join(f"{stats[key]:.4f}" for key in (
+                    "mean_ms", "median_ms", "p95_ms", "p99_ms", "max_ms"
+                )) + " |"
+            )
+    copy_scope = output["distributions"]["copy_plus_hash"]
+    difference = output["paired_sha_minus_blake3_ms"]["copy_plus_hash"]
+    dep, binding = report["dependency"], report["binding"]
+    text = f"""# Hash fuerte RGB: diagnóstico CPU SHA-256 frente a BLAKE3-256
+
+Generado por `artifacts/train40_runtime_council_20261028/frame_hash_cpu/write_findings.py`.
+Fuente: [recibo original](../../{args.source.as_posix()});
+[distribuciones, pares, procedencia y SHA de origen](FRAME_HASH_CPU_GENERATED.json).
+
+El caso {binding['index']} (`{binding['query_id']}`) conserva los mismos siete
+frames auténticos de 6.912.000 bytes, uint8 1200×1920×3, strides [5760,3,1].
+Se preservaron {report['coverage']['recorded_scope_pairs']} pares de scope:
+dos warmups y veinte repeticiones medidas para cada uno de los dos scopes.
+Orden de algoritmos y scopes alternado AB/BA; BLAKE3 usa `max_threads=1` y
+digest de 32 bytes. Todas las rutas pasan comparación de píxeles/bytes y digest
+contra su referencia del mismo algoritmo. SHA y BLAKE3 tienen valores distintos;
+el recibo conserva ambos y la SHA del factory original para cada frame.
+Los {report['preservation']['files']} archivos protegidos y el stat RAW permanecen intactos.
+
+{chr(10).join(table)}
+
+Cada distribución usa directamente 140 `frame_checks` medidos por algoritmo y
+scope; no divide percentiles del historial entre siete. El JSON conserva además
+las distribuciones por frame ID, por historial y de diferencias pareadas.
+La diferencia media pareada SHA − BLAKE3 para copia + hash es
+**{difference['mean_ms']:.4f} ms por frame**. Las medias por historial de siete
+frames son {copy_scope['sha256']['history_wall_ms']['mean_ms']:.4f} ms con SHA y
+{copy_scope['blake3']['history_wall_ms']['mean_ms']:.4f} ms con BLAKE3.
+
+## Qué justifica y qué falta
+
+El ahorro medido permite investigar una V2 opt-in que mantenga identidad
+criptográfica del contenido, sin sustituirla por un ID de capacidad local.
+V2 todavía no está implementada. V1 SHA sigue siendo el default y conserva su
+descriptor e identidades. Una implementación debe rotular explícitamente
+`blake3-256`, separar el namespace de identidad y usar SHA-256 solamente para
+el descriptor de metadata. Nunca debe llamar SHA-256 al digest BLAKE3 ni volver
+a calcular una SHA completa oculta al consultar propiedades.
+
+Esto es coste de copia/hash aislado, no un ahorro TTC medido. El factory completo
+también valida, construye metadata y publica el token en su registro; esos costes
+no están en la tabla. El setup, HDF5, referencias y comprobaciones se excluyen de
+los relojes. El scope sin copia parte de bytes existentes; el scope con copia
+crea bytes nuevos cada ruta. Ninguna ruta representa llegada causal, colas,
+transferencias ni modelos. Un update sin frame nuevo no paga sellado; con bursts
+debe medir todas las llegadas, sin prehash de observaciones futuras.
+
+No se puede restar el p95 de aquí al p95 de otro ensayo. Las 140 observaciones
+comparten veinte repeticiones y siete frames del mismo historial; no son 140
+episodios independientes. El resultado no demuestra 50 Hz ni <20 ms completos,
+no cambia pesos/normalizadores y no admite ampliar a dos objetos sin medir TTC.
+
+## Dependencia y reproducción
+
+Se verificó el wheel binario privado `blake3=={dep['version']}` de
+{dep['bytes']:,} bytes, sin modificar venv compartido, pyproject ni lockfile.
+SHA-256 del wheel: `{dep['wheel_sha256']}`.
+Licencia declarada: `{dep['license']}`. Véanse
+[recibo e instalación privada](../../artifacts/train40_runtime_council_20261028/hash_probe_dependencies/README.md),
+[bindings oficiales](https://github.com/oconnor663/blake3-py) y
+[release fijada](https://pypi.org/project/blake3/{dep['version']}/).
+El diagnóstico comprueba archivos instalados contra el wheel, origen del módulo
+y de su extensión, versión y vector vacío oficial; la referencia incremental
+usa la misma implementación, no constituye una segunda implementación independiente.
+
+Host `{binding['host']}`, Python {binding['python']}, NumPy {binding['numpy']},
+reloj `{binding['clock']['implementation']}`, resolución
+{binding['clock']['resolution']:.1e} s; OMP/MKL={binding['OMP_NUM_THREADS']}/{binding['MKL_NUM_THREADS']}.
+El JSON enlazado conserva comando, commit, entorno, referencias y provenance completa.
+Regeneración de este documento (stdlib, sin repetir la medición):
+
+```powershell
+& '../e-jepa-ttc/.venv/Scripts/python.exe' artifacts/train40_runtime_council_20261028/frame_hash_cpu/write_findings.py
+```
+"""
+    args.output.write_text(text, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

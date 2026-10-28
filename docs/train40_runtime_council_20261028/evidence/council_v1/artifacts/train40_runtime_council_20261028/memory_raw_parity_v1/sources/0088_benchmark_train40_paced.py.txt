@@ -1,0 +1,1371 @@
+"""Paced raw replay of one sensor sequence through the complete TRAIN40 service.
+
+This measures an artificial distinct-ROI capacity workload, not twenty tracked
+objects or physical sensor arrival latency. Disk acquisition stays inside the
+deadline-to-host-TTC clock. The optional original-oracle parity pass runs later.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import platform
+import subprocess
+import sys
+import threading
+import time
+from collections.abc import Mapping, Sequence
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import AbstractContextManager, nullcontext
+from dataclasses import dataclass, replace
+from pathlib import Path
+from types import MappingProxyType
+from typing import Any
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import h5py  # noqa: E402
+import numpy as np  # noqa: E402
+import torch  # noqa: E402
+
+from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes  # noqa: E402
+from operational.evttc_rgb_transfer.inputs import _rgb_box  # noqa: E402
+from operational.evttc_transfer.inputs import (  # noqa: E402
+    EvTTCEventReader,
+    _calibration,
+    _calibration_sha256,
+    _canonical_sha256,
+    project_rgb_box_rotation_only,
+)
+from operational.rgb_port import transfer as engine  # noqa: E402
+from operational.rgb_port_revision.transfer_inputs import sensor_triplets  # noqa: E402
+from operational.train40_runtime.defaults import DEFAULT_PROFILE  # noqa: E402
+from operational.train40_runtime.inputs import PersistentSensorInputs  # noqa: E402
+from operational.train40_runtime.measurement import (  # noqa: E402
+    PREDICTION_COMPONENTS,
+    prediction_parity,
+    snapshot_files,
+    verify_snapshot,
+)
+from operational.train40_runtime.multiobject import (  # noqa: E402
+    MultiObjectTrain40Service,
+    ObjectRegion,
+    RawRGBHistory,
+)
+from operational.train40_runtime.multiobject_cache import RGBBatchCache  # noqa: E402
+from operational.train40_runtime.paced import (  # noqa: E402
+    Arrival,
+    pacing_clock_metadata,
+    run_paced_replay,
+)
+from operational.train40_runtime.priming import prime_supported_histories  # noqa: E402
+from operational.train40_runtime.replay_inputs import SCHEMA  # noqa: E402
+from operational.train40_runtime.replay_memory import (  # noqa: E402
+    SCOPE as MEMORY_SCOPE,
+)
+from operational.train40_runtime.replay_memory import (  # noqa: E402
+    MemoryRawUpdate,
+    PreloadedRawSource,
+)
+from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory  # noqa: E402
+from operational.train40_runtime.rgb_raw_ring import (  # noqa: E402
+    FrozenRGBFrame,
+    RGBSourceIdentity,
+    freeze_rgb_frame,
+)
+from scripts.benchmark_train40_multiobject import (  # noqa: E402
+    artificial_regions,
+    prime,
+    reference_receipt,
+    reference_rgb,
+)
+from scripts.benchmark_train40_runtime import (  # noqa: E402
+    _candidate_inventory,
+    _source_inventory,
+    _validate_output,
+    _validate_reference,
+    _write,
+)
+from scripts.final_train40_transfer import (  # noqa: E402
+    FinalTransferPredictor,
+    load_models,
+    read,
+    reject_targets,
+    sha,
+    verify_candidate,
+    verify_frozen_runtime,
+)
+
+STEP_US = 20_000
+EVENT_DTYPES = {"x": np.int32, "y": np.int32, "t": np.int64, "p": np.int8}
+SCOPE = "PACED_DISK_RAW_REPLAY_ARTIFICIAL_DISTINCT_ROIS_ALL_HOST_TTC"
+MILESTONE_CHECKS = (
+    "all_scheduled_arrivals_recorded",
+    "no_drops_or_source_errors",
+    "complete_object_coverage",
+    "actual_availability_before_service",
+    "every_deadline_response_under_20ms",
+    "no_prior_work_at_scheduled_arrivals",
+    "finished_before_end_of_last_period",
+    "offered_50hz_for_at_least_60s",
+    "source_lifecycle_succeeded",
+)
+
+
+def replay_schedule(
+    manifest: Mapping[str, Any], sequence_id: str, updates: int | None = None
+) -> list[dict[str, Any]]:
+    """Retain excluded slots at their real clock positions; never close gaps."""
+    if (
+        manifest.get("schema") != SCHEMA
+        or manifest.get("targets_read") is not False
+        or manifest.get("optimizer_updates") != 0
+        or manifest.get("provenance", {}).get("step_us") != STEP_US
+    ):
+        raise ValueError("A label-free causal replay manifest with a 20000us step is required")
+    inventory = [
+        item for item in manifest["inventory"] if item["physical_sequence_id"] == sequence_id
+    ]
+    if len(inventory) != 1:
+        raise ValueError("Select exactly one registered physical sequence")
+    registered = inventory[0]
+    accepted = [row for row in manifest["rows"] if row["physical_sequence_id"] == sequence_id]
+    excluded = [row for row in manifest["excluded"] if row["physical_sequence_id"] == sequence_id]
+    count = int(registered["scheduled_updates"])
+    if count <= 0 or len(accepted) + len(excluded) != count:
+        raise ValueError("Every scheduled slot must be accepted or explicitly excluded")
+    first = int(registered["requested_bounds_us"][0])
+    slots: dict[int, dict[str, Any]] = {}
+    raw_path = Path(registered["raw_path"]).resolve()
+    for row in [*accepted, *excluded]:
+        anchor = int(row["anchor_us"])
+        if anchor in slots:
+            raise ValueError("Duplicate accepted/excluded sensor-clock slot")
+        if "reason" not in row:
+            unsigned = {key: value for key, value in row.items() if key != "metadata_sha256"}
+            if row.get("metadata_sha256") != _canonical_sha256(unsigned):
+                raise ValueError("Replay row metadata digest differs")
+            if (
+                Path(row["raw_path"]).resolve() != raw_path
+                or row["raw_stat"] != registered["raw_stat"]
+            ):
+                raise ValueError("Replay rows must identify one unchanged physical raw source")
+            if row.get("replay_step_us") != STEP_US:
+                raise ValueError("Replay row cadence differs")
+            reject_targets(row)
+        slots[anchor] = dict(row)
+    expected = [first + index * STEP_US for index in range(count)]
+    if set(slots) != set(expected):
+        raise ValueError("Replay has an unaccounted clock gap, rollback or out-of-range row")
+    if updates is not None and (
+        isinstance(updates, bool) or not isinstance(updates, int) or not 1 <= updates <= count
+    ):
+        raise ValueError("updates must select a positive prefix of the declared schedule")
+    return [slots[anchor] for anchor in expected[:updates]]
+
+
+def _own_readonly(value: Any, dtype: Any = None) -> np.ndarray:
+    result = np.array(value, dtype=dtype, order="C", copy=True)
+    result.setflags(write=False)
+    return result
+
+
+def bounded_events(
+    reader: EvTTCEventReader, start_us: int, end_us: int, max_bytes: int
+) -> Mapping[str, np.ndarray]:
+    """Reject capacity before allocating output; preserve every event or fail."""
+    first, last = reader._bounds(start_us, end_us)
+    count = last - first
+    if count * 17 > max_bytes:
+        raise ValueError("RAW_EVENT_BYTE_LIMIT: packet/history cannot be truncated")
+    result = {key: np.empty(count, dtype=dtype) for key, dtype in EVENT_DTYPES.items()}
+    cursor = 0
+    for chunk in reader.iter_window_chunks(start_us, end_us):
+        length = len(chunk["t"])
+        if cursor + length > count:
+            raise ValueError("Raw source changed while reading the bounded interval")
+        for key in result:
+            result[key][cursor : cursor + length] = chunk[key]
+        cursor += length
+    if cursor != count:
+        raise ValueError("Raw source changed while reading the bounded interval")
+    for value in result.values():
+        value.setflags(write=False)
+    return MappingProxyType(result)
+
+
+@dataclass(frozen=True)
+class RawUpdate:
+    """Owned immutable CPU bytes; no open reader, ROI transform or representation."""
+
+    index: int
+    row_json: bytes
+    events: Mapping[str, np.ndarray]
+    rgb: RawRGBHistory
+    boxes: tuple[tuple[float, float, float, float], ...]
+    calibration: Mapping[str, np.ndarray]
+    byte_count: int
+    acquisition_thread: int
+    source_diagnostics: Mapping[str, Any] | None = None
+
+
+class DiskRawSource:
+    """Open/close every HDF5 handle on the acquiring thread, including failures."""
+
+    def __init__(self, schedule: Sequence[Mapping[str, Any]], max_payload_bytes: int) -> None:
+        if max_payload_bytes <= 0:
+            raise ValueError("max_payload_bytes must be positive")
+        self.schedule = schedule
+        self.max_payload_bytes = max_payload_bytes
+
+    def _reader(self, row: Mapping[str, Any]) -> AbstractContextManager[EvTTCEventReader]:
+        return EvTTCEventReader(Path(row["raw_path"]))
+
+    def _boxes(self, sources: Sequence[Mapping[str, Any]]) -> tuple[Any, ...]:
+        return tuple(_rgb_box(item) for item in sources)
+
+    def _calibration(self, handle: h5py.File) -> dict[str, np.ndarray]:
+        return {key: _own_readonly(value) for key, value in _calibration(handle).items()}
+
+    def _clock(self, stamps: h5py.Dataset) -> np.ndarray:
+        if stamps.ndim != 1 or len(stamps) * 8 > self.max_payload_bytes:
+            raise ValueError("RAW_CLOCK_BYTE_LIMIT")
+        return np.asarray(stamps, dtype=np.int64)
+
+    def _prepare_frames(self, data: h5py.Dataset, clock: np.ndarray, query_us: int) -> None:
+        """Disk control deliberately rereads its selected raw frames each query."""
+
+    def _frame(self, data: h5py.Dataset, index: int) -> np.ndarray:
+        return _own_readonly(data[index], np.uint8)
+
+    def acquire_raw(self, index: int) -> RawUpdate:
+        """Read only the current raw packet, causal RGB frames and bbox metadata."""
+        row = self.schedule[index]
+        if "reason" in row:
+            raise ValueError(f"MANIFEST_EXCLUSION: {row['reason']}")
+        query = int(row["anchor_us"])
+        sources = row["bbox_sources"]
+        if len(sources) != 3 or any(
+            not 0 <= int(item["timestamp_us"]) <= int(item["available_us"]) <= query
+            for item in sources
+        ):
+            raise ValueError("Future or invalid bbox metadata is unavailable at this query")
+        row_json = json.dumps(dict(row), sort_keys=True, allow_nan=False).encode()
+        if len(row_json) > min(self.max_payload_bytes, 1024**2):
+            raise ValueError("RAW_METADATA_BYTE_LIMIT")
+        if any(Path(item["path"]).stat().st_size > 1024**2 for item in sources):
+            raise ValueError("RAW_ANNOTATION_BYTE_LIMIT")
+        # Validation reads metadata only; projection and square construction are
+        # deliberately postponed until the consuming thread's inference clock.
+        boxes = self._boxes(sources)
+        path = Path(row["raw_path"])
+        before = path.stat()
+        if any(
+            row["raw_stat"][key] != value
+            for key, value in (("size_bytes", before.st_size), ("mtime_ns", before.st_mtime_ns))
+        ):
+            raise ValueError("Raw source changed since replay manifest generation")
+        with self._reader(row) as reader:
+            handle = reader._require_handle()
+            calibration = self._calibration(handle)
+            if _calibration_sha256(calibration) != row["calibration_sha256"]:
+                raise ValueError("Raw calibration differs from replay selection")
+            used = len(row_json) + sum(value.nbytes for value in calibration.values())
+            events = bounded_events(reader, query - STEP_US, query, self.max_payload_bytes - used)
+            used += sum(value.nbytes for value in events.values())
+            data, stamps = handle.get("blackflys/left/data"), handle.get("blackflys/left/ts")
+            frames: dict[int, np.ndarray] = {}
+            timestamps: dict[int, int] = {}
+            groups: list[tuple[int, ...]] = []
+            reason = "RGB_DATASET_MISSING"
+            if isinstance(data, h5py.Dataset) and isinstance(stamps, h5py.Dataset):
+                clock = self._clock(stamps)
+                groups = [
+                    tuple(int(item) for item in group) for group in sensor_triplets(clock, query)
+                ]
+                ids = sorted({item for group in groups for item in group})
+                if (
+                    len(ids) > 10
+                    or data.dtype != np.uint8
+                    or len(data.shape) != 4
+                    or data.shape[-1] != 3
+                ):
+                    raise ValueError("Raw RGB must contain bounded uint8 HWC frames")
+                frame_bytes = int(np.prod(data.shape[1:]))
+                if used + frame_bytes * len(ids) > self.max_payload_bytes:
+                    raise ValueError("RAW_PAYLOAD_BYTE_LIMIT: RGB frames cannot be truncated")
+                self._prepare_frames(data, clock, query)
+                for frame_id in ids:
+                    frames[frame_id] = self._frame(data, frame_id)
+                    timestamps[frame_id] = int(clock[frame_id])
+                used += sum(value.nbytes for value in frames.values())
+                reason = "" if groups else "INSUFFICIENT_CAUSAL_RGB_HISTORY"
+        after = path.stat()
+        if (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
+            raise ValueError("Raw source changed during acquisition")
+        if used > self.max_payload_bytes:
+            raise ValueError("RAW_PAYLOAD_BYTE_LIMIT")
+        return RawUpdate(
+            index,
+            row_json,
+            events,
+            RawRGBHistory(
+                query, MappingProxyType(frames), MappingProxyType(timestamps), tuple(groups), reason
+            ),
+            boxes,
+            MappingProxyType(calibration),
+            used,
+            threading.get_ident(),
+        )
+
+    def initial_history(self, max_bytes: int) -> Mapping[str, np.ndarray]:
+        """Read the one startup 600ms interval, before any measured arrival."""
+        row = self.schedule[0]
+        if "reason" in row:
+            raise ValueError("Cannot initialize from an excluded first replay slot")
+        end = int(row["anchor_us"]) - STEP_US
+        with EvTTCEventReader(Path(row["raw_path"])) as reader:
+            handle = reader._require_handle()
+            clock = handle[reader.layout.t]
+            if not isinstance(clock, h5py.Dataset) or not len(clock):
+                raise ValueError("Raw event clock must be a nonempty dataset")
+            if int(clock[0]) > end - 600_000 or int(clock[-1]) < end:
+                raise ValueError("Startup requires the full preceding 600ms of sensor support")
+            return bounded_events(reader, end - 600_000, end, max_bytes)
+
+
+class PersistentRawSource(DiskRawSource):
+    """One producer-owned reader and a bounded complete causal raw RGB ring.
+
+    Cache all native frames in the last 650ms, not just one selected triplet
+    cohort: a 20Hz sensor can alternate two native-100ms cohorts. Every payload
+    still gets independent readonly frame copies; no lifetime sharing with GPU.
+    """
+
+    def __init__(
+        self,
+        schedule: Sequence[Mapping[str, Any]],
+        max_payload_bytes: int,
+        *,
+        max_frame_bytes: int = 128 * 1024**2,
+    ) -> None:
+        super().__init__(schedule, max_payload_bytes)
+        if max_frame_bytes <= 0:
+            raise ValueError("RAW frame cache byte budget must be positive")
+        self.max_frame_bytes = max_frame_bytes
+        self.inputs: PersistentSensorInputs | None = None
+        self.owner_thread: int | None = None
+        self._calibration_cache: dict[str, np.ndarray] | None = None
+        self._clock_cache: np.ndarray | None = None
+        self._loaded_through = -1
+        self._last_frame_query: int | None = None
+        self._next_index = 0
+        self.closed = False
+        self.stats: dict[str, Any] = {
+            "acquired_updates": 0,
+            "event_packet_read_bytes": 0,
+            "unique_frames_read": 0,
+            "copied_payload_frame_bytes": 0,
+            "peak_frame_cache_bytes": 0,
+            "peak_frame_cache_count": 0,
+            "frame_cache_budget_bytes": max_frame_bytes,
+        }
+
+    def _require_owner(self) -> PersistentSensorInputs:
+        if self.closed or self.inputs is None or threading.get_ident() != self.owner_thread:
+            raise RuntimeError("Persistent RAW source requires its live producer owner thread")
+        return self.inputs
+
+    def _reader(self, row: Mapping[str, Any]) -> AbstractContextManager[EvTTCEventReader]:
+        return nullcontext(self._require_owner()._source(row))
+
+    def _boxes(self, sources: Sequence[Mapping[str, Any]]) -> tuple[Any, ...]:
+        inputs = self._require_owner()
+        return tuple(inputs._box(item) for item in sources)
+
+    def _calibration(self, handle: h5py.File) -> dict[str, np.ndarray]:
+        self._require_owner()
+        if self._calibration_cache is None:
+            self._calibration_cache = super()._calibration(handle)
+            if sum(value.nbytes for value in self._calibration_cache.values()) > 1024**2:
+                raise ValueError("RAW_CALIBRATION_CACHE_BYTE_LIMIT")
+        return {key: _own_readonly(value) for key, value in self._calibration_cache.items()}
+
+    def _clock(self, stamps: h5py.Dataset) -> np.ndarray:
+        self._require_owner()
+        if self._clock_cache is None:
+            self._clock_cache = super()._clock(stamps)
+            if len(self._clock_cache) > 1 and np.any(np.diff(self._clock_cache) <= 0):
+                raise ValueError("RGB sensor clock must be strictly increasing")
+            self._clock_cache.setflags(write=False)
+        return self._clock_cache
+
+    def _prepare_frames(self, data: h5py.Dataset, clock: np.ndarray, query_us: int) -> None:
+        inputs = self._require_owner()
+        if self._last_frame_query is not None and query_us < self._last_frame_query:
+            raise ValueError("Persistent RAW frame clock cannot roll back")
+        if data.dtype != np.uint8 or len(data.shape) != 4 or data.shape[-1] != 3:
+            raise ValueError("Raw RGB must be uint8 HWC frames")
+        first = int(np.searchsorted(clock, query_us - 650_000, side="left"))
+        end = int(np.searchsorted(clock, query_us, side="right"))
+        frame_bytes = int(np.prod(data.shape[1:]))
+        if (end - first) * frame_bytes > self.max_frame_bytes:
+            raise ValueError("RAW_FRAME_CACHE_BYTE_LIMIT: complete causal history must fit")
+        for index in list(inputs._frames):
+            if index < first:
+                inputs._frame_bytes -= inputs._frames.pop(index).nbytes
+        for index in range(first, end):
+            if index not in inputs._frames:
+                if index <= self._loaded_through:
+                    raise ValueError("RAW_FRAME_REREAD: cache lost a still-causal native frame")
+                inputs._frame(data, index)
+                self.stats["unique_frames_read"] += 1
+                self._loaded_through = index
+        self._last_frame_query = query_us
+        self.stats["peak_frame_cache_bytes"] = max(
+            self.stats["peak_frame_cache_bytes"], inputs._frame_bytes
+        )
+        self.stats["peak_frame_cache_count"] = max(
+            self.stats["peak_frame_cache_count"], len(inputs._frames)
+        )
+
+    def _frame(self, data: h5py.Dataset, index: int) -> np.ndarray:
+        inputs = self._require_owner()
+        if index not in inputs._frames:
+            raise ValueError("Required RGB frame was not acquired by its causal deadline")
+        result = _own_readonly(inputs._frame(data, index), np.uint8)
+        self.stats["copied_payload_frame_bytes"] += result.nbytes
+        return result
+
+    def warmup(self) -> dict[str, Any]:
+        """Open on the producer and fill only RAW frames available at t0−20ms."""
+        if self.owner_thread is not None or self.closed:
+            raise RuntimeError("Persistent RAW source can be warmed only once")
+        self.owner_thread = threading.get_ident()
+        self.inputs = PersistentSensorInputs(
+            max_raw_bytes=0,
+            max_frame_bytes=self.max_frame_bytes,
+            rgb_workers=1,
+            max_bbox_entries=128,
+        )
+        row = self.schedule[0]
+        if "reason" in row:
+            raise ValueError("Cannot warm an excluded first replay slot")
+        cutoff = int(row["anchor_us"]) - STEP_US
+        with self._reader(row) as reader:
+            handle = reader._require_handle()
+            calibration = self._calibration(handle)
+            if _calibration_sha256(calibration) != row["calibration_sha256"]:
+                raise ValueError("Raw calibration differs from replay selection")
+            data, stamps = handle.get("blackflys/left/data"), handle.get("blackflys/left/ts")
+            if isinstance(data, h5py.Dataset) and isinstance(stamps, h5py.Dataset):
+                self._prepare_frames(data, self._clock(stamps), cutoff)
+        self.stats["warmup_cutoff_us"] = cutoff
+        self.stats["warmup_frames"] = len(self.inputs._frames)
+        return {
+            **self.stats,
+            "owner_thread": self.owner_thread,
+            "future_pixels_preloaded": False,
+            "representations_precomputed": False,
+        }
+
+    def acquire_raw(self, index: int) -> RawUpdate:
+        """Read only new packets/frames; preserve the default payload byte contract."""
+        self._require_owner()
+        if index != self._next_index:
+            raise ValueError("Persistent RAW acquisition indices must be contiguous")
+        self._next_index += 1
+        before = int(self.stats["unique_frames_read"])
+        payload = super().acquire_raw(index)
+        self.stats["acquired_updates"] += 1
+        self.stats["event_packet_read_bytes"] += sum(
+            value.nbytes for value in payload.events.values()
+        )
+        return replace(
+            payload,
+            source_diagnostics=MappingProxyType(
+                {
+                    "source_mode": "persistent",
+                    "new_frames_read": self.stats["unique_frames_read"] - before,
+                    "frame_cache_bytes": self._require_owner()._frame_bytes,
+                    "frame_cache_count": len(self._require_owner()._frames),
+                }
+            ),
+        )
+
+    def finalize(self) -> dict[str, Any]:
+        """Close the reader/cache on its owner, even after partial warmup failure."""
+        if self.owner_thread is not None and threading.get_ident() != self.owner_thread:
+            raise RuntimeError("Persistent RAW finalization must run on its owner thread")
+        if self.inputs is not None:
+            self.stats["input_stats"] = dict(self.inputs.stats)
+            try:
+                self.inputs.close()
+            finally:
+                self.closed = True
+        else:
+            self.closed = True
+        self._clock_cache = None
+        self._calibration_cache = None
+        self.stats["closed_on_owner_thread"] = threading.get_ident() == self.owner_thread
+        return dict(self.stats)
+
+
+class ImmutablePersistentRawSource(PersistentRawSource):
+    """Seal newly arrived CPU frames once and share their immutable byte ownership.
+
+    Sixteen slots preserve both alternating native 20 Hz frame cohorts. Every
+    frame read/copy/hash after warmup is inside acquire_raw and the paced clock.
+    Payload byte accounting remains conservative: shared frames count in every
+    payload, bounding tokens retained by queued consumers after ring eviction.
+    """
+
+    FRAME_CAPACITY = 16
+
+    def __init__(
+        self,
+        schedule: Sequence[Mapping[str, Any]],
+        max_payload_bytes: int,
+        *,
+        max_frame_bytes: int = 128 * 1024**2,
+    ) -> None:
+        super().__init__(schedule, max_payload_bytes, max_frame_bytes=max_frame_bytes)
+        if not schedule or "reason" in schedule[0]:
+            raise ValueError("Immutable RAW source needs a valid first scheduled update")
+        self._origin = self._source_identity(schedule[0])
+        self._tokens: dict[int, FrozenRGBFrame] = {}
+        self._sealed_through = -1
+        self._sealed_timestamp = -1
+        self.stats.update(
+            immutable_frame_capacity=self.FRAME_CAPACITY,
+            unique_frames_frozen=0,
+            frame_freeze_bytes=0,
+            frame_freeze_seconds=0.0,
+            frame_freeze_scratch_upper_bound_bytes=0,
+            immutable_payload_frame_copy_bytes=0,
+            source_revision_scope="SHA256_OF_PATH_STAT_CALIBRATION_DATASET_DESCRIPTOR",
+        )
+
+    @staticmethod
+    def _source_identity(row: Mapping[str, Any]) -> RGBSourceIdentity:
+        path = str(Path(row["raw_path"]).resolve())
+        descriptor = {
+            "path": path,
+            "raw_stat": dict(row["raw_stat"]),
+            "calibration_sha256": row["calibration_sha256"],
+            "dataset": "blackflys/left/data",
+        }
+        return RGBSourceIdentity(f"{path}::blackflys/left/data", _canonical_sha256(descriptor))
+
+    def _reader(self, row: Mapping[str, Any]) -> AbstractContextManager[EvTTCEventReader]:
+        self._require_owner()
+        if self._source_identity(row) != self._origin:
+            raise ValueError("Immutable RAW source name/revision changed during the run")
+        return super()._reader(row)
+
+    def _prepare_frames(self, data: h5py.Dataset, clock: np.ndarray, query_us: int) -> None:
+        inputs = self._require_owner()
+        first = int(np.searchsorted(clock, query_us - 650_000, side="left"))
+        end = int(np.searchsorted(clock, query_us, side="right"))
+        if end - first > self.FRAME_CAPACITY:
+            raise ValueError("RAW_FRAME_SLOT_LIMIT: complete causal history must fit 16 slots")
+        if self._last_frame_query is not None and query_us < self._last_frame_query:
+            raise ValueError("Immutable RAW frame clock cannot roll back")
+        for index in list(self._tokens):
+            if index < first:
+                del self._tokens[index]
+        super()._prepare_frames(data, clock, query_us)
+        self.stats["frame_freeze_scratch_upper_bound_bytes"] = max(
+            self.stats["frame_freeze_scratch_upper_bound_bytes"], int(np.prod(data.shape[1:]))
+        )
+        for index in range(first, end):
+            if index in self._tokens:
+                continue
+            timestamp = int(clock[index])
+            if index <= self._sealed_through or timestamp <= self._sealed_timestamp:
+                raise ValueError("Immutable RAW frame ID/timestamp cannot be recycled")
+            token = freeze_rgb_frame(
+                inputs._frames[index],
+                index,
+                timestamp,
+                self._origin,
+                max_bytes=self.max_frame_bytes,
+            )
+            self._tokens[index] = token
+            # Replace the reader-owned array, retaining no second mutable RAW copy.
+            inputs._frames[index] = token.array
+            self._sealed_through, self._sealed_timestamp = index, timestamp
+            self.stats["unique_frames_frozen"] += 1
+            self.stats["frame_freeze_bytes"] += token.hashed_bytes
+            self.stats["frame_freeze_seconds"] += token.freeze_seconds
+
+    def _frame(self, data: h5py.Dataset, index: int) -> np.ndarray:
+        self._require_owner()
+        if index not in self._tokens:
+            raise ValueError("Required RGB frame has no immutable arrival token")
+        return self._tokens[index].array
+
+    def acquire_raw(self, index: int) -> RawUpdate:
+        """Share only already sealed causal frames and keep sealing on the clock."""
+        before = int(self.stats["unique_frames_frozen"])
+        before_seconds = float(self.stats["frame_freeze_seconds"])
+        payload = super().acquire_raw(index)
+        rgb = payload.rgb
+        frozen = FrozenRGBHistory(
+            rgb.query_us,
+            {frame_id: self._tokens[frame_id] for frame_id in rgb.frames},
+            rgb.triplets,
+            rgb.unavailable_reason,
+        )
+        return replace(
+            payload,
+            rgb=frozen,
+            source_diagnostics=MappingProxyType(
+                {
+                    **dict(payload.source_diagnostics or {}),
+                    "source_mode": "immutable",
+                    "new_frames_frozen": self.stats["unique_frames_frozen"] - before,
+                    "new_frame_freeze_seconds": self.stats["frame_freeze_seconds"] - before_seconds,
+                    "payload_frame_copy_bytes": 0,
+                    "frame_token_count": len(self._tokens),
+                }
+            ),
+        )
+
+    def finalize(self) -> dict[str, Any]:
+        """Release the owner ring; queued payloads retain their immutable tokens."""
+        if self.owner_thread is not None and threading.get_ident() != self.owner_thread:
+            raise RuntimeError("Immutable RAW finalization must run on its owner thread")
+        try:
+            return super().finalize()
+        finally:
+            self._tokens.clear()
+
+
+def current_regions(payload: RawUpdate | MemoryRawUpdate, count: int) -> list[ObjectRegion]:
+    """Compute current calibrated geometry inside infer_all, not in acquisition."""
+    projected = [project_rgb_box_rotation_only(box, payload.calibration) for box in payload.boxes]
+    event = common_square_from_boxes(projected, (1, 2), margin_fraction=0.25)
+    rgb = common_square_from_boxes(payload.boxes, (1, 2), margin_fraction=0.25)
+    return artificial_regions(event, rgb, count)
+
+
+class ContinuousConsumer:
+    """Latch gaps or failures: no hidden refilling, skipping, or stale-history TTC."""
+
+    def __init__(self, service: Any, schedule: Sequence[Mapping[str, Any]], count: int) -> None:
+        self.service, self.schedule, self.count = service, schedule, count
+        self.next_index = 0
+        self.failure: str | None = None
+        self.service_receipts: list[dict[str, Any]] = []
+
+    def infer_all(self, arrival: Arrival[RawUpdate | MemoryRawUpdate]) -> dict[str, dict[str, Any]]:
+        """Return all completed host outputs or fail this entire update explicitly."""
+        payload = arrival.payload
+        if self.failure is not None:
+            raise RuntimeError(f"HISTORY_INVALID_REINITIALIZATION_REQUIRED: {self.failure}")
+        try:
+            if payload.index != self.next_index or arrival.update_id != f"update-{payload.index}":
+                raise ValueError(
+                    f"RAW_GAP: expected index {self.next_index}, received {payload.index}"
+                )
+            row = json.loads(payload.row_json)
+            query = int(self.schedule[payload.index]["anchor_us"])
+            if (
+                row["query_id"] != self.schedule[payload.index]["query_id"]
+                or int(row["anchor_us"]) != query
+            ):
+                raise ValueError("Payload identity differs from the scheduled sensor query")
+            regions = current_regions(payload, self.count)
+            result = self.service.update(
+                payload.events, query - STEP_US, query, regions, payload.rgb
+            )
+            outputs = result["objects"]
+            ids = [item["object_id"] for item in outputs]
+            if len(ids) != self.count or set(ids) != {item.object_id for item in regions}:
+                raise ValueError("Service returned duplicate, missing or unexpected object IDs")
+            for item in outputs:
+                if item.get("success", True) is not True:
+                    raise ValueError("Service explicitly marked an object prediction unsuccessful")
+                for name in PREDICTION_COMPONENTS:
+                    value = item["predictions"][name]
+                    if (
+                        name == "R_CTX_TRAIN40"
+                        and value is None
+                        and item.get("rgb_available") is False
+                    ):
+                        continue
+                    if (
+                        isinstance(value, (bool, str))
+                        or not isinstance(value, (float, int))
+                        or not np.isfinite(value)
+                    ):
+                        raise ValueError(
+                            "Every TTC must be a finite scalar already available on host"
+                        )
+            self.service_receipts.append(
+                {
+                    **result,
+                    "update_id": arrival.update_id,
+                    "query_id": row["query_id"],
+                    "anchor_us": query,
+                    "raw_payload_bytes": payload.byte_count,
+                    "raw_source": dict(payload.source_diagnostics or {"source_mode": "disk"}),
+                    "acquisition_thread": payload.acquisition_thread,
+                    "inference_thread": threading.get_ident(),
+                }
+            )
+            self.next_index += 1
+            return {item["object_id"]: {**item, "success": True} for item in outputs}
+        except Exception as exc:
+            self.failure = f"{type(exc).__name__}: {exc}"
+            raise
+
+
+def separate_parity(
+    source: DiskRawSource, consumer: ContinuousConsumer, models: Any, norms: Any
+) -> dict[str, Any]:
+    """Re-read each raw query for an independent original producer/context pass."""
+    oracle = FinalTransferPredictor.__new__(FinalTransferPredictor)
+    oracle.device, oracle.models, oracle.normalizers = torch.device("cuda"), models, norms
+    measured = {item["update_id"]: item for item in consumer.service_receipts}
+    checks = []
+    for index, row in enumerate(source.schedule):
+        update_id = f"update-{index}"
+        try:
+            payload = source.acquire_raw(index)
+            regions = current_regions(payload, consumer.count)
+            expected, receipts = [], []
+            for region in regions:
+                modified = {**row, "square_xyxy": list(region.event_square)}
+                raw = engine.prepare_event(modified)
+                rgb = reference_rgb(payload.rgb, region)
+                with (
+                    patch.object(engine, "prepare_event", return_value=raw),
+                    patch.object(
+                        engine,
+                        "raw_rgb_observations",
+                        return_value=(rgb, payload.rgb.unavailable_reason),
+                    ),
+                ):
+                    prediction = oracle.predict(modified)
+                expected.append({**prediction, "query_id": region.object_id})
+                receipts.append(reference_receipt(modified, region, rgb))
+            outputs = measured.get(update_id, {}).get("objects", [])
+            parity = prediction_parity(
+                expected,
+                [{**item, "query_id": item["object_id"]} for item in outputs],
+                [item.object_id for item in regions],
+            )
+            receipt_equal = len(outputs) == len(receipts) and all(
+                item.get("input_receipt") == receipt
+                for item, receipt in zip(outputs, receipts, strict=True)
+            )
+            checks.append(
+                {
+                    "update_id": update_id,
+                    "parity": parity,
+                    "input_receipts_exact": receipt_equal,
+                    "passed": parity["passed"] and receipt_equal,
+                }
+            )
+        except Exception as exc:
+            checks.append(
+                {"update_id": update_id, "passed": False, "error": f"{type(exc).__name__}: {exc}"}
+            )
+    return {
+        "performed": True,
+        "passed": bool(checks) and all(item["passed"] for item in checks),
+        "scope": "SEPARATE_ORIGINAL_ORACLE_ALL_SCHEDULED_UPDATES_AND_OBJECTS",
+        "updates": checks,
+    }
+
+
+def capacity_admission(
+    paced: Mapping[str, Any] | None,
+    parity: Mapping[str, Any],
+    originals_passed: bool,
+    *,
+    target_object_count: int = 20,
+    cache_exercise: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Version the 1/2-object milestones without changing the legacy 20-object gate."""
+    if (
+        isinstance(target_object_count, bool)
+        or not isinstance(target_object_count, int)
+        or not 1 <= target_object_count <= 20
+    ):
+        raise ValueError("target_object_count must be one to twenty")
+    complete = bool(
+        paced
+        and paced["grouped"]["passed"]
+        and paced["dropped_updates"] == 0
+        and paced["source_errors"] == 0
+        and paced["capacity_checks"]["all_scheduled_arrivals_recorded"]
+        and paced["capacity_checks"].get("source_lifecycle_succeeded", True)
+    )
+    checks = {
+        name: bool(paced and paced.get("capacity_checks", {}).get(name) is True)
+        for name in MILESTONE_CHECKS
+    }
+    ids = paced.get("object_ids", []) if paced else []
+    records = paced.get("object_records", []) if paced else []
+    checks["required_object_count"] = len(ids) == len(set(ids)) == target_object_count
+    checks["all_three_host_ttc_per_required_object"] = bool(records) and all(
+        record.get("success") is True
+        and all(
+            isinstance(record.get("result", {}).get("predictions", {}).get(name), (int, float))
+            and not isinstance(record["result"]["predictions"][name], bool)
+            and np.isfinite(record["result"]["predictions"][name])
+            for name in PREDICTION_COMPONENTS
+        )
+        for record in records
+    )
+    if cache_exercise is not None:
+        checks["rgb_cache_stored_miss_then_real_hit"] = cache_exercise.get("passed") is True
+    admitted = bool(
+        complete
+        and all(checks.values())
+        and parity.get("performed") is True
+        and parity.get("passed") is True
+        and originals_passed
+    )
+    return {
+        "schema": "train40_paced_milestone_gate_v2",
+        "target_object_count": target_object_count,
+        "milestone_checks": checks,
+        "complete_measurement_coverage": complete,
+        "milestone_with_parity_passed": admitted,
+        "capacity_with_parity_passed": admitted and target_object_count == 20,
+        "legacy_twenty_object_capacity_checks_passed": bool(
+            paced and paced.get("capacity_checks_passed")
+        ),
+    }
+
+
+def rgb_cache_exercise(receipts: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Require actual causal cache hits traceable to earlier guarded stored misses."""
+    stored: set[tuple[str, ...]] = set()
+    hits = misses = absent = 0
+    unmatched: list[int] = []
+    for index, row in enumerate(receipts):
+        receipt = row.get("rgb_feature_cache") or {}
+        keys = tuple(receipt.get("key_digests", ()))
+        status = receipt.get("status")
+        if status == "MISS":
+            misses += 1
+            if receipt.get("stored") is True and keys:
+                stored.add(keys)
+        elif status == "HIT":
+            hits += 1
+            if not keys or keys not in stored:
+                unmatched.append(index)
+        elif status == "NO_RGB":
+            absent += 1
+        else:
+            unmatched.append(index)
+    return {
+        "passed": hits > 0 and misses > 0 and not unmatched,
+        "hit_updates": hits,
+        "miss_updates": misses,
+        "no_rgb_updates": absent,
+        "unattested_update_indices": unmatched,
+        "scope": "CAUSAL_PACED_UPDATES_STORED_FEATURES_ONLY_CONTEXT_RECOMPUTED",
+    }
+
+
+def service_options(args: argparse.Namespace) -> dict[str, Any]:
+    """Keep the paced PIL path aligned with the admitted runtime profile."""
+    return {
+        "max_objects": args.objects,
+        "reuse_event_encodings": DEFAULT_PROFILE.reuse_event_encodings,
+        "rgb_object_chunk_size": DEFAULT_PROFILE.rgb_object_chunk_size,
+        "shared_rgb_images": args.shared_rgb_images,
+        "parallel_branches": DEFAULT_PROFILE.parallel_branches,
+        "rgb_workers": args.rgb_workers,
+        "overlap_event_with_rgb_preparation": args.overlap_event_with_rgb_preparation,
+    }
+
+
+def cache_identity(binding: Mapping[str, Any], args: argparse.Namespace) -> dict[str, str]:
+    """Bind immutable model/runtime/precision and exact RGB producer batch ABI."""
+    return {
+        "model_sha256": _canonical_sha256(binding["candidate"]),
+        "runtime_sha256": _canonical_sha256(
+            {
+                "sources": binding["sources"],
+                "torch": torch.__version__,
+                "cuda": torch.version.cuda,
+                "cudnn": torch.backends.cudnn.version(),
+                "precision": "FP32_TF32_OFF_NO_AUTOCAST",
+                "layout": "CONTIGUOUS",
+                "rgb_endpoint_reuse": True,
+                "rgb_uint8": False,
+                "options": service_options(args),
+            }
+        ),
+    }
+
+
+def source_scope(raw_source: str) -> str:
+    """Separate CPU arrival replay from the controls that include RAW disk I/O."""
+    if raw_source == "memory":
+        return MEMORY_SCOPE
+    return (
+        SCOPE
+        if raw_source == "disk"
+        else (f"PACED_{raw_source.upper()}_RAW_REPLAY_ARTIFICIAL_DISTINCT_ROIS_ALL_HOST_TTC")
+    )
+
+
+def cleanup_raw_source(
+    source: DiskRawSource | PreloadedRawSource | None,
+) -> dict[str, Any] | None:
+    """Release preloaded startup state; never close another thread's live source."""
+    if not isinstance(source, (PersistentRawSource, PreloadedRawSource)) or source.closed:
+        return None
+    if source.owner_thread is not None and source.owner_thread != threading.get_ident():
+        raise RuntimeError("Unclosed RAW source requires cleanup on its producer owner thread")
+    return source.finalize()
+
+
+def run(args: argparse.Namespace) -> None:
+    """Write partial evidence and original-file preservation even on failure."""
+    _validate_output(
+        args.output,
+        [args.candidate, args.reference, args.manifest.parent, args.base_manifest.parent],
+    )
+    args.output.mkdir(parents=True, exist_ok=False)
+    original: dict[str, Any] = {}
+    service = None
+    source: DiskRawSource | PreloadedRawSource | None = None
+    caught: BaseException | None = None
+    paced: dict[str, Any] | None = None
+    parity: dict[str, Any] = {
+        "performed": False,
+        "passed": False,
+        "reason": "SEPARATE_PARITY_NOT_RUN",
+    }
+    consumer = None
+    schedule: list[dict[str, Any]] = []
+    startup: dict[str, Any] = {}
+    scope = source_scope(args.raw_source)
+    try:
+        if args.queue_capacity < 1 or args.max_initial_bytes < 1:
+            raise ValueError("Queue capacity and initial raw byte budget must be positive")
+        if args.backend != "prefix" and (
+            args.event_query_graphs or args.event_normalization != "sort"
+        ):
+            raise ValueError("Event query graphs/topk require the prefix backend")
+        paths, candidate_binding = verify_candidate(args.candidate)
+        frozen = verify_frozen_runtime(args.candidate)
+        base = read(args.base_manifest)
+        _, reference_files, reference_binding = _validate_reference(
+            args.reference, args.base_manifest, base["rows"], candidate_binding
+        )
+        manifest = read(args.manifest)
+        if manifest["provenance"]["base_manifest_canonical_sha256"] != _canonical_sha256(base):
+            raise ValueError("Replay provenance does not bind the preserved base manifest")
+        schedule = replay_schedule(manifest, args.sequence, args.updates)
+        persistent_class = (
+            ImmutablePersistentRawSource if args.raw_source == "immutable" else PersistentRawSource
+        )
+        if args.raw_source == "memory":
+            source = PreloadedRawSource(
+                schedule,
+                args.max_payload_bytes,
+                max_total_bytes=args.max_preloaded_source_bytes,
+                max_frame_bytes=args.max_raw_frame_cache_bytes,
+                max_initial_bytes=args.max_initial_bytes,
+                queue_capacity=args.queue_capacity,
+            )
+        elif args.raw_source != "disk":
+            source = persistent_class(
+                schedule, args.max_payload_bytes, max_frame_bytes=args.max_raw_frame_cache_bytes
+            )
+        else:
+            source = DiskRawSource(schedule, args.max_payload_bytes)
+        if args.backend == "prefix":
+            from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
+
+            history_class = TemporalPrefixEventHistory
+        else:
+            from operational.train40_runtime.integral import IntegralEventHistory
+
+            history_class = IntegralEventHistory
+        inventory = _source_inventory(frozen, reference_binding)
+        sources = [
+            path
+            for path in inventory
+            if path.parent != ROOT / "operational/train40_runtime"
+            or f"operational.train40_runtime.{path.stem}" in sys.modules
+        ]
+        sources.extend(
+            [Path(__file__).resolve(), ROOT / "scripts/benchmark_train40_multiobject.py"]
+        )
+        annotation_files = [
+            Path(item["path"]) for row in schedule for item in row.get("bbox_sources", [])
+        ]
+        original = snapshot_files(
+            [
+                *_candidate_inventory(args.candidate),
+                *reference_files,
+                args.manifest,
+                args.base_manifest,
+                *sources,
+                *annotation_files,
+            ]
+        )
+        _write(args.output / "original_snapshot.json", original)
+        source_copies = args.output / "sources"
+        source_copies.mkdir()
+        for path in sorted(set(sources)):
+            target = source_copies / (
+                str(path.relative_to(ROOT)).replace("\\", "__").replace("/", "__") + ".txt"
+            )
+            target.write_bytes(path.read_bytes())
+            if sha(target) != sha(path):
+                raise ValueError("Source changed while preserving exact bytes")
+        if isinstance(source, PreloadedRawSource):
+            startup["raw_preload"] = source.preload()
+            _write(args.output / "startup.json", startup)
+        torch.set_num_threads(2)
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+        torch.manual_seed(7)
+        binding = {
+            "schema": "train40_paced_service_binding_v1",
+            "scope": scope,
+            "candidate": candidate_binding,
+            "manifest_sha256": sha(args.manifest),
+            "base_manifest_sha256": sha(args.base_manifest),
+            "sources": {str(path.relative_to(ROOT)): sha(path) for path in sorted(set(sources))},
+            "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+            "python": platform.python_version(),
+            "torch": torch.__version__,
+            "cuda": torch.version.cuda,
+            "device": torch.cuda.get_device_name(),
+            "precision": "FP32_TF32_OFF",
+            "scheduler": pacing_clock_metadata(args.wait_strategy),
+            "seed": 7,
+            "sequence": args.sequence,
+            "objects": args.objects,
+            "scheduled_updates": len(schedule),
+            "excluded_slots_retained": sum("reason" in row for row in schedule),
+            "configuration": {
+                key: str(value) if isinstance(value, Path) else value
+                for key, value in vars(args).items()
+            },
+            "initialization_excluded": "preceding 600ms, model loading, synthetic shape priming",
+            "raw_io_included": args.raw_source != "memory",
+            "raw_source_mode": args.raw_source,
+            "persistent_raw_numeric_cache_upper_bound_bytes": (
+                args.max_raw_frame_cache_bytes + args.max_payload_bytes + 1024**2
+                if args.raw_source in ("persistent", "immutable")
+                else 0
+            ),
+            "preloaded_source_envelope": startup.get("raw_preload"),
+            "persistent_bbox_cache_entries_max": 128 if args.raw_source != "disk" else 0,
+            "source_warmup_excluded": "RAW frames available by first_anchor-20000us"
+            if args.raw_source != "disk"
+            else None,
+            "roi_geometry_in_inference": True,
+            "precomputed_representations": False,
+            "queue_byte_upper_bound": args.queue_capacity * args.max_payload_bytes,
+            "live_payload_byte_upper_bound": (args.queue_capacity + 3) * args.max_payload_bytes,
+            "memory_scope": (
+                "Owned queue/consumer/producer previous/producer assembling payload bytes; "
+                "excludes model, ring, Python receipts, HDF5 and bounded read scratch"
+            ),
+            "raw_event_timestamp_scratch_limit_bytes": (
+                256 * 1024**2 if args.raw_source != "memory" else None
+            ),
+            "actual_peak_queue_bytes_measured": False,
+            "twenty_real_tracks": False,
+            "annotation_availability_measured": False,
+            "physical_goal_demonstrated": False,
+            "raw_source_integrity_scope": "size/mtime plus calibration digest; no full RAW hash",
+            "rgb_arrival_identity": (
+                "SHA256_IMMUTABLE_BYTES_ONCE_PER_NEW_FRAME_INSIDE_ACQUISITION"
+                if args.raw_source in ("immutable", "memory")
+                else "OWNED_READONLY_PAYLOAD_ARRAYS"
+            ),
+            "rgb_feature_cache_enabled": args.rgb_feature_cache,
+            "immutable_freeze_scratch_scope": (
+                "One additional RAW frame of immutable bytes during ndarray replacement; "
+                "bound reported in source lifecycle stats, outside numeric cache bound"
+                if args.raw_source == "immutable"
+                else None
+            ),
+            "service_options": service_options(args),
+        }
+        cache_binding = cache_identity(binding, args) if args.rgb_feature_cache else None
+        if cache_binding is not None:
+            binding["rgb_cache_identity"] = cache_binding
+        _write(args.output / "binding.json", binding)
+        begin = time.perf_counter()
+        models, norms = load_models(paths, "cuda")
+        options: dict[str, Any] = {
+            "device": "cuda",
+            "max_objects": args.objects,
+            "roi_batch_size": min(4, args.objects),
+        }
+        if args.backend == "prefix":
+            options.update(graphs=args.event_query_graphs, normalization=args.event_normalization)
+        elif args.event_query_graphs or args.event_normalization != "sort":
+            raise ValueError("Event query graphs/topk require the prefix backend")
+        history: Any = history_class(**options)
+        if args.event_query_graphs:
+            history.prime_query_graphs([args.objects])
+        service = MultiObjectTrain40Service(
+            models,
+            norms,
+            history,
+            **service_options(args),
+            rgb_feature_cache=(
+                RGBBatchCache(
+                    model_sha256=cache_binding["model_sha256"],
+                    runtime_sha256=cache_binding["runtime_sha256"],
+                    rgb_object_chunk_size=DEFAULT_PROFILE.rgb_object_chunk_size,
+                    max_entries=args.objects,
+                )
+                if cache_binding is not None
+                else None
+            ),
+        )
+        startup["model_and_service_seconds"] = time.perf_counter() - begin
+        if args.prime_native_histories:
+            startup["synthetic_shape_priming"] = {}
+            prime_supported_histories(
+                service,
+                object_counts=[args.objects],
+                receipt=startup["synthetic_shape_priming"],
+            )
+            startup["synthetic_shape_priming_seconds"] = startup["synthetic_shape_priming"][
+                "total_seconds"
+            ]
+        else:
+            startup["synthetic_shape_priming_seconds"] = prime(service, args.objects)
+            startup["synthetic_primed_rgb_triplets"] = 5
+        startup["unprimed_shapes_remain_inside_measurement"] = True
+        begin = time.perf_counter()
+        with ThreadPoolExecutor(max_workers=1, thread_name_prefix="train40-startup-raw") as pool:
+            raw = pool.submit(source.initial_history, args.max_initial_bytes).result()
+        end = int(schedule[0]["anchor_us"]) - STEP_US
+        history.initialize(raw, end - 600_000, end)
+        torch.cuda.synchronize()
+        startup.update(
+            history_initialization_seconds=time.perf_counter() - begin,
+            initial_interval_us=[end - 600_000, end],
+            initial_raw_bytes=sum(value.nbytes for value in raw.values()),
+        )
+        del raw
+        _write(args.output / "startup.json", startup)
+        consumer = ContinuousConsumer(service, schedule, args.objects)
+        paced = run_paced_replay(
+            source.acquire_raw,
+            consumer.infer_all,
+            [f"roi_{index:02d}" for index in range(args.objects)],
+            updates=len(schedule),
+            rate_hz=50.0,
+            queue_capacity=args.queue_capacity,
+            wait_strategy=args.wait_strategy,
+            source_warmup=source.warmup
+            if isinstance(source, (PersistentRawSource, PreloadedRawSource))
+            else None,
+            source_finalize=source.finalize
+            if isinstance(source, (PersistentRawSource, PreloadedRawSource))
+            else None,
+        )
+        startup["source_lifecycle"] = paced["source_lifecycle"]
+        _write(args.output / "startup.json", startup)
+        _write(args.output / "paced.json", paced)
+        _write(args.output / "service_updates.json", consumer.service_receipts)
+        if args.verify_parity:
+            parity = separate_parity(
+                DiskRawSource(schedule, args.max_payload_bytes), consumer, models, norms
+            )
+            _write(args.output / "parity.json", parity)
+    except BaseException as exc:
+        caught = exc
+    finally:
+        cleanup_errors = []
+        try:
+            source_cleanup = cleanup_raw_source(source)
+            if source_cleanup is not None:
+                startup["source_cleanup"] = source_cleanup
+        except BaseException as exc:
+            cleanup_errors.append(f"RAW source cleanup: {type(exc).__name__}: {exc}")
+        if service is not None:
+            try:
+                service.close()
+            except BaseException as exc:
+                cleanup_errors.append(f"{type(exc).__name__}: {exc}")
+        intact = (
+            verify_snapshot(original)
+            if original
+            else {"passed": False, "reason": "SNAPSHOT_NOT_ESTABLISHED"}
+        )
+        raw_checks = []
+        for path, identity in {
+            row["raw_path"]: row["raw_stat"] for row in schedule if "raw_path" in row
+        }.items():
+            try:
+                stat = Path(path).stat()
+                passed = (
+                    identity["size_bytes"] == stat.st_size
+                    and identity["mtime_ns"] == stat.st_mtime_ns
+                )
+                raw_checks.append({"path": path, "passed": passed})
+            except OSError as exc:
+                raw_checks.append({"path": path, "passed": False, "error": str(exc)})
+        raw_intact = bool(raw_checks) and all(item["passed"] for item in raw_checks)
+        cache_exercise = (
+            rgb_cache_exercise(consumer.service_receipts if consumer is not None else [])
+            if args.rgb_feature_cache
+            else None
+        )
+        admission = capacity_admission(
+            paced,
+            parity,
+            intact["passed"],
+            target_object_count=args.objects,
+            cache_exercise=cache_exercise,
+        )
+        completed = admission["complete_measurement_coverage"]
+        valid = (
+            completed
+            and caught is None
+            and not cleanup_errors
+            and intact["passed"]
+            and raw_intact
+            and (cache_exercise is None or cache_exercise["passed"])
+        )
+        capacity = bool(valid and admission["capacity_with_parity_passed"])
+        summary = {
+            "schema": "train40_paced_service_summary_v1",
+            "scope": scope,
+            "status": "COMPLETE"
+            if valid and (not args.verify_parity or parity["passed"])
+            else "FAILED",
+            "paced": paced,
+            "separate_parity": parity,
+            "originals": intact,
+            "raw_source_stat_checks": raw_checks,
+            "startup": startup,
+            "rgb_cache_exercise": cache_exercise,
+            "history_failure": consumer.failure if consumer is not None else None,
+            "milestone": {
+                **admission,
+                "milestone_with_parity_passed": bool(
+                    valid and admission["milestone_with_parity_passed"]
+                ),
+            },
+            "capacity_with_parity_passed": capacity,
+            "physical_goal_demonstrated": False,
+            "target_20_objects_50hz_demonstrated": False,
+            "goal_note": (
+                "Versioned 1/2-object milestones require the same 60s, all <20ms, full TTC and "
+                "separate parity gates; they do not imply the 20-object or physical-sensor goal"
+            ),
+            "cleanup_errors": cleanup_errors,
+            "error": f"{type(caught).__name__}: {caught}" if caught else None,
+            "targets_read": False,
+            "optimizer_updates": 0,
+        }
+        if consumer is not None:
+            _write(args.output / "service_updates.json", consumer.service_receipts)
+        _write(args.output / "summary.json", summary)
+    if caught is not None:
+        raise caught
+    if not valid or (args.verify_parity and not parity["passed"]):
+        raise SystemExit(2)
+
+
+def parser() -> argparse.ArgumentParser:
+    """Build the explicit bounded replay CLI without initializing CUDA."""
+    result = argparse.ArgumentParser(description=__doc__)
+    for name in ("candidate", "reference", "base-manifest", "manifest", "output"):
+        result.add_argument(f"--{name}", type=Path, required=True)
+    result.add_argument(
+        "--sequence", required=True, help="One physical sequence ID from the causal replay manifest"
+    )
+    result.add_argument(
+        "--objects", type=int, choices=range(1, 21), default=DEFAULT_PROFILE.replay_objects
+    )
+    result.add_argument("--updates", type=int, help="Declared prefix only; no sampling or looping")
+    result.add_argument("--queue-capacity", type=int, default=2)
+    result.add_argument(
+        "--prime-native-histories",
+        action="store_true",
+        help="Prime all declared native RGB history shapes using synthetic startup data",
+    )
+    result.add_argument(
+        "--wait-strategy",
+        choices=("event", "sleep"),
+        default="sleep",
+        help="Absolute-deadline waiting; event preserves the legacy scheduler for A/B comparisons",
+    )
+    result.add_argument("--max-payload-bytes", type=int, default=128 * 1024**2)
+    result.add_argument("--max-initial-bytes", type=int, default=512 * 1024**2)
+    result.add_argument(
+        "--raw-source",
+        choices=("disk", "persistent", "immutable", "memory"),
+        default="disk",
+        help="Disk/persistent controls, immutable frames, or privately preloaded RAW CPU arrivals",
+    )
+    result.add_argument(
+        "--max-preloaded-source-bytes",
+        type=int,
+        default=2 * 1024**3,
+        help="Total numeric memory bound for the opt-in memory feeder, ring, payloads and scratch",
+    )
+    result.add_argument("--max-raw-frame-cache-bytes", type=int, default=128 * 1024**2)
+    result.add_argument(
+        "--backend", choices=("integral", "prefix"), default=DEFAULT_PROFILE.backend
+    )
+    result.add_argument(
+        "--event-query-graphs", action="store_true", default=DEFAULT_PROFILE.event_query_graphs
+    )
+    result.add_argument("--no-event-query-graphs", dest="event_query_graphs", action="store_false")
+    result.add_argument(
+        "--event-normalization",
+        choices=("sort", "topk"),
+        default=DEFAULT_PROFILE.event_normalization,
+    )
+    result.add_argument(
+        "--rgb-workers", type=int, choices=range(1, 9), default=DEFAULT_PROFILE.rgb_workers
+    )
+    result.add_argument(
+        "--shared-rgb-images",
+        action="store_true",
+        default=DEFAULT_PROFILE.shared_rgb_images,
+        help="Experimental full-frame PIL sharing; default crops the ROI first",
+    )
+    result.add_argument(
+        "--rgb-feature-cache",
+        action="store_true",
+        help="Exact RGB producer features only; admission requires a stored MISS then real HIT",
+    )
+    result.add_argument(
+        "--overlap-event-with-rgb-preparation",
+        action="store_true",
+        help="Experimental event producer dispatch before CPU RGB preparation completes",
+    )
+    result.add_argument(
+        "--verify-parity",
+        action="store_true",
+        help="After timing, run original oracle for ALL scheduled queries/ROIs (potentially slow)",
+    )
+    return result
+
+
+def main() -> None:
+    run(parser().parse_args())
+
+
+if __name__ == "__main__":
+    main()

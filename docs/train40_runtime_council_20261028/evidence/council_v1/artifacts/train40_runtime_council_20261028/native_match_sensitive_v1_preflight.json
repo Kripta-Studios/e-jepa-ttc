@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-28T09:00:14.0028263Z",
+  "git_commit": "2521de1a585f515d4d4a7d184fce5193ffc65658",
+  "git_status": [
+    " M operational/train40_runtime/compiled_pipeline.py",
+    " M operational/train40_runtime/defaults.py",
+    " M operational/train40_runtime/multiobject.py",
+    " M operational/train40_runtime/multiobject_cache.py",
+    " M scripts/benchmark_train40_compiled_pipeline.py",
+    " M scripts/benchmark_train40_multiobject.py",
+    " M scripts/benchmark_train40_paced.py",
+    " M tests/unit/test_train40_paced_runner.py",
+    " M tests/unit/test_train40_runtime_compiled_pipeline.py",
+    " M tests/unit/test_train40_runtime_multiobject.py",
+    " M tests/unit/test_train40_runtime_multiobject_runner.py",
+    "?? docs/train40_runtime_council_20261028/",
+    "?? operational/train40_runtime/rgb_immutable_history.py",
+    "?? tests/unit/test_train40_runtime_rgb_immutable_history.py"
+  ],
+  "gpu": [
+    "name, memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 3654 MiB, 3 %, 23.67 W, 74"
+  ],
+  "os": {
+    "FreePhysicalMemory": 6391956,
+    "FreeVirtualMemory": 13431352
+  },
+  "note": "Root exclusive GPU; council CPU checks paused; native-match ablation, every replay checked"
+}

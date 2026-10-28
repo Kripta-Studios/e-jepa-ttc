@@ -1,0 +1,850 @@
+{
+  "schema": "train40_raw_clock_support_audit_v1",
+  "scope": "HDF5_TIMESTAMP_ENDPOINTS_NOT_A_LATENCY_OR_COVERAGE_MEASUREMENT",
+  "physical_sequence_count": 32,
+  "base_query_count": 554,
+  "minimum_event_duration_s": 16.886321,
+  "maximum_event_duration_s": 31.712052,
+  "any_raw_sequence_at_least_60s": false,
+  "sixty_second_natural_replay_demonstrated": false,
+  "endpoint_only_cannot_establish_annotation_or_event_continuity": true,
+  "raw_integrity_scope": "registered size/mtime checked before and after metadata read",
+  "full_raw_sha256_computed": false,
+  "rgb_pixels_read": false,
+  "event_coordinates_or_polarities_read": false,
+  "ttc_targets_read": false,
+  "inventory": [
+    {
+      "physical_sequence_id": "CCRm-low-0-overlap-0",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\low-0\\overlap-0\\2024-08-08-10-49-53.hdf5",
+      "raw_stat": {
+        "size_bytes": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "event_timestamp_count": 197561494,
+      "event_sensor_range_us": [
+        9,
+        24553000
+      ],
+      "event_duration_s": 24.552991,
+      "rgb_sensor_range_us": [
+        33,
+        24500615
+      ],
+      "rgb_frames": 491,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        14350374,
+        20450520
+      ],
+      "base_anchor_duration_s": 6.100146,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRm-low-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\low-100\\overlap-100\\2024-08-08-10-39-02.hdf5",
+      "raw_stat": {
+        "size_bytes": 6285476952,
+        "mtime_ns": 1785100661783834300
+      },
+      "event_timestamp_count": 192129956,
+      "event_sensor_range_us": [
+        4,
+        20342587
+      ],
+      "event_duration_s": 20.342583,
+      "rgb_sensor_range_us": [
+        -49976,
+        20300514
+      ],
+      "rgb_frames": 408,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        8200228,
+        18250471
+      ],
+      "base_anchor_duration_s": 10.050243,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRm-low-50-overlap-50",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\low-50\\overlap-50\\2024-08-08-10-57-47.hdf5",
+      "raw_stat": {
+        "size_bytes": 5661799887,
+        "mtime_ns": 1785100385923018300
+      },
+      "event_timestamp_count": 119617969,
+      "event_sensor_range_us": [
+        10,
+        19820052
+      ],
+      "event_duration_s": 19.820042,
+      "rgb_sensor_range_us": [
+        18,
+        19750502
+      ],
+      "rgb_frames": 396,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        10200267,
+        17450446
+      ],
+      "base_anchor_duration_s": 7.250179,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRm-medium-0-overlap-0",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-0\\overlap-0\\2024-08-08-10-54-42.hdf5",
+      "raw_stat": {
+        "size_bytes": 6950377080,
+        "mtime_ns": 1785101170874177700
+      },
+      "event_timestamp_count": 176802643,
+      "event_sensor_range_us": [
+        2,
+        23324910
+      ],
+      "event_duration_s": 23.324908,
+      "rgb_sensor_range_us": [
+        28,
+        23250588
+      ],
+      "rgb_frames": 466,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        8750241,
+        18000463
+      ],
+      "base_anchor_duration_s": 9.250222,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRm-medium-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+      "raw_stat": {
+        "size_bytes": 8266783070,
+        "mtime_ns": 1785101390231011300
+      },
+      "event_timestamp_count": 170352351,
+      "event_sensor_range_us": [
+        0,
+        28853801
+      ],
+      "event_duration_s": 28.853801,
+      "rgb_sensor_range_us": [
+        29,
+        28800720
+      ],
+      "rgb_frames": 577,
+      "base_query_count": 23,
+      "base_anchor_range_us": [
+        15700409,
+        24400614
+      ],
+      "base_anchor_duration_s": 8.700205,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRm-medium-50-overlap-50",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-50\\overlap-50\\2024-08-08-11-00-43.hdf5",
+      "raw_stat": {
+        "size_bytes": 5838091801,
+        "mtime_ns": 1785100552971907000
+      },
+      "event_timestamp_count": 153015614,
+      "event_sensor_range_us": [
+        19,
+        19439092
+      ],
+      "event_duration_s": 19.439073,
+      "rgb_sensor_range_us": [
+        21,
+        19400492
+      ],
+      "rgb_frames": 389,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        7650201,
+        16550420
+      ],
+      "base_anchor_duration_s": 8.900219,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-high-0-overlap-0",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\high-0\\overlap-0\\2024-09-25-14-42-21.hdf5",
+      "raw_stat": {
+        "size_bytes": 7496632361,
+        "mtime_ns": 1785100442332009600
+      },
+      "event_timestamp_count": 262072981,
+      "event_sensor_range_us": [
+        19,
+        23777990
+      ],
+      "event_duration_s": 23.777971,
+      "rgb_sensor_range_us": [
+        -459,
+        23730442
+      ],
+      "rgb_frames": 476,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        14686565,
+        19632944
+      ],
+      "base_anchor_duration_s": 4.946379,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-high-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\high-100\\overlap-100\\2024-09-25-16-03-10-003.hdf5",
+      "raw_stat": {
+        "size_bytes": 7618027837,
+        "mtime_ns": 1782844639743135300
+      },
+      "event_timestamp_count": 266944580,
+      "event_sensor_range_us": [
+        3,
+        26339779
+      ],
+      "event_duration_s": 26.339776,
+      "rgb_sensor_range_us": [
+        178,
+        26299908
+      ],
+      "rgb_frames": 527,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        17798283,
+        22649057
+      ],
+      "base_anchor_duration_s": 4.850774,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-high-50-overlap-50",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\high-50\\overlap-50\\2024-09-25-14-38-58.hdf5",
+      "raw_stat": {
+        "size_bytes": 7578841115,
+        "mtime_ns": 1785095518390185300
+      },
+      "event_timestamp_count": 262760626,
+      "event_sensor_range_us": [
+        98,
+        25916755
+      ],
+      "event_duration_s": 25.916657,
+      "rgb_sensor_range_us": [
+        -306,
+        25856872
+      ],
+      "rgb_frames": 518,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        14102027,
+        21154916
+      ],
+      "base_anchor_duration_s": 7.052889,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-low-0-overlap-0",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\low-0\\overlap-0\\2024-07-15-15-03-06.hdf5",
+      "raw_stat": {
+        "size_bytes": 5393641515,
+        "mtime_ns": 1785094988378513800
+      },
+      "event_timestamp_count": 41741332,
+      "event_sensor_range_us": [
+        169,
+        26571402
+      ],
+      "event_duration_s": 26.571233,
+      "rgb_sensor_range_us": [
+        202,
+        26500866
+      ],
+      "rgb_frames": 531,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        14200557,
+        20950727
+      ],
+      "base_anchor_duration_s": 6.75017,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-low-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\low-100\\overlap-100\\2024-07-15-14-53-45-001.hdf5",
+      "raw_stat": {
+        "size_bytes": 3453501728,
+        "mtime_ns": 1782843925243471100
+      },
+      "event_timestamp_count": 44005484,
+      "event_sensor_range_us": [
+        32,
+        16886353
+      ],
+      "event_duration_s": 16.886321,
+      "rgb_sensor_range_us": [
+        205,
+        16850640
+      ],
+      "rgb_frames": 338,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        9950461,
+        15050592
+      ],
+      "base_anchor_duration_s": 5.100131,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-low-50-overlap-50",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\low-50\\overlap-50\\2024-07-15-14-59-46.hdf5",
+      "raw_stat": {
+        "size_bytes": 5195865417,
+        "mtime_ns": 1785095212189311900
+      },
+      "event_timestamp_count": 45964512,
+      "event_sensor_range_us": [
+        213,
+        25758520
+      ],
+      "event_duration_s": 25.758307,
+      "rgb_sensor_range_us": [
+        206,
+        25700859
+      ],
+      "rgb_frames": 515,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        14700577,
+        19600701
+      ],
+      "base_anchor_duration_s": 4.900124,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-medium-0-overlap-0",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\medium-0\\overlap-0\\2024-07-15-15-04-43.hdf5",
+      "raw_stat": {
+        "size_bytes": 4628252418,
+        "mtime_ns": 1785097198422044200
+      },
+      "event_timestamp_count": 46825810,
+      "event_sensor_range_us": [
+        23,
+        21979827
+      ],
+      "event_duration_s": 21.979804,
+      "rgb_sensor_range_us": [
+        200,
+        21950749
+      ],
+      "rgb_frames": 440,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        11350486,
+        15950599
+      ],
+      "base_anchor_duration_s": 4.600113,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-medium-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\medium-100\\overlap-100\\2024-07-15-14-56-33-002.hdf5",
+      "raw_stat": {
+        "size_bytes": 3850726592,
+        "mtime_ns": 1782843961237171500
+      },
+      "event_timestamp_count": 49470495,
+      "event_sensor_range_us": [
+        221,
+        18475436
+      ],
+      "event_duration_s": 18.475215,
+      "rgb_sensor_range_us": [
+        201,
+        18400677
+      ],
+      "rgb_frames": 369,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        5950352,
+        13350546
+      ],
+      "base_anchor_duration_s": 7.400194,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-1-medium-50-overlap-50",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\medium-50\\overlap-50\\2024-07-15-15-00-53.hdf5",
+      "raw_stat": {
+        "size_bytes": 4620365633,
+        "mtime_ns": 1785095132873524000
+      },
+      "event_timestamp_count": 43983339,
+      "event_sensor_range_us": [
+        792,
+        23251366
+      ],
+      "event_duration_s": 23.250574,
+      "rgb_sensor_range_us": [
+        204,
+        23200770
+      ],
+      "rgb_frames": 465,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        12200498,
+        16850618
+      ],
+      "base_anchor_duration_s": 4.65012,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-2-high-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\high-100\\overlap-100\\2024-08-08-11-12-40.hdf5",
+      "raw_stat": {
+        "size_bytes": 6825396355,
+        "mtime_ns": 1785100607965106200
+      },
+      "event_timestamp_count": 175594088,
+      "event_sensor_range_us": [
+        34,
+        22400263
+      ],
+      "event_duration_s": 22.400229,
+      "rgb_sensor_range_us": [
+        17,
+        22350560
+      ],
+      "rgb_frames": 448,
+      "base_query_count": 30,
+      "base_anchor_range_us": [
+        12700328,
+        18950480
+      ],
+      "base_anchor_duration_s": 6.250152,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-2-low-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\low-100\\overlap-100\\2024-08-08-11-06-51.hdf5",
+      "raw_stat": {
+        "size_bytes": 5222564828,
+        "mtime_ns": 1785098994494947600
+      },
+      "event_timestamp_count": 61671122,
+      "event_sensor_range_us": [
+        4,
+        19649706
+      ],
+      "event_duration_s": 19.649702,
+      "rgb_sensor_range_us": [
+        27,
+        19600504
+      ],
+      "rgb_frames": 393,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        5700163,
+        14300370
+      ],
+      "base_anchor_duration_s": 8.600207,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-2-medium-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-2\\medium-100\\overlap-100\\2024-08-08-11-09-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5649443186,
+        "mtime_ns": 1785099598031731100
+      },
+      "event_timestamp_count": 96241463,
+      "event_sensor_range_us": [
+        89,
+        20683508
+      ],
+      "event_duration_s": 20.683419,
+      "rgb_sensor_range_us": [
+        24,
+        20650554
+      ],
+      "rgb_frames": 414,
+      "base_query_count": 37,
+      "base_anchor_range_us": [
+        7550215,
+        13600371
+      ],
+      "base_anchor_duration_s": 6.050156,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-3-low-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-3\\low-100\\overlap-100\\2024-08-08-11-17-18.hdf5",
+      "raw_stat": {
+        "size_bytes": 5345517316,
+        "mtime_ns": 1785099653486269800
+      },
+      "event_timestamp_count": 131310420,
+      "event_sensor_range_us": [
+        6,
+        18105963
+      ],
+      "event_duration_s": 18.105957,
+      "rgb_sensor_range_us": [
+        16,
+        18050477
+      ],
+      "rgb_frames": 362,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        6500182,
+        15500408
+      ],
+      "base_anchor_duration_s": 9.000226,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-3-medium-100-overlap-100",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-3\\medium-100\\overlap-100\\2024-08-08-11-19-08.hdf5",
+      "raw_stat": {
+        "size_bytes": 5548335671,
+        "mtime_ns": 1785100045403982100
+      },
+      "event_timestamp_count": 193651964,
+      "event_sensor_range_us": [
+        7,
+        17288221
+      ],
+      "event_duration_s": 17.288214,
+      "rgb_sensor_range_us": [
+        23,
+        17200449
+      ],
+      "rgb_frames": 345,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        7400200,
+        12400331
+      ],
+      "base_anchor_duration_s": 5.000131,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-side-high",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-side\\high\\data.hdf5",
+      "raw_stat": {
+        "size_bytes": 5552990172,
+        "mtime_ns": 1733998773000000000
+      },
+      "event_timestamp_count": 187156237,
+      "event_sensor_range_us": [
+        29,
+        19224458
+      ],
+      "event_duration_s": 19.224429,
+      "rgb_sensor_range_us": [
+        163,
+        19119157
+      ],
+      "rgb_frames": 383,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        11962045,
+        17117171
+      ],
+      "base_anchor_duration_s": 5.155126,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-side-low",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-side\\low\\data.hdf5",
+      "raw_stat": {
+        "size_bytes": 4811301729,
+        "mtime_ns": 1733999876000000000
+      },
+      "event_timestamp_count": 58970876,
+      "event_sensor_range_us": [
+        145,
+        24429924
+      ],
+      "event_duration_s": 24.429779,
+      "rgb_sensor_range_us": [
+        201,
+        24350830
+      ],
+      "rgb_frames": 488,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        10350468,
+        17550659
+      ],
+      "base_anchor_duration_s": 7.200191,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CCRs-side-medium",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-side\\medium\\data.hdf5",
+      "raw_stat": {
+        "size_bytes": 4570683242,
+        "mtime_ns": 1734000915000000000
+      },
+      "event_timestamp_count": 53919761,
+      "event_sensor_range_us": [
+        32,
+        23614413
+      ],
+      "event_duration_s": 23.614381,
+      "rgb_sensor_range_us": [
+        200,
+        23550798
+      ],
+      "rgb_frames": 472,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        10200459,
+        17000630
+      ],
+      "base_anchor_duration_s": 6.800171,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPLA-high",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPLA\\high\\data.hdf5",
+      "raw_stat": {
+        "size_bytes": 6998450625,
+        "mtime_ns": 1782911024906764900
+      },
+      "event_timestamp_count": 276952867,
+      "event_sensor_range_us": [
+        2,
+        22598341
+      ],
+      "event_duration_s": 22.598339,
+      "rgb_sensor_range_us": [
+        9580,
+        22696744
+      ],
+      "rgb_frames": 457,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        15526811,
+        19609142
+      ],
+      "base_anchor_duration_s": 4.082331,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPLA-low",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPLA\\low\\data.hdf5",
+      "raw_stat": {
+        "size_bytes": 7530933704,
+        "mtime_ns": 1734004464000000000
+      },
+      "event_timestamp_count": 143879272,
+      "event_sensor_range_us": [
+        10,
+        27914298
+      ],
+      "event_duration_s": 27.914288,
+      "rgb_sensor_range_us": [
+        298,
+        27850903
+      ],
+      "rgb_frames": 558,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        16750664,
+        24100821
+      ],
+      "base_anchor_duration_s": 7.350157,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPLA-medium",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPLA\\medium\\data.hdf5",
+      "raw_stat": {
+        "size_bytes": 6585537003,
+        "mtime_ns": 1782910459602475300
+      },
+      "event_timestamp_count": 207489635,
+      "event_sensor_range_us": [
+        35,
+        23877301
+      ],
+      "event_duration_s": 23.877266,
+      "rgb_sensor_range_us": [
+        298,
+        23800798
+      ],
+      "rgb_frames": 477,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        14950617,
+        19150707
+      ],
+      "base_anchor_duration_s": 4.20009,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPNA-high",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNA\\high\\2024-09-25-15-43-12.hdf5",
+      "raw_stat": {
+        "size_bytes": 7753994967,
+        "mtime_ns": 1785101387778347900
+      },
+      "event_timestamp_count": 250979830,
+      "event_sensor_range_us": [
+        17,
+        25473932
+      ],
+      "event_duration_s": 25.473915,
+      "rgb_sensor_range_us": [
+        -50949,
+        25402597
+      ],
+      "rgb_frames": 510,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        19602378,
+        22652570
+      ],
+      "base_anchor_duration_s": 3.050192,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPNA-low",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNA\\low\\2024-07-15-17-48-45.hdf5",
+      "raw_stat": {
+        "size_bytes": 7500732545,
+        "mtime_ns": 1785101331037769300
+      },
+      "event_timestamp_count": 140684538,
+      "event_sensor_range_us": [
+        3,
+        27538300
+      ],
+      "event_duration_s": 27.538297,
+      "rgb_sensor_range_us": [
+        306,
+        27450914
+      ],
+      "rgb_frames": 550,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        17700695,
+        25800873
+      ],
+      "base_anchor_duration_s": 8.100178,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPNA-medium",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNA\\medium\\2024-07-15-17-50-25.hdf5",
+      "raw_stat": {
+        "size_bytes": 6888201678,
+        "mtime_ns": 1785101200963435800
+      },
+      "event_timestamp_count": 155559380,
+      "event_sensor_range_us": [
+        95,
+        24378910
+      ],
+      "event_duration_s": 24.378815,
+      "rgb_sensor_range_us": [
+        299,
+        24300824
+      ],
+      "rgb_frames": 487,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        17100665,
+        20550743
+      ],
+      "base_anchor_duration_s": 3.450078,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPNAO-high",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\high\\2024-09-25-15-32-24.hdf5",
+      "raw_stat": {
+        "size_bytes": 6291870413,
+        "mtime_ns": 1785101042028342000
+      },
+      "event_timestamp_count": 189214362,
+      "event_sensor_range_us": [
+        50,
+        20821357
+      ],
+      "event_duration_s": 20.821307,
+      "rgb_sensor_range_us": [
+        153,
+        20750573
+      ],
+      "rgb_frames": 416,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        13000416,
+        18500526
+      ],
+      "base_anchor_duration_s": 5.50011,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPNAO-low",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\low\\2024-07-15-17-31-20.hdf5",
+      "raw_stat": {
+        "size_bytes": 8164072308,
+        "mtime_ns": 1785101414799575300
+      },
+      "event_timestamp_count": 140947628,
+      "event_sensor_range_us": [
+        20,
+        31712072
+      ],
+      "event_duration_s": 31.712052,
+      "rgb_sensor_range_us": [
+        301,
+        31650997
+      ],
+      "rgb_frames": 634,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        21900785,
+        25550860
+      ],
+      "base_anchor_duration_s": 3.650075,
+      "raw_stat_preserved": true
+    },
+    {
+      "physical_sequence_id": "CPNAO-medium",
+      "raw_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+      "raw_stat": {
+        "size_bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      },
+      "event_timestamp_count": 151964520,
+      "event_sensor_range_us": [
+        29,
+        23167184
+      ],
+      "event_duration_s": 23.167155,
+      "rgb_sensor_range_us": [
+        302,
+        23100800
+      ],
+      "rgb_frames": 463,
+      "base_query_count": 16,
+      "base_anchor_range_us": [
+        18400700,
+        20200738
+      ],
+      "base_anchor_duration_s": 1.800038,
+      "raw_stat_preserved": true
+    }
+  ]
+}

@@ -1,0 +1,603 @@
+{
+  "source": "artifacts/train40_runtime_council_20261028/frame_hash_cpu/idx553_v1/summary.json",
+  "source_sha256": "926c5239f1f328c2063a3c1febd7f5068ea33d4376462f486a26517c6666c0e2",
+  "scope": "CPU_MICRO_NOT_CAUSAL_OR_COMPLETE_TTC",
+  "quantile_method": "linear",
+  "population": "140 measured frame_checks per algorithm/scope, not history percentiles / 7",
+  "distributions": {
+    "hash_only_preexisting_bytes": {
+      "sha256": {
+        "history_wall_ms": {
+          "count": 20,
+          "mean_ms": 22.6714,
+          "median_ms": 22.555950000000003,
+          "p95_ms": 23.409335,
+          "p99_ms": 23.415947,
+          "min_ms": 21.843,
+          "max_ms": 23.4176
+        },
+        "copy_ms": {
+          "count": 140,
+          "mean_ms": 0.0,
+          "median_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 0.0,
+          "min_ms": 0.0,
+          "max_ms": 0.0
+        },
+        "hash_ms": {
+          "count": 140,
+          "mean_ms": 3.2332128571428576,
+          "median_ms": 3.19325,
+          "p95_ms": 3.5395099999999995,
+          "p99_ms": 3.827423999999996,
+          "min_ms": 3.0189,
+          "max_ms": 3.9609
+        },
+        "frame_total_ms": {
+          "count": 140,
+          "mean_ms": 3.2366821428571426,
+          "median_ms": 3.1997,
+          "p95_ms": 3.5405899999999995,
+          "p99_ms": 3.828869999999996,
+          "min_ms": 3.0228,
+          "max_ms": 3.9651
+        },
+        "by_frame_id": {
+          "392": {
+            "count": 20,
+            "mean_ms": 3.19117,
+            "median_ms": 3.17505,
+            "p95_ms": 3.281715,
+            "p99_ms": 3.391383,
+            "min_ms": 3.0673,
+            "max_ms": 3.4188
+          },
+          "394": {
+            "count": 20,
+            "mean_ms": 3.22459,
+            "median_ms": 3.18855,
+            "p95_ms": 3.408115,
+            "p99_ms": 3.6241829999999995,
+            "min_ms": 3.0598,
+            "max_ms": 3.6782
+          },
+          "396": {
+            "count": 20,
+            "mean_ms": 3.194765,
+            "median_ms": 3.1894,
+            "p95_ms": 3.28338,
+            "p99_ms": 3.3742759999999996,
+            "min_ms": 3.0653,
+            "max_ms": 3.397
+          },
+          "398": {
+            "count": 20,
+            "mean_ms": 3.30759,
+            "median_ms": 3.2739000000000003,
+            "p95_ms": 3.54066,
+            "p99_ms": 3.567412,
+            "min_ms": 3.0725,
+            "max_ms": 3.5741
+          },
+          "400": {
+            "count": 20,
+            "mean_ms": 3.2890050000000004,
+            "median_ms": 3.23085,
+            "p95_ms": 3.607235,
+            "p99_ms": 3.8616069999999993,
+            "min_ms": 3.099,
+            "max_ms": 3.9252
+          },
+          "402": {
+            "count": 20,
+            "mean_ms": 3.23477,
+            "median_ms": 3.19445,
+            "p95_ms": 3.33924,
+            "p99_ms": 3.839927999999999,
+            "min_ms": 3.145,
+            "max_ms": 3.9651
+          },
+          "404": {
+            "count": 20,
+            "mean_ms": 3.214885,
+            "median_ms": 3.1855,
+            "p95_ms": 3.3482800000000004,
+            "p99_ms": 3.5531759999999997,
+            "min_ms": 3.0228,
+            "max_ms": 3.6044
+          }
+        }
+      },
+      "blake3": {
+        "history_wall_ms": {
+          "count": 20,
+          "mean_ms": 5.83537,
+          "median_ms": 5.77135,
+          "p95_ms": 6.18144,
+          "p99_ms": 6.332528,
+          "min_ms": 5.5719,
+          "max_ms": 6.3703
+        },
+        "copy_ms": {
+          "count": 140,
+          "mean_ms": 0.0,
+          "median_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 0.0,
+          "min_ms": 0.0,
+          "max_ms": 0.0
+        },
+        "hash_ms": {
+          "count": 140,
+          "mean_ms": 0.8291271428571428,
+          "median_ms": 0.81675,
+          "p95_ms": 0.8943749999999998,
+          "p99_ms": 1.01691,
+          "min_ms": 0.7731,
+          "max_ms": 1.0918
+        },
+        "frame_total_ms": {
+          "count": 140,
+          "mean_ms": 0.8319257142857143,
+          "median_ms": 0.8211999999999999,
+          "p95_ms": 0.8976849999999998,
+          "p99_ms": 1.021249,
+          "min_ms": 0.7747,
+          "max_ms": 1.0933
+        },
+        "by_frame_id": {
+          "392": {
+            "count": 20,
+            "mean_ms": 0.86685,
+            "median_ms": 0.8463499999999999,
+            "p95_ms": 1.01424,
+            "p99_ms": 1.0194079999999999,
+            "min_ms": 0.8196,
+            "max_ms": 1.0207
+          },
+          "394": {
+            "count": 20,
+            "mean_ms": 0.8485250000000001,
+            "median_ms": 0.8242,
+            "p95_ms": 1.025185,
+            "p99_ms": 1.0796769999999998,
+            "min_ms": 0.78,
+            "max_ms": 1.0933
+          },
+          "396": {
+            "count": 20,
+            "mean_ms": 0.82406,
+            "median_ms": 0.82165,
+            "p95_ms": 0.8805700000000001,
+            "p99_ms": 0.893794,
+            "min_ms": 0.7778,
+            "max_ms": 0.8971
+          },
+          "398": {
+            "count": 20,
+            "mean_ms": 0.81896,
+            "median_ms": 0.81545,
+            "p95_ms": 0.86747,
+            "p99_ms": 0.876134,
+            "min_ms": 0.7765,
+            "max_ms": 0.8783
+          },
+          "400": {
+            "count": 20,
+            "mean_ms": 0.815215,
+            "median_ms": 0.80655,
+            "p95_ms": 0.885645,
+            "p99_ms": 0.893929,
+            "min_ms": 0.7747,
+            "max_ms": 0.896
+          },
+          "402": {
+            "count": 20,
+            "mean_ms": 0.8241099999999999,
+            "median_ms": 0.81325,
+            "p95_ms": 0.8736100000000001,
+            "p99_ms": 0.888962,
+            "min_ms": 0.7905,
+            "max_ms": 0.8928
+          },
+          "404": {
+            "count": 20,
+            "mean_ms": 0.82576,
+            "median_ms": 0.8079000000000001,
+            "p95_ms": 0.886615,
+            "p99_ms": 0.9719629999999998,
+            "min_ms": 0.7824,
+            "max_ms": 0.9933
+          }
+        }
+      }
+    },
+    "copy_plus_hash": {
+      "sha256": {
+        "history_wall_ms": {
+          "count": 20,
+          "mean_ms": 27.997755,
+          "median_ms": 27.950400000000002,
+          "p95_ms": 28.98127,
+          "p99_ms": 29.021854,
+          "min_ms": 26.7329,
+          "max_ms": 29.032
+        },
+        "copy_ms": {
+          "count": 140,
+          "mean_ms": 0.8215335714285714,
+          "median_ms": 0.808,
+          "p95_ms": 0.93134,
+          "p99_ms": 1.1189689999999974,
+          "min_ms": 0.7316,
+          "max_ms": 1.3063
+        },
+        "hash_ms": {
+          "count": 140,
+          "mean_ms": 3.175805714285714,
+          "median_ms": 3.15895,
+          "p95_ms": 3.3911499999999997,
+          "p99_ms": 3.6059469999999996,
+          "min_ms": 3.0095,
+          "max_ms": 3.6314
+        },
+        "frame_total_ms": {
+          "count": 140,
+          "mean_ms": 3.997339285714286,
+          "median_ms": 3.9831000000000003,
+          "p95_ms": 4.218599999999999,
+          "p99_ms": 4.477004999999999,
+          "min_ms": 3.7833,
+          "max_ms": 4.9172
+        },
+        "by_frame_id": {
+          "392": {
+            "count": 20,
+            "mean_ms": 4.00332,
+            "median_ms": 3.9951,
+            "p95_ms": 4.29707,
+            "p99_ms": 4.421254,
+            "min_ms": 3.8133,
+            "max_ms": 4.4523
+          },
+          "394": {
+            "count": 20,
+            "mean_ms": 4.008665,
+            "median_ms": 3.99295,
+            "p95_ms": 4.377865,
+            "p99_ms": 4.432053,
+            "min_ms": 3.7903,
+            "max_ms": 4.4456
+          },
+          "396": {
+            "count": 20,
+            "mean_ms": 3.9890749999999997,
+            "median_ms": 3.9351000000000003,
+            "p95_ms": 4.17607,
+            "p99_ms": 4.429454,
+            "min_ms": 3.8029,
+            "max_ms": 4.4928
+          },
+          "398": {
+            "count": 20,
+            "mean_ms": 3.9894800000000004,
+            "median_ms": 3.9731,
+            "p95_ms": 4.20289,
+            "p99_ms": 4.347138,
+            "min_ms": 3.7937,
+            "max_ms": 4.3832
+          },
+          "400": {
+            "count": 20,
+            "mean_ms": 3.9961849999999997,
+            "median_ms": 3.9741999999999997,
+            "p95_ms": 4.1804950000000005,
+            "p99_ms": 4.2077789999999995,
+            "min_ms": 3.8162,
+            "max_ms": 4.2146
+          },
+          "402": {
+            "count": 20,
+            "mean_ms": 3.966385,
+            "median_ms": 3.97385,
+            "p95_ms": 4.124605,
+            "p99_ms": 4.1292409999999995,
+            "min_ms": 3.7833,
+            "max_ms": 4.1304
+          },
+          "404": {
+            "count": 20,
+            "mean_ms": 4.028264999999999,
+            "median_ms": 3.9934000000000003,
+            "p95_ms": 4.209545,
+            "p99_ms": 4.775668999999999,
+            "min_ms": 3.7938,
+            "max_ms": 4.9172
+          }
+        }
+      },
+      "blake3": {
+        "history_wall_ms": {
+          "count": 20,
+          "mean_ms": 11.45355,
+          "median_ms": 11.32075,
+          "p95_ms": 12.518044999999999,
+          "p99_ms": 12.730008999999999,
+          "min_ms": 10.7807,
+          "max_ms": 12.783
+        },
+        "copy_ms": {
+          "count": 140,
+          "mean_ms": 0.8056142857142857,
+          "median_ms": 0.782,
+          "p95_ms": 0.90145,
+          "p99_ms": 1.0444619999999996,
+          "min_ms": 0.7151,
+          "max_ms": 1.2029
+        },
+        "hash_ms": {
+          "count": 140,
+          "mean_ms": 0.8285414285714285,
+          "median_ms": 0.8208,
+          "p95_ms": 0.9002249999999999,
+          "p99_ms": 0.9899519999999995,
+          "min_ms": 0.7487,
+          "max_ms": 1.1169
+        },
+        "frame_total_ms": {
+          "count": 140,
+          "mean_ms": 1.6341557142857144,
+          "median_ms": 1.6047,
+          "p95_ms": 1.8055699999999995,
+          "p99_ms": 1.994337,
+          "min_ms": 1.4843,
+          "max_ms": 2.1029
+        },
+        "by_frame_id": {
+          "392": {
+            "count": 20,
+            "mean_ms": 1.698115,
+            "median_ms": 1.68425,
+            "p95_ms": 1.8523850000000002,
+            "p99_ms": 2.0527969999999995,
+            "min_ms": 1.5674,
+            "max_ms": 2.1029
+          },
+          "394": {
+            "count": 20,
+            "mean_ms": 1.597105,
+            "median_ms": 1.5802,
+            "p95_ms": 1.7288800000000002,
+            "p99_ms": 1.755936,
+            "min_ms": 1.4843,
+            "max_ms": 1.7627
+          },
+          "396": {
+            "count": 20,
+            "mean_ms": 1.628955,
+            "median_ms": 1.5882,
+            "p95_ms": 1.799245,
+            "p99_ms": 1.8728889999999998,
+            "min_ms": 1.5141,
+            "max_ms": 1.8913
+          },
+          "398": {
+            "count": 20,
+            "mean_ms": 1.6369,
+            "median_ms": 1.60445,
+            "p95_ms": 1.8132750000000002,
+            "p99_ms": 1.9572949999999998,
+            "min_ms": 1.4879,
+            "max_ms": 1.9933
+          },
+          "400": {
+            "count": 20,
+            "mean_ms": 1.622125,
+            "median_ms": 1.57605,
+            "p95_ms": 1.870455,
+            "p99_ms": 1.9700909999999998,
+            "min_ms": 1.5105,
+            "max_ms": 1.995
+          },
+          "402": {
+            "count": 20,
+            "mean_ms": 1.610235,
+            "median_ms": 1.60325,
+            "p95_ms": 1.74095,
+            "p99_ms": 1.74931,
+            "min_ms": 1.4938,
+            "max_ms": 1.7514
+          },
+          "404": {
+            "count": 20,
+            "mean_ms": 1.645655,
+            "median_ms": 1.63205,
+            "p95_ms": 1.7730000000000001,
+            "p99_ms": 1.84748,
+            "min_ms": 1.5223,
+            "max_ms": 1.8661
+          }
+        }
+      }
+    }
+  },
+  "paired_sha_minus_blake3_ms": {
+    "hash_only_preexisting_bytes": {
+      "count": 140,
+      "mean_ms": 2.404756428571429,
+      "median_ms": 2.3844000000000003,
+      "p95_ms": 2.7039999999999993,
+      "p99_ms": 2.966453999999996,
+      "min_ms": 2.0906000000000002,
+      "max_ms": 3.1321
+    },
+    "copy_plus_hash": {
+      "count": 140,
+      "mean_ms": 2.3631835714285714,
+      "median_ms": 2.35715,
+      "p95_ms": 2.6308149999999997,
+      "p99_ms": 2.9126799999999995,
+      "min_ms": 1.8817999999999997,
+      "max_ms": 3.0511
+    }
+  },
+  "references": [
+    {
+      "frame_id": 392,
+      "original_sha256": "e0fb755d5044c06e131989f1cd87ab11718e7d2e7e35433be69f77b191b30201",
+      "blake3_256": "d1a56f2ed65319a0c2436e6d4cbde604d2c7cf4d6de9a06fe5f00402838162c5",
+      "bytes": 6912000
+    },
+    {
+      "frame_id": 394,
+      "original_sha256": "2f49b277973c9c38d14fa4d5b3792a80fbbd0a559cd6e86e2683d3fd490fcab4",
+      "blake3_256": "dd41d08f444ff7db4d615262ba4b7b6fc2ed71ec428f02b02b0825c26e976e77",
+      "bytes": 6912000
+    },
+    {
+      "frame_id": 396,
+      "original_sha256": "cb1f064b7521ca7fbf14124f066c82f48f8809f5e56d4e9992acb7e48568b885",
+      "blake3_256": "3bd9aeac30f9cb0d400717621cc712ec63826c0a2cb038c944d4d1689faa30c5",
+      "bytes": 6912000
+    },
+    {
+      "frame_id": 398,
+      "original_sha256": "868fd7431e72292ae0b966fd136964efe907ca74d189c28e60f437b117d2ec12",
+      "blake3_256": "de249e8c3859cae4e0975ead4bed591efffcfbae49b9fbf89d9fdec1d4de7c37",
+      "bytes": 6912000
+    },
+    {
+      "frame_id": 400,
+      "original_sha256": "9ad82fd0e70317a4f8c5fa2aeb532ff1ef5b781896974df3f2e6f75487a9f23c",
+      "blake3_256": "18c5be73cd1cbbc18d2c97a7eb0dbd0818c0321480b8a18052ceb0f8bade3b54",
+      "bytes": 6912000
+    },
+    {
+      "frame_id": 402,
+      "original_sha256": "ef652925ddbe4d044db8ee3e94ee43332ddb93c95192507baecb3cf88854c7e9",
+      "blake3_256": "8eb8c086084184316bed9e6dca130f5a47563e998e00307424e8408c497064da",
+      "bytes": 6912000
+    },
+    {
+      "frame_id": 404,
+      "original_sha256": "5d26a84d77b9fa0d2db21aed55a4a818fd1aed5920d58899a47029343b616754",
+      "blake3_256": "3dcbaa6a0fedd4ee46130b8482905f027b5b27f39d5035398b92a49c191b92e3",
+      "bytes": 6912000
+    }
+  ],
+  "dependency": {
+    "package": "blake3",
+    "version": "1.0.11",
+    "license_expression": null,
+    "license": "CC0-1.0 OR Apache-2.0",
+    "project_urls": {
+      "Homepage": "https://github.com/oconnor663/blake3-py",
+      "Source Code": "https://github.com/oconnor663/blake3-py"
+    },
+    "release_metadata_url": "https://pypi.org/pypi/blake3/1.0.11/json",
+    "release_metadata_sha256": "f59074cbe1c763b4b9b99a9db0b8209cb2c733702680a09dcf765dac3efa008e",
+    "wheel_url": "https://files.pythonhosted.org/packages/88/1f/c391bd9b645e92ca559545dfe2eb7194c492b27504b4ce5380ecfa8a8091/blake3-1.0.11-cp311-cp311-win_amd64.whl",
+    "filename": "blake3-1.0.11-cp311-cp311-win_amd64.whl",
+    "wheel_sha256": "de3fbfeef38f68b32c23ae954a83bbfc0c69189c480b045f91ae55e0f0ef9007",
+    "bytes": 220544,
+    "binary_only": true,
+    "shared_environment_modified": false,
+    "installed_files": [
+      {
+        "path": "blake3/__init__.py",
+        "sha256": "8b919729adf98380edfe138af0e98214663eeb10edce64c01a57a9485bffd27b"
+      },
+      {
+        "path": "blake3/__init__.pyi",
+        "sha256": "842a078387d3523c70f2f387577e9be2b56c812bf463d59903ff3f74005362be"
+      },
+      {
+        "path": "blake3/blake3.cp311-win_amd64.pyd",
+        "sha256": "410b6028d618096559359cbf5d62e349e7dac0d8d7f4ed303c4301187443effe"
+      },
+      {
+        "path": "blake3/py.typed",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "blake3-1.0.11.dist-info/METADATA",
+        "sha256": "0368c4303bcd3d9493017c63401d0fcffd493d36fb9bcf64e5bb70c3600c2ebb"
+      },
+      {
+        "path": "blake3-1.0.11.dist-info/WHEEL",
+        "sha256": "74854c48872385de90affc61c5f1cdd5534d3fb9ec86a65ad81484662c79e335"
+      },
+      {
+        "path": "blake3-1.0.11.dist-info/licenses/LICENSE",
+        "sha256": "ec0404d8e25af25dda85d3cfd110fe7e758852b84f26fba9f26ee9499b24fc12"
+      },
+      {
+        "path": "blake3-1.0.11.dist-info/sboms/blake3.cyclonedx.json",
+        "sha256": "3cbc0faacf6f76064218523471e92ca6c3d6f9e6d5963e249f09b88460ac850f"
+      }
+    ],
+    "imported_module": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\hash_probe_dependencies\\site\\blake3\\__init__.py",
+    "imported_extension": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\hash_probe_dependencies\\site\\blake3\\blake3.cp311-win_amd64.pyd",
+    "installed_version": "1.0.11",
+    "api_reference": "https://github.com/oconnor663/blake3-py",
+    "max_threads": 1,
+    "digest_bytes": 32
+  },
+  "binding": {
+    "command_argv": [
+      "scripts/diagnose_train40_frame_hashes.py",
+      "--manifest",
+      "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json",
+      "--output",
+      "artifacts/train40_runtime_council_20261028/frame_hash_cpu/idx553_v1",
+      "--dependency-path",
+      "artifacts/train40_runtime_council_20261028/hash_probe_dependencies",
+      "--index",
+      "553",
+      "--warmups",
+      "2",
+      "--repeats",
+      "20"
+    ],
+    "git_commit": "e2186f090709ccf32bb09bd1ec3855b578e1abc2",
+    "host": "DESKTOP-2N393IP",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+    "cpu_count": 32,
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "torch": "2.11.0+cu128",
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "torch_threads": 2,
+    "clock": {
+      "implementation": "QueryPerformanceCounter()",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-07
+    },
+    "index": 553,
+    "query_id": "EXTENDED:CPNAO-medium:20200738",
+    "query_us": 20200738,
+    "raw_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+    "raw_size_bytes": 6412206137,
+    "raw_mtime_ns": 1785101060214587300,
+    "warmup_pairs_per_scope": 2,
+    "measured_pairs_per_scope": 20,
+    "paired_order": "Algorithms and copy scopes each alternate AB/BA per repeat",
+    "reference_setup": "Original freeze SHA-256 plus incremental BLAKE3 outside all timing",
+    "future_frames_prehashed": false,
+    "sustained_or_causal_claim": false,
+    "clock_excludes": "HDF5, reference setup, verification, source inventory and reporting"
+  },
+  "preservation": {
+    "passed": true,
+    "files": 185,
+    "changed": [],
+    "missing": []
+  },
+  "raw_stat_preserved": true,
+  "runtime_v2_implemented": false,
+  "sustained_50hz_or_complete_20ms_demonstrated": false
+}
