@@ -1,7 +1,7 @@
 [project]
-name = "e-jepa-ttc"
+name = "phase-ttc"
 version = "0.1.0"
-description = "Multi-horizon JEPA scaffolding for TTC estimation from event camera streams."
+description = "Causal event-RGB fusion for time-to-contact estimation; formerly E-JEPA-TTC."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = { text = "MIT" }
@@ -27,7 +27,12 @@ dependencies = [
 ]
 
 [project.scripts]
+phase-ttc = "e_jepa_ttc.cli:main"
 e-jepa-ttc = "e_jepa_ttc.cli:main"
+
+[project.urls]
+Repository = "https://github.com/Kripta-Studios/phase-ttc"
+Issues = "https://github.com/Kripta-Studios/phase-ttc/issues"
 
 [project.optional-dependencies]
 multimodal = [

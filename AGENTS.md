@@ -1,4 +1,15 @@
-# AGENTS.md — E-JEPA-TTC
+# AGENTS.md — PHASE-TTC (formerly E-JEPA-TTC)
+
+## Naming update — 2026-10-28
+
+The project's current public name is **PHASE-TTC: Causal Event–RGB Fusion for
+Time-to-Contact Estimation**, at `Kripta-Studios/phase-ttc`. The original E-JEPA-TTC
+specification below is preserved as the research charter. It describes the initial
+JEPA hypothesis, not a claim that every final model uses or benefits from JEPA.
+Keep historical experiment IDs, signed evidence, checkpoint paths and the
+`e_jepa_ttc` import namespace unchanged. The preferred distribution/command name
+is `phase-ttc`; the legacy `e-jepa-ttc` command remains available.
+See `docs/decisions/ADR-0042-phase-ttc-name.md` for the migration boundary.
 
 ## 0. Propósito de este documento
 

@@ -1,4 +1,4 @@
-"""Command line interface for the E-JEPA-TTC MVP."""
+"""Command line interface for PHASE-TTC (formerly E-JEPA-TTC)."""
 
 from __future__ import annotations
 
@@ -785,7 +785,7 @@ def _add_object_finetune_arguments(parser: argparse.ArgumentParser) -> None:
 def build_parser() -> argparse.ArgumentParser:
     """Build the root CLI parser."""
 
-    parser = argparse.ArgumentParser(prog="e-jepa-ttc")
+    parser = argparse.ArgumentParser(prog="phase-ttc")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     synthetic = subparsers.add_parser("synthetic", help="Synthetic event data commands.")
