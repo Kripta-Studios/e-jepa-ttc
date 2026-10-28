@@ -440,3 +440,34 @@ Validation: 41 focused tests passed and one conditional CUDA test was skipped
 in the combined suite. Native CUDA parity for all three checkpoint models passed
 separately. Ruff, formatting and integrated Pyright passed. No external
 submission or publication was performed.
+
+## 2026-10-28 — Paper revision with official and EvTTC competition evidence
+
+Reorganized the manuscript around the deployed estimator, training/evaluation,
+official GarlTTC results, ten-sequence EvTTC competition inference, labeled
+development transfer, controlled design analysis, runtime and discussion.
+The full historical experiments and method families remain in appendices.
+The prior manuscript and the user-provided structural reference remain intact.
+
+The revised source is `output/pdf/phase_ttc_evttc_paper`. Its public competition
+projection contains 1,736 model-query rows with all signed finite outputs and
+explicit nulls, together with regenerated coverage, disagreement, per-sequence
+and observational-runtime tables. Published Garl EvTTC RTE values form a separate
+table. The paper assigns no PHASE-TTC RTE to the unscored competition population.
+The official benchmark section includes all four bands and an additive weighted
+gain decomposition with its 0.001-point display-rounding residual.
+
+Delivery: `output/pdf/PHASE_TTC_Research_Report.pdf` (51 pages) and
+`output/pdf/PHASE_TTC_LaTeX_Source.zip` (120 source/data/figure files plus the
+archive manifest). Scientific review matched every public competition row to
+the preserved inference ledgers. Visual review corrected float placement and
+page pacing. The final build has no undefined references or overfull boxes.
+The archive was extracted and rebuilt independently; extracted PDF text and
+pagination match the delivered PDF exactly. The public build verifies 13
+derived-data hashes and regenerates all added numerical tables and charts.
+
+PDF SHA-256:
+`04b3f126ab4fc86e9ffd5b75d545564369a0c9d17a052efc8c4c9add3387650f`.
+Source ZIP SHA-256:
+`1fdd298557927a234d12f080df22a6b88af1add0c88e3c378c6da90f9f80acb5`.
+The delivery receipt is `output/pdf/source_package_receipt.json`.
