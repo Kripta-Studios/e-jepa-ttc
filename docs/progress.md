@@ -348,3 +348,43 @@ representaciones y TTC correctos y 626 archivos preservados; no mide latencia.
 Se conserva también su fallo inicial de presupuesto RAW, la pérdida de cobertura
 del ensayo con crop cache y los fallos numéricos de transporte compilado. Las
 tablas, tests, limitaciones y fuentes exactas están enlazados en el handoff.
+
+## 2026-10-28 — EvTTC competition inference completed
+
+Implemented the ten-sequence competition adapter and completed local inference
+with the preserved nine-component TRAIN40 candidate. All 22 downloaded input
+files were present; no additional calibration downloads or training were needed.
+The complete run is `output/evttc_competition_20261028_v2`, with 434/434 finite
+predictions in ten `results.txt` files and `results.zip`. Original CSV indices
+and timestamp text are preserved. The ZIP SHA-256 is
+`2c79847516993924229799696b05d84185e1dc32d90cbc1ac6016532e9552733`.
+
+The first attempt remains intact: after 367 successful predictions it stopped
+on an unrepresentable event-expert TTC in Slider-750. Adapter v2 uses fixed
+causal history anchors with real startup prefixes, records whole-observation
+phase-domain rejection independently of confidence, and preserves explicit
+unavailable handling. Seven of 1,626 event observations were rejected in the
+complete run; all queries retained enough valid history. There were 426 fused
+outputs and eight native event fallbacks. Two negative TTC outputs were retained
+without clipping. See [ADR-0043](decisions/ADR-0043-evttc-competition-sensor-adapter.md)
+for the adaptation, prior failure, calibration interpretation, and limitations.
+
+The independent audit passed on its first execution. It verified all 434 raw
+query identities, the exact ten-file archive, the 22 raw inputs, 23 executed
+source files, 13 model-package files, and three files from the preserved parent
+attempt. The maximum complete sensor span was 641.313 ms. The run did not read
+TTC labels or published result plots. Earlier manual inspection of the public
+curves was not used for offsets, fitting, or output selection.
+
+Validation: 61 focused tests passed with one conditional CUDA test skipped in
+the combined suite; that sealed CUDA parity test passed separately. Ruff,
+format checks, and Pyright passed. Prediction and measured-cost figures are
+regenerated from the complete ledger, including every signed value and the
+startup/support diagnostics. Median query cost was 2.68688 s and p95 was
+9.07308 s for this offline history-recomputing adapter; these are not optimized
+streaming latency measurements.
+
+[Reproduction and artifact guide](evttc_competition.md) documents the run,
+verification, and package formats. Official EvTTC accuracy and leaderboard
+placement remain unmeasured; local coverage is not a benchmark-defined failure
+rate. No application email or leaderboard submission was performed.
