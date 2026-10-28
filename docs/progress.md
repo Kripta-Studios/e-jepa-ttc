@@ -388,3 +388,55 @@ streaming latency measurements.
 verification, and package formats. Official EvTTC accuracy and leaderboard
 placement remain unmeasured; local coverage is not a benchmark-defined failure
 rate. No application email or leaderboard submission was performed.
+
+## 2026-10-28 — Public Garl checkpoints compared on EvTTC
+
+Completed inference with the released full RGB-event, event-only LHR, and
+visual-only LHR checkpoints on the same 434 competition query identities as
+the preserved PHASE run. The three checkpoints match Hugging Face
+`NAIL-HNU/GarlTTC-model` revision `b676fcdaf26c04bcf896cdb2b208c9c424e8462a`;
+the native graph is pinned to upstream commit
+`256661242b8a7f5e56aa3c1c02348b30f6e89de6`. No training, target access, or
+test-based checkpoint selection occurred. Execution used commit `1d8de7d9`.
+
+The complete population is accounted for in
+`output/garl_evttc_competition_20261028`: 1,302 terminal records. Event-only
+has 434 finite outputs, full has 424, and visual-only has 426. Eight road
+startup queries lack two causal RGB frames; the full model also lacks its
+earlier event endpoint at Slider-750 indices 1 and 2. These are explicit nulls,
+not filled with another checkpoint. No numerical model failure occurred.
+Finite signed outputs, including all negative values and extremes, are intact.
+The aggregate status is correctly `PARTIAL`; event-only has a complete archive.
+
+The adapter preserves native preprocessing and FP32 height-ratio conversion,
+with measured sensor spacing substituted only in the TTC conversion. Full
+event windows end independently at their RGB endpoints and are bounded by
+`min(actual spacing, 100 ms)`. A label-free clock audit found camera jitter up
+to 24 microseconds beyond 100 ms; the bounded support and resulting gap are
+explicitly recorded. Native graph `dT=0.1` remains unchanged.
+
+Both independent audits passed on all 1,302 rows, exact query/ZIP identities,
+causality and FP32 conversions. All 22 raw files, three checkpoints/configs,
+executed sources and preserved PHASE artifacts retained their hashes.
+The run freeze SHA-256 is
+`3168520154bcde371e66986804f559241319fb4af1279e82c4acc226e8eed4db`.
+The event-only results ZIP SHA-256 is
+`fcca74928f56d958b6f7264c8ba2691a2313d3e77edc8efa30e87a407e9ace33`.
+
+The regenerated comparison includes all per-query values, a 30-row per-sequence
+table, full-range and signed-log plots, runtime telemetry, and artifact hashes.
+Median absolute disagreement with PHASE is 0.261 s for full, 0.681 s for event,
+and 0.236 s for visual. These are disagreement statistics, not errors. Exact
+ground-truth correspondence is unverified, so local accuracy and SOTA are
+unmeasured. Fixed variant order and shared cache/warm state prevent a controlled
+latency ranking; PHASE also uses a different history and offline adapter.
+
+The primary eAP/Garl paper reports 10.60% average RTE on three EvTTC sequences,
+not all ten competition sequences. Literature evidence, commands, temporal
+adaptations and checkpoint-lineage limitations are documented in
+[the reproduction guide](garl_evttc_competition.md).
+
+Validation: 41 focused tests passed and one conditional CUDA test was skipped
+in the combined suite. Native CUDA parity for all three checkpoint models passed
+separately. Ruff, formatting and integrated Pyright passed. No external
+submission or publication was performed.
