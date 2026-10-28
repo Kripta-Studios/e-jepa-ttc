@@ -21,6 +21,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
+from operational.train40_runtime.rgb_hash_backend import VerifiedBlake3, validate_blake3_backend
+
 
 def _integer(value: object, name: str, *, minimum: int = 0) -> int:
     if isinstance(value, bool) or not isinstance(value, Integral) or value < minimum:
@@ -54,7 +56,9 @@ class _FrameRecord:
     timestamp_us: int
     shape: tuple[int, int, int]
     payload: bytes
-    sha256: str
+    content_digest: str
+    token_version: int
+    content_algorithm: str
     identity_sha256: str
     freeze_seconds: float
 
@@ -112,13 +116,31 @@ class FrozenRGBFrame:
 
     @property
     def sha256(self) -> str:
-        """Return the RAW content checksum computed once during freezing."""
-        return _record(self).sha256
+        """Return V1 RAW SHA-256; V2 never computes a hidden SHA payload hash."""
+        record = _record(self)
+        if record.content_algorithm != "sha256":
+            raise ValueError("RGB V2 content uses blake3-256; read content_digest instead")
+        return record.content_digest
 
     @property
     def content_sha256(self) -> str:
-        """Alias for the RAW content checksum."""
+        """Return V1 RAW SHA-256; raise explicitly for BLAKE3 V2 tokens."""
         return self.sha256
+
+    @property
+    def content_digest(self) -> str:
+        """Return the RAW digest in the explicitly named content algorithm."""
+        return _record(self).content_digest
+
+    @property
+    def content_algorithm(self) -> str:
+        """Return sha256 for V1 or blake3-256 for the opt-in V2 profile."""
+        return _record(self).content_algorithm
+
+    @property
+    def token_version(self) -> int:
+        """Return the immutable frame identity schema version."""
+        return _record(self).token_version
 
     @property
     def identity_sha256(self) -> str:
@@ -168,6 +190,7 @@ def freeze_rgb_frame(
     source: RGBSourceIdentity,
     *,
     max_bytes: int = 128 * 1024**2,
+    hash_backend: VerifiedBlake3 | None = None,
 ) -> FrozenRGBFrame:
     """Copy a newly arrived frame to bytes and hash those bytes exactly once.
 
@@ -176,6 +199,8 @@ def freeze_rgb_frame(
     descriptive provenance, not permission to skip hashing changed content.
     Invoke once per sensor arrival and share the resulting token across ROIs
     and updates; repeated factory calls intentionally repeat the arrival cost.
+    Omit hash_backend for byte-identical V1 SHA identities. A setup-verified
+    BLAKE3 backend explicitly selects V2 with a separate metadata namespace.
     """
     started = time.perf_counter()
     frame_id = _integer(frame_id, "frame_id")
@@ -194,10 +219,17 @@ def freeze_rgb_frame(
         raise ValueError("RGB frames must be nonempty uint8 HWC arrays with three channels")
     if frame.nbytes > max_bytes:
         raise ValueError("RGB frame exceeds the arrival byte bound")
+    if hash_backend is not None:
+        validate_blake3_backend(hash_backend)
     shape = (int(frame.shape[0]), int(frame.shape[1]), 3)
     payload = frame.tobytes(order="C")
-    checksum = hashlib.sha256(payload).hexdigest()
-    descriptor = (
+    checksum = (
+        hashlib.sha256(payload).hexdigest()
+        if hash_backend is None
+        else hash_backend.digest(payload)
+    )
+    version, algorithm = (1, "sha256") if hash_backend is None else (2, "blake3-256")
+    descriptor: tuple[object, ...] = (
         source_copy.name,
         source_copy.revision_sha256,
         frame_id,
@@ -206,6 +238,8 @@ def freeze_rgb_frame(
         "uint8_HWC_RGB",
         checksum,
     )
+    if hash_backend is not None:
+        descriptor = ("IMMUTABLE_RGB_FRAME_V2", "blake3-256", *descriptor)
     identity = hashlib.sha256(json.dumps(descriptor, separators=(",", ":")).encode()).hexdigest()
     record = _FrameRecord(
         source_copy.name,
@@ -215,6 +249,8 @@ def freeze_rgb_frame(
         shape,
         payload,
         checksum,
+        version,
+        algorithm,
         identity,
         time.perf_counter() - started,
     )
@@ -320,6 +356,7 @@ class ResidentRGBFrameRing:
         self._entries: dict[str, _ResidentEntry] = {}
         self._slots: list[_ResidentEntry | None] = [None] * self._capacity
         self._source: tuple[str, str] | None = None
+        self._hash_profile: tuple[int, str] | None = None
         self._query_us: int | None = None
         self._active: RGBRingBinding | None = None
         self._tick = 0
@@ -332,6 +369,7 @@ class ResidentRGBFrameRing:
                 "h2d_bytes",
                 "evictions",
                 "source_resets",
+                "hash_profile_resets",
                 "rollback_resets",
                 "explicit_resets",
                 "invalidated_frames",
@@ -432,6 +470,10 @@ class ResidentRGBFrameRing:
         sources = {(record.source_name, record.source_revision) for record in records}
         if len(sources) != 1:
             raise ValueError("One RAW binding cannot mix source identities")
+        profiles = {(record.token_version, record.content_algorithm) for record in records}
+        if len(profiles) != 1:
+            raise ValueError("One RAW binding cannot mix immutable hash profiles")
+        profile = next(iter(profiles))
         if len({record.frame_id for record in records}) != len(records):
             raise ValueError("Current RAW frame IDs must be distinct")
         if any(record.shape != self._frame_shape for record in records):
@@ -440,13 +482,15 @@ class ResidentRGBFrameRing:
             raise ValueError("A RAW frame is not available at this query timestamp")
         source = next(iter(sources))
         source_changed = self._source is not None and self._source != source
+        profile_changed = self._hash_profile is not None and self._hash_profile != profile
         rollback = self._query_us is not None and query_us < self._query_us
         waited = time.perf_counter()
         self._wait()
         wait_seconds = time.perf_counter() - waited
-        if source_changed or rollback:
+        if source_changed or rollback or profile_changed:
             self._invalidate()
             self._stats["source_resets"] += int(source_changed)
+            self._stats["hash_profile_resets"] += int(profile_changed)
             self._stats["rollback_resets"] += int(rollback)
         required = {record.identity_sha256 for record in records}
         slots = []
@@ -489,6 +533,7 @@ class ResidentRGBFrameRing:
             self._invalidate()
             raise
         self._source, self._query_us = source, query_us
+        self._hash_profile = profile
         uploaded = uploads * self._frame_bytes
         h2d = uploaded if self.device.type == "cuda" else 0
         for key, value in (
@@ -513,6 +558,10 @@ class ResidentRGBFrameRing:
                 "uploaded_bytes": uploaded,
                 "h2d_bytes": h2d,
                 "source_reset": source_changed,
+                "hash_profile_reset": profile_changed,
+                "token_version": profile[0],
+                "content_algorithm": profile[1],
+                "frame_identity_algorithm": "sha256",
                 "query_rollback_reset": rollback,
                 "query_us": query_us,
                 "source_name": source[0],
@@ -551,6 +600,7 @@ class ResidentRGBFrameRing:
         self._wait()
         self._invalidate()
         self._source = self._query_us = None
+        self._hash_profile = None
         self._stats["explicit_resets"] += 1
 
     def close(self) -> None:

@@ -58,6 +58,7 @@ def bind_frozen_rgb_history(
         raise ValueError("RGB history exceeds ten distinct frames")
     clocks: dict[int, int] = {}
     source: tuple[str, str] | None = None
+    profile: tuple[int, str] | None = None
     descriptors = []
     raw_bytes = 0
     for index in frame_ids:
@@ -72,6 +73,10 @@ def bind_frozen_rgb_history(
         if source is not None and current_source != source:
             raise ValueError("RGB history cannot mix immutable source names/revisions")
         source = current_source
+        current_profile = (token.token_version, token.content_algorithm)
+        if profile is not None and profile != current_profile:
+            raise ValueError("RGB history cannot mix immutable hash profiles")
+        profile = current_profile
         clocks[index] = token.timestamp_us
         raw_bytes += token.hashed_bytes
         if raw_bytes > max_raw_bytes:
@@ -94,7 +99,11 @@ def bind_frozen_rgb_history(
         for group in groups
     )
     assert source is not None
-    source_binding = ("IMMUTABLE_OWNED_RGB_V1", *source)
+    source_binding = (
+        ("IMMUTABLE_OWNED_RGB_V1", *source)
+        if profile == (1, "sha256")
+        else ("IMMUTABLE_OWNED_RGB_V2", "blake3-256", *source)
+    )
     descriptor = json.dumps(
         (source_binding, groups, descriptors, deltas),
         sort_keys=True,
