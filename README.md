@@ -1,4 +1,24 @@
-# E-JEPA-TTC
+# PHASE-TTC
+
+**Causal Event–RGB Fusion for Time-to-Contact Estimation**
+
+Formerly **E-JEPA-TTC**. The current name reflects the final system's signed phase
+representation, causal temporal context, and event–RGB fusion. JEPA remains part
+of the research history; the name does not imply a demonstrated JEPA advantage,
+an official SOTA result, or a sustained real-time deployment claim.
+
+Repository: [Kripta-Studios/phase-ttc](https://github.com/Kripta-Studios/phase-ttc).
+The Python distribution and preferred command are `phase-ttc`. The `e_jepa_ttc`
+import namespace and `e-jepa-ttc` command remain compatible with existing scripts
+and checkpoints. Historical artifacts retain their original identifiers.
+See [the naming decision](docs/decisions/ADR-0042-phase-ttc-name.md).
+
+The completed implementation is on
+[`perf/train40-persistent-50hz`](https://github.com/Kripta-Studios/phase-ttc/tree/perf/train40-persistent-50hz);
+`main` preserves the earlier implementation lineage. Branch names and dated
+research records are not changed by this naming migration.
+
+The implementation description below documents the historical `main` snapshot.
 
 Research MVP for Time-to-Contact / Time-to-Collision estimation from event camera streams.
 

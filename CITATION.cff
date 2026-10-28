@@ -1,6 +1,7 @@
 cff-version: 1.2.0
-title: "E-JEPA-TTC"
-message: "Cite this software when using this research MVP."
+title: "PHASE-TTC: Causal Event-RGB Fusion for Time-to-Contact Estimation"
+message: "Cite this software when using PHASE-TTC (formerly E-JEPA-TTC)."
+repository-code: "https://github.com/Kripta-Studios/phase-ttc"
 type: software
 authors:
   - family-names: "KriptaStudios"

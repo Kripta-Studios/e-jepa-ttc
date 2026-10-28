@@ -1,10 +1,13 @@
-"""E-JEPA-TTC research MVP package."""
+"""PHASE-TTC, retaining the historical e_jepa_ttc import namespace."""
 
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version("e-jepa-ttc")
+    __version__ = version("phase-ttc")
 except PackageNotFoundError:  # pragma: no cover
-    __version__ = "0.0.0"
+    try:
+        __version__ = version("e-jepa-ttc")
+    except PackageNotFoundError:
+        __version__ = "0.0.0"
 
 __all__ = ["__version__"]
