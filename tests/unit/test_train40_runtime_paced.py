@@ -514,6 +514,39 @@ def test_lifecycle_finalization_survives_source_failures(failure):
         assert result["source_lifecycle"]["errors"][0]["phase"] == failure
 
 
+def test_failed_warmup_with_default_lead_has_no_negative_or_invented_paced_interval():
+    owners = {}
+
+    def warmup():
+        owners["warmup"] = threading.get_ident()
+        raise RuntimeError("startup failed before first offer")
+
+    def finalize():
+        owners["finalize"] = threading.get_ident()
+        return {"closed": True}
+
+    result = run_paced_replay(
+        lambda index: pytest.fail("Warmup failure must not acquire RAW"),
+        lambda arrival: pytest.fail("No inference without an offer"),
+        ["a"],
+        updates=2,
+        source_warmup=warmup,
+        source_finalize=finalize,
+    )
+    assert owners["warmup"] == owners["finalize"] != threading.get_ident()
+    assert result["wall_clock_schema"] == "train40_paced_wall_intervals_v2"
+    assert result["real_run_wall_duration_s"] >= 0
+    assert result["run_finished_ns"] >= result["run_started_ns"]
+    assert result["actual_wall_duration_s"] is None
+    assert result["first_scheduled_ns"] is None
+    assert result["first_offering_established"] is False
+    assert result["last_response_duration_s"] is None
+    assert result["last_successful_all_object_ttc_duration_s"] is None
+    assert result["arrival_receipts"] == []
+    assert result["missing_arrival_ids"] == ["update-0", "update-1"]
+    assert not result["capacity_checks_passed"] and not result["grouped"]["passed"]
+
+
 @pytest.mark.parametrize("keyboard_interrupt", [False, True])
 def test_caller_cancellation_still_finalizes_source_on_producer_thread(keyboard_interrupt):
     ids = {}

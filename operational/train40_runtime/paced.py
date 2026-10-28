@@ -149,6 +149,7 @@ def run_paced_replay(
     cannot compete with the last inference. This also applies after warmup or
     acquisition failure. Caller cancellation releases the producer in finally.
     """
+    run_started_ns = time.perf_counter_ns()
     ids = tuple(object_ids)
     if not ids or any(not isinstance(x, str) or not x for x in ids) or len(set(ids)) != len(ids):
         raise ValueError("object_ids must be nonempty unique strings")
@@ -166,6 +167,7 @@ def run_paced_replay(
         raise ValueError("startup_lead_s must be finite and nonnegative")
     scheduler = pacing_clock_metadata(wait_strategy)
     first_ns = time.perf_counter_ns() + round(startup_lead_s * 1e9)
+    first_offered_deadline_ns: int | None = None
     pending: queue.Queue[Arrival[Payload]] = queue.Queue(maxsize=queue_capacity)
     stop, offering_done, permit_finalize = (threading.Event(), threading.Event(), threading.Event())
     receipts: list[dict[str, Any]] = []
@@ -200,7 +202,7 @@ def run_paced_replay(
             receipt["ended_ns"] = time.perf_counter_ns()
 
     def produce() -> None:
-        nonlocal first_ns
+        nonlocal first_ns, first_offered_deadline_ns
         phase = "warmup"
         try:
             if source_warmup is not None:
@@ -212,6 +214,8 @@ def run_paced_replay(
                 if wait_until_deadline(deadline, stop, wait_strategy=wait_strategy):
                     break
                 begin = time.perf_counter_ns()
+                if first_offered_deadline_ns is None:
+                    first_offered_deadline_ns = deadline
                 receipt: dict[str, Any] = {
                     "update_id": f"update-{index}",
                     "scheduled_ns": deadline,
@@ -364,7 +368,16 @@ def run_paced_replay(
         "rate_hz": rate_hz,
         "offered_updates": updates,
         "offered_duration_s": updates / rate_hz,
-        "actual_wall_duration_s": (finish_ns - first_ns) / 1e9,
+        "wall_clock_schema": "train40_paced_wall_intervals_v2",
+        "real_run_wall_duration_s": (finish_ns - run_started_ns) / 1e9,
+        "run_started_ns": run_started_ns,
+        "run_finished_ns": finish_ns,
+        "first_offering_established": first_offered_deadline_ns is not None,
+        "actual_wall_duration_s": (
+            (finish_ns - first_ns) / 1e9 if first_offered_deadline_ns is not None else None
+        ),
+        "actual_wall_duration_note": "First offered deadline to source finalization/join; "
+        "null when no offer was established. real_run_wall_duration_s includes startup.",
         "actual_wall_duration_includes_source_finalize_and_join": True,
         "last_response_duration_s": (max(end_times) - first_ns) / 1e9 if end_times else None,
         "last_successful_all_object_ttc_duration_s": (
@@ -373,7 +386,8 @@ def run_paced_replay(
         "queue_capacity": queue_capacity,
         "wait_strategy": wait_strategy,
         "scheduler": scheduler,
-        "first_scheduled_ns": first_ns,
+        "first_scheduled_ns": first_offered_deadline_ns,
+        "planned_first_scheduled_ns": first_ns,
         "source_lifecycle": lifecycle,
         "object_ids": list(ids),
         "arrival_receipts": receipts,
