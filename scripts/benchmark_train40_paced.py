@@ -61,6 +61,10 @@ from operational.train40_runtime.paced import (  # noqa: E402
     run_paced_replay,
 )
 from operational.train40_runtime.priming import prime_supported_histories  # noqa: E402
+from operational.train40_runtime.producers import (  # noqa: E402
+    TRANSPORT_REUSE_MODES,
+    transport_reuse_contract,
+)
 from operational.train40_runtime.replay_inputs import SCHEMA  # noqa: E402
 from operational.train40_runtime.replay_memory import (  # noqa: E402
     SCOPE as MEMORY_SCOPE,
@@ -886,6 +890,7 @@ def service_options(args: argparse.Namespace) -> dict[str, Any]:
         "parallel_branches": DEFAULT_PROFILE.parallel_branches,
         "rgb_workers": args.rgb_workers,
         "overlap_event_with_rgb_preparation": args.overlap_event_with_rgb_preparation,
+        "transport_reuse": args.transport_reuse,
     }
 
 
@@ -903,6 +908,7 @@ def cache_identity(binding: Mapping[str, Any], args: argparse.Namespace) -> dict
                 "layout": "CONTIGUOUS",
                 "rgb_endpoint_reuse": True,
                 "rgb_uint8": False,
+                "transport_reuse": transport_reuse_contract(args.transport_reuse),
                 "options": service_options(args),
             }
         ),
@@ -1101,6 +1107,7 @@ def run(args: argparse.Namespace) -> None:
                 else None
             ),
             "service_options": service_options(args),
+            "transport_reuse": transport_reuse_contract(args.transport_reuse),
         }
         cache_binding = cache_identity(binding, args) if args.rgb_feature_cache else None
         if cache_binding is not None:
@@ -1137,6 +1144,7 @@ def run(args: argparse.Namespace) -> None:
             ),
         )
         startup["model_and_service_seconds"] = time.perf_counter() - begin
+        startup["producer_transport_bindings"] = service.producers.transport_bindings
         if args.prime_native_histories:
             startup["synthetic_shape_priming"] = {}
             prime_supported_histories(
@@ -1349,6 +1357,12 @@ def parser() -> argparse.ArgumentParser:
         "--rgb-feature-cache",
         action="store_true",
         help="Exact RGB producer features only; admission requires a stored MISS then real HIT",
+    )
+    result.add_argument(
+        "--transport-reuse",
+        choices=TRANSPORT_REUSE_MODES,
+        default="original",
+        help="Opt-in exact transport work reuse, before endpoint reuse; no adjacent pair dedup",
     )
     result.add_argument(
         "--overlap-event-with-rgb-preparation",

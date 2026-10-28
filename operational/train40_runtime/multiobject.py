@@ -24,7 +24,11 @@ from operational.rgb_port_revision.transfer_inputs import sensor_triplets
 from operational.train40_runtime.batched_context import BatchedContextRuntime, ContextObservation
 from operational.train40_runtime.defaults import DEFAULT_PROFILE
 from operational.train40_runtime.inputs import PersistentSensorInputs, _normalized_crop
-from operational.train40_runtime.producers import AsyncExpertBlock, ProducerRuntime
+from operational.train40_runtime.producers import (
+    AsyncExpertBlock,
+    ProducerRuntime,
+    transport_reuse_contract,
+)
 
 if TYPE_CHECKING:
     from operational.train40_runtime.multiobject_cache import RGBBatchCache
@@ -236,7 +240,9 @@ class MultiObjectTrain40Service:
         rgb_uint8: bool = DEFAULT_PROFILE.rgb_uint8,
         producer_runtime: ProducerRuntime | None = None,
         overlap_event_with_rgb_preparation: bool = False,
+        transport_reuse: str = "original",
     ) -> None:
+        transport_reuse_contract(transport_reuse)
         if not isinstance(max_objects, int) or not 1 <= max_objects <= 20:
             raise ValueError("max_objects must be between one and twenty")
         if not 1 <= rgb_workers <= 8:
@@ -272,6 +278,7 @@ class MultiObjectTrain40Service:
         self.rgb_object_chunk_size = rgb_object_chunk_size
         self.parallel_preprocessing = parallel_preprocessing
         self.overlap_event_with_rgb_preparation = overlap_event_with_rgb_preparation
+        self.transport_reuse = transport_reuse
         self._event_overlap_inflight = False
         self._event_overlap_ticket: AsyncExpertBlock | None = None
         self._event_overlap_inputs: tuple[Tensor, Tensor] | None = None
@@ -282,6 +289,8 @@ class MultiObjectTrain40Service:
             rgb_feature_cache.clear()
         self.last_rgb_profile: dict[str, float | int] = {}
         if producer_runtime is not None:
+            if getattr(producer_runtime, "transport_reuse", None) != transport_reuse:
+                raise ValueError("Injected producers differ from requested transport reuse mode")
             _validate_producer_device(producer_runtime, self.device)
             if parallel_branches and not producer_runtime.block_graphs:
                 raise ValueError("Parallel injected producers require block graphs")
@@ -296,6 +305,7 @@ class MultiObjectTrain40Service:
             block_graphs=graphs,
             reuse_encodings=graphs,
             reuse_event_encodings=reuse_event_encodings,
+            transport_reuse=transport_reuse,
         )
         self.context = BatchedContextRuntime(
             models, normalizers, self.device, graphs=graphs, max_objects=max_objects
@@ -826,6 +836,7 @@ class MultiObjectTrain40Service:
             "rgb_uint8": self._rgb_uint8 is not None,
             "rgb_diagnostic_lease_retained": self._diagnostic_rgb_lease is not None,
             "parallel_preprocessing": self.parallel_preprocessing,
+            "transport_reuse": self.transport_reuse,
             "event_producer_launched_before_rgb_join": event_ticket is not None,
             "input_boundary": "last_required_raw_CPU_packet_and_RGB_frames_available",
             "output_boundary": "all_object_TTC_values_available_on_host",

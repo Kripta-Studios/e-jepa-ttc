@@ -13,9 +13,9 @@ import time
 import warnings
 from collections.abc import Mapping
 from copy import copy, deepcopy
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from types import MethodType
-from typing import cast
+from typing import Any, cast
 
 import torch
 from torch import Tensor, nn
@@ -31,8 +31,64 @@ from e_jepa_ttc.simplex_t.expert_phase import expert_phase_from_ttc
 from e_jepa_ttc.simplex_t.phase import emitted_phase
 from operational.rgb_port.train_heads import pair_point_phase
 from operational.rgb_port_streaming.contracts import NativeObservation
+from operational.train40_runtime.compiled_transport import (
+    TransportCoreBinding,
+    attach_transport_pair_core,
+)
+from operational.train40_runtime.transport import TransportReuseOptions, attach_transport_reuse
 
 FEATURE_NAMES = ("token128", "prediction_ttc", "flow", "margin", "log_variance", "support", "known")
+TRANSPORT_REUSE_MODES = ("original", "reverse", "reverse-summaries")
+
+
+def transport_reuse_contract(mode: str) -> dict[str, Any]:
+    """Describe an explicit inference adapter without changing the original model."""
+    if not isinstance(mode, str) or mode not in TRANSPORT_REUSE_MODES:
+        raise ValueError("Transport reuse must be original, reverse or reverse-summaries")
+    return {
+        "mode": mode,
+        "reverse_correlation_reuse": mode != "original",
+        "reverse_sample_reuse": mode != "original",
+        "weighted_summary_reuse": mode == "reverse-summaries",
+        "history_group_size": None,
+        "adjacent_pair_deduplication": False,
+        "adapter_before_endpoint_reuse": True,
+        "compile_backend": None,
+    }
+
+
+def _transport_model_views(
+    models: Mapping[str, nn.Module], mode: str
+) -> tuple[Mapping[str, nn.Module], dict[str, Any]]:
+    """Use the exactly audited private views before endpoint encoder adaptation."""
+    if mode == "original":
+        return models, {}
+    proposed: dict[str, nn.Module] = {}
+    bindings: dict[str, Any] = {}
+    for name, model in models.items():
+        if model.training or any(parameter.requires_grad for parameter in model.parameters()):
+            raise ValueError(f"Transport reuse requires frozen eval models: {name}")
+        view = model
+        if isinstance(model, CausalScaleTTC):
+            if mode == "reverse":
+                view = attach_transport_pair_core(model, reuse_reverse=True)
+                adapter = view._train40_transport_binding
+                if not isinstance(adapter, TransportCoreBinding):
+                    raise TypeError("Transport-pair view did not bind its adapter identity")
+                bindings[name] = asdict(adapter)
+            else:
+                view = attach_transport_reuse(model, history_group_size=None, summaries=True)
+                options = view._train40_transport_options
+                if not isinstance(options, TransportReuseOptions):
+                    raise TypeError("Transport-reuse view did not bind its adapter options")
+                bindings[name] = asdict(options)
+        parameters, view_parameters = dict(model.named_parameters()), dict(view.named_parameters())
+        if parameters.keys() != view_parameters.keys() or any(
+            value is not view_parameters[key] for key, value in parameters.items()
+        ):
+            raise ValueError(f"Transport view did not share exact frozen parameters: {name}")
+        proposed[name] = view
+    return proposed, bindings
 
 
 class _ChannelsLastEndpointEncoder(nn.Module):
@@ -447,8 +503,10 @@ class ProducerRuntime:
         reuse_encodings: bool = False,
         reuse_event_encodings: bool | None = None,
         reuse_rgb_encodings: bool | None = None,
+        transport_reuse: str = "original",
     ) -> None:
-        self.models = models
+        self.transport_contract = transport_reuse_contract(transport_reuse)
+        self.transport_reuse = transport_reuse
         self.device = torch.device(device)
         self.graphs = graphs
         self.block_graphs = block_graphs
@@ -470,6 +528,7 @@ class ProducerRuntime:
             raise ValueError("Whole expert-block graphs require graphs=True")
         if self.reuse_encodings and not block_graphs:
             raise ValueError("Endpoint encoding reuse requires whole expert-block graphs")
+        self.models, self.transport_bindings = _transport_model_views(models, transport_reuse)
 
     def _producer(
         self, name: str, sensor: Tensor, delta: Tensor, *, values_checked: bool = False
@@ -714,6 +773,8 @@ class ProducerRuntime:
                 "endpoint_reuse": name.endswith("_REUSE"),
                 "endpoint_reuse_fallback_calls": self.reuse_fallbacks,
                 "endpoint_reuse_by_modality": dict(self.reuse_by_modality),
+                "transport_reuse": self.transport_reuse,
+                "transport_contract": dict(self.transport_contract),
                 "history_group_size": entry.history_group_size,
                 "dedicated_capture_stream": entry.capture_stream is not None,
                 "capture_stream_id": (

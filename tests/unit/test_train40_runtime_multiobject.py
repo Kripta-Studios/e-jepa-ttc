@@ -55,6 +55,7 @@ class FakeProducers:
         self.block_graphs = False
         self.reuse_by_modality = {"E": False, "R": True}
         self.models = {}
+        self.transport_reuse = "original"
 
     def expert_block(self, modality, sensor, delta, *, history_group_size):
         self.calls.append((modality, tuple(sensor.shape), history_group_size))
@@ -101,6 +102,7 @@ def service():
     value.rgb_object_chunk_size = None
     value.parallel_preprocessing = True
     value.overlap_event_with_rgb_preparation = False
+    value.transport_reuse = "original"
     value._event_overlap_inflight = False
     value._event_overlap_ticket = None
     value._event_overlap_inputs = None
