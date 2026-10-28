@@ -471,3 +471,53 @@ PDF SHA-256:
 Source ZIP SHA-256:
 `1fdd298557927a234d12f080df22a6b88af1add0c88e3c378c6da90f9f80acb5`.
 The delivery receipt is `output/pdf/source_package_receipt.json`.
+
+## 2026-10-29 — Final article refinement and reproducible source delivery
+
+Refined the manuscript using the supplied Improved TeX/source reference while
+preserving the 28 October scientific evidence snapshot and all 13 public
+ledger hashes. The final source is `output/pdf/phase_ttc_final_paper`; the prior
+51-page source and user references remain intact. The article now has 56 pages,
+24 numbered figures, and 27 tables, with a separate technical supplement.
+
+The method exposition uses modality-specific architecture, fusion-interface,
+out-of-fold training, and causal-history diagrams. Paired ablation figures,
+complete error-exceedance curves, all-sequence transfer comparisons, and
+unscored competition traces preserve their distinct populations and estimands.
+Scientific and visual reviewers checked the complete manuscript. Final fixes
+resolved sentence-interrupting floats, subplot-label collisions, numeric-column
+spacing, and an isolated table page. Public text and package metadata contain
+no aesthetic-reference or internal authoring-process commentary.
+
+R01 adds an exploratory analysis of the existing 468 eligible labeled transfer
+queries from 32 distinct recordings. An independent multiplicity-weighted
+implementation reproduced all 30,000 paired bootstrap values within
+8.88e-16 seconds. PHASE-minus-RGB mean, median and p95 difference intervals
+all include zero. The paper retains the stronger RGB averages and the worse
+PHASE extreme tail (five versus two errors above ten seconds). No fitting,
+model selection, new inference, or benchmark submission was performed.
+
+R02 documents the native finite phase-output map and the exact L40 paced-run
+GPU, PyTorch CUDA build, precision, worker/queue configuration, initialization
+boundaries, and parity tolerance. Source hashes and executed Git objects bind
+the metadata to the original run. CPU model, driver version, and a full
+component parameter/peak-memory inventory remain unreported. R02 SHA-256 is
+`c97dbdc25d7d28089d31ff60de0d0fa24b8e8a82744e78fc832e784e39c4447c`.
+
+Delivery:
+
+- `output/pdf/PHASE_TTC_Final.pdf`
+- `output/pdf/PHASE_TTC_Final.tex`
+- `output/pdf/PHASE_TTC_Final_Complete_Source.zip`
+
+The ZIP contains 197 manuscript, data, figure and generator files plus its
+SHA-256 manifest. A fresh extraction passed every member hash, regenerated all
+assets, compiled both source forms without LaTeX warnings, and reproduced the
+delivered PDF's extracted text and pagination exactly. Consolidated-source
+regeneration is byte-identical. All 56 delivered pages passed visual review.
+The delivery receipt is `output/pdf/final_delivery_receipt.json`.
+
+PDF SHA-256:
+`b07b078c03bee3393924bd6c451fb0961699343573c7b5f28c9ddbaa5a7985e5`.
+Source ZIP SHA-256:
+`563b948d6a9d64a41896739fc1739afc8ecdad1968d3b5ac8074f1037fbef098`.
