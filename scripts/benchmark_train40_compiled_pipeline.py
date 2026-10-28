@@ -3,6 +3,9 @@
 The clock covers prepared GPU inputs through producer/PAIR/PHASE17 features and
 guards. Raw preparation, H2D and final context are excluded. Independent final
 TTC parity is measured outside the clock. This is not complete-update admission.
+Every explicit call is checked before another producer call, with one owned
+feature copy at a time. These interleaved checks change the measurement cadence
+relative to earlier runs that checked only the final repetition.
 """
 
 from __future__ import annotations
@@ -17,11 +20,94 @@ import sys
 import time
 import traceback
 import types
+from collections.abc import Callable, Sequence
+from functools import partial
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+
+def _clone_producer_outputs(value: Any) -> Any:
+    """Own tensor leaves before later graph replays can overwrite shared buffers."""
+    if value is None:
+        return None
+    if isinstance(value, tuple):
+        return tuple(_clone_producer_outputs(item) for item in value)
+    if isinstance(value, list):
+        return [_clone_producer_outputs(item) for item in value]
+    return value.detach().clone()
+
+
+def capture_replay_parity(
+    outputs: Any,
+    *,
+    variant: str,
+    stage: str,
+    iteration: int,
+    predict: Callable[[Any], list[dict[str, Any]]],
+    compare_ttc: Callable[[list[dict[str, Any]]], dict[str, Any]],
+    compare_features: Callable[[Any], dict[str, Any]],
+) -> dict[str, Any]:
+    """Check one owned result outside timing; return CPU receipts, never tensors.
+
+    The caller completes/synchronizes the timed producer work first. It must
+    consume this receipt before another replay. Only this function's single
+    cloned feature tree is retained, independent of the total replay count.
+    """
+    owned = _clone_producer_outputs(outputs)
+    predictions = predict(owned)
+    return {
+        "variant": variant,
+        "stage": stage,
+        "iteration": iteration,
+        "actual_ttc": predictions,
+        "parity": compare_ttc(predictions),
+        "feature_parity": compare_features(owned),
+    }
+
+
+def replay_parity_coverage(
+    receipts: Sequence[dict[str, Any]],
+    variants: Sequence[str],
+    *,
+    warmup: int,
+    repeats: int,
+) -> dict[str, Any]:
+    """Fail closed on missing, duplicate, reordered or numerically failed calls."""
+    if not variants or len(set(variants)) != len(variants) or warmup < 1 or repeats < 1:
+        raise ValueError("Replay coverage requires unique variants and positive call counts")
+    expected = [
+        (name, stage, iteration)
+        for name in variants
+        for stage, count in (("initial_call", 1), ("warmup", warmup))
+        for iteration in range(count)
+    ]
+    expected += [
+        (name, "measured", iteration)
+        for iteration in range(repeats)
+        for name in (list(variants) if iteration % 2 == 0 else list(reversed(variants)))
+    ]
+    actual = [(item.get("variant"), item.get("stage"), item.get("iteration")) for item in receipts]
+    all_ttc = bool(receipts) and all(
+        item.get("parity", {}).get("passed") is True for item in receipts
+    )
+    return {
+        "passed": actual == expected and all_ttc,
+        "expected_calls": len(expected),
+        "observed_calls": len(actual),
+        "schedule_exact": actual == expected,
+        "all_ttc_passed": all_ttc,
+        "all_feature_parity_passed": bool(receipts)
+        and all(item.get("feature_parity", {}).get("passed") is True for item in receipts),
+        "first_calls_passed": all(
+            item.get("parity", {}).get("passed") is True
+            for item in receipts
+            if item.get("stage") == "initial_call"
+        )
+        and sum(item.get("stage") == "initial_call" for item in receipts) == len(variants),
+    }
 
 
 def compiler_cache_inventory(directory: Path) -> dict[str, dict[str, Any]]:
@@ -124,6 +210,17 @@ def run(args: argparse.Namespace) -> None:
         "status": "FAILED",
         "target_20_objects_50hz_demonstrated": False,
         "complete_update_admitted": False,
+        "replay_validation": {
+            "scope": "EVERY_EXPLICIT_INITIAL_WARMUP_AND_MEASURED_PRODUCER_CALL",
+            "placement": "AFTER_PRODUCER_CLOCK_BEFORE_NEXT_CALL_WITH_ONE_OWNED_FEATURE_COPY",
+            "latency_comparability": (
+                "INTERLEAVED_CONTEXT_AND_PARITY_CHANGE_CADENCE_VS_LAST_REPLAY_ONLY_RUNS"
+            ),
+            "initial_call_role": (
+                "FIRST_EXPLICIT_CALL_FOR_QUERY; may build or reuse a shape; producer internally "
+                "warms/traces/captures before its first returned replay; not cold-start latency"
+            ),
+        },
         "records": [],
     }
     original: dict[str, Any] = {}
@@ -260,8 +357,13 @@ def run(args: argparse.Namespace) -> None:
             compiler_options["eager_numerics.division_rounding"] = True
         summary["binding"]["compiler_options"] = compiler_options
         summary["binding"]["native_entropy_log"] = args.native_log
+        summary["binding"]["native_correlation_match"] = args.native_match
         compiled = CompiledTransportProducerRuntime(
-            models, "cuda", options=compiler_options, native_log=args.native_log
+            models,
+            "cuda",
+            options=compiler_options,
+            native_log=args.native_log,
+            native_match=args.native_match,
         )
         variants = {"original_graph": baseline, "compiled_transport_graph": compiled}
 
@@ -441,32 +543,67 @@ def run(args: argparse.Namespace) -> None:
                         record["preserved_primary_parity"] = prediction_parity(
                             [reference[index]], [first], [row["query_id"]]
                         )
+                        ids = [region.object_id for region in regions]
+                        receipts: list[dict[str, Any]] = []
+                        record["replay_parity"] = receipts
+                        record["producer_input_shapes"] = {
+                            "event": list(event.shape),
+                            "rgb": [
+                                list(sensor.shape) if sensor is not None else None
+                                for sensor, _, _ in rgbs
+                            ],
+                        }
+                        last_receipts: dict[str, dict[str, Any]] = {}
+
+                        check_replay = partial(
+                            capture_replay_parity,
+                            predict=partial(final_ttc, inputs=inputs, row=row, regions=regions),
+                            compare_ttc=partial(prediction_parity, expected, expected_ids=ids),
+                            compare_features=partial(compare_features, expected=oracle_features),
+                        )
+
                         cold = {}
                         for name, runtime in variants.items():
                             start = time.perf_counter()
-                            route(runtime, inputs)
+                            value = route(runtime, inputs)
                             torch.cuda.synchronize()
                             cold[name] = time.perf_counter() - start
-                            for _ in range(args.warmup):
-                                route(runtime, inputs)
+                            receipt = check_replay(
+                                value, variant=name, stage="initial_call", iteration=0
+                            )
+                            receipts.append(receipt)
+                            last_receipts[name] = receipt
+                            del value
+                            for warmup_index in range(args.warmup):
+                                value = route(runtime, inputs)
+                                torch.cuda.synchronize()
+                                receipt = check_replay(
+                                    value, variant=name, stage="warmup", iteration=warmup_index
+                                )
+                                receipts.append(receipt)
+                                last_receipts[name] = receipt
+                                del value
                         torch.cuda.synchronize()
                         transport_before_replays = compiled.transport_diagnostics()
                         times: dict[str, list[float]] = {name: [] for name in variants}
-                        outputs = {}
                         for repeat in range(args.repeats):
                             names = list(variants) if repeat % 2 == 0 else list(reversed(variants))
                             for name in names:
                                 torch.cuda.synchronize()
                                 start = time.perf_counter_ns()
-                                outputs[name] = route(variants[name], inputs)
+                                value = route(variants[name], inputs)
                                 torch.cuda.synchronize()
                                 times[name].append((time.perf_counter_ns() - start) / 1e6)
-                        predictions = {
-                            name: final_ttc(value, inputs, row, regions)
-                            for name, value in outputs.items()
-                        }
-                        ids = [region.object_id for region in regions]
+                                receipt = check_replay(
+                                    value, variant=name, stage="measured", iteration=repeat
+                                )
+                                receipts.append(receipt)
+                                last_receipts[name] = receipt
+                                del value
                         transport_after_replays = compiled.transport_diagnostics()
+                        coverage = replay_parity_coverage(
+                            receipts, list(variants), warmup=args.warmup, repeats=args.repeats
+                        )
                         attribution = producer_attribution(inputs)
                         record.update(
                             status="MEASURED",
@@ -476,11 +613,17 @@ def run(args: argparse.Namespace) -> None:
                                 name: latency_distribution(value) for name, value in times.items()
                             },
                             parity={
-                                name: prediction_parity(expected, value, ids)
-                                for name, value in predictions.items()
+                                name: receipt["parity"] for name, receipt in last_receipts.items()
                             },
+                            replay_parity_coverage=coverage,
+                            compatibility_parity_fields_role=(
+                                "LAST_CALL_ONLY; admission uses all replay receipts"
+                            ),
                             reference_ttc=expected,
-                            actual_ttc=predictions,
+                            actual_ttc={
+                                name: receipt["actual_ttc"]
+                                for name, receipt in last_receipts.items()
+                            },
                             replay_dispatcher_calls_unchanged=(
                                 transport_before_replays == transport_after_replays
                             ),
@@ -488,8 +631,8 @@ def run(args: argparse.Namespace) -> None:
                             transport_dispatcher_after_replays=transport_after_replays,
                             producer_attribution=attribution,
                             feature_parity={
-                                name: compare_features(value, oracle_features)
-                                for name, value in outputs.items()
+                                name: receipt["feature_parity"]
+                                for name, receipt in last_receipts.items()
                             },
                             regions=[
                                 {
@@ -530,12 +673,12 @@ def run(args: argparse.Namespace) -> None:
             record.get("status") == "MEASURED"
             and record["replay_dispatcher_calls_unchanged"]
             and record["preserved_primary_parity"]["passed"]
-            and all(item["passed"] for item in record["parity"].values())
+            and record["replay_parity_coverage"]["passed"]
             for record in summary["records"]
         )
         summary["all_feature_parity_passed"] = all(
             record.get("status") == "MEASURED"
-            and all(item["passed"] for item in record["feature_parity"].values())
+            and record["replay_parity_coverage"]["all_feature_parity_passed"]
             for record in summary["records"]
         )
         summary["intermediate_feature_gate_role"] = (
@@ -596,10 +739,16 @@ def main() -> None:
     parser.add_argument("--objects", nargs="+", type=int, default=[1])
     parser.add_argument("--repeats", type=int, default=20)
     parser.add_argument("--warmup", type=int, default=3)
-    parser.add_argument(
+    native = parser.add_mutually_exclusive_group()
+    native.add_argument(
         "--native-log",
         action="store_true",
         help="Keep the two entropy logs as original ATen operations",
+    )
+    native.add_argument(
+        "--native-match",
+        action="store_true",
+        help="Keep complete original ATen correlation matches; compile summaries and cycle only",
     )
     parser.add_argument(
         "--precision-mode",

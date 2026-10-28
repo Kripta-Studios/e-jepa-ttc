@@ -36,6 +36,7 @@ from operational.train40_runtime.producers import AsyncExpertBlock, ProducerRunt
 OPERATOR_NAME = "train40_compiled_pipeline::transport_pair"
 _HANDLES = itertools.count(1)
 _NATIVE_LOG_CALLS = 0
+_NATIVE_MATCH_CALLS = 0
 
 
 @torch.library.custom_op("train40_compiled_pipeline::native_log", mutates_args=())
@@ -53,6 +54,39 @@ def _native_log_fake(values: Tensor) -> Tensor:
     if values.dtype != torch.float32:
         raise ValueError("Frozen entropy log expects FP32 inputs")
     return torch.empty_like(values)
+
+
+@torch.library.custom_op("train40_compiled_pipeline::native_match", mutates_args=())
+def _native_match(
+    previous: Tensor, current: Tensor, radius: int, temperature: float
+) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+    """Keep the complete original matching arithmetic outside Inductor lowering."""
+    global _NATIVE_MATCH_CALLS
+    if previous.dtype != torch.float32 or current.dtype != torch.float32:
+        raise ValueError("Frozen native matching expects FP32 inputs")
+    _NATIVE_MATCH_CALLS += 1
+    match = transport_oracle.local_correlation_match(
+        previous, current, radius=radius, temperature=temperature
+    )
+    return match.dx, match.dy, match.confidence_margin, match.entropy, match.valid
+
+
+@_native_match.register_fake
+def _native_match_fake(
+    previous: Tensor, current: Tensor, radius: int, temperature: float
+) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+    if previous.dtype != torch.float32 or current.dtype != torch.float32:
+        raise ValueError("Frozen native matching expects FP32 inputs")
+    if previous.ndim != 4 or previous.shape != current.shape:
+        raise ValueError("transport endpoints must share shape [B,C,H,W]")
+    shape = (previous.shape[0], previous.shape[2], previous.shape[3])
+    return (
+        previous.new_empty(shape),
+        previous.new_empty(shape),
+        previous.new_empty(shape),
+        previous.new_empty(shape),
+        previous.new_empty(shape, dtype=torch.bool),
+    )
 
 
 @lru_cache(maxsize=4)
@@ -148,11 +182,67 @@ class NativeLogTransportPairTensorCore(TransportPairTensorCore):
         )
 
 
+class NativeMatchTransportPairTensorCore(TransportPairTensorCore):
+    """Compile summaries/cycle while matching uses the untouched ATen oracle."""
+
+    def __init__(self, original: TransportPairTensorCore) -> None:
+        if original.reuse_reverse:
+            raise ValueError("Native-match admission preserves original bidirectional matching")
+        super().__init__(
+            original.radius,
+            original.temperature,
+            deterministic_sampling=original.deterministic_sampling,
+            reuse_reverse=False,
+            reuse_samples=original.reuse_samples,
+        )
+        source = textwrap.dedent(inspect.getsource(transport_oracle.local_correlation_match))
+        self.native_match_binding = {
+            "original_match_sha256": hashlib.sha256(source.encode()).hexdigest(),
+            "boundary": "ORIGINAL_ATEN_LOCAL_CORRELATION_MATCH",
+            "outputs": ["dx", "dy", "confidence_margin", "entropy", "valid"],
+            "compiled_remainder": "ORIGINAL_TRANSPORT_PHYSICAL_FEATURES_AND_CYCLE",
+        }
+
+    def forward(
+        self,
+        previous: Tensor,
+        current: Tensor,
+        foreground_previous: Tensor,
+        foreground_current: Tensor,
+    ) -> tuple[Tensor, Tensor]:
+        """Reuse no correlations; preserve each original directional match."""
+        forward = transport_oracle.LocalTransportMatch(
+            *_native_match(previous, current, self.radius, self.temperature)
+        )
+        reverse = transport_oracle.LocalTransportMatch(
+            *_native_match(current, previous, self.radius, self.temperature)
+        )
+        return (
+            transport_oracle.transport_physical_features(
+                forward,
+                reverse,
+                foreground_weight=foreground_previous,
+                radius=self.radius,
+                deterministic_sampling=self.deterministic_sampling,
+                reuse_reverse_sample=self.reuse_samples,
+            ),
+            transport_oracle.transport_physical_features(
+                reverse,
+                forward,
+                foreground_weight=foreground_current,
+                radius=self.radius,
+                deterministic_sampling=self.deterministic_sampling,
+                reuse_reverse_sample=self.reuse_samples,
+            ),
+        )
+
+
 @dataclass(eq=False)
 class _Executor:
     callable: Any
     backend: str
     native_log_binding: dict[str, Any] | None = None
+    native_match_binding: dict[str, Any] | None = None
     calls: int = 0
     traced_calls: int = 0
 
@@ -211,6 +301,11 @@ class OpaqueCompiledTransport(nn.Module):
                 if isinstance(core, NativeLogTransportPairTensorCore)
                 else None
             ),
+            native_match_binding=(
+                dict(core.native_match_binding)
+                if isinstance(core, NativeMatchTransportPairTensorCore)
+                else None
+            ),
         )
         object.__setattr__(self, "_executor", executor)
         _EXECUTORS[self.handle] = executor
@@ -243,6 +338,10 @@ class OpaqueCompiledTransport(nn.Module):
             "native_log_dispatcher_calls_process": (
                 _NATIVE_LOG_CALLS if executor.native_log_binding is not None else None
             ),
+            "native_match_binding": executor.native_match_binding,
+            "native_match_dispatcher_calls_process": (
+                _NATIVE_MATCH_CALLS if executor.native_match_binding is not None else None
+            ),
         }
 
 
@@ -252,14 +351,19 @@ def attach_opaque_compiled_transport(
     backend: str = "inductor",
     options: Mapping[str, Any] | None = None,
     native_log: bool = False,
+    native_match: bool = False,
 ) -> CausalScaleTTC:
     """Share frozen weights and replace only audited transport blocks privately."""
+    if native_log and native_match:
+        raise ValueError("Select only one native transport boundary: log or match")
     view = attach_transport_pair_core(model, reuse_reverse=False)
     for scale in ("fine", "coarse"):
         name = f"_train40_transport_{scale}"
         core = cast(TransportPairTensorCore, view._modules[name])
         if native_log:
             core = NativeLogTransportPairTensorCore(core).eval()
+        elif native_match:
+            core = NativeMatchTransportPairTensorCore(core).eval()
         view._modules[name] = OpaqueCompiledTransport(core, backend=backend, options=options)
     return view
 
@@ -283,10 +387,17 @@ class CompiledTransportProducerRuntime(ProducerRuntime):
         reuse_event_encodings: bool = False,
         reuse_rgb_encodings: bool = True,
         native_log: bool = False,
+        native_match: bool = False,
     ) -> None:
+        if native_log and native_match:
+            raise ValueError("Select only one native transport boundary: log or match")
         proposed = {
             name: attach_opaque_compiled_transport(
-                model, backend=backend, options=options, native_log=native_log
+                model,
+                backend=backend,
+                options=options,
+                native_log=native_log,
+                native_match=native_match,
             )
             if isinstance(model, CausalScaleTTC) and model.config.transport_enabled
             else model

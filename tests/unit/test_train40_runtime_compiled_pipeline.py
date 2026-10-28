@@ -4,6 +4,7 @@ import gc
 import inspect
 import textwrap
 import warnings
+from typing import cast
 
 import numpy as np
 import pytest
@@ -15,6 +16,7 @@ from operational.train40_runtime.compiled_pipeline import (
     OPERATOR_NAME,
     CompiledTransportProducerRuntime,
     NativeLogTransportPairTensorCore,
+    NativeMatchTransportPairTensorCore,
     OpaqueCompiledTransport,
     _rewritten_native_log_match,
     attach_opaque_compiled_transport,
@@ -297,3 +299,208 @@ def test_native_entropy_log_custom_operator_schema_and_fake_metadata():
                 test_utils=("test_schema", "test_faketensor"),
             )
             assert all(value == "SUCCESS" for value in checked.values())
+
+
+@pytest.mark.parametrize("radius", [1, 4])
+def test_native_match_core_preserves_oracle_and_eager_compile_jit(radius):
+    torch.manual_seed(184)
+    original = TransportPairTensorCore(radius, 0.02, deterministic_sampling=True)
+    native = NativeMatchTransportPairTensorCore(original)
+    wrapper = OpaqueCompiledTransport(native, backend="eager")
+    values = (
+        torch.randn(2, 8, 12, 12),
+        torch.randn(2, 8, 12, 12),
+        torch.rand(2, 1, 12, 12),
+        torch.rand(2, 1, 12, 12),
+    )
+    with torch.inference_mode():
+        traced = cast(torch.jit.ScriptModule, torch.jit.trace(wrapper, values, check_trace=False))
+        for inputs in (values, tuple(value * 0 for value in values)):
+            expected, actual = original(*inputs), traced(*inputs)
+            assert all(torch.equal(a, b) for a, b in zip(actual, expected, strict=True))
+    diagnostics = wrapper.diagnostics()
+    assert (
+        diagnostics["native_match_binding"]["boundary"] == "ORIGINAL_ATEN_LOCAL_CORRELATION_MATCH"
+    )
+    assert len(diagnostics["native_match_binding"]["original_match_sha256"]) == 64
+    assert diagnostics["native_match_dispatcher_calls_process"] > 0
+    assert diagnostics["native_log_binding"] is None
+
+
+def test_native_match_custom_operator_schema_fake_metadata_and_original_guards():
+    from e_jepa_ttc.models.local_transport import local_correlation_match
+
+    operation = torch.ops.train40_compiled_pipeline.native_match.default
+    with torch.inference_mode():
+        for previous in (torch.randn(2, 4, 8, 8), torch.randn(2, 4, 8, 8).transpose(-1, -2)):
+            current = previous.flip(-1)
+            checked = torch.library.opcheck(
+                operation,
+                (previous, current, 1, 0.02),
+                test_utils=("test_schema", "test_faketensor"),
+            )
+            assert all(value == "SUCCESS" for value in checked.values())
+            original = local_correlation_match(previous, current, radius=1, temperature=0.02)
+            actual = operation(previous, current, 1, 0.02)
+            assert actual[-1].dtype == torch.bool
+            assert all(
+                torch.equal(value, getattr(original, name))
+                for value, name in zip(
+                    actual, ("dx", "dy", "confidence_margin", "entropy", "valid"), strict=True
+                )
+            )
+        with pytest.raises(ValueError, match="radius is too large"):
+            operation(previous, current, 4, 0.02)
+        with pytest.raises(ValueError, match="temperature must be finite"):
+            operation(previous, current, 1, 0.0)
+        with pytest.raises(ValueError, match="FP32"):
+            operation(previous.double(), current.double(), 1, 0.02)
+
+
+def test_native_transport_boundaries_are_exclusive_and_do_not_change_parameters():
+    model = _model()
+    with pytest.raises(ValueError, match="only one native"):
+        attach_opaque_compiled_transport(model, native_log=True, native_match=True)
+    with pytest.raises(ValueError, match="only one native"):
+        CompiledTransportProducerRuntime({}, "cpu", native_log=True, native_match=True)
+    proposed = attach_opaque_compiled_transport(model, backend="eager", native_match=True)
+    assert all(a is b for a, b in zip(model.parameters(), proposed.parameters(), strict=True))
+    assert all(
+        torch.equal(value, proposed.state_dict()[name])
+        for name, value in model.state_dict().items()
+    )
+
+
+def _replay_prediction(value, object_id="roi_00"):
+    return {
+        "query_id": object_id,
+        "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": value,
+            "E_CTX_TRAIN40": value,
+            "R_CTX_TRAIN40": value,
+        },
+        "history_lengths": {"event": 4, "rgb": 5},
+        "rgb_available": True,
+        "rgb_unavailable_reason": "",
+    }
+
+
+def _explicit_replay_schedule():
+    return [
+        ("original", "initial_call", 0),
+        ("original", "warmup", 0),
+        ("compiled", "initial_call", 0),
+        ("compiled", "warmup", 0),
+        ("original", "measured", 0),
+        ("compiled", "measured", 0),
+        ("compiled", "measured", 1),
+        ("original", "measured", 1),
+    ]
+
+
+@pytest.mark.parametrize("failed_stage", ["initial_call", "warmup", "measured"])
+def test_replay_parity_rejects_early_failure_even_when_final_replay_is_correct(failed_stage):
+    from operational.train40_runtime.measurement import prediction_parity
+    from scripts.benchmark_train40_compiled_pipeline import (
+        capture_replay_parity,
+        replay_parity_coverage,
+    )
+
+    shared = torch.ones(1)
+    expected = [_replay_prediction(1.0)]
+    receipts = []
+    for name, stage, iteration in _explicit_replay_schedule():
+        shared.fill_(
+            2.0 if name == "compiled" and stage == failed_stage and iteration == 0 else 1.0
+        )
+
+        def predict(owned):
+            # Simulate graph-owned storage being overwritten after the snapshot.
+            shared.fill_(1.0)
+            assert owned[0][0].data_ptr() != shared.data_ptr()
+            assert owned[1][0] == (None, None)
+            return [_replay_prediction(float(owned[0][0][0]))]
+
+        receipts.append(
+            capture_replay_parity(
+                ((shared, shared), [(None, None)]),
+                variant=name,
+                stage=stage,
+                iteration=iteration,
+                predict=predict,
+                compare_ttc=lambda actual: prediction_parity(expected, actual, ["roi_00"]),
+                compare_features=lambda owned: {"passed": True},
+            )
+        )
+    assert receipts[-1]["parity"]["passed"]
+    assert receipts[-2]["parity"]["passed"]
+    coverage = replay_parity_coverage(receipts, ["original", "compiled"], warmup=1, repeats=2)
+    assert coverage["schedule_exact"]
+    assert coverage["observed_calls"] == coverage["expected_calls"] == 8
+    assert not coverage["passed"] and not coverage["all_ttc_passed"]
+
+
+@pytest.mark.parametrize("damage", ["missing", "duplicate", "reordered"])
+def test_replay_parity_requires_exact_warmup_and_repeat_coverage(damage):
+    from scripts.benchmark_train40_compiled_pipeline import replay_parity_coverage
+
+    receipts = [
+        {
+            "variant": name,
+            "stage": stage,
+            "iteration": iteration,
+            "parity": {"passed": True},
+            "feature_parity": {"passed": True},
+        }
+        for name, stage, iteration in _explicit_replay_schedule()
+    ]
+    assert replay_parity_coverage(receipts, ["original", "compiled"], warmup=1, repeats=2)["passed"]
+    if damage == "missing":
+        del receipts[0]
+    elif damage == "duplicate":
+        receipts.append(receipts[-1])
+    else:
+        receipts[0], receipts[1] = receipts[1], receipts[0]
+    assert not replay_parity_coverage(receipts, ["original", "compiled"], warmup=1, repeats=2)[
+        "passed"
+    ]
+
+
+def test_replay_parity_checks_first_call_again_after_object_shape_transition():
+    from operational.train40_runtime.measurement import prediction_parity
+    from scripts.benchmark_train40_compiled_pipeline import (
+        capture_replay_parity,
+        replay_parity_coverage,
+    )
+
+    gates = []
+    for objects in (1, 2):
+        ids = [f"roi_{index:02}" for index in range(objects)]
+        expected = [_replay_prediction(1.0, object_id) for object_id in ids]
+        receipts = []
+        for name, stage, iteration in _explicit_replay_schedule():
+            values = torch.ones(objects)
+            if objects == 2 and name == "compiled" and stage == "initial_call":
+                values[-1] = 2.0
+            receipts.append(
+                capture_replay_parity(
+                    ((values, values), []),
+                    variant=name,
+                    stage=stage,
+                    iteration=iteration,
+                    predict=lambda owned, ids=ids: [
+                        _replay_prediction(float(value), object_id)
+                        for value, object_id in zip(owned[0][0], ids, strict=True)
+                    ],
+                    compare_ttc=lambda actual, expected=expected, ids=ids: prediction_parity(
+                        expected, actual, ids
+                    ),
+                    compare_features=lambda owned: {"passed": True},
+                )
+            )
+        gates.append(
+            replay_parity_coverage(receipts, ["original", "compiled"], warmup=1, repeats=2)
+        )
+    assert gates[0]["passed"]
+    assert gates[1]["schedule_exact"] and not gates[1]["passed"]
+    assert not gates[1]["first_calls_passed"]
