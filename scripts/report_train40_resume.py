@@ -29,6 +29,10 @@ DEFAULT_SOURCE = ROOT / "artifacts/train40_runtime_resume_20261027"
 DEFAULT_OUTPUT = ROOT / "docs/train40_runtime_resume_20261027/RESULTS_GENERATED.md"
 MAX_RECEIPT_BYTES = 8_000_000
 COMPILED_PIPELINE_SCOPE = "PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT"
+EXACT_TRANSPORT_SCOPE = "PREPARED_ONE_OBJECT_EXACT_TRANSPORT_ALL_EXPLICIT_CALLS_NOT_COMPLETE_UPDATE"
+IMMUTABLE_ADMISSION_SCOPE = (
+    "IMMUTABLE_RGB_CACHE_INPUT_ADMISSION_FIXED_QUERY_REPEATS_NO_ARRIVAL_TIMING"
+)
 FAMILIES = (
     "producers",
     "prefix",
@@ -37,6 +41,8 @@ FAMILIES = (
     "transport",
     "encoders",
     "compiled_pipeline",
+    "exact_transport",
+    "immutable_rgb_admission",
     "rgb_uint8",
     "rgb_exact",
     "scheduler",
@@ -51,6 +57,12 @@ SCOPES = {
     "encoders": "Encoders de endpoints preparados; excluye transporte, contexto y TTC.",
     "compiled_pipeline": "Productores con transporte compilado e inputs GPU preparados; "
     "la paridad TTC se comprueba fuera del reloj. Excluye RAW, H2D y contexto del tiempo.",
+    "exact_transport": "Transporte reutilizado con inputs de un objeto preparados en GPU. "
+    "Valida todas las llamadas explícitas y features exactas, con paridad/contexto fuera del "
+    "reloj. Excluye RAW, H2D y contexto; su ahorro no es una reducción de latencia completa.",
+    "immutable_rgb_admission": "Admisión de inputs y caché RGB inmutable a consulta fija. "
+    "Incluye MISS y HIT comprobados contra RAW independiente; el sellado precede al reloj "
+    "interno. No se incluyen sus tiempos en comparaciones de actualizaciones completas.",
     "rgb_uint8": "Preparación RGB sintética; incluye el tramo declarado en cada recibo. "
     "No incluye modelos ni TTC. Bytes propuestos no equivalen a transferencias ejecutadas.",
     "rgb_exact": "RAW RGB disponible en CPU a crops exactos preparados en el dispositivo; "
@@ -263,6 +275,16 @@ class Sources:
                 family = "paced"
             if result.get("schema") == "train40_rgb_pil_exact_probe_v1":
                 family = "rgb_exact"
+            if result.get("scope") == EXACT_TRANSPORT_SCOPE:
+                family = "exact_transport"
+            if result.get("scope") == IMMUTABLE_ADMISSION_SCOPE:
+                family = "immutable_rgb_admission"
+                result = {
+                    **result,
+                    "case_receipts": [
+                        self.read(case) for case in sorted(path.parent.glob("case_*.json"))
+                    ],
+                }
             receipts.append(Receipt(relative.as_posix(), result, binding, family))
         return receipts
 
@@ -581,6 +603,74 @@ def paced_section(receipt: Receipt) -> list[str]:
     return lines
 
 
+def immutable_admission_section(receipt: Receipt) -> list[str]:
+    """Report actual-input admission without rebranding instrumented times as arrival latency."""
+    result = receipt.result
+    lines = [
+        f"### `{receipt.relative}`",
+        "",
+        f"Estado: **{cell(receipt.status)}**. Alcance: `{cell(receipt.scope)}`.",
+        "",
+    ]
+    lines += table(
+        ["Recibo de admisión", "Valor"],
+        [
+            [name, result.get(name)]
+            for name in (
+                "passed",
+                "expected_updates",
+                "validated_updates",
+                "schedule_exact",
+                "rgb_cache_hit_updates",
+                "rgb_cache_miss_updates",
+            )
+        ]
+        + [["preservación", preservation(result)]],
+    )
+    rows = []
+    for case in result.get("case_receipts", []):
+        for update in mapping(case).get("updates", []):
+            row = mapping(update)
+            rows.append(
+                [
+                    row.get("index"),
+                    row.get("object_count"),
+                    row.get("repetition"),
+                    mapping(row.get("rgb_feature_cache")).get("status"),
+                    mapping(row.get("immutable_rgb_history")).get("all_raw_frames_exact"),
+                    mapping(row.get("actual_rgb_producer_input_attestation")).get("passed"),
+                    row.get("same_inputs_as_tensor_checked_repeat"),
+                    mapping(row.get("parity")).get("passed"),
+                    mapping(row.get("preserved_primary_parity")).get("passed"),
+                ]
+            )
+    if rows:
+        lines += table(
+            [
+                "Índice",
+                "ROI",
+                "Repetición",
+                "Caché",
+                "RAW exacto",
+                "Argumentos device/HIT",
+                "Procedencia features",
+                "TTC",
+                "Primaria",
+            ],
+            rows,
+        )
+    lines += [
+        "Los tiempos internos instrumentados se conservan en el JSON original y no se "
+        "presentan como latencia de llegada ni como evidencia de 50 Hz. Las repeticiones "
+        "usan la misma consulta; no validan por sí solas una secuencia paced.",
+        "",
+    ]
+    for name in ("error", "cleanup_errors"):
+        if result.get(name):
+            lines += [f"{name}: `{cell(result[name])}`", ""]
+    return lines
+
+
 def rgb_exact_section(receipt: Receipt) -> list[str]:
     """Retain cold RGB trials and their exact preprocessing-only boundary."""
     result, binding = receipt.result, receipt.binding
@@ -697,7 +787,7 @@ def run_section(receipt: Receipt) -> list[str]:
     rows, extra = [], []
     for index, record in enumerate(records):
         label = record.get("backend", record.get("model", record.get("variant", index)))
-        if receipt.family == "compiled_pipeline":
+        if receipt.family in {"compiled_pipeline", "exact_transport"}:
             label = f"índice={record.get('index', index)}"
         if receipt.family == "scheduler":
             label = record.get("strategy", index)
@@ -730,7 +820,7 @@ def run_section(receipt: Receipt) -> list[str]:
                 route,
                 timing,
                 compiled_route_parity(record, route)
-                if receipt.family == "compiled_pipeline"
+                if receipt.family in {"compiled_pipeline", "exact_transport"}
                 else gate,
             )
             for route, timing in measured
@@ -779,7 +869,7 @@ def run_section(receipt: Receipt) -> list[str]:
             "de productores, frente a la referencia por objeto del probe.",
             "",
         ]
-    if receipt.family == "compiled_pipeline":
+    if receipt.family in {"compiled_pipeline", "exact_transport"}:
         lines += [
             "La columna de paridad corresponde a las tres salidas TTC por ruta. "
             "all-replays incluye llamadas iniciales, warmup y cada repetición registrada; "
@@ -817,6 +907,63 @@ def run_section(receipt: Receipt) -> list[str]:
                 ],
                 coverage_rows,
             )
+    if receipt.family == "exact_transport":
+        feature_rows = []
+        for record in records:
+            calls = record.get("replay_parity", [])
+            if not isinstance(calls, list) or any(not isinstance(call, dict) for call in calls):
+                raise ValueError("Malformed exact-transport replay population")
+            for variant in sorted({cell(call.get("variant")) for call in calls}):
+                selected = [call for call in calls if cell(call.get("variant")) == variant]
+                exact = sum(
+                    mapping(call.get("feature_parity")).get("passed") is True
+                    and mapping(call.get("feature_parity")).get("exact") is True
+                    and set(mapping(mapping(call.get("feature_parity")).get("features")))
+                    == {"event_raw", "event_experts", "rgb_raw", "rgb_experts"}
+                    and all(
+                        mapping(feature).get("passed") is True
+                        and mapping(feature).get("exact") is True
+                        for feature in mapping(
+                            mapping(call.get("feature_parity")).get("features")
+                        ).values()
+                    )
+                    for call in selected
+                )
+                feature_rows.append(
+                    [
+                        record.get("index"),
+                        variant,
+                        len(selected),
+                        exact,
+                        bool(selected) and exact == len(selected),
+                    ]
+                )
+        lines += table(
+            ["Índice", "Ruta", "Llamadas explícitas", "Features exactas", "Todas exactas"],
+            feature_rows,
+        )
+        lines += table(
+            ["Gate preparado declarado", "Valor"],
+            [
+                [name, result.get(name)]
+                for name in (
+                    "all_replay_gates_passed",
+                    "query_coverage_exact",
+                    "weights_unchanged",
+                    "normalizers_unchanged",
+                    "variant_weights_equal_original",
+                    "complete_update_admitted",
+                    "sustained_50hz_demonstrated",
+                    "two_object_admitted",
+                )
+            ],
+        )
+        lines += [
+            "Cadencia de validación: " + cell(result.get("measurement_cadence")),
+            "",
+            "El ahorro observado en este reloj preparado no se extrapola al servicio completo.",
+            "",
+        ]
     if receipt.family == "rgb_uint8":
         lines += table(
             [
@@ -863,6 +1010,12 @@ def compact_overview(receipts: list[Receipt]) -> list[str]:
                 )
                 if isinstance(count, int) and not isinstance(count, bool):
                     counts.append(count)
+            if item.family == "immutable_rgb_admission":
+                for case in item.result.get("case_receipts", []):
+                    for row in mapping(case).get("updates", []):
+                        count = mapping(row).get("object_count")
+                        if isinstance(count, int) and not isinstance(count, bool):
+                            counts.append(count)
             records = item.result.get("records", item.result.get("results", []))
             if isinstance(records, list):
                 counts.extend(
@@ -953,6 +1106,8 @@ def generate(source: Path, output: Path) -> dict[str, Any]:
                 lines += paced_section(receipt)
             elif family == "rgb_exact":
                 lines += rgb_exact_section(receipt)
+            elif family == "immutable_rgb_admission":
+                lines += immutable_admission_section(receipt)
             else:
                 lines += run_section(receipt)
     unknown = [r for r in receipts if r.family not in {"baseline", *FAMILIES}]
@@ -972,6 +1127,11 @@ def generate(source: Path, output: Path) -> dict[str, Any]:
         "source_root": str(sources.root),
         "generator": str(Path(__file__).relative_to(ROOT)),
         "generator_sha256": sha(Path(__file__).read_bytes()),
+        "generator_dependency_sha256": {
+            "operational/train40_runtime/paced_statistics.py": sha(
+                (ROOT / "operational/train40_runtime/paced_statistics.py").read_bytes()
+            )
+        },
         "report": output.name,
         "report_sha256": sha(encoded),
         "sources": list(sources.files.values()),

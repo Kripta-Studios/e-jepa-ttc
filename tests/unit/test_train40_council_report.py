@@ -355,3 +355,84 @@ def test_exact_rgb_preserves_cold_failure_and_never_labels_it_ttc(tmp_path):
     assert "| 553 | 1 | tras primación | causal_prefix_rebuilt | 8 | — | sí |" in text
     assert "No acredita paridad TTC" in text
     assert "| modelos o normalizadores cargados | no |" in text
+
+
+def test_immutable_admission_never_renders_internal_times_as_complete_latency(tmp_path):
+    source = tmp_path / "source"
+    write_receipt(
+        source,
+        "multiobject/frozen/summary.json",
+        {
+            "scope": report.IMMUTABLE_ADMISSION_SCOPE,
+            "status": "FAILED",
+            "passed": False,
+            "expected_updates": 2,
+            "validated_updates": 2,
+            "schedule_exact": True,
+            "rgb_cache_hit_updates": 1,
+            "rgb_cache_miss_updates": 1,
+            "latency_by_count_ms": {"1": timing(9876.54321)},
+        },
+    )
+    case_path = write_receipt(
+        source,
+        "multiobject/frozen/case_01_00000.json",
+        {
+            "updates": [
+                {
+                    "index": 0,
+                    "object_count": 1,
+                    "repetition": 0,
+                    "rgb_feature_cache": {"status": "MISS"},
+                    "immutable_rgb_history": {"all_raw_frames_exact": True},
+                    "actual_rgb_producer_input_attestation": {"passed": False},
+                    "same_inputs_as_tensor_checked_repeat": False,
+                    "parity": {"passed": True},
+                    "preserved_primary_parity": {"passed": True},
+                }
+            ]
+        },
+    )
+    output = tmp_path / "report.md"
+    manifest = report.generate(source, output)
+    text = output.read_text(encoding="utf-8")
+    assert report.Sources(source).discover()[0].family == "immutable_rgb_admission"
+    assert "| 0 | 1 | 0 | MISS | sí | no | no | sí | sí |" in text
+    assert "9876.54321" not in text
+    assert "RAW disponible → último TTC" not in text
+    assert any(item["sha256"] == report.sha(case_path.read_bytes()) for item in manifest["sources"])
+
+
+def test_exact_transport_preserves_first_feature_failure_and_prepared_scope(tmp_path):
+    record = compiled_record()
+    for call in record["replay_parity"]:
+        call["parity"] = {"passed": True}
+        call["feature_parity"] = {
+            "passed": True,
+            "exact": True,
+            "features": {
+                key: {"passed": True, "exact": True}
+                for key in ("event_raw", "event_experts", "rgb_raw", "rgb_experts")
+            },
+        }
+    record["replay_parity"][0]["feature_parity"]["features"]["event_raw"]["exact"] = False
+    write_receipt(
+        tmp_path,
+        "arbitrary_folder/summary.json",
+        {
+            "scope": report.EXACT_TRANSPORT_SCOPE,
+            "status": "FAILED",
+            "records": [record],
+            "all_replay_gates_passed": False,
+            "complete_update_admitted": False,
+            "sustained_50hz_demonstrated": False,
+            "two_object_admitted": False,
+        },
+    )
+    receipt = report.Sources(tmp_path).discover()[0]
+    assert receipt.family == "exact_transport"
+    text = "\n".join(report.run_section(receipt))
+    assert "sí [all-replays; 2/2]" in text
+    assert "| 488 | compiled_transport_graph | 2 | 1 | no |" in text
+    assert "| complete_update_admitted | no |" in text
+    assert "no se extrapola al servicio completo" in text
