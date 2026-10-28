@@ -1,0 +1,92 @@
+{
+  "experiment_id": "compiled_gpu_v1",
+  "run_name": "train40_compiled_integer_prefix_selector",
+  "scope": "RAW_CPU_PACKET_TO_ALL_EVENT_TENSORS_NO_MODELS_OR_TTC",
+  "data": {
+    "synthetic": false,
+    "manifest_sha256": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31",
+    "query_id": "EXTENDED:CPNAO-medium:20200738",
+    "index": 553,
+    "raw_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+    "extra_rois": "SYNTHETIC_CAPACITY_REGIONS_NOT_ANNOTATED_TRACKS"
+  },
+  "sources": {
+    "scripts\\benchmark_train40_compiled_prefix.py": "4bc59b1ac2714c79529c771b61bd554009e17f2300ec2eba2c162c8161c1e00e",
+    "scripts\\benchmark_train40_prefix.py": "ed70d21229e0c4842d1bba22e9b1120ff1f8f8285501e950c65c048ac50bfc32",
+    "scripts\\benchmark_train40_transport.py": "122f8954567bdb43acd04363e055314e57e1b4d3377254125a74580d19064b20",
+    "operational\\train40_runtime\\compiled_prefix.py": "591a7de8f1ec8be28bd1c0183d3ebc623d3fb8df1e3e8e4123f2ba11a90c6cb6",
+    "operational\\train40_runtime\\temporal_prefix.py": "0d9c55068f2068150e4cc61d21ae0ecae06842817dd6ba28ab1389e7a6bd3115",
+    "operational\\train40_runtime\\integral.py": "cb4fba28675cde66dfbab6e191a179317924bc3113594cffff361f81b53c6680",
+    "operational\\train40_runtime\\normalization.py": "2c7dc863d525338fb703085d221cd8d1d0b1e7432bee39bdb34ce9c7de1fa816"
+  },
+  "source_commit": "35306554609113dd7a4abfec714e65a2ccb52290",
+  "git_commit": "35306554609113dd7a4abfec714e65a2ccb52290",
+  "config": {
+    "output": "artifacts\\train40_runtime_resume_20261027\\prefix\\compiled_gpu_v1",
+    "manifest": "artifacts\\final_train40_transfer_20261027\\QUERY_MANIFEST.json",
+    "index": 553,
+    "objects": [
+      1,
+      20
+    ],
+    "steps": 5,
+    "warmup": 2,
+    "device": "cuda",
+    "width": 1280,
+    "height": 720,
+    "roi_size": 128,
+    "roi_batch_size": 4,
+    "max_packet_events": 2000000,
+    "max_reference_bytes": 2147483648,
+    "normalization": "topk",
+    "graphs": true,
+    "compile_backend": "inductor",
+    "compiler_deps": "artifacts\\train40_runtime_20261027\\compiler_probe\\deps",
+    "synthetic": false,
+    "packet_events": 200
+  },
+  "config_hash": "d789d9d4dedbd4763b5da97439b501d3b1410a2fcdc60d45d8ffd97deb776518",
+  "seed": 7,
+  "dataset_manifest_hash": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31",
+  "split_version": null,
+  "host": "DESKTOP-2N393IP",
+  "start_time": "2026-10-27T23:30:41.626595+00:00",
+  "checkpoint_path": null,
+  "metrics_path": "artifacts\\train40_runtime_resume_20261027\\prefix\\compiled_gpu_v1\\summary.json",
+  "python": "3.11.15",
+  "torch": "2.11.0+cu128",
+  "cuda": "12.8",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "normalization": "topk",
+  "graphs": true,
+  "compile_backend": "inductor",
+  "source_timestamps_us": [
+    19460738,
+    20060738,
+    20200738
+  ],
+  "objects": [
+    1,
+    20
+  ],
+  "measured_updates": 5,
+  "warmup_updates": 2,
+  "reference_host_bytes": 1387266048,
+  "packet_events": [
+    487963,
+    520823,
+    508439,
+    500546,
+    442881,
+    506210,
+    510778
+  ],
+  "input_sha256": {
+    "x": "a061dde6b5ea190849c4cbc5ad111aea53eddced9fa4fda0b92bfd73681c66c5",
+    "y": "69b6cf9b4a9642c8c915dcd02b7d93de18c9fb64a63225720da23608fe3ebc13",
+    "t": "a62902f389f282549089619a5090e5b58ed81cf1d6c22d4aa7eeedb361467164",
+    "p": "6a7a227f496bc027dcf9b2d9e3646b084a3168cf9c58f20b226ec6fdc6412f1c"
+  },
+  "target_50hz_demonstrated": false
+}

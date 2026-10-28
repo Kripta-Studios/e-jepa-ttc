@@ -1,0 +1,10 @@
+{
+  "files": {
+    "benchmark_producer_event_no_reuse.py.txt": "66e8ec576b721489b99a13b64292b10feb77ea3fd9f1a3237a70db63aa331aed",
+    "benchmark_producer_original_probe.py.txt": "df632de8ac4271f7c74c5fde0ab3045cb4bbe5c30d61b2463565291bfd710701",
+    "producers_after_dedicated_capture_stream.py.txt": "1bab7e7bdb6c386dacfd0c5a62835174777e7be5d1891732f5c086fd628c6348",
+    "producers_before_dedicated_capture_stream.py.txt": "756d564d0391299788d6ed03531f45b25ebe413fbf21e9eb465fb3f1725da8b9",
+    "producers_before_modality_reuse.py.txt": "069d82ba3f3e58172176dca7d389496c9cd0e2d2663c02bbd9481a41ae98b380"
+  },
+  "identity_checks": "Snapshots reconstructed by inverse patches and matched against the original execution bindings; current stream-fix snapshot copied directly"
+}

@@ -1,0 +1,1016 @@
+{
+  "all_cases_exact": true,
+  "cases": [
+    {
+      "calculated_bytes": {
+        "expanded_delta_fp32": 40,
+        "expanded_fp32_sensor": 2949120,
+        "shared_raw_frames_uint8": 907200,
+        "unique_uint8_crops": 344064
+      },
+      "distinct_raw_frames": 7,
+      "distinct_roi_frame_crops": 7,
+      "history_observations": 5,
+      "initial_receipt": {
+        "assemble_enqueue_host_seconds": 0.0017056000069715083,
+        "baseline_expanded_fp32_bytes": 2949120,
+        "candidate_h2d_bytes": 344224,
+        "crop_host_seconds": 0.002330099989194423,
+        "delta_bytes": 40,
+        "expanded_crop_count": 15,
+        "h2d_bytes": 0,
+        "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+        "mapping_bytes": 120,
+        "mapping_host_seconds": 0.00010030000703409314,
+        "pack_host_seconds": 0.002539799956139177,
+        "raw_history_bytes": 907200,
+        "shared_pil_images": 0,
+        "unique_crop_bytes": 344064,
+        "unique_crop_count": 7,
+        "validation_and_pil_host_seconds": 0.00010599999222904444,
+        "wait_previous_host_seconds": 2.8999638743698597e-06
+      },
+      "measured_receipts": [
+        {
+          "assemble_enqueue_host_seconds": 0.0008428000146523118,
+          "baseline_expanded_fp32_bytes": 2949120,
+          "candidate_h2d_bytes": 344224,
+          "crop_host_seconds": 0.002567299990914762,
+          "delta_bytes": 40,
+          "expanded_crop_count": 15,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 120,
+          "mapping_host_seconds": 9.819999104365706e-05,
+          "pack_host_seconds": 0.002756199974101037,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 344064,
+          "unique_crop_count": 7,
+          "validation_and_pil_host_seconds": 8.929998148232698e-05,
+          "wait_previous_host_seconds": 1.100008375942707e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0008422000100836158,
+          "baseline_expanded_fp32_bytes": 2949120,
+          "candidate_h2d_bytes": 344224,
+          "crop_host_seconds": 0.0025942999636754394,
+          "delta_bytes": 40,
+          "expanded_crop_count": 15,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 120,
+          "mapping_host_seconds": 7.98000255599618e-05,
+          "pack_host_seconds": 0.002756599977146834,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 344064,
+          "unique_crop_count": 7,
+          "validation_and_pil_host_seconds": 8.120003622025251e-05,
+          "wait_previous_host_seconds": 9.999494068324566e-07
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0008108000038191676,
+          "baseline_expanded_fp32_bytes": 2949120,
+          "candidate_h2d_bytes": 344224,
+          "crop_host_seconds": 0.0025506000383757055,
+          "delta_bytes": 40,
+          "expanded_crop_count": 15,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 120,
+          "mapping_host_seconds": 7.720000576227903e-05,
+          "pack_host_seconds": 0.0027138000004924834,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 344064,
+          "unique_crop_count": 7,
+          "validation_and_pil_host_seconds": 8.479994721710682e-05,
+          "wait_previous_host_seconds": 9.00006853044033e-07
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0008152000373229384,
+          "baseline_expanded_fp32_bytes": 2949120,
+          "candidate_h2d_bytes": 344224,
+          "crop_host_seconds": 0.0025647999718785286,
+          "delta_bytes": 40,
+          "expanded_crop_count": 15,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 120,
+          "mapping_host_seconds": 7.920002099126577e-05,
+          "pack_host_seconds": 0.0027221000054851174,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 344064,
+          "unique_crop_count": 7,
+          "validation_and_pil_host_seconds": 7.680000271648169e-05,
+          "wait_previous_host_seconds": 9.00006853044033e-07
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0008467000443488359,
+          "baseline_expanded_fp32_bytes": 2949120,
+          "candidate_h2d_bytes": 344224,
+          "crop_host_seconds": 0.002642699982970953,
+          "delta_bytes": 40,
+          "expanded_crop_count": 15,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 120,
+          "mapping_host_seconds": 8.09000339359045e-05,
+          "pack_host_seconds": 0.0028030999819748104,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 344064,
+          "unique_crop_count": 7,
+          "validation_and_pil_host_seconds": 7.82000133767724e-05,
+          "wait_previous_host_seconds": 9.999494068324566e-07
+        }
+      ],
+      "objects": 1,
+      "original_host_expanded_preparation_latency": {
+        "count": 5,
+        "max_ms": 3.5352,
+        "mean_ms": 3.3266800000000005,
+        "min_ms": 3.2246,
+        "p50_ms": 3.2749,
+        "p95_ms": 3.49928,
+        "p99_ms": 3.528016,
+        "quantile_method": "linear"
+      },
+      "original_host_expanded_preparation_wall_ms": [
+        3.2246,
+        3.2431,
+        3.5352,
+        3.2749,
+        3.3556
+      ],
+      "parity": {
+        "byte_contract": {
+          "expected": {
+            "baseline_expanded_fp32_bytes": 2949120,
+            "candidate_h2d_bytes": 344224,
+            "device_buffer_bytes": 6046880,
+            "host_buffer_bytes": 344224,
+            "unique_crop_bytes": 344064
+          },
+          "observed": {
+            "baseline_expanded_fp32_bytes": 2949120,
+            "candidate_h2d_bytes": 344224,
+            "device_buffer_bytes": 6046880,
+            "host_buffer_bytes": 344224,
+            "unique_crop_bytes": 344064
+          },
+          "passed": true
+        },
+        "delta": {
+          "candidate_dtype": "float32",
+          "candidate_shape": [
+            5,
+            2
+          ],
+          "different_values": 0,
+          "exact": true,
+          "max_abs_error": 0.0,
+          "reference_dtype": "float32",
+          "reference_shape": [
+            5,
+            2
+          ]
+        },
+        "metadata_exact": true,
+        "original_vs_roi_first_exact": true,
+        "passed": true,
+        "present_indices_exact": true,
+        "sensor": {
+          "candidate_dtype": "float32",
+          "candidate_shape": [
+            5,
+            3,
+            3,
+            128,
+            128
+          ],
+          "different_values": 0,
+          "exact": true,
+          "max_abs_error": 0.0,
+          "reference_dtype": "float32",
+          "reference_shape": [
+            5,
+            3,
+            3,
+            128,
+            128
+          ]
+        }
+      },
+      "raw_frame_shape": [
+        180,
+        240,
+        3
+      ],
+      "reference_preparation_options": {
+        "candidate_matches_crop_options": true,
+        "comparison_scope": "SAME_INPUTS_AND_OUTPUTS_NOT_TRANSPORT_ISOLATION",
+        "crop_path": "ROI_FIRST_NORMALIZED_CROP",
+        "crop_workers": 1,
+        "shared_images": false
+      },
+      "rgb_preparation_latency": {
+        "count": 5,
+        "max_ms": 3.7044,
+        "mean_ms": 3.6377200000000003,
+        "min_ms": 3.5764,
+        "p50_ms": 3.6551,
+        "p95_ms": 3.696,
+        "p99_ms": 3.7027200000000002,
+        "quantile_method": "linear"
+      },
+      "rgb_preparation_wall_ms": [
+        3.6624,
+        3.6551,
+        3.5764,
+        3.5903,
+        3.7044
+      ],
+      "runtime_allocation_ms_excluded": 0.8761,
+      "runtime_allocation_receipt": {
+        "crop_workers": 1,
+        "device": "cpu",
+        "device_buffer_bytes": 6046880,
+        "device_buffers": {
+          "delta": {
+            "bytes": 40,
+            "dtype": "torch.float32",
+            "shape": [
+              10
+            ]
+          },
+          "expanded_fp32": {
+            "bytes": 2949120,
+            "dtype": "torch.float32",
+            "shape": [
+              15,
+              3,
+              128,
+              128
+            ]
+          },
+          "lut": {
+            "bytes": 1024,
+            "dtype": "torch.float32",
+            "shape": [
+              256
+            ]
+          },
+          "mapping": {
+            "bytes": 120,
+            "dtype": "torch.int64",
+            "shape": [
+              15
+            ]
+          },
+          "pixel_indices": {
+            "bytes": 1376256,
+            "dtype": "torch.int32",
+            "shape": [
+              7,
+              3,
+              128,
+              128
+            ]
+          },
+          "unique_fp32": {
+            "bytes": 1376256,
+            "dtype": "torch.float32",
+            "shape": [
+              7,
+              3,
+              128,
+              128
+            ]
+          },
+          "unique_uint8": {
+            "bytes": 344064,
+            "dtype": "torch.uint8",
+            "shape": [
+              7,
+              3,
+              128,
+              128
+            ]
+          }
+        },
+        "host_buffer_bytes": 344224,
+        "host_pinned": false,
+        "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+        "max_frames": 7,
+        "max_history": 5,
+        "max_objects": 1,
+        "max_raw_history_bytes": 134217728
+      },
+      "steps": 3,
+      "synthetic_input_sha256": "b697caabc74675315b2cfe80359b7b8c14065c56e88645ac89cd82dc30a66aa0"
+    },
+    {
+      "calculated_bytes": {
+        "expanded_delta_fp32": 80,
+        "expanded_fp32_sensor": 5898240,
+        "shared_raw_frames_uint8": 907200,
+        "unique_uint8_crops": 688128
+      },
+      "distinct_raw_frames": 7,
+      "distinct_roi_frame_crops": 14,
+      "history_observations": 5,
+      "initial_receipt": {
+        "assemble_enqueue_host_seconds": 0.0025641999673098326,
+        "baseline_expanded_fp32_bytes": 5898240,
+        "candidate_h2d_bytes": 688448,
+        "crop_host_seconds": 0.0053251999779604375,
+        "delta_bytes": 80,
+        "expanded_crop_count": 30,
+        "h2d_bytes": 0,
+        "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+        "mapping_bytes": 240,
+        "mapping_host_seconds": 0.00013870000839233398,
+        "pack_host_seconds": 0.005585199978668243,
+        "raw_history_bytes": 907200,
+        "shared_pil_images": 0,
+        "unique_crop_bytes": 688128,
+        "unique_crop_count": 14,
+        "validation_and_pil_host_seconds": 0.00011710001854225993,
+        "wait_previous_host_seconds": 3.89997148886323e-06
+      },
+      "measured_receipts": [
+        {
+          "assemble_enqueue_host_seconds": 0.0018401999841444194,
+          "baseline_expanded_fp32_bytes": 5898240,
+          "candidate_h2d_bytes": 688448,
+          "crop_host_seconds": 0.0055056000128388405,
+          "delta_bytes": 80,
+          "expanded_crop_count": 30,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 240,
+          "mapping_host_seconds": 0.0002874999772757292,
+          "pack_host_seconds": 0.0059130999725311995,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 688128,
+          "unique_crop_count": 14,
+          "validation_and_pil_host_seconds": 0.00011840002844110131,
+          "wait_previous_host_seconds": 1.1999509297311306e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0018310000305064023,
+          "baseline_expanded_fp32_bytes": 5898240,
+          "candidate_h2d_bytes": 688448,
+          "crop_host_seconds": 0.005729900032747537,
+          "delta_bytes": 80,
+          "expanded_crop_count": 30,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 240,
+          "mapping_host_seconds": 0.00013669999316334724,
+          "pack_host_seconds": 0.005986000003758818,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 688128,
+          "unique_crop_count": 14,
+          "validation_and_pil_host_seconds": 0.00011799996718764305,
+          "wait_previous_host_seconds": 1.00000761449337e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0018174000433646142,
+          "baseline_expanded_fp32_bytes": 5898240,
+          "candidate_h2d_bytes": 688448,
+          "crop_host_seconds": 0.005758199957199395,
+          "delta_bytes": 80,
+          "expanded_crop_count": 30,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 240,
+          "mapping_host_seconds": 0.00016270001651719213,
+          "pack_host_seconds": 0.006030199991073459,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 688128,
+          "unique_crop_count": 14,
+          "validation_and_pil_host_seconds": 0.00010790000669658184,
+          "wait_previous_host_seconds": 9.00006853044033e-07
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0019010999822057784,
+          "baseline_expanded_fp32_bytes": 5898240,
+          "candidate_h2d_bytes": 688448,
+          "crop_host_seconds": 0.00577819999307394,
+          "delta_bytes": 80,
+          "expanded_crop_count": 30,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 240,
+          "mapping_host_seconds": 0.00014840002404525876,
+          "pack_host_seconds": 0.006038599996827543,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 688128,
+          "unique_crop_count": 14,
+          "validation_and_pil_host_seconds": 0.00011069996980950236,
+          "wait_previous_host_seconds": 1.00000761449337e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.0019249000470153987,
+          "baseline_expanded_fp32_bytes": 5898240,
+          "candidate_h2d_bytes": 688448,
+          "crop_host_seconds": 0.006120299978647381,
+          "delta_bytes": 80,
+          "expanded_crop_count": 30,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 240,
+          "mapping_host_seconds": 0.00015540001913905144,
+          "pack_host_seconds": 0.0064005000167526305,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 688128,
+          "unique_crop_count": 14,
+          "validation_and_pil_host_seconds": 0.00012310000602155924,
+          "wait_previous_host_seconds": 1.100008375942707e-06
+        }
+      ],
+      "objects": 2,
+      "original_host_expanded_preparation_latency": {
+        "count": 5,
+        "max_ms": 9.0275,
+        "mean_ms": 8.728660000000001,
+        "min_ms": 8.3817,
+        "p50_ms": 8.7641,
+        "p95_ms": 8.99414,
+        "p99_ms": 9.020828,
+        "quantile_method": "linear"
+      },
+      "original_host_expanded_preparation_wall_ms": [
+        8.3817,
+        8.7641,
+        9.0275,
+        8.6093,
+        8.8607
+      ],
+      "parity": {
+        "byte_contract": {
+          "expected": {
+            "baseline_expanded_fp32_bytes": 5898240,
+            "candidate_h2d_bytes": 688448,
+            "device_buffer_bytes": 12092736,
+            "host_buffer_bytes": 688448,
+            "unique_crop_bytes": 688128
+          },
+          "observed": {
+            "baseline_expanded_fp32_bytes": 5898240,
+            "candidate_h2d_bytes": 688448,
+            "device_buffer_bytes": 12092736,
+            "host_buffer_bytes": 688448,
+            "unique_crop_bytes": 688128
+          },
+          "passed": true
+        },
+        "delta": {
+          "candidate_dtype": "float32",
+          "candidate_shape": [
+            10,
+            2
+          ],
+          "different_values": 0,
+          "exact": true,
+          "max_abs_error": 0.0,
+          "reference_dtype": "float32",
+          "reference_shape": [
+            10,
+            2
+          ]
+        },
+        "metadata_exact": true,
+        "original_vs_roi_first_exact": true,
+        "passed": true,
+        "present_indices_exact": true,
+        "sensor": {
+          "candidate_dtype": "float32",
+          "candidate_shape": [
+            10,
+            3,
+            3,
+            128,
+            128
+          ],
+          "different_values": 0,
+          "exact": true,
+          "max_abs_error": 0.0,
+          "reference_dtype": "float32",
+          "reference_shape": [
+            10,
+            3,
+            3,
+            128,
+            128
+          ]
+        }
+      },
+      "raw_frame_shape": [
+        180,
+        240,
+        3
+      ],
+      "reference_preparation_options": {
+        "candidate_matches_crop_options": true,
+        "comparison_scope": "SAME_INPUTS_AND_OUTPUTS_NOT_TRANSPORT_ISOLATION",
+        "crop_path": "ROI_FIRST_NORMALIZED_CROP",
+        "crop_workers": 1,
+        "shared_images": false
+      },
+      "rgb_preparation_latency": {
+        "count": 5,
+        "max_ms": 8.4095,
+        "mean_ms": 8.00892,
+        "min_ms": 7.8227,
+        "p50_ms": 7.9158,
+        "p95_ms": 8.32972,
+        "p99_ms": 8.393544,
+        "quantile_method": "linear"
+      },
+      "rgb_preparation_wall_ms": [
+        7.8227,
+        7.886,
+        7.9158,
+        8.0106,
+        8.4095
+      ],
+      "runtime_allocation_ms_excluded": 0.2055,
+      "runtime_allocation_receipt": {
+        "crop_workers": 1,
+        "device": "cpu",
+        "device_buffer_bytes": 12092736,
+        "device_buffers": {
+          "delta": {
+            "bytes": 80,
+            "dtype": "torch.float32",
+            "shape": [
+              20
+            ]
+          },
+          "expanded_fp32": {
+            "bytes": 5898240,
+            "dtype": "torch.float32",
+            "shape": [
+              30,
+              3,
+              128,
+              128
+            ]
+          },
+          "lut": {
+            "bytes": 1024,
+            "dtype": "torch.float32",
+            "shape": [
+              256
+            ]
+          },
+          "mapping": {
+            "bytes": 240,
+            "dtype": "torch.int64",
+            "shape": [
+              30
+            ]
+          },
+          "pixel_indices": {
+            "bytes": 2752512,
+            "dtype": "torch.int32",
+            "shape": [
+              14,
+              3,
+              128,
+              128
+            ]
+          },
+          "unique_fp32": {
+            "bytes": 2752512,
+            "dtype": "torch.float32",
+            "shape": [
+              14,
+              3,
+              128,
+              128
+            ]
+          },
+          "unique_uint8": {
+            "bytes": 688128,
+            "dtype": "torch.uint8",
+            "shape": [
+              14,
+              3,
+              128,
+              128
+            ]
+          }
+        },
+        "host_buffer_bytes": 688448,
+        "host_pinned": false,
+        "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+        "max_frames": 7,
+        "max_history": 5,
+        "max_objects": 2,
+        "max_raw_history_bytes": 134217728
+      },
+      "steps": 3,
+      "synthetic_input_sha256": "b5ece3e5b51f3295aa0cf433f820e50326f67520c09a4a30fd9cca8955941d8e"
+    },
+    {
+      "calculated_bytes": {
+        "expanded_delta_fp32": 800,
+        "expanded_fp32_sensor": 58982400,
+        "shared_raw_frames_uint8": 907200,
+        "unique_uint8_crops": 6881280
+      },
+      "distinct_raw_frames": 7,
+      "distinct_roi_frame_crops": 140,
+      "history_observations": 5,
+      "initial_receipt": {
+        "assemble_enqueue_host_seconds": 0.02270140004111454,
+        "baseline_expanded_fp32_bytes": 58982400,
+        "candidate_h2d_bytes": 6884480,
+        "crop_host_seconds": 0.039882399956695735,
+        "delta_bytes": 800,
+        "expanded_crop_count": 300,
+        "h2d_bytes": 0,
+        "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+        "mapping_bytes": 2400,
+        "mapping_host_seconds": 0.0008074000361375511,
+        "pack_host_seconds": 0.041022000019438565,
+        "raw_history_bytes": 907200,
+        "shared_pil_images": 0,
+        "unique_crop_bytes": 6881280,
+        "unique_crop_count": 140,
+        "validation_and_pil_host_seconds": 0.00032700004521757364,
+        "wait_previous_host_seconds": 4.699977580457926e-06
+      },
+      "measured_receipts": [
+        {
+          "assemble_enqueue_host_seconds": 0.01513159996829927,
+          "baseline_expanded_fp32_bytes": 58982400,
+          "candidate_h2d_bytes": 6884480,
+          "crop_host_seconds": 0.04134590004105121,
+          "delta_bytes": 800,
+          "expanded_crop_count": 300,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 2400,
+          "mapping_host_seconds": 0.0007648000027984381,
+          "pack_host_seconds": 0.04246760002570227,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 6881280,
+          "unique_crop_count": 140,
+          "validation_and_pil_host_seconds": 0.0003550999681465328,
+          "wait_previous_host_seconds": 1.100008375942707e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.014976899954490364,
+          "baseline_expanded_fp32_bytes": 58982400,
+          "candidate_h2d_bytes": 6884480,
+          "crop_host_seconds": 0.04277990001719445,
+          "delta_bytes": 800,
+          "expanded_crop_count": 300,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 2400,
+          "mapping_host_seconds": 0.0007295999675989151,
+          "pack_host_seconds": 0.04386490001343191,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 6881280,
+          "unique_crop_count": 140,
+          "validation_and_pil_host_seconds": 0.000354000017978251,
+          "wait_previous_host_seconds": 1.00000761449337e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.014734799973666668,
+          "baseline_expanded_fp32_bytes": 58982400,
+          "candidate_h2d_bytes": 6884480,
+          "crop_host_seconds": 0.040869399963412434,
+          "delta_bytes": 800,
+          "expanded_crop_count": 300,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 2400,
+          "mapping_host_seconds": 0.0007400000467896461,
+          "pack_host_seconds": 0.041973400046117604,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 6881280,
+          "unique_crop_count": 140,
+          "validation_and_pil_host_seconds": 0.0003622000222094357,
+          "wait_previous_host_seconds": 1.400010660290718e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.01506200002040714,
+          "baseline_expanded_fp32_bytes": 58982400,
+          "candidate_h2d_bytes": 6884480,
+          "crop_host_seconds": 0.04123160004382953,
+          "delta_bytes": 800,
+          "expanded_crop_count": 300,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 2400,
+          "mapping_host_seconds": 0.0007350000087171793,
+          "pack_host_seconds": 0.042308000032790005,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 6881280,
+          "unique_crop_count": 140,
+          "validation_and_pil_host_seconds": 0.00033979996806010604,
+          "wait_previous_host_seconds": 1.200009137392044e-06
+        },
+        {
+          "assemble_enqueue_host_seconds": 0.015287899994291365,
+          "baseline_expanded_fp32_bytes": 58982400,
+          "candidate_h2d_bytes": 6884480,
+          "crop_host_seconds": 0.04263600002741441,
+          "delta_bytes": 800,
+          "expanded_crop_count": 300,
+          "h2d_bytes": 0,
+          "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+          "mapping_bytes": 2400,
+          "mapping_host_seconds": 0.0007779999868944287,
+          "pack_host_seconds": 0.0437476999941282,
+          "raw_history_bytes": 907200,
+          "shared_pil_images": 0,
+          "unique_crop_bytes": 6881280,
+          "unique_crop_count": 140,
+          "validation_and_pil_host_seconds": 0.000331499963067472,
+          "wait_previous_host_seconds": 1.200009137392044e-06
+        }
+      ],
+      "objects": 20,
+      "original_host_expanded_preparation_latency": {
+        "count": 5,
+        "max_ms": 97.1272,
+        "mean_ms": 83.31460000000001,
+        "min_ms": 73.5816,
+        "p50_ms": 78.965,
+        "p95_ms": 95.83458,
+        "p99_ms": 96.86867600000001,
+        "quantile_method": "linear"
+      },
+      "original_host_expanded_preparation_wall_ms": [
+        73.5816,
+        76.2351,
+        78.965,
+        90.6641,
+        97.1272
+      ],
+      "parity": {
+        "byte_contract": {
+          "expected": {
+            "baseline_expanded_fp32_bytes": 58982400,
+            "candidate_h2d_bytes": 6884480,
+            "device_buffer_bytes": 120918144,
+            "host_buffer_bytes": 6884480,
+            "unique_crop_bytes": 6881280
+          },
+          "observed": {
+            "baseline_expanded_fp32_bytes": 58982400,
+            "candidate_h2d_bytes": 6884480,
+            "device_buffer_bytes": 120918144,
+            "host_buffer_bytes": 6884480,
+            "unique_crop_bytes": 6881280
+          },
+          "passed": true
+        },
+        "delta": {
+          "candidate_dtype": "float32",
+          "candidate_shape": [
+            100,
+            2
+          ],
+          "different_values": 0,
+          "exact": true,
+          "max_abs_error": 0.0,
+          "reference_dtype": "float32",
+          "reference_shape": [
+            100,
+            2
+          ]
+        },
+        "metadata_exact": true,
+        "original_vs_roi_first_exact": true,
+        "passed": true,
+        "present_indices_exact": true,
+        "sensor": {
+          "candidate_dtype": "float32",
+          "candidate_shape": [
+            100,
+            3,
+            3,
+            128,
+            128
+          ],
+          "different_values": 0,
+          "exact": true,
+          "max_abs_error": 0.0,
+          "reference_dtype": "float32",
+          "reference_shape": [
+            100,
+            3,
+            3,
+            128,
+            128
+          ]
+        }
+      },
+      "raw_frame_shape": [
+        180,
+        240,
+        3
+      ],
+      "reference_preparation_options": {
+        "candidate_matches_crop_options": true,
+        "comparison_scope": "SAME_INPUTS_AND_OUTPUTS_NOT_TRANSPORT_ISOLATION",
+        "crop_path": "ROI_FIRST_NORMALIZED_CROP",
+        "crop_workers": 1,
+        "shared_images": false
+      },
+      "rgb_preparation_latency": {
+        "count": 5,
+        "max_ms": 59.2267,
+        "mean_ms": 58.07622,
+        "min_ms": 56.8593,
+        "p50_ms": 57.7406,
+        "p95_ms": 59.18764,
+        "p99_ms": 59.218888,
+        "quantile_method": "linear"
+      },
+      "rgb_preparation_wall_ms": [
+        57.7406,
+        59.0314,
+        56.8593,
+        57.5231,
+        59.2267
+      ],
+      "runtime_allocation_ms_excluded": 0.5858,
+      "runtime_allocation_receipt": {
+        "crop_workers": 1,
+        "device": "cpu",
+        "device_buffer_bytes": 120918144,
+        "device_buffers": {
+          "delta": {
+            "bytes": 800,
+            "dtype": "torch.float32",
+            "shape": [
+              200
+            ]
+          },
+          "expanded_fp32": {
+            "bytes": 58982400,
+            "dtype": "torch.float32",
+            "shape": [
+              300,
+              3,
+              128,
+              128
+            ]
+          },
+          "lut": {
+            "bytes": 1024,
+            "dtype": "torch.float32",
+            "shape": [
+              256
+            ]
+          },
+          "mapping": {
+            "bytes": 2400,
+            "dtype": "torch.int64",
+            "shape": [
+              300
+            ]
+          },
+          "pixel_indices": {
+            "bytes": 27525120,
+            "dtype": "torch.int32",
+            "shape": [
+              140,
+              3,
+              128,
+              128
+            ]
+          },
+          "unique_fp32": {
+            "bytes": 27525120,
+            "dtype": "torch.float32",
+            "shape": [
+              140,
+              3,
+              128,
+              128
+            ]
+          },
+          "unique_uint8": {
+            "bytes": 6881280,
+            "dtype": "torch.uint8",
+            "shape": [
+              140,
+              3,
+              128,
+              128
+            ]
+          }
+        },
+        "host_buffer_bytes": 6884480,
+        "host_pinned": false,
+        "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8",
+        "max_frames": 7,
+        "max_history": 5,
+        "max_objects": 20,
+        "max_raw_history_bytes": 134217728
+      },
+      "steps": 3,
+      "synthetic_input_sha256": "4a54d36e953593099d7158c9e5ca82c6e563c2db2e37386c6a87af1aa9c343ad"
+    }
+  ],
+  "complete_ttc_latency_claimed": false,
+  "configuration": {
+    "crop_workers": 1,
+    "device": "cpu",
+    "height": 180,
+    "history_counts": [
+      5
+    ],
+    "measure_reference": true,
+    "objects": [
+      1,
+      2,
+      20
+    ],
+    "output": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_resume_20261027\\rgb_uint8\\cpu_roi_first_v1\\summary.json",
+    "repeats": 5,
+    "roi_first_images": true,
+    "seed": 20261028,
+    "steps": [
+      3
+    ],
+    "torch_threads": 1,
+    "warmups": 1,
+    "width": 240
+  },
+  "cuda_version": "12.8",
+  "device": "cpu",
+  "end_time": "2026-10-27T23:21:15.931523+00:00",
+  "frozen_candidate_accessed": false,
+  "git_commit": "5598e3652329eca6b4b1f67ab3355fd92c95d0d6",
+  "git_status": "M operational/train40_runtime/predictor.py\n M operational/train40_runtime/producers.py\n M operational/train40_runtime/temporal_prefix.py\n M scripts/benchmark_train40_integral.py\n M scripts/benchmark_train40_prefix.py\n M tests/unit/test_train40_runtime_producers.py\n M tests/unit/test_train40_runtime_temporal_prefix.py\n?? docs/train40_runtime_resume_20261027/RESULTS_GENERATED.md\n?? docs/train40_runtime_resume_20261027/RESULTS_SOURCES.json\n?? operational/train40_runtime/batched_context.py\n?? operational/train40_runtime/compiled_encoder.py\n?? operational/train40_runtime/compiled_pipeline.py\n?? operational/train40_runtime/compiled_transport.py\n?? operational/train40_runtime/feature_cache.py\n?? operational/train40_runtime/multiobject.py\n?? operational/train40_runtime/multiobject_cache.py\n?? operational/train40_runtime/rgb_uint8.py\n?? scripts/benchmark_train40_compiled_pipeline.py\n?? scripts/benchmark_train40_encoder.py\n?? scripts/benchmark_train40_multiobject.py\n?? scripts/benchmark_train40_producer_variants.py\n?? scripts/benchmark_train40_rgb_uint8.py\n?? scripts/benchmark_train40_transport.py\n?? scripts/report_train40_resume.py\n?? tests/unit/test_train40_runtime_batched_context.py\n?? tests/unit/test_train40_runtime_compiled_encoder.py\n?? tests/unit/test_train40_runtime_compiled_pipeline.py\n?? tests/unit/test_train40_runtime_compiled_transport.py\n?? tests/unit/test_train40_runtime_feature_cache.py\n?? tests/unit/test_train40_runtime_multiobject.py\n?? tests/unit/test_train40_runtime_multiobject_cache.py\n?? tests/unit/test_train40_runtime_multiobject_runner.py\n?? tests/unit/test_train40_runtime_rgb_uint8.py",
+  "gpu_used": false,
+  "host": "DESKTOP-2N393IP",
+  "models_loaded": false,
+  "numpy_version": "2.4.6",
+  "pillow_version": "12.3.0",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python_version": "3.11.15",
+  "scope": "SYNTHETIC_RGB_PREPARATION_ONLY_NOT_TTC_OR_SUSTAINED_SERVICE",
+  "sources_after": {
+    "operational/train40_runtime/encoding.py": "5ba5953422f32a4552f109f50daad53605e7580fb90882ad8a322b060ac22d33",
+    "operational/train40_runtime/inputs.py": "b5907a7c90b0dfdb286b85a10b3db0aafb6ba2ed2484d55afd49344701e796fd",
+    "operational/train40_runtime/measurement.py": "448cd81437f165f5c3b399f790f8be2867c75113ef11ec2fc123ea56fbf5bb42",
+    "operational/train40_runtime/multiobject.py": "94a9d20acd264fefea001023dd40834279dbd6ba7ec5646c45562561f25f6095",
+    "operational/train40_runtime/rgb_uint8.py": "60cbce1f4a698fce45d82d57f6e4b419f9557b0028d46eddbda3e650ec42dd59",
+    "scripts/benchmark_train40_rgb_uint8.py": "258b29b1a1cd5b2be169d33386c1dd64befb85d7532e15ed78f59cfa301322d4",
+    "src/e_jepa_ttc/rgb_port/data.py": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec"
+  },
+  "sources_before": {
+    "operational/train40_runtime/encoding.py": "5ba5953422f32a4552f109f50daad53605e7580fb90882ad8a322b060ac22d33",
+    "operational/train40_runtime/inputs.py": "b5907a7c90b0dfdb286b85a10b3db0aafb6ba2ed2484d55afd49344701e796fd",
+    "operational/train40_runtime/measurement.py": "448cd81437f165f5c3b399f790f8be2867c75113ef11ec2fc123ea56fbf5bb42",
+    "operational/train40_runtime/multiobject.py": "94a9d20acd264fefea001023dd40834279dbd6ba7ec5646c45562561f25f6095",
+    "operational/train40_runtime/rgb_uint8.py": "60cbce1f4a698fce45d82d57f6e4b419f9557b0028d46eddbda3e650ec42dd59",
+    "scripts/benchmark_train40_rgb_uint8.py": "258b29b1a1cd5b2be169d33386c1dd64befb85d7532e15ed78f59cfa301322d4",
+    "src/e_jepa_ttc/rgb_port/data.py": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec"
+  },
+  "sources_unchanged": true,
+  "start_time": "2026-10-27T23:21:14.510130+00:00",
+  "status": "COMPLETE",
+  "sustained_hz_claimed": false,
+  "targets_read": false,
+  "timing_boundary": {
+    "excluded": [
+      "synthetic raw frame generation",
+      "startup/preallocation",
+      "reference and parity comparison",
+      "events, RGB producers, context, TTC and output transport"
+    ],
+    "included": [
+      "current ROI Pillow crop and resize",
+      "unique crop host packing",
+      "host-to-device copies for the selected path",
+      "normalization LUT and triplet assembly",
+      "device completion synchronization and batch release"
+    ]
+  },
+  "torch_version": "2.11.0+cu128"
+}

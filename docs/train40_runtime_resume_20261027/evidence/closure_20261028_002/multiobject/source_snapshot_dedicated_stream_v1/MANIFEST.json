@@ -1,0 +1,167 @@
+[
+  {
+    "source": "operational\\final_refit\\features.py",
+    "artifact": "operational__final_refit__features.py.txt",
+    "sha256": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09"
+  },
+  {
+    "source": "operational\\final_refit\\test12.py",
+    "artifact": "operational__final_refit__test12.py.txt",
+    "sha256": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6"
+  },
+  {
+    "source": "operational\\final_refit\\training.py",
+    "artifact": "operational__final_refit__training.py.txt",
+    "sha256": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4"
+  },
+  {
+    "source": "operational\\rgb_port\\train_producers.py",
+    "artifact": "operational__rgb_port__train_producers.py.txt",
+    "sha256": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc"
+  },
+  {
+    "source": "operational\\rgb_port\\transfer.py",
+    "artifact": "operational__rgb_port__transfer.py.txt",
+    "sha256": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73"
+  },
+  {
+    "source": "operational\\rgb_port_revision\\transfer_inputs.py",
+    "artifact": "operational__rgb_port_revision__transfer_inputs.py.txt",
+    "sha256": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad"
+  },
+  {
+    "source": "operational\\rgb_port_streaming\\contracts.py",
+    "artifact": "operational__rgb_port_streaming__contracts.py.txt",
+    "sha256": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c"
+  },
+  {
+    "source": "operational\\train40_runtime\\__init__.py",
+    "artifact": "operational__train40_runtime____init__.py.txt",
+    "sha256": "4310057604c82ffd96ab5c41846b045ff4f94b5e4d41de5111ae43f3877bbf5b"
+  },
+  {
+    "source": "operational\\train40_runtime\\batched_context.py",
+    "artifact": "operational__train40_runtime__batched_context.py.txt",
+    "sha256": "94348898bc56febaff0eb37b71cd94723e592d6624233ada71670df5d7ce0057"
+  },
+  {
+    "source": "operational\\train40_runtime\\compiled_encoder.py",
+    "artifact": "operational__train40_runtime__compiled_encoder.py.txt",
+    "sha256": "9af931b46b9ff19bf39b37b71bbd01d2a6f78dba04d5e459ec5e5f1d77ad7f6d"
+  },
+  {
+    "source": "operational\\train40_runtime\\compiled_transport.py",
+    "artifact": "operational__train40_runtime__compiled_transport.py.txt",
+    "sha256": "0ff211ab33df33b1a5a9e8ccb27c8391ed03b73eac0828673415275b4a14d3c9"
+  },
+  {
+    "source": "operational\\train40_runtime\\context.py",
+    "artifact": "operational__train40_runtime__context.py.txt",
+    "sha256": "29a8051ca2a8fdb9521b2eca5ef6c59d8d914d5342a123ecf01250bafb65ecd8"
+  },
+  {
+    "source": "operational\\train40_runtime\\encoding.py",
+    "artifact": "operational__train40_runtime__encoding.py.txt",
+    "sha256": "5ba5953422f32a4552f109f50daad53605e7580fb90882ad8a322b060ac22d33"
+  },
+  {
+    "source": "operational\\train40_runtime\\feature_cache.py",
+    "artifact": "operational__train40_runtime__feature_cache.py.txt",
+    "sha256": "c139e971579ba2b05c1c45e9dace9807649b73f758eba9bbbcdfa1c85c153143"
+  },
+  {
+    "source": "operational\\train40_runtime\\inputs.py",
+    "artifact": "operational__train40_runtime__inputs.py.txt",
+    "sha256": "b5907a7c90b0dfdb286b85a10b3db0aafb6ba2ed2484d55afd49344701e796fd"
+  },
+  {
+    "source": "operational\\train40_runtime\\integral.py",
+    "artifact": "operational__train40_runtime__integral.py.txt",
+    "sha256": "cb4fba28675cde66dfbab6e191a179317924bc3113594cffff361f81b53c6680"
+  },
+  {
+    "source": "operational\\train40_runtime\\measurement.py",
+    "artifact": "operational__train40_runtime__measurement.py.txt",
+    "sha256": "448cd81437f165f5c3b399f790f8be2867c75113ef11ec2fc123ea56fbf5bb42"
+  },
+  {
+    "source": "operational\\train40_runtime\\multiobject.py",
+    "artifact": "operational__train40_runtime__multiobject.py.txt",
+    "sha256": "14e4c6fdcb558a625cb5c3bea492294c593f00ddd7f8fc44003080d75c3965a0"
+  },
+  {
+    "source": "operational\\train40_runtime\\normalization.py",
+    "artifact": "operational__train40_runtime__normalization.py.txt",
+    "sha256": "2c7dc863d525338fb703085d221cd8d1d0b1e7432bee39bdb34ce9c7de1fa816"
+  },
+  {
+    "source": "operational\\train40_runtime\\paced.py",
+    "artifact": "operational__train40_runtime__paced.py.txt",
+    "sha256": "c8515bcff70239139f556c78ffcf981bd5cdac86a002632bf70e0599942e2b8b"
+  },
+  {
+    "source": "operational\\train40_runtime\\predictor.py",
+    "artifact": "operational__train40_runtime__predictor.py.txt",
+    "sha256": "03d4b2de7b0f850805591a4b2f634c7f02a4ebe4b74e81c27b15b201bf8f6407"
+  },
+  {
+    "source": "operational\\train40_runtime\\producers.py",
+    "artifact": "operational__train40_runtime__producers.py.txt",
+    "sha256": "1bab7e7bdb6c386dacfd0c5a62835174777e7be5d1891732f5c086fd628c6348"
+  },
+  {
+    "source": "operational\\train40_runtime\\replay_inputs.py",
+    "artifact": "operational__train40_runtime__replay_inputs.py.txt",
+    "sha256": "3d2bc7f0053b307276be5c53c913f7eea104f9245929c75e13800171a13de17b"
+  },
+  {
+    "source": "operational\\train40_runtime\\temporal_prefix.py",
+    "artifact": "operational__train40_runtime__temporal_prefix.py.txt",
+    "sha256": "5f1b27d4fc53b0fab7b64da6f41699e43a4c64fb721783a35088616ea9e4902e"
+  },
+  {
+    "source": "operational\\train40_runtime\\transport.py",
+    "artifact": "operational__train40_runtime__transport.py.txt",
+    "sha256": "9c156deddbc3cb29b9c14c3458a266554706016f191ac6bce6d0cb048a377c24"
+  },
+  {
+    "source": "scripts\\benchmark_train40_runtime.py",
+    "artifact": "scripts__benchmark_train40_runtime.py.txt",
+    "sha256": "190aae46d5568ab1ea0e392e8f45b9c9a5eeb645ce5fcbcabd617a7b076a7ad2"
+  },
+  {
+    "source": "scripts\\final_train40_transfer.py",
+    "artifact": "scripts__final_train40_transfer.py.txt",
+    "sha256": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730"
+  },
+  {
+    "source": "src\\e_jepa_ttc\\models\\causal_scale_ttc.py",
+    "artifact": "src__e_jepa_ttc__models__causal_scale_ttc.py.txt",
+    "sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934"
+  },
+  {
+    "source": "src\\e_jepa_ttc\\models\\local_transport.py",
+    "artifact": "src__e_jepa_ttc__models__local_transport.py.txt",
+    "sha256": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d"
+  },
+  {
+    "source": "src\\e_jepa_ttc\\rgb_port\\features.py",
+    "artifact": "src__e_jepa_ttc__rgb_port__features.py.txt",
+    "sha256": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114"
+  },
+  {
+    "source": "src\\e_jepa_ttc\\simplex_t\\model.py",
+    "artifact": "src__e_jepa_ttc__simplex_t__model.py.txt",
+    "sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd"
+  },
+  {
+    "source": "src\\e_jepa_ttc\\simplex_t\\phase.py",
+    "artifact": "src__e_jepa_ttc__simplex_t__phase.py.txt",
+    "sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  {
+    "source": "scripts\\benchmark_train40_multiobject.py",
+    "artifact": "scripts__benchmark_train40_multiobject.py.txt",
+    "sha256": "1020f38153dec01a83a2486e4d157796414f71879a46972c59685c190be84841"
+  }
+]

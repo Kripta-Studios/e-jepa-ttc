@@ -1,0 +1,93 @@
+"""Read-only metadata estimate of unchanged RGB producer calls at a 20ms clock."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from collections import Counter, defaultdict
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import h5py
+import numpy as np
+
+from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
+from operational.rgb_port_revision.transfer_inputs import sensor_triplets
+from operational.train40_runtime.replay_inputs import generate_sensor_clock_replay
+
+output = Path(__file__).with_name("metadata_reuse_v1.json")
+if output.exists():
+    raise FileExistsError(output)
+manifest = ROOT / "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"
+base_bytes = manifest.read_bytes()
+replay = generate_sensor_clock_replay(json.loads(base_bytes), max_updates_per_sequence=100)
+by_sequence = defaultdict(list)
+for row in replay["rows"]:
+    by_sequence[row["physical_sequence_id"]].append(row)
+records = []
+for inventory in replay["inventory"]:
+    sequence = inventory["physical_sequence_id"]
+    rows = sorted(by_sequence[sequence], key=lambda row: row["anchor_us"])
+    with h5py.File(inventory["raw_path"], "r") as handle:
+        clock = np.asarray(handle["blackflys/left/ts"], np.int64)
+    previous = None
+    previous_anchor = None
+    counts = Counter()
+    receipts = []
+    for row in rows:
+        anchor = int(row["anchor_us"])
+        groups = [tuple(int(index) for index in group) for group in sensor_triplets(clock, anchor)]
+        square = common_square_from_boxes(row["rgb_boxes"], (1, 2), margin_fraction=0.25)
+        identity = {
+            "raw_path": row["raw_path"],
+            "raw_stat": row["raw_stat"],
+            "roi_hex": [float(value).hex() for value in square],
+            "groups": groups,
+            "timestamps_us": [[int(clock[index]) for index in group] for group in groups],
+        }
+        digest = hashlib.sha256(
+            json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        contiguous = previous_anchor is not None and anchor - previous_anchor == 20_000
+        hit = contiguous and digest == previous
+        counts["same_call_metadata" if hit else "changed_or_cold_call_metadata"] += 1
+        receipts.append({"query_id": row["query_id"], "same_as_previous_update": hit, "digest": digest})
+        previous, previous_anchor = digest, anchor
+    accepted = len(rows)
+    records.append(
+        {
+            "sequence": sequence,
+            "scheduled": inventory["scheduled_updates"],
+            "accepted": accepted,
+            "excluded": inventory["scheduled_updates"] - accepted,
+            "unchanged_rgb_call_count": counts["same_call_metadata"],
+            "unchanged_fraction_of_all_scheduled": (
+                counts["same_call_metadata"] / inventory["scheduled_updates"]
+                if inventory["scheduled_updates"] else None
+            ),
+            "native_rgb_interval_median_us": float(np.median(np.diff(clock))),
+            "receipts": receipts,
+        }
+    )
+summary = {
+    "scope": "METADATA_ONLY_20MS_REPLAY_OF_ONE_PRIMARY_ANNOTATED_OBJECT_PER_SEQUENCE",
+    "input_manifest_sha256": hashlib.sha256(base_bytes).hexdigest(),
+    "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    "max_updates_per_sequence": 100,
+    "scheduled": replay["scheduled_updates"],
+    "accepted": replay["accepted_updates"],
+    "excluded": len(replay["excluded"]),
+    "exclusion_reasons": replay["exclusion_reasons"],
+    "unchanged_rgb_call_count": sum(row["unchanged_rgb_call_count"] for row in records),
+    "no_pixels_or_models_read": True,
+    "targets_read": False,
+    "gpu_used": False,
+    "latency_or_parity_claim": False,
+    "twenty_object_hit_rate_demonstrated": False,
+    "records": records,
+}
+output.write_text(json.dumps(summary, indent=2, allow_nan=False), encoding="utf-8")
+print(json.dumps({key: value for key, value in summary.items() if key != "records"}))

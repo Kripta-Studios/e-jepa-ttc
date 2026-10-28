@@ -1,7 +1,8 @@
 # TRAIN40: reanudación de optimización
 
-Estado: **EN CURSO**, reanudado por petición expresa del usuario tras el cierre
-`9f62aebc`. La meta permanece en 50 actualizaciones por segundo, menos de 20 ms
+Estado: **PAUSADO A PETICIÓN DEL USUARIO**, después de terminar RGB frente a uint8
+y preparar el cierre del 28 de octubre. Empezar por [HANDOFF.md](HANDOFF.md).
+La meta permanece en 50 actualizaciones por segundo, menos de 20 ms
 hasta el último TTC de hasta veinte objetos, pesos y normalizadores originales,
 paridad `atol=rtol=1e-5`, cobertura y ausencia de acumulación de trabajo.
 

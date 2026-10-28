@@ -79,6 +79,9 @@ COMPACT_NAMES = {
     "scheduler_jitter_v1.json",
     "WINDOWS_SCHEDULER_JITTER.md",
     "PACED_RUNNER.md",
+    "REPORT.md",
+    "CLOSURE_HANDOFF.md",
+    "PRECISION_VARIANTS.md",
 }
 FORBIDDEN_PARTS = {
     "deps",
@@ -740,6 +743,7 @@ def copy_evidence(source: Path, destination: Path) -> dict[str, Any]:
         wanted = (
             name in COMPACT_NAMES
             or name.endswith(("_command.json", "_exit.json", ".py.txt"))
+            or (name.startswith("case_") and name.endswith(".json"))
             or path.suffix == ".py"
         )
         if not wanted:

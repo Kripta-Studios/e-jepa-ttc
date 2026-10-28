@@ -1,0 +1,457 @@
+"""Complete last-packet TRAIN40 pilot using distinct artificial regions.
+
+Each population shares one real raw sensor history. Object zero is the original
+annotated ROI; the others are deterministic translated regions, not annotated
+tracks. Every declared region receives its own original-model parity check.
+History rebuilding, raw disk loading and synthetic shape priming are excluded.
+Current ROI work, the new raw packet, all transfers/models and all TTC outputs
+are included. This pilot does not establish sustained 50 Hz operation.
+"""
+
+from __future__ import annotations
+
+import argparse
+import gc
+import hashlib
+import json
+import platform
+import subprocess
+import sys
+import time
+from dataclasses import asdict
+from pathlib import Path
+from typing import Any, cast
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import numpy as np  # noqa: E402
+import torch  # noqa: E402
+
+from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes  # noqa: E402
+from e_jepa_ttc.rgb_port.data import crop_uint8  # noqa: E402
+from operational.evttc_transfer.inputs import EvTTCEventReader  # noqa: E402
+from operational.rgb_port import transfer as engine  # noqa: E402
+from operational.train40_runtime.inputs import PersistentSensorInputs  # noqa: E402
+from operational.train40_runtime.integral import IntegralEventHistory  # noqa: E402
+from operational.train40_runtime.measurement import (  # noqa: E402
+    latency_distribution,
+    prediction_parity,
+    snapshot_files,
+    verify_snapshot,
+)
+from operational.train40_runtime.multiobject import (  # noqa: E402
+    MultiObjectTrain40Service,
+    ObjectRegion,
+    RawRGBHistory,
+    Square,
+    read_raw_rgb_history,
+)
+from scripts.benchmark_train40_runtime import (  # noqa: E402
+    _candidate_inventory,
+    _source_inventory,
+    _validate_output,
+    _validate_reference,
+    _write,
+)
+from scripts.final_train40_transfer import (  # noqa: E402
+    FinalTransferPredictor,
+    load_models,
+    read,
+    reject_targets,
+    sha,
+    verify_candidate,
+    verify_frozen_runtime,
+)
+
+SCOPE = "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE"
+
+
+def artificial_regions(event_square: Any, rgb_square: Any, count: int) -> list[ObjectRegion]:
+    """Keep the original ROI first; translate every other region deterministically."""
+    if not 1 <= count <= 20:
+        raise ValueError("The registered capacity population is one to twenty regions")
+    result = []
+    for index in range(count):
+        dx, dy = (index % 5) * 17, (index // 5) * 13
+        event = tuple(
+            float(value) + (dx if axis % 2 == 0 else dy) for axis, value in enumerate(event_square)
+        )
+        rgb = tuple(
+            float(value) + (dx if axis % 2 == 0 else dy) for axis, value in enumerate(rgb_square)
+        )
+        result.append(ObjectRegion(f"roi_{index:02d}", cast(Square, event), cast(Square, rgb)))
+    if len({item.event_square for item in result}) != count:
+        raise ValueError("Artificial load must contain distinct regions")
+    return result
+
+
+def reference_rgb(
+    history: RawRGBHistory, region: ObjectRegion
+) -> list[tuple[np.ndarray, dict[str, Any]]]:
+    """Use the original PIL crop adapter independently of the optimized workers."""
+    if region.rgb_square is None:
+        return []
+    frames = {
+        index: crop_uint8(frame, region.rgb_square) for index, frame in history.frames.items()
+    }
+    result = []
+    for group in history.triplets:
+        times = [history.timestamps_us[index] for index in group]
+        pixels = np.ascontiguousarray(
+            np.stack([frames[index] for index in group]).astype(np.float32) / 255
+        )
+        result.append(
+            (
+                pixels,
+                {
+                    "first_sensor_ts_us": times[0],
+                    "anchor_us": times[-1],
+                    "available_us": history.query_us,
+                    "timestamps_us": times,
+                    "frame_indices": list(group),
+                    "delta_t_s": (np.diff(times) / 1e6).tolist(),
+                    "square_xyxy": list(region.rgb_square),
+                },
+            )
+        )
+    return result
+
+
+def reference_receipt(row: dict[str, Any], region: ObjectRegion, rgb: list[Any]) -> dict[str, Any]:
+    """Bind every ROI, clock, frame and window, beyond history-length parity."""
+    anchor = int(row["anchor_us"])
+    windows = np.asarray(row["windows_us"], dtype=np.int64)
+    return {
+        "query_us": anchor,
+        "event_square": list(region.event_square),
+        "rgb_square": list(region.rgb_square) if region.rgb_square is not None else None,
+        "event_windows_us": (windows[None] - engine.EVENT_LAGS_US[:, None, None]).tolist(),
+        "rgb_observations": [dict(metadata) for _, metadata in rgb],
+    }
+
+
+def prime(service: MultiObjectTrain40Service, count: int) -> float:
+    """Capture standard shapes using synthetic zero data before sensor queries."""
+    query = 1_000_000
+    objects = artificial_regions((0, 0, 128, 128), (0, 0, 128, 128), count)
+    rgb = [
+        [
+            (
+                np.zeros((3, 3, 128, 128), dtype=np.float32),
+                {
+                    "delta_t_s": [0.1, 0.1],
+                    "first_sensor_ts_us": query - (6 - i) * 100_000,
+                    "anchor_us": query - (4 - i) * 100_000,
+                    "available_us": query,
+                },
+            )
+            for i in range(5)
+        ]
+        for _ in range(count)
+    ]
+    begin = time.perf_counter()
+    service.infer_prepared(objects, query, torch.zeros((count, 4, 3, 12, 128, 128)), rgb)
+    torch.cuda.synchronize()
+    return time.perf_counter() - begin
+
+
+def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
+    """Hash the actual consumed tensors after the timed update, not reconstructions."""
+    assert service.last_event_inputs is not None and service.last_rgb_inputs is not None
+    event = service.last_event_inputs.cpu().numpy()
+    return [
+        {
+            "event_sha256": hashlib.sha256(np.ascontiguousarray(event[index])).hexdigest(),
+            "rgb_sha256": [
+                hashlib.sha256(np.ascontiguousarray(pixels)).hexdigest() for pixels, _ in rows
+            ],
+        }
+        for index, rows in enumerate(service.last_rgb_inputs)
+    ]
+
+
+def run(args: argparse.Namespace) -> None:
+    """Persist failures, partial results and immutable-candidate checks."""
+    _validate_output(args.output, [args.candidate, args.reference, args.manifest.parent])
+    args.output.mkdir(parents=True, exist_ok=False)
+    paths, binding = verify_candidate(args.candidate)
+    frozen = verify_frozen_runtime(args.candidate)
+    rows = read(args.manifest)["rows"]
+    reject_targets(rows)
+    original_reference, reference_files, reference_binding = _validate_reference(
+        args.reference, args.manifest, rows, binding
+    )
+    if (
+        not args.indices
+        or len(set(args.indices)) != len(args.indices)
+        or any(not 0 <= index < len(rows) for index in args.indices)
+        or not args.counts
+        or len(set(args.counts)) != len(args.counts)
+        or any(not 1 <= count <= 20 for count in args.counts)
+        or args.repeats < 1
+    ):
+        raise ValueError("Unique valid indices/counts and positive repeats are required")
+    sources = [*_source_inventory(frozen, reference_binding), Path(__file__).resolve()]
+    originals = snapshot_files(
+        [*_candidate_inventory(args.candidate), *reference_files, args.manifest, *sources]
+    )
+    _write(args.output / "original_snapshot.json", originals)
+    records: list[dict[str, Any]] = []
+    startup = []
+    caught: BaseException | None = None
+    service = None
+    inputs = PersistentSensorInputs(rgb_workers=1)
+    finished = False
+    try:
+        torch.set_num_threads(2)
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+        torch.manual_seed(7)
+        binding.update(
+            scope=SCOPE,
+            source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+            sources={str(path.relative_to(ROOT)): sha(path) for path in sources},
+            indices=args.indices,
+            counts=args.counts,
+            repeats=args.repeats,
+            representation_backend=args.backend,
+            manifest_sha256=sha(args.manifest),
+            torch=torch.__version__,
+            cuda=torch.version.cuda,
+            python=platform.python_version(),
+            gpu=torch.cuda.get_device_name(),
+            precision="FP32_TF32_OFF",
+            seed=7,
+            twenty_real_annotated_tracks=False,
+            physical_50hz_goal_demonstrated=False,
+            last_packet_timing=True,
+            disk_and_initial_history_excluded=True,
+            future_frames_or_representations_precomputed=False,
+            target_20_objects_50hz_demonstrated=False,
+            reuse_event_encodings_override=False if args.no_event_reuse else None,
+        )
+        _write(args.output / "binding.json", binding)
+        models, norms = load_models(paths, "cuda")
+        oracle = FinalTransferPredictor.__new__(FinalTransferPredictor)
+        oracle.device = torch.device("cuda")
+        oracle.models, oracle.normalizers = models, norms
+        for count in args.counts:
+            if args.backend == "prefix":
+                from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
+
+                history = TemporalPrefixEventHistory(
+                    device="cuda", max_objects=count, roi_batch_size=min(4, count)
+                )
+            else:
+                history = IntegralEventHistory(
+                    device="cuda", max_objects=count, roi_batch_size=min(4, count)
+                )
+            service = MultiObjectTrain40Service(
+                models,
+                norms,
+                history,
+                max_objects=count,
+                parallel_branches=args.parallel,
+                rgb_workers=args.rgb_workers,
+                retain_input_diagnostics=True,
+                reuse_event_encodings=False if args.no_event_reuse else None,
+            )
+            startup.append({"objects": count, "synthetic_priming_seconds": prime(service, count)})
+            _write(args.output / "startup.json", startup)
+            for index in args.indices:
+                row = rows[index]
+                anchor = int(row["anchor_us"])
+                boxes = [inputs._box(source) for source in list(row["bbox_sources"])[-2:]]
+                rgb_square = common_square_from_boxes(boxes, (0, 1), margin_fraction=0.25)
+                objects = artificial_regions(row["square_xyxy"], rgb_square, count)
+                raw_rgb = read_raw_rgb_history(inputs, row)
+                with EvTTCEventReader(Path(row["raw_path"])) as reader:
+                    old = reader.read_window(anchor - 620_000, anchor - 20_000)
+                    packet = reader.read_window(anchor - 20_000, anchor)
+                timings = []
+                for repetition in range(args.repeats):
+                    history.initialize(old, anchor - 620_000, anchor - 20_000)
+                    torch.cuda.synchronize()
+                    result = service.update(packet, anchor - 20_000, anchor, objects, raw_rgb)
+                    result.update(
+                        index=index,
+                        repetition=repetition,
+                        regions=[asdict(x) for x in objects],
+                        scope=SCOPE,
+                        packet_events=len(packet["t"]),
+                        ring=history.stats,
+                        diagnostic_tensor_hashes_outside_clock=True,
+                    )
+                    result["input_digests"] = input_digests(service)
+                    # Recorded immediately: later parity failures do not erase measured cases.
+                    timings.append(result)
+                    with (args.output / "updates.jsonl").open("a", encoding="utf-8") as stream:
+                        stream.write(json.dumps(result, allow_nan=False) + "\n")
+                    print(
+                        json.dumps(
+                            {
+                                "objects": count,
+                                "index": index,
+                                "repeat": repetition,
+                                "ms": result["complete_wall_ms"],
+                            }
+                        ),
+                        flush=True,
+                    )
+                assert service.last_event_inputs is not None
+                actual_event = service.last_event_inputs.cpu().numpy()
+                expected_outputs = []
+                input_checks = []
+                receipts = []
+                for position, obj in enumerate(objects):
+                    modified = {**row, "square_xyxy": list(obj.event_square)}
+                    raw = engine.prepare_event(modified)
+                    reference_pixels = reference_rgb(raw_rgb, obj)
+                    assert service.last_rgb_inputs is not None
+                    actual_rgb = service.last_rgb_inputs[position]
+                    input_checks.append(
+                        {
+                            "object_id": obj.object_id,
+                            "event_exact": bool(
+                                np.array_equal(actual_event[position], raw["own_events"])
+                            ),
+                            "event_passed": bool(
+                                np.allclose(
+                                    actual_event[position], raw["own_events"], rtol=1e-5, atol=1e-5
+                                )
+                            ),
+                            "event_max_abs": float(
+                                np.abs(actual_event[position] - raw["own_events"]).max()
+                            ),
+                            "rgb_exact": len(actual_rgb) == len(reference_pixels)
+                            and all(
+                                np.array_equal(actual_pixels, expected_pixels)
+                                for (actual_pixels, _), (expected_pixels, _) in zip(
+                                    actual_rgb, reference_pixels, strict=True
+                                )
+                            ),
+                        }
+                    )
+                    with (
+                        patch.object(engine, "prepare_event", return_value=raw),
+                        patch.object(
+                            engine,
+                            "raw_rgb_observations",
+                            return_value=(reference_pixels, raw_rgb.unavailable_reason),
+                        ),
+                    ):
+                        expected = oracle.predict(modified)
+                    expected["query_id"] = obj.object_id
+                    expected_outputs.append(expected)
+                    receipts.append(reference_receipt(row, obj, reference_pixels))
+                for result in timings:
+                    candidates = [
+                        {**output, "query_id": output["object_id"]} for output in result["objects"]
+                    ]
+                    result["parity"] = prediction_parity(
+                        expected_outputs, candidates, [obj.object_id for obj in objects]
+                    )
+                    result["input_parity"] = input_checks
+                    result["same_inputs_as_tensor_checked_repeat"] = (
+                        result["input_digests"] == timings[-1]["input_digests"]
+                    )
+                    result["history_receipts_exact"] = [
+                        output["input_receipt"] == expected_receipt
+                        for output, expected_receipt in zip(
+                            result["objects"], receipts, strict=True
+                        )
+                    ]
+                    primary = {**result["objects"][0], "query_id": row["query_id"]}
+                    result["preserved_primary_parity"] = prediction_parity(
+                        [original_reference[index]], [primary], [row["query_id"]]
+                    )
+                    records.append(result)
+                _write(
+                    args.output / f"case_{count:02d}_{index:05d}.json",
+                    {"reference": expected_outputs, "updates": timings},
+                )
+                del actual_event, old, packet
+            service.close()
+            service = None
+            del history
+            gc.collect()
+            torch.cuda.empty_cache()
+        finished = True
+    except BaseException as exc:
+        caught = exc
+    finally:
+        cleanup_errors = []
+        for resource in (service, inputs):
+            if resource is not None:
+                try:
+                    resource.close()
+                except BaseException as exc:
+                    cleanup_errors.append(f"{type(exc).__name__}: {exc}")
+        intact = verify_snapshot(originals)
+        admitted = bool(records) and all(
+            record["parity"]["passed"]
+            and record["preserved_primary_parity"]["passed"]
+            and all(row["event_passed"] and row["rgb_exact"] for row in record["input_parity"])
+            and record["same_inputs_as_tensor_checked_repeat"]
+            and all(record["history_receipts_exact"])
+            for record in records
+        )
+        complete_count = len(args.counts) * len(args.indices) * args.repeats
+        passed = (
+            finished
+            and admitted
+            and len(records) == complete_count
+            and intact["passed"]
+            and not cleanup_errors
+        )
+        summary = {
+            "status": "COMPLETE" if passed else "FAILED",
+            "passed": passed,
+            "scope": SCOPE,
+            "expected_updates": complete_count,
+            "validated_updates": len(records),
+            "originals": intact,
+            "cleanup_errors": cleanup_errors,
+            "error": f"{type(caught).__name__}: {caught}" if caught else None,
+            "target_20_objects_50hz_demonstrated": False,
+            "latency_by_count_ms": {
+                str(count): latency_distribution(
+                    [row["complete_wall_ms"] for row in records if row["object_count"] == count]
+                )
+                for count in args.counts
+                if any(row["object_count"] == count for row in records)
+            },
+        }
+        _write(args.output / "summary.json", summary)
+    if caught is not None:
+        raise caught
+    if not passed:
+        raise RuntimeError("Multiobject pilot failed; inspect preserved summary and case files")
+
+
+def main() -> None:
+    """Parse an explicitly artificial population and fresh output directory."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--candidate", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--reference", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--counts", nargs="+", type=int, default=[1, 2, 5, 10, 20])
+    parser.add_argument("--indices", nargs="+", type=int, default=[0, 200, 553])
+    parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--rgb-workers", type=int, default=8)
+    parser.add_argument("--parallel", action="store_true")
+    parser.add_argument(
+        "--no-event-reuse",
+        action="store_true",
+        help="Preserve original event encoder batch; retain RGB endpoint reuse",
+    )
+    parser.add_argument("--backend", choices=["integral", "prefix"], default="integral")
+    run(parser.parse_args())
+
+
+if __name__ == "__main__":
+    main()

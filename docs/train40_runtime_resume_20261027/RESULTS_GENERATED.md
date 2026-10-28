@@ -12,7 +12,7 @@ Fuentes y SHA-256: [RESULTS_SOURCES.json](RESULTS_SOURCES.json). `—` significa
 | baseline | — | 1 | — | FAILED_BEFORE_MODEL_LOAD: 1 |
 | compiled_pipeline | — | 4 | 1 | COMPLETE_WITH_PARITY_FAILURES: 3; FAILED: 1 |
 | encoders | NVIDIA GeForce RTX 5070 Ti Laptop GPU | 1 | — | FAILED_ENCODER_PARITY: 1 |
-| multiobject | — | 7 | 20 | COMPLETE: 5; FAILED: 2 |
+| multiobject | — | 12 | 20 | COMPLETE: 9; FAILED: 2; PASSED: 1 |
 | normalization | cpu | 1 | 1 | PASSED: 1 |
 | normalization | cuda | 2 | 20 | PASSED: 2 |
 | prefix | cpu | 4 | 20 | COMPLETE: 4 |
@@ -37,6 +37,11 @@ El máximo de objetos/ROI es cobertura del tramo indicado, no capacidad admitida
 | compute_council/paced_scheduler_ab_v1/summary.json | COMPLETE_FAKE_CONTROL_ONLY | — | sí |
 | corrected_all554_v1/summary.json | COMPLETE | NVIDIA GeForce RTX 5070 Ti Laptop GPU | sí |
 | encoder_ea5_b12_v1/summary.json | FAILED_ENCODER_PARITY | NVIDIA GeForce RTX 5070 Ti Laptop GPU | sí |
+| multiobject/paired_1_2_uint8_v1_aggregate/summary.json | PASSED | — | — |
+| multiobject/paired_1_2_uint8_v1_pil_a/summary.json | COMPLETE | — | sí |
+| multiobject/paired_1_2_uint8_v1_pil_d/summary.json | COMPLETE | — | sí |
+| multiobject/paired_1_2_uint8_v1_uint8_b/summary.json | COMPLETE | — | sí |
+| multiobject/paired_1_2_uint8_v1_uint8_c/summary.json | COMPLETE | — | sí |
 | multiobject/pilot_1_2_dedicated_stream_v1/summary.json | COMPLETE | — | sí |
 | multiobject/pilot_1_2_serial_v1/summary.json | COMPLETE | — | sí |
 | multiobject/pilot_1_2_v1/summary.json | FAILED | — | sí |
@@ -682,6 +687,64 @@ Estado: **PASSED**. Dispositivo: `cuda`. Alcance: `SYNTHETIC_PREPARED_VOXEL_NORM
 ## multiobject
 
 Piloto completo con ROI de capacidad artificiales; no es un stream sostenido.
+
+### `multiobject/paired_1_2_uint8_v1_aggregate/summary.json`
+
+Estado: **PASSED**. Dispositivo: `—`. Alcance: `ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE`.
+
+No hay mediciones de este tramo en el recibo.
+
+### `multiobject/paired_1_2_uint8_v1_pil_a/summary.json`
+
+Estado: **COMPLETE**. Dispositivo: `—`. Alcance: `ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE`.
+
+| Configuración | Valor |
+| --- | --- |
+| precision | FP32_TF32_OFF |
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| piloto completo | 1 | RAW disponible → último TTC | 15 | 32.83774 | 24.3046 | 67.55061 | 73.269722 | 74.6995 | sí |
+| piloto completo | 2 | RAW disponible → último TTC | 15 | 68.5690333 | 45.1281 | 139.45469 | 140.837498 | 141.1832 | sí |
+
+### `multiobject/paired_1_2_uint8_v1_pil_d/summary.json`
+
+Estado: **COMPLETE**. Dispositivo: `—`. Alcance: `ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE`.
+
+| Configuración | Valor |
+| --- | --- |
+| precision | FP32_TF32_OFF |
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| piloto completo | 1 | RAW disponible → último TTC | 15 | 50.5381933 | 30.6299 | 100.48086 | 101.098092 | 101.2524 | sí |
+| piloto completo | 2 | RAW disponible → último TTC | 15 | 90.7202267 | 88.3703 | 138.41164 | 145.504488 | 147.2777 | sí |
+
+### `multiobject/paired_1_2_uint8_v1_uint8_b/summary.json`
+
+Estado: **COMPLETE**. Dispositivo: `—`. Alcance: `ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE`.
+
+| Configuración | Valor |
+| --- | --- |
+| precision | FP32_TF32_OFF |
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| piloto completo | 1 | RAW disponible → último TTC | 15 | 44.2588333 | 27.8245 | 84.70654 | 85.539148 | 85.7473 | sí |
+| piloto completo | 2 | RAW disponible → último TTC | 15 | 70.0170067 | 47.3252 | 120.83454 | 121.314908 | 121.435 | sí |
+
+### `multiobject/paired_1_2_uint8_v1_uint8_c/summary.json`
+
+Estado: **COMPLETE**. Dispositivo: `—`. Alcance: `ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE`.
+
+| Configuración | Valor |
+| --- | --- |
+| precision | FP32_TF32_OFF |
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| piloto completo | 1 | RAW disponible → último TTC | 15 | 48.0290733 | 39.1715 | 84.4541 | 85.54218 | 85.8142 | sí |
+| piloto completo | 2 | RAW disponible → último TTC | 15 | 105.419607 | 65.1466 | 226.16158 | 282.024716 | 295.9905 | sí |
 
 ### `multiobject/pilot_1_2_dedicated_stream_v1/summary.json`
 

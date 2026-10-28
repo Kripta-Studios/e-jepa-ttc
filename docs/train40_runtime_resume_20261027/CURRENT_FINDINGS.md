@@ -1,6 +1,6 @@
 # Hallazgos y criterios para continuar
 
-Investigación activa. El objetivo de menos de 20 ms por actualización completa
+Investigación pausada a petición del usuario. El objetivo de menos de 20 ms por actualización completa
 de hasta veinte objetos, a 50 Hz sostenidos, **no está demostrado**. Las cifras
 regenerables y sus poblaciones están en [RESULTS_GENERATED.md](RESULTS_GENERATED.md).
 Este documento explica decisiones; no sustituye los recibos JSON ni sus hashes.

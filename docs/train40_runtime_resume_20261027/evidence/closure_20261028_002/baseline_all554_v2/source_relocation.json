@@ -1,0 +1,39 @@
+{
+  "status": "VERIFIED",
+  "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+  "runtime_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc",
+  "wrapper_sha256": "811eae1ebbe58c9fcee62dd222d73c64a74f07c7c18ba0f3622dc1464bb029d1",
+  "source_relocations": [
+    {
+      "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\final_refit\\test12.py",
+      "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\final_refit\\test12.py",
+      "sha256": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6"
+    },
+    {
+      "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port\\transfer.py",
+      "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\rgb_port\\transfer.py",
+      "sha256": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73"
+    },
+    {
+      "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port_revision\\transfer_inputs.py",
+      "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\rgb_port_revision\\transfer_inputs.py",
+      "sha256": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad"
+    },
+    {
+      "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port_streaming\\contracts.py",
+      "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\rgb_port_streaming\\contracts.py",
+      "sha256": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c"
+    },
+    {
+      "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\final_train40_transfer.py",
+      "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\scripts\\final_train40_transfer.py",
+      "sha256": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730"
+    },
+    {
+      "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py",
+      "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py",
+      "sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934"
+    }
+  ],
+  "original_and_relocated_sources_intact": true
+}

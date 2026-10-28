@@ -1,10 +1,10 @@
 {
   "schema": "train40_runtime_resume_report_sources_v1",
-  "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\docs\\train40_runtime_resume_20261027\\evidence\\checkpoint_20261028_001",
+  "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\docs\\train40_runtime_resume_20261027\\evidence\\closure_20261028_002",
   "generator": "scripts\\report_train40_resume.py",
-  "generator_sha256": "4e2ba09e4ca91289c2211d1947fca52f7e5f05ecd083e3e1fddbdd78d7fdd0a6",
+  "generator_sha256": "c30d9565eca716886c9fe7d339c241701de03ad37ee6aa158c8e27c14c166ea4",
   "report": "RESULTS_GENERATED.md",
-  "report_sha256": "40eddf88ea02dd8824286df353b5622b7d9a2881d6385259dcc6cd776e88886c",
+  "report_sha256": "01bb3a22735ba828e457e39bf498ba45df519bd70df807e1025df764f99bd810",
   "sources": [
     {
       "path": "baseline_all554_v1/setup_failure.json",
@@ -60,6 +60,51 @@
       "path": "encoder_ea5_b12_v1/summary.json",
       "sha256": "8a3da53499accdcf14e7dfcdc45bbf52e2d9fdb5fbdc41e02bb9efb48f823cf1",
       "bytes": 10941
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_aggregate/summary.json",
+      "sha256": "60fca448e15c13ab372644df20ce952184226a4884739daac3f75c3f59aa1d4a",
+      "bytes": 68485
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_pil_a/summary.json",
+      "sha256": "c6d0f7e93b1bc7cfd2e115b051f44c28674fb5286022b076a3f43f4585f4a261",
+      "bytes": 1399
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_pil_a/binding.json",
+      "sha256": "bc52e6743867d211da211f65354ebf8654148e159f32f393a11c4b15fa56a5e1",
+      "bytes": 6484
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_pil_d/summary.json",
+      "sha256": "4d20acd801305b7089dd7bebb76f8a69be34eda644f0e73f51c099ba56838ee0",
+      "bytes": 1411
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_pil_d/binding.json",
+      "sha256": "bc52e6743867d211da211f65354ebf8654148e159f32f393a11c4b15fa56a5e1",
+      "bytes": 6484
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_uint8_b/summary.json",
+      "sha256": "2108120a32ddf82a05706c81270d024c761466ba21e2514f1b97696b0af46aac",
+      "bytes": 1397
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_uint8_b/binding.json",
+      "sha256": "a5e34b98c2aad4e593e5818c2fc5f1292993f546f4773b4acdb24f7b8866f1b1",
+      "bytes": 6551
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_uint8_c/summary.json",
+      "sha256": "f75027af79e4b63c2bc97a30cf3876cc278c6f4a87ed42b6be58fe3131239daa",
+      "bytes": 1404
+    },
+    {
+      "path": "multiobject/paired_1_2_uint8_v1_uint8_c/binding.json",
+      "sha256": "a5e34b98c2aad4e593e5818c2fc5f1292993f546f4773b4acdb24f7b8866f1b1",
+      "bytes": 6551
     },
     {
       "path": "multiobject/pilot_1_2_dedicated_stream_v1/summary.json",

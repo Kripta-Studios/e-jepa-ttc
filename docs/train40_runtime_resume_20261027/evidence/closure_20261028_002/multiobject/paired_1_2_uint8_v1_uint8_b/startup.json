@@ -1,0 +1,160 @@
+[
+  {
+    "objects": 1,
+    "synthetic_priming_seconds": 4.272329100000206,
+    "rgb_uint8_allocation": {
+      "host_buffer_bytes": 491776,
+      "device_buffer_bytes": 9143552,
+      "host_pinned": true,
+      "device": "cuda:0",
+      "max_objects": 1,
+      "max_history": 8,
+      "max_frames": 10,
+      "max_raw_history_bytes": 134217728,
+      "crop_workers": 8,
+      "device_buffers": {
+        "unique_uint8": {
+          "shape": [
+            10,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.uint8",
+          "bytes": 491520
+        },
+        "pixel_indices": {
+          "shape": [
+            10,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.int32",
+          "bytes": 1966080
+        },
+        "unique_fp32": {
+          "shape": [
+            10,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.float32",
+          "bytes": 1966080
+        },
+        "mapping": {
+          "shape": [
+            24
+          ],
+          "dtype": "torch.int64",
+          "bytes": 192
+        },
+        "delta": {
+          "shape": [
+            16
+          ],
+          "dtype": "torch.float32",
+          "bytes": 64
+        },
+        "expanded_fp32": {
+          "shape": [
+            24,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.float32",
+          "bytes": 4718592
+        },
+        "lut": {
+          "shape": [
+            256
+          ],
+          "dtype": "torch.float32",
+          "bytes": 1024
+        }
+      },
+      "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8"
+    }
+  },
+  {
+    "objects": 2,
+    "synthetic_priming_seconds": 4.5640803999849595,
+    "rgb_uint8_allocation": {
+      "host_buffer_bytes": 983552,
+      "device_buffer_bytes": 18286080,
+      "host_pinned": true,
+      "device": "cuda:0",
+      "max_objects": 2,
+      "max_history": 8,
+      "max_frames": 10,
+      "max_raw_history_bytes": 134217728,
+      "crop_workers": 8,
+      "device_buffers": {
+        "unique_uint8": {
+          "shape": [
+            20,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.uint8",
+          "bytes": 983040
+        },
+        "pixel_indices": {
+          "shape": [
+            20,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.int32",
+          "bytes": 3932160
+        },
+        "unique_fp32": {
+          "shape": [
+            20,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.float32",
+          "bytes": 3932160
+        },
+        "mapping": {
+          "shape": [
+            48
+          ],
+          "dtype": "torch.int64",
+          "bytes": 384
+        },
+        "delta": {
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32",
+          "bytes": 128
+        },
+        "expanded_fp32": {
+          "shape": [
+            48,
+            3,
+            128,
+            128
+          ],
+          "dtype": "torch.float32",
+          "bytes": 9437184
+        },
+        "lut": {
+          "shape": [
+            256
+          ],
+          "dtype": "torch.float32",
+          "bytes": 1024
+        }
+      },
+      "lut_sha256": "010413efe9fc4438fee48de66c4d09f377b28af6a9fe2522201e8c1dbb831fc8"
+    }
+  }
+]
