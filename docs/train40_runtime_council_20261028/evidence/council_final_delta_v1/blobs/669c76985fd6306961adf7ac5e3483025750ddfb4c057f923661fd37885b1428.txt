@@ -1,0 +1,122 @@
+{
+  "schema": "train40_closure_default_profile_qa_v1",
+  "created_utc": "2026-10-28T11:55:20.641871+00:00",
+  "cwd": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+  "python": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "PYTHONPATH": "src;.",
+    "PYTHONUTF8": "1"
+  },
+  "commands": [
+    {
+      "name": "pytest",
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/unit/test_train40_runtime_defaults.py",
+        "tests/unit/test_train40_paced_runner.py",
+        "tests/unit/test_train40_runtime_multiobject_runner.py",
+        "tests/unit/test_train40_runtime_multiobject.py",
+        "tests/unit/test_train40_runtime_rgb_crop_integration.py",
+        "tests/unit/test_train40_transport_reuse_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 9.506176800001413
+    },
+    {
+      "name": "ruff",
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\ruff.exe",
+        "check",
+        "operational/train40_runtime/defaults.py",
+        "operational/train40_runtime/multiobject.py",
+        "scripts/benchmark_train40_paced.py",
+        "scripts/benchmark_train40_multiobject.py",
+        "tests/unit/test_train40_runtime_defaults.py",
+        "tests/unit/test_train40_paced_runner.py",
+        "tests/unit/test_train40_runtime_multiobject_runner.py",
+        "tests/unit/test_train40_runtime_multiobject.py",
+        "tests/unit/test_train40_runtime_rgb_crop_integration.py",
+        "tests/unit/test_train40_transport_reuse_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.02828819997375831
+    },
+    {
+      "name": "format",
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\ruff.exe",
+        "format",
+        "--check",
+        "operational/train40_runtime/defaults.py",
+        "operational/train40_runtime/multiobject.py",
+        "scripts/benchmark_train40_paced.py",
+        "scripts/benchmark_train40_multiobject.py",
+        "tests/unit/test_train40_runtime_defaults.py",
+        "tests/unit/test_train40_paced_runner.py",
+        "tests/unit/test_train40_runtime_multiobject_runner.py",
+        "tests/unit/test_train40_runtime_multiobject.py",
+        "tests/unit/test_train40_runtime_rgb_crop_integration.py",
+        "tests/unit/test_train40_transport_reuse_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.04323619999922812
+    },
+    {
+      "name": "pyright",
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\pyright.exe",
+        "--venvpath",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc",
+        "operational/train40_runtime/defaults.py",
+        "operational/train40_runtime/multiobject.py",
+        "scripts/benchmark_train40_paced.py",
+        "scripts/benchmark_train40_multiobject.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.4657670000451617
+    },
+    {
+      "name": "diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.06628009997075424
+    }
+  ],
+  "before_sha256": {
+    "operational/train40_runtime/defaults.py": "44564498cb59f20d974e28dff6d0a7af4c90ac3cbe4ed27c3e45b16b7ca40058",
+    "operational/train40_runtime/multiobject.py": "9816d1f226ba14d1ba0e3619ce1bbc0bbb3f8ce1f8cddadc08d156e144fe4dec",
+    "scripts/benchmark_train40_paced.py": "dd5abf645426c909eaedfbc391298ed2b2be29e00fa8f1d691a6efa601b69277",
+    "scripts/benchmark_train40_multiobject.py": "56ad063d782d88c99c3c3cad22f2a9ad9b82e4b032e170b132cc19c584395e15",
+    "tests/unit/test_train40_runtime_defaults.py": "2dd54dba1370f0c8b15edbd028fd95806b0dcc89f42d043ef1c9967f02121a63",
+    "tests/unit/test_train40_paced_runner.py": "d0b78e7be9010ab3dc9c6b276e6c3ba3ea3c84f332134061073da68757adddaf",
+    "tests/unit/test_train40_runtime_multiobject_runner.py": "c755281030ea250449e5374aaae1d9d2223d503424ec8accf70d6abd0f0b3330",
+    "tests/unit/test_train40_runtime_multiobject.py": "ff369333e568ffed432e77b9e840d0713b4e6c075d1fc91c1198a10a64401d7d",
+    "tests/unit/test_train40_runtime_rgb_crop_integration.py": "f6adc1587713cbfef225a6e005fa3a38d5603846859bab698dae10397c356132",
+    "tests/unit/test_train40_transport_reuse_integration.py": "20ac511b68699c4b4292328be69098bba5e4d0f6c3be6c54d7795c1c2d419dce",
+    "docs/train40_runtime_council_20261028/DEFAULT_PROFILE.md": "adf959dd3201c227796de8c540150854331047af572723fe0effc6a4e0783c66"
+  },
+  "after_sha256": {
+    "operational/train40_runtime/defaults.py": "44564498cb59f20d974e28dff6d0a7af4c90ac3cbe4ed27c3e45b16b7ca40058",
+    "operational/train40_runtime/multiobject.py": "9816d1f226ba14d1ba0e3619ce1bbc0bbb3f8ce1f8cddadc08d156e144fe4dec",
+    "scripts/benchmark_train40_paced.py": "dd5abf645426c909eaedfbc391298ed2b2be29e00fa8f1d691a6efa601b69277",
+    "scripts/benchmark_train40_multiobject.py": "56ad063d782d88c99c3c3cad22f2a9ad9b82e4b032e170b132cc19c584395e15",
+    "tests/unit/test_train40_runtime_defaults.py": "2dd54dba1370f0c8b15edbd028fd95806b0dcc89f42d043ef1c9967f02121a63",
+    "tests/unit/test_train40_paced_runner.py": "d0b78e7be9010ab3dc9c6b276e6c3ba3ea3c84f332134061073da68757adddaf",
+    "tests/unit/test_train40_runtime_multiobject_runner.py": "c755281030ea250449e5374aaae1d9d2223d503424ec8accf70d6abd0f0b3330",
+    "tests/unit/test_train40_runtime_multiobject.py": "ff369333e568ffed432e77b9e840d0713b4e6c075d1fc91c1198a10a64401d7d",
+    "tests/unit/test_train40_runtime_rgb_crop_integration.py": "f6adc1587713cbfef225a6e005fa3a38d5603846859bab698dae10397c356132",
+    "tests/unit/test_train40_transport_reuse_integration.py": "20ac511b68699c4b4292328be69098bba5e4d0f6c3be6c54d7795c1c2d419dce",
+    "docs/train40_runtime_council_20261028/DEFAULT_PROFILE.md": "adf959dd3201c227796de8c540150854331047af572723fe0effc6a4e0783c66"
+  },
+  "files_unchanged": true,
+  "passed": true,
+  "gpu_used": false
+}

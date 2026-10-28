@@ -320,3 +320,31 @@ experimentos. V13 y sus admisiones no se modifican.
 Validación local: 41 tests y 17 subtests aprobados; Ruff, formato y Pyright
 sobre la integración y el generador. La copia histórica del handoff se excluye
 del formateo para conservar los hashes del paquete recibido.
+
+## 2026-10-28 — Cierre del consejo de runtime TRAIN40
+
+Por petición del usuario, se termina el diagnóstico en curso y se prepara la
+pausa de la investigación tras publicar código, recibos y documentación. El
+[handoff detallado](train40_runtime_council_20261028/HANDOFF.md) sustituye al
+handoff de la ronda anterior para continuar este trabajo. No se reentrenó ni se
+alteraron los pesos, normalizadores o predicciones originales.
+
+El mejor replay de un objeto completa 250/250 consultas con paridad, cero
+descartes y cero errores durante cinco segundos ofertados. La respuesta desde
+el deadline previo a adquisición hasta todos los TTC tiene p95 de 29,143155 ms
+y máximo de 35,3326 ms. En 200/250 deadlines todavía había una actualización
+previa pendiente. No admite 50 Hz sostenidos, todos los updates bajo 20 ms ni
+ausencia de acumulación; dos objetos sostenidos y veinte quedan pendientes.
+
+El perfil efectivo conserva PIL ROI-first, E reuse OFF, R reuse ON y FP32;
+adopta transporte exacto reverse-summaries y lanzamiento temprano de eventos.
+El runner paced usa RAW CPU precargado, primación sintética nativa y caché de
+features RGB con identidad inmutable SHA-256 V1. La frontera de memoria CPU
+está declarada: no es adquisición de un sensor físico. Crop cache, hash V2 y
+subpaquetes de 5 ms siguen fuera del perfil por defecto.
+
+El último diagnóstico de 5 ms completó tres casos, con gates de estados,
+representaciones y TTC correctos y 626 archivos preservados; no mide latencia.
+Se conserva también su fallo inicial de presupuesto RAW, la pérdida de cobertura
+del ensayo con crop cache y los fallos numéricos de transporte compilado. Las
+tablas, tests, limitaciones y fuentes exactas están enlazados en el handoff.

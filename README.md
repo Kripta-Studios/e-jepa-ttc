@@ -1,5 +1,13 @@
 # E-JEPA-TTC
 
+**Cierre de runtime del 28 de octubre de 2026:** el [handoff del consejo de
+agentes](docs/train40_runtime_council_20261028/HANDOFF.md) conserva los ensayos,
+fallos y comandos de continuación. El mejor replay de un objeto entregó 250/250
+actualizaciones con paridad y sin descartes durante cinco segundos, con p95 de
+respuesta completa de 29,14 ms. **50 Hz sostenidos, menos de 20 ms y ausencia de
+acumulación siguen pendientes.** El perfil por defecto conserva PIL y adopta
+la configuración verificada de ese replay; pesos y normalizadores no cambian.
+
 **Actualización del 27 de octubre de 2026:** candidato multimodal TRAIN40 con
 entradas fuera de muestra, nueve componentes identificados y 6.762 predicciones
 Test12 preparadas; todavía no enviado a CodaBench. La comparación EvTTC final,

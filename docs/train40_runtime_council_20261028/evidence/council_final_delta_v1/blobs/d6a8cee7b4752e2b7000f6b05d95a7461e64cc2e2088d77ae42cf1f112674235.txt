@@ -1,0 +1,203 @@
+"""Pure injected callbacks: no real GC collections or application/model imports."""
+
+from __future__ import annotations
+
+import importlib.util
+from collections.abc import Callable, Iterable
+from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
+
+import pytest
+
+SPEC = importlib.util.spec_from_file_location(
+    "proposed_gc_trace", Path(__file__).with_name("gc_trace.py")
+)
+assert SPEC and SPEC.loader
+trace_module = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(trace_module)
+
+
+@pytest.fixture
+def fake_gc(monkeypatch: pytest.MonkeyPatch) -> tuple[SimpleNamespace, Callable[..., None]]:
+    def other_callback(*_: object) -> None:
+        pass
+
+    fake = SimpleNamespace(
+        callbacks=[other_callback], isenabled=lambda: True, get_threshold=lambda: (700, 10, 10)
+    )
+    monkeypatch.setattr(trace_module, "gc", fake)
+    return fake, other_callback
+
+
+def new_trace(max_events: object = 8, *, times: Iterable[int] | None = None) -> Any:  # noqa: ANN401
+    stamps = iter(range(100, 1000, 10) if times is None else times)
+    return trace_module.BoundedGCTrace(
+        max_events, clock_ns=lambda: next(stamps), thread_id=lambda: 7
+    )
+
+
+def test_callbacks_only_between_attach_detach_and_keep_other_owners(
+    fake_gc: tuple[SimpleNamespace, Callable[..., None]],
+) -> None:
+    fake, original = fake_gc
+    trace = new_trace()
+    trace._callback("start", {"generation": 0})
+    trace.attach()
+    with pytest.raises(RuntimeError, match="Detach"):
+        trace.snapshot()
+    trace._callback("start", {"generation": 0})
+    trace._callback("stop", {"generation": 0})
+
+    def appended(*_: object) -> None:
+        pass
+
+    fake.callbacks.append(appended)
+    trace.detach()
+    trace.detach()
+    trace._callback("stop", {"generation": 0})
+    assert fake.callbacks == [original, appended]
+    receipt = trace.snapshot()
+    assert receipt["events"] == [
+        {"phase": "start", "timestamp_ns": 110, "thread_id": 7, "generation": 0},
+        {"phase": "stop", "timestamp_ns": 120, "thread_id": 7, "generation": 0},
+    ]
+    assert receipt["attached_ns"] == 100 and receipt["detached_ns"] == 130
+    assert receipt["policy_unchanged_at_boundaries"] is True
+    assert receipt["pause_time_subtracted"] is False
+    with pytest.raises(RuntimeError, match="single-use"):
+        trace.attach()
+
+
+@pytest.mark.parametrize("failure", [ValueError, KeyboardInterrupt])
+def test_finally_removes_observer_on_error_or_cancellation(
+    fake_gc: tuple[SimpleNamespace, Callable[..., None]], failure: type[BaseException]
+) -> None:
+    fake, original = fake_gc
+    trace = new_trace()
+    with pytest.raises(failure):
+        trace.attach()
+        try:
+            raise failure("original failure")
+        finally:
+            trace.detach()
+    assert fake.callbacks == [original]
+    assert trace.snapshot()["retained_events"] == 0
+
+
+def test_bound_drops_never_become_fake_completed_intervals(
+    fake_gc: tuple[SimpleNamespace, Callable[..., None]],
+) -> None:
+    trace = new_trace(max_events=1)
+    trace.attach()
+    trace._callback("start", {"generation": 2})
+    trace._callback("stop", {"generation": 2})
+    trace._callback("start", {"generation": 0})
+    trace.detach()
+    receipt = trace.snapshot()
+    assert receipt["retained_events"] == 1 and receipt["dropped_events"] == 2
+    result = trace_module.correlate_gc_windows(receipt, [])
+    assert result["capture_complete"] is False
+    assert result["unmatched_starts"] == 1 and result["intervals"] == []
+
+
+def test_invalid_callbacks_and_clock_failures_do_not_escape(
+    fake_gc: tuple[SimpleNamespace, Callable[..., None]],
+) -> None:
+    trace = new_trace(times=[100, 130])
+    trace.attach()
+    for phase, info in [
+        ("other", {"generation": 0}),
+        ("start", {}),
+        ("stop", {"generation": True}),
+        ("stop", {"generation": 3}),
+    ]:
+        trace._callback(phase, info)
+    trace._clock_ns = lambda: 1 / 0
+    trace._callback("start", {"generation": 0})
+    trace._clock_ns = lambda: 130
+    trace.detach()
+    receipt = trace.snapshot()
+    assert receipt["invalid_callbacks"] == 4 and receipt["callback_errors"] == 1
+    assert receipt["retained_events"] == 0
+
+
+def test_thread_generation_pairing_and_posthoc_nested_windows(
+    fake_gc: tuple[SimpleNamespace, Callable[..., None]],
+) -> None:
+    trace = new_trace()
+    trace.attach()
+    trace._callback("stop", {"generation": 0})  # Attach can occur during a collection.
+    trace._callback("start", {"generation": 2})
+    trace._thread_id = lambda: 8
+    trace._callback("stop", {"generation": 2})  # Never pair across threads.
+    trace._thread_id = lambda: 7
+    trace._callback("stop", {"generation": 2})
+    trace.detach()
+    windows = [
+        {"kind": "deadline_response", "update_id": "u", "started_ns": 100, "completed_ns": 150},
+        {"kind": "service", "update_id": "u", "started_ns": 130, "completed_ns": 150},
+    ]
+    result = trace_module.correlate_gc_windows(trace.snapshot(), windows)
+    assert result["unmatched_stops"] == 2 and result["capture_complete"] is False
+    assert result["intervals"] == [
+        {"started_ns": 120, "completed_ns": 140, "thread_id": 7, "generation": 2}
+    ]
+    assert result["windows"][0]["gc_interval_overlaps"][0]["overlap_ns"] == 20
+    assert result["windows"][1]["gc_interval_overlaps"][0]["overlap_ns"] == 10
+    assert result["causal_attribution"] is False
+    assert result["overlapping_windows_must_not_be_summed"] is True
+    assert windows[0]["started_ns"] == 100 and "gc_interval_overlaps" not in windows[0]
+
+
+def test_source_service_and_failed_ack_windows_preserve_original_clocks() -> None:
+    paced = {
+        "arrival_receipts": [
+            {
+                "update_id": "u",
+                "scheduled_ns": 10,
+                "acquisition_started_ns": 11,
+                "observation_available_ns": 15,
+                "status": "ENQUEUED",
+            },
+            {
+                "update_id": "d",
+                "acquisition_started_ns": 31,
+                "observation_available_ns": 35,
+                "status": "DROPPED_QUEUE_FULL",
+            },
+            {
+                "update_id": "e",
+                "acquisition_started_ns": 41,
+                "acquisition_ended_ns": 45,
+                "status": "SOURCE_ERROR",
+            },
+        ],
+        "grouped": {
+            "updates": [{"update_id": "u", "started_ns": 20, "completed_ns": 30, "passed": False}]
+        },
+        "source_lifecycle": {"finalize": {"started_ns": 50, "ended_ns": 60, "thread_id": 7}},
+    }
+    windows = trace_module.paced_gc_windows(paced)
+    assert len(windows) == 8
+    service = next(row for row in windows if row["kind"] == "service")
+    assert service["successful_all_object_ttc"] is False
+    assert service["started_ns"] == 20 and service["completed_ns"] == 30
+    assert not any(row["kind"] == "service" and row["update_id"] == "d" for row in windows)
+    paced["grouped"]["updates"][0]["completed_ns"] = 19
+    with pytest.raises(ValueError, match="Invalid original interval"):
+        trace_module.paced_gc_windows(paced)
+
+
+@pytest.mark.parametrize("value", [0, -1, 65_537, True, 1.5])
+def test_invalid_bounds_are_rejected(value: object) -> None:
+    with pytest.raises(ValueError, match="max_events"):
+        new_trace(max_events=value)
+
+
+def test_unattached_capture_is_not_complete_and_duplicate_arrivals_rejected() -> None:
+    trace = new_trace()
+    result = trace_module.correlate_gc_windows(trace.snapshot(), [])
+    assert result["capture_complete"] is False
+    with pytest.raises(ValueError, match="Duplicate arrival"):
+        trace_module.paced_gc_windows({"arrival_receipts": [{"update_id": "u"}] * 2})

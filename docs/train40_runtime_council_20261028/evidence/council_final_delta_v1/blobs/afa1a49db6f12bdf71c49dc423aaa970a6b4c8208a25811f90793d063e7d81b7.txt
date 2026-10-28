@@ -1,0 +1,265 @@
+"""Bounded observational GC callbacks; proposed runtime module, not yet wired.
+
+No collection policy is changed. Serialization and correlation run only after
+detach, and callback overhead remains inside every existing application clock.
+"""
+
+from __future__ import annotations
+
+import gc
+import threading
+import time
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any
+
+TRACE_SCOPE = "OBSERVATIONAL_GC_CALLBACKS_DURING_PACED_CALL_NO_PAUSE_SUBTRACTION"
+MAX_TRACE_EVENTS = 65_536
+
+
+class BoundedGCTrace:
+    """Attach once, retain at most max_events, and remove only our own callback.
+
+    The RLock protects counters and the bound across callback threads. This
+    instrumentation is optional and is not claimed to have zero overhead.
+    The caller must detach in finally, including on cancellation and errors.
+    """
+
+    def __init__(
+        self,
+        max_events: int = 4096,
+        *,
+        clock_ns: Callable[[], int] = time.perf_counter_ns,
+        thread_id: Callable[[], int] = threading.get_ident,
+    ) -> None:
+        if isinstance(max_events, bool) or not isinstance(max_events, int):
+            raise ValueError("max_events must be an integer")
+        if not 1 <= max_events <= MAX_TRACE_EVENTS:
+            raise ValueError(f"max_events must be in [1, {MAX_TRACE_EVENTS}]")
+        self.max_events = max_events
+        self._clock_ns = clock_ns
+        self._thread_id = thread_id
+        self._lock = threading.RLock()
+        self._events: list[tuple[str, int, int, int]] = []
+        self._dropped = 0
+        self._invalid = 0
+        self._errors = 0
+        self._active = False
+        self._used = False
+        self._attached_ns: int | None = None
+        self._detached_ns: int | None = None
+        self._policy_before: dict[str, Any] | None = None
+        self._policy_after: dict[str, Any] | None = None
+        # Keep one bound method identity; do not remove any preexisting callback.
+        self._registered_callback = self._callback
+
+    def _callback(self, phase: str, info: Mapping[str, Any]) -> None:
+        try:
+            with self._lock:
+                if not self._active:
+                    return
+                generation = info.get("generation")
+                if phase not in ("start", "stop") or type(generation) is not int:
+                    self._invalid += 1
+                    return
+                if generation not in (0, 1, 2):
+                    self._invalid += 1
+                    return
+                if len(self._events) >= self.max_events:
+                    self._dropped += 1
+                    return
+                self._events.append((phase, self._clock_ns(), self._thread_id(), generation))
+        except Exception:
+            # An optional observer must not disrupt the application's GC callback path.
+            with self._lock:
+                self._errors += 1
+
+    def attach(self) -> None:
+        """Begin recording before the paced call, without collecting or changing policy."""
+        with self._lock:
+            if self._used:
+                raise RuntimeError("A GC trace is single-use")
+            self._used = True
+            self._policy_before = {
+                "enabled": gc.isenabled(),
+                "thresholds": list(gc.get_threshold()),
+            }
+            self._attached_ns = self._clock_ns()
+            gc.callbacks.append(self._registered_callback)
+            self._active = True
+
+    def detach(self) -> None:
+        """Stop recording idempotently; preserve every other callback and GC policy."""
+        with self._lock:
+            if not self._active:
+                return
+            self._active = False
+            self._detached_ns = self._clock_ns()
+            for index in range(len(gc.callbacks) - 1, -1, -1):
+                if gc.callbacks[index] is self._registered_callback:
+                    del gc.callbacks[index]
+            self._policy_after = {"enabled": gc.isenabled(), "thresholds": list(gc.get_threshold())}
+
+    def snapshot(self) -> dict[str, Any]:
+        """Serialize retained observations after detach; never infer an absent GC pause."""
+        with self._lock:
+            if self._active:
+                raise RuntimeError("Detach GC trace before serializing")
+            return {
+                "schema": "train40_gc_trace_v1",
+                "scope": TRACE_SCOPE,
+                "clock": "time.perf_counter_ns",
+                "attached_ns": self._attached_ns,
+                "detached_ns": self._detached_ns,
+                "max_events": self.max_events,
+                "retained_events": len(self._events),
+                "dropped_events": self._dropped,
+                "invalid_callbacks": self._invalid,
+                "callback_errors": self._errors,
+                "gc_policy_before": self._policy_before,
+                "gc_policy_after": self._policy_after,
+                "policy_unchanged_at_boundaries": self._policy_before == self._policy_after
+                if self._policy_before is not None and self._policy_after is not None
+                else None,
+                "collection_policy_changed_by_observer": False,
+                "pause_time_subtracted": False,
+                "overhead_excluded_from_clocks": False,
+                "events": [
+                    {
+                        "phase": phase,
+                        "timestamp_ns": timestamp,
+                        "thread_id": thread,
+                        "generation": generation,
+                    }
+                    for phase, timestamp, thread, generation in self._events
+                ],
+            }
+
+
+def paced_gc_windows(paced: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Copy causal source, queue, response, service and cleanup intervals without edits."""
+    arrival_rows = paced.get("arrival_receipts", [])
+    arrivals = {row["update_id"]: row for row in arrival_rows}
+    if len(arrivals) != len(arrival_rows):
+        raise ValueError("Duplicate arrival IDs cannot be collapsed for correlation")
+    windows: list[dict[str, Any]] = []
+
+    def add(kind: str, update_id: str, begin: object, end: object, **metadata: object) -> None:
+        if begin is None or end is None:
+            return  # Missing clocks are not fabricated as zero-length windows.
+        if type(begin) is not int or type(end) is not int or end < begin:
+            raise ValueError(f"Invalid original interval: {kind}/{update_id}")
+        windows.append(
+            {
+                "kind": kind,
+                "update_id": update_id,
+                "started_ns": begin,
+                "completed_ns": end,
+                **metadata,
+            }
+        )
+
+    for update_id, row in arrivals.items():
+        add(
+            "raw_acquisition",
+            update_id,
+            row.get("acquisition_started_ns"),
+            row.get("observation_available_ns", row.get("acquisition_ended_ns")),
+            arrival_status=row.get("status"),
+        )
+    for row in paced.get("grouped", {}).get("updates", []):
+        update_id = row["update_id"]
+        arrival = arrivals.get(update_id, {})
+        start, end = row.get("started_ns"), row.get("completed_ns")
+        metadata = {"successful_all_object_ttc": row.get("passed")}
+        add("service", update_id, start, end, **metadata)
+        add("deadline_response", update_id, arrival.get("scheduled_ns"), end, **metadata)
+        add(
+            "raw_availability_response",
+            update_id,
+            arrival.get("observation_available_ns"),
+            end,
+            **metadata,
+        )
+        add("queue_wait", update_id, arrival.get("observation_available_ns"), start, **metadata)
+    lifecycle = paced.get("source_lifecycle", {})
+    for phase in ("warmup", "finalize"):
+        row = lifecycle.get(phase) or {}
+        add(
+            f"source_{phase}",
+            "lifecycle",
+            row.get("started_ns"),
+            row.get("ended_ns"),
+            thread_id=row.get("thread_id"),
+        )
+    return windows
+
+
+def correlate_gc_windows(
+    trace: Mapping[str, Any], windows: Sequence[Mapping[str, Any]]
+) -> dict[str, Any]:
+    """Report overlap only; incomplete/censored callbacks never become inferred intervals.
+
+    Input windows have kind, update_id, started_ns and completed_ns copied from
+    original receipts. Cross-kind overlaps must not be summed: these windows
+    can be nested. Thread identity is retained, not interpreted as GIL blockage.
+    """
+    starts: dict[tuple[int, int], int] = {}
+    intervals = []
+    unmatched_stops = 0
+    superseded_starts = 0
+    invalid_pairs = 0
+    for event in trace.get("events", []):
+        key = (event["thread_id"], event["generation"])
+        timestamp = event["timestamp_ns"]
+        if event["phase"] == "start":
+            superseded_starts += int(key in starts)
+            starts[key] = timestamp
+        elif event["phase"] == "stop":
+            begin = starts.pop(key, None)
+            if begin is None:
+                unmatched_stops += 1
+            elif timestamp < begin:
+                invalid_pairs += 1
+            else:
+                intervals.append(
+                    {
+                        "started_ns": begin,
+                        "completed_ns": timestamp,
+                        "thread_id": key[0],
+                        "generation": key[1],
+                    }
+                )
+    rows = []
+    for window in windows:
+        begin, end = window["started_ns"], window["completed_ns"]
+        if type(begin) is not int or type(end) is not int or end < begin:
+            raise ValueError("Correlation windows require ordered integer nanosecond clocks")
+        matches = []
+        for index, interval in enumerate(intervals):
+            overlap = min(end, interval["completed_ns"]) - max(begin, interval["started_ns"])
+            if overlap > 0:
+                matches.append({"interval_index": index, "overlap_ns": overlap})
+        rows.append({**window, "gc_interval_overlaps": matches})
+    return {
+        "schema": "train40_gc_window_correlation_v1",
+        "causal_attribution": False,
+        "pause_time_subtracted": False,
+        "overlapping_windows_must_not_be_summed": True,
+        "capture_complete": type(trace.get("attached_ns")) is int
+        and type(trace.get("detached_ns")) is int
+        and trace["detached_ns"] >= trace["attached_ns"]
+        and trace.get("dropped_events") == 0
+        and trace.get("invalid_callbacks") == 0
+        and trace.get("callback_errors") == 0
+        and not starts
+        and not unmatched_stops
+        and not superseded_starts
+        and not invalid_pairs,
+        "unmatched_starts": len(starts),
+        "unmatched_stops": unmatched_stops,
+        "superseded_starts": superseded_starts,
+        "invalid_clock_pairs": invalid_pairs,
+        "dropped_events": trace.get("dropped_events"),
+        "intervals": intervals,
+        "windows": rows,
+    }

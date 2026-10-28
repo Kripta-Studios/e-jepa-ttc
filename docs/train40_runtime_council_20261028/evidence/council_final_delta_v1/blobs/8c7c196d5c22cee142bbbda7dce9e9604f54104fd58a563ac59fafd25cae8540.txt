@@ -1,0 +1,318 @@
+{
+  "status": "COMPLETE",
+  "passed": true,
+  "scope": "IMMUTABLE_RGB_CROP_AND_FEATURE_CACHE_ADMISSION_FORCED_MISS_NO_ARRIVAL_TIMING",
+  "expected_updates": 18,
+  "validated_updates": 18,
+  "immutable_rgb_history": true,
+  "rgb_crop_cache": true,
+  "transport_reuse": {
+    "mode": "reverse-summaries",
+    "reverse_correlation_reuse": true,
+    "reverse_sample_reuse": true,
+    "weighted_summary_reuse": true,
+    "history_group_size": null,
+    "adjacent_pair_deduplication": false,
+    "adapter_before_endpoint_reuse": true,
+    "compile_backend": null
+  },
+  "crop_admission_matrix": {
+    "passed": true,
+    "required_cases": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        137
+      ],
+      [
+        1,
+        553
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        137
+      ],
+      [
+        2,
+        553
+      ]
+    ],
+    "missing_cases": [],
+    "arrival_or_latency_claim": false
+  },
+  "latency_is_paced_or_arrival_measurement": false,
+  "raw_source_stat_checks": [
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\low-0\\overlap-0\\2024-08-08-10-49-53.hdf5",
+      "before": {
+        "size_bytes": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "after": {
+        "size_bytes": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "passed": true
+    },
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\high-50\\overlap-50\\2024-09-25-14-38-58.hdf5",
+      "before": {
+        "size_bytes": 7578841115,
+        "mtime_ns": 1785095518390185300
+      },
+      "after": {
+        "size_bytes": 7578841115,
+        "mtime_ns": 1785095518390185300
+      },
+      "passed": true
+    },
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+      "before": {
+        "size_bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      },
+      "after": {
+        "size_bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      },
+      "passed": true
+    }
+  ],
+  "schedule_exact": true,
+  "expected_case_schedule": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      137,
+      0
+    ],
+    [
+      1,
+      137,
+      1
+    ],
+    [
+      1,
+      137,
+      2
+    ],
+    [
+      1,
+      553,
+      0
+    ],
+    [
+      1,
+      553,
+      1
+    ],
+    [
+      1,
+      553,
+      2
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      2
+    ],
+    [
+      2,
+      137,
+      0
+    ],
+    [
+      2,
+      137,
+      1
+    ],
+    [
+      2,
+      137,
+      2
+    ],
+    [
+      2,
+      553,
+      0
+    ],
+    [
+      2,
+      553,
+      1
+    ],
+    [
+      2,
+      553,
+      2
+    ]
+  ],
+  "observed_case_schedule": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      137,
+      0
+    ],
+    [
+      1,
+      137,
+      1
+    ],
+    [
+      1,
+      137,
+      2
+    ],
+    [
+      1,
+      553,
+      0
+    ],
+    [
+      1,
+      553,
+      1
+    ],
+    [
+      1,
+      553,
+      2
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      2
+    ],
+    [
+      2,
+      137,
+      0
+    ],
+    [
+      2,
+      137,
+      1
+    ],
+    [
+      2,
+      137,
+      2
+    ],
+    [
+      2,
+      553,
+      0
+    ],
+    [
+      2,
+      553,
+      1
+    ],
+    [
+      2,
+      553,
+      2
+    ]
+  ],
+  "originals": {
+    "passed": true,
+    "files": 623,
+    "changed": [],
+    "missing": []
+  },
+  "cleanup_errors": [],
+  "unexpected_excluded_source_imports": [],
+  "error": null,
+  "target_20_objects_50hz_demonstrated": false,
+  "rgb_cache_hit_updates": 6,
+  "rgb_cache_miss_updates": 12,
+  "latency_by_count_ms": {
+    "1": {
+      "count": 9,
+      "mean_ms": 21.835811111111113,
+      "p50_ms": 21.4631,
+      "p95_ms": 29.43824,
+      "p99_ms": 30.436288,
+      "min_ms": 14.9691,
+      "max_ms": 30.6858,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 4,
+      "at_least_20ms_count": 5,
+      "over_50ms_count": 0,
+      "over_100ms_count": 0,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 45.79632947507738
+    },
+    "2": {
+      "count": 9,
+      "mean_ms": 32.94745555555556,
+      "p50_ms": 33.2486,
+      "p95_ms": 50.14645999999999,
+      "p99_ms": 54.05609199999999,
+      "min_ms": 21.1704,
+      "max_ms": 55.0335,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 0,
+      "at_least_20ms_count": 9,
+      "over_50ms_count": 1,
+      "over_100ms_count": 0,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 30.35135743073736
+    }
+  }
+}

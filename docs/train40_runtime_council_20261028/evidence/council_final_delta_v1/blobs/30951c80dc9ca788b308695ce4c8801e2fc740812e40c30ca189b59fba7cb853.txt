@@ -1,0 +1,12 @@
+[
+  {
+    "objects": 1,
+    "synthetic_priming_seconds": 3.637123199994676,
+    "rgb_uint8_allocation": null
+  },
+  {
+    "objects": 2,
+    "synthetic_priming_seconds": 3.478609499987215,
+    "rgb_uint8_allocation": null
+  }
+]
