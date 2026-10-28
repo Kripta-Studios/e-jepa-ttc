@@ -21,7 +21,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = ROOT / "artifacts/train40_runtime_resume_20261027"
 DEFAULT_OUTPUT = ROOT / "docs/train40_runtime_resume_20261027/RESULTS_GENERATED.md"
-MAX_RECEIPT_BYTES = 2_000_000
+MAX_RECEIPT_BYTES = 8_000_000
+COMPILED_PIPELINE_SCOPE = "PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT"
 FAMILIES = (
     "producers",
     "prefix",
@@ -31,7 +32,9 @@ FAMILIES = (
     "encoders",
     "compiled_pipeline",
     "rgb_uint8",
+    "rgb_exact",
     "scheduler",
+    "paced",
 )
 SCOPES = {
     "producers": "Productores preparados en GPU; excluye sensores, H2D, contexto y TTC final.",
@@ -44,8 +47,14 @@ SCOPES = {
     "la paridad TTC se comprueba fuera del reloj. Excluye RAW, H2D y contexto del tiempo.",
     "rgb_uint8": "Preparación RGB sintética; incluye el tramo declarado en cada recibo. "
     "No incluye modelos ni TTC. Bytes propuestos no equivalen a transferencias ejecutadas.",
+    "rgb_exact": "RAW RGB disponible en CPU a crops exactos preparados en el dispositivo; "
+    "incluye sellado de llegadas nuevas, H2D y preparación. Excluye disco, reconstrucción "
+    "del prefijo causal, modelos y TTC. No es un ensayo sostenido del servicio.",
     "scheduler": "Control del planificador con RAW y predicciones ficticias. "
     "No ejecuta modelos ni GPU y no admite ningún objetivo TTC.",
+    "paced": "Replay RAW con llegadas independientes y todos los TTC en host. "
+    "Se separan deadline→TTC, disponibilidad RAW→TTC y adquisición; no se suman. "
+    "Un ensayo completado no implica superar su gate de cadencia ni certificar sensores reales.",
 }
 COMPACT_NAMES = {
     "summary.json",
@@ -82,6 +91,12 @@ COMPACT_NAMES = {
     "REPORT.md",
     "CLOSURE_HANDOFF.md",
     "PRECISION_VARIANTS.md",
+    "paced.json",
+    "parity.json",
+    "service_updates.json",
+    "raw_sequence_inventory.json",
+    "manifest_generation_receipt.json",
+    "causal_pilot_manifest.json",
 }
 FORBIDDEN_PARTS = {
     "deps",
@@ -171,7 +186,9 @@ class Receipt:
 
     @property
     def device(self) -> Any:
-        return self.binding.get("device", self.result.get("device", self.result.get("gpu")))
+        return self.binding.get(
+            "device", self.binding.get("gpu", self.result.get("device", self.result.get("gpu")))
+        )
 
 
 class Sources:
@@ -226,7 +243,15 @@ class Sources:
             ):
                 family = "scheduler"
             binding_path = path.with_name("binding.json")
-            binding = self.read(binding_path) if binding_path.exists() else {}
+            binding = (
+                self.read(binding_path) if binding_path.exists() else mapping(result.get("binding"))
+            )
+            if result.get("scope", binding.get("scope")) == COMPILED_PIPELINE_SCOPE:
+                family = "compiled_pipeline"
+            if result.get("schema") == "train40_paced_service_summary_v1":
+                family = "paced"
+            if result.get("schema") == "train40_rgb_pil_exact_probe_v1":
+                family = "rgb_exact"
             receipts.append(Receipt(relative.as_posix(), result, binding, family))
         return receipts
 
@@ -397,6 +422,188 @@ def record_gate(record: dict[str, Any], family: str) -> Any:
     return record.get("all_encoder_parity_passed", record.get("passed_1e5", record.get("passed")))
 
 
+def compiled_route_parity(record: dict[str, Any], route: str) -> str:
+    """Keep every replay gate; explicitly label legacy last-result-only evidence."""
+    if "replay_parity" not in record:
+        gate = mapping(mapping(record.get("parity")).get(route)).get("passed")
+        return f"{cell(gate)} [last-only]"
+    replays = record["replay_parity"]
+    if not isinstance(replays, list) or any(not isinstance(row, dict) for row in replays):
+        raise ValueError("Malformed compiled-pipeline replay parity population")
+    selected = [row for row in replays if row.get("variant") == route]
+    passed = sum(mapping(row.get("parity")).get("passed") is True for row in selected)
+    coverage = mapping(record.get("replay_parity_coverage"))
+    schedule_ok = coverage.get("schedule_exact") is not False
+    for field in ("expected_calls", "observed_calls"):
+        if field in coverage and coverage[field] != len(replays):
+            schedule_ok = False
+    gate = bool(selected) and passed == len(selected) and schedule_ok
+    return f"{cell(gate)} [all-replays; {passed}/{len(selected)}]"
+
+
+def paced_section(receipt: Receipt) -> list[str]:
+    """Render measured paced clocks and declared gates without inferring throughput."""
+    result, binding = receipt.result, receipt.binding
+    paced = mapping(result.get("paced"))
+    milestone = mapping(result.get("milestone"))
+    grouped = mapping(paced.get("grouped"))
+    parity = mapping(result.get("separate_parity"))
+    cache = mapping(result.get("rgb_cache_exercise"))
+    objects = milestone.get("target_object_count", binding.get("objects"))
+    lines = [
+        f"### `{receipt.relative}`",
+        "",
+        f"Estado: **{cell(receipt.status)}**. Dispositivo: `{cell(receipt.device)}`. "
+        f"Alcance: `{cell(receipt.scope)}`.",
+        "",
+    ]
+    lines += table(
+        ["Configuración/recibo", "Valor"],
+        [
+            ["objetos por actualización", objects],
+            ["rate_hz declarado", paced.get("rate_hz")],
+            ["actualizaciones ofertadas", paced.get("offered_updates")],
+            ["duración ofertada s", paced.get("offered_duration_s")],
+            ["duración wall s", paced.get("actual_wall_duration_s")],
+            ["capacidad cola", paced.get("queue_capacity")],
+            ["wait_strategy", paced.get("wait_strategy")],
+            ["raw_source_mode", binding.get("raw_source_mode")],
+            ["service_options", binding.get("service_options")],
+            ["updates esperados", grouped.get("expected_updates")],
+            ["resultados objeto esperados", grouped.get("expected_object_results")],
+            ["cobertura completa", grouped.get("passed")],
+            ["descartes", paced.get("dropped_updates")],
+            ["errores fuente", paced.get("source_errors")],
+            ["paridad posterior realizada", parity.get("performed")],
+            ["paridad posterior pasa", parity.get("passed")],
+            ["cache MISS→HIT acreditado", cache.get("passed")],
+            ["cache HIT updates", cache.get("hit_updates")],
+            ["cache MISS updates", cache.get("miss_updates")],
+            ["preservación de originales", preservation(result)],
+            ["hito con paridad declarado", milestone.get("milestone_with_parity_passed")],
+            ["capacidad veinte con paridad declarada", result.get("capacity_with_parity_passed")],
+        ],
+    )
+    gate = parity.get("passed") if parity.get("performed") is True else None
+    timings = []
+    for name in (
+        "deadline_response_ms",
+        "raw_availability_response_ms",
+        "raw_availability_lateness_ms",
+    ):
+        timings.extend(
+            timing_cells("recibos del replay", objects, route, timing, gate)
+            for route, timing in latency_rows(paced.get(name), name)
+        )
+    if timings:
+        lines += table([*TIMING_HEADERS[:-1], "Paridad TTC del replay"], timings)
+    else:
+        lines += ["No hay distribuciones de latencia paced en este recibo.", ""]
+    checks = [
+        [f"capacity_checks.{name}", value]
+        for name, value in mapping(paced.get("capacity_checks")).items()
+    ]
+    checks += [
+        [f"milestone_checks.{name}", value]
+        for name, value in mapping(milestone.get("milestone_checks")).items()
+    ]
+    if checks:
+        lines += table(["Gate declarado", "Resultado"], checks)
+    raw_checks = result.get("raw_source_stat_checks")
+    if isinstance(raw_checks, list):
+        lines += table(
+            ["Fuente RAW", "Tamaño/mtime preservados"],
+            [[mapping(row).get("path"), mapping(row).get("passed")] for row in raw_checks],
+        )
+    for name, value in (
+        ("error", result.get("error")),
+        ("history_failure", result.get("history_failure")),
+        ("cleanup_errors", result.get("cleanup_errors")),
+        ("source_lifecycle_errors", mapping(paced.get("source_lifecycle")).get("errors")),
+    ):
+        if value:
+            lines += [f"{name}: `{cell(value)}`", ""]
+    lines += [
+        "Los gates se muestran tal como quedaron registrados, sin recalcular admisión desde "
+        "medias ni suponer una frecuencia ausente. COMPLETE no equivale a tiempo real. "
+        "La distribución deadline_response_ms incluye adquisición y colas; "
+        "raw_availability_response_ms comienza después de preparar el payload RAW.",
+        "",
+    ]
+    return lines
+
+
+def rgb_exact_section(receipt: Receipt) -> list[str]:
+    """Retain cold RGB trials and their exact preprocessing-only boundary."""
+    result, binding = receipt.result, receipt.binding
+    coverage = mapping(result.get("coverage"))
+    lines = [
+        f"### `{receipt.relative}`",
+        "",
+        f"Estado: **{cell(receipt.status)}**. Dispositivo: `{cell(receipt.device)}`. "
+        f"Alcance: `{cell(receipt.scope)}`.",
+        "",
+    ]
+    lines += table(
+        ["Dato declarado", "Valor"],
+        [
+            ["actualizaciones esperadas", coverage.get("expected")],
+            ["actualizaciones medidas", coverage.get("measured")],
+            ["cobertura completa", coverage.get("passed")],
+            ["todos los píxeles/deltas exactos", result.get("all_exact")],
+            ["compilaciones nuevas tras primación", result.get("warmed_recompilations")],
+            ["preservación", preservation(result)],
+            ["definición primera preparación", binding.get("cold_definition")],
+            ["definición primación", binding.get("warmed_definition")],
+            ["costes excluidos", binding.get("clock_excludes")],
+            ["modelos o normalizadores cargados", result.get("weights_or_normalizers_loaded")],
+        ],
+    )
+    latencies = result.get("latency", [])
+    if not isinstance(latencies, list) or any(not isinstance(row, dict) for row in latencies):
+        raise ValueError("Malformed exact-RGB latency rows")
+    if latencies:
+        lines += table(
+            [*TIMING_HEADERS[:-1], "Exactitud global, incluida primera preparación"],
+            [
+                timing_cells(
+                    f"índice={row.get('index')}",
+                    row.get("objects"),
+                    row.get("mode", "NO_DECLARADO"),
+                    row,
+                    result.get("all_exact"),
+                )
+                for row in latencies
+            ],
+        )
+    observations = []
+    for group, phase in (("cold_records", "primera preparación"), ("records", "tras primación")):
+        rows = result.get(group, [])
+        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+            raise ValueError("Malformed exact-RGB observed trials")
+        observations.extend(
+            [
+                row.get("index"),
+                row.get("objects"),
+                phase,
+                row.get("mode"),
+                row.get("wall_ms"),
+                row.get("new_compilations_inside_clock"),
+                mapping(row.get("parity")).get("passed"),
+            ]
+            for row in rows
+        )
+    if observations:
+        lines += table(
+            ["Índice", "Objetos", "Fase", "Ruta", "Wall ms", "Compilaciones", "Exacto"],
+            observations,
+        )
+    if result.get("error"):
+        lines += [f"error: `{cell(result['error'])}`", ""]
+    lines += ["La exactitud aquí corresponde a píxeles y deltas. No acredita paridad TTC.", ""]
+    return lines
+
+
 def run_section(receipt: Receipt) -> list[str]:
     """Render known stage schemas and explicitly identify unmeasured/error cases."""
     result, binding = receipt.result, receipt.binding
@@ -420,6 +627,10 @@ def run_section(receipt: Receipt) -> list[str]:
         "normalization",
         "roi_size",
         "precision",
+        "event_object_chunk_size",
+        "rgb_object_chunk_size",
+        "native_entropy_log",
+        "native_correlation_match",
     )
     config = [[key, binding[key]] for key in keys if key in binding]
     if "input_population" in binding:
@@ -438,6 +649,8 @@ def run_section(receipt: Receipt) -> list[str]:
     rows, extra = [], []
     for index, record in enumerate(records):
         label = record.get("backend", record.get("model", record.get("variant", index)))
+        if receipt.family == "compiled_pipeline":
+            label = f"índice={record.get('index', index)}"
         if receipt.family == "scheduler":
             label = record.get("strategy", index)
         if "batch" in record:
@@ -468,7 +681,7 @@ def run_section(receipt: Receipt) -> list[str]:
                 record.get("objects"),
                 route,
                 timing,
-                mapping(mapping(record.get("parity")).get(route)).get("passed")
+                compiled_route_parity(record, route)
                 if receipt.family == "compiled_pipeline"
                 else gate,
             )
@@ -521,10 +734,41 @@ def run_section(receipt: Receipt) -> list[str]:
     if receipt.family == "compiled_pipeline":
         lines += [
             "La columna de paridad corresponde a las tres salidas TTC por ruta. "
+            "all-replays incluye llamadas iniciales, warmup y cada repetición registrada; "
+            "last-only conserva el alcance limitado de recibos históricos sin ese registro. "
             "El estado del ensayo conserva también fallos de auditoría. "
             "La paridad de features intermedias es un diagnóstico separado.",
             "",
         ]
+        validation = mapping(result.get("replay_validation"))
+        if validation:
+            lines += table(
+                ["Protocolo de validación", "Valor"], list(map(list, validation.items()))
+            )
+        coverage_rows = [
+            [
+                record.get("index", index),
+                mapping(record.get("replay_parity_coverage")).get("expected_calls"),
+                mapping(record.get("replay_parity_coverage")).get("observed_calls"),
+                mapping(record.get("replay_parity_coverage")).get("schedule_exact"),
+                mapping(record.get("replay_parity_coverage")).get("all_ttc_passed"),
+                mapping(record.get("replay_parity_coverage")).get("first_calls_passed"),
+            ]
+            for index, record in enumerate(records)
+            if "replay_parity_coverage" in record
+        ]
+        if coverage_rows:
+            lines += table(
+                [
+                    "Índice",
+                    "Llamadas esperadas",
+                    "Registradas",
+                    "Grilla exacta",
+                    "Todos TTC",
+                    "Primeras",
+                ],
+                coverage_rows,
+            )
     if receipt.family == "rgb_uint8":
         lines += table(
             [
@@ -565,6 +809,12 @@ def compact_overview(receipts: list[Receipt]) -> list[str]:
             primary = item.binding.get("primary_objects_per_update")
             if isinstance(primary, int) and not isinstance(primary, bool):
                 counts.append(primary)
+            if item.family == "paced":
+                count = mapping(item.result.get("milestone")).get(
+                    "target_object_count", item.binding.get("objects")
+                )
+                if isinstance(count, int) and not isinstance(count, bool):
+                    counts.append(count)
             records = item.result.get("records", item.result.get("results", []))
             if isinstance(records, list):
                 counts.extend(
@@ -649,7 +899,14 @@ def generate(source: Path, output: Path) -> dict[str, Any]:
         if not selected:
             lines += ["Sin recibos disponibles en esta generación.", ""]
         for receipt in selected:
-            lines += baseline_section(receipt) if family == "baseline" else run_section(receipt)
+            if family == "baseline":
+                lines += baseline_section(receipt)
+            elif family == "paced":
+                lines += paced_section(receipt)
+            elif family == "rgb_exact":
+                lines += rgb_exact_section(receipt)
+            else:
+                lines += run_section(receipt)
     unknown = [r for r in receipts if r.family not in {"baseline", *FAMILIES}]
     if unknown:
         lines += [
