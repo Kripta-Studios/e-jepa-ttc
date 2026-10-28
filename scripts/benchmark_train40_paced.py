@@ -73,6 +73,7 @@ from operational.train40_runtime.replay_memory import (  # noqa: E402
     MemoryRawUpdate,
     PreloadedRawSource,
 )
+from operational.train40_runtime.rgb_crop_cache import CROP_ABI, CROP_BYTES  # noqa: E402
 from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory  # noqa: E402
 from operational.train40_runtime.rgb_raw_ring import (  # noqa: E402
     FrozenRGBFrame,
@@ -891,6 +892,44 @@ def service_options(args: argparse.Namespace) -> dict[str, Any]:
         "rgb_workers": args.rgb_workers,
         "overlap_event_with_rgb_preparation": args.overlap_event_with_rgb_preparation,
         "transport_reuse": args.transport_reuse,
+        "rgb_crop_cache": args.rgb_crop_cache,
+    }
+
+
+def rgb_crop_cache_contract(args: argparse.Namespace) -> dict[str, Any]:
+    """Declare additional retained pixels and one insertion copy before allocating RAW."""
+    payload = args.objects * 16 * CROP_BYTES if args.rgb_crop_cache else 0
+    scratch = CROP_BYTES if args.rgb_crop_cache else 0
+    return {
+        "enabled": args.rgb_crop_cache,
+        "eligible_input": "AUTHENTICATED_FROZEN_RGB_HISTORY_ONLY_LEGACY_BYPASS",
+        "crop_abi": list(CROP_ABI),
+        "max_crops_per_object": 16,
+        "max_crop_bytes": payload,
+        "copy_scratch_upper_bound_bytes": scratch,
+        "additional_numeric_upper_bound_bytes": payload + scratch,
+        "memory_exclusions": "Python metadata and original PIL/stack working arrays",
+        "producer_batch_changed": False,
+    }
+
+
+def rgb_crop_cache_exercise(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Require actual causal crop hits and original-PIL misses in an opt-in replay."""
+    totals = {
+        key: sum(int((row.get("rgb_preprocess") or {}).get(key, 0)) for row in rows)
+        for key in (
+            "crop_cache_hits",
+            "crop_cache_misses",
+            "crop_cache_stored_crops",
+            "crop_cache_bypassed_frames",
+        )
+    }
+    return {
+        **totals,
+        "passed": totals["crop_cache_hits"] > 0
+        and totals["crop_cache_misses"] > 0
+        and totals["crop_cache_stored_crops"] > 0,
+        "scope": "CAUSAL_IMMUTABLE_ORIGINAL_PIL_CROPS_FULL_PRODUCER_BATCH_UNCHANGED",
     }
 
 
@@ -910,6 +949,7 @@ def cache_identity(binding: Mapping[str, Any], args: argparse.Namespace) -> dict
                 "rgb_uint8": False,
                 "transport_reuse": transport_reuse_contract(args.transport_reuse),
                 "options": service_options(args),
+                "rgb_crop_cache": rgb_crop_cache_contract(args),
             }
         ),
     }
@@ -965,6 +1005,12 @@ def run(args: argparse.Namespace) -> None:
             args.event_query_graphs or args.event_normalization != "sort"
         ):
             raise ValueError("Event query graphs/topk require the prefix backend")
+        crop_contract = rgb_crop_cache_contract(args)
+        crop_reserve = crop_contract["additional_numeric_upper_bound_bytes"]
+        if args.rgb_crop_cache and args.shared_rgb_images:
+            raise ValueError("RGB crop cache requires the original ROI-first PIL path")
+        if args.raw_source == "memory" and args.max_preloaded_source_bytes <= crop_reserve:
+            raise ValueError("Preloaded source budget must exceed the optional crop cache reserve")
         paths, candidate_binding = verify_candidate(args.candidate)
         frozen = verify_frozen_runtime(args.candidate)
         base = read(args.base_manifest)
@@ -982,7 +1028,7 @@ def run(args: argparse.Namespace) -> None:
             source = PreloadedRawSource(
                 schedule,
                 args.max_payload_bytes,
-                max_total_bytes=args.max_preloaded_source_bytes,
+                max_total_bytes=args.max_preloaded_source_bytes - crop_reserve,
                 max_frame_bytes=args.max_raw_frame_cache_bytes,
                 max_initial_bytes=args.max_initial_bytes,
                 queue_capacity=args.queue_capacity,
@@ -1100,6 +1146,12 @@ def run(args: argparse.Namespace) -> None:
                 else "OWNED_READONLY_PAYLOAD_ARRAYS"
             ),
             "rgb_feature_cache_enabled": args.rgb_feature_cache,
+            "rgb_crop_cache": crop_contract,
+            "preloaded_source_and_crop_upper_bound_bytes": (
+                startup["raw_preload"]["source_total_upper_bound_bytes"] + crop_reserve
+                if args.raw_source == "memory"
+                else None
+            ),
             "immutable_freeze_scratch_scope": (
                 "One additional RAW frame of immutable bytes during ndarray replacement; "
                 "bound reported in source lifecycle stats, outside numeric cache bound"
@@ -1145,6 +1197,7 @@ def run(args: argparse.Namespace) -> None:
         )
         startup["model_and_service_seconds"] = time.perf_counter() - begin
         startup["producer_transport_bindings"] = service.producers.transport_bindings
+        startup["rgb_crop_cache_initial"] = service.rgb_crop_cache_stats
         if args.prime_native_histories:
             startup["synthetic_shape_priming"] = {}
             prime_supported_histories(
@@ -1210,6 +1263,7 @@ def run(args: argparse.Namespace) -> None:
         if service is not None:
             try:
                 service.close()
+                startup["rgb_crop_cache_final"] = service.rgb_crop_cache_stats
             except BaseException as exc:
                 cleanup_errors.append(f"{type(exc).__name__}: {exc}")
         intact = (
@@ -1236,6 +1290,11 @@ def run(args: argparse.Namespace) -> None:
             if args.rgb_feature_cache
             else None
         )
+        crop_exercise = (
+            rgb_crop_cache_exercise(consumer.service_receipts if consumer is not None else [])
+            if args.rgb_crop_cache
+            else None
+        )
         admission = capacity_admission(
             paced,
             parity,
@@ -1251,6 +1310,7 @@ def run(args: argparse.Namespace) -> None:
             and intact["passed"]
             and raw_intact
             and (cache_exercise is None or cache_exercise["passed"])
+            and (crop_exercise is None or crop_exercise["passed"])
         )
         capacity = bool(valid and admission["capacity_with_parity_passed"])
         summary = {
@@ -1265,6 +1325,7 @@ def run(args: argparse.Namespace) -> None:
             "raw_source_stat_checks": raw_checks,
             "startup": startup,
             "rgb_cache_exercise": cache_exercise,
+            "rgb_crop_cache_exercise": crop_exercise,
             "history_failure": consumer.failure if consumer is not None else None,
             "milestone": {
                 **admission,
@@ -1329,7 +1390,7 @@ def parser() -> argparse.ArgumentParser:
         "--max-preloaded-source-bytes",
         type=int,
         default=2 * 1024**3,
-        help="Total numeric memory bound for the opt-in memory feeder, ring, payloads and scratch",
+        help="Numeric byte bound for memory feeder, ring, payloads, scratch and crop cache",
     )
     result.add_argument("--max-raw-frame-cache-bytes", type=int, default=128 * 1024**2)
     result.add_argument(
@@ -1352,6 +1413,11 @@ def parser() -> argparse.ArgumentParser:
         action="store_true",
         default=DEFAULT_PROFILE.shared_rgb_images,
         help="Experimental full-frame PIL sharing; default crops the ROI first",
+    )
+    result.add_argument(
+        "--rgb-crop-cache",
+        action="store_true",
+        help="Reuse exact PIL crops from immutable arrivals; keeps the complete original R batch",
     )
     result.add_argument(
         "--rgb-feature-cache",

@@ -29,6 +29,7 @@ from operational.train40_runtime.producers import (
     ProducerRuntime,
     transport_reuse_contract,
 )
+from operational.train40_runtime.rgb_crop_cache import ExactRGBCropCache
 
 if TYPE_CHECKING:
     from operational.train40_runtime.multiobject_cache import RGBBatchCache
@@ -241,8 +242,13 @@ class MultiObjectTrain40Service:
         producer_runtime: ProducerRuntime | None = None,
         overlap_event_with_rgb_preparation: bool = False,
         transport_reuse: str = "original",
+        rgb_crop_cache: bool = False,
     ) -> None:
         transport_reuse_contract(transport_reuse)
+        if not isinstance(rgb_crop_cache, bool):
+            raise ValueError("RGB crop cache must be an explicit boolean")
+        if rgb_crop_cache and (rgb_uint8 or shared_rgb_images):
+            raise ValueError("RGB crop cache requires the original ROI-first PIL FP32 path")
         if not isinstance(max_objects, int) or not 1 <= max_objects <= 20:
             raise ValueError("max_objects must be between one and twenty")
         if not 1 <= rgb_workers <= 8:
@@ -287,6 +293,9 @@ class MultiObjectTrain40Service:
             # A new service owns a new producer/configuration lifetime. Never
             # carry features across instances, even when a caller reuses a cache.
             rgb_feature_cache.clear()
+        self._rgb_crop_cache = (
+            ExactRGBCropCache(max_objects=max_objects) if rgb_crop_cache else None
+        )
         self.last_rgb_profile: dict[str, float | int] = {}
         if producer_runtime is not None:
             if getattr(producer_runtime, "transport_reuse", None) != transport_reuse:
@@ -341,10 +350,19 @@ class MultiObjectTrain40Service:
                 shared_images=shared_rgb_images,
             )
 
+    @property
+    def rgb_crop_cache_stats(self) -> dict[str, Any] | None:
+        """Snapshot bounded CPU crop storage without touching its owner or payloads."""
+        cache = getattr(self, "_rgb_crop_cache", None)
+        return cache.stats if cache is not None else None
+
     def close(self) -> None:
         """Drain owned work; do not close the caller's sensor reader."""
         self._preprocess.shutdown(wait=True, cancel_futures=True)
         self._crops.shutdown(wait=True, cancel_futures=True)
+        crop_cache = getattr(self, "_rgb_crop_cache", None)
+        if crop_cache is not None:
+            crop_cache.close()
         self._drain_event_overlap()
         if self._diagnostic_rgb_lease is not None:
             self._diagnostic_rgb_lease.release()
@@ -408,6 +426,17 @@ class MultiObjectTrain40Service:
         tasks = {}
         ids = sorted({index for group in history.triplets for index in group})
         images = {}
+        frames = {}
+        cache = getattr(self, "_rgb_crop_cache", None)
+        frozen = None
+        if cache is not None:
+            # Local import avoids the immutable-history adapter's RawRGBHistory cycle.
+            from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory
+
+            if isinstance(history, FrozenRGBHistory):
+                frozen = history
+        crop_hits = crop_misses = crop_stores = crop_bypassed = 0
+        squares = {item.object_id: item.rgb_square for item in objects}
         try:
             if self.shared_rgb_images and any(item.rgb_square is not None for item in objects):
                 for index in ids:
@@ -417,6 +446,21 @@ class MultiObjectTrain40Service:
             for item in objects:
                 if item.rgb_square is not None:
                     for index in ids:
+                        if cache is not None and frozen is not None:
+                            cached = cache.get(
+                                item.object_id,
+                                frozen.tokens[index],
+                                item.rgb_square,
+                                query_us=history.query_us,
+                            )
+                            if cached is not None:
+                                frames[(item.object_id, index)] = cached
+                                crop_hits += 1
+                                continue
+                            crop_misses += 1
+                        elif cache is not None:
+                            # Mutable/legacy arrays never earn identity from a new RAW hash.
+                            crop_bypassed += 1
                         if self.shared_rgb_images:
                             tasks[(item.object_id, index)] = self._crops.submit(
                                 _normalized_pil_crop,
@@ -427,7 +471,17 @@ class MultiObjectTrain40Service:
                             tasks[(item.object_id, index)] = self._crops.submit(
                                 _normalized_crop, history.frames[index], item.rgb_square
                             )
-            frames = {key: task.result() for key, task in tasks.items()}
+            for key, task in tasks.items():
+                crop = task.result()
+                frames[key] = crop
+                if cache is not None and frozen is not None:
+                    square = squares[key[0]]
+                    assert square is not None
+                    crop_stores += int(
+                        cache.put(
+                            key[0], frozen.tokens[key[1]], square, crop, query_us=history.query_us
+                        )
+                    )
         except BaseException:
             for task in tasks.values():
                 task.cancel()
@@ -467,6 +521,10 @@ class MultiObjectTrain40Service:
             "total_seconds": time.perf_counter() - begin,
             "pil_images_created": len(images),
             "roi_frame_tasks": len(tasks),
+            "crop_cache_hits": crop_hits,
+            "crop_cache_misses": crop_misses,
+            "crop_cache_stored_crops": crop_stores,
+            "crop_cache_bypassed_frames": crop_bypassed,
             "started_ns": rgb_started_ns,
             "completed_ns": time.perf_counter_ns(),
         }
@@ -737,7 +795,14 @@ class MultiObjectTrain40Service:
                     else None
                 )
                 rgb = PreparedRGBBatch(rgb_metadata(objects, rgb_history), features=features)
-                self.last_rgb_profile = {"cache_hit_skipped_pixels": 1, "roi_frame_tasks": 0}
+                self.last_rgb_profile = {
+                    "cache_hit_skipped_pixels": 1,
+                    "roi_frame_tasks": 0,
+                    "crop_cache_hits": 0,
+                    "crop_cache_misses": 0,
+                    "crop_cache_stored_crops": 0,
+                    "crop_cache_bypassed_frames": 0,
+                }
             else:
                 packed = self._pack_rgb(objects, rgb_history) if pending is None else None
                 rgb = None
@@ -833,6 +898,7 @@ class MultiObjectTrain40Service:
             "preprocessing_ready_host_ms": (prepared_ns - started_ns) / 1e6,
             "rgb_preprocess": dict(self.last_rgb_profile),
             "rgb_feature_cache": self.last_rgb_cache_receipt,
+            "rgb_crop_cache": self.rgb_crop_cache_stats,
             "rgb_uint8": self._rgb_uint8 is not None,
             "rgb_diagnostic_lease_retained": self._diagnostic_rgb_lease is not None,
             "parallel_preprocessing": self.parallel_preprocessing,
