@@ -1,0 +1,2619 @@
+{
+  "scope": "PREPARED_GPU_MULTIOBJECT_PRODUCERS_PAIR_PHASE17_GUARDS_NO_SENSOR_H2D_CONTEXT",
+  "status": "COMPLETE",
+  "records": [
+    {
+      "objects": 20,
+      "unmodified_object_original_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6881868839263916e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.313684105873108e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.96652364730835e-05
+              }
+            }
+          }
+        ]
+      },
+      "capture_seconds": 4.09804420004366,
+      "gpu_before_repetitions": {
+        "returncode": 0,
+        "csv": "timestamp, power.draw [W], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], temperature.gpu, memory.used [MiB]\n2026/10/28 00:20:16.486, 112.21 W, 2655 MHz, 14001 MHz, 94 %, 83, 4650 MiB\n",
+        "stderr": ""
+      },
+      "gpu_after_repetitions": {
+        "returncode": 0,
+        "csv": "timestamp, power.draw [W], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], temperature.gpu, memory.used [MiB]\n2026/10/28 00:20:19.112, 115.13 W, 2625 MHz, 14001 MHz, 96 %, 84, 4665 MiB\n",
+        "stderr": ""
+      },
+      "status": "MEASURED",
+      "event_shape": [
+        80,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        100,
+        3,
+        3,
+        128,
+        128
+      ],
+      "times_ms": {
+        "serial": [
+          338.2336,
+          388.1858,
+          386.4338,
+          355.045
+        ],
+        "parallel": [
+          253.0599,
+          280.9771,
+          288.6144,
+          264.7486
+        ]
+      },
+      "latency_ms": {
+        "serial": {
+          "count": 4,
+          "mean_ms": 366.97455,
+          "p50_ms": 370.73940000000005,
+          "p95_ms": 387.923,
+          "p99_ms": 388.13324,
+          "min_ms": 338.2336,
+          "max_ms": 388.1858,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 0,
+          "at_least_20ms_count": 4,
+          "over_50ms_count": 4,
+          "over_100ms_count": 4,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 2.7249846072432
+        },
+        "parallel": {
+          "count": 4,
+          "mean_ms": 271.85,
+          "p50_ms": 272.86285,
+          "p95_ms": 287.468805,
+          "p99_ms": 288.38528099999996,
+          "min_ms": 253.0599,
+          "max_ms": 288.6144,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 0,
+          "at_least_20ms_count": 4,
+          "over_50ms_count": 4,
+          "over_100ms_count": 4,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 3.678499172337686
+        }
+      },
+      "cold_vs_serial": {
+        "event_raw": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            80,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "event_experts": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            80,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "rgb_raw": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            100,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "rgb_experts": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            100,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        }
+      },
+      "serial_parallel": [
+        {
+          "event_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "event_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          }
+        },
+        {
+          "event_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "event_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          }
+        },
+        {
+          "event_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "event_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          }
+        },
+        {
+          "event_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "event_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              80,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              100,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          }
+        }
+      ],
+      "original_producer_features": {
+        "event_raw": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            80,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "event_experts": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            80,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "rgb_raw": {
+          "passed": true,
+          "exact": false,
+          "shape": [
+            100,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 393,
+          "max_abs": 1.52587890625e-05,
+          "max_relative": 1.1016613052483145e-05
+        },
+        "rgb_experts": {
+          "passed": true,
+          "exact": false,
+          "shape": [
+            100,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 47,
+          "max_abs": 1.1920928955078125e-07,
+          "max_relative": 1.4676486214376499e-06
+        }
+      },
+      "final_ttc_parity": {
+        "passed": true,
+        "exact": false,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 20,
+          "records": 20,
+          "unique_present": 20,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 20,
+          "records": 20,
+          "unique_present": 20,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 20,
+            "max_abs_error": 9.5367431640625e-07,
+            "max_relative_error": 3.547648871098218e-07
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 20,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 20,
+            "max_abs_error": 1.049041748046875e-05,
+            "max_relative_error": 1.3105185555130894e-06
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-0",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-07,
+                "allowed_abs_error": 3.6881868839263916e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.313684105873108e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-06,
+                "allowed_abs_error": 8.96652364730835e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-1",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6885948181152344e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3127521276474003e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.968611240386964e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-2",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.688998937606812e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.311835527420044e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.970700263977051e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-3",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.689407110214234e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.310933589935303e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.972836494445801e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-4",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.689805507659912e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3100447654724124e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.974917888641357e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-5",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 7.152557373046875e-07,
+                "allowed_abs_error": 3.690208196640015e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.309174656867981e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 8.977052688598633e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-6",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6906085014343264e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3083178997039795e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.979197502136231e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-7",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-07,
+                "allowed_abs_error": 3.691002607345581e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.307476282119751e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-06,
+                "allowed_abs_error": 8.981315612792969e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-8",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 2.384185791015625e-07,
+                "allowed_abs_error": 3.691403388977051e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.306649208068848e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 8.983494758605958e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-9",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.691781282424927e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3058379888534548e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.985517024993897e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-10",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-07,
+                "allowed_abs_error": 3.692167520523072e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3050401210784916e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 8.987632751464845e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-11",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-07,
+                "allowed_abs_error": 3.692560195922852e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.304258704185486e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 8.98982572555542e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-12",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 2.384185791015625e-07,
+                "allowed_abs_error": 3.692946195602417e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3034913539886475e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.991986751556397e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-13",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-07,
+                "allowed_abs_error": 3.6933252811431884e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3027398586273194e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-06,
+                "allowed_abs_error": 8.994116306304932e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-14",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.693694353103638e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3020012378692628e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.996186256408692e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-15",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 9.5367431640625e-07,
+                "allowed_abs_error": 3.694069623947144e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3012797832489015e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 8.998326778411866e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-16",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-07,
+                "allowed_abs_error": 3.694442987442017e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3005728721618653e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 9.000478744506837e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-17",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 7.152557373046875e-07,
+                "allowed_abs_error": 3.694814205169678e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.299879312515259e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 9.00264072418213e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-18",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 7.152557373046875e-07,
+                "allowed_abs_error": 3.695180892944336e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.2992016077041627e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 1.049041748046875e-05,
+                "allowed_abs_error": 9.004783630371095e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-19",
+            "passed": true,
+            "exact": false,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-07,
+                "allowed_abs_error": 3.6955435276031494e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.2985391616821292e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": false,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 4.76837158203125e-06,
+                "allowed_abs_error": 9.00692081451416e-05
+              }
+            }
+          }
+        ]
+      },
+      "serial_parallel_ttc": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 20,
+          "records": 20,
+          "unique_present": 20,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 20,
+          "records": 20,
+          "unique_present": 20,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 20,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 20,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 20,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-0",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.688187837600708e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.313684105873108e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.966533184051514e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-1",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6885948181152344e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3127521276474003e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.968611240386964e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-2",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.688998937606812e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.311835527420044e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.970700263977051e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-3",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.689407110214234e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.310933589935303e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.972836494445801e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-4",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.689805507659912e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3100447654724124e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.974917888641357e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-5",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.690207481384278e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.309174656867981e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.977047920227052e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-6",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6906085014343264e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3083178997039795e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.979197502136231e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-7",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6910021305084234e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.307476282119751e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.981306076049805e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-8",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6914036273956304e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.306649208068848e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.98349952697754e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-9",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.691781282424927e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3058379888534548e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.985517024993897e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-10",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6921670436859134e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3050401210784916e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.987627983093263e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-11",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.692559242248535e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.304258704185486e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.989820957183838e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-12",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.692945957183838e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3034913539886475e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.991986751556397e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-13",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.693326234817505e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3027398586273194e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.994125843048097e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-14",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.693694353103638e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3020012378692628e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.996186256408692e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-15",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.694068670272827e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3012797832489015e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.998322010040284e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-16",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6944425106048586e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.3005728721618653e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 9.000473976135254e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-17",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6948134899139405e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.299879312515259e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 9.002635955810548e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-18",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6951816082000736e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.2992016077041627e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 9.004794120788575e-05
+              }
+            }
+          },
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-19",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.695543050765992e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.2985391616821292e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 9.006916046142578e-05
+              }
+            }
+          }
+        ]
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6881868839263916,
+            "E_CTX_TRAIN40": 1.313684105873108,
+            "R_CTX_TRAIN40": 7.96652364730835
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-0",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6885948181152344,
+            "E_CTX_TRAIN40": 1.3127521276474,
+            "R_CTX_TRAIN40": 7.968611240386963
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-1",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6889989376068115,
+            "E_CTX_TRAIN40": 1.311835527420044,
+            "R_CTX_TRAIN40": 7.970700263977051
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-2",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6894071102142334,
+            "E_CTX_TRAIN40": 1.3109335899353027,
+            "R_CTX_TRAIN40": 7.972836494445801
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-3",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.689805507659912,
+            "E_CTX_TRAIN40": 1.310044765472412,
+            "R_CTX_TRAIN40": 7.974917888641357
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-4",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6902081966400146,
+            "E_CTX_TRAIN40": 1.309174656867981,
+            "R_CTX_TRAIN40": 7.977052688598633
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-5",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.690608501434326,
+            "E_CTX_TRAIN40": 1.3083178997039795,
+            "R_CTX_TRAIN40": 7.9791975021362305
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-6",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.691002607345581,
+            "E_CTX_TRAIN40": 1.307476282119751,
+            "R_CTX_TRAIN40": 7.981315612792969
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-7",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.691403388977051,
+            "E_CTX_TRAIN40": 1.3066492080688477,
+            "R_CTX_TRAIN40": 7.983494758605957
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-8",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6917812824249268,
+            "E_CTX_TRAIN40": 1.3058379888534546,
+            "R_CTX_TRAIN40": 7.9855170249938965
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-9",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6921675205230713,
+            "E_CTX_TRAIN40": 1.3050401210784912,
+            "R_CTX_TRAIN40": 7.987632751464844
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-10",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6925601959228516,
+            "E_CTX_TRAIN40": 1.3042587041854858,
+            "R_CTX_TRAIN40": 7.98982572555542
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-11",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.692946195602417,
+            "E_CTX_TRAIN40": 1.3034913539886475,
+            "R_CTX_TRAIN40": 7.9919867515563965
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-12",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6933252811431885,
+            "E_CTX_TRAIN40": 1.3027398586273193,
+            "R_CTX_TRAIN40": 7.994116306304932
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-13",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6936943531036377,
+            "E_CTX_TRAIN40": 1.3020012378692627,
+            "R_CTX_TRAIN40": 7.996186256408691
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-14",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6940696239471436,
+            "E_CTX_TRAIN40": 1.3012797832489014,
+            "R_CTX_TRAIN40": 7.998326778411865
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-15",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6944429874420166,
+            "E_CTX_TRAIN40": 1.3005728721618652,
+            "R_CTX_TRAIN40": 8.000478744506836
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-16",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6948142051696777,
+            "E_CTX_TRAIN40": 1.2998793125152588,
+            "R_CTX_TRAIN40": 8.002640724182129
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-17",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.695180892944336,
+            "E_CTX_TRAIN40": 1.2992016077041626,
+            "R_CTX_TRAIN40": 8.004783630371094
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-18",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6955435276031494,
+            "E_CTX_TRAIN40": 1.298539161682129,
+            "R_CTX_TRAIN40": 8.00692081451416
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-19",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.688187837600708,
+            "E_CTX_TRAIN40": 1.313684105873108,
+            "R_CTX_TRAIN40": 7.966533184051514
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-0",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6885948181152344,
+            "E_CTX_TRAIN40": 1.3127521276474,
+            "R_CTX_TRAIN40": 7.968611240386963
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-1",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6889989376068115,
+            "E_CTX_TRAIN40": 1.311835527420044,
+            "R_CTX_TRAIN40": 7.970700263977051
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-2",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6894071102142334,
+            "E_CTX_TRAIN40": 1.3109335899353027,
+            "R_CTX_TRAIN40": 7.972836494445801
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-3",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.689805507659912,
+            "E_CTX_TRAIN40": 1.310044765472412,
+            "R_CTX_TRAIN40": 7.974917888641357
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-4",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6902074813842773,
+            "E_CTX_TRAIN40": 1.309174656867981,
+            "R_CTX_TRAIN40": 7.977047920227051
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-5",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.690608501434326,
+            "E_CTX_TRAIN40": 1.3083178997039795,
+            "R_CTX_TRAIN40": 7.9791975021362305
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-6",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.691002130508423,
+            "E_CTX_TRAIN40": 1.307476282119751,
+            "R_CTX_TRAIN40": 7.981306076049805
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-7",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.69140362739563,
+            "E_CTX_TRAIN40": 1.3066492080688477,
+            "R_CTX_TRAIN40": 7.983499526977539
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-8",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6917812824249268,
+            "E_CTX_TRAIN40": 1.3058379888534546,
+            "R_CTX_TRAIN40": 7.9855170249938965
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-9",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.692167043685913,
+            "E_CTX_TRAIN40": 1.3050401210784912,
+            "R_CTX_TRAIN40": 7.987627983093262
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-10",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.692559242248535,
+            "E_CTX_TRAIN40": 1.3042587041854858,
+            "R_CTX_TRAIN40": 7.989820957183838
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-11",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.692945957183838,
+            "E_CTX_TRAIN40": 1.3034913539886475,
+            "R_CTX_TRAIN40": 7.9919867515563965
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-12",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.693326234817505,
+            "E_CTX_TRAIN40": 1.3027398586273193,
+            "R_CTX_TRAIN40": 7.994125843048096
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-13",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6936943531036377,
+            "E_CTX_TRAIN40": 1.3020012378692627,
+            "R_CTX_TRAIN40": 7.996186256408691
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-14",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.694068670272827,
+            "E_CTX_TRAIN40": 1.3012797832489014,
+            "R_CTX_TRAIN40": 7.998322010040283
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-15",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6944425106048584,
+            "E_CTX_TRAIN40": 1.3005728721618652,
+            "R_CTX_TRAIN40": 8.000473976135254
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-16",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6948134899139404,
+            "E_CTX_TRAIN40": 1.2998793125152588,
+            "R_CTX_TRAIN40": 8.002635955810547
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-17",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6951816082000732,
+            "E_CTX_TRAIN40": 1.2992016077041626,
+            "R_CTX_TRAIN40": 8.004794120788574
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-18",
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.695543050765991,
+            "E_CTX_TRAIN40": 1.298539161682129,
+            "R_CTX_TRAIN40": 8.006916046142578
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-medium:20200738/capacity-object-19",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "peak_allocated_bytes": 343691776,
+      "peak_reserved_bytes": 536870912,
+      "graphs": [
+        {
+          "producer": "E_EXPERT_BLOCK",
+          "shape": [
+            4,
+            3,
+            12,
+            128,
+            128
+          ],
+          "setup_seconds": 1.5735434999805875,
+          "replays": 260,
+          "trace_warnings": [
+            "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+            "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+          ],
+          "initial_exact_parity": true,
+          "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+          "jit_optimized_execution": false,
+          "endpoint_reuse": false,
+          "endpoint_reuse_fallback_calls": 0,
+          "endpoint_reuse_by_modality": {
+            "E": false,
+            "R": true
+          },
+          "history_group_size": 4,
+          "dedicated_capture_stream": true,
+          "capture_stream_id": 2753498449008,
+          "precision": "FP32_TF32_DISABLED"
+        },
+        {
+          "producer": "R_EXPERT_BLOCK_REUSE",
+          "shape": [
+            5,
+            3,
+            3,
+            128,
+            128
+          ],
+          "setup_seconds": 2.1273824000381865,
+          "replays": 260,
+          "trace_warnings": [
+            "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+            "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+          ],
+          "initial_exact_parity": true,
+          "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+          "jit_optimized_execution": false,
+          "endpoint_reuse": true,
+          "endpoint_reuse_fallback_calls": 0,
+          "endpoint_reuse_by_modality": {
+            "E": false,
+            "R": true
+          },
+          "history_group_size": 5,
+          "dedicated_capture_stream": true,
+          "capture_stream_id": 2753498449312,
+          "precision": "FP32_TF32_DISABLED"
+        }
+      ]
+    }
+  ],
+  "weight_values_unchanged": true,
+  "variant_weight_values_unchanged": true,
+  "all_final_ttc_parity_passed": true,
+  "preservation": {
+    "passed": true,
+    "files": 595,
+    "changed": [],
+    "missing": []
+  }
+}

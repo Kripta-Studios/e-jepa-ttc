@@ -1,0 +1,25 @@
+{
+  "status": "COMPLETE",
+  "cwd": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-admission-corrected",
+  "python": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+  "arguments": [
+    "scripts/run_corrected_relocated.py",
+    "--candidate",
+    "D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE",
+    "--manifest",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\QUERY_MANIFEST.json",
+    "--reference",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\final_train40\\own",
+    "--output",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_resume_20261027\\corrected_all554_v1",
+    "--parallel",
+    "--no-event-reuse"
+  ],
+  "prepared_utc": "2026-10-27T23:30:12.3909705Z",
+  "runtime_commit": "8c5226dd",
+  "wrapper_sha256": "70d9b3fa1b8cd6444f51e1b86ab6246303251dbd82c8b86d8cd4eeba5901bd94",
+  "timing_scope_note": "Full numerical admission, one original object per query. CPU swarm development may run concurrently; these timings are diagnostic, not an isolated performance comparison.",
+  "started_utc": "2026-10-27T23:34:34.3081431Z",
+  "finished_utc": "2026-10-27T23:46:28.6887459Z",
+  "summary_sha256": "03673ff070b1ff44d38021ef9714acf2f507865666bc1338909d2d9a4eed8373"
+}

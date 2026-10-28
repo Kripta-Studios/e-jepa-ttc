@@ -1,10 +1,10 @@
 {
   "schema": "train40_runtime_resume_report_sources_v1",
-  "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_resume_20261027",
+  "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\docs\\train40_runtime_resume_20261027\\evidence\\checkpoint_20261028_001",
   "generator": "scripts\\report_train40_resume.py",
-  "generator_sha256": "b5e97b30f4699abb3f98592688159acf8da761ed01626d3c090cb4e14c739d1e",
+  "generator_sha256": "4e2ba09e4ca91289c2211d1947fca52f7e5f05ecd083e3e1fddbdd78d7fdd0a6",
   "report": "RESULTS_GENERATED.md",
-  "report_sha256": "751a90f49119a38d699bb2969f06754e4f5b95682895d786b33b87bdeac09927",
+  "report_sha256": "40eddf88ea02dd8824286df353b5622b7d9a2881d6385259dcc6cd776e88886c",
   "sources": [
     {
       "path": "baseline_all554_v1/setup_failure.json",
@@ -27,9 +27,34 @@
       "bytes": 26291
     },
     {
+      "path": "compiled_pipeline/gpu_no_fma_exact_div_v4/summary.json",
+      "sha256": "de9a57328b4b321684ff43ef53ad04a8d36c468a03b9fa15beb5e94a2841f482",
+      "bytes": 273291
+    },
+    {
+      "path": "compiled_pipeline/gpu_no_fma_v3/summary.json",
+      "sha256": "b939b74d0575163b21d316244d8b5955961ad53fe00c3e5ad1ec9dfbb9146dda",
+      "bytes": 507881
+    },
+    {
       "path": "compiled_pipeline/gpu_sensitive_v2/summary.json",
       "sha256": "f9146ff71bea34b3771113fc8c9532e7eee3632d3a4f581de01c5d5c86310fec",
       "bytes": 154972
+    },
+    {
+      "path": "compute_council/paced_scheduler_ab_v1/summary.json",
+      "sha256": "a451d608ac10ddb7628392fa5e23aa216c33ec28a14f74149ab25cbcffb22340",
+      "bytes": 9259
+    },
+    {
+      "path": "corrected_all554_v1/summary.json",
+      "sha256": "03673ff070b1ff44d38021ef9714acf2f507865666bc1338909d2d9a4eed8373",
+      "bytes": 631646
+    },
+    {
+      "path": "corrected_all554_v1/binding.json",
+      "sha256": "3600484dc130d68c6a1f819e2be4bb87818297d867391d4a891ec91913cd7b01",
+      "bytes": 10676
     },
     {
       "path": "encoder_ea5_b12_v1/summary.json",

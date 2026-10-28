@@ -1,0 +1,38 @@
+{
+  "scope": "CPU_IMPLEMENTATION_WITH_EAGER_FULLGRAPH_TESTS_NO_GPU_ADMISSION",
+  "git_commit": "e0a2a096c48ab5b0f95c48f8e9a9e7edaf02c6ce",
+  "files": [
+    {
+      "source": "operational/train40_runtime/rgb_pil_exact.py",
+      "sha256": "f6eeed2e2ce11ca1c8de8822eaaffef73b057f7fd22cccebb681956b72646d2a",
+      "snapshot": "operational__train40_runtime__rgb_pil_exact.py.txt"
+    },
+    {
+      "source": "operational/train40_runtime/rgb_raw_ring.py",
+      "sha256": "8cb29e5fc679d405b25a95b4b6eb91e3cddd2085a6d62336ac8bb88fa142ff72",
+      "snapshot": "operational__train40_runtime__rgb_raw_ring.py.txt"
+    },
+    {
+      "source": "operational/train40_runtime/rgb_frozen_identity.py",
+      "sha256": "65633d6d3bee80c2a992674e94d0689a32a6d2b08606a4ac01e4d01125482719",
+      "snapshot": "operational__train40_runtime__rgb_frozen_identity.py.txt"
+    },
+    {
+      "source": "tests/unit/test_train40_runtime_rgb_pil_exact.py",
+      "sha256": "d2ceb580b81be01565fb5114e647dc79b401c5e2fb7da8d931db383dc560b236",
+      "snapshot": "tests__unit__test_train40_runtime_rgb_pil_exact.py.txt"
+    },
+    {
+      "source": "tests/unit/test_train40_runtime_rgb_raw_ring.py",
+      "sha256": "04eff5d3e9ee0a844179455b30594f28890b2447ae796fd924c47389098e6b0d",
+      "snapshot": "tests__unit__test_train40_runtime_rgb_raw_ring.py.txt"
+    },
+    {
+      "source": "tests/unit/test_train40_runtime_rgb_frozen_identity.py",
+      "sha256": "8c83f57a9b7a642dbd94199cb749df40fb787a9f72afed4f1110b6108da47f9b",
+      "snapshot": "tests__unit__test_train40_runtime_rgb_frozen_identity.py.txt"
+    }
+  ],
+  "cpu_tests_passed": 225,
+  "gpu_executed": false
+}

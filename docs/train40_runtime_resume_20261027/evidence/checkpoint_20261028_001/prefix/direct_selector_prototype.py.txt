@@ -1,0 +1,130 @@
+"""Private direct-quarter integer selector; no runtime or CUDA execution change."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import numpy as np
+import torch
+from torch import Tensor
+
+from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
+
+
+def direct_quarter_moments(
+    counts: Tensor, moments: Tensor, previous_count: Tensor, previous_moment: Tensor,
+    xb: Tensor, yb: Tensor, slots: Tensor, left_relative: Tensor, crosses_epoch: Tensor,
+) -> tuple[Tensor, Tensor]:
+    """Evaluate both endpoints directly on the output's 24-quarter domain.
+
+    The admitted compiled selector materializes 25-boundary arrays and then
+    slices adjacent endpoints, which Inductor currently keeps as separate
+    kernels. This expression exposes the complete quarter arithmetic pointwise.
+    It may duplicate endpoint loads; GPU performance remains to be measured.
+    """
+    polarity = torch.arange(2, device=counts.device, dtype=torch.int64)
+
+    def rectangle(source: Tensor, indices: Tensor) -> Tensor:
+        def corner(yi: int, xi: int) -> Tensor:
+            return source[
+                indices[None, :, None, None, None],
+                polarity[None, None, :, None, None],
+                yb[:, None, None, yi:yi + yb.shape[1] - 1, None],
+                xb[:, None, None, None, xi:xi + xb.shape[1] - 1],
+            ].to(torch.int64)
+        return corner(1, 1) - corner(0, 1) - corner(1, 0) + corner(0, 0)
+
+    def previous_rectangle(source: Tensor) -> Tensor:
+        def corner(yi: int, xi: int) -> Tensor:
+            return source[
+                polarity[None, :, None, None],
+                yb[:, None, yi:yi + yb.shape[1] - 1, None],
+                xb[:, None, None, xi:xi + xb.shape[1] - 1],
+            ].to(torch.int64)
+        return (corner(1, 1) - corner(0, 1) - corner(1, 0) + corner(0, 0))[:, None]
+
+    cl = rectangle(counts, slots[:-1])
+    cr = rectangle(counts, slots[1:])
+    ml = rectangle(moments, slots[:-1])
+    mr = rectangle(moments, slots[1:])
+    cp = previous_rectangle(previous_count)
+    mp = previous_rectangle(previous_moment)
+    qcount = cr - cl + crosses_epoch * cp
+    qmoment = mr - ml + crosses_epoch * (mp + 600000 * cr) - left_relative * qcount
+    return qcount, qmoment
+
+
+def select_direct_into(
+    counts: Tensor, moments: Tensor, previous_count: Tensor, previous_moment: Tensor,
+    xb: Tensor, yb: Tensor, slots: Tensor, left_relative: Tensor, crosses_epoch: Tensor,
+    output_count: Tensor, output_moment: Tensor,
+) -> tuple[Tensor, Tensor]:
+    c, m = direct_quarter_moments(
+        counts, moments, previous_count, previous_moment,
+        xb, yb, slots, left_relative, crosses_epoch,
+    )
+    output_count.copy_(c)
+    output_moment.copy_(m)
+    return output_count, output_moment
+
+
+def cpu_proof(output: Path) -> None:
+    torch.set_num_threads(2)
+    rng = np.random.default_rng(7)
+    raw = {
+        "x": rng.integers(0, 32, 14000, dtype=np.int32),
+        "y": rng.integers(0, 24, 14000, dtype=np.int32),
+        "t": np.sort(rng.integers(738, 1260738, 14000, dtype=np.int64)),
+        "p": rng.choice(np.array([-1, 1], dtype=np.int8), 14000),
+    }
+    def window(start: int, end: int) -> dict[str, np.ndarray]:
+        a, b = np.searchsorted(raw["t"], [start, end])
+        return {key: value[a:b] for key, value in raw.items()}
+
+    records = []
+    for objects in (1, 4, 20):
+        history = TemporalPrefixEventHistory(
+            device="cpu", width=32, height=24, roi_size=8,
+            max_packet_events=1024, max_objects=objects, roi_batch_size=objects,
+        )
+        history.initialize(window(738, 600738), 738, 600738)
+        rois = [(i*.3, i*.1, 24+i*.2, 20+i*.1) for i in range(objects)]
+        for anchor in range(600738, 1260739, 20000):
+            if anchor > 600738:
+                history.ingest(window(anchor-20000, anchor), anchor-20000, anchor)
+            if anchor not in (600738,620738,640738,1180738,1200738,1220738,1260738):
+                continue
+            history.query_many(rois)
+            expected = history._quarter_count.clone(), history._quarter_moment.clone()
+            history._prepare_query_state(rois)
+            actual = direct_quarter_moments(
+                history._counts, history._moments, history._previous_count,
+                history._previous_moment, history._query_bounds[0], history._query_bounds[1],
+                history._slot_indices, history._left_relative, history._cross,
+            )
+            for a,b in zip(actual,expected,strict=True):
+                torch.testing.assert_close(a,b,atol=0,rtol=0)
+            records.append({"objects":objects,"anchor_us":anchor,"exact":True})
+    output.write_text(json.dumps({
+        "status":"COMPLETE", "scope":"CPU_INTEGER_DIRECT_QUARTER_SELECTOR_ONLY",
+        "gpu_executed":False,"compiler_executed":False,
+        "source_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "records":records,
+    },indent=2)+'\n',encoding='utf-8')
+    print(json.dumps({"status":"COMPLETE","exact_cases":len(records),"gpu":False}))
+
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,required=True)
+    args=parser.parse_args()
+    if args.output.exists():
+        raise ValueError('fresh output required')
+    cpu_proof(args.output)

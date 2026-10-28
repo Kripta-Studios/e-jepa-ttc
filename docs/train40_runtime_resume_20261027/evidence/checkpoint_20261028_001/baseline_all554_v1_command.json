@@ -1,0 +1,17 @@
+{
+  "started_utc": "2026-10-27T22:32:07.3111155Z",
+  "cwd": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc",
+  "arguments": [
+    "scripts/benchmark_train40_integral.py",
+    "--candidate",
+    "D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE",
+    "--manifest",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\QUERY_MANIFEST.json",
+    "--reference",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\final_train40\\own",
+    "--output",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_resume_20261027\\baseline_all554_v1",
+    "--parallel"
+  ],
+  "python": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe"
+}

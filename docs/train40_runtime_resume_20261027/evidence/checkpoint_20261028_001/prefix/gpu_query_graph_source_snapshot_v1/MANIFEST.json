@@ -1,0 +1,9 @@
+{
+  "sources": {
+    "scripts\\benchmark_train40_prefix.py": "ed70d21229e0c4842d1bba22e9b1120ff1f8f8285501e950c65c048ac50bfc32",
+    "operational\\train40_runtime\\integral.py": "cb4fba28675cde66dfbab6e191a179317924bc3113594cffff361f81b53c6680",
+    "operational\\train40_runtime\\temporal_prefix.py": "3380d4d34e6d8e0112ffcdad6bcf347042c9a343498ac0de4887951674762a73",
+    "operational\\train40_runtime\\normalization.py": "2c7dc863d525338fb703085d221cd8d1d0b1e7432bee39bdb34ce9c7de1fa816"
+  },
+  "note": "The prefix snapshot was recovered by reversing the subsequent memory-accounting-only patch in memory and was accepted only after matching the recorded experiment SHA-256. No runtime file was changed."
+}

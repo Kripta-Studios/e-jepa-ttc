@@ -1,0 +1,39 @@
+{
+  "scope": "RAW_CPU_PACKET_TO_EVENT_REPRESENTATIONS_NO_MODELS_NO_TTC",
+  "data": {
+    "synthetic": true,
+    "seed": 7
+  },
+  "source_commit": "9f62aebcc45ec3c7236bcbcaa78c04db90872ce9",
+  "sources": {
+    "scripts\\benchmark_train40_prefix.py": "6fbc12098783e4595bd4a16ce7db011c4c26e1471c1871f569a63f7a390131d0",
+    "operational\\train40_runtime\\integral.py": "cb4fba28675cde66dfbab6e191a179317924bc3113594cffff361f81b53c6680",
+    "operational\\train40_runtime\\temporal_prefix.py": "1fa058c23f1493e9faca5c87d1dbad4c282365b61099ee7f7b3e1c98a58f6de9"
+  },
+  "device": "cpu",
+  "gpu": null,
+  "torch": "2.11.0+cu128",
+  "python": "3.11.15",
+  "start_us": 738,
+  "anchor_us": 680738,
+  "warmup_updates": 1,
+  "measured_updates": 3,
+  "objects": [
+    1,
+    20
+  ],
+  "roi_size": 8,
+  "input_hashes": {
+    "x": "ecb5e0f136eacfa8625f270f002c8b1d21aabeeb61c2b5cf59bc489d6ce559d3",
+    "y": "2d4926d35700333eb87db1a1b1870627d5b08ffe07b0cc3c25e2220ebf0d56c8",
+    "t": "7635d1bdb00c015e9cc8534b7c2dee890a83cf06e08fd15eca88d0b10e50fdde",
+    "p": "acfa4afa8d9004529abc0b6e925e8afce3043efa710b24e2fda56865c98abb63"
+  },
+  "packet_events": [
+    210,
+    216,
+    202,
+    207
+  ],
+  "target_50hz_demonstrated": false
+}

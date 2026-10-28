@@ -66,8 +66,9 @@ La validación completa del cierre anterior conserva las 554 consultas, pero
 rechaza cinco salidas E_CTX. La investigación aisló una dependencia numérica del
 batch del encoder: desactivar la reutilización de endpoints de eventos corrige
 los cinco casos sensibles; desactivarla también para RGB introduce otro fallo.
-La variante en evaluación conserva la reutilización RGB y desactiva la de eventos.
-Todavía necesita una nueva admisión completa de las 554 consultas.
+La variante conserva la reutilización RGB y desactiva la de eventos. La nueva
+admisión `corrected_all554_v1` pasa las tres salidas y las entradas en las 554
+consultas, con E_CTX bitexact. No demuestra el plazo ni una frecuencia sostenida.
 
 El piloto de veinte regiones trasladadas ya pasa las tres salidas TTC con RGB
 procesado en grupos de un objeto, manteniendo el batch del encoder. Eso acredita

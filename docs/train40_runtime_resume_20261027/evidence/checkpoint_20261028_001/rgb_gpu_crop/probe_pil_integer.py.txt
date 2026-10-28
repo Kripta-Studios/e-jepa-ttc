@@ -1,0 +1,157 @@
+"""CPU proof of fixed-coefficient, two-pass RGB bilinear arithmetic.
+
+Reference semantics: Pillow 12.3.0 src/libImaging/Resample.c, especially
+precompute_coeffs, normalize_coeffs_8bpc and horizontal/vertical 8bpc resampling.
+This standalone experimental implementation does not replace the runtime.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+import sys
+import time
+from functools import lru_cache
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import h5py
+import numpy as np
+import PIL
+from PIL import Image
+
+from e_jepa_ttc.rgb_port.data import _effective_square, crop_uint8
+
+BITS = 22
+
+
+@lru_cache(maxsize=256)
+def coefficients(in_size, out_size):
+    scale = float(in_size) / out_size
+    filter_scale = max(scale, 1.0)
+    reciprocal = 1.0 / filter_scale
+    records = []
+    for output_index in range(out_size):
+        center = (output_index + 0.5) * scale
+        start = max(0, int(center - filter_scale + 0.5))
+        end = min(in_size, int(center + filter_scale + 0.5))
+        weights = []
+        total = 0.0
+        for sample in range(start, end):
+            distance = abs((sample - center + 0.5) * reciprocal)
+            value = 1.0 - distance if distance < 1.0 else 0.0
+            weights.append(value)
+            total += value
+        fixed = np.asarray([int(0.5 + value / total * (1 << BITS)) for value in weights], np.int64)
+        assert np.all(fixed >= 0)
+        assert (1 << (BITS - 1)) + int(fixed.sum()) * 255 < np.iinfo(np.int32).max
+        records.append((start, fixed))
+    return records
+
+
+def resize_integer(frame, size):
+    height, width, channels = frame.shape
+    assert frame.dtype == np.uint8 and channels == 3
+    work = frame
+    if width != size:
+        horizontal = np.empty((height, size, 3), np.uint8)
+        for column, (start, weights) in enumerate(coefficients(width, size)):
+            selected = frame[:, start : start + len(weights), :].astype(np.int64)
+            values = (selected * weights[None, :, None]).sum(axis=1) + (1 << (BITS - 1))
+            horizontal[:, column] = np.clip(values >> BITS, 0, 255).astype(np.uint8)
+        work = horizontal
+    if height != size:
+        vertical = np.empty((size, size, 3), np.uint8)
+        for row, (start, weights) in enumerate(coefficients(height, size)):
+            selected = work[start : start + len(weights)].astype(np.int64)
+            values = (selected * weights[:, None, None]).sum(axis=0) + (1 << (BITS - 1))
+            vertical[row] = np.clip(values >> BITS, 0, 255).astype(np.uint8)
+        work = vertical
+    return work.copy()
+
+
+def crop_integer(frame, square, size=128):
+    x0, y0, x1, y1 = _effective_square(frame, square)
+    image = resize_integer(frame[y0:y1, x0:x1], size)
+    return np.ascontiguousarray(image.transpose(2, 0, 1))
+
+
+def main():
+    output = Path(__file__).with_name("cpu_integer_parity_v1.json")
+    if output.exists():
+        raise FileExistsError(output)
+    rng = np.random.default_rng(27028)
+    cases = []
+    begin = time.perf_counter()
+    shapes = [(1, 1), (1, 19), (19, 1), (7, 11), (64, 53), (127, 129), (128, 128),
+              (129, 127), (199, 301), (720, 1280), (1080, 1920)]
+    for height, width in shapes:
+        for pattern in ("random", "constant255", "ramp"):
+            if pattern == "random":
+                frame = rng.integers(0, 256, (height, width, 3), np.uint8)
+            elif pattern == "constant255":
+                frame = np.full((height, width, 3), 255, np.uint8)
+            else:
+                frame = (np.arange(height * width * 3, dtype=np.int64) % 256).astype(np.uint8)
+                frame = frame.reshape(height, width, 3)
+            proposed = resize_integer(frame, 128)
+            expected = np.asarray(Image.fromarray(frame).resize((128, 128), Image.Resampling.BILINEAR))
+            difference = np.abs(proposed.astype(np.int16) - expected.astype(np.int16))
+            cases.append({"shape": [height, width], "pattern": pattern,
+                          "exact": bool(np.array_equal(proposed, expected)),
+                          "max_abs_uint8": int(difference.max()),
+                          "different_values": int(np.count_nonzero(difference))})
+    frame = rng.integers(0, 256, (720, 1280, 3), np.uint8)
+    for roi in [(-20.9, -11.5, 89.9, 100.5), (100.99, 50.1, 700.8, 600.7),
+                (1200.2, 600.9, 1400.8, 780.1), (0., 0., 1280., 720.),
+                (55.1, 67.2, 183.9, 195.99), (55., 67., 56., 68.)]:
+        proposed = crop_integer(frame, roi)
+        expected = crop_uint8(frame, roi)
+        difference = np.abs(proposed.astype(np.int16) - expected.astype(np.int16))
+        cases.append({"roi": roi, "effective_roi": _effective_square(frame, roi),
+                      "exact": bool(np.array_equal(proposed, expected)),
+                      "max_abs_uint8": int(difference.max()),
+                      "different_values": int(np.count_nonzero(difference))})
+    values = np.arange(256, dtype=np.float32)
+    normalization_lut = values / np.float32(255)
+    reciprocal = values * np.float32(1.0 / 255)
+    manifest_path = ROOT / "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"
+    row = json.loads(manifest_path.read_text(encoding="utf-8"))["rows"][553]
+    with h5py.File(row["raw_path"], "r") as handle:
+        raw_shape = tuple(int(x) for x in handle["blackflys/left/data"].shape[1:])
+    objects, unique_frames, observations, triplet_size = 20, 7, 5, 3
+    receipt = {
+        "status": "COMPLETE" if all(item["exact"] for item in cases) else "FAILED",
+        "scope": "CPU_ARITHMETIC_REFERENCE_NOT_GPU_SPEED_OR_TTC_ADMISSION",
+        "pillow_version": PIL.__version__,
+        "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "source_reference": "https://github.com/python-pillow/Pillow/blob/12.3.0/src/libImaging/Resample.c",
+        "case_count": len(cases), "all_uint8_exact": all(item["exact"] for item in cases),
+        "cases": cases,
+        "normalization": {
+            "lut_sha256": hashlib.sha256(normalization_lut.tobytes()).hexdigest(),
+            "float32_division_vs_reciprocal_multiply_different_values": int(np.count_nonzero(normalization_lut != reciprocal)),
+            "float32_division_vs_reciprocal_multiply_max_abs": float(np.abs(normalization_lut - reciprocal).max()),
+            "proposal": "Upload the exact 256-entry float32 NumPy normalization LUT and gather by byte value",
+        },
+        "bytes_for_twenty_objects": {
+            "raw_rgb_frame_shape": raw_shape,
+            "unique_raw_history_uint8": unique_frames * math.prod(raw_shape),
+            "one_new_raw_frame_uint8": math.prod(raw_shape),
+            "unique_crops_uint8": objects * unique_frames * 3 * 128 * 128,
+            "unique_crops_fp32": objects * unique_frames * 3 * 128 * 128 * 4,
+            "expanded_triplets_fp32_current_h2d": objects * observations * triplet_size * 3 * 128 * 128 * 4,
+            "normalization_lut": normalization_lut.nbytes,
+        },
+        "probe_wall_seconds_not_runtime_latency": time.perf_counter() - begin,
+        "gpu_used": False, "runtime_modified": False, "targets_read": False,
+    }
+    output.write_text(json.dumps(receipt, indent=2, allow_nan=False), encoding="utf-8")
+    print(json.dumps({key: value for key, value in receipt.items() if key != "cases"}))
+
+
+if __name__ == "__main__":
+    main()

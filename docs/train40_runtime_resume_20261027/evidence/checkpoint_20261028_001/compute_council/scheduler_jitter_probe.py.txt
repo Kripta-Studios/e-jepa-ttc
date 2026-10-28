@@ -1,0 +1,122 @@
+"""Single-thread 60s Windows wait-primitive probe; no sensor/model/GPU claim."""
+
+from __future__ import annotations
+
+import ctypes
+import hashlib
+import json
+import os
+import platform
+import sys
+import threading
+import time
+from collections import defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+
+OUTPUT = Path(__file__).with_name("scheduler_jitter_v1.json")
+if OUTPUT.exists():
+    raise FileExistsError(OUTPUT)
+
+
+def distribution(values):
+    ordered = sorted(values)
+
+    def percentile(fraction):
+        index = (len(ordered) - 1) * fraction
+        low = int(index)
+        high = min(low + 1, len(ordered) - 1)
+        return ordered[low] + (ordered[high] - ordered[low]) * (index - low)
+
+    return {
+        "count": len(values), "mean_ms": sum(values) / len(values),
+        "p50_ms": percentile(.5), "p95_ms": percentile(.95),
+        "p99_ms": percentile(.99), "max_ms": max(values), "min_ms": min(values),
+        "over_1ms": sum(value > 1 for value in values),
+        "over_5ms": sum(value > 5 for value in values),
+        "over_20ms": sum(value > 20 for value in values),
+        "quantile_method": "linear",
+    }
+
+
+def host_cpu_times():
+    if os.name != "nt":
+        return None
+    idle, kernel, user = (ctypes.c_ulonglong() for _ in range(3))
+    if not ctypes.windll.kernel32.GetSystemTimes(
+        ctypes.byref(idle), ctypes.byref(kernel), ctypes.byref(user)
+    ):
+        raise ctypes.WinError()
+    return idle.value, kernel.value, user.value
+
+
+report = {
+    "scope": "SINGLE_THREAD_WAIT_PRIMITIVE_50HZ_FALSE_RAW_TRIVIAL_CONTROL_NO_GPU_NO_TTC",
+    "start_time": datetime.now(timezone.utc).isoformat(),
+    "python": sys.version, "platform": platform.platform(), "host": platform.node(),
+    "logical_cpus": os.cpu_count(),
+    "perf_counter": vars(time.get_clock_info("perf_counter")),
+    "monotonic": vars(time.get_clock_info("monotonic")),
+    "source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    "paced_source_sha256": hashlib.sha256(
+        Path(__file__).resolve().parents[3].joinpath("operational/train40_runtime/paced.py").read_bytes()
+    ).hexdigest(),
+    "rate_hz": 50, "block_seconds": 10, "arrivals_per_block": 500,
+    "order": ["event_wait", "sleep", "sleep", "event_wait", "event_wait", "sleep"],
+    "runtime_threads": 1, "priority_powerplan_timer_resolution_changed": False,
+    "background_work": "Concurrent root GPU validation and other normal host activity; not controlled idle.",
+    "queue_or_producer_consumer_handoff_exercised": False,
+    "goal_demonstrated": False, "blocks": [],
+}
+event = threading.Event()
+for block, method in enumerate(report["order"]):
+    # Fixed QPC schedule within each block; never add delays to previous arrival.
+    first = time.perf_counter_ns() + 20_000_000
+    cpu_start, host_start = time.process_time(), host_cpu_times()
+    rows = []
+    for index in range(500):
+        deadline = first + index * 20_000_000
+        delay = max(0.0, (deadline - time.perf_counter_ns()) / 1e9)
+        if method == "event_wait":
+            event.wait(delay)
+        elif delay:
+            time.sleep(delay)
+        started = time.perf_counter_ns()
+        payload = {"index": index, "raw": b"FAKE_RAW_CONTROL"}
+        available = time.perf_counter_ns()
+        assert payload["index"] == index and payload["raw"] == b"FAKE_RAW_CONTROL"
+        completed = time.perf_counter_ns()
+        rows.append({
+            "index": index, "scheduled_ns": deadline,
+            "started_ns": started, "available_ns": available, "completed_ns": completed,
+        })
+    host_end = host_cpu_times()
+    busy = None
+    if host_start is not None and host_end is not None:
+        di, dk, du = (end - start for start, end in zip(host_start, host_end))
+        busy = 100 * (dk + du - di) / (dk + du)
+    result = {
+        "block": block, "method": method,
+        "process_cpu_seconds": time.process_time() - cpu_start,
+        "host_cpu_busy_percent": busy,
+        "wake_lateness_ms": distribution([(r["started_ns"] - r["scheduled_ns"]) / 1e6 for r in rows]),
+        "raw_availability_lateness_ms": distribution([(r["available_ns"] - r["scheduled_ns"]) / 1e6 for r in rows]),
+        "control_response_ms": distribution([(r["completed_ns"] - r["scheduled_ns"]) / 1e6 for r in rows]),
+        "records": rows,
+    }
+    report["blocks"].append(result)
+    print(json.dumps({key: value for key, value in result.items() if key != "records"}), flush=True)
+groups = defaultdict(list)
+for block in report["blocks"]:
+    groups[block["method"]].extend(block["records"])
+report["by_method"] = {
+    method: {
+        "wake_lateness_ms": distribution([(r["started_ns"] - r["scheduled_ns"]) / 1e6 for r in rows]),
+        "raw_availability_lateness_ms": distribution([(r["available_ns"] - r["scheduled_ns"]) / 1e6 for r in rows]),
+        "control_response_ms": distribution([(r["completed_ns"] - r["scheduled_ns"]) / 1e6 for r in rows]),
+    }
+    for method, rows in groups.items()
+}
+report["end_time"] = datetime.now(timezone.utc).isoformat()
+OUTPUT.write_text(json.dumps(report, indent=2, allow_nan=False), encoding="utf-8")
+print(json.dumps({"by_method": report["by_method"], "output": str(OUTPUT)}), flush=True)

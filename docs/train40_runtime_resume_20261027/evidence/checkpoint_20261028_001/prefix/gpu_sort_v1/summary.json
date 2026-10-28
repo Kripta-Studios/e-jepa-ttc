@@ -1,0 +1,490 @@
+{
+  "status": "COMPLETE",
+  "errors": [],
+  "sources_unchanged": true,
+  "results": [
+    {
+      "backend": "IntegralEventHistory",
+      "objects": 1,
+      "initialization_ms_excluded": 164.2126999795437,
+      "latency_ms": {
+        "count": 5,
+        "mean_ms": 10.65252,
+        "p50_ms": 10.7783,
+        "p95_ms": 11.061539999999999,
+        "p99_ms": 11.107508,
+        "min_ms": 10.1452,
+        "max_ms": 11.119,
+        "quantile_method": "linear",
+        "strictly_under_20ms_count": 5,
+        "at_least_20ms_count": 0,
+        "over_50ms_count": 0,
+        "over_100ms_count": 0,
+        "inverse_mean_capacity_hz_not_sustained_throughput": 93.87450105702688
+      },
+      "samples_ms": [
+        11.119,
+        10.8317,
+        10.1452,
+        10.7783,
+        10.3884
+      ],
+      "prefix_vs_bucket_bit_exact": null,
+      "prefix_vs_bucket_max_abs": null,
+      "canonical_primary_final_max_abs": 0.0,
+      "canonical_primary_final_passed": true,
+      "distinct_final_tensor_count": 1,
+      "stats": {
+        "allocated_bytes": 3064677000,
+        "max_packet_events": 2000000,
+        "max_objects": 1,
+        "roi_batch_size": 1,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 20200738,
+        "ready": true,
+        "ingested_packets": 37,
+        "queries": 7,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": true,
+        "async_transfers": false,
+        "pinned_staging_bytes": 0,
+        "staging_waits": 0,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION"
+      },
+      "rois": [
+        [
+          665.8592090711404,
+          -27.01675319980069,
+          1639.1687340021085,
+          946.2927717311672
+        ]
+      ]
+    },
+    {
+      "backend": "IntegralEventHistory",
+      "objects": 20,
+      "initialization_ms_excluded": 181.02259997976944,
+      "latency_ms": {
+        "count": 5,
+        "mean_ms": 79.41803999999999,
+        "p50_ms": 78.9715,
+        "p95_ms": 80.93416,
+        "p99_ms": 81.09755200000001,
+        "min_ms": 78.0597,
+        "max_ms": 81.1384,
+        "quantile_method": "linear",
+        "strictly_under_20ms_count": 0,
+        "at_least_20ms_count": 5,
+        "over_50ms_count": 5,
+        "over_100ms_count": 0,
+        "inverse_mean_capacity_hz_not_sustained_throughput": 12.591597576570766
+      },
+      "samples_ms": [
+        78.0597,
+        81.1384,
+        78.8034,
+        78.9715,
+        80.1172
+      ],
+      "prefix_vs_bucket_bit_exact": null,
+      "prefix_vs_bucket_max_abs": null,
+      "canonical_primary_final_max_abs": 0.0,
+      "canonical_primary_final_passed": true,
+      "distinct_final_tensor_count": 20,
+      "stats": {
+        "allocated_bytes": 3954721704,
+        "max_packet_events": 2000000,
+        "max_objects": 20,
+        "roi_batch_size": 4,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 20200738,
+        "ready": true,
+        "ingested_packets": 37,
+        "queries": 140,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": true,
+        "async_transfers": false,
+        "pinned_staging_bytes": 0,
+        "staging_waits": 0,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION"
+      },
+      "rois": [
+        [
+          665.8592090711404,
+          -27.01675319980069,
+          1639.1687340021085,
+          946.2927717311672
+        ],
+        [
+          716.9579591300162,
+          -34.31657463678289,
+          1471.2728409515166,
+          719.9983071847172
+        ],
+        [
+          763.1901615642372,
+          -46.48294369842,
+          1541.8377815090116,
+          732.1646762463542
+        ],
+        [
+          809.4223639984582,
+          -58.64931276005706,
+          1612.4027220665068,
+          744.3310453079914
+        ],
+        [
+          855.6545664326791,
+          -70.81568182169417,
+          1682.967662624002,
+          756.4974143696285
+        ],
+        [
+          609.8939113876098,
+          -24.583479387473176,
+          1461.5397457022068,
+          827.0623549271237
+        ],
+        [
+          656.1261138218308,
+          -36.74984844911029,
+          1532.104686259702,
+          839.2287239887607
+        ],
+        [
+          702.3583162560517,
+          -48.9162175107474,
+          1602.6696268171972,
+          851.3950930503979
+        ],
+        [
+          748.5905186902727,
+          -61.08258657238446,
+          1673.2345673746922,
+          863.561462112035
+        ],
+        [
+          794.8227211244937,
+          -73.24895563402157,
+          1743.7995079321875,
+          875.727831173672
+        ],
+        [
+          549.0620660794243,
+          -27.016753199800633,
+          1522.3715910103924,
+          946.2927717311672
+        ],
+        [
+          595.2942685136453,
+          -39.18312226143769,
+          1592.9365315678874,
+          958.4591407928043
+        ],
+        [
+          641.5264709478662,
+          -51.34949132307486,
+          1663.5014721253829,
+          970.6255098544415
+        ],
+        [
+          687.7586733820872,
+          -63.515860384711914,
+          1734.0664126828779,
+          982.7918789160785
+        ],
+        [
+          733.9908758163081,
+          -75.68222944634908,
+          1804.631353240373,
+          994.9582479777157
+        ],
+        [
+          488.2302207712388,
+          -29.45002701212809,
+          1583.203436318578,
+          1065.523188535211
+        ],
+        [
+          534.4624232054598,
+          -41.616396073765145,
+          1653.768376876073,
+          1077.6895575968479
+        ],
+        [
+          580.6946256396807,
+          -53.782765135402315,
+          1724.3333174335683,
+          1089.855926658485
+        ],
+        [
+          626.9268280739017,
+          -65.94913419703937,
+          1794.8982579910635,
+          1102.0222957201222
+        ],
+        [
+          673.1590305081226,
+          -78.11550325867654,
+          1865.4631985485585,
+          1114.1886647817591
+        ]
+      ]
+    },
+    {
+      "backend": "TemporalPrefixEventHistory",
+      "objects": 1,
+      "initialization_ms_excluded": 180.61079998733476,
+      "latency_ms": {
+        "count": 5,
+        "mean_ms": 9.583079999999999,
+        "p50_ms": 9.4137,
+        "p95_ms": 9.9091,
+        "p99_ms": 9.92054,
+        "min_ms": 9.3305,
+        "max_ms": 9.9234,
+        "quantile_method": "linear",
+        "strictly_under_20ms_count": 5,
+        "at_least_20ms_count": 0,
+        "over_50ms_count": 0,
+        "over_100ms_count": 0,
+        "inverse_mean_capacity_hz_not_sustained_throughput": 104.35058457197478
+      },
+      "samples_ms": [
+        9.3959,
+        9.3305,
+        9.4137,
+        9.8519,
+        9.9234
+      ],
+      "prefix_vs_bucket_bit_exact": true,
+      "prefix_vs_bucket_max_abs": 0.0,
+      "canonical_primary_final_max_abs": 0.0,
+      "canonical_primary_final_passed": true,
+      "distinct_final_tensor_count": 1,
+      "stats": {
+        "allocated_bytes": 2991453304,
+        "max_packet_events": 2000000,
+        "max_objects": 1,
+        "roi_batch_size": 1,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 20200738,
+        "ready": true,
+        "ingested_packets": 37,
+        "queries": 7,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": false,
+        "async_transfers": false,
+        "pinned_staging_bytes": 0,
+        "staging_waits": 0,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION",
+        "backend": "TEMPORAL_PREFIX_600MS_EPOCHS",
+        "prefix_boundaries": 121,
+        "queried_boundaries": 25,
+        "epoch_total_planes": 1,
+        "epoch_start_us": 20060738,
+        "total_buckets": 148,
+        "moment_origin": "600MS_EPOCH_RELATIVE_BOUNDED",
+        "normalization": "UNCHANGED_FULL_FLOAT64_SORT",
+        "max_take_temporary_bytes": 6553600
+      },
+      "rois": [
+        [
+          665.8592090711404,
+          -27.01675319980069,
+          1639.1687340021085,
+          946.2927717311672
+        ]
+      ]
+    },
+    {
+      "backend": "TemporalPrefixEventHistory",
+      "objects": 20,
+      "initialization_ms_excluded": 189.09050000365824,
+      "latency_ms": {
+        "count": 5,
+        "mean_ms": 59.374700000000004,
+        "p50_ms": 56.2414,
+        "p95_ms": 65.30642,
+        "p99_ms": 65.603204,
+        "min_ms": 55.2629,
+        "max_ms": 65.6774,
+        "quantile_method": "linear",
+        "strictly_under_20ms_count": 0,
+        "at_least_20ms_count": 5,
+        "over_50ms_count": 5,
+        "over_100ms_count": 0,
+        "inverse_mean_capacity_hz_not_sustained_throughput": 16.84219036054077
+      },
+      "samples_ms": [
+        55.8693,
+        56.2414,
+        65.6774,
+        63.8225,
+        55.2629
+      ],
+      "prefix_vs_bucket_bit_exact": true,
+      "prefix_vs_bucket_max_abs": 0.0,
+      "canonical_primary_final_max_abs": 0.0,
+      "canonical_primary_final_passed": true,
+      "distinct_final_tensor_count": 20,
+      "stats": {
+        "allocated_bytes": 3462329752,
+        "max_packet_events": 2000000,
+        "max_objects": 20,
+        "roi_batch_size": 4,
+        "history_us": 600000,
+        "bucket_us": 5000,
+        "update_us": 20000,
+        "end_us": 20200738,
+        "ready": true,
+        "ingested_packets": 37,
+        "queries": 140,
+        "cuda_graph_captures": 0,
+        "small_eager_temporaries": false,
+        "async_transfers": false,
+        "pinned_staging_bytes": 0,
+        "staging_waits": 0,
+        "arithmetic": "INTEGER_MOMENTS_REQUIRES_EXPLICIT_PARITY_ADMISSION",
+        "backend": "TEMPORAL_PREFIX_600MS_EPOCHS",
+        "prefix_boundaries": 121,
+        "queried_boundaries": 25,
+        "epoch_total_planes": 1,
+        "epoch_start_us": 20060738,
+        "total_buckets": 148,
+        "moment_origin": "600MS_EPOCH_RELATIVE_BOUNDED",
+        "normalization": "UNCHANGED_FULL_FLOAT64_SORT",
+        "max_take_temporary_bytes": 26214400
+      },
+      "rois": [
+        [
+          665.8592090711404,
+          -27.01675319980069,
+          1639.1687340021085,
+          946.2927717311672
+        ],
+        [
+          716.9579591300162,
+          -34.31657463678289,
+          1471.2728409515166,
+          719.9983071847172
+        ],
+        [
+          763.1901615642372,
+          -46.48294369842,
+          1541.8377815090116,
+          732.1646762463542
+        ],
+        [
+          809.4223639984582,
+          -58.64931276005706,
+          1612.4027220665068,
+          744.3310453079914
+        ],
+        [
+          855.6545664326791,
+          -70.81568182169417,
+          1682.967662624002,
+          756.4974143696285
+        ],
+        [
+          609.8939113876098,
+          -24.583479387473176,
+          1461.5397457022068,
+          827.0623549271237
+        ],
+        [
+          656.1261138218308,
+          -36.74984844911029,
+          1532.104686259702,
+          839.2287239887607
+        ],
+        [
+          702.3583162560517,
+          -48.9162175107474,
+          1602.6696268171972,
+          851.3950930503979
+        ],
+        [
+          748.5905186902727,
+          -61.08258657238446,
+          1673.2345673746922,
+          863.561462112035
+        ],
+        [
+          794.8227211244937,
+          -73.24895563402157,
+          1743.7995079321875,
+          875.727831173672
+        ],
+        [
+          549.0620660794243,
+          -27.016753199800633,
+          1522.3715910103924,
+          946.2927717311672
+        ],
+        [
+          595.2942685136453,
+          -39.18312226143769,
+          1592.9365315678874,
+          958.4591407928043
+        ],
+        [
+          641.5264709478662,
+          -51.34949132307486,
+          1663.5014721253829,
+          970.6255098544415
+        ],
+        [
+          687.7586733820872,
+          -63.515860384711914,
+          1734.0664126828779,
+          982.7918789160785
+        ],
+        [
+          733.9908758163081,
+          -75.68222944634908,
+          1804.631353240373,
+          994.9582479777157
+        ],
+        [
+          488.2302207712388,
+          -29.45002701212809,
+          1583.203436318578,
+          1065.523188535211
+        ],
+        [
+          534.4624232054598,
+          -41.616396073765145,
+          1653.768376876073,
+          1077.6895575968479
+        ],
+        [
+          580.6946256396807,
+          -53.782765135402315,
+          1724.3333174335683,
+          1089.855926658485
+        ],
+        [
+          626.9268280739017,
+          -65.94913419703937,
+          1794.8982579910635,
+          1102.0222957201222
+        ],
+        [
+          673.1590305081226,
+          -78.11550325867654,
+          1865.4631985485585,
+          1114.1886647817591
+        ]
+      ]
+    }
+  ],
+  "target_50hz_demonstrated": false
+}

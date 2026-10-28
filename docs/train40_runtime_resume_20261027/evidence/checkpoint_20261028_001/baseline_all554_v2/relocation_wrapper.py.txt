@@ -1,0 +1,62 @@
+"""Run the unmodified sealed baseline from a byte-verified detached checkout.
+
+Only absolute source inventory keys are relocated. Original reference files,
+candidate bytes, oracle source code and all numerical/timing gates are unchanged.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+from scripts import benchmark_train40_integral as runner
+from scripts.benchmark_train40_runtime import _source_inventory, _write
+from scripts.final_train40_transfer import sha
+
+SOURCE_ROOT = ROOT.parent / "e-jepa-ttc-v18-joint-measurement"
+AUDIT = SOURCE_ROOT / "artifacts/train40_runtime_resume_20261027/baseline_all554_v2/source_relocation.json"
+MAPPINGS: list[dict[str, str]] = []
+
+
+def relocated_inventory(frozen: dict, reference_binding: dict) -> list[Path]:
+    normalized = dict(reference_binding)
+    sources = {}
+    for name, digest in reference_binding["sources"].items():
+        original = Path(name)
+        if original.is_absolute():
+            original = original.resolve(strict=True)
+            relative = original.relative_to(SOURCE_ROOT.resolve(strict=True))
+        else:
+            relative = original
+            original = (SOURCE_ROOT / relative).resolve(strict=True)
+        copied = (ROOT / relative).resolve(strict=True)
+        if not copied.is_relative_to(ROOT) or sha(original) != digest or sha(copied) != digest:
+            raise ValueError(f"Source relocation byte identity failed: {name}")
+        if relative.as_posix() in sources:
+            raise ValueError(f"Duplicate relocated source: {relative}")
+        sources[relative.as_posix()] = digest
+        MAPPINGS.append({"original": str(original), "relocated": str(copied), "sha256": digest})
+    normalized["sources"] = sources
+    paths = _source_inventory(frozen, normalized)
+    paths.append(Path(__file__).resolve())
+    _write(AUDIT, {"status": "RUNNING", "source_root": str(SOURCE_ROOT), "runtime_root": str(ROOT),
+                   "wrapper_sha256": sha(Path(__file__)), "source_relocations": MAPPINGS})
+    return paths
+
+
+runner._source_inventory = relocated_inventory
+if __name__ == "__main__":
+    try:
+        runner.main()
+    finally:
+        intact = all(sha(Path(item[key])) == item["sha256"]
+                     for item in MAPPINGS for key in ("original", "relocated"))
+        _write(AUDIT, {"status": "VERIFIED" if intact and MAPPINGS else "FAILED",
+                       "source_root": str(SOURCE_ROOT), "runtime_root": str(ROOT),
+                       "wrapper_sha256": sha(Path(__file__)), "source_relocations": MAPPINGS,
+                       "original_and_relocated_sources_intact": intact})
+        if not intact:
+            raise RuntimeError("Source relocation preservation failed")

@@ -1,0 +1,11 @@
+{
+  "gpu_model_inference_started": false,
+  "exit_receipt": "../baseline_all554_v1_exit.json",
+  "cause": "Reference INFERENCE_FREEZE.json binds original-checkout absolute source paths; stock _source_inventory requires paths under current ROOT.",
+  "candidate_modified": false,
+  "reference_modified": false,
+  "status": "FAILED_BEFORE_MODEL_LOAD",
+  "log": "../baseline_all554_v1.log",
+  "retry": "baseline_all554_v2 with byte-verified relocation wrapper; scientific sources and gates unchanged",
+  "error": "Frozen oracle source location/bytes differ: absolute source paths are outside the detached worktree"
+}

@@ -1,0 +1,135 @@
+"""Read metadata only; estimate causal input reuse, not admitted GPU reuse."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from collections import Counter, defaultdict
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import h5py
+import numpy as np
+
+from e_jepa_ttc.data.eap import EAP_IMAGE_SIZE
+from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
+from operational.rgb_port_revision.transfer_inputs import sensor_triplets
+from operational.train40_runtime.integral import projection_bounds
+from operational.train40_runtime.replay_inputs import generate_sensor_clock_replay
+
+manifest = ROOT / "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"
+base_bytes = manifest.read_bytes()
+replay = generate_sensor_clock_replay(json.loads(base_bytes), max_updates_per_sequence=100)
+by_sequence = defaultdict(list)
+for row in replay["rows"]:
+    by_sequence[row["physical_sequence_id"]].append(row)
+total = Counter()
+records = []
+for inventory in replay["inventory"]:
+    sequence = inventory["physical_sequence_id"]
+    rows = sorted(by_sequence[sequence], key=lambda row: row["anchor_us"])
+    with h5py.File(inventory["raw_path"], "r") as handle:
+        clock = np.asarray(handle["blackflys/left/ts"], np.int64)
+        height, width = handle["blackflys/left/data"].shape[1:3]
+    caches = {
+        name: {} for name in
+        ("ew_exact", "ew_effective", "eo_exact", "eo_effective", "ro_exact", "ro_effective")
+    }
+    stats = Counter()
+    previous = None
+    last_roi = {}
+    previous_calls = {}
+    for row in rows:
+        query = int(row["anchor_us"])
+        contiguous = previous is not None and query - previous == 20_000
+        if not contiguous:
+            for cache in caches.values():
+                cache.clear()
+            last_roi.clear()
+            previous_calls.clear()
+        for cache in caches.values():
+            for key, stamp in list(cache.items()):
+                if query - stamp > 650_000:
+                    del cache[key]
+        square = row["square_xyxy"]
+        event_exact = tuple(float(value).hex() for value in square)
+        event_width, event_height = EAP_IMAGE_SIZE
+        event_effective = (
+            projection_bounds(event_width, square[0], square[2], 128).tobytes(),
+            projection_bounds(event_height, square[1], square[3], 128).tobytes(),
+        )
+        rgb = common_square_from_boxes(row["rgb_boxes"], (1, 2), margin_fraction=0.25)
+        rgb_exact = tuple(float(value).hex() for value in rgb)
+        rgb_effective = (
+            max(0, int(rgb[0])), max(0, int(rgb[1])),
+            min(width, int(rgb[2])), min(height, int(rgb[3])),
+        )
+        groups = [tuple(int(index) for index in group) for group in sensor_triplets(clock, query)]
+        calls = {"exact": (rgb_exact, tuple(groups)), "effective": (rgb_effective, tuple(groups))}
+        for mode, call in calls.items():
+            stats[f"rgb_full_{mode}_hits"] += int(contiguous and previous_calls.get(mode) == call)
+        previous_calls = calls
+        old = last_roi.get(query - 100_000)
+        if old is not None:
+            stats["eligible_100ms_pairs"] += 1
+            for name, value, prior in (
+                ("event_exact", event_exact, old[0]),
+                ("event_effective", event_effective, old[1]),
+                ("rgb_exact", rgb_exact, old[2]),
+                ("rgb_effective", rgb_effective, old[3]),
+            ):
+                stats[f"{name}_same_100ms"] += int(value == prior)
+        last_roi[query] = (event_exact, event_effective, rgb_exact, rgb_effective)
+        for stamp in list(last_roi):
+            if query - stamp > 100_000:
+                del last_roi[stamp]
+        for mode, roi in (("exact", event_exact), ("effective", event_effective)):
+            for kind, ends in (
+                ("ew", range(query - 500_000, query + 1, 100_000)),
+                ("eo", range(query - 300_000, query + 1, 100_000)),
+            ):
+                name = f"{kind}_{mode}"
+                keys = [(roi, end) for end in ends]
+                stats[f"{name}_required"] += len(keys)
+                stats[f"{name}_reusable"] += sum(key in caches[name] for key in keys)
+                for key in keys:
+                    caches[name][key] = query
+        for mode, roi in (("exact", rgb_exact), ("effective", rgb_effective)):
+            name = f"ro_{mode}"
+            keys = [(roi, group) for group in groups]
+            stats[f"{name}_required"] += len(keys)
+            stats[f"{name}_reusable"] += sum(key in caches[name] for key in keys)
+            for key in keys:
+                caches[name][key] = query
+        previous = query
+    total.update(stats)
+    records.append({"sequence": sequence, **stats})
+result = {
+    "scope": "METADATA_INPUT_REUSE_UPPER_BOUND_NO_PIXELS_MODELS_GPU_OR_BATCH_PARITY",
+    "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    "manifest_sha256": hashlib.sha256(base_bytes).hexdigest(),
+    "scheduled": replay["scheduled_updates"],
+    "accepted": replay["accepted_updates"],
+    "excluded": len(replay["excluded"]),
+    "exclusion_reasons": replay["exclusion_reasons"],
+    "counts": dict(total),
+    "fractions": {name: total[f"{name}_reusable"] / total[f"{name}_required"] for name in caches},
+    "eap_image_size": EAP_IMAGE_SIZE,
+    "sequences": len(records),
+    "records": records,
+    "notes": [
+        "One primary object per sequence; no twenty-object cache hit-rate claim.",
+        "Caches retain any previously computed requested input for 650ms; gaps reset continuity.",
+        "ew=100ms event window; eo=three-window event observation; ro=RGB triplet.",
+        "Metadata equality is necessary input reuse evidence, not numeric admission after rebatching.",
+        "No speculative future ROI or input is computed.",
+    ],
+}
+output = Path(__file__).with_name("causal_cache_metadata_v1.json")
+if output.exists():
+    raise FileExistsError(output)
+output.write_text(json.dumps(result, indent=2, allow_nan=False), encoding="utf-8")
+print(json.dumps({key: value for key, value in result.items() if key != "records"}, indent=2))

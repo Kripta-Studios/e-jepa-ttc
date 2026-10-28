@@ -8,9 +8,9 @@ Fuentes y SHA-256: [RESULTS_SOURCES.json](RESULTS_SOURCES.json). `—` significa
 
 | Frente | Dispositivo | Recibos | Máx. objetos/ROI ensayados | Estados |
 | --- | --- | --- | --- | --- |
-| baseline | NVIDIA GeForce RTX 5070 Ti Laptop GPU | 1 | 1 | FAILED: 1 |
+| baseline | NVIDIA GeForce RTX 5070 Ti Laptop GPU | 2 | 1 | COMPLETE: 1; FAILED: 1 |
 | baseline | — | 1 | — | FAILED_BEFORE_MODEL_LOAD: 1 |
-| compiled_pipeline | — | 2 | 1 | COMPLETE_WITH_PARITY_FAILURES: 1; FAILED: 1 |
+| compiled_pipeline | — | 4 | 1 | COMPLETE_WITH_PARITY_FAILURES: 3; FAILED: 1 |
 | encoders | NVIDIA GeForce RTX 5070 Ti Laptop GPU | 1 | — | FAILED_ENCODER_PARITY: 1 |
 | multiobject | — | 7 | 20 | COMPLETE: 5; FAILED: 2 |
 | normalization | cpu | 1 | 1 | PASSED: 1 |
@@ -19,6 +19,7 @@ Fuentes y SHA-256: [RESULTS_SOURCES.json](RESULTS_SOURCES.json). `—` significa
 | prefix | cuda | 4 | 20 | COMPLETE: 4 |
 | producers | NVIDIA GeForce RTX 5070 Ti Laptop GPU | 11 | 20 | COMPLETE: 8; COMPLETE_WITH_PARITY_FAILURES: 3 |
 | rgb_uint8 | cpu | 3 | — | COMPLETE: 3 |
+| scheduler | — | 1 | — | COMPLETE_FAKE_CONTROL_ONLY: 1 |
 | transport | NVIDIA GeForce RTX 5070 Ti Laptop GPU | 1 | — | PROBE_COMPLETE_NOT_FINAL_TTC_ADMISSION: 1 |
 
 El máximo de objetos/ROI es cobertura del tramo indicado, no capacidad admitida de la cadena completa. Los encoders expresan batch de endpoints, no objetos. Cada tiempo y su paridad aparecen separados en el detalle.
@@ -30,7 +31,11 @@ El máximo de objetos/ROI es cobertura del tramo indicado, no capacidad admitida
 | baseline_all554_v1/setup_failure.json | FAILED_BEFORE_MODEL_LOAD | — | — |
 | baseline_all554_v2/admission_analysis.json | FAILED | NVIDIA GeForce RTX 5070 Ti Laptop GPU | sí |
 | compiled_pipeline/gpu_idx0_v1/summary.json | FAILED | — | sí |
+| compiled_pipeline/gpu_no_fma_exact_div_v4/summary.json | COMPLETE_WITH_PARITY_FAILURES | — | sí |
+| compiled_pipeline/gpu_no_fma_v3/summary.json | COMPLETE_WITH_PARITY_FAILURES | — | sí |
 | compiled_pipeline/gpu_sensitive_v2/summary.json | COMPLETE_WITH_PARITY_FAILURES | — | sí |
+| compute_council/paced_scheduler_ab_v1/summary.json | COMPLETE_FAKE_CONTROL_ONLY | — | sí |
+| corrected_all554_v1/summary.json | COMPLETE | NVIDIA GeForce RTX 5070 Ti Laptop GPU | sí |
 | encoder_ea5_b12_v1/summary.json | FAILED_ENCODER_PARITY | NVIDIA GeForce RTX 5070 Ti Laptop GPU | sí |
 | multiobject/pilot_1_2_dedicated_stream_v1/summary.json | COMPLETE | — | sí |
 | multiobject/pilot_1_2_serial_v1/summary.json | COMPLETE | — | sí |
@@ -103,6 +108,26 @@ Estado: **FAILED**.
 | cohorte completa | 1 | RAW disponible → TTC | 554 | 44.2483944 | 40.5906 | 63.77779 | 98.415266 | 294.5156 | no |
 
 Other swarm agents performed CPU development; desktop GPU shared. Single-object registered replay with per-query history initialization outside clock. Not sustained and not isolated before/after performance evidence.
+
+### `corrected_all554_v1/summary.json`
+
+Estado: **COMPLETE**.
+
+| Cobertura | Inputs pasan | Inputs exactos | Archivos preservados | Intactos |
+| --- | --- | --- | --- | --- |
+| 554/554 | 554 | — | 606 | sí |
+
+| Salida | Pasan | Pares finitos | Máx. error absoluto s | Máx. relativo |
+| --- | --- | --- | --- | --- |
+| PHASE_ONLY_TRAIN40_S7 | 554 | 554 | 6.67572021e-05 | 4.93935321e-06 |
+| E_CTX_TRAIN40 | 554 | 554 | 0 | 0 |
+| R_CTX_TRAIN40 | 554 | 554 | 0.000312805176 | 8.60476559e-06 |
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| cohorte completa | 1 | RAW disponible → TTC | 554 | 46.1917847 | 44.1926 | 66.634525 | 76.600801 | 103.7058 | sí |
+
+Inicialización de historial y disco excluidos.
 
 ## producers
 
@@ -794,6 +819,52 @@ La columna de paridad corresponde a las tres salidas TTC por ruta. El estado del
 
 error: `RuntimeError: Compiled producer graph lost its opaque transport operator`
 
+### `compiled_pipeline/gpu_no_fma_exact_div_v4/summary.json`
+
+Estado: **COMPLETE_WITH_PARITY_FAILURES**. Dispositivo: `—`. Alcance: `PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT`.
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | 1 | original_graph | 20 | 18.61502 | 18.42515 | 20.193155 | 21.539191 | 21.8757 | sí |
+| 0 | 1 | compiled_transport_graph | 20 | 10.20089 | 10.08835 | 10.96106 | 11.208212 | 11.27 | sí |
+| 1 | 1 | original_graph | 20 | 18.95618 | 19.1487 | 20.4676 | 20.65608 | 20.7032 | sí |
+| 1 | 1 | compiled_transport_graph | 20 | 10.55057 | 10.6497 | 11.45835 | 11.67647 | 11.731 | sí |
+| 2 | 1 | original_graph | 20 | 19.240435 | 19.3197 | 20.571675 | 20.630575 | 20.6453 | sí |
+| 2 | 1 | compiled_transport_graph | 20 | 10.88964 | 10.8344 | 12.109645 | 12.236489 | 12.2682 | no |
+| 3 | 1 | original_graph | 20 | 18.827965 | 18.89265 | 20.01408 | 20.197696 | 20.2436 | sí |
+| 3 | 1 | compiled_transport_graph | 20 | 10.76307 | 10.7428 | 11.99962 | 12.285684 | 12.3572 | no |
+| 4 | 1 | original_graph | 20 | 18.404695 | 18.28765 | 19.51635 | 19.52623 | 19.5287 | sí |
+| 4 | 1 | compiled_transport_graph | 20 | 10.35518 | 10.45095 | 10.953555 | 10.954391 | 10.9546 | sí |
+| 5 | 1 | original_graph | 20 | 20.207165 | 19.98755 | 21.957645 | 22.341369 | 22.4373 | sí |
+| 5 | 1 | compiled_transport_graph | 20 | 11.37498 | 11.21235 | 12.53935 | 13.02195 | 13.1426 | sí |
+| 6 | 1 | original_graph | 20 | 17.74493 | 17.74665 | 18.465235 | 18.636007 | 18.6787 | sí |
+| 6 | 1 | compiled_transport_graph | 20 | 9.997815 | 9.9527 | 10.667405 | 10.836201 | 10.8784 | sí |
+
+La columna de paridad corresponde a las tres salidas TTC por ruta. El estado del ensayo conserva también fallos de auditoría. La paridad de features intermedias es un diagnóstico separado.
+
+### `compiled_pipeline/gpu_no_fma_v3/summary.json`
+
+Estado: **COMPLETE_WITH_PARITY_FAILURES**. Dispositivo: `—`. Alcance: `PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT`.
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 | 1 | original_graph | 20 | 20.816355 | 19.46525 | 24.27013 | 24.396746 | 24.4284 | sí |
+| 0 | 1 | compiled_transport_graph | 20 | 11.137885 | 10.3036 | 13.5099 | 14.14526 | 14.3041 | sí |
+| 1 | 1 | original_graph | 20 | 17.85844 | 17.8892 | 18.489635 | 18.668007 | 18.7126 | sí |
+| 1 | 1 | compiled_transport_graph | 20 | 9.88426 | 9.876 | 10.479645 | 10.500089 | 10.5052 | sí |
+| 2 | 1 | original_graph | 20 | 17.87667 | 17.763 | 18.600485 | 18.621537 | 18.6268 | sí |
+| 2 | 1 | compiled_transport_graph | 20 | 9.749535 | 9.8012 | 10.274215 | 10.365643 | 10.3885 | no |
+| 3 | 1 | original_graph | 20 | 17.9546 | 17.9014 | 18.614575 | 18.790515 | 18.8345 | sí |
+| 3 | 1 | compiled_transport_graph | 20 | 9.79831 | 9.7568 | 10.45441 | 10.460642 | 10.4622 | no |
+| 4 | 1 | original_graph | 20 | 18.098975 | 17.9884 | 18.733815 | 19.015243 | 19.0856 | sí |
+| 4 | 1 | compiled_transport_graph | 20 | 9.880895 | 9.8729 | 10.339905 | 10.391661 | 10.4046 | sí |
+| 5 | 1 | original_graph | 20 | 17.977495 | 18.05815 | 18.66584 | 18.809328 | 18.8452 | sí |
+| 5 | 1 | compiled_transport_graph | 20 | 9.772445 | 9.71465 | 10.33315 | 10.38255 | 10.3949 | no |
+| 6 | 1 | original_graph | 20 | 18.154915 | 18.0961 | 19.004355 | 19.335031 | 19.4177 | sí |
+| 6 | 1 | compiled_transport_graph | 20 | 10.05057 | 9.9543 | 10.71276 | 11.341432 | 11.4986 | sí |
+
+La columna de paridad corresponde a las tres salidas TTC por ruta. El estado del ensayo conserva también fallos de auditoría. La paridad de features intermedias es un diagnóstico separado.
+
 ### `compiled_pipeline/gpu_sensitive_v2/summary.json`
 
 Estado: **COMPLETE_WITH_PARITY_FAILURES**. Dispositivo: `—`. Alcance: `PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT`.
@@ -964,3 +1035,18 @@ Estado: **COMPLETE**. Dispositivo: `cpu`. Alcance: `SYNTHETIC_RGB_PREPARATION_ON
 | 1 | 5 | 3 | 0 | 344224 | 2949120 |
 | 2 | 5 | 3 | 0 | 688448 | 5898240 |
 | 20 | 5 | 3 | 0 | 6884480 | 58982400 |
+
+## scheduler
+
+Control del planificador con RAW y predicciones ficticias. No ejecuta modelos ni GPU y no admite ningún objetivo TTC.
+
+### `compute_council/paced_scheduler_ab_v1/summary.json`
+
+Estado: **COMPLETE_FAKE_CONTROL_ONLY**. Dispositivo: `—`. Alcance: `REAL_PACED_HELPER_THREADS_QUEUE_FAKE_RAW_FAKE_PREDICTIONS_NO_GPU_NO_TTC`.
+
+| Caso | Objetos/ROI | Ruta | n | Media ms | p50 ms | p95 ms | p99 ms | Máximo ms | Paridad del tramo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| event | — | raw_availability_lateness_ms | 3000 | 8.22284703 | 8.247 | 15.225025 | 16.02663 | 16.8984 | — |
+| event | — | deadline_response_ms | 3000 | 8.3464227 | 8.3681 | 15.356815 | 16.192146 | 17.1889 | — |
+| sleep | — | raw_availability_lateness_ms | 3000 | 0.3510518 | 0.3427 | 0.610805 | 0.825125 | 1.5396 | — |
+| sleep | — | deadline_response_ms | 3000 | 0.4668937 | 0.45205 | 0.77045 | 1.043656 | 8.1876 | — |

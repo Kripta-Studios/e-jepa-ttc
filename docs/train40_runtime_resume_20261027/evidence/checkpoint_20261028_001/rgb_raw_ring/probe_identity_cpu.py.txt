@@ -1,0 +1,95 @@
+"""CPU-only arrival sealing and per-query identity cost; no model or TTC timing."""
+from __future__ import annotations
+
+import hashlib
+import json
+import platform
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import numpy as np
+
+from operational.train40_runtime.feature_cache import bind_rgb_history
+from operational.train40_runtime.rgb_frozen_identity import bind_frozen_rgb_history
+from operational.train40_runtime.rgb_raw_ring import RGBSourceIdentity, freeze_rgb_frame
+
+
+def summary(values):
+    return {"count": len(values), "mean_ms": float(np.mean(values)),
+            "p95_ms": float(np.percentile(values, 95)),
+            "p99_ms": float(np.percentile(values, 99)),
+            "min_ms": min(values), "max_ms": max(values)}
+
+
+def sources():
+    names = ["operational/train40_runtime/feature_cache.py",
+             "operational/train40_runtime/rgb_raw_ring.py",
+             "operational/train40_runtime/rgb_frozen_identity.py"]
+    return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in names}
+
+
+def main():
+    output = Path(__file__).with_name("identity_cpu_v1.json")
+    if output.exists():
+        raise FileExistsError(output)
+    before = sources()
+    rng = np.random.default_rng(271028)
+    source = RGBSourceIdentity("synthetic_identity_probe", "a" * 64)
+    tokens, freeze_ms = {}, []
+    for index in range(7):
+        raw = rng.integers(0, 256, (1200, 1920, 3), dtype=np.uint8)
+        started = time.perf_counter()
+        tokens[index] = freeze_rgb_frame(raw, frame_id=index,
+                                         timestamp_us=(index + 1) * 100_000, source=source)
+        freeze_ms.append((time.perf_counter() - started) * 1000)
+    arrays = {index: token.array for index, token in tokens.items()}
+    clocks = {index: token.timestamp_us for index, token in tokens.items()}
+    groups = tuple((index, index + 1, index + 2) for index in range(5))
+    timings = {"payload_sha": [], "immutable_descriptor": []}
+    receipts = []
+    for repetition in range(10):
+        query = 700_000 + repetition * 1000
+        order = ("payload_sha", "immutable_descriptor") if repetition % 2 == 0 else (
+            "immutable_descriptor", "payload_sha")
+        receipt = {"query_us": query, "order": list(order)}
+        for method in order:
+            started = time.perf_counter()
+            if method == "payload_sha":
+                identity = bind_rgb_history(arrays, clocks, groups, query_us=query)
+            else:
+                identity = bind_frozen_rgb_history(tokens, groups, query_us=query)
+            elapsed = (time.perf_counter() - started) * 1000
+            timings[method].append(elapsed)
+            receipt[method] = {"ms": elapsed, "raw_bytes": identity.raw_bytes,
+                               "hashed_bytes": identity.hashed_bytes, "digest": identity.digest}
+        receipts.append(receipt)
+    after = sources()
+    result = {
+        "status": "COMPLETE" if before == after else "SOURCE_MUTATION",
+        "scope": "CPU_SYNTHETIC_IDENTITY_ONLY_NOT_GPU_OR_TTC_OR_SUSTAINED_LATENCY",
+        "source_shape": [1200, 1920, 3], "frames": 7, "seed": 271028,
+        "source_generation_inside_timing": False,
+        "source_sealing_measured_separately": True,
+        "host_exclusivity_enforced": False,
+        "freeze_each_new_frame_ms": freeze_ms,
+        "freeze_summary": summary(freeze_ms),
+        "identity_summaries": {name: summary(values) for name, values in timings.items()},
+        "queries": receipts,
+        "numpy_version": np.__version__, "python_version": platform.python_version(),
+        "gpu_used": False, "models_or_targets_used": False,
+        "sources_before": before, "sources_after": after,
+        "probe_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    }
+    output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"status": result["status"], "freeze": result["freeze_summary"],
+                      "identity": result["identity_summaries"]}))
+    if before != after:
+        raise RuntimeError("Source files changed during identity measurements")
+
+
+if __name__ == "__main__":
+    main()

@@ -31,6 +31,7 @@ FAMILIES = (
     "encoders",
     "compiled_pipeline",
     "rgb_uint8",
+    "scheduler",
 )
 SCOPES = {
     "producers": "Productores preparados en GPU; excluye sensores, H2D, contexto y TTC final.",
@@ -43,6 +44,8 @@ SCOPES = {
     "la paridad TTC se comprueba fuera del reloj. Excluye RAW, H2D y contexto del tiempo.",
     "rgb_uint8": "Preparación RGB sintética; incluye el tramo declarado en cada recibo. "
     "No incluye modelos ni TTC. Bytes propuestos no equivalen a transferencias ejecutadas.",
+    "scheduler": "Control del planificador con RAW y predicciones ficticias. "
+    "No ejecuta modelos ni GPU y no admite ningún objetivo TTC.",
 }
 COMPACT_NAMES = {
     "summary.json",
@@ -73,6 +76,9 @@ COMPACT_NAMES = {
     "CPU_BENCHMARK_NOTES.md",
     "CAUSAL_REUSE_AND_20MS.md",
     "causal_cache_metadata_v1.json",
+    "scheduler_jitter_v1.json",
+    "WINDOWS_SCHEDULER_JITTER.md",
+    "PACED_RUNNER.md",
 }
 FORBIDDEN_PARTS = {
     "deps",
@@ -88,6 +94,8 @@ FORBIDDEN_PARTS = {
     "__pycache__",
     "torch_compile_debug",
     "compiler_cache",
+    "inductor_cache",
+    "triton_cache",
 }
 
 
@@ -207,9 +215,13 @@ class Sources:
                 continue
             group = relative.parts[0].lower()
             family = "baseline" if group.startswith(("baseline", "corrected_all")) else group
-            if family.startswith("encoder") or family in {"compute_council", "compiled_encoder"}:
+            if family.startswith("encoder") or family == "compiled_encoder":
                 family = "encoders"
             result = self.read(path)
+            if family == "compute_council" and "FAKE_RAW_FAKE_PREDICTIONS" in result.get(
+                "scope", ""
+            ):
+                family = "scheduler"
             binding_path = path.with_name("binding.json")
             binding = self.read(binding_path) if binding_path.exists() else {}
             receipts.append(Receipt(relative.as_posix(), result, binding, family))
@@ -423,6 +435,8 @@ def run_section(receipt: Receipt) -> list[str]:
     rows, extra = [], []
     for index, record in enumerate(records):
         label = record.get("backend", record.get("model", record.get("variant", index)))
+        if receipt.family == "scheduler":
+            label = record.get("strategy", index)
         if "batch" in record:
             label = f"{label}; batch={record['batch']}"
         if "radius" in record:
@@ -435,6 +449,9 @@ def run_section(receipt: Receipt) -> list[str]:
             )
         gate = record_gate(record, receipt.family)
         measured = latency_rows(record.get("latency_ms"))
+        if receipt.family == "scheduler":
+            for name in ("raw_availability_lateness_ms", "deadline_response_ms"):
+                measured += latency_rows(record.get(name), name)
         if receipt.family == "rgb_uint8":
             measured += latency_rows(
                 record.get("original_host_expanded_preparation_latency"), "original_preparation"

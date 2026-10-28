@@ -1,0 +1,501 @@
+"""Compare matched producer graphs with compiled transport on real distinct ROIs.
+
+The clock covers prepared GPU inputs through producer/PAIR/PHASE17 features and
+guards. Raw preparation, H2D and final context are excluded. Independent final
+TTC parity is measured outside the clock. This is not complete-update admission.
+"""
+
+from __future__ import annotations
+
+import argparse
+import ast
+import hashlib
+import json
+import platform
+import subprocess
+import sys
+import time
+import traceback
+import types
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+
+def snapshot_roi_helpers(output: Path) -> tuple[types.ModuleType, Path, dict[str, Any]]:
+    """Execute exact helper-source snapshots while service agents edit their files.
+
+    Only top-level named classes/functions are copied. Original helper bytes and
+    source-file hashes remain in provenance; preservation binds the executed
+    snapshot rather than mutable, unused remainder of the source modules.
+    """
+    selected = {
+        ROOT / "operational/train40_runtime/multiobject.py": (
+            "ObjectRegion",
+            "RawRGBHistory",
+            "read_raw_rgb_history",
+        ),
+        ROOT / "scripts/benchmark_train40_multiobject.py": (
+            "artificial_regions",
+            "reference_rgb",
+        ),
+    }
+    blocks, provenance = [], {}
+    for path, names in selected.items():
+        payload = path.read_bytes()
+        source = payload.decode("utf-8-sig")
+        lines = source.splitlines(keepends=True)
+        found = {}
+        for node in ast.parse(source).body:
+            if isinstance(node, (ast.ClassDef, ast.FunctionDef)) and node.name in names:
+                start = min([node.lineno] + [item.lineno for item in node.decorator_list]) - 1
+                block = "".join(lines[start : node.end_lineno])
+                found[node.name] = block
+        if set(found) != set(names):
+            raise ValueError(f"ROI snapshot helper set changed: {path}")
+        for name in names:
+            block = found[name]
+            blocks.append(block)
+            provenance[name] = {
+                "source": str(path.relative_to(ROOT)),
+                "source_sha256": hashlib.sha256(payload).hexdigest(),
+                "helper_sha256": hashlib.sha256(block.encode()).hexdigest(),
+            }
+    preamble = """from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any, cast
+import h5py
+import numpy as np
+from e_jepa_ttc.rgb_port.data import crop_uint8
+from operational.rgb_port_revision.transfer_inputs import sensor_triplets
+Square = tuple[float, float, float, float]
+"""
+    source = preamble + "\n\n".join(blocks)
+    path = output / "executed_roi_helpers.py"
+    path.write_text(source, encoding="utf-8")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    module = types.ModuleType(f"_train40_roi_helpers_{digest[:16]}")
+    module.__file__ = str(path)
+    sys.modules[module.__name__] = module
+    exec(compile(source, str(path), "exec"), module.__dict__)  # noqa: S102
+    return module, path, {"executed_sha256": digest, "helpers": provenance}
+
+
+def run(args: argparse.Namespace) -> None:
+    """Bind frozen inputs, preserve failures, and compare fixed final TTC gates."""
+    from scripts.benchmark_train40_encoder import configure_compiler
+
+    for protected in (args.candidate, args.reference, args.manifest.parent):
+        a, b = args.output.resolve(), protected.resolve()
+        if a == b or a.is_relative_to(b) or b.is_relative_to(a):
+            raise ValueError("Evidence directory must be separate from frozen inputs")
+    if not args.indices or len(args.indices) != len(set(args.indices)):
+        raise ValueError("Query indices must be nonempty and unique")
+    if not args.objects or any(not 1 <= count <= 20 for count in args.objects):
+        raise ValueError("Object counts must lie in [1,20]")
+    if args.warmup < 1 or args.repeats < 1:
+        raise ValueError("At least one warmup and repetition are required")
+    if not 0 <= args.event_object_chunk_size <= 20:
+        raise ValueError("Event object chunk size must lie in [0,20]")
+    args.output.mkdir(parents=True, exist_ok=False)
+    summary: dict[str, Any] = {
+        "scope": "PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT",
+        "status": "FAILED",
+        "target_20_objects_50hz_demonstrated": False,
+        "complete_update_admitted": False,
+        "records": [],
+    }
+    original: dict[str, Any] = {}
+    caught: BaseException | None = None
+    try:
+        summary["compiler_environment"] = configure_compiler(args.compiler_root, args.output)
+        import numpy as np
+        import torch
+
+        from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
+        from operational.rgb_port import transfer as engine
+        from operational.train40_runtime.compiled_pipeline import CompiledTransportProducerRuntime
+        from operational.train40_runtime.context import ContextRuntime
+        from operational.train40_runtime.inputs import PersistentSensorInputs
+        from operational.train40_runtime.measurement import (
+            latency_distribution,
+            prediction_parity,
+            snapshot_files,
+            verify_snapshot,
+        )
+        from operational.train40_runtime.producers import ProducerRuntime
+        from scripts.benchmark_train40_producer_variants import (
+            _preserve_source_bytes,
+            _weight_values,
+            tensor_comparison,
+        )
+        from scripts.benchmark_train40_runtime import (
+            _candidate_inventory,
+            _source_inventory,
+            _validate_reference,
+            _write,
+        )
+        from scripts.final_train40_transfer import (
+            load_models,
+            read,
+            reject_targets,
+            verify_candidate,
+            verify_frozen_runtime,
+        )
+
+        helpers, helper_path, helper_binding = snapshot_roi_helpers(args.output)
+        summary["roi_helper_snapshot"] = helper_binding
+        paths, binding = verify_candidate(args.candidate)
+        frozen = verify_frozen_runtime(args.candidate)
+        rows = read(args.manifest)["rows"]
+        reject_targets(rows)
+        if any(not 0 <= index < len(rows) for index in args.indices):
+            raise ValueError("Query index outside frozen manifest")
+        reference, reference_files, reference_binding = _validate_reference(
+            args.reference, args.manifest, rows, binding
+        )
+        used_runtime = {
+            "compiled_pipeline.py",
+            "compiled_transport.py",
+            "transport.py",
+            "producers.py",
+            "context.py",
+            "measurement.py",
+            "inputs.py",
+        }
+        sources = [
+            path
+            for path in _source_inventory(frozen, reference_binding)
+            if path.parent.name != "train40_runtime" or path.name in used_runtime
+        ]
+        sources += [
+            Path(__file__),
+            ROOT / "scripts/benchmark_train40_encoder.py",
+            ROOT / "scripts/benchmark_train40_producer_variants.py",
+            helper_path,
+        ]
+        sources = sorted(set(path.resolve() for path in sources))
+        original = snapshot_files(
+            [*_candidate_inventory(args.candidate), args.manifest, *reference_files, *sources]
+        )
+        _write(args.output / "original_snapshot.json", original)
+        _preserve_source_bytes(sources, original, args.output)
+        torch.set_num_threads(2)
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+        torch.manual_seed(7)
+        summary["binding"] = {
+            **binding,
+            "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+            "torch": torch.__version__,
+            "cuda": torch.version.cuda,
+            "python": platform.python_version(),
+            "gpu": torch.cuda.get_device_name(),
+            "seed": 7,
+            "atol": 1e-5,
+            "rtol": 1e-5,
+            "event_endpoint_reuse": False,
+            "rgb_endpoint_reuse": True,
+            "rgb_object_chunk_size": 1,
+            "event_object_chunk_size": args.event_object_chunk_size,
+            "population": "distinct translated real-sensor ROIs; object zero is preserved query",
+            "encoder": "original FP32 contiguous",
+            "precision": "FP32_TF32_OFF",
+        }
+        models, normalizers = load_models(paths, "cuda")
+        before = _weight_values(models)
+        context = ContextRuntime(models, normalizers, "cuda", graphs=True)
+        oracle = ProducerRuntime(models, "cuda", graphs=False)
+        baseline = ProducerRuntime(
+            models,
+            "cuda",
+            graphs=True,
+            block_graphs=True,
+            reuse_event_encodings=False,
+            reuse_rgb_encodings=True,
+        )
+        compiler_options = {
+            "use_fast_math": False,
+            "force_same_precision": True,
+            "triton.cudagraphs": False,
+        }
+        if args.precision_mode in ("no-fma", "no-fma-exact-div"):
+            compiler_options["emulate_precision_casts"] = True
+        if args.precision_mode == "no-fma-exact-div":
+            compiler_options["eager_numerics.division_rounding"] = True
+        summary["binding"]["compiler_options"] = compiler_options
+        compiled = CompiledTransportProducerRuntime(models, "cuda", options=compiler_options)
+        variants = {"original_graph": baseline, "compiled_transport_graph": compiled}
+
+        def route(runtime: ProducerRuntime, inputs: Any, *, historical: bool = False) -> Any:
+            event, delta, rgbs = inputs
+            event_parts = []
+            chunk = 1 if historical else args.event_object_chunk_size or len(rgbs)
+            for start in range(0, len(rgbs), chunk):
+                end = min(start + chunk, len(rgbs))
+                event_parts.append(
+                    runtime.expert_block(
+                        "E",
+                        event[start * 4 : end * 4],
+                        delta[start * 4 : end * 4],
+                        history_group_size=4,
+                    )
+                )
+            event_outputs = tuple(torch.cat([part[i] for part in event_parts]) for i in range(2))
+            rgb_outputs = []
+            for sensor, clock, _ in rgbs:
+                if sensor is None:
+                    rgb_outputs.append((None, None))
+                elif historical:
+                    parts = [
+                        runtime.expert_block("R", sensor[i : i + 1], clock[i : i + 1])
+                        for i in range(len(sensor))
+                    ]
+                    rgb_outputs.append(
+                        tuple(torch.cat([part[i] for part in parts]) for i in range(2))
+                    )
+                else:
+                    rgb_outputs.append(
+                        runtime.expert_block("R", sensor, clock, history_group_size=len(sensor))
+                    )
+            return event_outputs, rgb_outputs
+
+        def final_ttc(
+            features: Any, inputs: Any, row: dict[str, Any], regions: Any
+        ) -> list[dict[str, Any]]:
+            (eraw, eexperts), rgb_features = features
+            anchor = int(row["anchor_us"])
+            results = []
+            for index, region in enumerate(regions):
+                raw, experts = rgb_features[index]
+                result = context.predict(
+                    eraw[index * 4 : (index + 1) * 4],
+                    eexperts[index * 4 : (index + 1) * 4],
+                    [anchor - int(lag) for lag in engine.EVENT_LAGS_US],
+                    raw,
+                    experts,
+                    inputs[2][index][2],
+                    anchor,
+                )
+                result.update(
+                    query_id=region.object_id,
+                    rgb_unavailable_reason="" if raw is not None else "NO_RGB_HISTORY",
+                )
+                results.append(result)
+            return results
+
+        def compare_features(actual: Any, expected: Any) -> dict[str, Any]:
+            event = [tensor_comparison(a, b) for a, b in zip(actual[0], expected[0], strict=True)]
+            rgb = [
+                [
+                    tensor_comparison(a, b)
+                    if a is not None and b is not None
+                    else {"passed": a is None and b is None, "absent": True}
+                    for a, b in zip(current, reference, strict=True)
+                ]
+                for current, reference in zip(actual[1], expected[1], strict=True)
+            ]
+            return {
+                "passed": all(row["passed"] for row in event)
+                and all(row["passed"] for object_rows in rgb for row in object_rows),
+                "event": event,
+                "rgb": rgb,
+            }
+
+        with torch.inference_mode(), PersistentSensorInputs() as sensors:
+            for objects in args.objects:
+                for index in args.indices:
+                    record: dict[str, Any] = {
+                        "objects": objects,
+                        "index": index,
+                        "status": "FAILED",
+                    }
+                    summary["records"].append(record)
+                    try:
+                        row = rows[index]
+                        boxes = [sensors._box(source) for source in list(row["bbox_sources"])[-2:]]
+                        square = common_square_from_boxes(boxes, (0, 1), margin_fraction=0.25)
+                        regions = helpers.artificial_regions(row["square_xyxy"], square, objects)
+                        raw_rgb = helpers.read_raw_rgb_history(sensors, row)
+                        events, rgbs = [], []
+                        for region in regions:
+                            prepared = engine.prepare_event(
+                                {**row, "square_xyxy": list(region.event_square)}
+                            )
+                            events.append(torch.from_numpy(prepared["own_events"]).cuda())
+                            rgb = helpers.reference_rgb(raw_rgb, region)
+                            if rgb:
+                                rgbs.append(
+                                    (
+                                        torch.from_numpy(np.stack([x for x, _ in rgb])).cuda(),
+                                        torch.tensor(
+                                            [meta["delta_t_s"] for _, meta in rgb],
+                                            dtype=torch.float32,
+                                            device="cuda",
+                                        ),
+                                        [meta for _, meta in rgb],
+                                    )
+                                )
+                            else:
+                                rgbs.append((None, None, []))
+                        event = torch.cat(events)
+                        inputs = event, torch.full((len(event), 2), 0.1, device="cuda"), rgbs
+                        oracle_features = route(oracle, inputs, historical=True)
+                        expected = final_ttc(oracle_features, inputs, row, regions)
+                        first = {
+                            **expected[0],
+                            "query_id": row["query_id"],
+                            "rgb_unavailable_reason": raw_rgb.unavailable_reason,
+                        }
+                        record["preserved_primary_parity"] = prediction_parity(
+                            [reference[index]], [first], [row["query_id"]]
+                        )
+                        cold = {}
+                        for name, runtime in variants.items():
+                            start = time.perf_counter()
+                            route(runtime, inputs)
+                            torch.cuda.synchronize()
+                            cold[name] = time.perf_counter() - start
+                            for _ in range(args.warmup):
+                                route(runtime, inputs)
+                        torch.cuda.synchronize()
+                        transport_before_replays = compiled.transport_diagnostics()
+                        times: dict[str, list[float]] = {name: [] for name in variants}
+                        outputs = {}
+                        for repeat in range(args.repeats):
+                            names = list(variants) if repeat % 2 == 0 else list(reversed(variants))
+                            for name in names:
+                                torch.cuda.synchronize()
+                                start = time.perf_counter_ns()
+                                outputs[name] = route(variants[name], inputs)
+                                torch.cuda.synchronize()
+                                times[name].append((time.perf_counter_ns() - start) / 1e6)
+                        predictions = {
+                            name: final_ttc(value, inputs, row, regions)
+                            for name, value in outputs.items()
+                        }
+                        ids = [region.object_id for region in regions]
+                        transport_after_replays = compiled.transport_diagnostics()
+                        record.update(
+                            status="MEASURED",
+                            setup_seconds=cold,
+                            times_ms=times,
+                            latency_ms={
+                                name: latency_distribution(value) for name, value in times.items()
+                            },
+                            parity={
+                                name: prediction_parity(expected, value, ids)
+                                for name, value in predictions.items()
+                            },
+                            reference_ttc=expected,
+                            actual_ttc=predictions,
+                            replay_dispatcher_calls_unchanged=(
+                                transport_before_replays == transport_after_replays
+                            ),
+                            transport_dispatcher_before_replays=transport_before_replays,
+                            transport_dispatcher_after_replays=transport_after_replays,
+                            feature_parity={
+                                name: compare_features(value, oracle_features)
+                                for name, value in outputs.items()
+                            },
+                            regions=[
+                                {
+                                    "id": region.object_id,
+                                    "event": region.event_square,
+                                    "rgb": region.rgb_square,
+                                }
+                                for region in regions
+                            ],
+                        )
+                    except Exception as error:
+                        record.update(
+                            error=f"{type(error).__name__}: {error}",
+                            traceback=traceback.format_exc(),
+                        )
+                    _write(args.output / "summary.json", summary)
+                    print(
+                        json.dumps(
+                            {
+                                key: record.get(key)
+                                for key in ("objects", "index", "status", "latency_ms", "error")
+                            }
+                        ),
+                        flush=True,
+                    )
+        for (name, _), entry in compiled._entries.items():
+            ir_parts = ["INLINED\n" + str(entry.traced.inlined_graph)]
+            for module_name, module in entry.traced.named_modules():
+                try:
+                    ir_parts.append(module_name + "\n" + str(module.graph))
+                except (AttributeError, RuntimeError):
+                    continue
+            (args.output / f"{name}_jit_ir.txt").write_text("\n\n".join(ir_parts), encoding="utf-8")
+        summary["graphs"] = {name: runtime.diagnostics() for name, runtime in variants.items()}
+        summary["transport"] = compiled.transport_diagnostics()
+        summary["weights_unchanged"] = before == _weight_values(models)
+        summary["all_final_ttc_parity_passed"] = all(
+            record.get("status") == "MEASURED"
+            and record["replay_dispatcher_calls_unchanged"]
+            and record["preserved_primary_parity"]["passed"]
+            and all(item["passed"] for item in record["parity"].values())
+            for record in summary["records"]
+        )
+        summary["all_feature_parity_passed"] = all(
+            record.get("status") == "MEASURED"
+            and all(item["passed"] for item in record["feature_parity"].values())
+            for record in summary["records"]
+        )
+        summary["intermediate_feature_gate_role"] = (
+            "DIAGNOSTIC_ONLY; original admission requires final TTC, coverage, guards and preservation"
+        )
+        summary["status"] = (
+            "COMPLETE"
+            if summary["all_final_ttc_parity_passed"] and summary["weights_unchanged"]
+            else "COMPLETE_WITH_PARITY_FAILURES"
+        )
+    except BaseException as error:
+        caught = error
+        summary.update(error=f"{type(error).__name__}: {error}", traceback=traceback.format_exc())
+    finally:
+        if original:
+            summary["preservation"] = verify_snapshot(original)
+            if not summary["preservation"]["passed"]:
+                summary["status"] = "FAILED"
+        (args.output / "summary.json").write_text(
+            json.dumps(summary, indent=2, allow_nan=False), encoding="utf-8"
+        )
+    if caught is not None:
+        raise caught
+    if summary["status"] != "COMPLETE":
+        raise SystemExit(2)
+
+
+def main() -> None:
+    """Require frozen input locations and an unused output directory."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("candidate", "manifest", "reference", "output", "compiler-root"):
+        parser.add_argument(f"--{name}", type=Path, required=True)
+    parser.add_argument("--indices", nargs="+", type=int, default=[0, 137, 488, 505, 514, 533, 553])
+    parser.add_argument("--objects", nargs="+", type=int, default=[1])
+    parser.add_argument("--repeats", type=int, default=20)
+    parser.add_argument("--warmup", type=int, default=3)
+    parser.add_argument(
+        "--precision-mode",
+        choices=("default", "no-fma", "no-fma-exact-div"),
+        default="default",
+        help="Separate compiler-precision ablations; all retain the original fixed TTC gate",
+    )
+    parser.add_argument(
+        "--event-object-chunk-size",
+        type=int,
+        default=1,
+        help="One preserves per-object event encoder batches; zero groups all objects",
+    )
+    run(parser.parse_args())
+
+
+if __name__ == "__main__":
+    main()

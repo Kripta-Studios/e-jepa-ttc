@@ -20,9 +20,11 @@ entradas canónicas y el contexto original permiten aislar ese efecto.
 
 Desactivar la reutilización event corrige los cinco casos sensibles. Desactivar
 también la reutilización RGB introduce otra discrepancia. La ruta candidata
-actual usa E OFF / R ON. Una comprobación de casos sensibles no equivale a una
-nueva admisión completa: esta última se ejecutará desde el worktree aislado
-`../e-jepa-ttc-train40-admission-corrected`, basado en `8c5226dd`.
+actual usa E OFF / R ON. La nueva admisión completa `corrected_all554_v1`, desde
+el worktree aislado `../e-jepa-ttc-train40-admission-corrected` basado en `8c5226dd`,
+pasa las tres salidas TTC en las 554 consultas, con E_CTX bitexact. Todas las
+entradas pasan el gate y los 606 archivos vinculados permanecen intactos. Este
+resultado admite la paridad de esa ruta; sus latencias aún no cumplen la meta.
 
 El piloto multiobjeto requirió además procesar RGB en chunks de un objeto para
 conservar su batch numérico. Cada objeto mantiene su ROI, entradas, características,
