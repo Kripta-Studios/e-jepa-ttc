@@ -624,6 +624,7 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
     assert args.verify_parity is False
     assert args.wait_strategy == "sleep"
     assert args.raw_source == "disk"
+    assert args.max_preloaded_source_bytes == 2 * 1024**3
     assert not args.rgb_feature_cache and not args.shared_rgb_images
     assert not args.overlap_event_with_rgb_preparation
     assert not args.prime_native_histories
@@ -657,7 +658,8 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
     assert "--verify-parity" in capsys.readouterr().out
 
 
-def test_failure_still_verifies_sources_and_writes_summary(tmp_path, monkeypatch):
+@pytest.mark.parametrize("mode", ["disk", "memory", "memory_preload_failure"])
+def test_failure_still_verifies_sources_and_writes_summary(tmp_path, monkeypatch, mode):
     replay = manifest(tmp_path)
     base = {"rows": []}
     replay["provenance"]["base_manifest_canonical_sha256"] = runner._canonical_sha256(base)
@@ -676,9 +678,34 @@ def test_failure_still_verifies_sources_and_writes_summary(tmp_path, monkeypatch
         lambda value: checks.append(value) or {"passed": False, "modified": ["original"]},
     )
     monkeypatch.setattr(runner, "sha", lambda path: "sha")
-    monkeypatch.setattr(runner.torch.cuda, "get_device_name", lambda: "fake-no-cuda")
+    lifecycle = []
+
+    class MemorySource:
+        def __init__(self, *args, **kwargs):
+            self.closed = False
+            self.owner_thread = None
+
+        def preload(self):
+            lifecycle.append("preload")
+            if mode == "memory_preload_failure":
+                raise RuntimeError("preload failed")
+            return {"scope": runner.MEMORY_SCOPE, "source_total_upper_bound_bytes": 123}
+
+        def finalize(self):
+            lifecycle.append("finalize")
+            self.closed = True
+            return {"closed_before_producer_start": True}
+
+    if mode.startswith("memory"):
+        monkeypatch.setattr(runner, "PreloadedRawSource", MemorySource)
+    monkeypatch.setattr(
+        runner.torch.cuda,
+        "get_device_name",
+        lambda: lifecycle.append("gpu_metadata") or "fake-no-cuda",
+    )
 
     def broken_load(*args):
+        lifecycle.append("load_models")
         raise RuntimeError("model loading failed")
 
     monkeypatch.setattr(runner, "load_models", broken_load)
@@ -696,15 +723,53 @@ def test_failure_still_verifies_sources_and_writes_summary(tmp_path, monkeypatch
             str(tmp_path / "result"),
             "--sequence",
             "sequence",
+            "--raw-source",
+            "memory" if mode.startswith("memory") else "disk",
         ]
     )
-    with pytest.raises(RuntimeError, match="model loading failed"):
+    with pytest.raises(
+        RuntimeError,
+        match="preload failed" if mode == "memory_preload_failure" else "model loading failed",
+    ):
         runner.run(args)
     summary = json.loads((args.output / "summary.json").read_text())
     assert checks == [{"original": {}}]
     assert summary["status"] == "FAILED"
     assert not summary["originals"]["passed"]
     assert not summary["capacity_with_parity_passed"]
+    if mode.startswith("memory"):
+        assert lifecycle[0] == "preload" and lifecycle[-1] == "finalize"
+        assert summary["scope"] == runner.MEMORY_SCOPE
+        assert summary["startup"]["source_cleanup"]["closed_before_producer_start"]
+        if mode == "memory":
+            assert lifecycle.index("preload") < lifecycle.index("load_models")
+            binding = json.loads((args.output / "binding.json").read_text())
+            assert not binding["raw_io_included"]
+            assert binding["persistent_raw_numeric_cache_upper_bound_bytes"] == 0
+            assert binding["preloaded_source_envelope"]["source_total_upper_bound_bytes"] == 123
+            assert binding["rgb_arrival_identity"].startswith("SHA256_IMMUTABLE_BYTES")
+        else:
+            assert "gpu_metadata" not in lifecycle and "load_models" not in lifecycle
+
+
+def test_raw_source_cleanup_never_closes_live_foreign_owner(source_fixture):
+    disk, _, _ = source_fixture
+    instance = runner.PreloadedRawSource(disk.schedule)
+    instance.owner_thread = -1
+    with pytest.raises(RuntimeError, match="producer owner thread"):
+        runner.cleanup_raw_source(instance)
+    assert not instance.closed
+    instance.owner_thread = None
+    assert runner.cleanup_raw_source(instance) is not None and instance.closed
+    assert runner.cleanup_raw_source(instance) is None
+
+
+@pytest.mark.parametrize("mode", ["disk", "persistent", "immutable", "memory"])
+def test_raw_source_scope_distinguishes_cpu_memory_arrivals(mode):
+    scope = runner.source_scope(mode)
+    assert (scope == runner.MEMORY_SCOPE) == (mode == "memory")
+    if mode == "memory":
+        assert "NOT_PHYSICAL_SENSOR" in scope
 
 
 def test_immutable_source_shares_only_sealed_frames_and_preserves_both_cohorts(source_fixture):

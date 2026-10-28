@@ -62,6 +62,13 @@ from operational.train40_runtime.paced import (  # noqa: E402
 )
 from operational.train40_runtime.priming import prime_supported_histories  # noqa: E402
 from operational.train40_runtime.replay_inputs import SCHEMA  # noqa: E402
+from operational.train40_runtime.replay_memory import (  # noqa: E402
+    SCOPE as MEMORY_SCOPE,
+)
+from operational.train40_runtime.replay_memory import (  # noqa: E402
+    MemoryRawUpdate,
+    PreloadedRawSource,
+)
 from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory  # noqa: E402
 from operational.train40_runtime.rgb_raw_ring import (  # noqa: E402
     FrozenRGBFrame,
@@ -637,7 +644,7 @@ class ImmutablePersistentRawSource(PersistentRawSource):
             self._tokens.clear()
 
 
-def current_regions(payload: RawUpdate, count: int) -> list[ObjectRegion]:
+def current_regions(payload: RawUpdate | MemoryRawUpdate, count: int) -> list[ObjectRegion]:
     """Compute current calibrated geometry inside infer_all, not in acquisition."""
     projected = [project_rgb_box_rotation_only(box, payload.calibration) for box in payload.boxes]
     event = common_square_from_boxes(projected, (1, 2), margin_fraction=0.25)
@@ -654,7 +661,7 @@ class ContinuousConsumer:
         self.failure: str | None = None
         self.service_receipts: list[dict[str, Any]] = []
 
-    def infer_all(self, arrival: Arrival[RawUpdate]) -> dict[str, dict[str, Any]]:
+    def infer_all(self, arrival: Arrival[RawUpdate | MemoryRawUpdate]) -> dict[str, dict[str, Any]]:
         """Return all completed host outputs or fail this entire update explicitly."""
         payload = arrival.payload
         if self.failure is not None:
@@ -902,6 +909,28 @@ def cache_identity(binding: Mapping[str, Any], args: argparse.Namespace) -> dict
     }
 
 
+def source_scope(raw_source: str) -> str:
+    """Separate CPU arrival replay from the controls that include RAW disk I/O."""
+    if raw_source == "memory":
+        return MEMORY_SCOPE
+    return (
+        SCOPE
+        if raw_source == "disk"
+        else (f"PACED_{raw_source.upper()}_RAW_REPLAY_ARTIFICIAL_DISTINCT_ROIS_ALL_HOST_TTC")
+    )
+
+
+def cleanup_raw_source(
+    source: DiskRawSource | PreloadedRawSource | None,
+) -> dict[str, Any] | None:
+    """Release preloaded startup state; never close another thread's live source."""
+    if not isinstance(source, (PersistentRawSource, PreloadedRawSource)) or source.closed:
+        return None
+    if source.owner_thread is not None and source.owner_thread != threading.get_ident():
+        raise RuntimeError("Unclosed RAW source requires cleanup on its producer owner thread")
+    return source.finalize()
+
+
 def run(args: argparse.Namespace) -> None:
     """Write partial evidence and original-file preservation even on failure."""
     _validate_output(
@@ -911,6 +940,7 @@ def run(args: argparse.Namespace) -> None:
     args.output.mkdir(parents=True, exist_ok=False)
     original: dict[str, Any] = {}
     service = None
+    source: DiskRawSource | PreloadedRawSource | None = None
     caught: BaseException | None = None
     paced: dict[str, Any] | None = None
     parity: dict[str, Any] = {
@@ -921,11 +951,7 @@ def run(args: argparse.Namespace) -> None:
     consumer = None
     schedule: list[dict[str, Any]] = []
     startup: dict[str, Any] = {}
-    scope = (
-        SCOPE
-        if args.raw_source == "disk"
-        else (f"PACED_{args.raw_source.upper()}_RAW_REPLAY_ARTIFICIAL_DISTINCT_ROIS_ALL_HOST_TTC")
-    )
+    scope = source_scope(args.raw_source)
     try:
         if args.queue_capacity < 1 or args.max_initial_bytes < 1:
             raise ValueError("Queue capacity and initial raw byte budget must be positive")
@@ -946,13 +972,21 @@ def run(args: argparse.Namespace) -> None:
         persistent_class = (
             ImmutablePersistentRawSource if args.raw_source == "immutable" else PersistentRawSource
         )
-        source = (
-            persistent_class(
+        if args.raw_source == "memory":
+            source = PreloadedRawSource(
+                schedule,
+                args.max_payload_bytes,
+                max_total_bytes=args.max_preloaded_source_bytes,
+                max_frame_bytes=args.max_raw_frame_cache_bytes,
+                max_initial_bytes=args.max_initial_bytes,
+                queue_capacity=args.queue_capacity,
+            )
+        elif args.raw_source != "disk":
+            source = persistent_class(
                 schedule, args.max_payload_bytes, max_frame_bytes=args.max_raw_frame_cache_bytes
             )
-            if args.raw_source != "disk"
-            else DiskRawSource(schedule, args.max_payload_bytes)
-        )
+        else:
+            source = DiskRawSource(schedule, args.max_payload_bytes)
         if args.backend == "prefix":
             from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
 
@@ -994,6 +1028,9 @@ def run(args: argparse.Namespace) -> None:
             target.write_bytes(path.read_bytes())
             if sha(target) != sha(path):
                 raise ValueError("Source changed while preserving exact bytes")
+        if isinstance(source, PreloadedRawSource):
+            startup["raw_preload"] = source.preload()
+            _write(args.output / "startup.json", startup)
         torch.set_num_threads(2)
         torch.backends.cuda.matmul.allow_tf32 = False
         torch.backends.cudnn.allow_tf32 = False
@@ -1023,13 +1060,14 @@ def run(args: argparse.Namespace) -> None:
                 for key, value in vars(args).items()
             },
             "initialization_excluded": "preceding 600ms, model loading, synthetic shape priming",
-            "raw_io_included": True,
+            "raw_io_included": args.raw_source != "memory",
             "raw_source_mode": args.raw_source,
             "persistent_raw_numeric_cache_upper_bound_bytes": (
                 args.max_raw_frame_cache_bytes + args.max_payload_bytes + 1024**2
-                if args.raw_source != "disk"
+                if args.raw_source in ("persistent", "immutable")
                 else 0
             ),
+            "preloaded_source_envelope": startup.get("raw_preload"),
             "persistent_bbox_cache_entries_max": 128 if args.raw_source != "disk" else 0,
             "source_warmup_excluded": "RAW frames available by first_anchor-20000us"
             if args.raw_source != "disk"
@@ -1042,7 +1080,9 @@ def run(args: argparse.Namespace) -> None:
                 "Owned queue/consumer/producer previous/producer assembling payload bytes; "
                 "excludes model, ring, Python receipts, HDF5 and bounded read scratch"
             ),
-            "raw_event_timestamp_scratch_limit_bytes": 256 * 1024**2,
+            "raw_event_timestamp_scratch_limit_bytes": (
+                256 * 1024**2 if args.raw_source != "memory" else None
+            ),
             "actual_peak_queue_bytes_measured": False,
             "twenty_real_tracks": False,
             "annotation_availability_measured": False,
@@ -1050,7 +1090,7 @@ def run(args: argparse.Namespace) -> None:
             "raw_source_integrity_scope": "size/mtime plus calibration digest; no full RAW hash",
             "rgb_arrival_identity": (
                 "SHA256_IMMUTABLE_BYTES_ONCE_PER_NEW_FRAME_INSIDE_ACQUISITION"
-                if args.raw_source == "immutable"
+                if args.raw_source in ("immutable", "memory")
                 else "OWNED_READONLY_PAYLOAD_ARRAYS"
             ),
             "rgb_feature_cache_enabled": args.rgb_feature_cache,
@@ -1133,8 +1173,12 @@ def run(args: argparse.Namespace) -> None:
             rate_hz=50.0,
             queue_capacity=args.queue_capacity,
             wait_strategy=args.wait_strategy,
-            source_warmup=source.warmup if isinstance(source, PersistentRawSource) else None,
-            source_finalize=source.finalize if isinstance(source, PersistentRawSource) else None,
+            source_warmup=source.warmup
+            if isinstance(source, (PersistentRawSource, PreloadedRawSource))
+            else None,
+            source_finalize=source.finalize
+            if isinstance(source, (PersistentRawSource, PreloadedRawSource))
+            else None,
         )
         startup["source_lifecycle"] = paced["source_lifecycle"]
         _write(args.output / "startup.json", startup)
@@ -1149,6 +1193,12 @@ def run(args: argparse.Namespace) -> None:
         caught = exc
     finally:
         cleanup_errors = []
+        try:
+            source_cleanup = cleanup_raw_source(source)
+            if source_cleanup is not None:
+                startup["source_cleanup"] = source_cleanup
+        except BaseException as exc:
+            cleanup_errors.append(f"RAW source cleanup: {type(exc).__name__}: {exc}")
         if service is not None:
             try:
                 service.close()
@@ -1263,9 +1313,15 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--max-initial-bytes", type=int, default=512 * 1024**2)
     result.add_argument(
         "--raw-source",
-        choices=("disk", "persistent", "immutable"),
+        choices=("disk", "persistent", "immutable", "memory"),
         default="disk",
-        help="Disk control, persistent RAW copies, or immutable arrival-time CPU frame tokens",
+        help="Disk/persistent controls, immutable frames, or privately preloaded RAW CPU arrivals",
+    )
+    result.add_argument(
+        "--max-preloaded-source-bytes",
+        type=int,
+        default=2 * 1024**3,
+        help="Total numeric memory bound for the opt-in memory feeder, ring, payloads and scratch",
     )
     result.add_argument("--max-raw-frame-cache-bytes", type=int, default=128 * 1024**2)
     result.add_argument(
