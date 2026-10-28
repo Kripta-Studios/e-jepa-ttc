@@ -623,6 +623,12 @@ def test_cli_defaults_and_help_do_not_initialize_cuda(monkeypatch, capsys):
     assert args.event_query_graphs and args.event_normalization == "topk"
     assert args.verify_parity is False
     assert args.wait_strategy == "sleep"
+    assert args.raw_source == "disk"
+    assert not args.rgb_feature_cache and not args.shared_rgb_images
+    assert not args.overlap_event_with_rgb_preparation
+    options = runner.service_options(args)
+    assert options["shared_rgb_images"] == runner.DEFAULT_PROFILE.shared_rgb_images is False
+    assert options["rgb_object_chunk_size"] == 1
     legacy = runner.parser().parse_args(
         [
             "--candidate",
@@ -696,3 +702,99 @@ def test_failure_still_verifies_sources_and_writes_summary(tmp_path, monkeypatch
     assert summary["status"] == "FAILED"
     assert not summary["originals"]["passed"]
     assert not summary["capacity_with_parity_passed"]
+
+
+def test_immutable_source_shares_only_sealed_frames_and_preserves_both_cohorts(source_fixture):
+    disk, reads, geometry = source_fixture
+    schedule = twenty_hz_schedule(disk)
+    source = runner.ImmutablePersistentRawSource(schedule, 10_000, max_frame_bytes=16 * 48)
+    payloads = []
+
+    def infer(arrival):
+        payloads.append(arrival.payload)
+        return {
+            "a": {"success": True, "predictions": {name: 1.0 for name in PREDICTION_COMPONENTS}}
+        }
+
+    result = run_paced_replay(
+        source.acquire_raw,
+        infer,
+        ["a"],
+        updates=10,
+        rate_hz=200,
+        queue_capacity=10,
+        wait_strategy="sleep",
+        source_warmup=source.warmup,
+        source_finalize=source.finalize,
+    )
+    assert result["grouped"]["passed"] and result["capacity_checks"]["source_lifecycle_succeeded"]
+    assert source.closed and source.stats["closed_on_owner_thread"] and not source._tokens
+    assert len(reads) == 1 and geometry == []
+    assert source.stats["warmup_cutoff_us"] == 980_000
+    assert source.stats["warmup_frames"] == 13
+    assert source.stats["unique_frames_read"] == source.stats["unique_frames_frozen"] == 17
+    assert source.stats["frame_freeze_bytes"] == 17 * 48
+    assert source.stats["copied_payload_frame_bytes"] == 0
+    assert source.stats["peak_frame_cache_count"] == 14
+    assert payloads[0].source_diagnostics["new_frames_frozen"] == 1
+    assert payloads[1].source_diagnostics["new_frames_frozen"] == 0
+    assert payloads[3].source_diagnostics["new_frames_frozen"] == 1
+    common = next(iter(payloads[0].rgb.frames))
+    assert payloads[0].rgb.tokens[common] is payloads[1].rgb.tokens[common]
+    assert np.shares_memory(payloads[0].rgb.frames[common], payloads[1].rgb.frames[common])
+    control = runner.DiskRawSource(schedule, 10_000)
+    for index, actual in enumerate(payloads):
+        expected = control.acquire_raw(index)
+        assert actual.byte_count == expected.byte_count
+        assert actual.rgb.triplets == expected.rgb.triplets
+        assert dict(actual.rgb.timestamps_us) == dict(expected.rgb.timestamps_us)
+        for key in actual.rgb.frames:
+            np.testing.assert_array_equal(actual.rgb.frames[key], expected.rgb.frames[key])
+            with pytest.raises(ValueError):
+                actual.rgb.frames[key].setflags(write=True)
+
+
+def test_immutable_source_rejects_rollback_recycled_ids_and_source_change(source_fixture):
+    disk, _, _ = source_fixture
+    source = runner.ImmutablePersistentRawSource(twenty_hz_schedule(disk), 10_000)
+    source.warmup()
+    try:
+        source.acquire_raw(0)
+        altered = {**source.schedule[1], "calibration_sha256": "changed"}
+        with pytest.raises(ValueError, match="name/revision"):
+            source._reader(altered)
+        data = source.inputs._reader._require_handle()["blackflys/left/data"]
+        clock = source._clock_cache
+        with pytest.raises(ValueError, match="roll back"):
+            source._prepare_frames(data, clock, 900_000)
+        del source._tokens[next(iter(source._tokens))]
+        with pytest.raises(ValueError, match="recycled"):
+            source._prepare_frames(data, clock, 1_000_000)
+    finally:
+        source.finalize()
+    assert source.closed and not source._tokens
+
+
+def test_immutable_source_slot_limit_rejects_before_reading_raw_frames(source_fixture):
+    disk, _, _ = source_fixture
+    source = runner.ImmutablePersistentRawSource(twenty_hz_schedule(disk), 10_000)
+    source.FRAME_CAPACITY = 12
+    try:
+        with pytest.raises(ValueError, match="SLOT_LIMIT"):
+            source.warmup()
+        assert source.stats["unique_frames_read"] == 0
+    finally:
+        source.finalize()
+
+
+@pytest.mark.parametrize("case", ["valid", "no_hit", "unmatched", "unstored", "absent"])
+def test_cache_exercise_requires_real_hit_after_guarded_miss(case):
+    miss = {"status": "MISS", "stored": case != "unstored", "key_digests": ["one"]}
+    hit = {"status": "HIT", "key_digests": ["other" if case == "unmatched" else "one"]}
+    receipts = [miss] if case == "no_hit" else [miss, hit]
+    if case == "absent":
+        receipts = [{"status": "NO_RGB"}]
+    result = runner.rgb_cache_exercise([{"rgb_feature_cache": item} for item in receipts])
+    assert result["passed"] == (case == "valid")
+    admission = runner.capacity_admission(None, {}, False, cache_exercise=result)
+    assert admission["milestone_checks"]["rgb_cache_stored_miss_then_real_hit"] == (case == "valid")

@@ -22,6 +22,8 @@ from operational.train40_runtime.feature_cache import (
     bind_rgb_history,
     rgb_feature_key,
 )
+from operational.train40_runtime.rgb_frozen_identity import bind_frozen_rgb_history
+from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory
 
 if TYPE_CHECKING:
     from operational.train40_runtime.multiobject import ObjectRegion, RawRGBHistory
@@ -59,8 +61,9 @@ class RGBBatchCache:
     The startup digests must bind all RGB weights, preprocessing/producer code,
     normalization, library versions, precision/layout flags and chunk options.
     That state must remain frozen for this instance's lifetime. Raw history is
-    content-hashed once per update, shared by all objects; no source-stat trust
-    is inferred from the current RawRGBHistory packet.
+    content-hashed once per update, shared by all objects. Factory-authenticated
+    FrozenRGBHistory packets bind arrival-time hashes without rescanning RAW.
+    No source-stat trust is inferred from ordinary RawRGBHistory packets.
 
     Instances belong to one thread and CUDA stream, like ExactRGBFeatureCache.
     Store only after all producer guards and stream waits have completed.
@@ -127,11 +130,17 @@ class RGBBatchCache:
         keys: tuple[RGBFeatureKey, ...] = ()
         cached: list[CachedRGBFeatures] | None = []
         if present:
-            identity = bind_rgb_history(
-                raw_history.frames,
-                raw_history.timestamps_us,
-                raw_history.triplets,
-                query_us=raw_history.query_us,
+            identity = (
+                bind_frozen_rgb_history(
+                    raw_history.tokens, raw_history.triplets, query_us=raw_history.query_us
+                )
+                if isinstance(raw_history, FrozenRGBHistory)
+                else bind_rgb_history(
+                    raw_history.frames,
+                    raw_history.timestamps_us,
+                    raw_history.triplets,
+                    query_us=raw_history.query_us,
+                )
             )
             group_size = len(identity.triplets)
             steps = len(identity.triplets[0])
