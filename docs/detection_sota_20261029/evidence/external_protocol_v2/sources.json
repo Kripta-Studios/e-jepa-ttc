@@ -1,0 +1,124 @@
+{
+  "max_response_bytes": 2000000,
+  "raw_bodies_persisted": false,
+  "schema": "phase_ttc_external_detection_protocol_sources_v2",
+  "sources": [
+    {
+      "content_type": "application/json",
+      "name": "codabench_competition",
+      "pinned": false,
+      "raw_sha256": "f4120e9477ebacf6a81838a7d0a66426399bdd60daf8551aad4ef98d7d908643",
+      "response_bytes": 10151,
+      "status": 200,
+      "url": "https://www.codabench.org/api/competitions/17291/"
+    },
+    {
+      "content_type": "application/json",
+      "name": "codabench_admin_results",
+      "pinned": false,
+      "raw_sha256": "6113fc2e77984eb0bfce6bada1068b7757aaef5dbac0870ae0875b62941e7348",
+      "response_bytes": 57,
+      "status": 403,
+      "url": "https://www.codabench.org/api/competitions/17291/results/"
+    },
+    {
+      "content_type": "application/json",
+      "name": "codabench_public_leaderboard",
+      "pinned": false,
+      "raw_sha256": "ff9adb183df850d5bac15521142bbff3825a2c33470c34cef6a67d17957543b8",
+      "response_bytes": 18,
+      "status": 200,
+      "url": "https://www.codabench.org/api/leaderboards/19173/"
+    },
+    {
+      "content_type": "application/json",
+      "name": "codabench_stale_competition",
+      "pinned": false,
+      "raw_sha256": "41be34d741e89094ed5df94d0220a14680af6d4fa1a4e16271d2636ce9d6475f",
+      "response_bytes": 52,
+      "status": 404,
+      "url": "https://www.codabench.org/api/competitions/16717/"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "eap_readme_20260627",
+      "pinned": true,
+      "raw_sha256": "3d84dfff9259a67ab480a81f9c80e647126776c65226451dfb6785fa3f66d099",
+      "response_bytes": 6290,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/eAP_dataset/2c5f3a74ba5b693b746820a0a355684e3597dc2d/README.md"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "garl_readme_20260629",
+      "pinned": true,
+      "raw_sha256": "eaa355b18e9749a0c7331d8439c5d8279fcc36bdc4e2d5358fd8d8a6ea13ab3b",
+      "response_bytes": 6290,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/Garl-TTC/256661242b8a7f5e56aa3c1c02348b30f6e89de6/README.md"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "project_page_index",
+      "pinned": true,
+      "raw_sha256": "e8b1d9fcfa728df36e6fca493c8495c2af467a1610ac4172c97d81031d0e6516",
+      "response_bytes": 58163,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/eAP_dataset/e3e53d476cfcc275edb49afbe40c335b9923e7b6/index.html"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "release_catalog_8f259188",
+      "pinned": true,
+      "raw_sha256": "96c58c819666b1718970bf66e20709f06ce85deb3375c01427c6dc321e9fa9e7",
+      "response_bytes": 10785,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/eAP_dataset/8f259188cc80d54e63339ffe789fb2e56a28455d/assets/data/release_catalog.json"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "release_catalog_3f35e946",
+      "pinned": true,
+      "raw_sha256": "2b2de5b0911db933d45f33dfcd0de7c6edec79ab4911fb5099d48f6d05e23254",
+      "response_bytes": 14842,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/eAP_dataset/3f35e946c71dc49440e94e1329d10d0681381253/assets/data/release_catalog.json"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "release_catalog_e3e53d47",
+      "pinned": true,
+      "raw_sha256": "df6d97e749389bf66da4a6ae19fbddebf1d66cc7409a92d9d562a65b22cfa2ce",
+      "response_bytes": 14958,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/eAP_dataset/e3e53d476cfcc275edb49afbe40c335b9923e7b6/assets/data/release_catalog.json"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "dataset_info",
+      "pinned": true,
+      "raw_sha256": "209f418b7215a5d5954575d0137240a0d4a5c69db846cd103f810392cf43cd98",
+      "response_bytes": 14135,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/Garl-TTC/256661242b8a7f5e56aa3c1c02348b30f6e89de6/configs/dataset_info.json"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "train_split",
+      "pinned": true,
+      "raw_sha256": "2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb",
+      "response_bytes": 505,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/Garl-TTC/256661242b8a7f5e56aa3c1c02348b30f6e89de6/configs/splits/train.txt"
+    },
+    {
+      "content_type": "text/plain",
+      "name": "test_split",
+      "pinned": true,
+      "raw_sha256": "b5b26f879c46de208ef0223011911baff9e6537fc2e999cbb474cc642e4d201e",
+      "response_bytes": 132,
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/Garl-TTC/256661242b8a7f5e56aa3c1c02348b30f6e89de6/configs/splits/test.txt"
+    }
+  ]
+}

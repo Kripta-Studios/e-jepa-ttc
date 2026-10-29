@@ -1,0 +1,17 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 1230,
+      "sha256": "6f959cc14d8d83479a3eb0f2b2c22df409e1e9a41e5a775604c81eca24b05c36"
+    },
+    "audit.json": {
+      "bytes": 5301,
+      "sha256": "0ee0b03a799a3e909c8a109118673b8b6ca6f47d8d2a2d2d7a4322651824de63"
+    },
+    "sources.json": {
+      "bytes": 4863,
+      "sha256": "66a5e1c07478e58065da17fabbd6414fc73393a4053c5561ca380cfc6116937c"
+    }
+  },
+  "schema": "phase_ttc_external_detection_protocol_manifest_v2"
+}

@@ -1,0 +1,172 @@
+{
+  "audit_date": "2026-10-29",
+  "claim_boundary": {
+    "leaderboard_rank_available": false,
+    "local_protocol_is_official_score": false,
+    "next_valid_claim": "official score/rank requires an admitted CodaBench submission or public scorer; the six ids require released media, labels, hashes, and an exposure audit",
+    "official_metric_implementation_bytes_available": false,
+    "six_missing_sequences_usable": false
+  },
+  "leader_status": {
+    "admin_results_endpoint_status": 403,
+    "official_leader_verifiable": false,
+    "public_leaderboard_endpoint_status": 200,
+    "public_submission_rows": 0,
+    "reason": "admin results are forbidden and the public leaderboard response is empty"
+  },
+  "link_reconciliation": {
+    "current_detection_competition_id": 17291,
+    "eap_readme_commit": "2c5f3a74ba5b693b746820a0a355684e3597dc2d",
+    "eap_readme_commit_date": "2026-06-27",
+    "garl_readme_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "garl_readme_commit_date": "2026-06-29",
+    "stale_api_status": 404,
+    "stale_detection_competition_id": 16717,
+    "ttc_competition_id": 17289
+  },
+  "official_contract": {
+    "center_distance_thresholds_m": [
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "classes": [
+      "car",
+      "bicycle",
+      "truck",
+      "pedestrian",
+      "motorcycle",
+      "bus",
+      "tricycle",
+      "other_vehicle"
+    ],
+    "competition_id": 17291,
+    "leaderboard_columns": [
+      "AP",
+      "ATE",
+      "ASE",
+      "AOE"
+    ],
+    "phase": {
+      "end": "2030-12-31T23:59:59Z",
+      "id": 28840,
+      "name": "test",
+      "start": "2026-05-28T00:00:00Z",
+      "status": "Current"
+    },
+    "primary_metric": "AP",
+    "public_sequence_counts": {
+      "test": 12,
+      "train": 40
+    },
+    "published": true,
+    "submission_format": "eap_native_detection_result JSON in root-level submission.json",
+    "title": "eAP 3D Detection Benchmark"
+  },
+  "private_metric_assets": {
+    "bytes_requested": 0,
+    "make_input_data_available": false,
+    "make_programs_available": false,
+    "reference_data": {
+      "is_public": false,
+      "metadata_size_bytes": 14949442
+    },
+    "scoring_program": {
+      "is_public": false,
+      "metadata_size_bytes": 9821
+    }
+  },
+  "release_reconciliation": {
+    "catalog_history": [
+      {
+        "asset_count": 40,
+        "commit": "8f259188cc80d54e63339ffe789fb2e56a28455d",
+        "missing_id_occurrences": []
+      },
+      {
+        "asset_count": 40,
+        "commit": "3f35e946c71dc49440e94e1329d10d0681381253",
+        "missing_id_occurrences": []
+      },
+      {
+        "asset_count": 40,
+        "commit": "e3e53d476cfcc275edb49afbe40c335b9923e7b6",
+        "missing_id_occurrences": []
+      }
+    ],
+    "dataset_info_sha256": "209f418b7215a5d5954575d0137240a0d4a5c69db846cd103f810392cf43cd98",
+    "described_train_sequences": 46,
+    "latest_public_catalog_assets": 40,
+    "missing_ids_public_evidence": {
+      "catalog_entries": 0,
+      "categorical_metadata": {
+        "AUIkq1ZJRv": {
+          "contains_hdr": true,
+          "relative_speed": "中速跟车",
+          "road_type": "快速路",
+          "split": "train",
+          "targets_per_frame": "中等（3-5辆车）",
+          "weather": "晴天"
+        },
+        "CEOFFwY7c8": {
+          "contains_hdr": true,
+          "relative_speed": "中速跟车",
+          "road_type": "快速路",
+          "split": "train",
+          "targets_per_frame": "少（小于3辆车）",
+          "weather": "晴天"
+        },
+        "F6XHHaiwJg": {
+          "contains_hdr": true,
+          "relative_speed": "中速跟车",
+          "road_type": "快速路",
+          "split": "train",
+          "targets_per_frame": "中等（3-5辆车）",
+          "weather": "多云"
+        },
+        "OwA5qqkewc": {
+          "contains_hdr": false,
+          "relative_speed": "中速跟车",
+          "road_type": "快速路",
+          "split": "train",
+          "targets_per_frame": "中等（3-5辆车）",
+          "weather": "晴天"
+        },
+        "mXRa2Ux9ok": {
+          "contains_hdr": false,
+          "relative_speed": "中速跟车",
+          "road_type": "城区",
+          "split": "train",
+          "targets_per_frame": "中等（3-5辆车）",
+          "weather": "夜晚"
+        },
+        "uXfPJNOXVY": {
+          "contains_hdr": false,
+          "relative_speed": "高速飙车急刹",
+          "road_type": "快速路",
+          "split": "train",
+          "targets_per_frame": "少（小于3辆车）",
+          "weather": "晴天"
+        }
+      },
+      "file_hashes": 0,
+      "file_sizes": 0,
+      "label_files": 0,
+      "media_urls": 0
+    },
+    "missing_public_media_ids": [
+      "AUIkq1ZJRv",
+      "CEOFFwY7c8",
+      "F6XHHaiwJg",
+      "OwA5qqkewc",
+      "mXRa2Ux9ok",
+      "uXfPJNOXVY"
+    ],
+    "official_train_split_ids": 46,
+    "scientific_interpretation": "categorical metadata does not establish media/label availability, additional diversity, or acquisition independence",
+    "train_split_sha256": "2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb"
+  },
+  "schema": "phase_ttc_external_detection_protocol_audit_v2",
+  "scope": "public metadata only; no private scorer/reference/test labels requested"
+}

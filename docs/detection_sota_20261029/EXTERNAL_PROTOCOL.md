@@ -2,7 +2,56 @@
 
 Comprobación del 29-10-2026. Se conserva sin modificar el plan recibido.
 
-## Competiciones
+## Reconciliación pública v2
+
+La [auditoría reproducible](evidence/external_protocol_v2/README.md) consultó 13
+fuentes públicas mediante GET acotados a 2 MB. Conserva el estado HTTP, tamaño y
+SHA-256 de cada respuesta, pero no sus cuerpos crudos. No solicitó ni descargó
+programas privados, referencias, etiquetas test o recursos autenticados.
+
+La API pública de CodaBench confirma ahora el siguiente contrato:
+
+| Campo | Valor verificado |
+|---|---|
+| Competición | `17291`, **eAP 3D Detection Benchmark**, publicada |
+| Clases | `car`, `bicycle`, `truck`, `pedestrian`, `motorcycle`, `bus`, `tricycle`, `other_vehicle` |
+| Umbrales de distancia de centro | 0,5 / 1 / 2 / 4 m |
+| Columnas | AP, ATE, ASE, AOE; AP es primaria |
+| Fase | `28840`, test, fin `2030-12-31T23:59:59Z` |
+| Split público declarado | 40 secuencias train y 12 test |
+| Programa de scoring | Privado; solo se publica metadata de tamaño: 9.821 bytes |
+| Referencia | Privada; `make_programs_available=false` |
+
+Esto verifica el **contrato**, no los bytes de su implementación métrica. El
+endpoint administrativo de resultados devolvió 403 y el endpoint público del
+leaderboard `19173` devolvió una lista vacía. Por tanto no hay un líder, score o
+ranking oficial verificable desde el acceso público auditado. La AP local sigue
+sin poder etiquetarse como score oficial ni como reproducción del scorer privado.
+
+La reconciliación de links queda fechada y fijada por commit:
+
+- `NAIL-HNU/eAP_dataset@2c5f3a74` (27-06-2026) todavía enlaza `16717`; su API
+  devuelve actualmente 404.
+- `NAIL-HNU/Garl-TTC@25666124` (29-06-2026), commit posterior titulado
+  `Update benchmark links`, enlaza detección `17291` y TTC `17289`.
+
+La lista train oficial fijada contiene 46 IDs (SHA-256
+`2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb`).
+Las tres revisiones disponibles del catálogo de GitHub Pages contienen 40 assets
+y ninguna incluye los seis IDs ausentes. `dataset_info.json` (SHA-256
+`209f418b7215a5d5954575d0137240a0d4a5c69db846cd103f810392cf43cd98`)
+solo aporta para ellos weather, road type, HDR, densidad categórica, velocidad
+categórica y rol train. No aporta URL de medio, tamaño, hash ni labels. Esos seis
+IDs no cuentan como datos utilizables, diversidad adicional ni evaluación
+independiente.
+
+El script que regenera y valida esta evidencia es
+[`scripts/audit_detection_external_protocol.py`](../../scripts/audit_detection_external_protocol.py).
+La auditoría inicial se conserva a continuación como registro fechado; donde era
+más cauta por falta de acceso estructurado, la reconciliación v2 es la referencia
+actual.
+
+## Auditoría inicial: competiciones
 
 El [README oficial Garl-TTC fijado en
 256661242b8a7f5e56aa3c1c02348b30f6e89de6](https://github.com/NAIL-HNU/Garl-TTC/blob/256661242b8a7f5e56aa3c1c02348b30f6e89de6/README.md)
@@ -20,7 +69,7 @@ privadas Test12 ni proporciona el scorer de detección. Los resultados TTC
 históricos del proyecto conservan su propia procedencia y no se sustituyen por
 una evaluación nueva del sistema detector–tracker–PHASE.
 
-## Corpus descrito y medios públicos
+## Auditoría inicial: corpus descrito y medios públicos
 
 La [página del proyecto](https://nail-hnu.github.io/eAP_dataset/) describe 46
 secuencias train. El release público fijado
@@ -34,7 +83,7 @@ identifica estas seis secuencias sin medios en ese release:
 Esto delimita una diferencia entre corpus descrito y publicación de medios; no
 autoriza contar las seis como diversidad disponible. La campaña usa train40.
 
-## Independencia y TTC conjunto
+## Auditoría inicial: independencia y TTC conjunto
 
 Los metadatos públicos inspeccionados contienen secuencia, tiempos, calibración,
 referencias y condiciones de escena; no proporcionan un ID de adquisición/sesión
