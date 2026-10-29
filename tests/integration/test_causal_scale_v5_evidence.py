@@ -1,0 +1,131 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+from typing import Any, cast
+
+from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
+
+ROOT = Path(__file__).resolve().parents[2]
+ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.json"
+LEARNING_ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json"
+V6_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json"
+V7_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json"
+V7_LEARNING_ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v7_synthetic_learning_gate_v1.json"
+
+
+def test_causal_scale_v5_evidence_is_signed_clean_and_synthetic_only() -> None:
+    payload = cast(dict[str, Any], json.loads(ARTIFACT.read_text(encoding="utf-8")))
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(ARTIFACT.read_bytes()).hexdigest() == (
+        "3fd4d2a25b85173cf34bb8738f5b7e80190f31f26acc9ed9a4d3c818d10afb20"
+    )
+    assert payload["git_commit"] == "7945e9936af7b6fa802ef2cca4172487adf0f2d6"
+    assert payload["git_dirty"] is False
+    assert payload["worktree"]["tracked_dirty"] is False
+    assert payload["worktree"]["untracked_code_paths"] == []
+    assert payload["status"] == "completed_passed"
+    assert payload["evidence_scope"] == "synthetic_mechanistic_only"
+    assert payload["metrics_are_not_real_dataset_results"] is True
+    assert payload["garl_ttc_comparison_performed"] is False
+    assert payload["sota_claim_authorized"] is False
+    assert payload["data_access"] == {
+        "eap_opened": False,
+        "evttc_opened": False,
+        "real_data_opened": False,
+        "source": "analytic_foreground_rectangles",
+        "ttc_labels_opened": False,
+    }
+    assert payload["gates"]["passed"] is True
+
+
+def test_causal_scale_v5_learning_evidence_preserves_clean_held_out_failure() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(LEARNING_ARTIFACT.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(LEARNING_ARTIFACT.read_bytes()).hexdigest() == (
+        "ac26c1b2ad87c6c991decd46b8fd2e478cd87dcd926f49edd492bcdf3214c7e8"
+    )
+    assert payload["git_commit"] == "d9d20af51c5e3f4bda2a6c54791f8b939bdbe441"
+    assert payload["git_dirty"] is False
+    assert payload["status"] == "completed_gate_failed"
+    assert payload["opened_splits"] == ["train", "validation", "test"]
+    assert payload["test_evaluation_count"] == 1
+    assert payload["data_access"]["real_data_opened"] is False
+    assert payload["data_access"]["eap_opened"] is False
+    assert payload["data_access"]["evttc_opened"] is False
+    assert payload["garl_ttc_comparison_performed"] is False
+    assert payload["sota_claim_authorized"] is False
+    assert payload["test_gates"]["passed"] is False
+    assert payload["test_gates"]["equivariance"] is False
+    assert payload["test_gates"]["translation"] is False
+
+
+def test_causal_scale_v6_diagnostics_keep_new_test_and_real_data_closed() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(V6_DIAGNOSTICS.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(V6_DIAGNOSTICS.read_bytes()).hexdigest() == (
+        "8b2037b7ef18f0430164bb10755e541206927d8000882b69a68b5e32e0e7b048"
+    )
+    assert payload["artifact_sha256"] == (
+        "e00a64a90aee5c302ad486763ed147a2af590a7d3575191395e0f0d374d6191f"
+    )
+    assert payload["selectable"] is False
+    assert payload["test_opened"] is False
+    assert payload["real_data_opened"] is False
+    assert payload["sota_claim_authorized"] is False
+    assert len(payload["rows"]) == 4
+    assert {row["source_status"] for row in payload["rows"]} == {"diagnostic_nonselectable"}
+
+
+def test_causal_scale_v7_diagnostics_pass_validation_without_opening_test() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(V7_DIAGNOSTICS.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(V7_DIAGNOSTICS.read_bytes()).hexdigest() == (
+        "bd4b2a23968751616e455a5414b91c877a6ddba55893d3196181d4d144b26196"
+    )
+    assert payload["artifact_sha256"] == (
+        "eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82"
+    )
+    assert payload["selectable"] is False
+    assert payload["test_opened"] is False
+    assert payload["real_data_opened"] is False
+    assert payload["sota_claim_authorized"] is False
+    selected = next(
+        row for row in payload["rows"] if row["label"] == "pair_supervision_gate_selection"
+    )
+    assert selected["analytic_pearson"] >= 0.95
+    assert selected["translation_leakage_p95"] <= 0.02
+    assert selected["ttc_symmetric_relative_error"] <= 0.30
+
+
+def test_causal_scale_v7_held_out_result_preserves_single_clean_failure() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(V7_LEARNING_ARTIFACT.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(V7_LEARNING_ARTIFACT.read_bytes()).hexdigest() == (
+        "f947b32f05e655a116ef22e711fcd5df474b459f2d158b3096283bae55e2eff6"
+    )
+    assert payload["artifact_sha256"] == (
+        "97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b"
+    )
+    assert payload["git_commit"] == "0bc781f37c65e2c20861a87b9343a3ea8388bc03"
+    assert payload["git_dirty"] is False
+    assert payload["status"] == "completed_gate_failed"
+    assert payload["test_evaluation_count"] == 1
+    assert payload["test_gates"]["passed"] is False
+    assert payload["test_gates"]["equivariance"] is False
+    assert payload["test_gates"]["translation"] is True
+    assert payload["data_access"]["real_data_opened"] is False
+    assert payload["sota_claim_authorized"] is False

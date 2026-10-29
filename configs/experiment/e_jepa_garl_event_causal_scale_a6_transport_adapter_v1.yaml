@@ -1,0 +1,68 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_a6_transport_adapter_v1
+  protocol_version: causal_scale_a6_transport_adapter_v1
+  evidence_scope: public_eap_garl_train_validation_only
+  purpose: test_minimal_transport_specific_feature_adaptation_while_A4_geometry_is_frozen
+source_evidence:
+  a4_checkpoint: artifacts/runs/causal_scale_eap_screen_a4_dinov3_relational_rgb_v2_seed7/model_best.pt
+  a4_checkpoint_sha256: db4cf4a112df66c5ef8f291f83c05c76fe263e3fb11c0665d649acf91a193c35
+  diagnostic_replication: artifacts/audit/a5_postgate_recovery_v1/diagnostic_replication.json
+  diagnostic_replication_required_passed: true
+  diagnostic_replication_required_passing_seeds: 3
+  anchor_seed7_gate: artifacts/audit/a5_postgate_recovery_v1/anchor_seed7_gate.json
+  anchor_seed7_required_passed: false
+  anchor_seed7_summary: artifacts/runs/causal_scale_eap_screen_a5_anchor_v1_seed7/summary.json
+  anchor_seed7_artifact_sha256: 67a7f19526e6e134934c81cfcfbdbdcbc1a30441e5df1f1482068f62ffeaaf5e
+parent_metrics:
+  log_ratio_pearson: 0.26009801030158997
+  sequence_macro_MiD: 322.6813364242674
+  failure_rate_pct: 11.083984375
+  delta_log_height_vs_physical: 0.2476144314489911
+  delta_log_height_vs_physical_macro: 0.2526319214906502
+  absolute_log_height_macro: 0.5469041860501996
+replicated_free_a5_metrics:
+  seed_count: 3
+  log_ratio_pearson_mean: 0.6482132871945699
+  sequence_macro_MiD_mean: 181.68347323913903
+  failure_rate_pct_mean: 5.843098958333333
+  foreground_divergence_y_global_mean: 0.5426580678831491
+  foreground_divergence_y_macro_mean: 0.5355951601413754
+observed_frozen_anchor_seed7:
+  log_ratio_pearson: 0.3723286986351013
+  sequence_macro_MiD: 278.1581838659303
+  failure_rate_pct: 7.12890625
+  foreground_divergence_y_global: 0.3454944917946739
+  foreground_divergence_y_macro: 0.3315449958230711
+adapter_contract:
+  initialization_mode: shape_compatible
+  parent_encoder_frozen_for_entire_run: true
+  geometry_must_equal_parent_by_construction: true
+  transport_adapter_enabled: true
+  transport_adapter_depth: 1
+  adapter_is_transport_only: true
+  adapter_identity_initialized: true
+  foreground_warmup_epochs: 0
+  transport_radius: 1
+  transport_temperature: 0.02
+  dino_endpoint_lambda: 4.0
+  no_resolution_change: true
+  no_radius_or_temperature_change: true
+  no_DINO_lambda_change: true
+  no_new_teacher: true
+  no_JEPA_objective: true
+  private_test_remains_closed: true
+  expected_parameter_count: 498130
+adapter_gate:
+  temporal_gain_recovery_fraction_min: 0.50
+  MiD_gain_recovery_fraction_min: 0.50
+  maximum_failure_rate_pct: 11.083984375
+  geometry_absolute_tolerance: 0.005
+  foreground_divergence_y_global_min: 0.40
+  foreground_divergence_y_macro_min: 0.35
+  minimum_positive_foreground_divergence_y_sequences: 2
+  minimum_passing_seeds: 2
+  seed7_must_pass_before_replication: true
+  interpretation: preserve_A4_geometry_and_recover_at_least_half_of_replicated_free_A5_temporal_gain
+stopping_rule:
+  if_seed7_fails: stop_without_seed13_seed23
+  if_replication_passes: stop_and_analyze_before_capacity_resolution_or_scale

@@ -1,0 +1,16 @@
+{
+  "docs/simplex_t_nocturnal_20261003/NEXT_DECISION_NOCTURNA.json": "1cdfec36a6b1a104e6ba97c0fe624930de6d77443456b99d96fb73be6ae56036",
+  "artifacts/simplex_t/h16_replication_20261003/analysis/RESULTS.json": "46f876a11f7508b2c65855b25f60fc6a55b0b2c8a1e5275f2e85e5f1cc6f0d45",
+  "artifacts/simplex_t/nocturnal_20261003/execution/analysis/N2/RESULTS.json": "500707893a0f17f5f512b51e0cf69d53e8696885f3a3f9109cf555767b91fdef",
+  "artifacts/simplex_t/nocturnal_20261003/execution/analysis/N3/RESULTS.json": "36a3eb253b477f2c12aab1afc12bf9c5cf95b02d341e6e3abec30989f7ee61ed",
+  "docs/simplex_t_post_campaign_20261003/ACCURACY_COST_FRONTIER.csv": "8d96bbc9bd66d8fb09d1b0e4db03804be19373338ee05501d6b82478a47e5f2e",
+  "docs/simplex_t_nocturnal_20261003/BASELINE_REGISTRY.csv": "312255c830c67e620aa402c7db5bbf64822b2b83778afc56ef8c4a1d0b7a3841",
+  "docs/simplex_t_post_campaign_20261003/COMPARATOR_REVIEW_RECONCILED.json": "03653a2f78b77b44f845c696790b5e3e5be2bf481ae0d053072af40806be1c2a",
+  "docs/simplex_t_shared_gpu_route_20261004/DELIVERY_STATUS.json": "de000a6b33c31efcd7573d50a03a04e14aeaf124c467ac50f962a1061c44570d",
+  "docs/simplex_t_shared_gpu_route_20261004/COST_ACCURACY_SHARED.csv": "ada865fef63cb4193c803a4fea29d81856f15356c68ea44965f8cedfc89ed301",
+  "docs/simplex_t_shared_gpu_route_20261004/STAGE_SHARES.csv": "0268f46deb2ce119852f3860e7710ced5534264ebf3201dbfb1ff4b56a1c1513",
+  "artifacts/simplex_t/closure_20261002/essential_delivery/FINAL_DELIVERY.json": "ebc72465276fef7e1c51df78e6a5b6cd387a038de1eee79d4bdf5d6b4e5313d1",
+  "docs/simplex_t_nocturnal_20261003/H16_FINAL_DELIVERY.json": "49048f8855e8de82834b336a1fa69cbcff0fe95f86c9814de86af8ec9260b7f3",
+  "docs/simplex_t_nocturnal_20261003/FINAL_DELIVERY_NOCTURNA.json": "ab1a26330bf2f7dc734bc75e41ffa478d49195e0a73244a4090e4e73557addd8",
+  "docs/simplex_t_post_campaign_20261003/FINAL_DELIVERY.json": "cceae61683c9195c3a00c58931a0b4b5c72cf94c1d7804ecf7a46a849fd8d61f"
+}

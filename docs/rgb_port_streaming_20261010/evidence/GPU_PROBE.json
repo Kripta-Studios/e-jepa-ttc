@@ -1,0 +1,37 @@
+{
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "optimizer_updates": 0,
+  "parents": {
+    "E_A5_MATCHED": "36485f9881182bbf0e57da29563a396585c9d6e550fd29e5cd8bba88b35cdcaa",
+    "E_C2F_MATCHED": "c0439d969c6537ff4df69b6e8a5bd034b8bc9f78ef482c856f81bd02335a534d"
+  },
+  "protected_unchanged": true,
+  "results": {
+    "native_fp32": {
+      "cold_ms": 548.4421000001021,
+      "finite": true,
+      "max_feature_abs_difference": 0.0,
+      "median_batch2_ms": 86.0719500342384
+    },
+    "vectorized_encoder_bf16": {
+      "cold_ms": 171.5781000093557,
+      "finite": true,
+      "max_feature_abs_difference": 0.8606033325195312,
+      "median_batch2_ms": 58.00300001283176
+    },
+    "vectorized_fp32": {
+      "cold_ms": 77.32530002249405,
+      "finite": true,
+      "max_feature_abs_difference": 3.0517578125e-05,
+      "median_batch2_ms": 71.42240001121536
+    },
+    "vectorized_graph_fp32": {
+      "cold_ms": 9623.160900024232,
+      "finite": true,
+      "max_feature_abs_difference": 3.0517578125e-05,
+      "median_batch2_ms": 17.48974999645725
+    }
+  },
+  "scope": "synthetic event inputs; random PAIR; not TTC accuracy or end-to-end latency",
+  "status": "PASS"
+}

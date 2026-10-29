@@ -1,0 +1,15 @@
+{
+  "optimizer_updates_from_CPU_tests": 0,
+  "pyright": "0 errors, 0 warnings",
+  "pytest_loss": {
+    "command": "python -m pytest tests/unit/test_captured_phase_loss.py tests/unit/test_phase_transport_loss.py",
+    "passed": 19
+  },
+  "pytest_runner_observer": {
+    "command": "python -m pytest tests/unit/test_adaptation_loss_graph_runtime.py tests/test_joint_measurement_hourly_observe.py",
+    "passed": 17
+  },
+  "registration_sha256": "9a323910a027de4b416bbf587f60c497039c65d451d45d1323ecf9eff6bca40a",
+  "ruff": "PASS",
+  "scope": "CPU tests and static checks; native CUDA and complete-state results are separate"
+}

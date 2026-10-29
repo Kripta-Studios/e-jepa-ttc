@@ -1,0 +1,32 @@
+{
+  "checks": {
+    "persistent": {
+      "cuda_rng_state_all": true,
+      "curve": true,
+      "four_updates": true,
+      "model_state_dict": true,
+      "numpy_random_state": true,
+      "optimizer_state_dict": true,
+      "python_random_state": true,
+      "sampler_generator_state": true,
+      "scheduler_state_dict": true,
+      "torch_rng_state": true
+    },
+    "resumed": {
+      "cuda_rng_state_all": true,
+      "curve": true,
+      "four_updates": true,
+      "model_state_dict": true,
+      "numpy_random_state": true,
+      "optimizer_state_dict": true,
+      "python_random_state": true,
+      "sampler_generator_state": true,
+      "scheduler_state_dict": true,
+      "torch_rng_state": true
+    }
+  },
+  "physical_technical_updates": 12,
+  "registration_sha256": "9a323910a027de4b416bbf587f60c497039c65d451d45d1323ecf9eff6bca40a",
+  "same_parameters_one_model_and_loss_capture_two_scopes": true,
+  "status": "PASS"
+}

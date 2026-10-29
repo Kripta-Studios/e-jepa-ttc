@@ -1,0 +1,30 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_gate_v5
+  protocol_version: causal_scale_v5_synthetic_operator_gate_v1
+  seed: 7
+  evidence_scope: synthetic_mechanistic_only
+model_config: configs/model/e_jepa_causal_scale_event_v5.yaml
+data:
+  source: analytic_foreground_rectangles
+  real_data_opened: false
+  ttc_labels_opened: false
+  eap_opened: false
+  evttc_opened: false
+operator_gates:
+  analytic_pearson_min: 0.95
+  slope_min: 0.8
+  slope_max: 1.2
+  sign_accuracy_min: 0.95
+  oddness_median_max: 0.2
+  oddness_p95_max: 0.5
+  identity_p95_max: 0.00001
+  translation_leakage_p95_max: 0.0001
+  rotation_leakage_p95_max: 0.02
+  zero_unknown_min: 1.0
+decision_contract:
+  pass_authorizes: synthetic_event_learning_gate_only
+  pass_does_not_authorize:
+    - eap_test
+    - evttc
+    - sota_claim
+    - garl_ttc_comparison

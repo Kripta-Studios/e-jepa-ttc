@@ -1,0 +1,18 @@
+native_fp32 {'cold_ms': 548.4421000001021, 'median_batch2_ms': 86.0719500342384, 'max_feature_abs_difference': 0.0, 'finite': True}
+W1010 16:34:45.798000 26636 Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+vectorized_fp32 {'cold_ms': 77.32530002249405, 'median_batch2_ms': 71.42240001121536, 'max_feature_abs_difference': 3.0517578125e-05, 'finite': True}
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] Graph break from `Tensor.item()`, consider setting:
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     torch._dynamo.config.capture_scalar_outputs = True
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] or:
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     env TORCHDYNAMO_CAPTURE_SCALAR_OUTPUTS=1
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] to include these operations in the captured graph.
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] Graph break: from user code at:
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 848, in forward
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     return self._forward_impl(inputs, delta_t_s, return_dense_features=return_dense_features)
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 885, in _forward_impl
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:34:48.670000 26636 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+vectorized_graph_fp32 {'cold_ms': 9623.160900024232, 'median_batch2_ms': 17.48974999645725, 'max_feature_abs_difference': 3.0517578125e-05, 'finite': True}
+vectorized_encoder_bf16 {'cold_ms': 171.5781000093557, 'median_batch2_ms': 58.00300001283176, 'max_feature_abs_difference': 0.8606033325195312, 'finite': True}

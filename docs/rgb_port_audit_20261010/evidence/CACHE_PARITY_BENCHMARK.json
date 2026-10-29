@@ -1,0 +1,40 @@
+{
+  "all_batch_tensors_and_metadata_exact": true,
+  "group_rows": {
+    "batch_sha256": [
+      "c2ac06bf6ae0934fbb7c2fcc42d60a8023cf960eefd511361c835180dab9f35e",
+      "072585cba5fc57715a47b6c3538e40e87010daa20c9c8db92b816b1f0116022e",
+      "6d427c8573116db0a7b159f8037ec44ed47d69761e0a7b6d194fe959e8baf14b",
+      "22a9ebacae76fc588db69d5a97f7ad70254926149ba915d34f821dd9056dc613",
+      "0dc903792db631e0f281a8499377cdf1ba0362a6c28466266ae37be53e29e75c",
+      "f09eb91b028085fc1316d23714a65c19fe16a453e57835971b71521bcc244c52",
+      "0f368e44ecda577fd078c9bde910ec2291a72746cc0fd27c25574405484db8d7",
+      "7998a0e05e8ef837647712accbc7b7b2ca49e667861073c08ffda0ee37f42336"
+    ],
+    "hits": 219,
+    "limit_bytes": 536870912,
+    "peak_retained_bytes": 469701456,
+    "seconds": 51.01065789995482,
+    "shard_reads": 21
+  },
+  "measurement": "sequential_CPU_shard_LRU_then_row_cache; not_joint_GPU_throughput",
+  "optimizer_updates": 0,
+  "sample_order": "unchanged_seed7_epoch1_first256",
+  "shard_lru": {
+    "batch_sha256": [
+      "c2ac06bf6ae0934fbb7c2fcc42d60a8023cf960eefd511361c835180dab9f35e",
+      "072585cba5fc57715a47b6c3538e40e87010daa20c9c8db92b816b1f0116022e",
+      "6d427c8573116db0a7b159f8037ec44ed47d69761e0a7b6d194fe959e8baf14b",
+      "22a9ebacae76fc588db69d5a97f7ad70254926149ba915d34f821dd9056dc613",
+      "0dc903792db631e0f281a8499377cdf1ba0362a6c28466266ae37be53e29e75c",
+      "f09eb91b028085fc1316d23714a65c19fe16a453e57835971b71521bcc244c52",
+      "0f368e44ecda577fd078c9bde910ec2291a72746cc0fd27c25574405484db8d7",
+      "7998a0e05e8ef837647712accbc7b7b2ca49e667861073c08ffda0ee37f42336"
+    ],
+    "hits": 0,
+    "limit_bytes": 536870912,
+    "peak_retained_bytes": null,
+    "seconds": 85.73879189998843,
+    "shard_reads": 131
+  }
+}

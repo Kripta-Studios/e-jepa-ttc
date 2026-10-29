@@ -1,0 +1,12 @@
+artifact_type: scientific_recovery_v9_stage61_config_v1
+arm_id: S61-PAIR-INNER
+seeds: [7, 13, 23]
+batch_size: 32
+update_budget: 6840
+learning_rate: 0.0003
+weight_decay: 0.0001
+dropout: 0.05
+precision: float32
+checkpoint_policy: last_update_fixed_budget
+milestones: [0, 250, 500, 1000, 2000, 4000, 6840]
+outer_dev_available_to_trainer: false

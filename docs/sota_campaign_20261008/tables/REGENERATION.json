@@ -1,0 +1,20 @@
+{
+  "scorer": "evidence/scripts/scoring.py",
+  "scoring_jobs": [
+    {
+      "branch": "scoring_existing_946",
+      "input": "evidence/scoring_existing/input/SCORED_PREDICTIONS.csv",
+      "reference": "evidence/scoring_existing"
+    },
+    {
+      "branch": "expanded_metrics",
+      "input": "evidence/dev32_expanded_rgb/SCORED_PREDICTIONS.csv",
+      "reference": "evidence/expanded_metrics"
+    },
+    {
+      "branch": "fcwd_metrics",
+      "input": "evidence/fcwd_inference/scoring/SCORED_PREDICTIONS.csv",
+      "reference": "evidence/fcwd_inference/scoring"
+    }
+  ]
+}

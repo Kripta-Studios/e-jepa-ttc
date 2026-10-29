@@ -1,0 +1,51 @@
+{
+  "status": "COMPLETE",
+  "passed": true,
+  "scope": "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE",
+  "expected_updates": 30,
+  "validated_updates": 30,
+  "originals": {
+    "passed": true,
+    "files": 604,
+    "changed": [],
+    "missing": []
+  },
+  "cleanup_errors": [],
+  "unexpected_excluded_source_imports": [],
+  "error": null,
+  "target_20_objects_50hz_demonstrated": false,
+  "rgb_cache_hit_updates": 0,
+  "rgb_cache_miss_updates": 0,
+  "latency_by_count_ms": {
+    "1": {
+      "count": 15,
+      "mean_ms": 50.53819333333334,
+      "p50_ms": 30.6299,
+      "p95_ms": 100.48085999999999,
+      "p99_ms": 101.098092,
+      "min_ms": 25.1044,
+      "max_ms": 101.2524,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 0,
+      "at_least_20ms_count": 15,
+      "over_50ms_count": 5,
+      "over_100ms_count": 2,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 19.78701520658501
+    },
+    "2": {
+      "count": 15,
+      "mean_ms": 90.72022666666665,
+      "p50_ms": 88.3703,
+      "p95_ms": 138.41163999999998,
+      "p99_ms": 145.504488,
+      "min_ms": 49.1821,
+      "max_ms": 147.2777,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 0,
+      "at_least_20ms_count": 15,
+      "over_50ms_count": 14,
+      "over_100ms_count": 5,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 11.022900148544604
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "attempts_preserved": 2,
+  "identity": {
+    "create_time": 1791487184.908388,
+    "pid": 8672
+  },
+  "max_attempts": 3,
+  "old_freeze_sha256": "3b400ebe43d3dc3c3b4589ca590fa2b208342d838575342754733223c6e7593a",
+  "reason": "CPU publication was falsely classified as a GPU evaluator; no measurement child is active.",
+  "retired_epoch": 1791489755.8006108,
+  "scientific_sources_changed": false,
+  "status": "IDLE_COORDINATOR_RETIRED_FOR_GUARD_FIX"
+}

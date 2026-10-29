@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sample_token",
+    "sequence_id",
+    "track_id",
+    "outer_fold",
+    "target_ttc_s",
+    "target_benchmark_phase",
+    "predicted_benchmark_phase",
+    "predicted_inverse_ttc_raw",
+    "predicted_ttc_raw",
+    "predicted_ttc_clipped",
+    "is_clip_saturated",
+    "scientific_mid_per_row",
+    "scientific_failure",
+    "sample_weight",
+    "arm_id",
+    "seed",
+    "checkpoint_sha256",
+    "config_sha256",
+    "protocol_sha256",
+    "cache_manifest_sha256",
+    "split_manifest_sha256"
+  ],
+  "properties": {
+    "sample_token": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sequence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "track_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outer_fold": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "target_ttc_s": {
+      "type": "number"
+    },
+    "target_benchmark_phase": {
+      "type": "number"
+    },
+    "predicted_benchmark_phase": {
+      "type": "number"
+    },
+    "predicted_inverse_ttc_raw": {
+      "type": "number"
+    },
+    "predicted_ttc_raw": {
+      "type": "number"
+    },
+    "predicted_ttc_clipped": {
+      "type": "number"
+    },
+    "is_clip_saturated": {
+      "type": "boolean"
+    },
+    "scientific_mid_per_row": {
+      "type": "number",
+      "minimum": 0
+    },
+    "scientific_failure": {
+      "type": "boolean"
+    },
+    "sample_weight": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "arm_id": {
+      "enum": [
+        "X0-A5-REPLAY",
+        "X0-PAIR-U",
+        "X0-BASE-U",
+        "X0-DYN-U"
+      ]
+    },
+    "seed": {
+      "const": 7
+    },
+    "checkpoint_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "config_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "protocol_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "cache_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "split_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_row_level_oof_v2.schema.json"
+}

@@ -1,0 +1,64 @@
+{
+  "artifact_sha256": "ac9b851468940485870815783b47050ffe7155dc39514b90506d46d70f468135",
+  "artifact_type": "scientific_recovery_v5_fold_parent_frozen_configs_v1",
+  "cache": {
+    "artifact_sha256": "f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec",
+    "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\cache\\garl_object_event_common_roi_train8192_v1\\manifest.json",
+    "sha256": "063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39"
+  },
+  "configs": [
+    {
+      "dev_rows": 2731,
+      "dev_sample_tokens_sha256": "85326602af71948734ff250a2e95e37d88db0d7cdbcfc494b30536f1956b61c9",
+      "fold": 0,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a4_parent_grouped_fold0_seed7.yaml",
+      "sha256": "6569e6078f655759083a62ebd3b5457dd0609572aff38817c2aa056fe9ca3d3f",
+      "train_rows": 5461,
+      "train_sample_tokens_sha256": "8f88d14d5f88228a7d59b853a8da86c9120d53c1fc7dcb94f94ae18f9a73d798",
+      "training_seed": 7
+    },
+    {
+      "dev_rows": 2731,
+      "dev_sample_tokens_sha256": "5ea864aaa339ac5140bb61357e45b620f5819c42fa9db1542179658395d4fa77",
+      "fold": 1,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a4_parent_grouped_fold1_seed7.yaml",
+      "sha256": "800416c9716bdc8c0932e907ade7249a21a5b6d8e38e5221c636c0bd61f15519",
+      "train_rows": 5461,
+      "train_sample_tokens_sha256": "b57f1d9667c25a97a6f812406a534c63678d0cfce4dc25749efcd5c5c131f552",
+      "training_seed": 7
+    },
+    {
+      "dev_rows": 2730,
+      "dev_sample_tokens_sha256": "e09980a547cf9c71c27cda9ee02c2ff12de6857dea47ced64ae61acb7a876f17",
+      "fold": 2,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a4_parent_grouped_fold2_seed7.yaml",
+      "sha256": "1bda6f44164504848ecf40f789342e6ec9baaa758d3def5f149fc988a7848bd0",
+      "train_rows": 5462,
+      "train_sample_tokens_sha256": "b4163c61800ff36de95b2c764182b63a9a6b38f7975ea8a1db94f9b20f83fb24",
+      "training_seed": 7
+    }
+  ],
+  "contracts": {
+    "folds_unchanged_from_original_freeze": true,
+    "one_parent_per_fold": true,
+    "outer_dev_is_not_test": true,
+    "outer_dev_used_for_checkpoint_selection": true,
+    "parent_initialization_from_scratch": true,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "teacher_targets_limited_to_fold_train": true
+  },
+  "created_at_utc": "2026-08-13T00:38:48.471048+00:00",
+  "git_commit": "de3349fdf77d1e5a9c2da0479a18a190bc580414",
+  "protocol": {
+    "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+    "path": "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json",
+    "sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874",
+    "split_seed": 20260813
+  },
+  "source_recipe": {
+    "path": "artifacts/scientific_recovery_master_v3/configs/causal_a6/a4_s1_lambda8_causal_left_seed7.yaml",
+    "sha256": "a27c2080df0aefcbd8f8e3efd5e5f5dcbb73fd65924a352c829eb18d3c16f44e"
+  },
+  "status": "frozen_before_clean_fold_parent_training"
+}

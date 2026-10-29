@@ -1,0 +1,29 @@
+Subject: FCWD Table VII input registration and missing reproduction assets
+
+Dear Hongxin and Prof. Zhou,
+
+Thank you for publishing the FCWD recordings and Garl-TTC reference materials. We are
+preparing an independently frozen transfer evaluation and would appreciate clarification
+of three input-contract details before reporting a full RGB+event comparison:
+
+1. Which spatial mapping, crop, rectification and interpolation were used to transfer the
+   FCWD event-camera bounding boxes (1280x720 coordinates) to the Blackfly RGB frames
+   (1920x1200) for the Table VII evaluation? Please include the exact transform and code or
+   configuration revision if available.
+
+2. Could you provide the camera calibration in a portable plain-numeric or MATLAB struct
+   representation? The public calibParams.mat stores DVScameraParams as an MCOS
+   cameraParameters object, and the published LiDAR-to-RGB matrix does not define the
+   event-to-RGB transform.
+
+3. Could you publish the innercar_bbox.csv files referenced by main_FCWD.m, or document
+   how those boxes were produced? They are required by the official STRTTC path to remove
+   ego-vehicle events but are not linked from the public FCWD download page.
+
+We will keep event-only results separate from the blocked full RGB+event branch and will
+not interpret an unavailable full input mapping as a negative model result.
+
+Best regards,
+Alvaro
+
+DRAFT ONLY. Not sent by the agent; no email or submission performed.

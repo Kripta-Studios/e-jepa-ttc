@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import random
 import time
@@ -10,13 +11,41 @@ from typing import Any
 
 import numpy as np
 import torch
+from numpy.lib.npyio import NpzFile
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
+from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
+from e_jepa_ttc.reproducibility import (
+    cuda_device_count,
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
+
+
+def _hash_file(filepath: str | Path) -> str:
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _get_git_commit() -> str:
+    import subprocess
+
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        return "unknown"
 
 
 class VoxelCacheDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
@@ -40,8 +69,9 @@ class VoxelCacheDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _split_indices(split: np.ndarray, name: str) -> np.ndarray:
@@ -64,8 +94,17 @@ def _evaluate_model(
     *,
     device: torch.device,
     batch_size: int,
+    num_workers: int = 0,
 ) -> tuple[np.ndarray, np.ndarray, float]:
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    loader_kwargs: dict[str, Any] = {
+        "batch_size": batch_size,
+        "shuffle": False,
+        "num_workers": num_workers,
+        "pin_memory": device.type == "cuda",
+    }
+    if num_workers > 0:
+        loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+    loader = DataLoader(dataset, **loader_kwargs)
     predictions: list[np.ndarray] = []
     targets: list[np.ndarray] = []
     start = time.perf_counter()
@@ -80,6 +119,115 @@ def _evaluate_model(
     if not predictions:
         return np.empty(0), np.empty(0), elapsed
     return np.concatenate(targets), np.concatenate(predictions), elapsed
+
+
+def _prediction_metadata(
+    cache: NpzFile,
+    indices: np.ndarray,
+) -> dict[str, np.ndarray]:
+    """Return sample-level identity arrays aligned with saved predictions."""
+
+    metadata: dict[str, np.ndarray] = {
+        "global_index": indices.astype(np.int64, copy=False),
+    }
+    optional_fields = (
+        "sequence_id",
+        "timestamp_us",
+        "context_start_us",
+        "context_end_us",
+    )
+    for field in optional_fields:
+        if field in cache.files:
+            metadata[field] = np.asarray(cache[field])[indices]
+    return metadata
+
+
+def _sequence_macro_mae(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sequence_ids: np.ndarray | None,
+) -> float:
+    """Return sequence-macro MAE, falling back to sample-micro MAE."""
+
+    if sequence_ids is None:
+        return float(np.mean(np.abs(y_true - y_pred)))
+    sequence_text = np.asarray(sequence_ids).astype(str)
+    values = [
+        float(
+            np.mean(
+                np.abs(y_true[sequence_text == sequence_id] - y_pred[sequence_text == sequence_id])
+            )
+        )
+        for sequence_id in np.unique(sequence_text)
+    ]
+    return float(np.mean(values))
+
+
+def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
+    """Write a checkpoint atomically so interruption cannot corrupt the previous state."""
+
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, temporary_path)
+    temporary_path.replace(path)
+
+
+def _split_evaluation(
+    *,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    seconds: float,
+    metadata: dict[str, np.ndarray],
+) -> dict[str, Any]:
+    """Build aggregate and sequence-aware metrics for one evaluation split."""
+
+    payload: dict[str, Any] = {
+        "count": int(y_true.shape[0]),
+        "metrics": regression_metrics(y_true, y_pred),
+        "seconds": seconds,
+    }
+    sequence_ids = metadata.get("sequence_id")
+    if sequence_ids is None:
+        payload["sequence_metrics_status"] = "unavailable_missing_sequence_id"
+        return payload
+
+    sequence_text = sequence_ids.astype(str)
+    per_sequence: dict[str, Any] = {}
+    for sequence_id in np.unique(sequence_text):
+        selected = sequence_text == sequence_id
+        per_sequence[str(sequence_id)] = {
+            "count": int(np.sum(selected)),
+            "metrics": regression_metrics(y_true[selected], y_pred[selected]),
+        }
+    payload["sequence_count"] = len(per_sequence)
+    payload["per_sequence"] = per_sequence
+    payload["mae_sequence_bootstrap_95"] = sequence_bootstrap_interval(
+        y_true,
+        y_pred,
+        sequence_text,
+        iterations=2000,
+        confidence=0.95,
+        seed=0,
+    )
+    return payload
+
+
+def _save_prediction_artifact(
+    path: Path,
+    *,
+    evaluation_splits: tuple[str, ...],
+    predictions: dict[str, np.ndarray],
+    targets: dict[str, np.ndarray],
+    metadata: dict[str, dict[str, np.ndarray]],
+) -> None:
+    """Save predictions together with the identities required for clustered analysis."""
+
+    arrays: dict[str, np.ndarray] = {}
+    for split_name in evaluation_splits:
+        arrays[f"{split_name}_pred"] = predictions[split_name].astype(np.float32, copy=False)
+        arrays[f"{split_name}_true"] = targets[split_name].astype(np.float32, copy=False)
+        for field, values in metadata[split_name].items():
+            arrays[f"{split_name}_{field}"] = np.asarray(values)
+    np.savez(ensure_parent(path), **arrays)
 
 
 def _train_one_epoch(
@@ -154,17 +302,27 @@ def train_tiny_cnn(
     pretrained_encoder_path: str | Path | None = None,
     freeze_encoder: bool = False,
     train_fraction: float = 1.0,
+    subset_manifest_path: str | Path | None = None,
     model_name: str = "tiny-cnn",
+    navigation_mode: str = "enabled",
     evaluation_splits: tuple[str, ...] = ("train", "validation", "test"),
     train_splits: tuple[str, ...] = ("train",),
     validation_splits: tuple[str, ...] = ("validation",),
-) -> dict[str, Any]:
+    num_workers: int = 0,
+    early_stopping_patience: int = 8,
+    early_stopping_min_epochs: int = 12,
+    early_stopping_min_delta_relative: float = 0.003,
+    resume: bool = False,
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Train a supervised TTC model on a materialized voxel cache."""
 
     _set_seed(seed)
     if not 0.0 < train_fraction <= 1.0:
         msg = "train_fraction must be in (0, 1]."
         raise ValueError(msg)
+    if navigation_mode not in ("enabled", "disabled"):
+        raise ValueError("navigation_mode must be 'enabled' or 'disabled'")
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
@@ -174,15 +332,28 @@ def train_tiny_cnn(
     if not validation_splits:
         msg = "validation_splits must contain at least one split."
         raise ValueError(msg)
+    if num_workers < 0:
+        raise ValueError("num_workers must be non-negative.")
+    if early_stopping_patience < 0:
+        raise ValueError("early_stopping_patience must be non-negative.")
+    if early_stopping_min_epochs <= 0:
+        raise ValueError("early_stopping_min_epochs must be positive.")
+    if early_stopping_min_delta_relative < 0.0:
+        raise ValueError("early_stopping_min_delta_relative must be non-negative.")
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
+    if navigation_mode == "disabled":
+        if bool(cache.get("navigation_channels", False)):
+            nav_count = len(cache["navigation_feature_names"])
+            x[:, -nav_count:, :, :] = 0.0
+
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
     available_splits = _available_split_names(split)
     missing_names = sorted(
-        (set(train_splits) | set(validation_splits) | set(evaluation_splits))
-        - available_splits
+        (set(train_splits) | set(validation_splits) | set(evaluation_splits)) - available_splits
     )
     if missing_names:
         msg = f"Requested split names are missing from cache: {missing_names}."
@@ -197,25 +368,100 @@ def train_tiny_cnn(
         msg = "Requested train and validation splits must be non-empty."
         raise ValueError(msg)
     missing_eval_splits = [
-        split_name
-        for split_name in evaluation_splits
-        if split_indices[split_name].size == 0
+        split_name for split_name in evaluation_splits if split_indices[split_name].size == 0
     ]
     if missing_eval_splits:
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
     full_train_count = int(train_idx.size)
-    if train_fraction < 1.0:
+    subset_sha256 = ""
+    if subset_manifest_path is not None and Path(subset_manifest_path).exists():
+        manifest_path = Path(subset_manifest_path)
+        with manifest_path.open("r", encoding="utf-8") as f:
+            manifest_data = json.load(f)
+        unsigned_manifest = dict(manifest_data)
+        declared_subset_sha256 = unsigned_manifest.pop("sha256", None)
+        canonical_manifest = json.dumps(
+            unsigned_manifest,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+        computed_subset_sha256 = hashlib.sha256(canonical_manifest).hexdigest()
+        if declared_subset_sha256 != computed_subset_sha256:
+            raise ValueError(
+                f"Subset manifest signature mismatch: {manifest_path}. "
+                "Regenerate it rather than editing indices by hand."
+            )
+        requested_train_idx = np.array(manifest_data["global_indices"], dtype=np.int64)
+        if requested_train_idx.ndim != 1 or requested_train_idx.size == 0:
+            raise ValueError("Subset manifest global_indices must be a non-empty vector.")
+        if np.unique(requested_train_idx).size != requested_train_idx.size:
+            raise ValueError("Subset manifest contains duplicate global indices.")
+        if not np.isin(requested_train_idx, train_idx).all():
+            raise ValueError("Subset manifest contains indices outside the requested train split.")
+        train_idx = np.sort(requested_train_idx)
+        if "sequence_id" in cache:
+            declared_sequences = np.asarray(manifest_data.get("sequence_ids", [])).astype(str)
+            actual_sequences = cache["sequence_id"][train_idx].astype(str)
+            if not np.array_equal(declared_sequences, actual_sequences):
+                raise ValueError("Subset manifest sequence_ids do not match cache indices.")
+        subset_sha256 = computed_subset_sha256
+        print(f"Loaded subset manifest from {manifest_path} with {train_idx.size} samples.")
+    elif train_fraction < 1.0:
         rng = np.random.default_rng(seed)
-        subset_count = max(1, int(round(train_idx.size * train_fraction)))
-        train_idx = np.sort(
-            rng.choice(train_idx, size=subset_count, replace=False)
-        ).astype(np.int64)
+        if "sequence_id" in cache:
+            seqs = cache["sequence_id"][train_idx]
+            unique_seqs = np.sort(np.unique(seqs))
+            subset_idx = []
+            for seq in unique_seqs:
+                seq_idx = train_idx[seqs == seq]
+                shuffled = rng.permutation(seq_idx)
+                subset_count = max(1, int(round(seq_idx.size * train_fraction)))
+                subset_idx.append(shuffled[:subset_count])
+            train_idx = np.sort(np.concatenate(subset_idx)).astype(np.int64)
+        else:
+            shuffled = rng.permutation(train_idx)
+            subset_count = max(1, int(round(train_idx.size * train_fraction)))
+            train_idx = np.sort(shuffled[:subset_count]).astype(np.int64)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+        if subset_manifest_path is not None:
+            manifest_path = Path(subset_manifest_path)
+            ensure_parent(manifest_path)
+
+            payload = {
+                "global_indices": train_idx.tolist(),
+                "sequence_ids": (
+                    cache["sequence_id"][train_idx].astype(str).tolist()
+                    if "sequence_id" in cache
+                    else []
+                ),
+                "ttc_bins": [],  # Could compute bins here if needed
+                "source_split_hash": "",
+                "seed": seed,
+                "requested_fraction": train_fraction,
+                "effective_fraction": float(train_idx.size / full_train_count),
+            }
+            payload_bytes = json.dumps(
+                payload,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+            ).encode("utf-8")
+            subset_sha256 = hashlib.sha256(payload_bytes).hexdigest()
+            payload["sha256"] = subset_sha256
+
+            with manifest_path.open("w", encoding="utf-8") as f:
+                json.dump(payload, f, indent=2)
+            print(f"Saved subset manifest to {manifest_path}")
+
+    commit = _get_git_commit()
+    cache_sha256 = _hash_file(cache_path)
+    split_manifest_sha256 = (
+        str(cache["split_manifest_sha256"]) if "split_manifest_sha256" in cache else ""
+    )
+
+    device = resolve_device(device_name)
     model_tag = model_name.replace("-", "_")
 
     train_dataset = VoxelCacheDataset(x, y_log, train_idx)
@@ -226,13 +472,15 @@ def train_tiny_cnn(
     }
     datasets["__train_selection__"] = train_dataset
     datasets["__validation_selection__"] = val_dataset
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=0,
-        pin_memory=device.type == "cuda",
-    )
+    train_loader_kwargs: dict[str, Any] = {
+        "batch_size": batch_size,
+        "shuffle": True,
+        "num_workers": num_workers,
+        "pin_memory": device.type == "cuda",
+    }
+    if num_workers > 0:
+        train_loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+    train_loader = DataLoader(train_dataset, **train_loader_kwargs)
 
     model = build_regressor(model_name, in_channels=int(x.shape[1])).to(device)
     pretrained_encoder: dict[str, Any] | None = None
@@ -243,6 +491,46 @@ def train_tiny_cnn(
             device=device,
             expected_model_name=model_name,
         )
+    run_fingerprint_payload = {
+        "git_commit": commit,
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "subset_manifest_sha256": subset_sha256,
+        "model_name": model_name,
+        "resolved_model_config": {
+            "in_channels": int(x.shape[1]),
+            "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
+        },
+        "navigation_mode": navigation_mode,
+        "label_fraction": train_fraction,
+        "seed": seed,
+        "batch_size": batch_size,
+        "freeze_encoder": freeze_encoder,
+        "train_splits": list(train_splits),
+        "validation_splits": list(validation_splits),
+        "evaluation_splits": list(evaluation_splits),
+        "pretraining_checkpoint_sha256": pretrained_encoder.get("checkpoint_sha256", "")
+        if pretrained_encoder
+        else "",
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+        "num_workers": num_workers,
+        "early_stopping": {
+            "patience": early_stopping_patience,
+            "min_epochs": early_stopping_min_epochs,
+            "min_delta_relative": early_stopping_min_delta_relative,
+            "monitor": "validation_sequence_macro_mae",
+        },
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
+
     if freeze_encoder:
         for param in model.encoder.parameters():
             param.requires_grad_(False)
@@ -258,15 +546,89 @@ def train_tiny_cnn(
     output.mkdir(parents=True, exist_ok=True)
     best_path = output / "tiny_cnn_best.pt"
     last_path = output / "tiny_cnn_last.pt"
+    resume_path = output / "resume.pt"
     metrics_path = output / "metrics.json"
     history_path = output / "history.jsonl"
     best_val_mae = float("inf")
     best_epoch = -1
+    epochs_without_improvement = 0
+    start_epoch = 1
+    completed_epoch = 0
+    stopped_early = False
     history: list[dict[str, Any]] = []
     start_time = time.perf_counter()
 
-    with history_path.open("w", encoding="utf-8") as history_file:
-        for epoch in range(1, epochs + 1):
+    resolved_model_config = {
+        "in_channels": int(x.shape[1]),
+        "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
+    }
+
+    def checkpoint_payload(
+        *,
+        epoch: int,
+        role: str,
+        selected_by: str,
+    ) -> dict[str, Any]:
+        return {
+            "model_state_dict": model.state_dict(),
+            "model_name": model_name,
+            "epoch": epoch,
+            "checkpoint_role": role,
+            "checkpoint_selected_by": selected_by,
+            "cache_path": str(cache_path),
+            "seed": seed,
+            "pretrained_encoder": pretrained_encoder,
+            "in_channels": int(x.shape[1]),
+            "cache_sha256": cache_sha256,
+            "split_manifest_sha256": split_manifest_sha256,
+            "subset_manifest_sha256": subset_sha256,
+            "navigation_mode": navigation_mode,
+            "label_fraction": train_fraction,
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
+            "git_commit": commit,
+            "resolved_model_config": resolved_model_config,
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
+        }
+
+    if resume:
+        if not resume_path.is_file():
+            raise FileNotFoundError(f"Resume checkpoint does not exist: {resume_path}")
+        resume_state = torch.load(resume_path, map_location=device, weights_only=False)
+        if resume_state.get("run_fingerprint") != run_fingerprint:
+            raise ValueError(
+                "Resume fingerprint differs from the current data/config/code fingerprint."
+            )
+        model.load_state_dict(resume_state["model_state_dict"])
+        optimizer.load_state_dict(resume_state["optimizer_state_dict"])
+        if scaler is not None and resume_state.get("scaler_state_dict") is not None:
+            scaler.load_state_dict(resume_state["scaler_state_dict"])
+        completed_epoch = int(resume_state["epoch"])
+        start_epoch = completed_epoch + 1
+        best_val_mae = float(resume_state["best_validation_sequence_macro_mae"])
+        best_epoch = int(resume_state["best_epoch"])
+        epochs_without_improvement = int(resume_state["epochs_without_improvement"])
+        rng_state = resume_state["rng_state"]
+        random.setstate(rng_state["python"])
+        np.random.set_state(rng_state["numpy"])
+        torch.set_rng_state(rng_state["torch"])
+        if device.type == "cuda" and rng_state.get("cuda"):
+            torch.cuda.set_rng_state_all(rng_state["cuda"])
+        if history_path.is_file():
+            history = [
+                json.loads(line)
+                for line in history_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+    elif resume_path.exists():
+        raise FileExistsError(
+            f"{resume_path} already exists. Pass resume=True or choose a new output directory."
+        )
+
+    history_mode = "a" if resume else "w"
+    with history_path.open(history_mode, encoding="utf-8") as history_file:
+        for epoch in range(start_epoch, epochs + 1):
             train_loss = _train_one_epoch(
                 model,
                 train_loader,
@@ -280,55 +642,93 @@ def train_tiny_cnn(
                 val_dataset,
                 device=device,
                 batch_size=batch_size,
+                num_workers=num_workers,
             )
             val_metrics = regression_metrics(val_true, val_pred)
+            validation_sequence_ids = (
+                np.asarray(cache["sequence_id"])[val_idx] if "sequence_id" in cache.files else None
+            )
+            validation_sequence_macro_mae = _sequence_macro_mae(
+                val_true,
+                val_pred,
+                validation_sequence_ids,
+            )
             row = {
                 "epoch": epoch,
                 "train_loss": train_loss,
                 "validation": val_metrics,
+                "validation_sequence_macro_mae": validation_sequence_macro_mae,
                 "validation_seconds": val_seconds,
             }
             history.append(row)
             history_file.write(json.dumps(row, sort_keys=True) + "\n")
             history_file.flush()
-            if val_metrics["mae_s"] < best_val_mae:
-                best_val_mae = val_metrics["mae_s"]
+            improvement_threshold = (
+                best_val_mae * (1.0 - early_stopping_min_delta_relative)
+                if np.isfinite(best_val_mae)
+                else float("inf")
+            )
+            if validation_sequence_macro_mae < improvement_threshold:
+                best_val_mae = validation_sequence_macro_mae
                 best_epoch = epoch
-                torch.save(
-                    {
-                        "model_state_dict": model.state_dict(),
-                        "model_name": model_name,
-                        "epoch": epoch,
-                        "checkpoint_role": "best",
-                        "checkpoint_selected_by": "validation_mae",
-                        "cache_path": str(cache_path),
-                        "seed": seed,
-                        "pretrained_encoder": pretrained_encoder,
-                        "in_channels": int(x.shape[1]),
-                    },
+                epochs_without_improvement = 0
+                _atomic_torch_save(
+                    checkpoint_payload(
+                        epoch=epoch,
+                        role="best",
+                        selected_by="validation_sequence_macro_mae",
+                    ),
                     best_path,
                 )
+            else:
+                epochs_without_improvement += 1
 
-    torch.save(
-        {
-            "model_state_dict": model.state_dict(),
-            "model_name": model_name,
-            "epoch": epochs,
-            "checkpoint_role": "last",
-            "checkpoint_selected_by": "final_epoch",
-            "cache_path": str(cache_path),
-            "seed": seed,
-            "pretrained_encoder": pretrained_encoder,
-            "in_channels": int(x.shape[1]),
-        },
+            completed_epoch = epoch
+            resume_payload = checkpoint_payload(
+                epoch=epoch,
+                role="resume",
+                selected_by="latest_completed_epoch",
+            )
+            resume_payload.update(
+                {
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "scaler_state_dict": scaler.state_dict() if scaler is not None else None,
+                    "best_validation_sequence_macro_mae": best_val_mae,
+                    "best_epoch": best_epoch,
+                    "epochs_without_improvement": epochs_without_improvement,
+                    "rng_state": {
+                        "python": random.getstate(),
+                        "numpy": np.random.get_state(),
+                        "torch": torch.get_rng_state(),
+                        "cuda": torch.cuda.get_rng_state_all() if device.type == "cuda" else [],
+                    },
+                }
+            )
+            _atomic_torch_save(resume_payload, resume_path)
+
+            if (
+                early_stopping_patience > 0
+                and epoch >= early_stopping_min_epochs
+                and epochs_without_improvement >= early_stopping_patience
+            ):
+                stopped_early = True
+                break
+
+    _atomic_torch_save(
+        checkpoint_payload(
+            epoch=completed_epoch,
+            role="last",
+            selected_by="early_stopping" if stopped_early else "final_epoch",
+        ),
         last_path,
     )
     checkpoint = torch.load(best_path, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["model_state_dict"])
 
     split_results: dict[str, Any] = {}
-    predictions: dict[str, list[float]] = {}
-    targets: dict[str, list[float]] = {}
+    predictions: dict[str, np.ndarray] = {}
+    targets: dict[str, np.ndarray] = {}
+    prediction_metadata: dict[str, dict[str, np.ndarray]] = {}
     for split_name in evaluation_splits:
         dataset = datasets[split_name]
         y_true, y_pred, seconds = _evaluate_model(
@@ -336,15 +736,20 @@ def train_tiny_cnn(
             dataset,
             device=device,
             batch_size=batch_size,
+            num_workers=num_workers,
         )
-        split_results[split_name] = {
-            "count": int(y_true.shape[0]),
-            "metrics": regression_metrics(y_true, y_pred),
-            "seconds": seconds,
-        }
-        predictions[split_name] = y_pred.astype(float).tolist()
-        targets[split_name] = y_true.astype(float).tolist()
+        metadata = _prediction_metadata(cache, split_indices[split_name])
+        split_results[split_name] = _split_evaluation(
+            y_true=y_true,
+            y_pred=y_pred,
+            seconds=seconds,
+            metadata=metadata,
+        )
+        predictions[split_name] = y_pred
+        targets[split_name] = y_true
+        prediction_metadata[split_name] = metadata
 
+    predictions_path = output / "predictions.npz"
     summary: dict[str, Any] = {
         "model": f"{model_tag}_voxel_supervised",
         "model_name": model_name,
@@ -352,17 +757,29 @@ def train_tiny_cnn(
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "downstream_seed": seed,
         "pretrain_seed": (
             pretrained_encoder.get("source_seed") if pretrained_encoder is not None else None
         ),
         "epochs": epochs,
+        "epochs_completed": completed_epoch,
+        "stopped_early": stopped_early,
         "batch_size": batch_size,
+        "num_workers": num_workers,
         "learning_rate": learning_rate,
         "weight_decay": weight_decay,
+        "early_stopping": {
+            "monitor": "validation_sequence_macro_mae",
+            "patience": early_stopping_patience,
+            "min_epochs": early_stopping_min_epochs,
+            "min_delta_relative": early_stopping_min_delta_relative,
+            "best_value": best_val_mae,
+        },
+        "resume_checkpoint": resume_path.as_posix(),
         "pretrained_encoder": pretrained_encoder,
         "freeze_encoder": freeze_encoder,
         "train_fraction": train_fraction,
@@ -376,19 +793,29 @@ def train_tiny_cnn(
         "last_checkpoint": last_path.as_posix(),
         "elapsed_seconds": time.perf_counter() - start_time,
         "splits": split_results,
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "subset_manifest_sha256": subset_sha256,
+        "navigation_mode": navigation_mode,
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "git_commit": commit,
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
+        "final_test_opened": False,
+        "predictions_path": predictions_path.as_posix(),
+        "prediction_identity_fields": sorted(
+            {field for split_metadata in prediction_metadata.values() for field in split_metadata}
+        ),
     }
+    _save_prediction_artifact(
+        predictions_path,
+        evaluation_splits=evaluation_splits,
+        predictions=predictions,
+        targets=targets,
+        metadata=prediction_metadata,
+    )
     write_structured(metrics_path, summary)
-    prediction_arrays: dict[str, np.ndarray] = {}
-    for split_name in evaluation_splits:
-        prediction_arrays[f"{split_name}_pred"] = np.array(
-            predictions[split_name],
-            dtype=np.float32,
-        )
-        prediction_arrays[f"{split_name}_true"] = np.array(
-            targets[split_name],
-            dtype=np.float32,
-        )
-    np.savez(ensure_parent(output / "predictions.npz"), **prediction_arrays)
     return summary
 
 
@@ -399,19 +826,27 @@ def evaluate_supervised_checkpoint(
     output_path: str | Path | None = None,
     batch_size: int = 64,
     device_name: str = "auto",
-    evaluation_splits: tuple[str, ...] = ("test",),
+    evaluation_splits: tuple[str, ...] = ("validation",),
     model_name: str | None = None,
+    allow_final_test_evaluation: bool = False,
 ) -> dict[str, Any]:
     """Evaluate a saved supervised TTC checkpoint without retraining."""
 
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
+    if not allow_final_test_evaluation and any(
+        "test" in s or "CPLA-high" in s for s in evaluation_splits
+    ):
+        raise ValueError(
+            "Evaluation on test or CPLA-high splits requires allow_final_test_evaluation=True."
+        )
     if batch_size <= 0:
         msg = "batch_size must be positive."
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
@@ -425,18 +860,13 @@ def evaluate_supervised_checkpoint(
         split_name: _split_indices(split, split_name) for split_name in available_splits
     }
     missing_eval_splits = [
-        split_name
-        for split_name in evaluation_splits
-        if split_indices[split_name].size == 0
+        split_name for split_name in evaluation_splits if split_indices[split_name].size == 0
     ]
     if missing_eval_splits:
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     checkpoint_model_name = str(checkpoint.get("model_name", "tiny-cnn"))
     selected_model_name = model_name or checkpoint_model_name
@@ -454,8 +884,9 @@ def evaluate_supervised_checkpoint(
     model.load_state_dict(state)
 
     split_results: dict[str, Any] = {}
-    predictions: dict[str, list[float]] = {}
-    targets: dict[str, list[float]] = {}
+    predictions: dict[str, np.ndarray] = {}
+    targets: dict[str, np.ndarray] = {}
+    prediction_metadata: dict[str, dict[str, np.ndarray]] = {}
     for split_name in evaluation_splits:
         dataset = VoxelCacheDataset(x, y_log, split_indices[split_name])
         y_true, y_pred, seconds = _evaluate_model(
@@ -464,13 +895,16 @@ def evaluate_supervised_checkpoint(
             device=device,
             batch_size=batch_size,
         )
-        split_results[split_name] = {
-            "count": int(y_true.shape[0]),
-            "metrics": regression_metrics(y_true, y_pred),
-            "seconds": seconds,
-        }
-        predictions[split_name] = y_pred.astype(float).tolist()
-        targets[split_name] = y_true.astype(float).tolist()
+        metadata = _prediction_metadata(cache, split_indices[split_name])
+        split_results[split_name] = _split_evaluation(
+            y_true=y_true,
+            y_pred=y_pred,
+            seconds=seconds,
+            metadata=metadata,
+        )
+        predictions[split_name] = y_pred
+        targets[split_name] = y_true
+        prediction_metadata[split_name] = metadata
 
     summary: dict[str, Any] = {
         "checkpoint": Path(checkpoint_path).as_posix(),
@@ -489,25 +923,28 @@ def evaluate_supervised_checkpoint(
         "cache": str(cache_path),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "model_name": selected_model_name,
         "batch_size": batch_size,
         "evaluation_splits": list(evaluation_splits),
         "splits": split_results,
+        "final_test_opened": allow_final_test_evaluation,
+        "prediction_identity_fields": sorted(
+            {field for split_metadata in prediction_metadata.values() for field in split_metadata}
+        ),
     }
     if output_path is not None:
         output = ensure_parent(output_path)
+        predictions_path = output.with_suffix(".predictions.npz")
+        summary["predictions_path"] = predictions_path.as_posix()
+        _save_prediction_artifact(
+            predictions_path,
+            evaluation_splits=evaluation_splits,
+            predictions=predictions,
+            targets=targets,
+            metadata=prediction_metadata,
+        )
         write_structured(output, summary)
-        prediction_arrays: dict[str, np.ndarray] = {}
-        for split_name in evaluation_splits:
-            prediction_arrays[f"{split_name}_pred"] = np.array(
-                predictions[split_name],
-                dtype=np.float32,
-            )
-            prediction_arrays[f"{split_name}_true"] = np.array(
-                targets[split_name],
-                dtype=np.float32,
-            )
-        np.savez(output.with_suffix(".predictions.npz"), **prediction_arrays)
     return summary

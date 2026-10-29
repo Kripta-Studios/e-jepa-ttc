@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "training_commit", "microbatch", "accumulation", "updates", "a5_producer_seed", "fixed_final_update"],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_training_lock_v1"}, "schema_version": {"const": "1.0"}, "evidence_type": {"const": "prospective_training_lock"},
+    "code_commit": {"type": "string"}, "protocol_version": {"type": "string"}, "protocol_sha256": {"type": "string"}, "created_at": {"type": "string"}, "artifact_sha256": {"type": "string"},
+    "training_commit": {"type": "string"}, "base_commit": {"type": "string"}, "x3_commit": {"type": "string"}, "protocol_path": {"type": "string"}, "handoff_protocol_sha256": {"type": "string"},
+    "microbatch": {"enum": [4, 8]}, "accumulation": {"enum": [8, 16]}, "updates": {"const": 3000}, "seeds": {"const": [7, 13, 23]}, "a5_producer_seed": {"const": 7}, "device": {"type": "string"},
+    "python": {"type": "string"}, "python_executable": {"type": "string"}, "torch": {"type": "string"}, "cuda_runtime": {"type": ["string", "null"]}, "cuda_available": {"type": "boolean"}, "gpu": {"type": ["string", "null"]}, "host": {"type": "string"}, "authorization": {"type": "string"}, "outer_dev_checkpoint_selection": {"const": false}, "fixed_final_update": {"const": 3000}
+  }, "additionalProperties": false
+}

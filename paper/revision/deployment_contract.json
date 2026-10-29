@@ -1,0 +1,279 @@
+{
+  "schema": "phase_ttc_deployment_contract_projection_v1",
+  "evidence_id": "R02",
+  "evidence_kind": "sanitized reproducibility metadata projection; not a new experiment or model run",
+  "scope": "Final TRAIN40 signed output map and the exact L40 250-update single-object paced replay",
+  "derivation": "Read-only extraction from the cited source and original run receipts; no model loading, inference, fitting or tuning",
+  "phase_output_contract": {
+    "phase_coordinate": "phi(T) = -log1p(-d/T)",
+    "anchor_seconds": 0.1,
+    "forward_input_domain": "Finite T < 0 or T > 0.1 seconds",
+    "registered_minimum_phase_expression": "-log(2) + 1e-6",
+    "registered_minimum_phase": -0.6931461805599453,
+    "registered_maximum_phase": 8.0,
+    "inverse_map": [
+      "phi_c = clamp(raw_location, -log(2)+1e-6, 8)",
+      "q = -expm1(-phi_c) / 0.1",
+      "s = -1 if q < 0 else +1",
+      "T_emitted = s / max(abs(q), 1/60)"
+    ],
+    "inverse_ttc_magnitude_floor_per_second": 0.016666666666666666,
+    "maximum_emitted_ttc_magnitude_seconds": 60.0,
+    "zero_phase_emits_ttc_seconds": 60.0,
+    "nonfinite_input_policy": "Reject nonfinite phase before clamping",
+    "point_phase": "emitted_phase(raw_location) = ttc_to_phase(phase_to_ttc(raw_location))",
+    "point_phase_note": "The reported point phase is recomputed after finite-TTC saturation; it is not merely the clipped raw location.",
+    "final_fusion_location": "raw_location = RGB_raw_location + 0.03 * correction[0]",
+    "final_fusion_widths": "widths = 0.03 * softplus(RGB_width_logits + correction[1:3])",
+    "phase_interval_outputs": {
+      "q10": "clamp(raw_location - widths[0], MIN_PHASE, MAX_PHASE)",
+      "q90": "clamp(raw_location + widths[1], MIN_PHASE, MAX_PHASE)"
+    },
+    "interpretation": "The registered phase limits are numerical constants. Learned widths form separately clamped phase-interval endpoints; neither those endpoints nor finite TTC saturation establishes calibrated collision probabilities or measured 60-second collision times.",
+    "source_path": "src/e_jepa_ttc/simplex_t/phase.py",
+    "source_sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "L40_runtime": {
+    "recorded_status": "COMPLETE",
+    "recorded_git_commit": "df8837f894261fe625ebf86e2c59fe4679d20637",
+    "hardware": {
+      "gpu_product": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "cpu_model": null,
+      "gpu_driver_version": null,
+      "unrecorded_fields_note": "CPU model and GPU driver version are not recorded in the cited L40 summary or binding; current-host values are not substituted."
+    },
+    "software": {
+      "python": "3.11.15",
+      "torch": "2.11.0+cu128",
+      "cuda_version_recorded": "12.8",
+      "cuda_version_field": "torch.version.cuda; PyTorch CUDA build, not GPU driver version",
+      "platform_recorded": "Windows-10-10.0.26200-SP0"
+    },
+    "execution": {
+      "precision": "FP32_TF32_OFF",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false,
+      "cudnn_benchmark": false,
+      "torch_cpu_threads": 2,
+      "rgb_workers": 8,
+      "queue_capacity": 2,
+      "backend": "prefix",
+      "event_query_graphs": true,
+      "event_normalization": "topk",
+      "rgb_feature_cache": true,
+      "shared_rgb_images": false,
+      "transport_reuse": "reverse-summaries",
+      "overlap_event_with_rgb_preparation": true,
+      "scheduler": {
+        "wait_strategy": "sleep",
+        "wait_primitive": "time.sleep",
+        "python_version": "3.11.15",
+        "python_implementation": "CPython",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "deadline_clock": "time.perf_counter_ns",
+        "clock_implementation": "QueryPerformanceCounter()",
+        "clock_monotonic": true,
+        "clock_adjustable": false,
+        "clock_resolution_seconds": 1e-07,
+        "sleep_stop_poll_seconds": 0.01,
+        "deadlines_absolute": true,
+        "busy_spin": false,
+        "scheduler_lateness_subtracted": false
+      }
+    },
+    "population": {
+      "sequence": "CPLA-low",
+      "objects": 1,
+      "scheduled_updates": 250,
+      "rate_hz": 50.0,
+      "offered_duration_seconds": 5.0,
+      "actual_wall_duration_seconds": 5.0493202,
+      "actual_wall_duration_includes_source_finalize_and_join": true,
+      "last_successful_all_object_ttc_duration_seconds": 5.0036785
+    },
+    "boundary": {
+      "scope": "PACED_PRELOADED_RAW_CPU_ARRIVALS_NOT_PHYSICAL_SENSOR",
+      "primary_clock": "scheduled arrival to all required host TTC outputs",
+      "secondary_clock": "actual RAW observation availability to all required host TTC outputs",
+      "initialization_excluded": "preceding 600ms, model loading, synthetic shape priming",
+      "source_warmup_excluded": "RAW frames available by first_anchor-20000us",
+      "disk_reads": "RAW preloaded before measured arrivals",
+      "precomputed_representations": false,
+      "unexpected_shapes_remain_inside_update_clock": true,
+      "physical_sensor_claim": false,
+      "sustained_60_second_service_claim": false
+    },
+    "excluded_initialization": {
+      "raw_preload_seconds": 2.7692391999880783,
+      "model_and_service_seconds": 0.5157925999956205,
+      "synthetic_shape_priming_seconds": 12.095422700047493,
+      "history_initialization_seconds": 0.1315271999919787,
+      "history_sensor_interval_us": [
+        16130664,
+        16730664
+      ],
+      "history_sensor_duration_us": 600000,
+      "initial_raw_bytes": 45897654,
+      "source_warmup_wall_seconds": 0.0513519,
+      "source_warmup_frame_freeze_seconds": 0.051084500097204,
+      "source_warmup_frames": 13,
+      "source_warmup_cutoff_us": 16730664,
+      "source_warmup_frame_bytes": 89856000,
+      "timing_note": "Separate recorded intervals; no aggregate startup time is inferred."
+    },
+    "synthetic_priming": {
+      "scope": "EXPLICIT_SYNTHETIC_STARTUP_ONLY_NO_RAW_OR_FUTURE_DATA",
+      "status": "COMPLETE",
+      "layout_count": 7,
+      "rgb_layouts": [
+        {
+          "rgb_observations": 0,
+          "rgb_steps": 0
+        },
+        {
+          "rgb_observations": 1,
+          "rgb_steps": 2
+        },
+        {
+          "rgb_observations": 1,
+          "rgb_steps": 3
+        },
+        {
+          "rgb_observations": 2,
+          "rgb_steps": 3
+        },
+        {
+          "rgb_observations": 3,
+          "rgb_steps": 3
+        },
+        {
+          "rgb_observations": 4,
+          "rgb_steps": 3
+        },
+        {
+          "rgb_observations": 5,
+          "rgb_steps": 3
+        }
+      ],
+      "event_observations": 4,
+      "event_steps": 3,
+      "object_counts": [
+        1
+      ],
+      "targets_read": false,
+      "optimizer_updates": 0,
+      "mixed_rgb_availability_covered": true,
+      "event_early_launch_path_exercised": false,
+      "nonoverlapping_multi_observation_rgb_primed": false,
+      "numerical_parity_admitted_by_priming": false
+    },
+    "raw_preload_metadata": {
+      "scope": "PACED_PRELOADED_RAW_CPU_ARRIVALS_NOT_PHYSICAL_SENSOR",
+      "preload_seconds": 2.7692391999880783,
+      "raw_event_bytes": 510984890,
+      "raw_rgb_bytes": 781056000,
+      "archive_bytes": 1293321168,
+      "token_ring_upper_bound_bytes": 110592000,
+      "live_payload_upper_bound_bytes": 671088640,
+      "scratch_upper_bound_bytes": 536870912,
+      "source_total_upper_bound_bytes": 2611872720,
+      "max_total_bytes": 3221225472,
+      "memory_exclusions": "Python object overhead, HDF5 internals, model/GPU storage and result receipts",
+      "event_archive_rows": 39306530,
+      "rgb_archive_frames": 113,
+      "future_raw_bytes_preloaded_private_to_feeder": true,
+      "future_tokens_or_hashes_prepared": false,
+      "representations_precomputed": false,
+      "physical_sensor_claim": false
+    },
+    "verification": {
+      "separate_parity_performed": true,
+      "separate_parity_passed": true,
+      "separate_parity_scope": "SEPARATE_ORIGINAL_ORACLE_ALL_SCHEDULED_UPDATES_AND_OBJECTS",
+      "parity_relative_tolerance": 1e-05,
+      "parity_absolute_tolerance": 1e-05,
+      "original_files_unchanged": true
+    }
+  },
+  "model_identity": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3",
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "candidate_metadata_exactly_matches_completed_competition_run": true,
+    "comparison_scope": "Exact equality of the candidate record, including component/normalizer digests, model seal, recipe hash and portable-path manifest hash; not equality of sensor preprocessing or runtime protocols.",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+    },
+    "L40_binding_sha256": "d0beb4917bad5451606995146c80b8d1b1596b75e7416f8eb53e0c2e22d4a706",
+    "completed_competition_freeze_sha256": "fab56dfcd99d953a54067a2103faba49e8edb9d886c94e7bc06d805877bf6324"
+  },
+  "sources": [
+    {
+      "path": "artifacts/train40_runtime_council_20261028/paced/memory_cache_overlap_reverse1_250_v1/summary.json",
+      "sha256": "c27d5d980f2bb1c163b073f0f71d66b3aab887ce73f98c6b19c3d6ef4bcf322d",
+      "role": "L40 original paced-run receipt"
+    },
+    {
+      "path": "artifacts/train40_runtime_council_20261028/paced/memory_cache_overlap_reverse1_250_v1/binding.json",
+      "sha256": "d0beb4917bad5451606995146c80b8d1b1596b75e7416f8eb53e0c2e22d4a706",
+      "role": "L40 original hardware, model and execution binding"
+    },
+    {
+      "path": "output/evttc_competition_20261028_v2/RUN_FREEZE.json",
+      "sha256": "fab56dfcd99d953a54067a2103faba49e8edb9d886c94e7bc06d805877bf6324",
+      "role": "Completed competition-run frozen-model identity"
+    },
+    {
+      "path": "operational/final_refit/training.py",
+      "sha256": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+      "role": "M22 final anchored fusion output map",
+      "matches_L40_executed_source_binding": true
+    },
+    {
+      "path": "operational/final_refit/features.py",
+      "sha256": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+      "role": "M22 final feature interface",
+      "matches_L40_executed_source_binding": true
+    },
+    {
+      "path": "src/e_jepa_ttc/simplex_t/phase.py",
+      "sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+      "role": "Native finite signed phase-to-TTC output contract",
+      "matches_L40_executed_source_binding": true
+    },
+    {
+      "path": "scripts/benchmark_train40_paced.py",
+      "git_commit": "df8837f894261fe625ebf86e2c59fe4679d20637",
+      "sha256": "f0fb06f37595d340b8b6da3bdad9e950aad648739458b22b04c1d393928e50cc",
+      "role": "Executed paced-run setup: CPU threads, precision and backend settings",
+      "matches_L40_executed_source_binding": true,
+      "source_version": "Git object at recorded execution commit; current working-tree contents are not substituted"
+    },
+    {
+      "path": "operational/train40_runtime/priming.py",
+      "git_commit": "df8837f894261fe625ebf86e2c59fe4679d20637",
+      "sha256": "e30622bb27c1b73a2b261ea8475c596920059136ea2a12ee4a26295f9ca3abad",
+      "role": "Executed supported-shape priming protocol",
+      "matches_L40_executed_source_binding": true,
+      "source_version": "Git object at recorded execution commit; current working-tree contents are not substituted"
+    }
+  ],
+  "limitations": [
+    "The complete nine-component parameter and peak-memory inventory is outside this projection.",
+    "The paced replay uses one object and five seconds of preloaded CPU RAW arrivals; metadata does not establish physical-camera or sustained multi-object deployment.",
+    "CPU model and GPU driver version were not recorded in the cited original receipts."
+  ]
+}

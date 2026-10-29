@@ -1,0 +1,48 @@
+artifact_type: sam_train_bbox_prompt_multisequence_audit_protocol_v1
+dataset:
+  public_train_only: true
+  expected_parquet_sha256: 03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6
+  sequence_ids:
+    - 2cyv0Oedzg
+    - 5ilM1PX2vz
+    - 6h5yRW2LGc
+    - OBneIVg4Cw
+    - OYgB6RGWcq
+    - WbCh1DRerJ
+    - mHGFBekt7X
+    - qGsgzl4Q8B
+    - t79dBxj1WS
+  samples_per_sequence: 4
+  selector: evenly_spaced_indices_after_sample_token_sort
+  endpoint_indices: [0, 1]
+  box_index: 0
+  ttc_columns_read: false
+teacher:
+  repo_id: facebook/sam-vit-large
+  revision: 6851e0441005b0fb96f2cc4dfac472f3d1b14af1
+  expected_weights_sha256: a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81
+  selection: maximum_predicted_iou
+  threshold_logit: 0.0
+  local_files_only: true
+runtime:
+  device: cuda
+  precision: bf16
+  maximum_peak_vram_mib: 9216
+  maximum_mean_inference_seconds: 1.0
+gate:
+  expected_pair_count: 36
+  expected_endpoint_count: 72
+  require_all_finite: true
+  minimum_iou_score_p10: 0.5
+  minimum_bbox_mask_iou_median: 0.30
+  maximum_degenerate_endpoint_fraction: 0.10
+  minimum_temporal_area_ratio_pearson: 0.30
+  minimum_temporal_area_ratio_sign_accuracy: 0.60
+  degenerate_mask_fraction_minimum: 0.001
+  degenerate_mask_fraction_maximum: 0.75
+claim_boundary:
+  purpose: train-only teacher feasibility, not architecture or TTC selection
+  modality_if_promoted: event-only inference with RGB distillation
+  validation_teacher_generation_allowed: false
+  private_test_opened: false
+  ttc_labels_used: false

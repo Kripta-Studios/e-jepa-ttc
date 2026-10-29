@@ -1,0 +1,41 @@
+{
+  "population": 18422,
+  "schema_ok": true,
+  "shape": {
+    "expert_phase": [
+      18422,
+      3
+    ],
+    "features": [
+      18422,
+      8,
+      17
+    ],
+    "group_id": [
+      18422
+    ],
+    "mass": [
+      18422
+    ],
+    "role": [
+      18422
+    ],
+    "sample_token": [
+      18422
+    ],
+    "target_phase": [
+      18422
+    ],
+    "timing": [
+      18422,
+      8,
+      4
+    ],
+    "valid": [
+      18422,
+      8
+    ]
+  },
+  "target_max": 9.998320337526703,
+  "target_min": -9.999300591600209
+}

@@ -1,0 +1,29 @@
+{
+  "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+  "computed_under_seal": true,
+  "external_submission": false,
+  "fallback_count": 0,
+  "inputs_sha256": "b78730abe68de7fbe06c6c98b25d5fa025c04d9303720b680ce0c0f575d2e526",
+  "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+  "physical_queries": 5805,
+  "population": 6762,
+  "predictions_sha256": "1176515e71a41210a21709845c11e3944076b982902288196d0e47dc725d4a44",
+  "private_targets_read": false,
+  "run_binding_sha256": "48657736aee79ff44dd82cc57414642ff4d9b394b6cbd1ff40ff237498d4d576",
+  "schema": "scientific_oof_test12_prediction_receipt_v1",
+  "staged_sequence_completion_sha256": {
+    "3RUZHwnCwK": "a83f3556559fed7228b6370c25fb706c7a7df3275f791e5f480500bc6447f89a",
+    "71wUSQYMpk": "bf8ef890588b5682d2d0212629753ce24fcc074f51b3b65d4502c14ef60f84cb",
+    "89fvtHGHx2": "edf46812793d7a8966a5d0ba7a2e8027df39612662272c31afddeee728ddc696",
+    "HHJe79eY2J": "75aedcf0b6bba49a4335b6d730c75e7e72beb18d2a5c3929282526695bdf3f55",
+    "JcjcDPISuL": "f1f8af2040b36707aa9bc77f5b4b658342e239fde71bb283a16dc76f32565ee3",
+    "M8I2irMvY7": "23e3683194a303e39200794afc242d908e4b2c5df1933b2e7530f3203a6cb815",
+    "Mu6kaUjIz3": "1be921c67210e6a1f55518b9bc6d34e6a3956b7e4801b4bcba97514c01ff0e4d",
+    "V741M41vPW": "7355a81cdb051974068d1eac94022023fb4c58afed24d804e5afa8f52384fc49",
+    "kafYzX6kJ4": "e632a2d143ee3b38d88f7a95e6afe682d09dcae7ecbed417cc5e23b9771c993c",
+    "nP4MRdpEeO": "a16e5bbb73d7aefdfdc2bf9dfb5bfc90a7b4e5fc82cec89b59eceb9c18f87b74",
+    "r0PXQOpCA6": "004bbdc7dba4d53e1b4a122901c9aab0c141b53562c4c463174410af764ccef3",
+    "vhjB5OViA7": "0da3de46204f8934d0ba5fbc92791b50b162ac4a1c4749378d19a338e02bd735"
+  },
+  "status": "COMPLETE"
+}

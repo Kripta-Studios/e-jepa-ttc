@@ -1,0 +1,14 @@
+{
+  "V13_training_or_selection": false,
+  "completed_queries": 32,
+  "cost_scope": "CPU_native_input_plus_producers_and_diagnostic_capture_not_isolated_benchmark",
+  "max_feature_abs_cpu_vs_saved_gpu": 0.0001201629638671875,
+  "max_phase_abs_cpu_vs_saved_gpu": 2.60770320892334e-07,
+  "new_scientific_weights": false,
+  "optimizer_updates": 0,
+  "producer_observations": 512,
+  "raw_input_route": "native_label_free_exact_no_warp",
+  "requested_queries": 32,
+  "seconds": 679.8294483997743,
+  "status": "COMPLETE"
+}

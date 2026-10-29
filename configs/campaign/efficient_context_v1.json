@@ -1,0 +1,16 @@
+{
+  "schema": "efficient_context_campaign_v1",
+  "campaign": "EFFICIENT_CONTEXT_20261004",
+  "base_commit": "fd16d8102914537653622d3abf298b753120ea43",
+  "historical_root": "../e-jepa-ttc-v10-simplex-t-companion",
+  "new_output_root": "artifacts/efficient_context_20261004",
+  "policy": "docs/efficient_context_handoff_20261004/execution_policy.json",
+  "wide_slots": [0,2,4,6,9,11,13,15],
+  "wide_seeds": [7,13,23],
+  "wide_folds": [0,1,2],
+  "wide_updates": 2500,
+  "replication": {"delta_max": -1, "improved_sequences_min": 6, "finite_fraction": 1, "sign_delta_max": 0.005, "crucial_delta_max": 5},
+  "noninferiority_margin_mid": 2,
+  "garl_upstream_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+  "garl_config_blob": "555058f52e9fce72d0530f256d5d155b5b88f78f"
+}

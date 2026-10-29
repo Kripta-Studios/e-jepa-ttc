@@ -1,0 +1,128 @@
+{
+  "schema": "train40_transport_integration_qa_session_receipt_v1",
+  "recorded_at": "2026-10-28T10:12:19.458703+00:00",
+  "evidence_origin": "Previously observed exec_command/write_stdin tool outputs and child QA report; saved after execution, no tests rerun while GPU reserved",
+  "hash_snapshot_commit": "fcac4c1f5fe04677d8f0fceb6234f98ac17ebfee",
+  "baseline_hashes": {
+    "operational/train40_runtime/transport.py": {
+      "working_bytes_sha256": "9c156deddbc3cb29b9c14c3458a266554706016f191ac6bce6d0cb048a377c24",
+      "git_baseline_bytes_sha256": "9c156deddbc3cb29b9c14c3458a266554706016f191ac6bce6d0cb048a377c24",
+      "working_git_blob": "0b04cf4cd4f92714f0cecdee5e6224d9a729bccf",
+      "baseline_git_blob": "0b04cf4cd4f92714f0cecdee5e6224d9a729bccf",
+      "git_content_unchanged": true,
+      "bytes_identical": true
+    },
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": {
+      "working_bytes_sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+      "git_baseline_bytes_sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+      "working_git_blob": "1a4d252d26b814184fa6961af7a68e3cb178fbe9",
+      "baseline_git_blob": "1a4d252d26b814184fa6961af7a68e3cb178fbe9",
+      "git_content_unchanged": true,
+      "bytes_identical": true
+    },
+    "src/e_jepa_ttc/models/local_transport.py": {
+      "working_bytes_sha256": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d",
+      "git_baseline_bytes_sha256": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d",
+      "working_git_blob": "30aaa6e3d842f4e3fa6e34e239f9574a19b69f01",
+      "baseline_git_blob": "30aaa6e3d842f4e3fa6e34e239f9574a19b69f01",
+      "git_content_unchanged": true,
+      "bytes_identical": true
+    },
+    "tests/unit/test_train40_runtime_transport.py": {
+      "working_bytes_sha256": "45e27ebb2a012ff3973dbcc2486fef5dabe32983404c035f3e3ffa7d10108ed0",
+      "git_baseline_bytes_sha256": "45e27ebb2a012ff3973dbcc2486fef5dabe32983404c035f3e3ffa7d10108ed0",
+      "working_git_blob": "d13c6c8fdd40424f61d33faab3831ddc4a59e0bd",
+      "baseline_git_blob": "d13c6c8fdd40424f61d33faab3831ddc4a59e0bd",
+      "git_content_unchanged": true,
+      "bytes_identical": true
+    }
+  },
+  "tested_source_hashes_at_receipt": {
+    "operational/train40_runtime/producers.py": "c4af8d6512b248911f0f9deb7e437f14d94bf78a32f3834677b0780a9782f785",
+    "operational/train40_runtime/multiobject.py": "79937726fa1b85e38b8e1ede971f5e7b07916148d99ae85c5261b6c77e90461f",
+    "scripts/benchmark_train40_paced.py": "f0fb06f37595d340b8b6da3bdad9e950aad648739458b22b04c1d393928e50cc",
+    "tests/unit/test_train40_runtime_multiobject.py": "6b39b4d45ae2e60d0011bbe6b4c7dc7418a0535409f38743565645579688cdd1",
+    "tests/unit/test_train40_transport_reuse_integration.py": "73d5b9339ab09c5ab0518997da4988234dbaab37613eda838a1ca86012546e8d"
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "EJEPA_TRAIN40_CUDA_TESTS": "not enabled"
+  },
+  "regression": {
+    "argv": [
+      "../e-jepa-ttc/.venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "tests/unit/test_train40_runtime_producers.py",
+      "tests/unit/test_train40_runtime_transport.py",
+      "tests/unit/test_train40_runtime_compiled_transport.py",
+      "tests/unit/test_train40_runtime_multiobject.py",
+      "tests/unit/test_train40_runtime_multiobject_cache.py",
+      "tests/unit/test_train40_runtime_priming.py",
+      "tests/unit/test_train40_paced_runner.py",
+      "-q"
+    ],
+    "command_posix_display": "OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 ../e-jepa-ttc/.venv/Scripts/python.exe -m pytest tests/unit/test_train40_runtime_producers.py tests/unit/test_train40_runtime_transport.py tests/unit/test_train40_runtime_compiled_transport.py tests/unit/test_train40_runtime_multiobject.py tests/unit/test_train40_runtime_multiobject_cache.py tests/unit/test_train40_runtime_priming.py tests/unit/test_train40_paced_runner.py -q",
+    "tool_session_id": 85818,
+    "pytest_exit_code": 1,
+    "collected": 220,
+    "passed": 217,
+    "skipped": 1,
+    "failed_strict_xpass": 2,
+    "strict_xpass_cases": [
+      "tests/unit/test_train40_runtime_transport.py::test_model_view_preserves_all_outputs_and_frozen_state[True-False]",
+      "tests/unit/test_train40_runtime_transport.py::test_model_view_preserves_all_outputs_and_frozen_state[True-True]"
+    ],
+    "skipped_case": "tests/unit/test_train40_runtime_producers.py::test_first_changed_parallel_update_uses_independent_capture_workspaces",
+    "collection_confirmation": "220 tests collected in 4.72s"
+  },
+  "isolated_reproduction": {
+    "argv": [
+      "../e-jepa-ttc/.venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "tests/unit/test_train40_runtime_transport.py::test_model_view_preserves_all_outputs_and_frozen_state[True-False]",
+      "tests/unit/test_train40_runtime_transport.py::test_model_view_preserves_all_outputs_and_frozen_state[True-True]",
+      "-o",
+      "addopts=",
+      "-q"
+    ],
+    "command_posix_display": "OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 ../e-jepa-ttc/.venv/Scripts/python.exe -m pytest tests/unit/test_train40_runtime_transport.py::test_model_view_preserves_all_outputs_and_frozen_state[True-False] tests/unit/test_train40_runtime_transport.py::test_model_view_preserves_all_outputs_and_frozen_state[True-True] -o addopts='' -q",
+    "pytest_exit_code": 1,
+    "tool_command_exit_code": 0,
+    "tool_exit_explanation": "Same shell then ran successful collect-only and git diff --exit-code; pytest result is the explicit 2 failed output",
+    "collected": 2,
+    "failed_strict_xpass": 2,
+    "observed_summary": "2 failed in 2.39s"
+  },
+  "new_tests": {
+    "argv": [
+      "../e-jepa-ttc/.venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "tests/unit/test_train40_transport_reuse_integration.py",
+      "-q"
+    ],
+    "agent": "/root/council_numerics/summary_probe_tests",
+    "pytest_exit_code": 0,
+    "passed": 28,
+    "ruff": "clean",
+    "pyright": "0 errors, 0 warnings"
+  },
+  "combined_unique_cases": {
+    "total": 248,
+    "passed": 245,
+    "skipped": 1,
+    "failed_strict_xpass": 2
+  },
+  "production_static_qa": {
+    "ruff_check": "all checks passed",
+    "ruff_format_check": "3 files already formatted",
+    "pyright": "0 errors, 0 warnings, 0 informations",
+    "pyright_venvpath": "../e-jepa-ttc"
+  },
+  "unchanged_xfail_reason": "UNADMITTED adjacent-pair dedup changes batch shape; observed CPU pair_tokens differ bitwise. Keep exact assertion and final 1e-5 gate unchanged.",
+  "interpretation": "The unchanged experimental deduplicate=True checks XPASS on this two-thread CPU execution. Their sources and strict xfail marks were not modified. Runtime integration uses history_group_size=None and does not admit adjacent pair deduplication.",
+  "gpu_executed": false
+}

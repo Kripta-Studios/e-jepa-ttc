@@ -1,0 +1,749 @@
+{
+  "scope": "PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT",
+  "status": "FAILED",
+  "target_20_objects_50hz_demonstrated": false,
+  "complete_update_admitted": false,
+  "records": [
+    {
+      "objects": 1,
+      "index": 0,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CCRm-low-0-overlap-0:14350374",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 5.8032369613647464e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 6.410682678222657e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 5.9776692390441895e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 5.832042699970771,
+        "compiled_transport_graph": 133.2079323999933
+      },
+      "times_ms": {
+        "original_graph": [
+          20.3214,
+          20.5841,
+          21.0377,
+          20.7584,
+          21.0045,
+          21.918,
+          20.1148,
+          19.9345,
+          21.6966,
+          22.8417,
+          20.1223,
+          21.3041,
+          19.9386,
+          20.8149,
+          21.8556,
+          17.2978,
+          17.8292,
+          17.8493,
+          16.7863,
+          17.5962
+        ],
+        "compiled_transport_graph": [
+          10.7476,
+          12.5554,
+          10.459,
+          10.6327,
+          10.673,
+          10.3798,
+          11.46,
+          11.3292,
+          10.6324,
+          10.611,
+          10.7087,
+          10.5251,
+          11.5664,
+          10.7229,
+          10.3686,
+          9.3629,
+          9.6062,
+          9.7335,
+          9.3187,
+          9.8101
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 20.080299999999998,
+          "p50_ms": 20.45275,
+          "p95_ms": 21.964185,
+          "p99_ms": 22.666196999999997,
+          "min_ms": 16.7863,
+          "max_ms": 22.8417,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 7,
+          "at_least_20ms_count": 13,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 49.800052788055964
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 10.560160000000002,
+          "p50_ms": 10.6217,
+          "p95_ms": 11.61585,
+          "p99_ms": 12.367489999999998,
+          "min_ms": 9.3187,
+          "max_ms": 12.5554,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 94.69553491613762
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.873858036585937e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 5.8032369613647464e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 6.410682678222657e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 5.9776692390441895e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.9782238230506184e-07
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.643865034567654e-07
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.873858036585937e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 5.8032369613647464e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 6.410682678222657e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 5.9776692390441895e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 4.803236961364746,
+            "E_CTX_TRAIN40": 5.410682678222656,
+            "R_CTX_TRAIN40": 4.9776692390441895
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 4.803236961364746,
+              "E_CTX_TRAIN40": 5.410682678222656,
+              "R_CTX_TRAIN40": 4.977667808532715
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 4.8032355308532715,
+              "E_CTX_TRAIN40": 5.410681247711182,
+              "R_CTX_TRAIN40": 4.977667808532715
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 48,
+                "max_abs": 2.09808349609375e-05,
+                "max_relative": 0.0003495403544339194
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 9,
+                "max_abs": 6.146728992462158e-08,
+                "max_relative": 3.3472243142374185e-06
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 47,
+              "max_abs": 1.5735626220703125e-05,
+              "max_relative": 4.675409682773453e-05
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 7,
+              "max_abs": 3.166496753692627e-08,
+              "max_relative": 2.3678886992024324e-06
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 67,
+                "max_abs": 1.1444091796875e-05,
+                "max_relative": 0.0001747701772169597
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 11,
+                "max_abs": 5.774199962615967e-08,
+                "max_relative": 2.8764554052447805e-06
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            459.0570356398582,
+            301.70797026119465,
+            566.0329603286862,
+            408.6838949500226
+          ],
+          "rgb": [
+            746.0,
+            513.5,
+            896.0,
+            663.5
+          ]
+        }
+      ]
+    }
+  ],
+  "compiler_environment": {
+    "TRITON_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~2\\COMPIL~1\\GPU_ID~1\\triton_cache",
+    "TORCHINDUCTOR_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~2\\COMPIL~1\\GPU_ID~1\\inductor_cache",
+    "CUDA_PATH": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\backends\\nvidia",
+    "CC": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\runtime\\tcc\\tcc.exe"
+  },
+  "roi_helper_snapshot": {
+    "executed_sha256": "d0a040635aea9927006f7ffe3cc90112efaccc2323397cd1076a4f05ef12d710",
+    "helpers": {
+      "ObjectRegion": {
+        "source": "operational\\train40_runtime\\multiobject.py",
+        "source_sha256": "94a9d20acd264fefea001023dd40834279dbd6ba7ec5646c45562561f25f6095",
+        "helper_sha256": "064190546e527044190a3e4dc15f277ca64d049abf309b6ce7de91831fe8badf"
+      },
+      "RawRGBHistory": {
+        "source": "operational\\train40_runtime\\multiobject.py",
+        "source_sha256": "94a9d20acd264fefea001023dd40834279dbd6ba7ec5646c45562561f25f6095",
+        "helper_sha256": "590dabf6529542b11c73152c85cef3b69213c5a8ab8abcc5ae89fef9200fb2ba"
+      },
+      "read_raw_rgb_history": {
+        "source": "operational\\train40_runtime\\multiobject.py",
+        "source_sha256": "94a9d20acd264fefea001023dd40834279dbd6ba7ec5646c45562561f25f6095",
+        "helper_sha256": "65ab627ae4fee374dcba4946f56874168f0bbe857b423c95b9259eba92ddc9de"
+      },
+      "artificial_regions": {
+        "source": "scripts\\benchmark_train40_multiobject.py",
+        "source_sha256": "ae6d919586129c3bb9c4ad6ecf56e55bb067ee2f01056056f42ce4bf4907572f",
+        "helper_sha256": "3417535ba98af262e22987b747ed07a0b43e67d7049bf81df66cf5043e070915"
+      },
+      "reference_rgb": {
+        "source": "scripts\\benchmark_train40_multiobject.py",
+        "source_sha256": "ae6d919586129c3bb9c4ad6ecf56e55bb067ee2f01056056f42ce4bf4907572f",
+        "helper_sha256": "a17f52d06f90d97e3e021dbf51f664315a845f02d8aa28aa6c3a1d5195b9cb00"
+      }
+    }
+  },
+  "binding": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+    },
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "git_commit": "5598e3652329eca6b4b1f67ab3355fd92c95d0d6",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "python": "3.11.15",
+    "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "seed": 7,
+    "atol": 1e-05,
+    "rtol": 1e-05,
+    "event_endpoint_reuse": false,
+    "rgb_endpoint_reuse": true,
+    "rgb_object_chunk_size": 1,
+    "event_object_chunk_size": 1,
+    "population": "distinct translated real-sensor ROIs; object zero is preserved query",
+    "encoder": "original FP32 contiguous",
+    "precision": "FP32_TF32_OFF",
+    "compiler_options": {
+      "use_fast_math": false,
+      "force_same_precision": true,
+      "triton.cudagraphs": false
+    }
+  },
+  "error": "RuntimeError: Compiled producer graph lost its opaque transport operator",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\benchmark_train40_compiled_pipeline.py\", line 428, in run\n    summary[\"graphs\"] = {name: runtime.diagnostics() for name, runtime in variants.items()}\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\benchmark_train40_compiled_pipeline.py\", line 428, in <dictcomp>\n    summary[\"graphs\"] = {name: runtime.diagnostics() for name, runtime in variants.items()}\n                               ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\train40_runtime\\compiled_pipeline.py\", line 176, in diagnostics\n    raise RuntimeError(\"Compiled producer graph lost its opaque transport operator\")\nRuntimeError: Compiled producer graph lost its opaque transport operator\n",
+  "preservation": {
+    "passed": true,
+    "files": 602,
+    "changed": [],
+    "missing": []
+  }
+}

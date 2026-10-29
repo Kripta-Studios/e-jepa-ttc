@@ -1,0 +1,13 @@
+{
+  "include": [
+    "../../scripts/benchmark_train40_multiobject.py",
+    "../../tests/unit/test_train40_runtime_multiobject_runner.py"
+  ],
+  "extraPaths": ["../..", "../../src"],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none",
+  "venvPath": "../../../e-jepa-ttc",
+  "venv": ".venv"
+}

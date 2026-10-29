@@ -1,0 +1,245 @@
+{
+  "scope": "CPU synthetic fixtures only; no GPU admission",
+  "cases": [
+    {
+      "batch": 1,
+      "size": 32,
+      "radius": 1,
+      "kind": "random",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 1,
+      "size": 32,
+      "radius": 1,
+      "kind": "zero",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 1,
+      "size": 32,
+      "radius": 1,
+      "kind": "constant",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 1,
+      "size": 32,
+      "radius": 1,
+      "kind": "shift",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 4,
+      "size": 32,
+      "radius": 1,
+      "kind": "random",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 4,
+      "size": 32,
+      "radius": 1,
+      "kind": "zero",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 4,
+      "size": 32,
+      "radius": 1,
+      "kind": "constant",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 4,
+      "size": 32,
+      "radius": 1,
+      "kind": "shift",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 3,
+      "size": 16,
+      "radius": 2,
+      "kind": "random",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 3,
+      "size": 16,
+      "radius": 2,
+      "kind": "zero",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 3,
+      "size": 16,
+      "radius": 2,
+      "kind": "constant",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 3,
+      "size": 16,
+      "radius": 2,
+      "kind": "shift",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 2,
+      "size": 32,
+      "radius": 4,
+      "kind": "random",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 2,
+      "size": 32,
+      "radius": 4,
+      "kind": "zero",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 2,
+      "size": 32,
+      "radius": 4,
+      "kind": "constant",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    },
+    {
+      "batch": 2,
+      "size": 32,
+      "radius": 4,
+      "kind": "shift",
+      "reverse_volume_exact": true,
+      "fields_exact": {
+        "dx": true,
+        "dy": true,
+        "confidence_margin": true,
+        "entropy": true,
+        "valid": true,
+        "probability": true
+      }
+    }
+  ]
+}

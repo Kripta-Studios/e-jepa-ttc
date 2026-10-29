@@ -1,0 +1,18 @@
+model:
+  epsilon: 1.0e-6
+  feature_clip: 6.0
+  minimum_feature_scale: 1.0e-3
+
+train:
+  seed: 1818
+  descriptor_batch_size: 12
+  fold_count: 3
+  head_epochs: 160
+  learning_rate: 1.0e-2
+  weight_decay: 1.0e-3
+
+decision:
+  baseline_pearson_tolerance: 0.03
+  minimum_sequence_negative_accuracy_floor: 0.35
+  positive_accuracy_floor: 0.86
+  feature_validation_abs_pearson_support: 0.15

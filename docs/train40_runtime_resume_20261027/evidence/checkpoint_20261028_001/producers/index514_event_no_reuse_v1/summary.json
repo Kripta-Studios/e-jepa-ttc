@@ -1,0 +1,631 @@
+{
+  "scope": "PREPARED_GPU_MULTIOBJECT_PRODUCERS_PAIR_PHASE17_GUARDS_NO_SENSOR_H2D_CONTEXT",
+  "status": "COMPLETE",
+  "records": [
+    {
+      "objects": 1,
+      "unmodified_object_original_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-high:15900477",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 4.4168262481689454e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.00014049399375915529
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.8613023757934575e-05
+              }
+            }
+          }
+        ]
+      },
+      "capture_seconds": 5.822236699983478,
+      "status": "MEASURED",
+      "event_shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "rgb_shape": [
+        5,
+        3,
+        3,
+        128,
+        128
+      ],
+      "times_ms": {
+        "serial": [
+          17.8891,
+          18.8832
+        ],
+        "parallel": [
+          12.3829,
+          13.1163
+        ]
+      },
+      "latency_ms": {
+        "serial": {
+          "count": 2,
+          "mean_ms": 18.38615,
+          "p50_ms": 18.38615,
+          "p95_ms": 18.833495,
+          "p99_ms": 18.873258999999997,
+          "min_ms": 17.8891,
+          "max_ms": 18.8832,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 2,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 54.38876545660728
+        },
+        "parallel": {
+          "count": 2,
+          "mean_ms": 12.749600000000001,
+          "p50_ms": 12.749600000000001,
+          "p95_ms": 13.07963,
+          "p99_ms": 13.108966,
+          "min_ms": 12.3829,
+          "max_ms": 13.1163,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 2,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 78.43383321829704
+        }
+      },
+      "cold_vs_serial": {
+        "event_raw": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            4,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "event_experts": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            4,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "rgb_raw": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            5,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "rgb_experts": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            5,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        }
+      },
+      "serial_parallel": [
+        {
+          "event_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              4,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "event_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              4,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              5,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              5,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          }
+        },
+        {
+          "event_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              4,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "event_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              4,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_raw": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              5,
+              17
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          },
+          "rgb_experts": {
+            "passed": true,
+            "exact": true,
+            "shape": [
+              5,
+              3
+            ],
+            "nonfinite_pairs": 0,
+            "outside_tolerance": 0,
+            "different_elements": 0,
+            "max_abs": 0.0,
+            "max_relative": 0.0
+          }
+        }
+      ],
+      "original_producer_features": {
+        "event_raw": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            4,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "event_experts": {
+          "passed": true,
+          "exact": true,
+          "shape": [
+            4,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 0,
+          "max_abs": 0.0,
+          "max_relative": 0.0
+        },
+        "rgb_raw": {
+          "passed": true,
+          "exact": false,
+          "shape": [
+            5,
+            17
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 52,
+          "max_abs": 1.1444091796875e-05,
+          "max_relative": 9.806565495599304e-06
+        },
+        "rgb_experts": {
+          "passed": true,
+          "exact": false,
+          "shape": [
+            5,
+            3
+          ],
+          "nonfinite_pairs": 0,
+          "outside_tolerance": 0,
+          "different_elements": 8,
+          "max_abs": 2.60770320892334e-08,
+          "max_relative": 5.13410615321889e-07
+        }
+      },
+      "final_ttc_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-high:15900477/capacity-object-0",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 4.4168262481689454e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.00014049399375915529
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.8613023757934575e-05
+              }
+            }
+          }
+        ]
+      },
+      "serial_parallel_ttc": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-high:15900477/capacity-object-0",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 4.4168262481689454e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.00014049399375915529
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.8613023757934575e-05
+              }
+            }
+          }
+        ]
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 3.4168262481689453,
+            "E_CTX_TRAIN40": 13.049399375915527,
+            "R_CTX_TRAIN40": 2.861302375793457
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-high:15900477/capacity-object-0",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 3.4168262481689453,
+            "E_CTX_TRAIN40": 13.049399375915527,
+            "R_CTX_TRAIN40": 2.861302375793457
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "EXTENDED:CPNAO-high:15900477/capacity-object-0",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "peak_allocated_bytes": 118744576,
+      "peak_reserved_bytes": 308281344,
+      "graphs": [
+        {
+          "producer": "E_EXPERT_BLOCK",
+          "shape": [
+            4,
+            3,
+            12,
+            128,
+            128
+          ],
+          "setup_seconds": 2.3020127000054345,
+          "replays": 9,
+          "trace_warnings": [
+            "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+            "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+          ],
+          "initial_exact_parity": true,
+          "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+          "jit_optimized_execution": false,
+          "endpoint_reuse": false,
+          "endpoint_reuse_fallback_calls": 0,
+          "endpoint_reuse_by_modality": {
+            "E": false,
+            "R": true
+          },
+          "history_group_size": 4,
+          "precision": "FP32_TF32_DISABLED"
+        },
+        {
+          "producer": "R_EXPERT_BLOCK_REUSE",
+          "shape": [
+            5,
+            3,
+            3,
+            128,
+            128
+          ],
+          "setup_seconds": 3.5012732000323012,
+          "replays": 9,
+          "trace_warnings": [
+            "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+            "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+            "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+          ],
+          "initial_exact_parity": true,
+          "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+          "jit_optimized_execution": false,
+          "endpoint_reuse": true,
+          "endpoint_reuse_fallback_calls": 0,
+          "endpoint_reuse_by_modality": {
+            "E": false,
+            "R": true
+          },
+          "history_group_size": 5,
+          "precision": "FP32_TF32_DISABLED"
+        }
+      ]
+    }
+  ],
+  "weight_values_unchanged": true,
+  "variant_weight_values_unchanged": true,
+  "all_final_ttc_parity_passed": true,
+  "preservation": {
+    "passed": true,
+    "files": 595,
+    "changed": [],
+    "missing": []
+  }
+}

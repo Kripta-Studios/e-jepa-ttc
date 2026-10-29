@@ -1,0 +1,94 @@
+{
+  "schema": "rgb_port_initial_campaign_v1",
+  "base_commit": "b44443ae331b5e84b94e940801468449b2858de4",
+  "status": "PROPOSED_ACTIVATED_BY_EXPLICIT_USER_PROMPT",
+  "branch": "scientific-recovery-v13-rgb-port",
+  "historical_results_immutable": true,
+  "task": "Adapt and train compact A5/C2F/PAIR/context refiners for RGB plus controlled late fusion",
+  "does_not_prove_sota": true,
+  "source_zip_sha256": "b24b1f68be8e2846805d2b7f3f7cab2bd385864faac7cc662a1ade47940f3917",
+  "phases": [
+    "P0_state_and_parity",
+    "P1_data_contracts_and_qa",
+    "P2_producers",
+    "P3_pair_and_heads",
+    "P4_analysis_delivery"
+  ],
+  "model_seeds": [
+    7
+  ],
+  "fresh_roles": [
+    "P_producer_fit",
+    "H_head_fit",
+    "V_development"
+  ],
+  "suggested_group_fractions": [
+    0.6,
+    0.2,
+    0.2
+  ],
+  "temporal_lookback_us": 650000,
+  "max_context_observations": 8,
+  "scientific_updates_max": 228408,
+  "technical_updates_max": 500,
+  "recovery_updates_max": 11092,
+  "physical_updates_max": 240000,
+  "producer_ids": [
+    "E_A5_MATCHED",
+    "E_C2F_MATCHED",
+    "R_A5",
+    "R_C2F"
+  ],
+  "producer_epochs": 18,
+  "producer_updates_each_max": 49932,
+  "pair_ids": [
+    "PAIR_E_MATCHED",
+    "PAIR_R"
+  ],
+  "pair_updates_each_max": 6840,
+  "head_ids": [
+    "E_H1_MATCHED",
+    "E_CTX_MATCHED",
+    "R_H1",
+    "R_CTX",
+    "F_TRUE",
+    "F_ZERO"
+  ],
+  "head_updates_each": 2500,
+  "no_budget_reallocation": true,
+  "no_refit_of_admissible_existing_endpoints": true,
+  "resources": {
+    "project_tree_rss_max_decimal_bytes": 23000000000,
+    "host_free_pause_gib": 2,
+    "host_free_resume_gib": 3,
+    "disk_margin_decimal_bytes": 10000000000,
+    "heavy_trainers": 1,
+    "r1_gpu_conflict_prohibited": true
+  },
+  "external_eval_role": "exploratory transfer already exposed",
+  "official_submission_authorized": false,
+  "prohibited": [
+    "private_targets",
+    "sealed_test_scores",
+    "Stage76_read",
+    "codabench_submission",
+    "git_push",
+    "git_merge",
+    "automatic_email",
+    "Runpod",
+    "driver_changes",
+    "paging_changes",
+    "latent_rescue",
+    "new_architecture_sweep"
+  ],
+  "pending_not_negative": [
+    "FCWD_RGB_calibration",
+    "official_TableVI_contract"
+  ],
+  "future_not_authorized": [
+    "producer_seeds13_23",
+    "KD_vs_EXTRA",
+    "full_TRAIN40_refit",
+    "new_official_confirmation"
+  ]
+}

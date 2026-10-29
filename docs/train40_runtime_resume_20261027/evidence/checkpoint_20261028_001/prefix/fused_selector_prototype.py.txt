@@ -1,0 +1,132 @@
+"""Private integer-only selector prototype; not connected to any runtime route."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import numpy as np
+import torch
+from torch import Tensor
+
+from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
+
+
+def prefix_quarter_moments(
+    counts: Tensor,
+    moments: Tensor,
+    previous_count: Tensor,
+    previous_moment: Tensor,
+    xb: Tensor,
+    yb: Tensor,
+    first_bucket: Tensor,
+) -> tuple[Tensor, Tensor]:
+    """Pure integer selector suitable for future fused Inductor compilation.
+
+    This deliberately returns only int64 quarter counts/moments. It changes no
+    floating-point bin interpolation, normalization or original model formula.
+    The compiler may inline source addressing instead of materializing _address,
+    four torch.take outputs and their rectangle scratch arrays. Whether that
+    reduces device time must be measured; endpoint reads can be duplicated.
+    """
+    boundaries = torch.arange(25, device=counts.device, dtype=torch.int64) * 5 + first_bucket
+    slots = boundaries % 121
+    pol = torch.arange(2, device=counts.device, dtype=torch.int64)
+
+    def rectangle(source: Tensor) -> Tensor:
+        def corner(yi: int, xi: int) -> Tensor:
+            return source[
+                slots[None, :, None, None, None],
+                pol[None, None, :, None, None],
+                yb[:, None, None, yi : yi + yb.shape[1] - 1, None],
+                xb[:, None, None, None, xi : xi + xb.shape[1] - 1],
+            ].to(torch.int64)
+
+        return corner(1, 1) - corner(0, 1) - corner(1, 0) + corner(0, 0)
+
+    def previous_rectangle(source: Tensor) -> Tensor:
+        def corner(yi: int, xi: int) -> Tensor:
+            return source[
+                pol[None, :, None, None],
+                yb[:, None, yi : yi + yb.shape[1] - 1, None],
+                xb[:, None, None, xi : xi + xb.shape[1] - 1],
+            ].to(torch.int64)
+
+        return (corner(1, 1) - corner(0, 1) - corner(1, 0) + corner(0, 0))[:, None]
+
+    c, m = rectangle(counts), rectangle(moments)
+    cp, mp = previous_rectangle(previous_count), previous_rectangle(previous_moment)
+    cross = (
+        boundaries[:-1].div(120, rounding_mode="floor")
+        != boundaries[1:].div(120, rounding_mode="floor")
+    ).to(torch.int64)[None, :, None, None, None]
+    left = (boundaries[:-1] % 120 * 5000)[None, :, None, None, None]
+    quarter_count = c[:, 1:] - c[:, :-1] + cross * cp
+    quarter_moment = m[:, 1:] - m[:, :-1] + cross * (mp + 600000 * c[:, 1:])
+    return quarter_count, quarter_moment - left * quarter_count
+
+
+def cpu_proof(output: Path) -> None:
+    torch.set_num_threads(2)
+    rng = np.random.default_rng(7)
+    start, end = 738, 1_260_738
+    raw = {
+        "x": rng.integers(0, 32, 14000, dtype=np.int32),
+        "y": rng.integers(0, 24, 14000, dtype=np.int32),
+        "t": np.sort(rng.integers(start, end, 14000, dtype=np.int64)),
+        "p": rng.choice(np.array([-1, 1], dtype=np.int8), 14000),
+    }
+
+    def window(a: int, b: int) -> dict[str, np.ndarray]:
+        lo, hi = np.searchsorted(raw["t"], [a, b])
+        return {key: value[lo:hi] for key, value in raw.items()}
+
+    records = []
+    for objects in (1, 4, 20):
+        history = TemporalPrefixEventHistory(
+            device="cpu", width=32, height=24, roi_size=8, max_packet_events=1024,
+            max_objects=objects, roi_batch_size=objects,
+        )
+        history.initialize(window(start, start + 600000), start, start + 600000)
+        rois = [(i*.3, i*.1, 24+i*.2, 20+i*.1) for i in range(objects)]
+        for anchor in range(start + 600000, end + 1, 20000):
+            if anchor > start + 600000:
+                history.ingest(window(anchor - 20000, anchor), anchor - 20000, anchor)
+            if anchor not in (600738, 620738, 640738, 1180738, 1200738, 1220738, 1260738):
+                continue
+            history.query_many(rois)
+            expected = history._quarter_count.clone(), history._quarter_moment.clone()
+            history._prepare_query_state(rois)
+            actual = prefix_quarter_moments(
+                history._counts, history._moments, history._previous_count,
+                history._previous_moment, history._query_bounds[0],
+                history._query_bounds[1], history._query_first_bucket,
+            )
+            for value, reference in zip(actual, expected, strict=True):
+                torch.testing.assert_close(value, reference, rtol=0, atol=0)
+            records.append({"objects": objects, "anchor_us": anchor, "exact": True})
+    receipt = {
+        "status": "COMPLETE", "scope": "CPU_INTEGER_QUARTER_MOMENTS_ONLY",
+        "source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "prefix_sha256": hashlib.sha256(
+            (ROOT / "operational/train40_runtime/temporal_prefix.py").read_bytes()
+        ).hexdigest(),
+        "gpu_executed": False, "compiler_executed": False, "records": records,
+    }
+    output.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"status": "COMPLETE", "exact_cases": len(records), "gpu": False}))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if args.output.exists():
+        raise ValueError("fresh receipt required")
+    cpu_proof(args.output)

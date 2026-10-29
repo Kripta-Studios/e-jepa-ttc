@@ -4,13 +4,46 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
-      - run: uv sync --all-groups --no-editable
+      - run: uv sync --locked --all-groups --no-editable
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
-      - run: uv run --no-sync pytest
+      - name: Type-check maintained modules and the manuscript CI entry point
+        run: |
+          uvx --from pyright==1.1.411 pyright
+          uvx --from pyright==1.1.411 pyright scripts/ci_paper_validation.py
+      - name: Validate PowerShell script syntax
+        shell: pwsh
+        run: |
+          Get-ChildItem scripts -Filter *.ps1 | ForEach-Object {
+            $parseErrors = $null
+            $tokens = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile(
+              $_.FullName, [ref]$tokens, [ref]$parseErrors
+            )
+            if ($parseErrors) {
+              $parseErrors | ForEach-Object { Write-Error $_ }
+              exit 1
+            }
+          }
+      - name: Run the complete test suite
+        run: uv run --no-sync pytest -q
+      - name: Build the distribution
+        run: uv build --wheel --no-sources
+      - name: Verify current and legacy command entry points
+        run: |
+          uv run --no-sync phase-ttc --help
+          uv run --no-sync e-jepa-ttc --help

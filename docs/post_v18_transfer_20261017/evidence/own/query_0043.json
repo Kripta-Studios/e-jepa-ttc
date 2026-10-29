@@ -1,0 +1,19 @@
+{
+  "query_id": "CCRm-medium-overlap100:22000560",
+  "registration_sha256": "46784d99adff5a2b80bc052d435e8fd8bdd3c9f62c15e6197d3365b648b73467",
+  "predictions": {
+    "C1_event": 2.054412364959717,
+    "R_CTX": 1.824183464050293,
+    "F_TRUE": 1.8595091104507446,
+    "PHASE_ONLY_V16_S7": 1.79908287525177,
+    "FUSION_C1_V18_S7": 1.854556918144226
+  },
+  "rgb_history_length": 5,
+  "seconds": {
+    "preprocess": 0.5998791999882087,
+    "all_models_shared_compute": 0.5050739999860525,
+    "total": 1.1049531999742612
+  },
+  "targets_read": false,
+  "optimizer_updates": 0
+}

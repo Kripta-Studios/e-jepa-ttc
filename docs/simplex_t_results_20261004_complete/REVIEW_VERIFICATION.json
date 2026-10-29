@@ -1,0 +1,17 @@
+{
+  "status": "EXACT_REGENERATION_VERIFIED",
+  "files": {
+    "README.md": "224ee918f1b8c7cb6379864fae4abaa3784c0d2d8a9e53c8d712e1a99a9851de",
+    "RESULTS_SUMMARY.json": "93f83e71f86dfcada1ef70e691f2d0153ce2a3e37351d3d640d4dad6837ebd5e",
+    "INPUT_HASHES.json": "67172802f74faf44fdbd6d3ce82f18c3bdfd708e06415403accd58e3bc52b74d",
+    "RELEASE_ASSETS.json": "679843a11c8c93f600302ba5e0a950289bfe39b0edde0829c881f5b85d5c6e69",
+    "SHA256SUMS.txt": "65f626d1d14c88f2ad3d04520248cc709b3b2aff1b8fbfc87c76624ebac1f8b1"
+  },
+  "scientific_or_technical_optimizer_updates": 0,
+  "archive_inventory_count": 6,
+  "profile_fragments": 1728,
+  "pending_profile_fragments": 0,
+  "head_inputs_replayed": 576,
+  "maximum_prediction_difference": 0,
+  "new_full_route_archive_sha256": "a2aad451e6bc2ef2a6b41f1f09bc7425e37b3d70916167444f1b5a84727cb0e5"
+}

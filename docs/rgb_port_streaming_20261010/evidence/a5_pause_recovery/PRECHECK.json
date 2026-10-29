@@ -1,0 +1,30 @@
+{
+  "completed_updates": 26338,
+  "current_checkpoint_sha256": "36485f9881182bbf0e57da29563a396585c9d6e550fd29e5cd8bba88b35cdcaa",
+  "gpu_seconds": 0,
+  "next_step": "Native recovery from existing pending proofs and exact GPU restore QA",
+  "old_checkpoint_tensor_parity_available": false,
+  "optimizer_updates_consumed": 0,
+  "protected": {
+    "fits\\E_A5_MATCHED\\CHECKPOINT_POINTER.json": "fe4baf838f22b1de39508bfc18dcf44089a585be4953005a245a2b69b4a95432",
+    "fits\\E_A5_MATCHED\\CHECKPOINT_RECEIPT.json": "0a75733257aea4cdf5150a4a221084285413c97f5c530e4c9a7586068939c7ef",
+    "fits\\E_A5_MATCHED\\UPDATE_JOURNAL.json": "39d155e743fc6a5388586da1bd0f66305212929ce49c458165c6aa7ecbc7e398",
+    "fits\\E_A5_MATCHED\\acceleration_checkpoints\\PENDING_EXECUTION_RECEIPT.json": "67ceb3491e1df22369bcd515c3d9382420c2d6366dad22be26e1971900261941",
+    "fits\\E_A5_MATCHED\\checkpoint_last.pt": "36485f9881182bbf0e57da29563a396585c9d6e550fd29e5cd8bba88b35cdcaa",
+    "fits\\E_A5_MATCHED\\checkpoint_versions\\checkpoint_026338.pt": "36485f9881182bbf0e57da29563a396585c9d6e550fd29e5cd8bba88b35cdcaa",
+    "fits\\E_A5_MATCHED\\concurrent_checkpoints\\PENDING_EXECUTION_RECEIPT.json": "912c0f8058bf48887a899bbf09c45a6fc02daafa8b3b0acd4d70141ebdc8c5d0",
+    "fits\\E_A5_MATCHED\\pipeline_checkpoints\\PENDING_EXECUTION_RECEIPT.json": "a79a3b4bd6b45b7d49b1106988d20cb3f262a17040719916c34a7289c3f1a9a7"
+  },
+  "source_sha256": "fef27986f026a40414136fa12a6ec83dd53df976c5b7c888e17b5cb3da98bc26",
+  "status": "VALIDATED_ONLY",
+  "superseded_auxiliary_files": {
+    "PIPELINE_RUNTIME.json": "47e48cd0e73c986afc2892a47d9945f4c314822675ea357afbfecf955229cf91",
+    "acceleration_checkpoints\\checkpoint_026338.json": "2a25f5970a5a4fe8eb7a80d416022d8f3914df5babd1a92300d24d71fbe7976e",
+    "acceleration_checkpoints\\runtime_026338.json": "a16f7ed060320c4bd7427fda039ffac361248d0ca64aababb0a91f5c101f8390",
+    "concurrent_checkpoints\\checkpoint_026338.json": "158c46ca9011604ba2cda0cca001e968fff50025b26f816a605a45fa782f1806",
+    "pipeline_checkpoints\\checkpoint_026338.json": "5b36af5b8be2a30ab5c9a46666d329b02328d1f9e5d82bb69bd6420f133d4eac",
+    "pipeline_checkpoints\\timings_026338.json": "7b39b72e3c87bbf4a8913b7c4353eb1d90579b049471592c3a9b3d49f1b2a047"
+  },
+  "superseded_checkpoint_sha256": "ffddb3a1a7b9f08f5c9bc5723baa79f2bf47250a1929b41c4b285436c6211f41",
+  "utc": "2026-10-10T14:35:16.828950+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-28T09:14:37.4661349Z",
+  "gpu": [
+    "name, memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 3792 MiB, 2 %, 24.00 W, 73"
+  ],
+  "os": {
+    "FreePhysicalMemory": 7452212,
+    "FreeVirtualMemory": 13617632
+  },
+  "note": "Root exclusive GPU; council CPU tests paused; exact PIL GPU microprobe, no models/TTC"
+}

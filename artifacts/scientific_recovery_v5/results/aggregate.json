@@ -1,0 +1,3232 @@
+{
+  "a8_0_gate": {
+    "checks": {
+      "coverage_not_materially_worse": true,
+      "first_stage_MiD_le_175": false,
+      "geometry_exact_parent": true,
+      "improves_a6_aggregate": true,
+      "model_prefix_causality": true,
+      "private_test_opened": false,
+      "public_validation_used_for_selection": false,
+      "strong_target_MiD_le_160": false
+    },
+    "decision": "FAIL",
+    "first_stage_pass": false
+  },
+  "aggregation_revision": {
+    "commit": "c55e791c563e6f463385685e8dd3b4aa62d485a7",
+    "tracked_dirty": false
+  },
+  "artifact_sha256": "b3f0fc484b16f5d503d20deb35b275ddaf7392b2c9484ebc4874b29c8bbb4fc5",
+  "artifact_type": "scientific_recovery_v5_fold_chain_aggregate_v1",
+  "contracts": {
+    "outer_dev_is_development_not_test": true,
+    "outer_dev_used_for_checkpoint_selection": true,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "sota_claim_authorized": false,
+    "strict_end_to_end_streaming_causality_claimed": false
+  },
+  "created_at_utc": "2026-08-13T08:29:17.970874+00:00",
+  "models": {
+    "a4": {
+      "fold_MiD_mean": 291.08780050987195,
+      "fold_MiD_sample_std": 39.75963714663625,
+      "folds": {
+        "0": {
+          "coverage": 0.9209080922738924,
+          "failure_pct": 7.909190772610765,
+          "pearson": 0.06573621378545456,
+          "per_sequence": {
+            "5ilM1PX2vz": {
+              "bins": {
+                "crucial": {
+                  "count": 150,
+                  "failure_count": 5,
+                  "failure_rate_pct": 3.3333333333333335,
+                  "mid": 356.87050774521714,
+                  "rte_pct": 330.83069202951157
+                },
+                "large": {
+                  "count": 135,
+                  "failure_count": 7,
+                  "failure_rate_pct": 5.185185185185185,
+                  "mid": 169.78538384048392,
+                  "rte_pct": 248.96408108327975
+                },
+                "negative": {
+                  "count": 467,
+                  "failure_count": 35,
+                  "failure_rate_pct": 7.494646680942184,
+                  "mid": 236.4242051572415,
+                  "rte_pct": 413.20055479231854
+                },
+                "small": {
+                  "count": 159,
+                  "failure_count": 15,
+                  "failure_rate_pct": 9.433962264150944,
+                  "mid": 184.37599934074888,
+                  "rte_pct": 306.14153387369487
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 62,
+              "failure_rate_pct": 6.805708013172337,
+              "num_samples": 911,
+              "paper_MiD_overall": 274.36901257460573,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 323.4742697644241
+            },
+            "OYgB6RGWcq": {
+              "bins": {
+                "crucial": {
+                  "count": 95,
+                  "failure_count": 9,
+                  "failure_rate_pct": 9.473684210526317,
+                  "mid": 295.55929280584945,
+                  "rte_pct": 345.04939800776305
+                },
+                "large": {
+                  "count": 195,
+                  "failure_count": 9,
+                  "failure_rate_pct": 4.615384615384616,
+                  "mid": 148.6166546262003,
+                  "rte_pct": 217.86472595717888
+                },
+                "negative": {
+                  "count": 478,
+                  "failure_count": 39,
+                  "failure_rate_pct": 8.158995815899582,
+                  "mid": 196.85828712956237,
+                  "rte_pct": 365.8320676902858
+                },
+                "small": {
+                  "count": 142,
+                  "failure_count": 6,
+                  "failure_rate_pct": 4.225352112676056,
+                  "mid": 206.10662450583237,
+                  "rte_pct": 340.2622787898916
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 63,
+              "failure_rate_pct": 6.923076923076923,
+              "num_samples": 910,
+              "paper_MiD_overall": 244.15912793025072,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 332.97306200559547
+            },
+            "qGsgzl4Q8B": {
+              "bins": {
+                "crucial": {
+                  "count": 145,
+                  "failure_count": 5,
+                  "failure_rate_pct": 3.4482758620689653,
+                  "mid": 275.8995180197607,
+                  "rte_pct": 332.6883244256504
+                },
+                "large": {
+                  "count": 239,
+                  "failure_count": 33,
+                  "failure_rate_pct": 13.807531380753138,
+                  "mid": 129.2353811946396,
+                  "rte_pct": 236.09434617074223
+                },
+                "negative": {
+                  "count": 256,
+                  "failure_count": 25,
+                  "failure_rate_pct": 9.765625,
+                  "mid": 186.97009801203825,
+                  "rte_pct": 343.0962289289991
+                },
+                "small": {
+                  "count": 270,
+                  "failure_count": 28,
+                  "failure_rate_pct": 10.37037037037037,
+                  "mid": 172.61139669773348,
+                  "rte_pct": 349.2929375371322
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 91,
+              "failure_rate_pct": 10.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 221.35372593986818,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 329.051100983939
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 247.07115645805825,
+          "sequence_macro_MiD": 246.6272888149082
+        },
+        "1": {
+          "coverage": 0.8963749542292201,
+          "failure_pct": 10.362504577077994,
+          "pearson": 0.08207572831655444,
+          "per_sequence": {
+            "2cyv0Oedzg": {
+              "bins": {
+                "crucial": {
+                  "count": 160,
+                  "failure_count": 9,
+                  "failure_rate_pct": 5.625,
+                  "mid": 512.243814522535,
+                  "rte_pct": 738.2849113245076
+                },
+                "large": {
+                  "count": 213,
+                  "failure_count": 26,
+                  "failure_rate_pct": 12.206572769953052,
+                  "mid": 113.55270845018426,
+                  "rte_pct": 225.9833190452655
+                },
+                "negative": {
+                  "count": 305,
+                  "failure_count": 40,
+                  "failure_rate_pct": 13.114754098360656,
+                  "mid": 187.0860464429756,
+                  "rte_pct": 341.0252227945493
+                },
+                "small": {
+                  "count": 233,
+                  "failure_count": 34,
+                  "failure_rate_pct": 14.592274678111588,
+                  "mid": 196.5923571062783,
+                  "rte_pct": 350.96197980841555
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 109,
+              "failure_rate_pct": 11.964873765093303,
+              "num_samples": 911,
+              "paper_MiD_overall": 345.163489882467,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 531.1319037887599
+            },
+            "6h5yRW2LGc": {
+              "bins": {
+                "crucial": {
+                  "count": 288,
+                  "failure_count": 21,
+                  "failure_rate_pct": 7.291666666666667,
+                  "mid": 540.9748839701571,
+                  "rte_pct": 843.7730043716981
+                },
+                "large": {
+                  "count": 214,
+                  "failure_count": 27,
+                  "failure_rate_pct": 12.616822429906541,
+                  "mid": 198.19774877308035,
+                  "rte_pct": 224.31241585832524
+                },
+                "negative": {
+                  "count": 163,
+                  "failure_count": 11,
+                  "failure_rate_pct": 6.748466257668712,
+                  "mid": 240.10466212616598,
+                  "rte_pct": 267.93934951665955
+                },
+                "small": {
+                  "count": 245,
+                  "failure_count": 25,
+                  "failure_rate_pct": 10.204081632653061,
+                  "mid": 246.45823465354457,
+                  "rte_pct": 359.44342833423485
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 84,
+              "failure_rate_pct": 9.230769230769232,
+              "num_samples": 910,
+              "paper_MiD_overall": 388.25515347106654,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 578.9447072236179
+            },
+            "mHGFBekt7X": {
+              "bins": {
+                "crucial": {
+                  "count": 126,
+                  "failure_count": 4,
+                  "failure_rate_pct": 3.1746031746031744,
+                  "mid": 308.9099923403763,
+                  "rte_pct": 330.8873705767865
+                },
+                "large": {
+                  "count": 249,
+                  "failure_count": 29,
+                  "failure_rate_pct": 11.646586345381527,
+                  "mid": 120.24571976601668,
+                  "rte_pct": 237.71193534049823
+                },
+                "negative": {
+                  "count": 308,
+                  "failure_count": 36,
+                  "failure_rate_pct": 11.688311688311687,
+                  "mid": 153.69657368095275,
+                  "rte_pct": 316.16092954679476
+                },
+                "small": {
+                  "count": 227,
+                  "failure_count": 21,
+                  "failure_rate_pct": 9.251101321585903,
+                  "mid": 181.42187985491762,
+                  "rte_pct": 304.36726178276353
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 90,
+              "failure_rate_pct": 9.89010989010989,
+              "num_samples": 910,
+              "paper_MiD_overall": 236.27578947136038,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 312.1411503119516
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 335.82718656656266,
+          "sequence_macro_MiD": 323.231477608298
+        },
+        "2": {
+          "coverage": 0.8992673992673993,
+          "failure_pct": 10.073260073260073,
+          "pearson": 0.033647693891616835,
+          "per_sequence": {
+            "OBneIVg4Cw": {
+              "bins": {
+                "crucial": {
+                  "count": 325,
+                  "failure_count": 25,
+                  "failure_rate_pct": 7.6923076923076925,
+                  "mid": 498.883775388996,
+                  "rte_pct": 610.4461606925058
+                },
+                "large": {
+                  "count": 162,
+                  "failure_count": 16,
+                  "failure_rate_pct": 9.876543209876543,
+                  "mid": 156.5774979630299,
+                  "rte_pct": 213.50730981451292
+                },
+                "negative": {
+                  "count": 127,
+                  "failure_count": 14,
+                  "failure_rate_pct": 11.023622047244094,
+                  "mid": 174.92100602862965,
+                  "rte_pct": 289.31587942296244
+                },
+                "small": {
+                  "count": 296,
+                  "failure_count": 29,
+                  "failure_rate_pct": 9.797297297297296,
+                  "mid": 213.24573292403792,
+                  "rte_pct": 350.64622517479694
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 84,
+              "failure_rate_pct": 9.230769230769232,
+              "num_samples": 910,
+              "paper_MiD_overall": 346.56545797087534,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 460.69926682243954
+            },
+            "WbCh1DRerJ": {
+              "bins": {
+                "crucial": {
+                  "count": 255,
+                  "failure_count": 18,
+                  "failure_rate_pct": 7.0588235294117645,
+                  "mid": 409.4697739094302,
+                  "rte_pct": 449.26807836987194
+                },
+                "large": {
+                  "count": 241,
+                  "failure_count": 43,
+                  "failure_rate_pct": 17.842323651452283,
+                  "mid": 145.02872495281903,
+                  "rte_pct": 238.73199690622982
+                },
+                "negative": {
+                  "count": 177,
+                  "failure_count": 15,
+                  "failure_rate_pct": 8.47457627118644,
+                  "mid": 174.9657176761604,
+                  "rte_pct": 239.61889494982253
+                },
+                "small": {
+                  "count": 237,
+                  "failure_count": 25,
+                  "failure_rate_pct": 10.548523206751055,
+                  "mid": 214.11695573506324,
+                  "rte_pct": 383.7687458781967
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 101,
+              "failure_rate_pct": 11.098901098901099,
+              "num_samples": 910,
+              "paper_MiD_overall": 300.96941793813204,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 387.5997521340002
+            },
+            "t79dBxj1WS": {
+              "bins": {
+                "crucial": {
+                  "count": 152,
+                  "failure_count": 11,
+                  "failure_rate_pct": 7.236842105263158,
+                  "mid": 344.9407491417377,
+                  "rte_pct": 403.1769422301278
+                },
+                "large": {
+                  "count": 278,
+                  "failure_count": 32,
+                  "failure_rate_pct": 11.510791366906476,
+                  "mid": 139.75357056067287,
+                  "rte_pct": 225.76070438356703
+                },
+                "negative": {
+                  "count": 203,
+                  "failure_count": 24,
+                  "failure_rate_pct": 11.822660098522167,
+                  "mid": 168.25282967626637,
+                  "rte_pct": 298.1239254050154
+                },
+                "small": {
+                  "count": 277,
+                  "failure_count": 23,
+                  "failure_rate_pct": 8.303249097472925,
+                  "mid": 198.02671605219584,
+                  "rte_pct": 373.25239778432535
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 90,
+              "failure_rate_pct": 9.89010989010989,
+              "num_samples": 910,
+              "paper_MiD_overall": 262.6790294102215,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 365.9526534292197
+            }
+          },
+          "rows": 2730,
+          "sample_weighted_MiD": 312.0735652281699,
+          "sequence_macro_MiD": 303.4046351064096
+        }
+      },
+      "outer_dev_9_sequence": {
+        "coverage": 0.905517578125,
+        "failure_pct": 9.4482421875,
+        "pearson": 0.06082498940415631,
+        "per_sequence": {
+          "2cyv0Oedzg": {
+            "bins": {
+              "crucial": {
+                "count": 160,
+                "failure_count": 9,
+                "failure_rate_pct": 5.625,
+                "mid": 512.243814522535,
+                "rte_pct": 738.2849113245076
+              },
+              "large": {
+                "count": 213,
+                "failure_count": 26,
+                "failure_rate_pct": 12.206572769953052,
+                "mid": 113.55270845018426,
+                "rte_pct": 225.9833190452655
+              },
+              "negative": {
+                "count": 305,
+                "failure_count": 40,
+                "failure_rate_pct": 13.114754098360656,
+                "mid": 187.0860464429756,
+                "rte_pct": 341.0252227945493
+              },
+              "small": {
+                "count": 233,
+                "failure_count": 34,
+                "failure_rate_pct": 14.592274678111588,
+                "mid": 196.5923571062783,
+                "rte_pct": 350.96197980841555
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 109,
+            "failure_rate_pct": 11.964873765093303,
+            "num_samples": 911,
+            "paper_MiD_overall": 345.163489882467,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 531.1319037887599
+          },
+          "5ilM1PX2vz": {
+            "bins": {
+              "crucial": {
+                "count": 150,
+                "failure_count": 5,
+                "failure_rate_pct": 3.3333333333333335,
+                "mid": 356.87050774521714,
+                "rte_pct": 330.83069202951157
+              },
+              "large": {
+                "count": 135,
+                "failure_count": 7,
+                "failure_rate_pct": 5.185185185185185,
+                "mid": 169.78538384048392,
+                "rte_pct": 248.96408108327975
+              },
+              "negative": {
+                "count": 467,
+                "failure_count": 35,
+                "failure_rate_pct": 7.494646680942184,
+                "mid": 236.4242051572415,
+                "rte_pct": 413.20055479231854
+              },
+              "small": {
+                "count": 159,
+                "failure_count": 15,
+                "failure_rate_pct": 9.433962264150944,
+                "mid": 184.37599934074888,
+                "rte_pct": 306.14153387369487
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 62,
+            "failure_rate_pct": 6.805708013172337,
+            "num_samples": 911,
+            "paper_MiD_overall": 274.36901257460573,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 323.4742697644241
+          },
+          "6h5yRW2LGc": {
+            "bins": {
+              "crucial": {
+                "count": 288,
+                "failure_count": 21,
+                "failure_rate_pct": 7.291666666666667,
+                "mid": 540.9748839701571,
+                "rte_pct": 843.7730043716981
+              },
+              "large": {
+                "count": 214,
+                "failure_count": 27,
+                "failure_rate_pct": 12.616822429906541,
+                "mid": 198.19774877308035,
+                "rte_pct": 224.31241585832524
+              },
+              "negative": {
+                "count": 163,
+                "failure_count": 11,
+                "failure_rate_pct": 6.748466257668712,
+                "mid": 240.10466212616598,
+                "rte_pct": 267.93934951665955
+              },
+              "small": {
+                "count": 245,
+                "failure_count": 25,
+                "failure_rate_pct": 10.204081632653061,
+                "mid": 246.45823465354457,
+                "rte_pct": 359.44342833423485
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 84,
+            "failure_rate_pct": 9.230769230769232,
+            "num_samples": 910,
+            "paper_MiD_overall": 388.25515347106654,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 578.9447072236179
+          },
+          "OBneIVg4Cw": {
+            "bins": {
+              "crucial": {
+                "count": 325,
+                "failure_count": 25,
+                "failure_rate_pct": 7.6923076923076925,
+                "mid": 498.883775388996,
+                "rte_pct": 610.4461606925058
+              },
+              "large": {
+                "count": 162,
+                "failure_count": 16,
+                "failure_rate_pct": 9.876543209876543,
+                "mid": 156.5774979630299,
+                "rte_pct": 213.50730981451292
+              },
+              "negative": {
+                "count": 127,
+                "failure_count": 14,
+                "failure_rate_pct": 11.023622047244094,
+                "mid": 174.92100602862965,
+                "rte_pct": 289.31587942296244
+              },
+              "small": {
+                "count": 296,
+                "failure_count": 29,
+                "failure_rate_pct": 9.797297297297296,
+                "mid": 213.24573292403792,
+                "rte_pct": 350.64622517479694
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 84,
+            "failure_rate_pct": 9.230769230769232,
+            "num_samples": 910,
+            "paper_MiD_overall": 346.56545797087534,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 460.69926682243954
+          },
+          "OYgB6RGWcq": {
+            "bins": {
+              "crucial": {
+                "count": 95,
+                "failure_count": 9,
+                "failure_rate_pct": 9.473684210526317,
+                "mid": 295.55929280584945,
+                "rte_pct": 345.04939800776305
+              },
+              "large": {
+                "count": 195,
+                "failure_count": 9,
+                "failure_rate_pct": 4.615384615384616,
+                "mid": 148.6166546262003,
+                "rte_pct": 217.86472595717888
+              },
+              "negative": {
+                "count": 478,
+                "failure_count": 39,
+                "failure_rate_pct": 8.158995815899582,
+                "mid": 196.85828712956237,
+                "rte_pct": 365.8320676902858
+              },
+              "small": {
+                "count": 142,
+                "failure_count": 6,
+                "failure_rate_pct": 4.225352112676056,
+                "mid": 206.10662450583237,
+                "rte_pct": 340.2622787898916
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 63,
+            "failure_rate_pct": 6.923076923076923,
+            "num_samples": 910,
+            "paper_MiD_overall": 244.15912793025072,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 332.97306200559547
+          },
+          "WbCh1DRerJ": {
+            "bins": {
+              "crucial": {
+                "count": 255,
+                "failure_count": 18,
+                "failure_rate_pct": 7.0588235294117645,
+                "mid": 409.4697739094302,
+                "rte_pct": 449.26807836987194
+              },
+              "large": {
+                "count": 241,
+                "failure_count": 43,
+                "failure_rate_pct": 17.842323651452283,
+                "mid": 145.02872495281903,
+                "rte_pct": 238.73199690622982
+              },
+              "negative": {
+                "count": 177,
+                "failure_count": 15,
+                "failure_rate_pct": 8.47457627118644,
+                "mid": 174.9657176761604,
+                "rte_pct": 239.61889494982253
+              },
+              "small": {
+                "count": 237,
+                "failure_count": 25,
+                "failure_rate_pct": 10.548523206751055,
+                "mid": 214.11695573506324,
+                "rte_pct": 383.7687458781967
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 101,
+            "failure_rate_pct": 11.098901098901099,
+            "num_samples": 910,
+            "paper_MiD_overall": 300.96941793813204,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 387.5997521340002
+          },
+          "mHGFBekt7X": {
+            "bins": {
+              "crucial": {
+                "count": 126,
+                "failure_count": 4,
+                "failure_rate_pct": 3.1746031746031744,
+                "mid": 308.9099923403763,
+                "rte_pct": 330.8873705767865
+              },
+              "large": {
+                "count": 249,
+                "failure_count": 29,
+                "failure_rate_pct": 11.646586345381527,
+                "mid": 120.24571976601668,
+                "rte_pct": 237.71193534049823
+              },
+              "negative": {
+                "count": 308,
+                "failure_count": 36,
+                "failure_rate_pct": 11.688311688311687,
+                "mid": 153.69657368095275,
+                "rte_pct": 316.16092954679476
+              },
+              "small": {
+                "count": 227,
+                "failure_count": 21,
+                "failure_rate_pct": 9.251101321585903,
+                "mid": 181.42187985491762,
+                "rte_pct": 304.36726178276353
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 90,
+            "failure_rate_pct": 9.89010989010989,
+            "num_samples": 910,
+            "paper_MiD_overall": 236.27578947136038,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 312.1411503119516
+          },
+          "qGsgzl4Q8B": {
+            "bins": {
+              "crucial": {
+                "count": 145,
+                "failure_count": 5,
+                "failure_rate_pct": 3.4482758620689653,
+                "mid": 275.8995180197607,
+                "rte_pct": 332.6883244256504
+              },
+              "large": {
+                "count": 239,
+                "failure_count": 33,
+                "failure_rate_pct": 13.807531380753138,
+                "mid": 129.2353811946396,
+                "rte_pct": 236.09434617074223
+              },
+              "negative": {
+                "count": 256,
+                "failure_count": 25,
+                "failure_rate_pct": 9.765625,
+                "mid": 186.97009801203825,
+                "rte_pct": 343.0962289289991
+              },
+              "small": {
+                "count": 270,
+                "failure_count": 28,
+                "failure_rate_pct": 10.37037037037037,
+                "mid": 172.61139669773348,
+                "rte_pct": 349.2929375371322
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 91,
+            "failure_rate_pct": 10.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 221.35372593986818,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 329.051100983939
+          },
+          "t79dBxj1WS": {
+            "bins": {
+              "crucial": {
+                "count": 152,
+                "failure_count": 11,
+                "failure_rate_pct": 7.236842105263158,
+                "mid": 344.9407491417377,
+                "rte_pct": 403.1769422301278
+              },
+              "large": {
+                "count": 278,
+                "failure_count": 32,
+                "failure_rate_pct": 11.510791366906476,
+                "mid": 139.75357056067287,
+                "rte_pct": 225.76070438356703
+              },
+              "negative": {
+                "count": 203,
+                "failure_count": 24,
+                "failure_rate_pct": 11.822660098522167,
+                "mid": 168.25282967626637,
+                "rte_pct": 298.1239254050154
+              },
+              "small": {
+                "count": 277,
+                "failure_count": 23,
+                "failure_rate_pct": 8.303249097472925,
+                "mid": 198.02671605219584,
+                "rte_pct": 373.25239778432535
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 90,
+            "failure_rate_pct": 9.89010989010989,
+            "num_samples": 910,
+            "paper_MiD_overall": 262.6790294102215,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 365.9526534292197
+          }
+        },
+        "rows": 8192,
+        "sample_weighted_MiD": 305.5884401781781,
+        "sequence_macro_MiD": 291.08780050987195
+      },
+      "parameter_count": 355118,
+      "worst_fold_MiD": 323.231477608298
+    },
+    "a6": {
+      "fold_MiD_mean": 211.50851321026667,
+      "fold_MiD_sample_std": 27.987868568192315,
+      "folds": {
+        "0": {
+          "coverage": 0.9231050897107287,
+          "failure_pct": 7.689491028927133,
+          "pearson": 0.14437098809963775,
+          "per_sequence": {
+            "5ilM1PX2vz": {
+              "bins": {
+                "crucial": {
+                  "count": 150,
+                  "failure_count": 5,
+                  "failure_rate_pct": 3.3333333333333335,
+                  "mid": 267.95397917972304,
+                  "rte_pct": 139.11217129750133
+                },
+                "large": {
+                  "count": 135,
+                  "failure_count": 11,
+                  "failure_rate_pct": 8.148148148148149,
+                  "mid": 148.8528151385555,
+                  "rte_pct": 188.22937741607325
+                },
+                "negative": {
+                  "count": 467,
+                  "failure_count": 42,
+                  "failure_rate_pct": 8.993576017130621,
+                  "mid": 208.21982950712533,
+                  "rte_pct": 318.0565253160951
+                },
+                "small": {
+                  "count": 159,
+                  "failure_count": 8,
+                  "failure_rate_pct": 5.031446540880504,
+                  "mid": 132.69975979102696,
+                  "rte_pct": 169.27911077117975
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 66,
+              "failure_rate_pct": 7.244785949506037,
+              "num_samples": 911,
+              "paper_MiD_overall": 209.4941819917377,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 170.96840915332143
+            },
+            "OYgB6RGWcq": {
+              "bins": {
+                "crucial": {
+                  "count": 95,
+                  "failure_count": 4,
+                  "failure_rate_pct": 4.2105263157894735,
+                  "mid": 190.8926515785306,
+                  "rte_pct": 197.90304269850014
+                },
+                "large": {
+                  "count": 195,
+                  "failure_count": 13,
+                  "failure_rate_pct": 6.666666666666667,
+                  "mid": 127.63495479217218,
+                  "rte_pct": 162.34892319988984
+                },
+                "negative": {
+                  "count": 478,
+                  "failure_count": 43,
+                  "failure_rate_pct": 8.99581589958159,
+                  "mid": 162.54088575823343,
+                  "rte_pct": 260.23801037472407
+                },
+                "small": {
+                  "count": 142,
+                  "failure_count": 10,
+                  "failure_rate_pct": 7.042253521126761,
+                  "mid": 154.144933325589,
+                  "rte_pct": 195.1747049299665
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 70,
+              "failure_rate_pct": 7.6923076923076925,
+              "num_samples": 910,
+              "paper_MiD_overall": 170.70738984198258,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 199.76262618570138
+            },
+            "qGsgzl4Q8B": {
+              "bins": {
+                "crucial": {
+                  "count": 145,
+                  "failure_count": 4,
+                  "failure_rate_pct": 2.7586206896551726,
+                  "mid": 202.98039484794495,
+                  "rte_pct": 240.5565353585423
+                },
+                "large": {
+                  "count": 239,
+                  "failure_count": 24,
+                  "failure_rate_pct": 10.0418410041841,
+                  "mid": 101.45862890542827,
+                  "rte_pct": 168.34577806258508
+                },
+                "negative": {
+                  "count": 256,
+                  "failure_count": 26,
+                  "failure_rate_pct": 10.15625,
+                  "mid": 148.0710593940644,
+                  "rte_pct": 272.9211528172952
+                },
+                "small": {
+                  "count": 270,
+                  "failure_count": 20,
+                  "failure_rate_pct": 7.4074074074074066,
+                  "mid": 118.00697160754335,
+                  "rte_pct": 160.27083939732933
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 74,
+              "failure_rate_pct": 8.131868131868131,
+              "num_samples": 910,
+              "paper_MiD_overall": 161.84525773618475,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 212.486212586458
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 181.78011163513816,
+          "sequence_macro_MiD": 180.68227652330165
+        },
+        "1": {
+          "coverage": 0.9293299157817649,
+          "failure_pct": 7.067008421823508,
+          "pearson": 0.2838294572909102,
+          "per_sequence": {
+            "2cyv0Oedzg": {
+              "bins": {
+                "crucial": {
+                  "count": 160,
+                  "failure_count": 5,
+                  "failure_rate_pct": 3.125,
+                  "mid": 329.5321676820039,
+                  "rte_pct": 329.94557422660444
+                },
+                "large": {
+                  "count": 213,
+                  "failure_count": 18,
+                  "failure_rate_pct": 8.450704225352112,
+                  "mid": 82.39501900420929,
+                  "rte_pct": 118.21008276205154
+                },
+                "negative": {
+                  "count": 305,
+                  "failure_count": 26,
+                  "failure_rate_pct": 8.524590163934425,
+                  "mid": 97.63774637449912,
+                  "rte_pct": 121.99918033448697
+                },
+                "small": {
+                  "count": 233,
+                  "failure_count": 13,
+                  "failure_rate_pct": 5.579399141630901,
+                  "mid": 89.2506724965505,
+                  "rte_pct": 94.03992428182507
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 62,
+              "failure_rate_pct": 6.805708013172337,
+              "num_samples": 911,
+              "paper_MiD_overall": 209.54456212783793,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 217.2056907075036
+            },
+            "6h5yRW2LGc": {
+              "bins": {
+                "crucial": {
+                  "count": 288,
+                  "failure_count": 17,
+                  "failure_rate_pct": 5.902777777777778,
+                  "mid": 461.43879888051777,
+                  "rte_pct": 584.4194795806638
+                },
+                "large": {
+                  "count": 214,
+                  "failure_count": 21,
+                  "failure_rate_pct": 9.813084112149532,
+                  "mid": 151.09643606829,
+                  "rte_pct": 165.29332658085818
+                },
+                "negative": {
+                  "count": 163,
+                  "failure_count": 12,
+                  "failure_rate_pct": 7.361963190184049,
+                  "mid": 180.42884911610187,
+                  "rte_pct": 170.79355646090812
+                },
+                "small": {
+                  "count": 245,
+                  "failure_count": 21,
+                  "failure_rate_pct": 8.571428571428571,
+                  "mid": 190.70636870897232,
+                  "rte_pct": 265.0453860514143
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 71,
+              "failure_rate_pct": 7.802197802197802,
+              "num_samples": 910,
+              "paper_MiD_overall": 321.08383857138983,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 405.3320439099328
+            },
+            "mHGFBekt7X": {
+              "bins": {
+                "crucial": {
+                  "count": 126,
+                  "failure_count": 2,
+                  "failure_rate_pct": 1.5873015873015872,
+                  "mid": 158.65970423773672,
+                  "rte_pct": 118.54541116047372
+                },
+                "large": {
+                  "count": 249,
+                  "failure_count": 18,
+                  "failure_rate_pct": 7.228915662650602,
+                  "mid": 75.61629087022087,
+                  "rte_pct": 107.06758525548143
+                },
+                "negative": {
+                  "count": 308,
+                  "failure_count": 32,
+                  "failure_rate_pct": 10.38961038961039,
+                  "mid": 111.85403782869682,
+                  "rte_pct": 183.27336332066085
+                },
+                "small": {
+                  "count": 227,
+                  "failure_count": 8,
+                  "failure_rate_pct": 3.524229074889868,
+                  "mid": 89.49148268524672,
+                  "rte_pct": 79.71242238011237
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 60,
+              "failure_rate_pct": 6.593406593406594,
+              "num_samples": 910,
+              "paper_MiD_overall": 124.92432979433414,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 112.2205271518848
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 237.30233021861196,
+          "sequence_macro_MiD": 218.5175768311873
+        },
+        "2": {
+          "coverage": 0.9120879120879121,
+          "failure_pct": 8.791208791208792,
+          "pearson": 0.18241699603830697,
+          "per_sequence": {
+            "OBneIVg4Cw": {
+              "bins": {
+                "crucial": {
+                  "count": 325,
+                  "failure_count": 26,
+                  "failure_rate_pct": 8.0,
+                  "mid": 461.2383934960389,
+                  "rte_pct": 520.531872294445
+                },
+                "large": {
+                  "count": 162,
+                  "failure_count": 20,
+                  "failure_rate_pct": 12.345679012345679,
+                  "mid": 101.14188331160734,
+                  "rte_pct": 164.4284767360422
+                },
+                "negative": {
+                  "count": 127,
+                  "failure_count": 13,
+                  "failure_rate_pct": 10.236220472440944,
+                  "mid": 109.74880109781886,
+                  "rte_pct": 138.1457583004766
+                },
+                "small": {
+                  "count": 296,
+                  "failure_count": 30,
+                  "failure_rate_pct": 10.135135135135135,
+                  "mid": 153.2101430138339,
+                  "rte_pct": 244.44997034720035
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 89,
+              "failure_rate_pct": 9.780219780219781,
+              "num_samples": 910,
+              "paper_MiD_overall": 297.67130809311226,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 363.85835075503445
+            },
+            "WbCh1DRerJ": {
+              "bins": {
+                "crucial": {
+                  "count": 255,
+                  "failure_count": 16,
+                  "failure_rate_pct": 6.2745098039215685,
+                  "mid": 334.9093130735528,
+                  "rte_pct": 474.81644659869437
+                },
+                "large": {
+                  "count": 241,
+                  "failure_count": 25,
+                  "failure_rate_pct": 10.37344398340249,
+                  "mid": 115.58108512538989,
+                  "rte_pct": 180.1384547702375
+                },
+                "negative": {
+                  "count": 177,
+                  "failure_count": 15,
+                  "failure_rate_pct": 8.47457627118644,
+                  "mid": 120.25551234588235,
+                  "rte_pct": 186.67693131443224
+                },
+                "small": {
+                  "count": 237,
+                  "failure_count": 17,
+                  "failure_rate_pct": 7.172995780590717,
+                  "mid": 136.88911693580687,
+                  "rte_pct": 260.62986635720085
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 73,
+              "failure_rate_pct": 8.021978021978022,
+              "num_samples": 910,
+              "paper_MiD_overall": 232.1050513646457,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 352.27872181497446
+            },
+            "t79dBxj1WS": {
+              "bins": {
+                "crucial": {
+                  "count": 152,
+                  "failure_count": 1,
+                  "failure_rate_pct": 0.6578947368421052,
+                  "mid": 241.412602755847,
+                  "rte_pct": 167.88520695008123
+                },
+                "large": {
+                  "count": 278,
+                  "failure_count": 40,
+                  "failure_rate_pct": 14.388489208633093,
+                  "mid": 82.95108696450885,
+                  "rte_pct": 136.14977418625966
+                },
+                "negative": {
+                  "count": 203,
+                  "failure_count": 21,
+                  "failure_rate_pct": 10.344827586206897,
+                  "mid": 119.5081304561564,
+                  "rte_pct": 225.7954569664445
+                },
+                "small": {
+                  "count": 277,
+                  "failure_count": 16,
+                  "failure_rate_pct": 5.776173285198556,
+                  "mid": 117.49492083728477,
+                  "rte_pct": 171.98020507668767
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 78,
+              "failure_rate_pct": 8.571428571428571,
+              "num_samples": 910,
+              "paper_MiD_overall": 176.20069937117543,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 171.73118811331733
+            }
+          },
+          "rows": 2730,
+          "sample_weighted_MiD": 247.04318709011034,
+          "sequence_macro_MiD": 235.32568627631113
+        }
+      },
+      "outer_dev_9_sequence": {
+        "coverage": 0.9215087890625,
+        "failure_pct": 7.84912109375,
+        "pearson": 0.20114680893328202,
+        "per_sequence": {
+          "2cyv0Oedzg": {
+            "bins": {
+              "crucial": {
+                "count": 160,
+                "failure_count": 5,
+                "failure_rate_pct": 3.125,
+                "mid": 329.5321676820039,
+                "rte_pct": 329.94557422660444
+              },
+              "large": {
+                "count": 213,
+                "failure_count": 18,
+                "failure_rate_pct": 8.450704225352112,
+                "mid": 82.39501900420929,
+                "rte_pct": 118.21008276205154
+              },
+              "negative": {
+                "count": 305,
+                "failure_count": 26,
+                "failure_rate_pct": 8.524590163934425,
+                "mid": 97.63774637449912,
+                "rte_pct": 121.99918033448697
+              },
+              "small": {
+                "count": 233,
+                "failure_count": 13,
+                "failure_rate_pct": 5.579399141630901,
+                "mid": 89.2506724965505,
+                "rte_pct": 94.03992428182507
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 62,
+            "failure_rate_pct": 6.805708013172337,
+            "num_samples": 911,
+            "paper_MiD_overall": 209.54456212783793,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 217.2056907075036
+          },
+          "5ilM1PX2vz": {
+            "bins": {
+              "crucial": {
+                "count": 150,
+                "failure_count": 5,
+                "failure_rate_pct": 3.3333333333333335,
+                "mid": 267.95397917972304,
+                "rte_pct": 139.11217129750133
+              },
+              "large": {
+                "count": 135,
+                "failure_count": 11,
+                "failure_rate_pct": 8.148148148148149,
+                "mid": 148.8528151385555,
+                "rte_pct": 188.22937741607325
+              },
+              "negative": {
+                "count": 467,
+                "failure_count": 42,
+                "failure_rate_pct": 8.993576017130621,
+                "mid": 208.21982950712533,
+                "rte_pct": 318.0565253160951
+              },
+              "small": {
+                "count": 159,
+                "failure_count": 8,
+                "failure_rate_pct": 5.031446540880504,
+                "mid": 132.69975979102696,
+                "rte_pct": 169.27911077117975
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 66,
+            "failure_rate_pct": 7.244785949506037,
+            "num_samples": 911,
+            "paper_MiD_overall": 209.4941819917377,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 170.96840915332143
+          },
+          "6h5yRW2LGc": {
+            "bins": {
+              "crucial": {
+                "count": 288,
+                "failure_count": 17,
+                "failure_rate_pct": 5.902777777777778,
+                "mid": 461.43879888051777,
+                "rte_pct": 584.4194795806638
+              },
+              "large": {
+                "count": 214,
+                "failure_count": 21,
+                "failure_rate_pct": 9.813084112149532,
+                "mid": 151.09643606829,
+                "rte_pct": 165.29332658085818
+              },
+              "negative": {
+                "count": 163,
+                "failure_count": 12,
+                "failure_rate_pct": 7.361963190184049,
+                "mid": 180.42884911610187,
+                "rte_pct": 170.79355646090812
+              },
+              "small": {
+                "count": 245,
+                "failure_count": 21,
+                "failure_rate_pct": 8.571428571428571,
+                "mid": 190.70636870897232,
+                "rte_pct": 265.0453860514143
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 71,
+            "failure_rate_pct": 7.802197802197802,
+            "num_samples": 910,
+            "paper_MiD_overall": 321.08383857138983,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 405.3320439099328
+          },
+          "OBneIVg4Cw": {
+            "bins": {
+              "crucial": {
+                "count": 325,
+                "failure_count": 26,
+                "failure_rate_pct": 8.0,
+                "mid": 461.2383934960389,
+                "rte_pct": 520.531872294445
+              },
+              "large": {
+                "count": 162,
+                "failure_count": 20,
+                "failure_rate_pct": 12.345679012345679,
+                "mid": 101.14188331160734,
+                "rte_pct": 164.4284767360422
+              },
+              "negative": {
+                "count": 127,
+                "failure_count": 13,
+                "failure_rate_pct": 10.236220472440944,
+                "mid": 109.74880109781886,
+                "rte_pct": 138.1457583004766
+              },
+              "small": {
+                "count": 296,
+                "failure_count": 30,
+                "failure_rate_pct": 10.135135135135135,
+                "mid": 153.2101430138339,
+                "rte_pct": 244.44997034720035
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 89,
+            "failure_rate_pct": 9.780219780219781,
+            "num_samples": 910,
+            "paper_MiD_overall": 297.67130809311226,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 363.85835075503445
+          },
+          "OYgB6RGWcq": {
+            "bins": {
+              "crucial": {
+                "count": 95,
+                "failure_count": 4,
+                "failure_rate_pct": 4.2105263157894735,
+                "mid": 190.8926515785306,
+                "rte_pct": 197.90304269850014
+              },
+              "large": {
+                "count": 195,
+                "failure_count": 13,
+                "failure_rate_pct": 6.666666666666667,
+                "mid": 127.63495479217218,
+                "rte_pct": 162.34892319988984
+              },
+              "negative": {
+                "count": 478,
+                "failure_count": 43,
+                "failure_rate_pct": 8.99581589958159,
+                "mid": 162.54088575823343,
+                "rte_pct": 260.23801037472407
+              },
+              "small": {
+                "count": 142,
+                "failure_count": 10,
+                "failure_rate_pct": 7.042253521126761,
+                "mid": 154.144933325589,
+                "rte_pct": 195.1747049299665
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 70,
+            "failure_rate_pct": 7.6923076923076925,
+            "num_samples": 910,
+            "paper_MiD_overall": 170.70738984198258,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 199.76262618570138
+          },
+          "WbCh1DRerJ": {
+            "bins": {
+              "crucial": {
+                "count": 255,
+                "failure_count": 16,
+                "failure_rate_pct": 6.2745098039215685,
+                "mid": 334.9093130735528,
+                "rte_pct": 474.81644659869437
+              },
+              "large": {
+                "count": 241,
+                "failure_count": 25,
+                "failure_rate_pct": 10.37344398340249,
+                "mid": 115.58108512538989,
+                "rte_pct": 180.1384547702375
+              },
+              "negative": {
+                "count": 177,
+                "failure_count": 15,
+                "failure_rate_pct": 8.47457627118644,
+                "mid": 120.25551234588235,
+                "rte_pct": 186.67693131443224
+              },
+              "small": {
+                "count": 237,
+                "failure_count": 17,
+                "failure_rate_pct": 7.172995780590717,
+                "mid": 136.88911693580687,
+                "rte_pct": 260.62986635720085
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 73,
+            "failure_rate_pct": 8.021978021978022,
+            "num_samples": 910,
+            "paper_MiD_overall": 232.1050513646457,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 352.27872181497446
+          },
+          "mHGFBekt7X": {
+            "bins": {
+              "crucial": {
+                "count": 126,
+                "failure_count": 2,
+                "failure_rate_pct": 1.5873015873015872,
+                "mid": 158.65970423773672,
+                "rte_pct": 118.54541116047372
+              },
+              "large": {
+                "count": 249,
+                "failure_count": 18,
+                "failure_rate_pct": 7.228915662650602,
+                "mid": 75.61629087022087,
+                "rte_pct": 107.06758525548143
+              },
+              "negative": {
+                "count": 308,
+                "failure_count": 32,
+                "failure_rate_pct": 10.38961038961039,
+                "mid": 111.85403782869682,
+                "rte_pct": 183.27336332066085
+              },
+              "small": {
+                "count": 227,
+                "failure_count": 8,
+                "failure_rate_pct": 3.524229074889868,
+                "mid": 89.49148268524672,
+                "rte_pct": 79.71242238011237
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 60,
+            "failure_rate_pct": 6.593406593406594,
+            "num_samples": 910,
+            "paper_MiD_overall": 124.92432979433414,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 112.2205271518848
+          },
+          "qGsgzl4Q8B": {
+            "bins": {
+              "crucial": {
+                "count": 145,
+                "failure_count": 4,
+                "failure_rate_pct": 2.7586206896551726,
+                "mid": 202.98039484794495,
+                "rte_pct": 240.5565353585423
+              },
+              "large": {
+                "count": 239,
+                "failure_count": 24,
+                "failure_rate_pct": 10.0418410041841,
+                "mid": 101.45862890542827,
+                "rte_pct": 168.34577806258508
+              },
+              "negative": {
+                "count": 256,
+                "failure_count": 26,
+                "failure_rate_pct": 10.15625,
+                "mid": 148.0710593940644,
+                "rte_pct": 272.9211528172952
+              },
+              "small": {
+                "count": 270,
+                "failure_count": 20,
+                "failure_rate_pct": 7.4074074074074066,
+                "mid": 118.00697160754335,
+                "rte_pct": 160.27083939732933
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 74,
+            "failure_rate_pct": 8.131868131868131,
+            "num_samples": 910,
+            "paper_MiD_overall": 161.84525773618475,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 212.486212586458
+          },
+          "t79dBxj1WS": {
+            "bins": {
+              "crucial": {
+                "count": 152,
+                "failure_count": 1,
+                "failure_rate_pct": 0.6578947368421052,
+                "mid": 241.412602755847,
+                "rte_pct": 167.88520695008123
+              },
+              "large": {
+                "count": 278,
+                "failure_count": 40,
+                "failure_rate_pct": 14.388489208633093,
+                "mid": 82.95108696450885,
+                "rte_pct": 136.14977418625966
+              },
+              "negative": {
+                "count": 203,
+                "failure_count": 21,
+                "failure_rate_pct": 10.344827586206897,
+                "mid": 119.5081304561564,
+                "rte_pct": 225.7954569664445
+              },
+              "small": {
+                "count": 277,
+                "failure_count": 16,
+                "failure_rate_pct": 5.776173285198556,
+                "mid": 117.49492083728477,
+                "rte_pct": 171.98020507668767
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 78,
+            "failure_rate_pct": 8.571428571428571,
+            "num_samples": 910,
+            "paper_MiD_overall": 176.20069937117543,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 171.73118811331733
+          }
+        },
+        "rows": 8192,
+        "sample_weighted_MiD": 230.08684180934338,
+        "sequence_macro_MiD": 211.50851321026667
+      },
+      "parameter_count": 498130,
+      "worst_fold_MiD": 235.32568627631113
+    },
+    "a8_0": {
+      "fold_MiD_mean": 197.69139895274205,
+      "fold_MiD_sample_std": 15.33587903346392,
+      "folds": {
+        "0": {
+          "coverage": 0.9267667521054559,
+          "failure_pct": 7.3233247894544125,
+          "pearson": 0.1455227229885137,
+          "per_sequence": {
+            "5ilM1PX2vz": {
+              "bins": {
+                "crucial": {
+                  "count": 150,
+                  "failure_count": 6,
+                  "failure_rate_pct": 4.0,
+                  "mid": 276.0603364064801,
+                  "rte_pct": 151.53144256927874
+                },
+                "large": {
+                  "count": 135,
+                  "failure_count": 8,
+                  "failure_rate_pct": 5.9259259259259265,
+                  "mid": 139.43790880049153,
+                  "rte_pct": 162.18594208803214
+                },
+                "negative": {
+                  "count": 467,
+                  "failure_count": 38,
+                  "failure_rate_pct": 8.137044967880087,
+                  "mid": 186.67888899712202,
+                  "rte_pct": 313.44791423395685
+                },
+                "small": {
+                  "count": 159,
+                  "failure_count": 8,
+                  "failure_rate_pct": 5.031446540880504,
+                  "mid": 134.80833743999094,
+                  "rte_pct": 209.36096823037641
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 60,
+              "failure_rate_pct": 6.586169045005488,
+              "num_samples": 911,
+              "paper_MiD_overall": 211.0843492149987,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 186.1373973859512
+            },
+            "OYgB6RGWcq": {
+              "bins": {
+                "crucial": {
+                  "count": 95,
+                  "failure_count": 5,
+                  "failure_rate_pct": 5.263157894736842,
+                  "mid": 189.414807306623,
+                  "rte_pct": 190.48705954106765
+                },
+                "large": {
+                  "count": 195,
+                  "failure_count": 16,
+                  "failure_rate_pct": 8.205128205128204,
+                  "mid": 130.46830276678963,
+                  "rte_pct": 162.09054788049949
+                },
+                "negative": {
+                  "count": 478,
+                  "failure_count": 42,
+                  "failure_rate_pct": 8.786610878661087,
+                  "mid": 157.0517092251368,
+                  "rte_pct": 263.3371044473652
+                },
+                "small": {
+                  "count": 142,
+                  "failure_count": 10,
+                  "failure_rate_pct": 7.042253521126761,
+                  "mid": 159.1217581071174,
+                  "rte_pct": 243.63016978144003
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 73,
+              "failure_rate_pct": 8.021978021978022,
+              "num_samples": 910,
+              "paper_MiD_overall": 171.19593228463935,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 210.8753459377523
+            },
+            "qGsgzl4Q8B": {
+              "bins": {
+                "crucial": {
+                  "count": 145,
+                  "failure_count": 6,
+                  "failure_rate_pct": 4.137931034482759,
+                  "mid": 194.82279348507294,
+                  "rte_pct": 132.27349230852107
+                },
+                "large": {
+                  "count": 239,
+                  "failure_count": 22,
+                  "failure_rate_pct": 9.205020920502092,
+                  "mid": 110.97962577484346,
+                  "rte_pct": 166.4199483824053
+                },
+                "negative": {
+                  "count": 256,
+                  "failure_count": 21,
+                  "failure_rate_pct": 8.203125,
+                  "mid": 151.94135460184594,
+                  "rte_pct": 292.2773303663502
+                },
+                "small": {
+                  "count": 270,
+                  "failure_count": 18,
+                  "failure_rate_pct": 6.666666666666667,
+                  "mid": 121.34088950781074,
+                  "rte_pct": 179.4286049173312
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 67,
+              "failure_rate_pct": 7.362637362637363,
+              "num_samples": 910,
+              "paper_MiD_overall": 160.10576163254862,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 165.83505550433543
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 181.98676723904396,
+          "sequence_macro_MiD": 180.79534771072886
+        },
+        "1": {
+          "coverage": 0.9322592456975467,
+          "failure_pct": 6.774075430245332,
+          "pearson": 0.32306632770804194,
+          "per_sequence": {
+            "2cyv0Oedzg": {
+              "bins": {
+                "crucial": {
+                  "count": 160,
+                  "failure_count": 5,
+                  "failure_rate_pct": 3.125,
+                  "mid": 315.5903467718796,
+                  "rte_pct": 232.83127457610175
+                },
+                "large": {
+                  "count": 213,
+                  "failure_count": 17,
+                  "failure_rate_pct": 7.981220657276995,
+                  "mid": 67.43313430671935,
+                  "rte_pct": 105.9520869415081
+                },
+                "negative": {
+                  "count": 305,
+                  "failure_count": 16,
+                  "failure_rate_pct": 5.245901639344262,
+                  "mid": 86.67930838946785,
+                  "rte_pct": 105.33709653927075
+                },
+                "small": {
+                  "count": 233,
+                  "failure_count": 10,
+                  "failure_rate_pct": 4.291845493562231,
+                  "mid": 84.81887584512795,
+                  "rte_pct": 96.11868692732561
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 48,
+              "failure_rate_pct": 5.26893523600439,
+              "num_samples": 911,
+              "paper_MiD_overall": 198.6520804090969,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 166.38016171432645
+            },
+            "6h5yRW2LGc": {
+              "bins": {
+                "crucial": {
+                  "count": 288,
+                  "failure_count": 16,
+                  "failure_rate_pct": 5.555555555555555,
+                  "mid": 422.1952481948569,
+                  "rte_pct": 554.3819563903885
+                },
+                "large": {
+                  "count": 214,
+                  "failure_count": 28,
+                  "failure_rate_pct": 13.084112149532709,
+                  "mid": 140.9089388838596,
+                  "rte_pct": 156.02317011193026
+                },
+                "negative": {
+                  "count": 163,
+                  "failure_count": 12,
+                  "failure_rate_pct": 7.361963190184049,
+                  "mid": 174.67087386981245,
+                  "rte_pct": 174.00555449923843
+                },
+                "small": {
+                  "count": 245,
+                  "failure_count": 24,
+                  "failure_rate_pct": 9.795918367346939,
+                  "mid": 168.17621879107722,
+                  "rte_pct": 256.634541371384
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 80,
+              "failure_rate_pct": 8.791208791208792,
+              "num_samples": 910,
+              "paper_MiD_overall": 293.1084710101188,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 387.18421306772626
+            },
+            "mHGFBekt7X": {
+              "bins": {
+                "crucial": {
+                  "count": 126,
+                  "failure_count": 1,
+                  "failure_rate_pct": 0.7936507936507936,
+                  "mid": 144.3548013506868,
+                  "rte_pct": 83.93037109338712
+                },
+                "large": {
+                  "count": 249,
+                  "failure_count": 19,
+                  "failure_rate_pct": 7.630522088353414,
+                  "mid": 65.48632698177617,
+                  "rte_pct": 81.48032006236853
+                },
+                "negative": {
+                  "count": 308,
+                  "failure_count": 26,
+                  "failure_rate_pct": 8.441558441558442,
+                  "mid": 96.80571885167107,
+                  "rte_pct": 160.15207445326195
+                },
+                "small": {
+                  "count": 227,
+                  "failure_count": 11,
+                  "failure_rate_pct": 4.845814977973569,
+                  "mid": 81.58882932625107,
+                  "rte_pct": 61.49802067401339
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 57,
+              "failure_rate_pct": 6.263736263736264,
+              "num_samples": 910,
+              "paper_MiD_overall": 112.88325405656344,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 84.57783120046064
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 217.98117543187857,
+          "sequence_macro_MiD": 201.54793515859308
+        },
+        "2": {
+          "coverage": 0.9304029304029304,
+          "failure_pct": 6.95970695970696,
+          "pearson": 0.22284060358435057,
+          "per_sequence": {
+            "OBneIVg4Cw": {
+              "bins": {
+                "crucial": {
+                  "count": 325,
+                  "failure_count": 14,
+                  "failure_rate_pct": 4.3076923076923075,
+                  "mid": 429.98720034573887,
+                  "rte_pct": 479.22488044048424
+                },
+                "large": {
+                  "count": 162,
+                  "failure_count": 10,
+                  "failure_rate_pct": 6.172839506172839,
+                  "mid": 104.42155837031224,
+                  "rte_pct": 168.0289268476631
+                },
+                "negative": {
+                  "count": 127,
+                  "failure_count": 13,
+                  "failure_rate_pct": 10.236220472440944,
+                  "mid": 112.41243893320296,
+                  "rte_pct": 179.25609904480928
+                },
+                "small": {
+                  "count": 296,
+                  "failure_count": 20,
+                  "failure_rate_pct": 6.756756756756757,
+                  "mid": 127.96071988381729,
+                  "rte_pct": 195.66964932946598
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 57,
+              "failure_rate_pct": 6.263736263736264,
+              "num_samples": 910,
+              "paper_MiD_overall": 275.0652158683661,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 333.0418376083292
+            },
+            "WbCh1DRerJ": {
+              "bins": {
+                "crucial": {
+                  "count": 255,
+                  "failure_count": 10,
+                  "failure_rate_pct": 3.9215686274509802,
+                  "mid": 311.8746435865527,
+                  "rte_pct": 389.56173934592124
+                },
+                "large": {
+                  "count": 241,
+                  "failure_count": 27,
+                  "failure_rate_pct": 11.20331950207469,
+                  "mid": 102.94971745013281,
+                  "rte_pct": 173.55376778158478
+                },
+                "negative": {
+                  "count": 177,
+                  "failure_count": 11,
+                  "failure_rate_pct": 6.214689265536723,
+                  "mid": 108.59996788003785,
+                  "rte_pct": 173.39086501408232
+                },
+                "small": {
+                  "count": 237,
+                  "failure_count": 20,
+                  "failure_rate_pct": 8.438818565400844,
+                  "mid": 114.16657800936736,
+                  "rte_pct": 175.1818122836505
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 68,
+              "failure_rate_pct": 7.472527472527473,
+              "num_samples": 910,
+              "paper_MiD_overall": 211.34226372910362,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 282.0298766376225
+            },
+            "t79dBxj1WS": {
+              "bins": {
+                "crucial": {
+                  "count": 152,
+                  "failure_count": 2,
+                  "failure_rate_pct": 1.3157894736842104,
+                  "mid": 195.93924098007744,
+                  "rte_pct": 98.14353654476189
+                },
+                "large": {
+                  "count": 278,
+                  "failure_count": 35,
+                  "failure_rate_pct": 12.589928057553957,
+                  "mid": 72.96487378387171,
+                  "rte_pct": 133.86013466729412
+                },
+                "negative": {
+                  "count": 203,
+                  "failure_count": 15,
+                  "failure_rate_pct": 7.389162561576355,
+                  "mid": 106.67229852560415,
+                  "rte_pct": 172.7326056229322
+                },
+                "small": {
+                  "count": 277,
+                  "failure_count": 13,
+                  "failure_rate_pct": 4.693140794223827,
+                  "mid": 99.5064154941893,
+                  "rte_pct": 140.94291755448924
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 65,
+              "failure_rate_pct": 7.142857142857142,
+              "num_samples": 910,
+              "paper_MiD_overall": 145.7852623692431,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 122.01391756775034
+            }
+          },
+          "rows": 2730,
+          "sample_weighted_MiD": 223.87177717030053,
+          "sequence_macro_MiD": 210.7309139889043
+        }
+      },
+      "outer_dev_9_sequence": {
+        "coverage": 0.9298095703125,
+        "failure_pct": 7.01904296875,
+        "pearson": 0.22460797928056825,
+        "per_sequence": {
+          "2cyv0Oedzg": {
+            "bins": {
+              "crucial": {
+                "count": 160,
+                "failure_count": 5,
+                "failure_rate_pct": 3.125,
+                "mid": 315.5903467718796,
+                "rte_pct": 232.83127457610175
+              },
+              "large": {
+                "count": 213,
+                "failure_count": 17,
+                "failure_rate_pct": 7.981220657276995,
+                "mid": 67.43313430671935,
+                "rte_pct": 105.9520869415081
+              },
+              "negative": {
+                "count": 305,
+                "failure_count": 16,
+                "failure_rate_pct": 5.245901639344262,
+                "mid": 86.67930838946785,
+                "rte_pct": 105.33709653927075
+              },
+              "small": {
+                "count": 233,
+                "failure_count": 10,
+                "failure_rate_pct": 4.291845493562231,
+                "mid": 84.81887584512795,
+                "rte_pct": 96.11868692732561
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 48,
+            "failure_rate_pct": 5.26893523600439,
+            "num_samples": 911,
+            "paper_MiD_overall": 198.6520804090969,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 166.38016171432645
+          },
+          "5ilM1PX2vz": {
+            "bins": {
+              "crucial": {
+                "count": 150,
+                "failure_count": 6,
+                "failure_rate_pct": 4.0,
+                "mid": 276.0603364064801,
+                "rte_pct": 151.53144256927874
+              },
+              "large": {
+                "count": 135,
+                "failure_count": 8,
+                "failure_rate_pct": 5.9259259259259265,
+                "mid": 139.43790880049153,
+                "rte_pct": 162.18594208803214
+              },
+              "negative": {
+                "count": 467,
+                "failure_count": 38,
+                "failure_rate_pct": 8.137044967880087,
+                "mid": 186.67888899712202,
+                "rte_pct": 313.44791423395685
+              },
+              "small": {
+                "count": 159,
+                "failure_count": 8,
+                "failure_rate_pct": 5.031446540880504,
+                "mid": 134.80833743999094,
+                "rte_pct": 209.36096823037641
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 60,
+            "failure_rate_pct": 6.586169045005488,
+            "num_samples": 911,
+            "paper_MiD_overall": 211.0843492149987,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 186.1373973859512
+          },
+          "6h5yRW2LGc": {
+            "bins": {
+              "crucial": {
+                "count": 288,
+                "failure_count": 16,
+                "failure_rate_pct": 5.555555555555555,
+                "mid": 422.1952481948569,
+                "rte_pct": 554.3819563903885
+              },
+              "large": {
+                "count": 214,
+                "failure_count": 28,
+                "failure_rate_pct": 13.084112149532709,
+                "mid": 140.9089388838596,
+                "rte_pct": 156.02317011193026
+              },
+              "negative": {
+                "count": 163,
+                "failure_count": 12,
+                "failure_rate_pct": 7.361963190184049,
+                "mid": 174.67087386981245,
+                "rte_pct": 174.00555449923843
+              },
+              "small": {
+                "count": 245,
+                "failure_count": 24,
+                "failure_rate_pct": 9.795918367346939,
+                "mid": 168.17621879107722,
+                "rte_pct": 256.634541371384
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 80,
+            "failure_rate_pct": 8.791208791208792,
+            "num_samples": 910,
+            "paper_MiD_overall": 293.1084710101188,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 387.18421306772626
+          },
+          "OBneIVg4Cw": {
+            "bins": {
+              "crucial": {
+                "count": 325,
+                "failure_count": 14,
+                "failure_rate_pct": 4.3076923076923075,
+                "mid": 429.98720034573887,
+                "rte_pct": 479.22488044048424
+              },
+              "large": {
+                "count": 162,
+                "failure_count": 10,
+                "failure_rate_pct": 6.172839506172839,
+                "mid": 104.42155837031224,
+                "rte_pct": 168.0289268476631
+              },
+              "negative": {
+                "count": 127,
+                "failure_count": 13,
+                "failure_rate_pct": 10.236220472440944,
+                "mid": 112.41243893320296,
+                "rte_pct": 179.25609904480928
+              },
+              "small": {
+                "count": 296,
+                "failure_count": 20,
+                "failure_rate_pct": 6.756756756756757,
+                "mid": 127.96071988381729,
+                "rte_pct": 195.66964932946598
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 57,
+            "failure_rate_pct": 6.263736263736264,
+            "num_samples": 910,
+            "paper_MiD_overall": 275.0652158683661,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 333.0418376083292
+          },
+          "OYgB6RGWcq": {
+            "bins": {
+              "crucial": {
+                "count": 95,
+                "failure_count": 5,
+                "failure_rate_pct": 5.263157894736842,
+                "mid": 189.414807306623,
+                "rte_pct": 190.48705954106765
+              },
+              "large": {
+                "count": 195,
+                "failure_count": 16,
+                "failure_rate_pct": 8.205128205128204,
+                "mid": 130.46830276678963,
+                "rte_pct": 162.09054788049949
+              },
+              "negative": {
+                "count": 478,
+                "failure_count": 42,
+                "failure_rate_pct": 8.786610878661087,
+                "mid": 157.0517092251368,
+                "rte_pct": 263.3371044473652
+              },
+              "small": {
+                "count": 142,
+                "failure_count": 10,
+                "failure_rate_pct": 7.042253521126761,
+                "mid": 159.1217581071174,
+                "rte_pct": 243.63016978144003
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 73,
+            "failure_rate_pct": 8.021978021978022,
+            "num_samples": 910,
+            "paper_MiD_overall": 171.19593228463935,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 210.8753459377523
+          },
+          "WbCh1DRerJ": {
+            "bins": {
+              "crucial": {
+                "count": 255,
+                "failure_count": 10,
+                "failure_rate_pct": 3.9215686274509802,
+                "mid": 311.8746435865527,
+                "rte_pct": 389.56173934592124
+              },
+              "large": {
+                "count": 241,
+                "failure_count": 27,
+                "failure_rate_pct": 11.20331950207469,
+                "mid": 102.94971745013281,
+                "rte_pct": 173.55376778158478
+              },
+              "negative": {
+                "count": 177,
+                "failure_count": 11,
+                "failure_rate_pct": 6.214689265536723,
+                "mid": 108.59996788003785,
+                "rte_pct": 173.39086501408232
+              },
+              "small": {
+                "count": 237,
+                "failure_count": 20,
+                "failure_rate_pct": 8.438818565400844,
+                "mid": 114.16657800936736,
+                "rte_pct": 175.1818122836505
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 68,
+            "failure_rate_pct": 7.472527472527473,
+            "num_samples": 910,
+            "paper_MiD_overall": 211.34226372910362,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 282.0298766376225
+          },
+          "mHGFBekt7X": {
+            "bins": {
+              "crucial": {
+                "count": 126,
+                "failure_count": 1,
+                "failure_rate_pct": 0.7936507936507936,
+                "mid": 144.3548013506868,
+                "rte_pct": 83.93037109338712
+              },
+              "large": {
+                "count": 249,
+                "failure_count": 19,
+                "failure_rate_pct": 7.630522088353414,
+                "mid": 65.48632698177617,
+                "rte_pct": 81.48032006236853
+              },
+              "negative": {
+                "count": 308,
+                "failure_count": 26,
+                "failure_rate_pct": 8.441558441558442,
+                "mid": 96.80571885167107,
+                "rte_pct": 160.15207445326195
+              },
+              "small": {
+                "count": 227,
+                "failure_count": 11,
+                "failure_rate_pct": 4.845814977973569,
+                "mid": 81.58882932625107,
+                "rte_pct": 61.49802067401339
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 57,
+            "failure_rate_pct": 6.263736263736264,
+            "num_samples": 910,
+            "paper_MiD_overall": 112.88325405656344,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 84.57783120046064
+          },
+          "qGsgzl4Q8B": {
+            "bins": {
+              "crucial": {
+                "count": 145,
+                "failure_count": 6,
+                "failure_rate_pct": 4.137931034482759,
+                "mid": 194.82279348507294,
+                "rte_pct": 132.27349230852107
+              },
+              "large": {
+                "count": 239,
+                "failure_count": 22,
+                "failure_rate_pct": 9.205020920502092,
+                "mid": 110.97962577484346,
+                "rte_pct": 166.4199483824053
+              },
+              "negative": {
+                "count": 256,
+                "failure_count": 21,
+                "failure_rate_pct": 8.203125,
+                "mid": 151.94135460184594,
+                "rte_pct": 292.2773303663502
+              },
+              "small": {
+                "count": 270,
+                "failure_count": 18,
+                "failure_rate_pct": 6.666666666666667,
+                "mid": 121.34088950781074,
+                "rte_pct": 179.4286049173312
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 67,
+            "failure_rate_pct": 7.362637362637363,
+            "num_samples": 910,
+            "paper_MiD_overall": 160.10576163254862,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 165.83505550433543
+          },
+          "t79dBxj1WS": {
+            "bins": {
+              "crucial": {
+                "count": 152,
+                "failure_count": 2,
+                "failure_rate_pct": 1.3157894736842104,
+                "mid": 195.93924098007744,
+                "rte_pct": 98.14353654476189
+              },
+              "large": {
+                "count": 278,
+                "failure_count": 35,
+                "failure_rate_pct": 12.589928057553957,
+                "mid": 72.96487378387171,
+                "rte_pct": 133.86013466729412
+              },
+              "negative": {
+                "count": 203,
+                "failure_count": 15,
+                "failure_rate_pct": 7.389162561576355,
+                "mid": 106.67229852560415,
+                "rte_pct": 172.7326056229322
+              },
+              "small": {
+                "count": 277,
+                "failure_count": 13,
+                "failure_rate_pct": 4.693140794223827,
+                "mid": 99.5064154941893,
+                "rte_pct": 140.94291755448924
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 65,
+            "failure_rate_pct": 7.142857142857142,
+            "num_samples": 910,
+            "paper_MiD_overall": 145.7852623692431,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 122.01391756775034
+          }
+        },
+        "rows": 8192,
+        "sample_weighted_MiD": 214.28860517112716,
+        "sequence_macro_MiD": 197.69139895274208
+      },
+      "parameter_count": 627827,
+      "worst_fold_MiD": 210.7309139889043
+    },
+    "garl": {
+      "fold_MiD_mean": 144.35302716563493,
+      "fold_MiD_sample_std": 16.965597027590157,
+      "folds": {
+        "0": {
+          "coverage": 1.0,
+          "failure_pct": 0.0,
+          "pearson": 0.04174601534431557,
+          "per_sequence": {
+            "5ilM1PX2vz": {
+              "bins": {
+                "crucial": {
+                  "count": 150,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 220.9742255755878,
+                  "rte_pct": 80.92267834403582
+                },
+                "large": {
+                  "count": 135,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 101.15171983496246,
+                  "rte_pct": 66.54242062871417
+                },
+                "negative": {
+                  "count": 467,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 268.42610259144095,
+                  "rte_pct": 1762.4173859734797
+                },
+                "small": {
+                  "count": 159,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 77.04066928297203,
+                  "rte_pct": 89.62245250151446
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 911,
+              "paper_MiD_overall": 170.55709581532585,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 250.24405558269166
+            },
+            "OYgB6RGWcq": {
+              "bins": {
+                "crucial": {
+                  "count": 95,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 114.43838626402633,
+                  "rte_pct": 29.52597642325076
+                },
+                "large": {
+                  "count": 195,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 105.20149623658959,
+                  "rte_pct": 53.11629044012754
+                },
+                "negative": {
+                  "count": 478,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 183.57733793287983,
+                  "rte_pct": 764.3223670334669
+                },
+                "small": {
+                  "count": 142,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 69.97970959219508,
+                  "rte_pct": 44.77198183932852
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 107.09098942661865,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 109.93844851078339
+            },
+            "qGsgzl4Q8B": {
+              "bins": {
+                "crucial": {
+                  "count": 145,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 135.2407751696188,
+                  "rte_pct": 33.972565246089665
+                },
+                "large": {
+                  "count": 239,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 83.2366060091577,
+                  "rte_pct": 116.68543553653176
+                },
+                "negative": {
+                  "count": 256,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 193.8687127564525,
+                  "rte_pct": 400.94560497192947
+                },
+                "small": {
+                  "count": 270,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 60.234737621175974,
+                  "rte_pct": 60.82348459609047
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 113.4013407477232,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 86.99643205271809
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 133.15319231950784,
+          "sequence_macro_MiD": 130.34980866322257
+        },
+        "1": {
+          "coverage": 1.0,
+          "failure_pct": 0.0,
+          "pearson": 0.0726593425608313,
+          "per_sequence": {
+            "2cyv0Oedzg": {
+              "bins": {
+                "crucial": {
+                  "count": 160,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 259.0534922443847,
+                  "rte_pct": 186.8027963491781
+                },
+                "large": {
+                  "count": 213,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 73.72050987603376,
+                  "rte_pct": 256.1632433538702
+                },
+                "negative": {
+                  "count": 305,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 135.86571819642515,
+                  "rte_pct": 274.28531038114363
+                },
+                "small": {
+                  "count": 233,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 55.29842393256838,
+                  "rte_pct": 55.68514483491147
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 911,
+              "paper_MiD_overall": 167.07489610920874,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 163.15179699856387
+            },
+            "6h5yRW2LGc": {
+              "bins": {
+                "crucial": {
+                  "count": 288,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 323.3759072794131,
+                  "rte_pct": 403.7452297594692
+                },
+                "large": {
+                  "count": 214,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 147.78290577058277,
+                  "rte_pct": 130.35867287192042
+                },
+                "negative": {
+                  "count": 163,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 169.86661878237598,
+                  "rte_pct": 509.6656162174949
+                },
+                "small": {
+                  "count": 245,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 111.40485180274044,
+                  "rte_pct": 96.44570426126926
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 226.87436163582458,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 294.80875506705695
+            },
+            "mHGFBekt7X": {
+              "bins": {
+                "crucial": {
+                  "count": 126,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 124.17833861385574,
+                  "rte_pct": 40.54383475667064
+                },
+                "large": {
+                  "count": 249,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 72.60869133301036,
+                  "rte_pct": 70.62984381249247
+                },
+                "negative": {
+                  "count": 308,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 124.07881367221924,
+                  "rte_pct": 268.24633963538037
+                },
+                "small": {
+                  "count": 227,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 46.49972968782235,
+                  "rte_pct": 24.058157333443543
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 95.70783871379754,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 61.376982923155666
+            }
+          },
+          "rows": 2731,
+          "sample_weighted_MiD": 175.9576256004929,
+          "sequence_macro_MiD": 163.21903215294364
+        },
+        "2": {
+          "coverage": 1.0,
+          "failure_pct": 0.0,
+          "pearson": 0.033951550262727816,
+          "per_sequence": {
+            "OBneIVg4Cw": {
+              "bins": {
+                "crucial": {
+                  "count": 325,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 231.793499360862,
+                  "rte_pct": 104.42764025413861
+                },
+                "large": {
+                  "count": 162,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 122.02818215325111,
+                  "rte_pct": 163.52447313257468
+                },
+                "negative": {
+                  "count": 127,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 113.16906267751943,
+                  "rte_pct": 291.11853206681513
+                },
+                "small": {
+                  "count": 296,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 115.79493724219724,
+                  "rte_pct": 190.11831466315655
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 174.15495533616723,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 154.71361504595524
+            },
+            "WbCh1DRerJ": {
+              "bins": {
+                "crucial": {
+                  "count": 255,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 181.31115039116676,
+                  "rte_pct": 389.2534765309555
+                },
+                "large": {
+                  "count": 241,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 106.87671203813935,
+                  "rte_pct": 126.04793264649854
+                },
+                "negative": {
+                  "count": 177,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 83.02725026775649,
+                  "rte_pct": 138.2889291717693
+                },
+                "small": {
+                  "count": 237,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 100.79134193762809,
+                  "rte_pct": 103.64005925685807
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 139.88337400746138,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 252.15244222436195
+            },
+            "t79dBxj1WS": {
+              "bins": {
+                "crucial": {
+                  "count": 152,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 118.6738176092927,
+                  "rte_pct": 28.729934460320834
+                },
+                "large": {
+                  "count": 278,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 87.31695330359379,
+                  "rte_pct": 395.515265819593
+                },
+                "negative": {
+                  "count": 203,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 129.92419968880287,
+                  "rte_pct": 215.65092097671126
+                },
+                "small": {
+                  "count": 277,
+                  "failure_count": 0,
+                  "failure_rate_pct": 0.0,
+                  "mid": 77.90456198233646,
+                  "rte_pct": 140.64951611873934
+                }
+              },
+              "delta_t_s": 0.1,
+              "failure_count": 0,
+              "failure_rate_pct": 0.0,
+              "num_samples": 910,
+              "paper_MiD_overall": 104.43239269858694,
+              "protocol": "garl_signed_v1",
+              "weighted_RTE_pct": 117.67644074541265
+            }
+          },
+          "rows": 2730,
+          "sample_weighted_MiD": 146.0783907536759,
+          "sequence_macro_MiD": 139.49024068073854
+        }
+      },
+      "outer_dev_9_sequence": {
+        "coverage": 1.0,
+        "failure_pct": 0.0,
+        "pearson": 0.042057012361143856,
+        "per_sequence": {
+          "2cyv0Oedzg": {
+            "bins": {
+              "crucial": {
+                "count": 160,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 259.0534922443847,
+                "rte_pct": 186.8027963491781
+              },
+              "large": {
+                "count": 213,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 73.72050987603376,
+                "rte_pct": 256.1632433538702
+              },
+              "negative": {
+                "count": 305,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 135.86571819642515,
+                "rte_pct": 274.28531038114363
+              },
+              "small": {
+                "count": 233,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 55.29842393256838,
+                "rte_pct": 55.68514483491147
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 911,
+            "paper_MiD_overall": 167.07489610920874,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 163.15179699856387
+          },
+          "5ilM1PX2vz": {
+            "bins": {
+              "crucial": {
+                "count": 150,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 220.9742255755878,
+                "rte_pct": 80.92267834403582
+              },
+              "large": {
+                "count": 135,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 101.15171983496246,
+                "rte_pct": 66.54242062871417
+              },
+              "negative": {
+                "count": 467,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 268.42610259144095,
+                "rte_pct": 1762.4173859734797
+              },
+              "small": {
+                "count": 159,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 77.04066928297203,
+                "rte_pct": 89.62245250151446
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 911,
+            "paper_MiD_overall": 170.55709581532585,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 250.24405558269166
+          },
+          "6h5yRW2LGc": {
+            "bins": {
+              "crucial": {
+                "count": 288,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 323.3759072794131,
+                "rte_pct": 403.7452297594692
+              },
+              "large": {
+                "count": 214,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 147.78290577058277,
+                "rte_pct": 130.35867287192042
+              },
+              "negative": {
+                "count": 163,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 169.86661878237598,
+                "rte_pct": 509.6656162174949
+              },
+              "small": {
+                "count": 245,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 111.40485180274044,
+                "rte_pct": 96.44570426126926
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 226.87436163582458,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 294.80875506705695
+          },
+          "OBneIVg4Cw": {
+            "bins": {
+              "crucial": {
+                "count": 325,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 231.793499360862,
+                "rte_pct": 104.42764025413861
+              },
+              "large": {
+                "count": 162,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 122.02818215325111,
+                "rte_pct": 163.52447313257468
+              },
+              "negative": {
+                "count": 127,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 113.16906267751943,
+                "rte_pct": 291.11853206681513
+              },
+              "small": {
+                "count": 296,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 115.79493724219724,
+                "rte_pct": 190.11831466315655
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 174.15495533616723,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 154.71361504595524
+          },
+          "OYgB6RGWcq": {
+            "bins": {
+              "crucial": {
+                "count": 95,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 114.43838626402633,
+                "rte_pct": 29.52597642325076
+              },
+              "large": {
+                "count": 195,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 105.20149623658959,
+                "rte_pct": 53.11629044012754
+              },
+              "negative": {
+                "count": 478,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 183.57733793287983,
+                "rte_pct": 764.3223670334669
+              },
+              "small": {
+                "count": 142,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 69.97970959219508,
+                "rte_pct": 44.77198183932852
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 107.09098942661865,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 109.93844851078339
+          },
+          "WbCh1DRerJ": {
+            "bins": {
+              "crucial": {
+                "count": 255,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 181.31115039116676,
+                "rte_pct": 389.2534765309555
+              },
+              "large": {
+                "count": 241,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 106.87671203813935,
+                "rte_pct": 126.04793264649854
+              },
+              "negative": {
+                "count": 177,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 83.02725026775649,
+                "rte_pct": 138.2889291717693
+              },
+              "small": {
+                "count": 237,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 100.79134193762809,
+                "rte_pct": 103.64005925685807
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 139.88337400746138,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 252.15244222436195
+          },
+          "mHGFBekt7X": {
+            "bins": {
+              "crucial": {
+                "count": 126,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 124.17833861385574,
+                "rte_pct": 40.54383475667064
+              },
+              "large": {
+                "count": 249,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 72.60869133301036,
+                "rte_pct": 70.62984381249247
+              },
+              "negative": {
+                "count": 308,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 124.07881367221924,
+                "rte_pct": 268.24633963538037
+              },
+              "small": {
+                "count": 227,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 46.49972968782235,
+                "rte_pct": 24.058157333443543
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 95.70783871379754,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 61.376982923155666
+          },
+          "qGsgzl4Q8B": {
+            "bins": {
+              "crucial": {
+                "count": 145,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 135.2407751696188,
+                "rte_pct": 33.972565246089665
+              },
+              "large": {
+                "count": 239,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 83.2366060091577,
+                "rte_pct": 116.68543553653176
+              },
+              "negative": {
+                "count": 256,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 193.8687127564525,
+                "rte_pct": 400.94560497192947
+              },
+              "small": {
+                "count": 270,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 60.234737621175974,
+                "rte_pct": 60.82348459609047
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 113.4013407477232,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 86.99643205271809
+          },
+          "t79dBxj1WS": {
+            "bins": {
+              "crucial": {
+                "count": 152,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 118.6738176092927,
+                "rte_pct": 28.729934460320834
+              },
+              "large": {
+                "count": 278,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 87.31695330359379,
+                "rte_pct": 395.515265819593
+              },
+              "negative": {
+                "count": 203,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 129.92419968880287,
+                "rte_pct": 215.65092097671126
+              },
+              "small": {
+                "count": 277,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 77.90456198233646,
+                "rte_pct": 140.64951611873934
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 910,
+            "paper_MiD_overall": 104.43239269858694,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 117.67644074541265
+          }
+        },
+        "rows": 8192,
+        "sample_weighted_MiD": 155.45617736842806,
+        "sequence_macro_MiD": 144.3530271656349
+      },
+      "parameter_count": 24674178,
+      "worst_fold_MiD": 163.21903215294364
+    }
+  },
+  "paired_outer_dev": {
+    "a6_vs_garl": {
+      "artifact_sha256": "4774acc3997250e204da7aaaa98a91ec04c3ecb146ea24e2672734b5cd2ecf27",
+      "bootstrap": {
+        "failure_pct_delta_first_minus_second": {
+          "lower_95": 7.211862493935505,
+          "median": 7.855961083727685,
+          "upper_95": 8.522703797332072
+        },
+        "probability_first_lower_MiD": 0.0,
+        "sequence_macro_MiD_delta_first_minus_second": {
+          "lower_95": 58.16534575024511,
+          "median": 67.17087662499587,
+          "upper_95": 75.89152449475866
+        }
+      },
+      "delta_first_minus_second": {
+        "failure_pct": 7.84912109375,
+        "finite_prediction_fraction": -0.0784912109375,
+        "sample_weighted_MiD": 74.63066444091533,
+        "sequence_macro_MiD": 67.15548604463177
+      },
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v5\\results\\paired_a6_vs_garl_outer_dev.json"
+    },
+    "a8_0_vs_a6": {
+      "artifact_sha256": "a80fdb4b4c4818e66e16dcf02d66480ecf37d8d09603434bcabe3b6ef1610399",
+      "bootstrap": {
+        "failure_pct_delta_first_minus_second": {
+          "lower_95": -1.6215126248742215,
+          "median": -0.8394593892405684,
+          "upper_95": -0.03701640889713444
+        },
+        "probability_first_lower_MiD": 1.0,
+        "sequence_macro_MiD_delta_first_minus_second": {
+          "lower_95": -17.724530233188908,
+          "median": -13.875187258312621,
+          "upper_95": -10.065450307781191
+        }
+      },
+      "delta_first_minus_second": {
+        "failure_pct": -0.830078125,
+        "finite_prediction_fraction": 0.00830078125,
+        "sample_weighted_MiD": -15.798236638216224,
+        "sequence_macro_MiD": -13.817114257524565
+      },
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v5\\results\\paired_a8_0_vs_a6_outer_dev.json"
+    },
+    "a8_0_vs_garl": {
+      "artifact_sha256": "9348abf4c49f4e6982b5de6676387735ffb21abbf50073cd08b60031213100db",
+      "bootstrap": {
+        "failure_pct_delta_first_minus_second": {
+          "lower_95": 6.414349818966948,
+          "median": 7.018429872948779,
+          "upper_95": 7.641122273582348
+        },
+        "probability_first_lower_MiD": 0.0,
+        "sequence_macro_MiD_delta_first_minus_second": {
+          "lower_95": 44.312629336646275,
+          "median": 53.312578050871124,
+          "upper_95": 61.782673319608854
+        }
+      },
+      "delta_first_minus_second": {
+        "failure_pct": 7.01904296875,
+        "finite_prediction_fraction": -0.0701904296875,
+        "sample_weighted_MiD": 58.8324278026991,
+        "sequence_macro_MiD": 53.33837178710721
+      },
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v5\\results\\paired_a8_0_vs_garl_outer_dev.json"
+    }
+  },
+  "protocol": {
+    "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+    "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\configs\\protocol\\scientific_recovery_v5_train_only_grouped_dev.json",
+    "sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874"
+  },
+  "sources": {
+    "a4_fold0": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold0_seed7\\dev_predictions.csv",
+        "sha256": "32458c9e6ab7671da8469682774c2fe3b5aa118ad911a8ba86f4ab38a3be3bcb"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold0_seed7\\summary.json",
+        "sha256": "dd08b8d5b0e601bf8a3a01597c3f98ee6d2502d603fecd5762cc5e484f1912f1"
+      }
+    },
+    "a4_fold1": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold1_seed7\\dev_predictions.csv",
+        "sha256": "33539404991c8d6c9d9be39e50ebeb53a50dc4ded595f19b1d90869471ed5d29"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold1_seed7\\summary.json",
+        "sha256": "87e9baeb2e039af7f1fbf81ca1d172be0ff8497596c17440b0d1168692f5f74d"
+      }
+    },
+    "a4_fold2": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold2_seed7\\dev_predictions.csv",
+        "sha256": "aab40f963781dd26b00968baebd742ccb5b27e42d1968a6f2f4d9e181a44c883"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold2_seed7\\summary.json",
+        "sha256": "caa819a12c0eaa85d085b0d331156785fae3025d33434d6a5ddee17dd2d011ae"
+      }
+    },
+    "a6_fold0": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold0_seed7\\dev_predictions.csv",
+        "sha256": "1a78a045f0913248353b05e7cf6e3fc5ec897d8dd4ce6799cf725bc9f66c7958"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold0_seed7\\summary.json",
+        "sha256": "9a7a3e126d6c81d0e1c366e84ad671b5509efd898308075f75e0642490bb127d"
+      }
+    },
+    "a6_fold1": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold1_seed7\\dev_predictions.csv",
+        "sha256": "ada03ce17e514c6ca50f7a1f31e9c7c6da8ae36e124597fb42d891a08f5433c1"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold1_seed7\\summary.json",
+        "sha256": "aec9ff603ca16918ff7991b20b8604981764c43aba8c8da1c1f87976fee1381f"
+      }
+    },
+    "a6_fold2": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold2_seed7\\dev_predictions.csv",
+        "sha256": "7de5be1e2510fdadb9ab5f4b13063dce12a812dcc13e9a65d19bd11ba8853db4"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold2_seed7\\summary.json",
+        "sha256": "9bbd10edafc7590f693779b2a6fa7e9ed725c5f4c18a631a8439a62fd9cb00a9"
+      }
+    },
+    "a8_0_fold0": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold0_seed7\\dev_predictions.csv",
+        "sha256": "37989e37d31efe69d6878ca6071787793bf48acc943e04bff74b57aa201b517d"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold0_seed7\\summary.json",
+        "sha256": "7ea83cc1030cbe40d1d26a2a4a7ed7a72e02c8f56feb3575a2e7fb07f21bd312"
+      }
+    },
+    "a8_0_fold1": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold1_seed7\\dev_predictions.csv",
+        "sha256": "cb9ca884aeb21795381b670bb97caddac2ae2d4c03b7a7929006e35eba519569"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold1_seed7\\summary.json",
+        "sha256": "bc718a0d4d3957da44484dac068742d048fff7b4c79ab72595011365b2d28158"
+      }
+    },
+    "a8_0_fold2": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold2_seed7\\dev_predictions.csv",
+        "sha256": "6ae103883e1053177ffe6c6bb4eefafdcdbd1c03ee96346e7db8c6585a1a55c1"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold2_seed7\\summary.json",
+        "sha256": "f53239254b3ce9693e248143f4a84b9915a586371939856f7d76d8db6e5c3bcf"
+      }
+    },
+    "garl_fold0": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_garl_fold_chain_fold0_seed7\\dev_predictions.parquet",
+        "sha256": "217ce6b36cea81ed08a410142bc07ff0fffbe89bad91156908ea085e86a983b9"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_garl_fold_chain_fold0_seed7\\summary.json",
+        "sha256": "902e34a3a09c4727ede2e2163a241dab8a7b5d45ee6e0384a4417a15fb8a7546"
+      }
+    },
+    "garl_fold1": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_garl_fold_chain_fold1_seed7\\dev_predictions.parquet",
+        "sha256": "30f20fef75ec8fe9fada188557b71c5fb3337fa5127c0d50fe43f3cb567a2c66"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_garl_fold_chain_fold1_seed7\\summary.json",
+        "sha256": "fd8301f9b891cfd038826fcbade1394d92779ccca19338227208f301cb838dd1"
+      }
+    },
+    "garl_fold2": {
+      "predictions": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_garl_fold_chain_fold2_seed7\\dev_predictions.parquet",
+        "sha256": "98e337f0712fd8fbec08b44a43acc09ce3cf6fbc0d05f8f492a861f75a3b22f4"
+      },
+      "summary": {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_garl_fold_chain_fold2_seed7\\summary.json",
+        "sha256": "d4bcb7a3f012b0c1cbcc551681f6f562561e5765d54973827a32c307aeddd554"
+      }
+    }
+  },
+  "status": "completed_development_gate_evaluation"
+}

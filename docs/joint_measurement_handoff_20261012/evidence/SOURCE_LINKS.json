@@ -1,0 +1,10 @@
+{
+  "v17_release": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/v17-research-results-20261012",
+  "v17_docs": "https://github.com/Kripta-Studios/e-jepa-ttc/tree/396abe922537d9dac19d6db3451e59d283636e20/docs/representation_audit_20261012",
+  "garl": "https://github.com/NAIL-HNU/Garl-TTC",
+  "eap": "https://arxiv.org/html/2603.16303v1",
+  "react": "https://arxiv.org/abs/2609.19204",
+  "raft": "https://arxiv.org/abs/2003.12039",
+  "goals": "https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex",
+  "codex_cli": "https://developers.openai.com/codex/cli/reference/"
+}

@@ -17,6 +17,7 @@ from torch import nn
 from torch.nn import functional as functional
 from torch.utils.data import DataLoader, Dataset, Subset
 
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset, ShardLocalSampler
 from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.calibration import (
@@ -35,21 +36,47 @@ from e_jepa_ttc.models.object_jepa import (
     inverse_ttc_distribution_to_seconds,
     object_event_jepa_loss,
 )
+from e_jepa_ttc.reproducibility import cuda_is_usable, resolve_device, seed_torch_cpu
 from e_jepa_ttc.utils.io import write_structured
+
+
+def _hash_file(filepath: str | Path) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    if not Path(filepath).exists():
+        return ""
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _get_git_commit() -> str:
+    import subprocess
+
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        return "unknown"
+
+
+def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, temporary)
+    temporary.replace(path)
 
 
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
         torch.cuda.manual_seed_all(seed)
 
 
 def _device(name: str) -> torch.device:
-    if name == "auto":
-        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    return torch.device(name)
+    return resolve_device(name)
 
 
 def _tensor_batch(
@@ -197,12 +224,22 @@ def pretrain_object_event_jepa(
     use_ego_actions: bool = True,
     use_recurrence: bool = True,
     use_geometry: bool = True,
-) -> dict[str, Any]:
+    num_workers: int = 4,
+    early_stopping_patience: int = 6,
+    early_stopping_min_epochs: int = 10,
+    early_stopping_min_delta_relative: float = 0.003,
+    resume: bool = False,
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Pretrain the object world model without consuming TTC labels."""
 
     if epochs <= 0 or batch_size <= 0 or learning_rate <= 0:
         msg = "epochs, batch_size and learning_rate must be positive."
         raise ValueError(msg)
+    if num_workers < 0 or early_stopping_patience < 0:
+        raise ValueError("num_workers and early_stopping_patience must be non-negative.")
+    if early_stopping_min_epochs <= 0 or early_stopping_min_delta_relative < 0:
+        raise ValueError("Early-stopping minimums are invalid.")
     _set_seed(seed)
     device = _device(device_name)
     train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
@@ -228,19 +265,23 @@ def pretrain_object_event_jepa(
         use_geometry=use_geometry,
     )
     model = ObjectCentricEventJEPA(config).to(device)
+    loader_options: dict[str, Any] = {
+        "num_workers": num_workers,
+        "pin_memory": device.type == "cuda",
+    }
+    if num_workers > 0:
+        loader_options.update(persistent_workers=True, prefetch_factor=2)
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
         sampler=ShardLocalSampler(train_dataset, seed=seed),
-        num_workers=0,
-        pin_memory=device.type == "cuda",
+        **loader_options,
     )
     validation_loader = DataLoader(
         validation_dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=0,
-        pin_memory=device.type == "cuda",
+        **loader_options,
     )
     trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
     optimizer = torch.optim.AdamW(
@@ -253,18 +294,103 @@ def pretrain_object_event_jepa(
     output.mkdir(parents=True, exist_ok=True)
     best_path = output / "object_jepa_best.pt"
     last_path = output / "object_jepa_last.pt"
+    resume_path = output / "resume.pt"
     history_path = output / "history.jsonl"
     best_validation = float("inf")
     best_epoch = -1
     history: list[dict[str, Any]] = []
+    import hashlib
+
+    run_fingerprint_payload = {
+        "git_commit": _get_git_commit(),
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "cache_sha256": _hash_file(cache_manifest_path),
+        "split_manifest_sha256": _hash_file(cache_manifest_path),
+        "subset_manifest_sha256": "",
+        "model_name": "object_centric_event_jepa",
+        "resolved_model_config": asdict(config),
+        "navigation_mode": "enabled" if use_ego_actions else "disabled",
+        "label_fraction": 1.0,
+        "seed": seed,
+        "pretraining_checkpoint_sha256": "",
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+        "num_workers": num_workers,
+        "early_stopping": {
+            "patience": early_stopping_patience,
+            "min_epochs": early_stopping_min_epochs,
+            "min_delta_relative": early_stopping_min_delta_relative,
+        },
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
+
     start_time = time.perf_counter()
     total_steps = max(1, epochs * len(train_loader))
     global_step = 0
-    with history_path.open("w", encoding="utf-8") as history_file:
-        for epoch in range(1, epochs + 1):
+    start_epoch = 1
+    no_improvement = 0
+    completed_epoch = 0
+    stopped_early = False
+
+    def checkpoint(epoch: int, role: str, selected_by: str) -> dict[str, Any]:
+        return {
+            "model_state_dict": model.state_dict(),
+            "model_config": asdict(config),
+            "epoch": epoch,
+            "seed": seed,
+            "checkpoint_role": role,
+            "selected_by": selected_by,
+            "uses_ttc_labels": False,
+            "uses_ego_actions": use_ego_actions,
+            "cache_manifest": str(cache_manifest_path),
+            "manifest_sha256": _hash_file(cache_manifest_path),
+            "git_commit": _get_git_commit(),
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
+        }
+
+    if resume:
+        if not resume_path.is_file():
+            raise FileNotFoundError(f"Resume checkpoint does not exist: {resume_path}")
+        state = torch.load(resume_path, map_location=device, weights_only=False)
+        if state["run_fingerprint"] != run_fingerprint:
+            raise ValueError("JEPA resume fingerprint differs from current data/config/code.")
+        model.load_state_dict(state["model_state_dict"])
+        optimizer.load_state_dict(state["optimizer_state_dict"])
+        if scaler is not None and state.get("scaler_state_dict") is not None:
+            scaler.load_state_dict(state["scaler_state_dict"])
+        start_epoch = int(state["epoch"]) + 1
+        completed_epoch = int(state["epoch"])
+        global_step = int(state["global_step"])
+        best_validation = float(state["best_validation"])
+        best_epoch = int(state["best_epoch"])
+        no_improvement = int(state["no_improvement"])
+        if history_path.is_file():
+            history = [
+                json.loads(line)
+                for line in history_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+    elif resume_path.exists():
+        raise FileExistsError(
+            f"{resume_path} exists; pass resume=True or select a new output directory."
+        )
+
+    with history_path.open("a" if resume else "w", encoding="utf-8") as history_file:
+        for epoch in range(start_epoch, epochs + 1):
             model.train()
             train_sum = 0.0
             train_count = 0
+            divergence_sum = 0.0
+            divergence_count = 0
             for batch in train_loader:
                 optimizer.zero_grad(set_to_none=True)
                 with torch.autocast(
@@ -292,7 +418,9 @@ def pretrain_object_event_jepa(
                 momentum = ema_end - (ema_end - ema_start) * 0.5 * (
                     1.0 + math.cos(math.pi * progress)
                 )
-                model.update_target_encoder(momentum)
+                divergence = model.update_target_encoder(momentum)
+                divergence_sum += divergence
+                divergence_count += 1
                 global_step += 1
                 train_sum += float(losses["total"].detach()) * valid_count
                 train_count += valid_count
@@ -307,39 +435,52 @@ def pretrain_object_event_jepa(
                 "train_total": train_sum / max(train_count, 1),
                 "validation": validation,
                 "ema_momentum": momentum,
+                "target_encoder_divergence_l2": divergence_sum / max(divergence_count, 1),
             }
             history.append(row)
             history_file.write(json.dumps(row, sort_keys=True) + "\n")
             history_file.flush()
-            if validation["total"] < best_validation:
+            improvement_threshold = (
+                best_validation * (1.0 - early_stopping_min_delta_relative)
+                if np.isfinite(best_validation)
+                else float("inf")
+            )
+            if validation["total"] < improvement_threshold:
                 best_validation = validation["total"]
                 best_epoch = epoch
-                torch.save(
-                    {
-                        "model_state_dict": model.state_dict(),
-                        "model_config": asdict(config),
-                        "epoch": epoch,
-                        "seed": seed,
-                        "checkpoint_role": "best",
-                        "selected_by": "validation_object_jepa_total",
-                        "uses_ttc_labels": False,
-                        "uses_ego_actions": use_ego_actions,
-                        "cache_manifest": str(cache_manifest_path),
-                    },
+                no_improvement = 0
+                _atomic_torch_save(
+                    checkpoint(epoch, "best", "validation_object_jepa_total"),
                     best_path,
                 )
-    torch.save(
-        {
-            "model_state_dict": model.state_dict(),
-            "model_config": asdict(config),
-            "epoch": epochs,
-            "seed": seed,
-            "checkpoint_role": "last",
-            "selected_by": "final_epoch",
-            "uses_ttc_labels": False,
-            "uses_ego_actions": use_ego_actions,
-            "cache_manifest": str(cache_manifest_path),
-        },
+            else:
+                no_improvement += 1
+            completed_epoch = epoch
+            resume_state = checkpoint(epoch, "resume", "latest_completed_epoch")
+            resume_state.update(
+                {
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "scaler_state_dict": scaler.state_dict() if scaler is not None else None,
+                    "global_step": global_step,
+                    "best_validation": best_validation,
+                    "best_epoch": best_epoch,
+                    "no_improvement": no_improvement,
+                }
+            )
+            _atomic_torch_save(resume_state, resume_path)
+            if (
+                early_stopping_patience > 0
+                and epoch >= early_stopping_min_epochs
+                and no_improvement >= early_stopping_patience
+            ):
+                stopped_early = True
+                break
+    _atomic_torch_save(
+        checkpoint(
+            completed_epoch,
+            "last",
+            "early_stopping" if stopped_early else "final_epoch",
+        ),
         last_path,
     )
     summary: dict[str, Any] = {
@@ -349,7 +490,10 @@ def pretrain_object_event_jepa(
         "seed": seed,
         "device": str(device),
         "epochs": epochs,
+        "epochs_completed": completed_epoch,
+        "stopped_early": stopped_early,
         "batch_size": batch_size,
+        "num_workers": num_workers,
         "learning_rate": learning_rate,
         "weight_decay": weight_decay,
         "uses_ttc_labels": False,
@@ -359,10 +503,18 @@ def pretrain_object_event_jepa(
         "best_validation_total": best_validation,
         "best_checkpoint": best_path.as_posix(),
         "last_checkpoint": last_path.as_posix(),
+        "resume_checkpoint": resume_path.as_posix(),
         "train_samples": len(train_dataset),
         "validation_samples": len(validation_dataset),
         "elapsed_seconds": time.perf_counter() - start_time,
         "history": history,
+        "manifest_sha256": _hash_file(cache_manifest_path),
+        "git_commit": _get_git_commit(),
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
+        "final_test_opened": False,
     }
     write_structured(output / "summary.json", summary)
     train_dataset.close()
@@ -413,16 +565,14 @@ def _supervised_object_loss(
     inverse_target = torch.reciprocal(ttc_s[valid])
     residual = prediction.inverse_ttc_mean[valid] - inverse_target
     log_variance = prediction.inverse_ttc_log_variance[valid]
-    inverse_nll = (
-        0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance
-    ).mean()
+    inverse_nll = (0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance).mean()
     thresholds = prediction.risk_logits.new_tensor(risk_thresholds_s)
     if prediction.risk_logits.shape[-1] != thresholds.numel():
         msg = "Risk thresholds do not match the model risk-head width."
         raise ValueError(msg)
-    labels = (
-        (ttc_s[..., None] > 0.0) & (ttc_s[..., None] <= thresholds[None, None, :])
-    ).to(prediction.risk_logits.dtype)
+    labels = ((ttc_s[..., None] > 0.0) & (ttc_s[..., None] <= thresholds[None, None, :])).to(
+        prediction.risk_logits.dtype
+    )
     risk_bce = functional.binary_cross_entropy_with_logits(
         prediction.risk_logits[valid],
         labels[valid],
@@ -459,9 +609,11 @@ def _label_subset_indices(
         strata.setdefault((sequence_id, bin_index), []).append(index)
     rng = np.random.default_rng(seed)
     selected: list[int] = []
-    for indices in strata.values():
+    for key in sorted(strata.keys()):
+        indices = strata[key]
+        shuffled = rng.permutation(indices)
         count = max(1, int(round(len(indices) * fraction)))
-        selected.extend(rng.choice(indices, size=min(count, len(indices)), replace=False).tolist())
+        selected.extend(shuffled[: min(count, len(indices))].tolist())
     return sorted(set(int(index) for index in selected))
 
 
@@ -563,10 +715,9 @@ def _fit_calibrators(
     temperatures = [
         fit_temperature_scaler(
             predictions["risk_logits"][:, index],
-            (
-                (predictions["ttc_true"] > 0.0)
-                & (predictions["ttc_true"] <= threshold)
-            ).astype(np.int64),
+            ((predictions["ttc_true"] > 0.0) & (predictions["ttc_true"] <= threshold)).astype(
+                np.int64
+            ),
         )
         for index, threshold in enumerate(risk_thresholds_s)
     ]
@@ -587,8 +738,18 @@ def fine_tune_object_ttc(
     device_name: str = "auto",
     scratch_config: ObjectJEPAConfig | None = None,
     use_ego_actions: bool = True,
-) -> dict[str, Any]:
+    report_splits: tuple[str, ...] = ("validation",),
+    allow_final_test_evaluation: bool = False,
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Fine-tune a matched JEPA/scratch TTC model and calibrate on a held-out split."""
+
+    if "test" in report_splits and not allow_final_test_evaluation:
+        raise ValueError(
+            "Test split evaluation requested, but allow_final_test_evaluation is False. "
+            "Pass --allow-final-test-evaluation if you are absolutely sure you are ready "
+            "to burn the test split."
+        )
 
     _set_seed(seed)
     device = _device(device_name)
@@ -627,8 +788,23 @@ def fine_tune_object_ttc(
 
     train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
     validation_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("validation",))
-    calibration_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("calibration",))
-    test_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("test",))
+
+    datasets = {
+        "train": train_dataset,
+        "validation": validation_dataset,
+    }
+
+    if "calibration" in report_splits:
+        datasets["calibration"] = EAPObjectCacheDataset(
+            cache_manifest_path, splits=("calibration",)
+        )
+
+    if "test" in report_splits:
+        if not allow_final_test_evaluation:
+            raise ValueError(
+                "Evaluation of the final test split requires allow_final_test_evaluation=True"
+            )
+        datasets["test"] = EAPObjectCacheDataset(cache_manifest_path, splits=("test",))
     selected_indices = _label_subset_indices(
         train_dataset,
         fraction=label_fraction,
@@ -656,6 +832,33 @@ def fine_tune_object_ttc(
     best_path = output / "object_ttc_best.pt"
     history_path = output / "history.jsonl"
     best_validation = float("inf")
+    import hashlib
+
+    run_fingerprint_payload = {
+        "git_commit": _get_git_commit(),
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "cache_sha256": _hash_file(cache_manifest_path),
+        "split_manifest_sha256": _hash_file(cache_manifest_path),
+        "subset_manifest_sha256": "",
+        "model_name": "object_ttc",
+        "resolved_model_config": asdict(config),
+        "navigation_mode": "enabled" if use_ego_actions else "disabled",
+        "label_fraction": label_fraction,
+        "seed": seed,
+        "pretraining_checkpoint_sha256": _hash_file(pretrained_checkpoint_path)
+        if pretrained_checkpoint_path
+        else "",
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
+
     best_epoch = -1
     start_time = time.perf_counter()
     with history_path.open("w", encoding="utf-8") as history_file:
@@ -723,6 +926,12 @@ def fine_tune_object_ttc(
                         "uses_ego_actions": use_ego_actions,
                         "checkpoint_role": "best",
                         "selected_by": "validation_inverse_ttc_mae",
+                        "manifest_sha256": _hash_file(cache_manifest_path),
+                        "git_commit": _get_git_commit(),
+                        "protocol_version": get_current_protocol_identity()[0],
+                        "protocol_sha256": get_current_protocol_identity()[1],
+                        "run_fingerprint": run_fingerprint,
+                        "run_fingerprint_payload": run_fingerprint_payload,
                     },
                     best_path,
                 )
@@ -735,53 +944,22 @@ def fine_tune_object_ttc(
         batch_size=batch_size,
         use_ego_actions=use_ego_actions,
     )
-    calibration_predictions = _collect_predictions(
-        model,
-        calibration_dataset,
-        device=device,
-        batch_size=batch_size,
-        use_ego_actions=use_ego_actions,
-    )
-    conformal, temperatures = _fit_calibrators(
-        calibration_predictions,
-        risk_thresholds_s=config.risk_thresholds_s,
-    )
-    test_predictions = _collect_predictions(
-        model,
-        test_dataset,
-        device=device,
-        batch_size=batch_size,
-        use_ego_actions=use_ego_actions,
-    )
-    calibrated_risk = np.column_stack(
-        [
-            temperature.probabilities(test_predictions["risk_logits"][:, index])
-            for index, temperature in enumerate(temperatures)
-        ]
-    )
-    test_metrics = object_ttc_metrics(
-        test_predictions["ttc_true"],
-        test_predictions["ttc_pred"],
-        calibrated_risk,
-        risk_thresholds_s=config.risk_thresholds_s,
-    )
-    lower, upper = conformal.interval(
-        test_predictions["ttc_pred"],
-        test_predictions["ttc_std"],
-    )
-    test_metrics["conformal_90"] = interval_metrics(
-        test_predictions["ttc_true"],
-        lower,
-        upper,
-    )
-    test_metrics["mae_sequence_bootstrap_95"] = sequence_bootstrap_interval(
-        test_predictions["ttc_true"],
-        test_predictions["ttc_pred"],
-        test_predictions["sequence_id"],
-        iterations=2000,
-        confidence=0.95,
-        seed=seed,
-    )
+    # Fit calibrators only when a dedicated calibration split is requested.
+    conformal = None
+    temperatures = []
+    if "calibration" in report_splits:
+        calibration_predictions = _collect_predictions(
+            model,
+            datasets["calibration"],
+            device=device,
+            batch_size=batch_size,
+            use_ego_actions=use_ego_actions,
+        )
+        conformal, temperatures = _fit_calibrators(
+            calibration_predictions,
+            risk_thresholds_s=config.risk_thresholds_s,
+        )
+
     summary: dict[str, Any] = {
         "method": "object_centric_event_jepa_ttc",
         "initialization": "jepa" if checkpoint is not None else "scratch",
@@ -799,21 +977,122 @@ def fine_tune_object_ttc(
         "best_epoch": best_epoch,
         "best_validation_inverse_ttc_mae": best_validation,
         "validation": _prediction_metrics(validation_predictions),
-        "calibration": {
-            "split": "calibration",
-            "count": int(calibration_predictions["ttc_true"].shape[0]),
-            "conformal_coverage": conformal.coverage,
-            "conformal_scale": conformal.scale,
-            "temperatures": [temperature.temperature for temperature in temperatures],
-        },
-        "test": test_metrics,
-        "test_evaluated_after_model_selection_and_calibration": True,
+        "evaluation_split": report_splits[-1] if report_splits else "validation",
+        "final_test_opened": "test" in report_splits,
         "elapsed_seconds": time.perf_counter() - start_time,
         "best_checkpoint": best_path.as_posix(),
+        "manifest_sha256": _hash_file(cache_manifest_path),
+        "git_commit": _get_git_commit(),
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
     }
+
+    if "calibration" in report_splits and conformal is not None:
+        calibration_metrics = _prediction_metrics(calibration_predictions)
+
+        sample_ids = calibration_predictions.get(
+            "sample_id", np.arange(int(calibration_predictions["ttc_true"].shape[0]))
+        )
+        import hashlib
+
+        sample_id_hash = hashlib.sha256(sample_ids.tobytes()).hexdigest()
+
+        import datetime
+
+        protocol_version, protocol_sha256 = get_current_protocol_identity()
+
+        summary["calibration"] = {
+            "artifact_type": "calibration_metrics_v3",
+            "schema_version": "3.0",
+            "evidence_type": "synthetic_smoke",
+            "code_commit": _get_git_commit(),
+            "protocol_version": protocol_version,
+            "protocol_sha256": protocol_sha256,
+            "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
+            "cache_sha256": _hash_file(cache_manifest_path),
+            "split_manifest_sha256": _hash_file(
+                cache_manifest_path
+            ),  # usually they are the same in this setup
+            "evaluation_split": "calibration",
+            "sample_count": int(calibration_predictions["ttc_true"].shape[0]),
+            "sample_id_hash": sample_id_hash,
+            "regression": {
+                "mae_s": float(calibration_metrics["regression"]["mae_s"]),
+                "rmse_s": float(calibration_metrics["regression"]["rmse_s"]),
+                "median_abs_error_s": float(
+                    calibration_metrics["regression"]["median_abs_error_s"]
+                ),
+            },
+            "risk_support": [
+                {
+                    "threshold_s": float(t),
+                    "positive": int(metrics["positive_count"]),
+                    "negative": int(metrics["negative_count"]),
+                }
+                for t, metrics in calibration_metrics["risk"].items()
+            ]
+            if "risk" in calibration_metrics
+            else [],
+            "calibration": {
+                "conformal_coverage": conformal.coverage,
+                "conformal_scale": conformal.scale,
+                "temperatures": [temperature.temperature for temperature in temperatures],
+            },
+        }
+        from e_jepa_ttc.artifacts.hashing import sign_artifact
+
+        summary["calibration"] = sign_artifact(summary["calibration"])
+
+    if "test" in report_splits:
+        test_predictions = _collect_predictions(
+            model,
+            datasets["test"],
+            device=device,
+            batch_size=batch_size,
+            use_ego_actions=use_ego_actions,
+        )
+        calibrated_risk = (
+            np.column_stack(
+                [
+                    temperature.probabilities(test_predictions["risk_logits"][:, index])
+                    for index, temperature in enumerate(temperatures)
+                ]
+            )
+            if temperatures
+            else test_predictions["risk_logits"]
+        )
+        test_metrics = object_ttc_metrics(
+            test_predictions["ttc_true"],
+            test_predictions["ttc_pred"],
+            calibrated_risk,
+            risk_thresholds_s=config.risk_thresholds_s,
+        )
+        if conformal is not None:
+            lower, upper = conformal.interval(
+                test_predictions["ttc_pred"],
+                test_predictions["ttc_std"],
+            )
+            test_metrics["conformal_90"] = interval_metrics(
+                test_predictions["ttc_true"],
+                lower,
+                upper,
+            )
+        test_metrics["mae_sequence_bootstrap_95"] = sequence_bootstrap_interval(
+            test_predictions["ttc_true"],
+            test_predictions["ttc_pred"],
+            test_predictions["sequence_id"],
+            iterations=2000,
+            confidence=0.95,
+            seed=seed,
+        )
+        summary["test"] = test_metrics
+        summary["test_evaluated_after_model_selection_and_calibration"] = True
+        np.savez_compressed(output / "test_predictions.npz", **test_predictions)
+
     write_structured(output / "summary.json", summary)
-    np.savez_compressed(output / "test_predictions.npz", **test_predictions)
-    for dataset in (train_dataset, validation_dataset, calibration_dataset, test_dataset):
+    for dataset in datasets.values():
         dataset.close()
     return summary
 
@@ -854,17 +1133,13 @@ def evaluate_object_ttc_checkpoint(
         batch_size=batch_size,
         use_ego_actions=use_ego_actions,
     )
-    raw_risk = 1.0 / (
-        1.0 + np.exp(-np.clip(predictions["risk_logits"], -30.0, 30.0))
-    )
+    raw_risk = 1.0 / (1.0 + np.exp(-np.clip(predictions["risk_logits"], -30.0, 30.0)))
     risk_probability = raw_risk
     calibration_payload: dict[str, Any] | None = None
     conformal: ConformalIntervalCalibrator | None = None
     if calibration_summary_path is not None:
         summary_source = Path(calibration_summary_path)
-        calibration_source = json.loads(summary_source.read_text(encoding="utf-8"))[
-            "calibration"
-        ]
+        calibration_source = json.loads(summary_source.read_text(encoding="utf-8"))["calibration"]
         temperature_values = calibration_source["temperatures"]
         if len(temperature_values) != len(config.risk_thresholds_s):
             msg = "Saved calibration temperatures do not match model risk thresholds."
@@ -924,6 +1199,7 @@ def evaluate_object_ttc_checkpoint(
         "fit_on_evaluation_data": False,
         "uses_ego_actions": use_ego_actions,
         "metrics": metrics,
+        "final_test_opened": "test" in splits or "CPLA-high" in splits,
     }
     destination = Path(output_path)
     write_structured(destination, payload)

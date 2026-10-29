@@ -1,0 +1,76 @@
+{
+  "artifact_sha256": "10a570a148684f1facc9800ad13143da7a0bcebe457ba9ccc773a8418dd6a07e",
+  "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+  "benchmark10_opened": false,
+  "candidate_label": "eap_geo",
+  "comparisons": {
+    "sequence_macro_mae_s": {
+      "candidate_pair_wins": 1,
+      "candidate_relative_improvement_pct": 6.631600867219563,
+      "candidate_transfer_mean": 1.1196490888084685,
+      "control_mean": 1.199173488255058,
+      "control_pair_wins": 1,
+      "pair_count": 2
+    },
+    "sequence_macro_mean_relative_error": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 6.673265859244141,
+      "candidate_transfer_mean": 0.290923456723584,
+      "control_mean": 0.3117257443990398,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    },
+    "sequence_macro_selection_score": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 7.038383713529591,
+      "candidate_transfer_mean": 0.5619047588979384,
+      "control_mean": 0.6044481382147804,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    }
+  },
+  "control_aggregate": "artifacts/runs/evttc32_eap_random_control_analysis_v1/core/aggregate.json",
+  "control_aggregate_sha256": "8121cb5194498ef5092744d46b5a0179b57c8ff31dffe1efe12e3b6303ceeddd",
+  "fold_seed_pairs": [
+    {
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "matched_control_audit_passed": true,
+  "paired_oof_sequence_bootstrap_by_seed": [
+    {
+      "candidate_minus_control_mae_s": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": -0.07764400430023666,
+        "iterations": 2000,
+        "lower": -0.19923115856137186,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.027760348472037358
+      },
+      "candidate_minus_control_mean_abs_relative_error": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": -0.0204075173114861,
+        "iterations": 2000,
+        "lower": -0.04758391809834209,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.007508877842041429
+      },
+      "sample_count": 160,
+      "seed": 7,
+      "sequence_count": 14
+    }
+  ],
+  "test_used_for_selection": false,
+  "transfer_aggregate": "artifacts/runs/evttc32_eap_geo_transfer_analysis_v1/core/aggregate.json",
+  "transfer_aggregate_sha256": "c8082498be562e5d96e6de2fcafad1668268694b6e736585fae57b7eb4f69132",
+  "variant": "A1_MATCHED_DENSE_BLOCK"
+}

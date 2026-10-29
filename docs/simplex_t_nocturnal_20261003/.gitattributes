@@ -1,0 +1,2 @@
+# Preserve SHA-256 of delivered evidence, including original Windows newlines.
+* -text whitespace=cr-at-eol

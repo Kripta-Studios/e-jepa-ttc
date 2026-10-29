@@ -1,0 +1,79 @@
+{
+  "artifact_sha256": "09ae03ebb5bce8473e3a4dc70cd321e8421539df78293f4614c1d5ddb22c538d",
+  "artifact_type": "scientific_recovery_v5_garl_grouped_frozen_runs_v1",
+  "contracts": {
+    "comparison_scope": "exact-sample, target, budget, metric and oracle-ROI matched",
+    "event_only": true,
+    "from_scratch_per_fold": true,
+    "num_workers": 0,
+    "oracle_roi_preprocessing": true,
+    "preprocessing_identical_to_ejepa": false,
+    "pretrained_release_checkpoint_used": false,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "same_frozen_folds_as_ejepa": true,
+    "sequential_cuda_runs": true
+  },
+  "created_at_utc": "2026-08-13T01:52:01.012851+00:00",
+  "git_commit": "28690fe96113eda8f323aeefbf5ad893e19bcb50",
+  "protocol": {
+    "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+    "file_sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874",
+    "path": "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
+  },
+  "runs": [
+    {
+      "command": ".\\.venv\\Scripts\\python.exe scripts/train_garl_matched_from_cache.py --release-root E:\\Garl-TTC --cache-manifest artifacts/cache/garl_budget_matched_s1_8192_v2/manifest.json --development-protocol configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json --identity-metadata artifacts/scientific_recovery_master_v3/garl_budget_subset/train_data.parquet --device cuda --seed 7 --epochs 18 --batch-size 32 --num-workers 0 --minimum-epochs 8 --early-stopping-patience 5 --maximum-runtime-hours 8 --fold 0 --output-dir artifacts/runs/scientific_recovery_v5_garl_fold_chain_fold0_seed7",
+      "dev_rows": 2731,
+      "dev_sample_tokens_sha256": "85326602af71948734ff250a2e95e37d88db0d7cdbcfc494b30536f1956b61c9",
+      "fold": 0,
+      "from_scratch": true,
+      "pretrained_checkpoint": null,
+      "run_name": "scientific_recovery_v5_garl_fold_chain_fold0_seed7",
+      "seed": 7,
+      "train_rows": 5461,
+      "train_sample_tokens_sha256": "8f88d14d5f88228a7d59b853a8da86c9120d53c1fc7dcb94f94ae18f9a73d798"
+    },
+    {
+      "command": ".\\.venv\\Scripts\\python.exe scripts/train_garl_matched_from_cache.py --release-root E:\\Garl-TTC --cache-manifest artifacts/cache/garl_budget_matched_s1_8192_v2/manifest.json --development-protocol configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json --identity-metadata artifacts/scientific_recovery_master_v3/garl_budget_subset/train_data.parquet --device cuda --seed 7 --epochs 18 --batch-size 32 --num-workers 0 --minimum-epochs 8 --early-stopping-patience 5 --maximum-runtime-hours 8 --fold 1 --output-dir artifacts/runs/scientific_recovery_v5_garl_fold_chain_fold1_seed7",
+      "dev_rows": 2731,
+      "dev_sample_tokens_sha256": "5ea864aaa339ac5140bb61357e45b620f5819c42fa9db1542179658395d4fa77",
+      "fold": 1,
+      "from_scratch": true,
+      "pretrained_checkpoint": null,
+      "run_name": "scientific_recovery_v5_garl_fold_chain_fold1_seed7",
+      "seed": 7,
+      "train_rows": 5461,
+      "train_sample_tokens_sha256": "b57f1d9667c25a97a6f812406a534c63678d0cfce4dc25749efcd5c5c131f552"
+    },
+    {
+      "command": ".\\.venv\\Scripts\\python.exe scripts/train_garl_matched_from_cache.py --release-root E:\\Garl-TTC --cache-manifest artifacts/cache/garl_budget_matched_s1_8192_v2/manifest.json --development-protocol configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json --identity-metadata artifacts/scientific_recovery_master_v3/garl_budget_subset/train_data.parquet --device cuda --seed 7 --epochs 18 --batch-size 32 --num-workers 0 --minimum-epochs 8 --early-stopping-patience 5 --maximum-runtime-hours 8 --fold 2 --output-dir artifacts/runs/scientific_recovery_v5_garl_fold_chain_fold2_seed7",
+      "dev_rows": 2730,
+      "dev_sample_tokens_sha256": "e09980a547cf9c71c27cda9ee02c2ff12de6857dea47ced64ae61acb7a876f17",
+      "fold": 2,
+      "from_scratch": true,
+      "pretrained_checkpoint": null,
+      "run_name": "scientific_recovery_v5_garl_fold_chain_fold2_seed7",
+      "seed": 7,
+      "train_rows": 5462,
+      "train_sample_tokens_sha256": "b4163c61800ff36de95b2c764182b63a9a6b38f7975ea8a1db94f9b20f83fb24"
+    }
+  ],
+  "sources": {
+    "cache_manifest": {
+      "artifact_sha256": "f9ccb4a901112a3b648edbb746c8dbb0648d7d2d676adccbdaf51e8207c84b9c",
+      "path": "artifacts/cache/garl_budget_matched_s1_8192_v2/manifest.json",
+      "sha256": "3faf86bfe533bbf14fb71a054e777192853231af5a0c16876190fb71c128aafc"
+    },
+    "identity_metadata": {
+      "path": "artifacts/scientific_recovery_master_v3/garl_budget_subset/train_data.parquet",
+      "sha256": "50534e49323b10fb5cc1ab850391d85b88c7669b39f866e798cf0a18d621bbcd"
+    },
+    "official_release_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "training_script": {
+      "path": "scripts/train_garl_matched_from_cache.py",
+      "sha256": "304dcfb71813421e042c98c8deea37cd23dc066b4b5ec78191c693cf37de8013"
+    }
+  },
+  "status": "frozen_before_grouped_garl_training"
+}

@@ -1,0 +1,8 @@
+{
+  "draws": 10000,
+  "seed": 20261009,
+  "unit": "whole scenario family, including all queries and repetitions",
+  "interval": "percentile 95%",
+  "scope": "conditional on measured queries, host and workload; not deployment assurance",
+  "comparisons": "each mode independently; no paired cache-capacity claim across trials"
+}

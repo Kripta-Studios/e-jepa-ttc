@@ -1,0 +1,10 @@
+{
+  "status": "TRAINING_DISABLED_PENDING_REVIEW_REMEDIATION",
+  "affected_training_commit": "a9c2d6e8689e24c4eed4acac7aa9b6eede7f8a84",
+  "affected_attempt": "STAGE63_65_RUN_20260904",
+  "last_observed_update": 506,
+  "last_observed_arm": "outer0/S64-STATE-L1",
+  "reason": "Twelve user review findings require temporal cache v2, coherent A5 replay, nested validation, complete identity binding, resume, authorization, resource, access, metric and packaging repairs.",
+  "prior_artifacts_policy": "preserve_as_invalidated_attempt",
+  "release_condition": "all twelve findings covered by adversarial QA and a new bound training lock"
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "phase_ttc_public_early_tables_v1",
+  "tables": [
+    {
+      "file": "early_table_evttc.tex",
+      "spec": "lrrr",
+      "header": "Architecture & MAE (s) & Relative error (\\%) & Selection score",
+      "rows": [
+        "Global A0 & 1.0109 & 30.25 & 0.58452",
+        "Dense A1 & 1.0067 & 30.55 & 0.59312"
+      ]
+    },
+    {
+      "file": "early_table_factorial.tex",
+      "spec": "lr",
+      "header": "Replay intervention & MiD $\\downarrow$",
+      "rows": [
+        "analytic only & 373.176",
+        "analytic residual & 373.596",
+        "analytic residual transport & 163.231",
+        "analytic residual transport history & 155.824",
+        "analytic transport & 373.176"
+      ]
+    },
+    {
+      "file": "early_table_jepa.tex",
+      "spec": "lrrrrr",
+      "header": "Arm & 1\\% & 5\\% & 10\\% & 25\\% & 100\\%",
+      "rows": [
+        "D2 & 379.95 & 379.88 & 379.94 & 379.79 & 379.99",
+        "D3 & 379.52 & 379.38 & 379.39 & 379.32 & 379.67"
+      ]
+    },
+    {
+      "file": "early_table_screen.tex",
+      "spec": "lrr",
+      "header": "Arm & MiD $\\downarrow$ & Failure (\\%)",
+      "rows": [
+        "A1 geometry & 346.829 & 9.961",
+        "A3 SAM distilled & 353.635 & 10.889",
+        "Garl trained matched & 203.634 & 0.000"
+      ]
+    },
+    {
+      "file": "early_table_v5v6.tex",
+      "spec": "lrrr",
+      "header": "Model & Parameters & MiD $\\downarrow$ & Failure (\\%)",
+      "rows": [
+        "A4 parent & 355,118 & 291.088 & 9.448",
+        "A6 transport & 498,130 & 211.509 & 7.849",
+        "A8.0 dual transport & 627,827 & 197.691 & 7.019",
+        "V6.1 radius 2 & 627,827 & 194.122 & 6.689",
+        "A5 causal & 424,274 & 155.472 & 4.761",
+        "Garl local matched & 24,674,178 & 144.353 & 0.000"
+      ]
+    },
+    {
+      "file": "early_table_v7.tex",
+      "spec": "lrrr",
+      "header": "Arm & Point MiD & Delta vs A5 & Paired 95\\% interval",
+      "rows": [
+        "A5 reference & 158.449 & -- & --",
+        "SOFT & 165.116 & +6.668 & [+3.084, +10.547]",
+        "C2F & 158.573 & +0.125 & [-3.025, +3.432]",
+        "T20 & 165.260 & +6.812 & [+2.290, +11.514]",
+        "CAP-S & 167.025 & +8.576 & [+3.735, +13.630]",
+        "SOFT partial freeze & 167.826 & +9.378 & [+5.359, +13.272]"
+      ]
+    },
+    {
+      "file": "early_table_v8screen.tex",
+      "spec": "lrrr",
+      "header": "Arm & MiD & Finite (\\%) & Stored gate",
+      "rows": [
+        "router & 153.877 & 100.00 & True",
+        "timevol20\\_3 & 183.092 & 95.25 & False",
+        "exp6\\_3 & 190.711 & 94.10 & False",
+        "gated\\_exp6\\_3 & 187.400 & 94.80 & False"
+      ]
+    }
+  ]
+}

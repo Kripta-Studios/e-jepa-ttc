@@ -2,10 +2,41 @@
 
 **Causal Event–RGB Fusion for Time-to-Contact Estimation**
 
-Formerly **E-JEPA-TTC**. The current name reflects the final system's signed phase
-representation, causal temporal context, and event–RGB fusion. JEPA remains part
-of the research history; the name does not imply a demonstrated JEPA advantage,
-an official SOTA result, or a sustained real-time deployment claim.
+PHASE-TTC estimates signed time-to-contact from causal event streams and RGB
+frames. Each modality measures motion separately; temporal refiners and a
+compact RGB-anchored fusion head combine the resulting phase estimates.
+
+## Research article and current implementation
+
+**[PHASE-TTC: From Motion to Time](paper/PHASE_TTC_Final.pdf)** documents the
+final TRAIN40 system, the experiments that led to it, and its evaluation.
+The implementation and public research evidence are maintained together on
+`main`.
+
+- [Article PDF](paper/PHASE_TTC_Final.pdf)
+- [LaTeX source and build instructions](paper/README.md)
+- [Complete article source bundle](paper/PHASE_TTC_Final_Complete_Source.zip)
+- [Scientific and engineering history](docs/engineering_history_20261027/README.md)
+
+As of **28 October 2026**, PHASE-TTC ranks first among the three displayed
+GarlTTC Test submissions: **35.80 Overall MiD**, compared with **45.03** for
+Garl-TTC, a **20.49% reduction** across **6,762 scored tokens** with **0% scorer-defined
+failures**. The TRAIN40 submission uses up to **650 ms of causal event–RGB
+history**. The [distributed scoring records](paper/data/official_benchmark.json)
+and article specify the protocol and comparison scope.
+
+The paper also reports 468 labeled transfer queries from 32 sequences, 434
+separate EvTTC competition queries with unverified TTC labels, and a 250-update
+paced replay. Fusion has a mixed error profile against RGB alone, and the
+replay's 29.14 ms p95 response exceeds the 20 ms target.
+
+**Author:** Álvaro Schwiedop Souto
+
+[Email](mailto:alvaro.schwiedop@evocon-solutions.com) ·
+[LinkedIn](https://www.linkedin.com/in/%C3%A1lvaro-schwiedop-souto-92718b339/) ·
+[GitHub](https://github.com/Kripta-Studios/phase-ttc)
+
+Formerly **E-JEPA-TTC**. JEPA remains part of the documented research history.
 
 Repository: [Kripta-Studios/phase-ttc](https://github.com/Kripta-Studios/phase-ttc).
 The Python distribution and preferred command are `phase-ttc`. The `e_jepa_ttc`
@@ -13,203 +44,438 @@ import namespace and `e-jepa-ttc` command remain compatible with existing script
 and checkpoints. Historical artifacts retain their original identifiers.
 See [the naming decision](docs/decisions/ADR-0042-phase-ttc-name.md).
 
-The completed implementation is on
-[`perf/train40-persistent-50hz`](https://github.com/Kripta-Studios/phase-ttc/tree/perf/train40-persistent-50hz);
-`main` preserves the earlier implementation lineage. Branch names and dated
-research records are not changed by this naming migration.
+## Historical development notes
 
-The implementation description below documents the historical `main` snapshot.
+The dated notes below preserve the status at each research checkpoint. The
+article and current summary above supersede earlier submission-status notes.
 
-Research MVP for Time-to-Contact / Time-to-Collision estimation from event camera streams.
+**Cierre de runtime del 28 de octubre de 2026:** el [handoff del consejo de
+agentes](docs/train40_runtime_council_20261028/HANDOFF.md) conserva los ensayos,
+fallos y comandos de continuación. El mejor replay de un objeto entregó 250/250
+actualizaciones con paridad y sin descartes durante cinco segundos, con p95 de
+respuesta completa de 29,14 ms. **50 Hz sostenidos, menos de 20 ms y ausencia de
+acumulación siguen pendientes.** El perfil por defecto conserva PIL y adopta
+la configuración verificada de ese replay; pesos y normalizadores no cambian.
 
-The current repository implements the first engineering milestones from `AGENTS.md`: project
-bootstrap, typed data contracts, synthetic event data with known TTC, EvTTC dataset discovery,
-manifest validation, temporal indexing, sequence-level splits, dense event representations,
-classical TTC baselines, voxel-cache materialization, a supervised TinyCNN TTC regressor,
-dense motion-conditioned temporal JEPA pretraining, and low-label probes.
+**Actualización del 27 de octubre de 2026:** candidato multimodal TRAIN40 con
+entradas fuera de muestra, nueve componentes identificados y 6.762 predicciones
+Test12 preparadas; todavía no enviado a CodaBench. La comparación EvTTC final,
+sus límites y las mediciones de latencia están documentados. V18 conserva su
+cierre histórico `NO_CANDIDATE`.
 
-Experimental numbers must be generated from reproducible runs before being promoted to project
-claims. The bundled local EvTTC data is a three-sequence mini subset, so local results are smoke and
-sanity evidence rather than a broad benchmark.
+La [historia científica y de ingeniería de junio a octubre](docs/engineering_history_20261027/README.md)
+recoge entrenamientos, CUDA Graphs, BF16, cachés, prefetch, concurrencia,
+recuperación, migración Runpod y preservación de resultados en diez capítulos.
+La [evaluación final frente a Garl](docs/final_train40_transfer_20261027/REPORT.md)
+incluye resultados por secuencia; no se afirma SOTA oficial.
+Los estados fechados que siguen son históricos.
 
-## Quickstart
+> Actualización V14 del 12 de octubre de 2026:
+> [informes RANGE-TRANSFER y resultados](docs/range_transfer_results_20261012/README.md).
+> Seis fits event-only completos y evaluación interna V: **NO_CANDIDATE**.
+> Las mejoras de TTC corto incumplen salvaguardas de otros rangos; no hay réplicas
+> ni transferencia nueva. Se conservan pesos, predicciones, diagnósticos y fallos.
+> V13 permanece intacto. Los estados fechados debajo son históricos.
 
-```bash
-make setup
-make smoke-data
-make test
-```
+> Actualización del 8 de octubre de 2026:
+> [informes del 4–8 de octubre](docs/research_review_20261004_08/README.md), con
+> TRAIN40 completo, comparación EvTTC congelada frente a Garl event-only y
+> RGB+eventos, predicciones, costes y evidencia verificable. R1 sigue pendiente
+> en el corte publicado. No se afirma SOTA. Los estados fechados debajo son históricos.
 
-To scan the local EvTTC subset placed under `datasets/evttc`:
+> Estado vigente (2026-08-14): V7 terminó sin candidato. SOFT, T20, CAP-S y el
+> control partial-freeze empeoran A5; C2F queda compatible con efecto nulo. Ninguno
+> preserva geometría. No se ejecutan seeds 13/23 ni ablation JEPA. Un diagnóstico
+> post hoc A5/C2F-MoE obtiene 153,519 MiD, pero requiere confirmación prospectiva.
+> Acta:
+> [Scientific Recovery V7](docs/SCIENTIFIC_RECOVERY_V7_STATUS.md). Contrato y
+> gates: [CODEX_HANDOFF.md](CODEX_HANDOFF.md).
 
-```bash
-make scan-data
-make validate-data
-make index-data
-make split-data
-```
+> Estado vigente (2026-08-13): Scientific Recovery V6 cerró seis entrenamientos
+> fold-locales. V6.1 radio 2 mejora A8.0 de 197,69 a 194,12 MiD, pero su IC95%
+> incluye cero y falla el gate 175. A5 causal obtiene 155,47 y es el mejor E-JEPA
+> TTC limpio, aunque no es promocionable porque no preserva geometría. Garl mantiene
+> 144,35 y cero failures. Public validation y private/test permanecen cerrados.
+> Estado canónico: [Scientific Recovery V6](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
+> Contrato operativo V7/V8:
+> [CODEX_HANDOFF.md](CODEX_HANDOFF.md). V7 mantiene test y CodaBench cerrados.
 
-Equivalent direct CLI calls:
+> Estado event-only (2026-08-10): Garl matched desde cero fija la métrica a batir
+> en MiD macro 203,63. A0 obtuvo 382,19, A1 geometry-only 346,83 y A3
+> SAM-distilled 353,64. A3 empeora A1; no existe claim SOTA.
 
-```bash
-uv sync --all-groups --no-editable
-uv run --no-sync e-jepa-ttc data scan --root datasets/evttc --output data/manifests/evttc_local.yaml
-uv run --no-sync e-jepa-ttc data validate --manifest data/manifests/evttc_local.yaml
-uv run --no-sync e-jepa-ttc data index --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
-uv run --no-sync e-jepa-ttc split create --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
-```
+El diagnóstico de A0 localiza el defecto antes de la física: la expansión bbox sí
+correlaciona con TTC (`r=.760`), pero la expansión extraída del mapa no correlaciona
+con bbox (`r=.015`) ni TTC (`r=.037`). La inversión TTC agrava ratios cercanos a
+cero, pero no crea el error. A1 probó de forma aislada la hipótesis weak-box: la
+altura absoluta mejoró, pero anchura, centros y cambio temporal siguieron débiles.
+La weak-box no era la explicación suficiente.
 
-On Windows paths containing non-ASCII characters, `--no-editable` and `--no-sync` avoid an editable
-install `.pth` encoding issue observed with CPython 3.11.
+El preprocessing oficial del baseline Garl matched ya está materializado y firmado
+(`92af2810…f564b52`): 2.048 train/2.048 validation, event-only FP32, sin pesos
+release ni fuentes selladas.
 
-## GPU Training
+Ese baseline matched ya terminó: Garl obtiene MiD macro `203,63` y `0%` failures,
+frente a A0 `382,19` y `12,30%`. La ventaja aparece en las tres secuencias y el
+IC95% agrupado por secuencia de A0−Garl es `[131,74, 215,31]`. Garl matched,
+sin embargo, no modela receding: todas sus predicciones son positivas y su MiD
+negative es `437,60`; esta limitación sigue visible.
 
-The base project dependencies stay lightweight. Install PyTorch into the existing virtualenv before
-using `train tiny-cnn`:
+A1 se congeló antes del run: mismo CNN y prediction path, sin weak-box densa, con
+supervisión training-only de `h,w,cx,cy`, pair-ratio cero y sin parámetros nuevos.
+Terminó best 18/18 con MiD `346,83`, failure `9,96%` y Pearson log-ratio `.111`.
+`log h` alcanza `.471`, pero `log w/cx/cy` solo `.079/.064/.032`; `delta log h`
+contra bbox es `.059`. El siguiente control actuará sobre representación densa
+event-native, no sobre clipping ni la inversión TTC.
+
+La auditoría por endpoint confirma que la anchura bbox no es constante, pero el
+decoder separable no la sigue en t1/t2 (`r=.048/.105`). Como la masa absoluta de
+eventos es difusa en casi todo el ROI y el decoder actual usa `amax` por eje, el
+siguiente control cambia solo a convolución full-resolution 2-D. DINO, SAM, JEPA y
+pair-ratio permanecen fuera para no contaminar la ablation.
+
+Ese control full-resolution ya terminó y fue negativo: MiD macro `380,22`, failure
+`28,76%` y Pearson log-ratio `-.018`. La estructura 2-D superficial sobre eventos
+crudos no basta. El siguiente paso probará si el foreground debe consumir features
+profundas del encoder (`resize_conv`) antes de recurrir a pretraining RGB/event.
+Ese brazo A1-DF se preregistró antes de ejecutarse. Su run terminó con más señal
+temporal (`r=.186`) pero MiD macro `350,30` y
+`21,09%` failures: no supera A1 ni Garl matched. El ratio aprendido está
+subescalado, por lo que el siguiente control aislado será supervisarlo directamente
+sin cambiar arquitectura. A1-DF-R está preregistrado con peso train-normalized
+`5.0`. Terminó con macro `349,86` y `19,82%` failures: mejora marginalmente A1-DF,
+pero dos de tres secuencias empeoran y no supera A1. Se cierra sin sweep/escalado.
+
+La auditoría material posterior descarta el uso inmediato de máscaras oficiales:
+las 88.744 filas de train declaran 177.488 referencias `.npy` (64.629 únicas), pero
+ninguna existe bajo los seis roots locales auditados. En cambio, los 64.629 frames
+RGB únicos están presentes dentro de 135 TAR. Los snapshots locales SAM ViT-L y
+DINOv3 ConvNeXt-Tiny tienen config, processor, licencia y pesos verificados por hash.
+Esto permite preregistrar un smoke SAM con bbox prompts **solo sobre train**, pero el
+brazo resultante se llamará `event-only inference with RGB distillation`; no es
+event-only puro y no puede generar targets teacher en validation. Artefacto firmado:
+`artifacts/metrics/garl_foreground_resource_audit_v2.json`, identidad
+`6e910ec2…f1e246`.
+
+El smoke preregistrado posterior pasó en `cuda:0`: una bbox train real produjo tres
+máscaras finitas; la seleccionada ocupa `6,63%` de la imagen, con score IoU interno
+`1,0`, inferencia `0,421 s` y peak VRAM `1.691 MiB`. Es solo un gate de viabilidad,
+no una evaluación de calidad ni una métrica TTC. Identidad firmada
+`be097e6c…2af5e9`.
+
+El audit train-only posterior cubrió las nueve secuencias (36 pares/72 endpoints)
+y pasó los gates congelados: bbox–mask IoU mediana `.576`, cambio de área Pearson
+`.647`, signo `.829` y una máscara degenerada. Autoriza precomputar únicamente las
+2.048 filas train exactas, con filtros explícitos; no autoriza generar teachers en
+validation ni afirmar calidad de segmentación.
+
+La materialización exacta ya terminó: 4.096 endpoints en 32 shards, `94,92%`
+válidos individualmente y `78,22%` de pares válidos después del filtro temporal.
+El cache packbits ocupa ~2,18 MB, conserva cada rechazo y mantiene cobertura en las
+nueve secuencias. Preprocessing total `1.784,6 s`, inferencia media `.1711 s`, peak
+VRAM `1.691,9 MiB`. Manifest firmado `aaa60090…0426b0`; sigue siendo train-only y
+la materialización por sí sola no era evidencia TTC. A3 se implementó/preregistró sin cambiar
+la arquitectura A1: añade BCE `1.0` + Dice `.5` solo sobre las 3.204 máscaras
+aceptadas y mantiene geometry-only en las demás. Validation no carga el cache.
+Config SHA-256 `83e8c716…9b7754`. A3 terminó best 8/13 con MiD macro `353,64`,
+failure `10,89%` y ratio Pearson `.105`: peor que A1 en las tres secuencias. Solo
+mejora negative; su IC95% A3−A1 por secuencia es `[1,55,10,64]`. Se cierra sin
+sweep, escalado ni seeds adicionales. La siguiente rama será event-native y no
+añadirá otra dependencia de máscara RGB.
+
+Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
+cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
+RGB-E multimodal.
+
+Estado: Causal Scale V8 alcanza Pearson sintético multigrupo `.94621` con CVaR pero
+falla el gate `.95`; sus tests permanecen sellados. El screen eAP/Garl
+train/validation de 2.048/2.048 completó A0, Garl matched y A1. La hipótesis
+científica todavía no está demostrada. No existe claim SOTA ni resultado oficial
+eAP/CodaBench. Consulta el
+[estado operativo](STATUS.md) antes de ejecutar experimentos largos.
+
+## Qué produce
+
+- TTC continuo firmado en segundos;
+- logits de riesgo por horizontes configurables;
+- incertidumbre cuando la cabeza correspondiente está activa;
+- embeddings globales/densos y diagnósticos de colapso;
+- métricas macro por secuencia, robustez, calibración y latencia;
+- checkpoints auditables, export ONNX, demo offline e informe regenerable.
+
+## Instalación
+
+Requisitos recomendados: Python 3.11, `uv`, PyTorch con CUDA para entrenamiento y
+una GPU de consumo con aproximadamente 12 GiB de VRAM.
 
 ```powershell
-uv pip install --python .\.venv\Scripts\python.exe torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+uv sync --locked --all-groups --no-editable
+uv run --no-sync python -m e_jepa_ttc --help
 ```
 
-Then build a voxel cache and train the supervised CNN:
+Validación completa:
 
 ```powershell
-$env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --width 160 --height 90 --bins 5 --no-normalize --metadata-channels
-.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto
+uv run --no-sync ruff check .
+uv run --no-sync ruff format --check .
+uv run --no-sync pyright
+uv run --no-sync pytest -q
 ```
 
-To pretrain the encoder without TTC labels and then fine-tune the supervised head:
+## Datos
+
+Las rutas locales nunca se hardcodean en el paquete. Las fuentes principales son:
+
+```text
+EAP_ROOT=E:\eAP_dataset
+GARLTTC_ROOT=E:\GarlTTC_dataset
+GARLTTC_RELEASE_ROOT=E:\Garl-TTC
+```
+
+- EvTTC-32 local se usa para desarrollo, grouped CV y evaluación controlada.
+- El benchmark EvTTC permanece sellado hasta congelar candidato.
+- eAP/Garl se lee bajo demanda desde HDF5/parquet.
+- CARLA se retiró del camino activo tras una transferencia negativa.
+
+## Object Event TTC v4
+
+V4 corrige los fallos falsados por las auditorías v3:
+
+```text
+eventos t0/t1/t2
+  -> una sola ROI cuadrada común (unión temporal + margen)
+  -> 12 canales activos, sin el tail de 9 canales constantes
+  -> encoder event-only online + target encoder EMA
+  -> predicción JEPA local de tokens futuros, sin cajas ni motion embedding
+  -> cabeza de expansión event-only exactamente antisimétrica
+  -> cabeza motion-only independiente
+  -> fusión tardía con gate event mínimo
+  -> TTC firmado derivado de g = delta_t / TTC
+```
+
+El trainer aplica warm-up event-only y dropout de modalidad. Un checkpoint no se
+selecciona si los eventos pueden ponerse a cero o barajarse sin degradación
+medible. V4 conserva scratch, Level-transfer y cada rama por separado en las
+métricas; no permite presentar el atajo geométrico como aprendizaje visual.
+
+Screen completo:
 
 ```powershell
-$env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 64 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05
-.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
+uv run --no-sync python scripts/run_e_jepa_object_event_v4.py `
+  --profile screen `
+  --stages preflight cache scratch level `
+  --eap-root 'E:\eAP_dataset' `
+  --garlttc-root 'E:\GarlTTC_dataset' `
+  --pretrained artifacts\runs\level_dynamics_pilot256\pretrain\level\seed-7\checkpoint.pt `
+  --device cuda
 ```
 
-## Local Results
+Consulta [el contrato y los gates de v4](docs/object_event_v4.md) antes de
+escalar a full o abrir EvTTC.
 
-Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
-Full-starter diagnostic results are summarized in
-[docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
-the strongest all-window result so far is tubelet-masked token JEPA with causal
-integrated-navigation channels and a transformer dense predictor: with 100%
-labels it reaches `0.231 +/- 0.018s` validation MAE and `0.312 +/- 0.044s`
-CPLA-high diagnostic MAE over three fine-tuning seeds conditioned on one SSL
-pretraining seed. This is a reused-test local result, not an official EvTTC SOTA
-claim; official comparison still requires
-the benchmark bbox/ROI protocol and broader sequence set.
+## Causal Scale TTC v5
 
-The official EvTTC bbox/ROI coverage checker currently finds only `3/8`
-real-world benchmark sequences complete locally (`37.5%`) and `3/10` complete
-Table V rows including slider (`30.0%`). Regenerate it with:
+V4.31 falsó el matcher congelado. V5 reemplaza su mecanismo por un contrato común
+para event-only, RGB-only y fusión tardía RGB-E:
+
+```text
+foreground causal -> altura visible -> log-ratio firmado
+                   -> TTC + incertidumbre + riesgo derivados físicamente
+```
+
+El primer core event-only está implementado sin coordenadas bbox, categoría o ID de
+secuencia como inputs. Su residual es antisimétrico y acotado; la cabeza TTC libre es
+solo auxiliar. El gate ideal-foreground versionado pasó. Nueve diagnósticos de
+aprendizaje train/validation llevaron el candidato a Pearson `.9560`, pendiente
+`.9686`, signo `.9957`, IoU `.8640` y error TTC simétrico `.2639`; sigue no promovido
+porque leakage de traslación `.02399` falla el gate `.02`. El test sintético se abrió
+una vez desde el commit limpio `d9d20af` y confirmó el fallo: Pearson `.92135` y
+translation `.02749`. Todos los datos reales permanecen cerrados.
+
+V6 no reutiliza ese test: una cabeza foreground separable sin strides, evaluada solo
+en train/validation 401/502, reduce translation leakage a `.00462` y alcanza IoU
+`.89323`. Pearson `.92042` sigue por debajo de `.95`, por lo que test 603 no se abre.
+La comparación firmada está documentada en [Causal Scale v6](docs/causal_scale_v6.md).
+
+V7 transporta causalmente el TTC del par anterior y lo combina con el par actual sin
+añadir parámetros. En validation 502 pasa todos los gates: Pearson `.96126`, TTC
+`.24345` y translation `.00351`. El test limpio 603 posterior falló Pearson `.92014`;
+todos los demás gates pasaron. V7 queda cerrado y real-data continúa sellado.
+
+V8 mantiene esa arquitectura y el presupuesto, pero selecciona checkpoints sobre
+tres grupos validation mediante media macro y peor grupo. Las seeds test 901/902/903
+están preregistradas y selladas. El primer diagnóstico da Pearson macro `.80631` y
+CVaR+consenso lo eleva a `.94621`; sigue sin ser pass y test no se abrió. Detalles en
+[Causal Scale v8](docs/causal_scale_v8.md).
 
 ```powershell
-$env:PYTHONPATH='src'
-.\.venv\Scripts\e-jepa-ttc.exe data official-coverage --root datasets\evttc --output artifacts\metrics\evttc_official_table_v_coverage.json
+uv run --no-sync python scripts/evaluate_causal_scale_v5_operator.py --require-clean
 ```
 
-The thesis-style paper for the current project state is
-[docs/e_jepa_ttc_paper.md](docs/e_jepa_ttc_paper.md). It records the method,
-protocol, final tests, results, negative ablations, and claim limits.
+Consulta [el contrato, resultado y siguiente gate](docs/causal_scale_v5.md).
 
-Aggregate tables must declare their claim level and split protocol. For the
-reused CPLA-high split, only `development` or `diagnostic` is accepted; the
-same command with `--claim-level official` or `final` fails closed:
+## Screen eAP/Garl causal-scale event-only
+
+El protocolo autorizado abre solo train/validation públicos y compara modalidades
+event-only sobre los mismos tokens. Config, trainer y runner:
+
+```text
+configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml
+src/e_jepa_ttc/training/causal_scale_eap.py
+scripts/train_causal_scale_eap_screen.py
+```
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\aggregate_eval_metrics.py --split test --split-protocol data\splits\evttc_full_starter_sealed.yaml --claim-level diagnostic <metrics.json...>
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_v1_seed7 `
+  --device cuda
 ```
 
-With event-only inputs, token JEPA improves diagnostic-test MAE from `1.327 +/- 0.104s` to
-`0.460 +/- 0.029s` at 10% labels.
+Usa early stopping validation-only, CVaR top 10%, límite 6 h y checkpoints atómicos.
+Para reanudar se repite el comando con `--resume`; la equivalencia continua/resume
+está probada end-to-end. Tras el run,
+`scripts/build_garl_validation_subset_from_predictions.py` crea el subset Garl exacto
+y firmado por tokens. Las cajas oficiales son supervisión weak-box y crop oracle,
+nunca entrada del modelo. Ese screen se completó históricamente; Scientific Recovery
+V5 lo sustituyó por cadenas fold-locales autocontenidas. Véase
+[el protocolo del screen](docs/causal_scale_eap_screen.md) y
+[el handoff](CODEX_HANDOFF.md).
 
-Earlier available-starter sealed results are kept in
-[docs/available_starter_results.md](docs/available_starter_results.md).
+## Entrenamiento high-resolution histórico
 
-## Script Wrappers
+Preflight del perfil full, sin reservar GPU:
 
-Implemented script wrappers mirror the CLI for current milestones:
-
-```bash
-uv run --no-sync python scripts/scan_evttc_manifest.py --root datasets/evttc --output data/manifests/evttc_local.yaml
-uv run --no-sync python scripts/validate_dataset.py --manifest data/manifests/evttc_local.yaml
-uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
-uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
-uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
-uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --no-normalize --metadata-channels
-uv run --no-sync python scripts/pretrain_jepa.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --temporal-horizons-ms 20 60 100 240 500
-uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --seed 7
-uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manifests/evttc_starter_downloads.yaml --root .
+```powershell
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile full --stages train freeze `
+  --eap-root 'E:\eAP_dataset' `
+  --garlttc-root 'E:\GarlTTC_dataset' `
+  --dry-run
 ```
 
-## Implemented
+Screen corto y acotado:
 
-- Synthetic expanding-object event generator with monotonic timestamps and known TTC labels.
-- EvTTC local scanner for sequence folders with event HDF5, `gt.hdf5`, `ttc.csv`, and ISAT labels.
-- Lazy HDF5 event-field discovery for common separate-field and compound-event layouts.
-- EvTTC window reads using `ms_map_idx` when available, validated on the local HDF5 files.
-- Dataset manifest validation without loading full event streams into memory.
-- Temporal window index generation from TTC timestamps.
-- Sequence-level split generation and validation.
-- Event count, time surface, voxel grid, and sparse token representations.
-- Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
-- Causal detection-assisted geometry baseline with explicit anti-lookahead audit.
-- Voxel tensor cache builder for supervised and representation-learning experiments.
-- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, dense temporal
-  token future prediction, causal context-motion conditioning, masked context views, and leakage
-  audit metadata.
-- V-JEPA-like event tubelet transformer backbones via `--model event-tubelet-transformer` and
-  `--model event-tubelet-transformer-large`.
-- Optional causal integrated-navigation cache channels for ego speed, velocity, acceleration,
-  yaw-rate, and validity.
-- SkyJEPA-style frozen latent and predicted-rollout bbox/ROI TTC probers with checkpoint-only
-  evaluation commands; current rollout results are diagnostic and not an official SOTA claim.
-- Official EvTTC Table V bbox/ROI asset coverage checker with an explicit claim blocker.
-- Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
-- Frozen-encoder probes and low-label supervised runs via `--freeze-encoder` and `--train-fraction`.
-- Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
-  and EvTTC window reads.
+```powershell
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile screen --stages train `
+  --eap-root 'E:\eAP_dataset' `
+  --garlttc-root 'E:\GarlTTC_dataset' `
+  --output-root artifacts/runs/e_jepa_garl_event_screen_v1
+```
 
-## Not Implemented Yet
+El perfil full exige un commit limpio. Omitir `--max-samples-per-split` es parte
+del contrato: usa todas las filas válidas del split firmado. `--resume` restaura
+el checkpoint y el orden de muestras se deriva de seed+época.
 
-- Robustness suite, ONNX export, streaming demo, and project-level final report generation.
+## EvTTC Tabla VI y submission
 
-These remain in the milestone order defined in `AGENTS.md`; they should be added after the
-supervised baseline is established against the local data.
+El runner mantiene separados:
 
-## Local Dataset Notes
+```text
+train -> freeze -> evttc-predict -> evttc-score -> submission-validate
+```
 
-The handoff contains an EvTTC mini subset under `datasets/evttc/CCRs-1` with three speed buckets:
-`low-100`, `medium-100`, and `high-100`. Each sequence includes `ttc.csv`, one large event HDF5,
-`gt.hdf5`, ISAT JSON labels, and video/bag files. The current pipeline uses only HDF5 metadata,
-`ttc.csv`, and label metadata; video and bag files are intentionally ignored for the MVP.
+`evttc-predict` no puede abrir TTC/depth/categoría/máscaras. `evttc-score` recibe
+los targets en otro proceso. La creación del manifest EvTTC real y el paquete
+eAP/CodaBench siguen pendientes.
 
-`data/manifests/evttc_starter_downloads.yaml` records public official links for the six starter
-sequences missing from the handoff. `scripts/download_evttc_starter.py` prints a dry-run plan by
-default and only calls `gdown` when `--execute` is passed; it also supports `--continue` and
-`--quiet`.
+## Evidencia actual
 
-If `gdown --folder` can list a Google Drive folder but cannot resolve per-file public download URLs,
-save the listing with `gdown --folder --json ...` and recover the files with
-`scripts/download_gdown_listing.py --listing <listing.json> --output-dir <folder> --suffix .json`.
-The listing downloader skips existing files and supports `--retries` for transient Drive failures.
+| Evidencia | Resultado | Decisión |
+|---|---:|---|
+| BASE histórico EvTTC | 8,1554 % error relativo | ancla, no SOTA |
+| A0 grouped CV 5x3 | 30,25 % ± 0,52 | arquitectura EvTTC histórica |
+| A1 Dense grouped CV | 30,55 % ± 0,06 | rechazado |
+| bbox-ROI / AttnRes / KDA | regresión o gate fallido | rechazados |
+| high-res raw smoke 16/16 | MiD macro 1868,3186 | integración solamente |
+| Object Expansion v3 | usa casi exclusivamente motion | falsado como event-TTC |
+| Object Event v4 | v4.30 OOF negativo; v4.31 train-only estable pero no físicamente equivariante | no promocionado; full cerrado |
+| Causal Scale v5 | test sintético: Pearson .92135, translation .02749; gates fallidos | no promovido; real-data cerrado |
+| Causal Scale v6 | validation: Pearson .92042, translation .00462, IoU .89323 | test 603 sellado; no promovido |
+| Causal Scale v7 | test: Pearson .92014 (falla), TTC .24576, translation .00338 | no promovido; seed 603 consumida |
+| Causal Scale v8 | validation Pearson .94621 con CVaR; falla por .00379 | test 901/902/903 nunca abierto |
+| Scientific Recovery V5 A8.0 | grouped-dev fold-local MiD 197,69 vs A6 211,51 y Garl 144,35 | mejora A6, falla gate 175; no promovido |
 
-The locally complete full-starter manifest is
-`data/manifests/evttc_full_starter_local.yaml`, with split
-`data/splits/evttc_full_starter_sealed.yaml`. It contains the three original `CCRs-1` sequences,
-all three `CCRs-side` sequences, and all three `CPLA` starter sequences. The
-legacy filename is retained for artifact compatibility, but its machine-readable
-status is `reused_test_diagnostic`; `CPLA-high` cannot support final or
-official claims.
+El smoke high-resolution valida integración, no precisión. Los resultados v3
+muestran que la expansión firmada y la supervisión de ratio son útiles, pero
+que el crop independiente, la ausencia de t0 y el atajo de cajas impiden
+atribuir el resultado a eventos. V4 existe precisamente para falsar o corregir
+esa ruta.
 
-The earlier available-starter manifest is
-`data/manifests/evttc_available_starter_local.yaml`, with split
-`data/splits/evttc_available_starter_sealed.yaml`.
+## Arquitectura base
 
-See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md),
-[docs/local_results.md](docs/local_results.md), and
-[docs/full_starter_results.md](docs/full_starter_results.md).
+```text
+eventos raw HDF5
+  -> voxel temporal causal [T,C,H,W]
+  -> patch embedding high-resolution
+  -> atención espacial por ventanas
+  -> merge 2x2 opcional
+  -> mixer temporal block-causal
+  -> query pooling / tokens densos
+  -> cabeza TTC firmada
+```
 
+KDA permanece como resultado negativo. La configuración RGB-E existe como
+contrato de investigación, pero el trainer event-only la rechaza hasta que la
+fusión causal esté implementada y probada.
 
+## Estructura útil
 
+- `src/e_jepa_ttc/`: datos, modelos, pérdidas, evaluación e inferencia;
+- `scripts/build_eap_object_event_v4_cache.py`: caché común t0/t1/t2;
+- `scripts/train_e_jepa_object_event_v4.py`: trainer y gates v4;
+- `scripts/run_e_jepa_object_event_v4.py`: orquestación screen/full;
+- `configs/experiment/e_jepa_garl_object_event_{screen,full}_v4.yaml`: perfiles v4;
+- `data/protocols/garl_evttc_table_vi_v1.yaml`: frontera predict/score;
+- `artifacts/metrics/`: evidencia compacta versionada;
+- `PLAN.md`: plan científico y gates;
+- `STATUS.md`: handoff operativo actual.
+
+`artifacts/runs`, `artifacts/features`, datasets y caches son locales/ignorados y
+se pueden regenerar. No deben subirse a Git.
+
+## Integridad científica
+
+- splits por secuencia, nunca aleatorios por ventana;
+- selección de modelo macro por secuencia;
+- pretraining SSL sin etiquetas TTC;
+- EvTTC no se usa para seleccionar el supuesto zero-shot;
+- resultados negativos y fallos relevantes se conservan;
+- no se declara SOTA desde smokes, una semilla o cifras copiadas de artículos;
+- v4 exige dependencia observable de eventos antes de congelar candidato.
+
+## Documentación
+
+- [estado canónico Scientific Recovery V5](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md)
+- [auditoría científica y de código V5](docs/E_JEPA_TTC_V5_SCIENTIFIC_CODE_AUDIT.md)
+
+### v4.30 authoritative negative result and v4.31 next action
+
+The authoritative full v4.30 SHA256 is `9722202A4D33F6B5D1B933EEDA1F9143E13E4E2FD64B21356E93783AFAA1C689`, status `completed_oof_gate_failed`. Stabilization passed `.0010116798/.0423071422/.1308624286`; rank-only winner `stable_multiscale_similarity` has no champion. Its best-arm Pearson `.4791568608`, negative accuracy `0`, balanced `.5`, std ratio `.3731916487`, slope `.1788173388`, high-bucket Pearson `-.1972577670`, and ratios `.92439/.58893/.48926/.30467` failed the frozen objective; both arms failed with no sealed data opened. The target-free saved-NPZ post-hoc audit (not preregistered) found forward-vs-swap `log_eta` correlation `+.53338`, zero sign flips, and 95.8% coverage at `|log_eta| >= .005`. The next action after Sol's rethink is a TTC-label-free but train-box-conditioned common-object-ROI v4.31 redesign: TTC/sign/bucket-independent selection, immutable sequence/time-disjoint train-only stabilization/audit pools, sanitized event/ROI-only artifacts, exact physical reversal controls, and no development/test/EvTTC. The direct full-frame v4.31 draft was rejected before execution and is not evidence.
+
+The v4.31 implementation and negative 512-row diagnostic are documented in [the causal-audit handoff](docs/object_event_v4_31.md).  Cache preflight passed and no sealed data were opened.  Stability passed, but the operator failed analytic zoom, slope, sign, oddness, translation leakage and swap coverage; stage 2 was absent and the recorded worktree was dirty, so the result is explicitly non-selectable and non-authoritative.  Full remains closed.
+
+### Superseded historical v4.30 executable protocol
+
+The following is superseded diagnostic history, not current v4.30 state. A 96-row post-fix train-only diagnostic was `diagnostic_only`: JS median `.010237284936010838` passed; JS p95 `.19495552778244019` and BASE-pixel displacement p95 `.5500071191315064` failed. The earlier `D9DE07…` diagnostic is superseded. The authoritative completed v4.30 summary is the SHA and negative result stated above; historical diagnostics cannot modify it.
+
+- [plan de ejecución](PLAN.md)
+- [estado actual](STATUS.md)
+- [protocolo experimental](docs/experimental_protocol.md)
+- [Object Event TTC v4](docs/object_event_v4.md)
+- [Object Event TTC v4.29 preregistration](docs/object_event_v4_29.md)
+- [Object Event TTC v4.30 stable similarity preregistration](docs/object_event_v4_30.md)
+- [Object Event TTC v4.31 causal audit handoff](docs/object_event_v4_31.md)
+- [Causal Scale TTC v5](docs/causal_scale_v5.md)
+- [Causal Scale TTC v6](docs/causal_scale_v6.md)
+- [Causal Scale TTC v7](docs/causal_scale_v7.md)
+- [ADR-0001: geometry-bound causal scale](docs/decisions/ADR-0001-causal-scale-v5.md)
+- [dataset card](docs/dataset_card.md)
+- [model card](docs/model_card.md)
+- [limitaciones](docs/limitations.md)
+- [reproducibilidad](docs/reproducibility.md)
+- [informe técnico](docs/technical_report.md)
+- [informe PDF](docs/e_jepa_ttc_paper.pdf)
+
+El sistema es experimental y no está validado para control de seguridad.

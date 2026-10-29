@@ -1,0 +1,137 @@
+"""Real paced helper A/B with fake RAW/control results; never a TTC claim."""
+
+from __future__ import annotations
+
+import ctypes
+import hashlib
+import json
+import os
+import platform
+import sys
+import threading
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+
+for variable in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
+    os.environ[variable] = "1"
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+from operational.train40_runtime.measurement import PREDICTION_COMPONENTS, latency_distribution
+from operational.train40_runtime.paced import run_paced_replay
+
+OUTPUT = Path(__file__).with_name("paced_scheduler_ab_v1")
+OUTPUT.mkdir(exist_ok=False)
+sources = [
+    Path(__file__), ROOT / "operational/train40_runtime/paced.py",
+    ROOT / "operational/train40_runtime/measurement.py",
+]
+snapshots = OUTPUT / "sources"
+snapshots.mkdir()
+source_hashes = {}
+for path in sources:
+    payload = path.read_bytes()
+    source_hashes[str(path.relative_to(ROOT))] = hashlib.sha256(payload).hexdigest()
+    (snapshots / (path.name + ".txt")).write_bytes(payload)
+
+
+def host_cpu_times():
+    idle, kernel, user = (ctypes.c_ulonglong() for _ in range(3))
+    if not ctypes.windll.kernel32.GetSystemTimes(
+        ctypes.byref(idle), ctypes.byref(kernel), ctypes.byref(user)
+    ):
+        raise ctypes.WinError()
+    return idle.value, kernel.value, user.value
+
+
+summary = {
+    "scope": "REAL_PACED_HELPER_THREADS_QUEUE_FAKE_RAW_FAKE_PREDICTIONS_NO_GPU_NO_TTC",
+    "start_time": datetime.now(timezone.utc).isoformat(),
+    "python": sys.version, "host": platform.node(), "platform": platform.platform(),
+    "source_sha256": source_hashes, "order": ["event", "sleep"],
+    "updates_per_strategy": 3000, "rate_hz": 50.0, "queue_capacity": 2,
+    "fake_object_ids": ["FAKE_CONTROL_1"], "fake_predictions": True,
+    "cpu_compute_threads": 1, "producer_thread_additional": True,
+    "background_work": "Concurrent CPU development and root GPU admission; not controlled idle.",
+    "priority_powerplan_timer_resolution_changed": False,
+    "physical_goal_demonstrated": False, "target_20_objects_50hz_demonstrated": False,
+    "ttc_goal_demonstrated": False, "records": [],
+}
+
+for strategy in summary["order"]:
+    source_threads, consumer_threads = set(), set()
+    consumer = threading.get_ident()
+
+    def acquire(index):
+        source_threads.add(threading.get_ident())
+        # Every packet owns a new immutable copy. There are no real sensor bytes.
+        raw = bytes(bytearray(b"FAKE_RAW_CONTROL_" * 8))
+        return {"index": index, "raw": raw, "synthetic_control": True}
+
+    def infer(arrival):
+        consumer_threads.add(threading.get_ident())
+        packet = arrival.payload
+        if not packet["synthetic_control"] or packet["raw"] != b"FAKE_RAW_CONTROL_" * 8:
+            raise RuntimeError("Invalid fake payload")
+        return {"FAKE_CONTROL_1": {
+            "success": True, "synthetic_control": True,
+            "predictions_are_fake_not_ttc": True,
+            "predictions": {component: 1.0 for component in PREDICTION_COMPONENTS},
+        }}
+
+    before_host, before_cpu = host_cpu_times(), time.process_time()
+    started = datetime.now(timezone.utc).isoformat()
+    result = run_paced_replay(
+        acquire, infer, ["FAKE_CONTROL_1"], updates=3000, rate_hz=50.0,
+        queue_capacity=2, wait_strategy=strategy,
+    )
+    after_host = host_cpu_times()
+    di, dk, du = (end - start for start, end in zip(before_host, after_host))
+    receipts = result["arrival_receipts"]
+    record = {
+        "strategy": strategy, "start_time": started,
+        "end_time": datetime.now(timezone.utc).isoformat(),
+        "host_cpu_busy_percent": 100 * (dk + du - di) / (dk + du),
+        "process_cpu_seconds_including_report_aggregation": time.process_time() - before_cpu,
+        "source_thread_ids": sorted(source_threads),
+        "consumer_thread_ids": sorted(consumer_threads),
+        "independent_source_thread": source_threads != {consumer} and consumer_threads == {consumer},
+        "acquisition_start_lateness_ms": latency_distribution([
+            (row["acquisition_started_ns"] - row["scheduled_ns"]) / 1e6 for row in receipts
+        ]),
+        "raw_availability_lateness_ms": result["raw_availability_lateness_ms"],
+        "deadline_response_ms": result["deadline_response_ms"],
+        "raw_availability_response_ms": result["raw_availability_response_ms"],
+        "dropped_updates": result["dropped_updates"], "source_errors": result["source_errors"],
+        "coverage_passed": result["grouped"]["passed"],
+        "prior_work_at_scheduled_arrival_max": max(result["prior_work_at_each_scheduled_arrival"]),
+        "helper_capacity_checks": result["capacity_checks"],
+        "helper_capacity_checks_passed": result["capacity_checks_passed"],
+        "fake_results_do_not_admit_ttc_goal": True,
+        "scheduler": result["scheduler"],
+    }
+    result.update(
+        scope="FAKE_CONTROL_REAL_HELPER_NOT_SCIENTIFIC_TTC_RESULTS",
+        fake_predictions=True, ttc_goal_demonstrated=False,
+    )
+    (OUTPUT / f"{strategy}_receipts.json").write_text(
+        json.dumps(result, indent=2, allow_nan=False), encoding="utf-8"
+    )
+    summary["records"].append(record)
+    (OUTPUT / "summary.json").write_text(
+        json.dumps(summary, indent=2, allow_nan=False), encoding="utf-8"
+    )
+    print(json.dumps(record), flush=True)
+
+summary["sources_unchanged"] = all(
+    hashlib.sha256(path.read_bytes()).hexdigest() == source_hashes[str(path.relative_to(ROOT))]
+    for path in sources
+)
+summary["torch_imported"] = "torch" in sys.modules
+summary["end_time"] = datetime.now(timezone.utc).isoformat()
+summary["status"] = "COMPLETE_FAKE_CONTROL_ONLY" if summary["sources_unchanged"] else "FAILED_SOURCE_CHANGE"
+(OUTPUT / "summary.json").write_text(json.dumps(summary, indent=2, allow_nan=False), encoding="utf-8")
+if not summary["sources_unchanged"] or summary["torch_imported"]:
+    raise RuntimeError("Probe integrity failed")

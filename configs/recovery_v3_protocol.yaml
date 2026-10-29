@@ -1,0 +1,77 @@
+protocol_version: '3.0'
+claim_level: diagnostic
+test_status: reused_test_diagnostic
+cache_format_version: 2
+resources:
+  evttc_dataset_manifest: data/manifests/evttc_all32_local.yaml
+  evttc_split_manifest: data/splits/evttc_all32_article_family_holdout.yaml
+  evttc_cache: artifacts/features/evttc32_trainval/cache.npz
+  eap_remote_manifest: data/manifests/eap50_remote_files.json
+  eap_split_manifest: data/splits/eap_object_jepa_v2.yaml
+matrix:
+  ssl_seeds:
+  - 7
+  - 13
+  - 21
+  downstream_seeds:
+  - 7
+  - 13
+  - 21
+  nav_modes:
+  - enabled
+  - disabled
+  label_fractions:
+  - 1.0
+  - 0.1
+  - 0.05
+eap_matrix:
+  ssl_seeds:
+  - 17
+  - 42
+  - 73
+  downstream_seeds:
+  - 17
+  - 42
+  - 73
+  label_fractions:
+  - 1.0
+  - 0.1
+  - 0.05
+architecture:
+  use_ego_actions: true
+  use_recurrence: true
+  use_geometry: true
+smoke:
+  max_windows_per_sequence: 50
+  sample_count_total_limit: 200
+  iterations_limit: 50
+requirements:
+  primary_metrics:
+  - mae_s
+  - rmse_s
+  - median_abs_error_s
+  - auroc
+  - auprc
+  - calibration_error
+  allowed_training_splits:
+  - train
+  allowed_selection_splits:
+  - validation
+  allowed_calibration_splits:
+  - calibration
+  forbidden_ordinary_splits:
+  - test
+  min_train_support: 25
+  min_val_support: 25
+  checkpoint_selection_metric: validation_mae_s
+  dataset:
+    name: evttc
+    version: EvTTC-32-local-article-v5
+    manifest_hash: f555067ad2e8a1556b45095d98287582f4fccd4afa7fed6784b7aa8d4c938bc3
+onnx_policies:
+  strict_state_dict_loading: true
+  output_names:
+  - log_ttc
+  maximum_absolute_error_tolerance: 0.0001
+  mean_absolute_error_tolerance: 1.0e-05
+  real_validation_samples: true

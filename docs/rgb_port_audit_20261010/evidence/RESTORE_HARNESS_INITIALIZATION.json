@@ -1,0 +1,18 @@
+{
+  "initial_harness": "CPU model before lazy CUDA initialization",
+  "first_check": {
+    "model": true,
+    "optimizer": true,
+    "scheduler": true,
+    "sampler_rng": true,
+    "cpu_rng": true,
+    "cuda_rng": false,
+    "numpy_rng": true,
+    "python_rng": true,
+    "cursor": true,
+    "updates": true
+  },
+  "correction": "initialize CUDA first, as production model.to(cuda) does",
+  "scientific_checkpoint_changed": false,
+  "optimizer_updates": 0
+}

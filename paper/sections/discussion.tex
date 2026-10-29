@@ -1,0 +1,23 @@
+\section{Discussion and limitations}
+\subsection{What the benchmark result establishes}
+The official ranking shows that the submitted PHASE-TTC system performs well on GarlTTC Test. Its fusion head operates on phase, timing, and support features whose meanings remain comparable across the two modalities. This avoids requiring independently trained hidden coordinates to align. The ranking alone cannot determine how much of the gain comes from that interface, the longer history, or the upstream models; those questions require matched comparisons. \evidence{M22,M23}
+
+The out-of-fold training procedure addresses a narrower problem: later stages should not train on features produced by a model fitted to the same sequence group. At deployment, however, they receive features from producers trained on all 40 groups rather than the 24 used in each auxiliary fit. That shift remains, as does the exposure involved in earlier architecture selection. The JEPA experiments provide a separate result: they did not establish a benefit from predictive pretraining, even when embeddings retained variance and effective rank. Subsequent supervised or teacher-assisted gains do not resolve that question.
+
+\subsection{Where fusion helps, and where it fails}
+The labeled transfer experiment gives a mixed answer about adding events. Fusion has a lower empirical p95 absolute error than RGB alone, but a higher mean and more errors above ten seconds. All three paired intervals for mean, median, and p95 differences include zero. \evidence{L01,L02,L30,R01}
+
+The range experiments reinforce this point. Improving imminent-contact predictions sometimes worsened estimates for receding objects, because phase error, error in seconds, and warning behavior emphasize different parts of the problem. The labeled transfer includes only positive TTC and cannot test the full signed domain or a complete warning policy.
+
+The 434-query competition experiment answers a different question. It establishes prediction coverage and disagreement between models, but verified TTC labels are not mapped to those exact queries. Its Garl visual-only checkpoint also differs from PHASE-TTC's RGB context model. Matching scenario names is insufficient to combine these results with the labeled transfer; the recordings and query identities must match as well. \evidence{T01,T02}
+
+\subsection{Generalization and deployment}
+Most development comparisons reuse sequences or upstream models. Repeating the head with different seeds measures variation conditional on those models, and nearby windows remain correlated observations of the same scene. Independent retraining and new sequences would test how much of the observed performance survives beyond these choices. Deployment also requires obtaining object regions causally; the current evaluations supply them, and rotation-only projection between sensors approximates alignment without depth.
+
+The compact head has 1,955 parameters, but the full system includes all upstream components. A complete parameter and peak-memory inventory remains to be reported. The paced-run records specify the GPU, software, execution settings, and initialization excluded from timing, while omitting the CPU model and GPU driver version. Learned phase widths and propagated variances likewise need empirical calibration before they can support probability statements.
+
+The runtime study identifies an operational bottleneck: all predictions remain numerically consistent, yet their p95 response exceeds 20\,ms. Input preparation and scheduling must improve along with kernel speed. A longer run with physical-camera input and multiple objects would test whether those improvements hold under sustained load. \evidence{L40--L42}
+
+\section{Conclusion}
+PHASE-TTC combines geometric measurements and recent history from events and RGB images, then corrects the RGB estimate through a compact phase-based head. It ranks first on the public GarlTTC Test leaderboard as of 28 October 2026, reducing Overall MiD by \OfficialOverallRelativeGain{} relative to Garl-TTC. The broader experiments show where further progress is needed: on the labeled transfer set, fusion trades a lower p95 against worse extreme errors; the competition predictions still need verified labels; and the paced service exceeds its deadline. Improving rare-error behavior and meeting sustained response deadlines remain central challenges for deployment.
+\FloatBarrier

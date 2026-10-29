@@ -1,0 +1,18 @@
+experiment:
+  arm: D1
+  seed: 7
+  name: scientific_recovery_v8_d1_random_frozen
+downstream:
+  winner_artifact_required: true
+  supervised_updates: 400
+  head_learning_rate: 0.0003
+  partial_encoder_learning_rate: 0.00003
+jepa_pretrain:
+  total_updates: 1000
+  batch_size: 32
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  predictor_hidden_dim: 64
+low_label:
+  fractions: [0.01, 0.05, 0.10, 0.25, 1.0]
+  nested_by: [sequence_id, track_id]

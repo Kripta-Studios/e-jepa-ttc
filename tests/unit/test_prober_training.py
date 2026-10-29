@@ -20,6 +20,11 @@ def _write_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,

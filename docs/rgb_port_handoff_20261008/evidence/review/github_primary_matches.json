@@ -1,0 +1,20 @@
+[
+  {
+    "path": "README.md",
+    "expected_git_blob": "0c09fa0f4b238f821440c0479c6d23b55a4f4456",
+    "actual_git_blob": "0c09fa0f4b238f821440c0479c6d23b55a4f4456",
+    "match": true
+  },
+  {
+    "path": "NEXT_DECISION.json",
+    "expected_git_blob": "b5f6418f70840c1e39c91de54a1ba4da38b9e6c3",
+    "actual_git_blob": "b5f6418f70840c1e39c91de54a1ba4da38b9e6c3",
+    "match": true
+  },
+  {
+    "path": "evidence/root_qa/full_outlier_audit/COMMON_BOUND_SENSITIVITY_POSTHOC.csv",
+    "expected_git_blob": "bef1a9fb81a0f06b8b5d87d1127f222cb7907229",
+    "actual_git_blob": "bef1a9fb81a0f06b8b5d87d1127f222cb7907229",
+    "match": true
+  }
+]

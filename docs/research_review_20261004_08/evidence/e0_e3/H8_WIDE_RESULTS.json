@@ -1,0 +1,128 @@
+{
+  "status": "COMPLETE",
+  "seed": 7,
+  "comparisons": {
+    "H8": {
+      "candidate_score": 118.45168736644493,
+      "reference_score": 121.64633225755645,
+      "point_delta": -3.1946448911115324,
+      "weighted_sign_error_delta": -0.0007552411342562773,
+      "crucial_bucket_mid_delta": -6.205502489260156,
+      "candidate_finite_fraction": 1.0,
+      "reference_finite_fraction": 1.0,
+      "sequence_deltas": {
+        "2cyv0Oedzg": -6.678908823761071,
+        "5ilM1PX2vz": -0.996338055995179,
+        "6h5yRW2LGc": -4.11348093945942,
+        "OBneIVg4Cw": 5.0245506843810235,
+        "OYgB6RGWcq": -1.194297066864238,
+        "WbCh1DRerJ": -5.2285357971443975,
+        "mHGFBekt7X": -0.6549833452296031,
+        "qGsgzl4Q8B": -6.714112327514313,
+        "t79dBxj1WS": -8.195698348416602
+      },
+      "sequence_wins": 8,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "gate_authorized": false,
+      "hierarchical_ci95": [
+        -6.853208843467789,
+        0.27156351509198084
+      ],
+      "sequence_only": {
+        "point_delta": -3.1946448911115333,
+        "ci95": [
+          -5.592470490053319,
+          -0.5206624094710003
+        ],
+        "fraction_negative": 0.9896387591416208,
+        "sequence_wins": 8,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          -2.759111899530341,
+          -3.4694332455010777,
+          -3.0797903850680477,
+          -4.222044338048103,
+          -3.4446883691424453,
+          -2.940408527857425,
+          -3.5121025843467746,
+          -2.754711461561186,
+          -2.5695132089483996
+        ],
+        "signflip_p_two_sided_descriptive": 0.04296875,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "noninferiority_margin_mid": 2,
+      "noninferiority_supported": true
+    },
+    "H16": {
+      "candidate_score": 118.45168736644493,
+      "reference_score": 118.86573891024781,
+      "point_delta": -0.41405154380288006,
+      "weighted_sign_error_delta": 0.0016245811174359615,
+      "crucial_bucket_mid_delta": -2.1958470753397914,
+      "candidate_finite_fraction": 1.0,
+      "reference_finite_fraction": 1.0,
+      "sequence_deltas": {
+        "2cyv0Oedzg": -2.3832029471153406,
+        "5ilM1PX2vz": -0.92392795419709,
+        "6h5yRW2LGc": 1.175741114539384,
+        "OBneIVg4Cw": 0.22552889670247653,
+        "OYgB6RGWcq": 1.05639432216845,
+        "WbCh1DRerJ": -4.603817187371166,
+        "mHGFBekt7X": 2.6383741686405915,
+        "qGsgzl4Q8B": -1.3004823564314132,
+        "t79dBxj1WS": 0.3889280488381855
+      },
+      "sequence_wins": 4,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "gate_authorized": false,
+      "hierarchical_ci95": [
+        -2.6229735272262245,
+        1.6444872812221834
+      ],
+      "sequence_only": {
+        "point_delta": -0.41405154380288034,
+        "ci95": [
+          -1.809197981088154,
+          0.8464425709992832
+        ],
+        "fraction_negative": 0.7197273890178792,
+        "sequence_wins": 4,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          -0.1679076183888228,
+          -0.35031699250360415,
+          -0.6127756260956634,
+          -0.4939990988660499,
+          -0.5978572770492966,
+          0.10966916164315538,
+          -0.7956047578583143,
+          -0.3032476922243137,
+          -0.5144239928830135
+        ],
+        "signflip_p_two_sided_descriptive": 0.609375,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "noninferiority_margin_mid": 2,
+      "noninferiority_supported": true
+    }
+  },
+  "replication_authorized": true,
+  "replication_rule": "prospective_all_five_conditions",
+  "bootstrap": {
+    "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+    "valid_draws": 8192,
+    "attempts": 8195,
+    "discarded": 3,
+    "validity_fraction": 0.999633923123856
+  },
+  "scientific_updates": 7500,
+  "encoder_replicas": false,
+  "head_replicas": true,
+  "confirmation": false,
+  "candidate_promoted": false
+}

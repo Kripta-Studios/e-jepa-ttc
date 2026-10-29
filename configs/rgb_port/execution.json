@@ -1,0 +1,1702 @@
+{
+  "base_commit": "b44443ae331b5e84b94e940801468449b2858de4",
+  "contract_files": [
+    "docs/rgb_port_handoff_20261008/execution_policy.json",
+    "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json",
+    "artifacts/rgb_port_20261008/FRAME_AVAILABILITY.json",
+    "artifacts/rgb_port_20261008/INPUT_CONTRACTS.json",
+    "artifacts/rgb_port_20261008/P_MANIFEST.json",
+    "artifacts/rgb_port_20261008/H_MANIFEST.json",
+    "artifacts/rgb_port_20261008/V_MANIFEST.json",
+    "artifacts/rgb_port_20261008/P_DINO_MANIFEST.json",
+    "artifacts/rgb_port_20261008/DATA_AUDIT.json",
+    "artifacts/rgb_port_20261008/REAL_RGB_READ_QA.json",
+    "artifacts/rgb_port_20261008/SOURCE_FACTORY_QA.json",
+    "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+    "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/PREPARE_FREEZE.json",
+    "artifacts/rgb_port_20261008/P0_LIVE_STATE.json",
+    "artifacts/rgb_port_20261008/R1_READONLY_FINAL_OBSERVATION.json",
+    "artifacts/rgb_port_20261008/r1_continuation/ROOT_LAUNCH.json",
+    "artifacts/rgb_port_20261008/r1_continuation/SUPERVISOR_FREEZE.json",
+    "../e-jepa-ttc-v12-efficient-context/artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json",
+    "artifacts/rgb_port_20261008/STAGE70_CURRENT_ADMISSION.json",
+    "artifacts/rgb_port_20261008/E_CACHE_EVICTION_PARITY.json"
+  ],
+  "external_heavy_owners": [
+    {
+      "command_markers": [
+        "operational.sota_eval.r1_resume",
+        "operational.sota_eval.r1_resume_supervisor"
+      ],
+      "path": "artifacts/rgb_port_20261008/COORDINATION.json"
+    },
+    {
+      "command_markers": [
+        "operational.sota_eval.r1_resume",
+        "operational.sota_eval.r1_resume_supervisor"
+      ],
+      "path": "artifacts/rgb_port_20261008/r1_continuation/WRITER.lock"
+    }
+  ],
+  "head_task_ids": [
+    "E_H1_MATCHED",
+    "E_CTX_MATCHED",
+    "R_H1",
+    "R_CTX",
+    "F_TRUE",
+    "F_ZERO"
+  ],
+  "package": {
+    "members": [
+      "RGB_PORT_STATE.json",
+      "ACCOUNTING.json",
+      "SOURCE_FREEZE.json",
+      "PREFLIGHT.json",
+      "optional:evaluation/V_RESULTS.json",
+      "repo-tree:operational/rgb_port",
+      "repo-tree:src/e_jepa_ttc/rgb_port",
+      "repo-tree:configs/rgb_port",
+      "repo:tests/unit/test_rgb_port_queue.py",
+      "optional:fits/E_A5_MATCHED/checkpoint_last.pt",
+      "optional:fits/E_A5_MATCHED/CHECKPOINT_RECEIPT.json",
+      "optional:fits/E_A5_MATCHED/UPDATE_JOURNAL.json",
+      "optional:fits/E_A5_MATCHED/RUN_PROVENANCE.json",
+      "optional:fits/E_A5_MATCHED/ENDPOINT_FREEZE.json",
+      "optional:fits/E_C2F_MATCHED/checkpoint_last.pt",
+      "optional:fits/E_C2F_MATCHED/CHECKPOINT_RECEIPT.json",
+      "optional:fits/E_C2F_MATCHED/UPDATE_JOURNAL.json",
+      "optional:fits/E_C2F_MATCHED/RUN_PROVENANCE.json",
+      "optional:fits/E_C2F_MATCHED/ENDPOINT_FREEZE.json",
+      "optional:fits/R_A5/checkpoint_last.pt",
+      "optional:fits/R_A5/CHECKPOINT_RECEIPT.json",
+      "optional:fits/R_A5/UPDATE_JOURNAL.json",
+      "optional:fits/R_A5/RUN_PROVENANCE.json",
+      "optional:fits/R_A5/ENDPOINT_FREEZE.json",
+      "optional:fits/R_C2F/checkpoint_last.pt",
+      "optional:fits/R_C2F/CHECKPOINT_RECEIPT.json",
+      "optional:fits/R_C2F/UPDATE_JOURNAL.json",
+      "optional:fits/R_C2F/RUN_PROVENANCE.json",
+      "optional:fits/R_C2F/ENDPOINT_FREEZE.json",
+      "optional:fits/PAIR_E_MATCHED/checkpoint_last.pt",
+      "optional:fits/PAIR_E_MATCHED/CHECKPOINT_RECEIPT.json",
+      "optional:fits/PAIR_E_MATCHED/UPDATE_JOURNAL.json",
+      "optional:fits/PAIR_E_MATCHED/RUN_PROVENANCE.json",
+      "optional:fits/PAIR_E_MATCHED/ENDPOINT_FREEZE.json",
+      "optional:fits/PAIR_R/checkpoint_last.pt",
+      "optional:fits/PAIR_R/CHECKPOINT_RECEIPT.json",
+      "optional:fits/PAIR_R/UPDATE_JOURNAL.json",
+      "optional:fits/PAIR_R/RUN_PROVENANCE.json",
+      "optional:fits/PAIR_R/ENDPOINT_FREEZE.json",
+      "optional:fits/E_H1_MATCHED/checkpoint_last.pt",
+      "optional:fits/E_H1_MATCHED/CHECKPOINT_RECEIPT.json",
+      "optional:fits/E_H1_MATCHED/UPDATE_JOURNAL.json",
+      "optional:fits/E_H1_MATCHED/RUN_PROVENANCE.json",
+      "optional:fits/E_H1_MATCHED/ENDPOINT_FREEZE.json",
+      "optional:fits/E_CTX_MATCHED/checkpoint_last.pt",
+      "optional:fits/E_CTX_MATCHED/CHECKPOINT_RECEIPT.json",
+      "optional:fits/E_CTX_MATCHED/UPDATE_JOURNAL.json",
+      "optional:fits/E_CTX_MATCHED/RUN_PROVENANCE.json",
+      "optional:fits/E_CTX_MATCHED/ENDPOINT_FREEZE.json",
+      "optional:fits/R_H1/checkpoint_last.pt",
+      "optional:fits/R_H1/CHECKPOINT_RECEIPT.json",
+      "optional:fits/R_H1/UPDATE_JOURNAL.json",
+      "optional:fits/R_H1/RUN_PROVENANCE.json",
+      "optional:fits/R_H1/ENDPOINT_FREEZE.json",
+      "optional:fits/R_CTX/checkpoint_last.pt",
+      "optional:fits/R_CTX/CHECKPOINT_RECEIPT.json",
+      "optional:fits/R_CTX/UPDATE_JOURNAL.json",
+      "optional:fits/R_CTX/RUN_PROVENANCE.json",
+      "optional:fits/R_CTX/ENDPOINT_FREEZE.json",
+      "optional:fits/F_TRUE/checkpoint_last.pt",
+      "optional:fits/F_TRUE/CHECKPOINT_RECEIPT.json",
+      "optional:fits/F_TRUE/UPDATE_JOURNAL.json",
+      "optional:fits/F_TRUE/RUN_PROVENANCE.json",
+      "optional:fits/F_TRUE/ENDPOINT_FREEZE.json",
+      "optional:fits/F_ZERO/checkpoint_last.pt",
+      "optional:fits/F_ZERO/CHECKPOINT_RECEIPT.json",
+      "optional:fits/F_ZERO/UPDATE_JOURNAL.json",
+      "optional:fits/F_ZERO/RUN_PROVENANCE.json",
+      "optional:fits/F_ZERO/ENDPOINT_FREEZE.json",
+      "optional:P_RGB_CACHE_BINDING.json",
+      "optional:PREPARE_RECEIPT.json",
+      "optional:SPLIT_MANIFEST.json",
+      "optional:FRAME_AVAILABILITY.json",
+      "optional:INPUT_CONTRACTS.json",
+      "optional:P_MANIFEST.json",
+      "optional:H_MANIFEST.json",
+      "optional:V_MANIFEST.json",
+      "optional:P_DINO_MANIFEST.json",
+      "optional:DATA_AUDIT.json",
+      "optional:REAL_RGB_READ_QA.json",
+      "optional:SOURCE_FACTORY_QA.json",
+      "optional:rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+      "optional:rounds/HEADS_V_ROUND_FREEZE.json",
+      "optional:features/H/E_NORMALIZER.json",
+      "optional:features/H/R_NORMALIZER.json",
+      "optional:features/H/E_OBSERVATIONS.json",
+      "optional:features/H/R_OBSERVATIONS.json",
+      "optional:features/H/E_HISTORY.json",
+      "optional:features/H/R_HISTORY.json",
+      "optional:features/H/FUSION.json",
+      "optional:predictions/V/HEAD_PREDICTIONS.json",
+      "optional:admissions/E_H1_MATCHED.json",
+      "optional:predictions/V/E_H1_MATCHED.csv",
+      "optional:predictions/V/E_H1_MATCHED.HEAD_ONLY_PROFILE.json",
+      "optional:admissions/E_CTX_MATCHED.json",
+      "optional:predictions/V/E_CTX_MATCHED.csv",
+      "optional:predictions/V/E_CTX_MATCHED.HEAD_ONLY_PROFILE.json",
+      "optional:admissions/R_H1.json",
+      "optional:predictions/V/R_H1.csv",
+      "optional:predictions/V/R_H1.HEAD_ONLY_PROFILE.json",
+      "optional:admissions/R_CTX.json",
+      "optional:predictions/V/R_CTX.csv",
+      "optional:predictions/V/R_CTX.HEAD_ONLY_PROFILE.json",
+      "optional:admissions/F_TRUE.json",
+      "optional:predictions/V/F_TRUE.csv",
+      "optional:predictions/V/F_TRUE.HEAD_ONLY_PROFILE.json",
+      "optional:admissions/F_ZERO.json",
+      "optional:predictions/V/F_ZERO.csv",
+      "optional:predictions/V/F_ZERO.HEAD_ONLY_PROFILE.json",
+      "optional:admissions/PAIR_E_MATCHED.json",
+      "optional:admissions/PAIR_R.json",
+      "optional:profiles/ROUTE_COSTS.json",
+      "optional:NEXT_DECISION.json",
+      "optional:transfer/dev32/PREDICTIONS.csv",
+      "optional:transfer/dev32/PREDICTIONS_SEALED.json",
+      "optional:transfer/dev32_score/SCORED_PREDICTIONS.csv",
+      "optional:transfer/dev32_score/RESULT.json",
+      "optional:transfer/fcwd/FCWD_RGB_STATUS.json",
+      "optional:TECHNICAL_JOURNAL.json",
+      "optional:ROOT_QA_RECEIPT.json",
+      "repo:tests/test_rgb_port_producer_resume_technical.py",
+      "optional:qa/GLOBAL_QA_ADMISSION.json",
+      "optional:qa/GLOBAL_TECHNICAL_JOURNAL.json",
+      "optional:qa/RECOVERY_QA_RECEIPT.json",
+      "optional:STAGE70_CURRENT_ADMISSION.json",
+      "optional:report/REPORT.md",
+      "optional:report/model_cards/E_MODEL_CARD.md",
+      "optional:report/model_cards/RGB_E_MODEL_CARD.md",
+      "optional:report/HASH_MANIFEST.json",
+      "optional:report/REPORT_RECEIPT.json",
+      "optional:report/curves/E_A5_MATCHED.json",
+      "optional:report/curves/E_C2F_MATCHED.json",
+      "optional:report/curves/R_A5.json",
+      "optional:report/curves/R_C2F.json",
+      "optional:report/curves/PAIR_E_MATCHED.json",
+      "optional:report/curves/PAIR_R.json",
+      "optional:report/curves/E_H1_MATCHED.json",
+      "optional:report/curves/E_CTX_MATCHED.json",
+      "optional:report/curves/R_H1.json",
+      "optional:report/curves/R_CTX.json",
+      "optional:report/curves/F_TRUE.json",
+      "optional:report/curves/F_ZERO.json",
+      "optional:E_CACHE_EVICTION_PARITY.json"
+    ],
+    "output": "RGB_PORT_ESSENTIAL.zip"
+  },
+  "parent_fit_task_ids": [
+    "E_A5_MATCHED",
+    "E_C2F_MATCHED",
+    "R_A5",
+    "R_C2F",
+    "PAIR_E_MATCHED",
+    "PAIR_R"
+  ],
+  "required_artifacts": [
+    {
+      "path": "docs/rgb_port_handoff_20261008/execution_policy.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/FRAME_AVAILABILITY.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/INPUT_CONTRACTS.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/P_MANIFEST.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/H_MANIFEST.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/V_MANIFEST.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/P_DINO_MANIFEST.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/DATA_AUDIT.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/REAL_RGB_READ_QA.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/SOURCE_FACTORY_QA.json"
+    },
+    {
+      "path": "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json"
+    },
+    {
+      "path": "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/PREPARE_FREEZE.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/P0_LIVE_STATE.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/R1_READONLY_FINAL_OBSERVATION.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/r1_continuation/ROOT_LAUNCH.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/r1_continuation/SUPERVISOR_FREEZE.json"
+    },
+    {
+      "path": "../e-jepa-ttc-v12-efficient-context/artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/TECHNICAL_JOURNAL.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/ROOT_QA_RECEIPT.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/STAGE70_CURRENT_ADMISSION.json"
+    },
+    {
+      "path": "artifacts/rgb_port_20261008/E_CACHE_EVICTION_PARITY.json"
+    }
+  ],
+  "resources": {
+    "disk_margin_decimal_bytes": 10000000000,
+    "disk_roots": [
+      "E:/E_JEPA_TTC_RGB_PORT"
+    ],
+    "heavy_command_markers": [
+      "operational.sota_eval.r1_resume",
+      "operational.sota_eval.r1_resume_supervisor",
+      "operational.rgb_port.train_producers",
+      "operational.rgb_port.train_heads",
+      "operational.rgb_port.infer_experts",
+      "operational.rgb_port.root_qa",
+      "operational.rgb_port.cost_routes",
+      "operational.rgb_port.transfer"
+    ],
+    "project_command_markers": [
+      "operational.rgb_port.run",
+      "operational.rgb_port.prepare",
+      "operational.rgb_port.pilot",
+      "operational.rgb_port.train_producers",
+      "operational.rgb_port.train_heads",
+      "operational.rgb_port.infer_experts",
+      "operational.dual_ttc.prepare",
+      "operational.sota_eval.r1_resume",
+      "operational.sota_eval.r1_resume_supervisor",
+      "operational.rgb_port.cache_prepare",
+      "operational.rgb_port.root_qa",
+      "operational.rgb_port.cost_routes",
+      "operational.rgb_port.transfer"
+    ],
+    "project_tree_rss_max_decimal_bytes": 23000000000
+  },
+  "run_root": "artifacts/rgb_port_20261008",
+  "schema": "rgb_port_execution_v1",
+  "source_files": [
+    "LOCAL_RGB_PORT_BINDING.json",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py",
+    "src/e_jepa_ttc/losses/causal_scale_ttc.py",
+    "src/e_jepa_ttc/training/causal_scale_eap.py",
+    "src/e_jepa_ttc/simplex_t/phase.py",
+    "src/e_jepa_ttc/simplex_t/expert_phase.py",
+    "operational/train40_system/models.py",
+    "configs/rgb_port/v_inputs.json",
+    "configs/rgb_port/normalizers.json",
+    "tests/test_rgb_port_producer_resume_technical.py"
+  ],
+  "source_roots": [
+    "operational/rgb_port",
+    "src/e_jepa_ttc",
+    "operational/evttc_rgb_transfer",
+    "operational/evttc_transfer"
+  ],
+  "tasks": [
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare",
+        "--source",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAIN40_ROWS.parquet",
+        "--output",
+        "artifacts/rgb_port_20261008",
+        "--metadata-root",
+        "E:/E_JEPA_TTC_RGB_PORT/metadata",
+        "--eap-root",
+        "E:/eAP_dataset",
+        "--teacher-manifest",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TEACHER_MANIFEST.json",
+        "--teacher-index",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAIN40_INDEX.npz"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/PREPARE_RECEIPT.json",
+      "depends": [],
+      "id": "P0_PREPARE",
+      "phase": "P1"
+    },
+    {
+      "adopt_argv_values": [
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "E:/E_JEPA_TTC_RGB_PORT/prepared/P"
+      ],
+      "adopt_live_modules": [
+        "operational.rgb_port.cache_prepare"
+      ],
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.cache_prepare",
+        "--role-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--cache-root",
+        "E:/E_JEPA_TTC_RGB_PORT/prepared/P",
+        "--workers",
+        "1"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/P_RGB_CACHE_BINDING.json",
+      "completion_schema": "rgb_port_cache_binding_v1",
+      "depends": [
+        "P0_PREPARE"
+      ],
+      "disk_reservation_bytes": 14000000000,
+      "host_reservation_bytes": 3000000000,
+      "id": "P_RGB_CACHE",
+      "phase": "P1",
+      "rss_reservation_bytes": 4000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.root_qa",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--allow-updates",
+        "4",
+        "tests/test_rgb_port_producer_resume_technical.py"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/qa/RECOVERY_QA_RECEIPT.json",
+      "completion_copy_from": "artifacts/rgb_port_20261008/ROOT_QA_RECEIPT.json",
+      "completion_schema": "rgb_port_root_qa_v1",
+      "completion_status_optional": true,
+      "depends": [
+        "P_RGB_CACHE"
+      ],
+      "failure_artifact": "artifacts/rgb_port_20261008/qa/RECOVERY_QA_RECEIPT.json",
+      "heavy": true,
+      "host_reservation_bytes": 6000000000,
+      "id": "RECOVERY_QA",
+      "phase": "P1",
+      "rss_reservation_bytes": 6000000000,
+      "technical_qa_contract": {
+        "expected_updates": 4,
+        "journal": "artifacts/rgb_port_20261008/TECHNICAL_JOURNAL.json",
+        "test": "tests/test_rgb_port_producer_resume_technical.py"
+      }
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_producers",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "E_A5_MATCHED",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.train_producers:make_event_producer_source",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--role-manifest-sha256",
+        "sha256://artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "RECOVERY_QA"
+      ],
+      "disk_reservation_bytes": 4000000000,
+      "fit_id": "E_A5_MATCHED",
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "E_A5_MATCHED",
+      "max_updates": 30330,
+      "phase": "P2",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_producers",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "E_C2F_MATCHED",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.train_producers:make_event_producer_source",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--role-manifest-sha256",
+        "sha256://artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "RECOVERY_QA"
+      ],
+      "disk_reservation_bytes": 4000000000,
+      "fit_id": "E_C2F_MATCHED",
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "E_C2F_MATCHED",
+      "max_updates": 30330,
+      "phase": "P2",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_producers",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "R_A5",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.run:make_bound_rgb_producer_source",
+        "--role-manifest-sha256",
+        "sha256://artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "RECOVERY_QA"
+      ],
+      "disk_reservation_bytes": 4000000000,
+      "fit_id": "R_A5",
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "R_A5",
+      "max_updates": 30330,
+      "phase": "P2",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_producers",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "R_C2F",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.run:make_bound_rgb_producer_source",
+        "--role-manifest-sha256",
+        "sha256://artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "RECOVERY_QA"
+      ],
+      "disk_reservation_bytes": 4000000000,
+      "fit_id": "R_C2F",
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "R_C2F",
+      "max_updates": 30330,
+      "phase": "P2",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.infer_experts",
+        "pair-source",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--modality",
+        "event",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--output",
+        "artifacts/rgb_port_20261008/features/P/E_PAIR_SOURCE.npz",
+        "--batch-size",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/P/E_PAIR_SOURCE.receipt.json",
+      "depends": [
+        "E_A5_MATCHED"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "E_PAIR_SOURCE",
+      "phase": "P3",
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "pair",
+        "--source",
+        "artifacts/rgb_port_20261008/features/P/E_PAIR_SOURCE.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/P/E_PAIR_TRAIN.npz",
+        "--modality",
+        "event",
+        "--producer-receipt",
+        "artifacts/rgb_port_20261008/fits/E_A5_MATCHED/CHECKPOINT_RECEIPT.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/P/E_PAIR_TRAIN.json",
+      "depends": [
+        "E_PAIR_SOURCE"
+      ],
+      "id": "E_PAIR_CACHE",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "PAIR_E_MATCHED",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/P/E_PAIR_TRAIN.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/PAIR_E_MATCHED.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "E_PAIR_CACHE"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "PAIR_E_MATCHED",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/P/E_PAIR_TRAIN.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer_value": "NOT_APPLICABLE_PAIR_RAW133",
+        "output": "artifacts/rgb_port_20261008/admissions/PAIR_E_MATCHED.json",
+        "parent": "artifacts/rgb_port_20261008/fits/E_A5_MATCHED/ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "PAIR_E_MATCHED",
+      "max_updates": 6840,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.infer_experts",
+        "pair-source",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--modality",
+        "rgb",
+        "--output",
+        "artifacts/rgb_port_20261008/features/P/R_PAIR_SOURCE.npz",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--batch-size",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/P/R_PAIR_SOURCE.receipt.json",
+      "depends": [
+        "R_A5"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "R_PAIR_SOURCE",
+      "phase": "P3",
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "pair",
+        "--source",
+        "artifacts/rgb_port_20261008/features/P/R_PAIR_SOURCE.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/P/R_PAIR_TRAIN.npz",
+        "--modality",
+        "rgb",
+        "--producer-receipt",
+        "artifacts/rgb_port_20261008/fits/R_A5/CHECKPOINT_RECEIPT.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/P/R_PAIR_TRAIN.json",
+      "depends": [
+        "R_PAIR_SOURCE"
+      ],
+      "id": "R_PAIR_CACHE",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "PAIR_R",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/P/R_PAIR_TRAIN.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/PAIR_R.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "R_PAIR_CACHE"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "PAIR_R",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/P/R_PAIR_TRAIN.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer_value": "NOT_APPLICABLE_PAIR_RAW133",
+        "output": "artifacts/rgb_port_20261008/admissions/PAIR_R.json",
+        "parent": "artifacts/rgb_port_20261008/fits/R_A5/ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "PAIR_R",
+      "max_updates": 6840,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.infer_experts",
+        "observations",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "--modality",
+        "event",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--output-dir",
+        "artifacts/rgb_port_20261008/features/H/E_RAW",
+        "--batch-size",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/E_RAW/REAL_EXPERT_RECEIPT.json",
+      "depends": [
+        "E_A5_MATCHED",
+        "E_C2F_MATCHED",
+        "R_A5",
+        "R_C2F",
+        "PAIR_E_MATCHED",
+        "PAIR_R"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "H_E_RAW",
+      "phase": "P3",
+      "requires_parent_round_freeze": true,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "observations",
+        "--blocks",
+        "artifacts/rgb_port_20261008/features/H/E_RAW/blocks.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/E_OBSERVATIONS.npz",
+        "--role",
+        "H",
+        "--modality",
+        "event",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/E_OBSERVATIONS.json",
+      "depends": [
+        "H_E_RAW"
+      ],
+      "id": "H_E_OBS",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "normalizer",
+        "--observations",
+        "artifacts/rgb_port_20261008/features/H/E_OBSERVATIONS.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+        "--modality",
+        "event"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+      "completion_schema": "rgb_port_normalizer_v1",
+      "completion_status_optional": true,
+      "depends": [
+        "H_E_OBS"
+      ],
+      "id": "E_NORMALIZER",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "history",
+        "--observations",
+        "artifacts/rgb_port_20261008/features/H/E_OBSERVATIONS.npz",
+        "--history",
+        "artifacts/rgb_port_20261008/features/H/E_RAW/history.npz",
+        "--normalizer",
+        "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/E_HISTORY.npz",
+        "--role",
+        "H",
+        "--modality",
+        "event",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/E_HISTORY.json",
+      "depends": [
+        "E_NORMALIZER"
+      ],
+      "id": "H_E_HISTORY",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.infer_experts",
+        "observations",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "--modality",
+        "rgb",
+        "--output-dir",
+        "artifacts/rgb_port_20261008/features/H/R_RAW",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--batch-size",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/R_RAW/REAL_EXPERT_RECEIPT.json",
+      "depends": [
+        "E_A5_MATCHED",
+        "E_C2F_MATCHED",
+        "R_A5",
+        "R_C2F",
+        "PAIR_E_MATCHED",
+        "PAIR_R"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "H_R_RAW",
+      "phase": "P3",
+      "requires_parent_round_freeze": true,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "observations",
+        "--blocks",
+        "artifacts/rgb_port_20261008/features/H/R_RAW/blocks.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/R_OBSERVATIONS.npz",
+        "--role",
+        "H",
+        "--modality",
+        "rgb",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/R_OBSERVATIONS.json",
+      "depends": [
+        "H_R_RAW"
+      ],
+      "id": "H_R_OBS",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "normalizer",
+        "--observations",
+        "artifacts/rgb_port_20261008/features/H/R_OBSERVATIONS.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+        "--modality",
+        "rgb"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+      "completion_schema": "rgb_port_normalizer_v1",
+      "completion_status_optional": true,
+      "depends": [
+        "H_R_OBS"
+      ],
+      "id": "R_NORMALIZER",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "history",
+        "--observations",
+        "artifacts/rgb_port_20261008/features/H/R_OBSERVATIONS.npz",
+        "--history",
+        "artifacts/rgb_port_20261008/features/H/R_RAW/history.npz",
+        "--normalizer",
+        "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/R_HISTORY.npz",
+        "--role",
+        "H",
+        "--modality",
+        "rgb",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/R_HISTORY.json",
+      "depends": [
+        "R_NORMALIZER"
+      ],
+      "id": "H_R_HISTORY",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "fusion",
+        "--event-cache",
+        "artifacts/rgb_port_20261008/features/H/E_HISTORY.npz",
+        "--rgb-cache",
+        "artifacts/rgb_port_20261008/features/H/R_HISTORY.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/H/FUSION.npz"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/H/FUSION.json",
+      "depends": [
+        "H_E_HISTORY",
+        "H_R_HISTORY"
+      ],
+      "id": "H_FUSION",
+      "phase": "P3"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "E_H1_MATCHED",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/H/E_HISTORY.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/E_H1_MATCHED.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "H_E_HISTORY"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "E_H1_MATCHED",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/H/E_HISTORY.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer": "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+        "output": "artifacts/rgb_port_20261008/admissions/E_H1_MATCHED.json",
+        "parent": "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "E_H1_MATCHED",
+      "max_updates": 2500,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "E_CTX_MATCHED",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/H/E_HISTORY.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/E_CTX_MATCHED.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "H_E_HISTORY"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "E_CTX_MATCHED",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/H/E_HISTORY.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer": "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+        "output": "artifacts/rgb_port_20261008/admissions/E_CTX_MATCHED.json",
+        "parent": "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "E_CTX_MATCHED",
+      "max_updates": 2500,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "R_H1",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/H/R_HISTORY.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/R_H1.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "H_R_HISTORY"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "R_H1",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/H/R_HISTORY.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer": "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+        "output": "artifacts/rgb_port_20261008/admissions/R_H1.json",
+        "parent": "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "R_H1",
+      "max_updates": 2500,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "R_CTX",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/H/R_HISTORY.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/R_CTX.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "H_R_HISTORY"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "R_CTX",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/H/R_HISTORY.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer": "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+        "output": "artifacts/rgb_port_20261008/admissions/R_CTX.json",
+        "parent": "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "R_CTX",
+      "max_updates": 2500,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "F_TRUE",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/H/FUSION.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/F_TRUE.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "H_FUSION"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "F_TRUE",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/H/FUSION.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer": "artifacts/rgb_port_20261008/features/H/FUSION.json",
+        "output": "artifacts/rgb_port_20261008/admissions/F_TRUE.json",
+        "parent": "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "F_TRUE",
+      "max_updates": 2500,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.train_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "F_ZERO",
+        "--cache",
+        "artifacts/rgb_port_20261008/features/H/FUSION.npz",
+        "--freeze",
+        "artifacts/rgb_port_20261008/admissions/F_ZERO.json",
+        "--resume",
+        "--device",
+        "cuda"
+      ],
+      "depends": [
+        "H_FUSION"
+      ],
+      "disk_reservation_bytes": 1000000000,
+      "fit_id": "F_ZERO",
+      "head_admission": {
+        "cache": "artifacts/rgb_port_20261008/features/H/FUSION.npz",
+        "device": "cuda",
+        "executed_sources": [
+          "operational/rgb_port/train_heads.py",
+          "operational/rgb_port/train_producers.py",
+          "src/e_jepa_ttc/rgb_port/features.py",
+          "src/e_jepa_ttc/rgb_port/fusion.py"
+        ],
+        "normalizer": "artifacts/rgb_port_20261008/features/H/FUSION.json",
+        "output": "artifacts/rgb_port_20261008/admissions/F_ZERO.json",
+        "parent": "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "role_manifest": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+        "split": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json"
+      },
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "F_ZERO",
+      "max_updates": 2500,
+      "phase": "P3",
+      "recovery_attempt_upper": 100,
+      "rss_reservation_bytes": 3000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.infer_experts",
+        "observations",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/V_MANIFEST.json",
+        "--modality",
+        "event",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--output-dir",
+        "artifacts/rgb_port_20261008/features/V/E_RAW",
+        "--batch-size",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/E_RAW/REAL_EXPERT_RECEIPT.json",
+      "depends": [
+        "E_H1_MATCHED",
+        "E_CTX_MATCHED",
+        "R_H1",
+        "R_CTX",
+        "F_TRUE",
+        "F_ZERO"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "V_E_RAW",
+      "phase": "P4",
+      "requires_head_round_freeze": true,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "observations",
+        "--blocks",
+        "artifacts/rgb_port_20261008/features/V/E_RAW/blocks.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/V/E_OBSERVATIONS.npz",
+        "--role",
+        "V",
+        "--modality",
+        "event",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/E_OBSERVATIONS.json",
+      "depends": [
+        "V_E_RAW"
+      ],
+      "id": "V_E_OBS",
+      "phase": "P4"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "history",
+        "--observations",
+        "artifacts/rgb_port_20261008/features/V/E_OBSERVATIONS.npz",
+        "--history",
+        "artifacts/rgb_port_20261008/features/V/E_RAW/history.npz",
+        "--normalizer",
+        "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+        "--output",
+        "artifacts/rgb_port_20261008/features/V/E_HISTORY.npz",
+        "--role",
+        "V",
+        "--modality",
+        "event",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/E_HISTORY.json",
+      "depends": [
+        "V_E_OBS"
+      ],
+      "id": "V_E_HISTORY",
+      "phase": "P4"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.infer_experts",
+        "observations",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/V_MANIFEST.json",
+        "--modality",
+        "rgb",
+        "--output-dir",
+        "artifacts/rgb_port_20261008/features/V/R_RAW",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--batch-size",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/R_RAW/REAL_EXPERT_RECEIPT.json",
+      "depends": [
+        "E_H1_MATCHED",
+        "E_CTX_MATCHED",
+        "R_H1",
+        "R_CTX",
+        "F_TRUE",
+        "F_ZERO"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 3000000000,
+      "id": "V_R_RAW",
+      "phase": "P4",
+      "requires_head_round_freeze": true,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "observations",
+        "--blocks",
+        "artifacts/rgb_port_20261008/features/V/R_RAW/blocks.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/V/R_OBSERVATIONS.npz",
+        "--role",
+        "V",
+        "--modality",
+        "rgb",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/R_OBSERVATIONS.json",
+      "depends": [
+        "V_R_RAW"
+      ],
+      "id": "V_R_OBS",
+      "phase": "P4"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "history",
+        "--observations",
+        "artifacts/rgb_port_20261008/features/V/R_OBSERVATIONS.npz",
+        "--history",
+        "artifacts/rgb_port_20261008/features/V/R_RAW/history.npz",
+        "--normalizer",
+        "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+        "--output",
+        "artifacts/rgb_port_20261008/features/V/R_HISTORY.npz",
+        "--role",
+        "V",
+        "--modality",
+        "rgb",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/R_HISTORY.json",
+      "depends": [
+        "V_R_OBS"
+      ],
+      "id": "V_R_HISTORY",
+      "phase": "P4"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.prepare_features",
+        "fusion",
+        "--event-cache",
+        "artifacts/rgb_port_20261008/features/V/E_HISTORY.npz",
+        "--rgb-cache",
+        "artifacts/rgb_port_20261008/features/V/R_HISTORY.npz",
+        "--output",
+        "artifacts/rgb_port_20261008/features/V/FUSION.npz"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/features/V/FUSION.json",
+      "depends": [
+        "V_E_HISTORY",
+        "V_R_HISTORY"
+      ],
+      "id": "V_FUSION",
+      "phase": "P4"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.predict_heads",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--manifestV",
+        "artifacts/rgb_port_20261008/V_MANIFEST.json",
+        "--inputsJSON",
+        "configs/rgb_port/v_inputs.json",
+        "--output-dir",
+        "artifacts/rgb_port_20261008/predictions/V"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/predictions/V/HEAD_PREDICTIONS.json",
+      "depends": [
+        "V_FUSION"
+      ],
+      "id": "V_PREDICTIONS",
+      "phase": "P4",
+      "requires_head_round_freeze": true
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.evaluate",
+        "--candidate",
+        "E_H1_MATCHED=artifacts/rgb_port_20261008/predictions/V/E_H1_MATCHED.csv",
+        "--candidate",
+        "E_CTX_MATCHED=artifacts/rgb_port_20261008/predictions/V/E_CTX_MATCHED.csv",
+        "--candidate",
+        "R_H1=artifacts/rgb_port_20261008/predictions/V/R_H1.csv",
+        "--candidate",
+        "R_CTX=artifacts/rgb_port_20261008/predictions/V/R_CTX.csv",
+        "--candidate",
+        "F_TRUE=artifacts/rgb_port_20261008/predictions/V/F_TRUE.csv",
+        "--candidate",
+        "F_ZERO=artifacts/rgb_port_20261008/predictions/V/F_ZERO.csv",
+        "--contrast",
+        "E_CTX_MATCHED=E_H1_MATCHED",
+        "--contrast",
+        "R_CTX=R_H1",
+        "--contrast",
+        "F_TRUE=F_ZERO",
+        "--contrast",
+        "F_TRUE=E_CTX_MATCHED",
+        "--output",
+        "artifacts/rgb_port_20261008/evaluation/V_RESULTS.json"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/evaluation/V_RESULTS.json",
+      "depends": [
+        "V_PREDICTIONS"
+      ],
+      "id": "V_EVALUATION",
+      "phase": "P4",
+      "requires_head_round_freeze": true
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.transfer",
+        "predict-dev32",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--endpoint-freeze",
+        "artifacts/rgb_port_20261008/rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        "--query-manifest",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json",
+        "--event-normalizer",
+        "artifacts/rgb_port_20261008/features/H/E_NORMALIZER.json",
+        "--rgb-normalizer",
+        "artifacts/rgb_port_20261008/features/H/R_NORMALIZER.json",
+        "--output",
+        "artifacts/rgb_port_20261008/transfer/dev32",
+        "--device",
+        "cpu"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/transfer/dev32/PREDICTIONS_SEALED.json",
+      "completion_schema": "rgb_port_dev32_prediction_seal_v1",
+      "depends": [
+        "V_EVALUATION"
+      ],
+      "host_reservation_bytes": 6000000000,
+      "id": "DEV32_PREDICT",
+      "phase": "P4",
+      "requires_head_round_freeze": true,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.transfer",
+        "score-dev32",
+        "--seal",
+        "artifacts/rgb_port_20261008/transfer/dev32/PREDICTIONS_SEALED.json",
+        "--comparator-csv",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/evttc_rgb_transfer_20261008/SCORED_PREDICTIONS.csv",
+        "--output",
+        "artifacts/rgb_port_20261008/transfer/dev32_score"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/transfer/dev32_score/RESULT.json",
+      "completion_schema": "rgb_port_dev32_score_v1",
+      "depends": [
+        "DEV32_PREDICT"
+      ],
+      "id": "DEV32_SCORE",
+      "phase": "P4"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.cost_routes",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--p-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--manifest",
+        "artifacts/rgb_port_20261008/V_MANIFEST.json",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--event-history",
+        "artifacts/rgb_port_20261008/features/V/E_RAW/history.npz",
+        "--head-inputs",
+        "configs/rgb_port/v_inputs.json",
+        "--normalizers",
+        "configs/rgb_port/normalizers.json",
+        "--output",
+        "artifacts/rgb_port_20261008/profiles/ROUTE_COSTS.json",
+        "--device",
+        "cuda"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/profiles/ROUTE_COSTS.json",
+      "completion_schema": "rgb_port_route_costs_v1",
+      "depends": [
+        "V_PREDICTIONS"
+      ],
+      "heavy": true,
+      "host_reservation_bytes": 6000000000,
+      "id": "PROFILE_ROUTES",
+      "phase": "P4",
+      "requires_head_round_freeze": true,
+      "rss_reservation_bytes": 6000000000
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.transfer",
+        "block-external",
+        "--output",
+        "artifacts/rgb_port_20261008/transfer/fcwd/FCWD_RGB_STATUS.json",
+        "--branch",
+        "FCWD_RGB_AND_FUSION",
+        "--reason",
+        "RGB_TO_EVENT_CALIBRATION_MISSING"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/transfer/fcwd/FCWD_RGB_STATUS.json",
+      "completion_schema": "rgb_port_transfer_external_status_v1",
+      "depends": [
+        "V_EVALUATION"
+      ],
+      "id": "FCWD_RGB_STATUS",
+      "phase": "P4",
+      "terminal_artifact_status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "command": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port.report",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--config",
+        "configs/rgb_port/execution.json",
+        "--output",
+        "artifacts/rgb_port_20261008/report"
+      ],
+      "completion_artifact": "artifacts/rgb_port_20261008/report/REPORT_RECEIPT.json",
+      "completion_schema": "rgb_port_report_receipt_v1",
+      "depends": [
+        "V_EVALUATION"
+      ],
+      "id": "REPORT",
+      "phase": "P4",
+      "soft_depends": [
+        "PROFILE_ROUTES",
+        "DEV32_SCORE",
+        "FCWD_RGB_STATUS"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "arm_id",
+    "seed",
+    "outer_fold",
+    "model_class",
+    "model_topology_sha256",
+    "initialization_sha256",
+    "trainable_parameter_count",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_initialization_manifest_v2"
+    },
+    "arm_id": {
+      "enum": [
+        "X0-A5-REPLAY",
+        "X0-PAIR-U",
+        "X0-BASE-U",
+        "X0-DYN-U"
+      ]
+    },
+    "seed": {
+      "const": 7
+    },
+    "outer_fold": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "model_class": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_topology_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "initialization_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "trainable_parameter_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_initialization_manifest_v2.schema.json"
+}

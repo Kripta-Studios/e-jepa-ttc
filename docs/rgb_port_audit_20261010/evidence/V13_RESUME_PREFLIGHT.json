@@ -1,0 +1,78 @@
+{
+  "utc": "2026-10-10T13:51:25.233326+00:00",
+  "scope": "read-only CPU payload and native receipt checks; no CUDA restoration or optimizer updates",
+  "records": [
+    {
+      "fit": "E_A5_MATCHED",
+      "updates": 26338,
+      "remaining_to_30330": 3992,
+      "native_status": "PAUSED_RESOURCE",
+      "native_hash_agreement": true,
+      "update_agreement": true,
+      "identity_agreement": true,
+      "accumulation_index": 0,
+      "pending_update_upper": 0,
+      "complete_state": true,
+      "adam_steps": [
+        26338
+      ],
+      "code_migration_matches": true,
+      "state_keys": [
+        "schema",
+        "code_migration_sha256",
+        "identity",
+        "identity_sha256",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "scheduler_state_dict",
+        "sampler_generator_state",
+        "torch_rng_state",
+        "cuda_rng_state_all",
+        "numpy_random_state",
+        "python_random_state",
+        "cursor",
+        "completed_updates",
+        "recovery_upper",
+        "accumulation_index",
+        "status"
+      ],
+      "checkpoint_sha256": "36485f9881182bbf0e57da29563a396585c9d6e550fd29e5cd8bba88b35cdcaa"
+    },
+    {
+      "fit": "E_C2F_MATCHED",
+      "updates": 17679,
+      "remaining_to_30330": 12651,
+      "native_status": "PAUSED_RESOURCE",
+      "native_hash_agreement": true,
+      "update_agreement": true,
+      "identity_agreement": true,
+      "accumulation_index": 0,
+      "pending_update_upper": 0,
+      "complete_state": true,
+      "adam_steps": [
+        17679
+      ],
+      "code_migration_matches": true,
+      "state_keys": [
+        "schema",
+        "code_migration_sha256",
+        "identity",
+        "identity_sha256",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "scheduler_state_dict",
+        "sampler_generator_state",
+        "torch_rng_state",
+        "cuda_rng_state_all",
+        "numpy_random_state",
+        "python_random_state",
+        "cursor",
+        "completed_updates",
+        "recovery_upper",
+        "accumulation_index",
+        "status"
+      ],
+      "checkpoint_sha256": "c0439d969c6537ff4df69b6e8a5bd034b8bc9f78ef482c856f81bd02335a534d"
+    }
+  ]
+}

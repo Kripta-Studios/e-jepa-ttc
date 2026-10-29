@@ -1,0 +1,58 @@
+{
+  "schema": "v18_joint_measurement_proposed_authorization_v1",
+  "status": "PROPOSED_NOT_EXECUTED",
+  "source_commit": "396abe922537d9dac19d6db3451e59d283636e20",
+  "scientific_goal": "Benchmark-specific SOTA objective, never a guaranteed outcome",
+  "new_physical_update_cap": 1000000,
+  "new_gpu_scope_seconds_cap": 64800,
+  "synthetic_update_reserve_max": 1000,
+  "recovery_update_reserve_max": 5000,
+  "primary_fits": {
+    "NATIVE-P2-FT-S7": 12000,
+    "PAIR-DIRECT-S7": 12000,
+    "PAIR-CORR-S7": 12000,
+    "PAIR-CORR-FROZEN-S7": 12000
+  },
+  "max_additional_paired_experiments": 4,
+  "max_updates_each_additional_experiment": 24000,
+  "max_rgb_branch_scientific_updates": 29000,
+  "max_selected_replication_families": 1,
+  "max_final_refit_families": 2,
+  "roles": {
+    "producer_training": "P",
+    "candidate_selection": "H",
+    "pipeline_development": "V",
+    "external_exploratory": [
+      "Dev32",
+      "FCWD"
+    ]
+  },
+  "forbidden": [
+    "private evaluation labels",
+    "automatic submission",
+    "automatic push or merge",
+    "global driver paging or power changes",
+    "altering closed historical recipes",
+    "paid compute",
+    "unbounded experiments"
+  ],
+  "historical_gates": "remain unchanged; new exploration criteria do not promote V17",
+  "hard_stop_conditions": [
+    "resource cap",
+    "fatal data/semantic integrity issue for dependent branch",
+    "no remaining viable authorized task",
+    "user interruption"
+  ],
+  "soft_branch_status": "NO_CANDIDATE does not stop other authorized families",
+  "resource_policy": {
+    "project_rss_GB": 23,
+    "host_min_available_GiB": 2,
+    "host_resume_available_GiB": 3,
+    "min_free_GB_after_reservations": 10
+  },
+  "execution_requires_user_delivery_of_prompt": true,
+  "scientific_update_upper_limit": 994000,
+  "new_encoder_training_required": true,
+  "replication_limit": "One selected architecture family plus its predeclared controls; exact fit graph and budget recorded before training.",
+  "final_refit_limit": "At most one final event candidate and one multimodal candidate; freeze graph, support and budget before start. Do not consume H/V as an evaluation afterward."
+}

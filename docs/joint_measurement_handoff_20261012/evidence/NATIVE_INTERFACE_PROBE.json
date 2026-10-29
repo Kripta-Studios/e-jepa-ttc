@@ -1,0 +1,71 @@
+{
+  "status": "PASS_SYNTHETIC_NATIVE_INTERFACE",
+  "records": [
+    {
+      "name": "DIRECT",
+      "input_shape": [
+        2,
+        2,
+        12,
+        128,
+        128
+      ],
+      "output_shape": [
+        2
+      ],
+      "parameters": 578337,
+      "trainable_parameters": 578337,
+      "encoder_gradient_norm": 4.953474843791396,
+      "native_parent_unchanged": true,
+      "private_encoder_copy": true,
+      "synthetic_loss": 1.6932494640350342,
+      "optimizer_updates": 0
+    },
+    {
+      "name": "CORR",
+      "input_shape": [
+        2,
+        2,
+        12,
+        128,
+        128
+      ],
+      "output_shape": [
+        2
+      ],
+      "parameters": 578337,
+      "trainable_parameters": 578337,
+      "encoder_gradient_norm": 4.976813506034418,
+      "native_parent_unchanged": true,
+      "private_encoder_copy": true,
+      "synthetic_loss": 1.7032926082611084,
+      "optimizer_updates": 0
+    },
+    {
+      "name": "CORR_FROZEN",
+      "input_shape": [
+        2,
+        2,
+        12,
+        128,
+        128
+      ],
+      "output_shape": [
+        2
+      ],
+      "parameters": 578337,
+      "trainable_parameters": 402145,
+      "encoder_gradient_norm": 0.0,
+      "native_parent_unchanged": true,
+      "private_encoder_copy": true,
+      "synthetic_loss": 1.7028658390045166,
+      "optimizer_updates": 0
+    }
+  ],
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "device": "cpu"
+  },
+  "scope": "Native CNN instantiated from source with random weights; synthetic 128x128 inputs. No dataset, trained A5 parent, GPU, optimizer update or TTC accuracy claim."
+}

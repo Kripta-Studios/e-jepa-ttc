@@ -1,0 +1,8 @@
+{
+  "created_utc": "2026-10-08T17:58:24.711807+00:00",
+  "owner": "sota_campaign_20261008",
+  "path": "${REPO}\\artifacts\\efficient_context_20261004\\r1_20261008\\resident_1g\\STOP_REQUEST",
+  "preserve_pairs": 486,
+  "reason": "exclusive inference; R1 resume prefix repair",
+  "sha256": "97e78701c9037b273fc4c0fd5ceaa3ad35467bbb10f121271df230e21f628fbf"
+}

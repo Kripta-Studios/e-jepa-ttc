@@ -1,0 +1,6 @@
+{
+  "reason": "Explicit string type guard for pandas to_json; selection unchanged; no predictions yet",
+  "previous_registration_sha256": "d6e8fc1b0a0ab21af962e1f1e96d4fe42626f0d1bfd17ec90fc83abdd2dcc2d3",
+  "previous_source_sha256": "ee5014ff41de2993eb042137c67a91bd3dc64675d60b1feb411c794e1b5825db",
+  "new_source_sha256": "3b6b26437f6d0cbb5f110c91d78fb5d4fc86dfcf3d3dcb1a106e0e205cff1eb5"
+}

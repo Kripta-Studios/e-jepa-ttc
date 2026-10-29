@@ -1,0 +1,6 @@
+name: jepa_main
+pretraining: configs/train/pretrain.yaml
+fine_tuning: configs/train/finetune.yaml
+representation: configs/representation/voxel_grid.yaml
+seeds: [7, 13, 23]
+claim_level: diagnostic

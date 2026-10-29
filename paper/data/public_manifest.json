@@ -1,0 +1,70 @@
+{
+  "schema": "phase_ttc_public_manifest_v1",
+  "files": [
+    {
+      "path": "data/early_results.json",
+      "sha256": "bbc3e4b30c44e6af003574c49fbc18d38b2fb501473f0807e9ee5c819db97fae",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/early_tables.json",
+      "sha256": "e7c769877f14ecf234b4bda872258215ebaeed5a3f815afb4a3cd6e5d7595847",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/git_summary.json",
+      "sha256": "40b8eac8566ed3de60f320fa25aab8b9ee768578114630537a7310632245a6b5",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/late_results.json",
+      "sha256": "e7093f1b75a4e96bc2298d96525f47a3ede6e84e961673a95492bcd309d5185e",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/middle_results.json",
+      "sha256": "236eb5dab7db19326e9ac6ec50f603b65d0cfd0e007ca08c41293766ca19aea2",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/official_benchmark.json",
+      "sha256": "f7bc1a8bd786f8149ff6ce44ad60bfe43aaa8f7e7833d04b07f4b6ce004aa532",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/official_scorer_verification.json",
+      "sha256": "98ccc01371304d3ae71ebaea5d651c0c2709773e3b9bd007b072790173ba509f",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/official_scoring_scores.json",
+      "sha256": "e06e99ba1e5d6c4eccc0a475384d797961de771f61d7dbb0fc56a00dc9e75092",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/public_evidence_registry.json",
+      "sha256": "c7c1130068c98e00ee8588f7ee0b2f361020b5c8f88a251ac5c786db5125514b",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/transfer_queries.csv",
+      "sha256": "2fd4c33716a6c48e50aab581b3a6f172e5492d9136d408433868f63a71431621",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/visual_source_manifest.json",
+      "sha256": "7cd53750ff47347988b608a71f926b11535172ccdfe7b200be9ccc32f260b57b",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/evttc_competition_summary.json",
+      "sha256": "9ad728d4168c0b41594956d1d028e2a3f7b820b621c98303bd7ed64733382806",
+      "role": "public derived competition evidence"
+    },
+    {
+      "path": "data/evttc_competition_predictions.csv",
+      "sha256": "5e58c4155d90cf5ea9ce3421325bbd0552b2fffe060b0941ad3ae2757be565eb",
+      "role": "public derived competition evidence"
+    }
+  ]
+}

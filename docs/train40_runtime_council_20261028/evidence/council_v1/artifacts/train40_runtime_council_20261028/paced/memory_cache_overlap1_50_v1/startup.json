@@ -1,0 +1,569 @@
+{
+  "raw_preload": {
+    "scope": "PACED_PRELOADED_RAW_CPU_ARRIVALS_NOT_PHYSICAL_SENSOR",
+    "preload_seconds": 0.5412876999471337,
+    "raw_event_bytes": 104590525,
+    "raw_rgb_bytes": 228096000,
+    "archive_bytes": 332914352,
+    "token_ring_upper_bound_bytes": 110592000,
+    "live_payload_upper_bound_bytes": 671088640,
+    "scratch_upper_bound_bytes": 536870912,
+    "source_total_upper_bound_bytes": 1651465904,
+    "max_total_bytes": 2147483648,
+    "memory_exclusions": "Python object overhead, HDF5 internals, model/GPU storage and result receipts",
+    "event_archive_rows": 8045425,
+    "rgb_archive_frames": 33,
+    "future_raw_bytes_preloaded_private_to_feeder": true,
+    "future_tokens_or_hashes_prepared": false,
+    "representations_precomputed": false,
+    "physical_sensor_claim": false
+  },
+  "model_and_service_seconds": 0.4457968999631703,
+  "synthetic_shape_priming": {
+    "schema": "train40_synthetic_abi_priming_v1",
+    "status": "COMPLETE",
+    "scope": "EXPLICIT_SYNTHETIC_STARTUP_ONLY_NO_RAW_OR_FUTURE_DATA",
+    "object_counts": [
+      1
+    ],
+    "layouts": [
+      {
+        "rgb_observations": 0,
+        "rgb_steps": 0
+      },
+      {
+        "rgb_observations": 1,
+        "rgb_steps": 2
+      },
+      {
+        "rgb_observations": 1,
+        "rgb_steps": 3
+      },
+      {
+        "rgb_observations": 2,
+        "rgb_steps": 3
+      },
+      {
+        "rgb_observations": 3,
+        "rgb_steps": 3
+      },
+      {
+        "rgb_observations": 4,
+        "rgb_steps": 3
+      },
+      {
+        "rgb_observations": 5,
+        "rgb_steps": 3
+      }
+    ],
+    "event_observations": 4,
+    "event_steps": 3,
+    "rgb_object_chunk_size": 1,
+    "endpoint_reuse_config": {
+      "E": false,
+      "R": true
+    },
+    "mixed_rgb_availability_covered": true,
+    "nonoverlapping_multi_observation_rgb_primed": false,
+    "nonoverlap_reason": "Native sensor_triplets structurally shares endpoints; guards remain active",
+    "unexpected_shapes_remain_inside_update_clock": true,
+    "event_early_launch_path_exercised": false,
+    "numerical_parity_admitted": false,
+    "targets_read": false,
+    "optimizer_updates": 0,
+    "records": [
+      {
+        "objects": 1,
+        "rgb_observations": 0,
+        "rgb_steps": 0,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [],
+        "rgb_endpoint_reuse_active": false,
+        "layout_reason": "NO_RGB_FALLBACK",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 2991230976,
+          "reserved_bytes": 3042967552
+        },
+        "seconds": 1.8953249000478536,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3029381120,
+          "reserved_bytes": 3212836864
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "E_EXPERT_BLOCK",
+            "shape": [
+              4,
+              3,
+              12,
+              128,
+              128
+            ],
+            "endpoint_reuse": false
+          }
+        ]
+      },
+      {
+        "objects": 1,
+        "rgb_observations": 1,
+        "rgb_steps": 2,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [
+          [
+            1,
+            2,
+            3,
+            128,
+            128
+          ]
+        ],
+        "rgb_endpoint_reuse_active": false,
+        "layout_reason": "NATIVE_STARTUP_T2",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3029381120,
+          "reserved_bytes": 3212836864
+        },
+        "seconds": 2.163253500009887,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3039346176,
+          "reserved_bytes": 3265265664
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "R_EXPERT_BLOCK",
+            "shape": [
+              1,
+              2,
+              3,
+              128,
+              128
+            ],
+            "endpoint_reuse": false
+          }
+        ]
+      },
+      {
+        "objects": 1,
+        "rgb_observations": 1,
+        "rgb_steps": 3,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [
+          [
+            1,
+            3,
+            3,
+            128,
+            128
+          ]
+        ],
+        "rgb_endpoint_reuse_active": false,
+        "layout_reason": "NATIVE_OVERLAPPING_T3_CHAIN",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3039346176,
+          "reserved_bytes": 3265265664
+        },
+        "seconds": 2.1574058000114746,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3049506304,
+          "reserved_bytes": 3315597312
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "R_EXPERT_BLOCK",
+            "shape": [
+              1,
+              3,
+              3,
+              128,
+              128
+            ],
+            "endpoint_reuse": false
+          }
+        ]
+      },
+      {
+        "objects": 1,
+        "rgb_observations": 2,
+        "rgb_steps": 3,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [
+          [
+            2,
+            3,
+            3,
+            128,
+            128
+          ]
+        ],
+        "rgb_endpoint_reuse_active": true,
+        "layout_reason": "NATIVE_OVERLAPPING_T3_CHAIN",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3049506304,
+          "reserved_bytes": 3315597312
+        },
+        "seconds": 2.2479594000033103,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3060552192,
+          "reserved_bytes": 3388997632
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "R_EXPERT_BLOCK_REUSE",
+            "shape": [
+              2,
+              3,
+              3,
+              128,
+              128
+            ],
+            "endpoint_reuse": true
+          }
+        ]
+      },
+      {
+        "objects": 1,
+        "rgb_observations": 3,
+        "rgb_steps": 3,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [
+          [
+            3,
+            3,
+            3,
+            128,
+            128
+          ]
+        ],
+        "rgb_endpoint_reuse_active": true,
+        "layout_reason": "NATIVE_OVERLAPPING_T3_CHAIN",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3060552192,
+          "reserved_bytes": 3388997632
+        },
+        "seconds": 2.3146222999785095,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3072122880,
+          "reserved_bytes": 3460300800
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "R_EXPERT_BLOCK_REUSE",
+            "shape": [
+              3,
+              3,
+              3,
+              128,
+              128
+            ],
+            "endpoint_reuse": true
+          }
+        ]
+      },
+      {
+        "objects": 1,
+        "rgb_observations": 4,
+        "rgb_steps": 3,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [
+          [
+            4,
+            3,
+            3,
+            128,
+            128
+          ]
+        ],
+        "rgb_endpoint_reuse_active": true,
+        "layout_reason": "NATIVE_OVERLAPPING_T3_CHAIN",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3072122880,
+          "reserved_bytes": 3460300800
+        },
+        "seconds": 2.027739199984353,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3084053504,
+          "reserved_bytes": 3529506816
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "R_EXPERT_BLOCK_REUSE",
+            "shape": [
+              4,
+              3,
+              3,
+              128,
+              128
+            ],
+            "endpoint_reuse": true
+          }
+        ]
+      },
+      {
+        "objects": 1,
+        "rgb_observations": 5,
+        "rgb_steps": 3,
+        "event_producer_shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "rgb_producer_shapes": [
+          [
+            5,
+            3,
+            3,
+            128,
+            128
+          ]
+        ],
+        "rgb_endpoint_reuse_active": true,
+        "layout_reason": "NATIVE_OVERLAPPING_T3_CHAIN",
+        "status": "COMPLETE",
+        "memory_before": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3084053504,
+          "reserved_bytes": 3529506816
+        },
+        "seconds": 2.194858899980318,
+        "memory_after": {
+          "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+          "allocated_bytes": 3096573952,
+          "reserved_bytes": 3598712832
+        },
+        "new_producer_graphs": [
+          {
+            "producer": "R_EXPERT_BLOCK_REUSE",
+            "shape": [
+              5,
+              3,
+              3,
+              128,
+              128
+            ],
+            "endpoint_reuse": true
+          }
+        ]
+      }
+    ],
+    "memory_before": {
+      "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+      "allocated_bytes": 2991230976,
+      "reserved_bytes": 3042967552
+    },
+    "producer_graphs_before": [],
+    "total_seconds": 15.005117000022437,
+    "memory_after": {
+      "scope": "PYTORCH_PROCESS_CURRENT_ALLOCATOR_NOT_EXCLUSIVE_OR_PEAK",
+      "allocated_bytes": 3096573952,
+      "reserved_bytes": 3598712832
+    },
+    "producer_graphs_after": [
+      {
+        "producer": "E_EXPERT_BLOCK",
+        "shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "endpoint_reuse": false
+      },
+      {
+        "producer": "R_EXPERT_BLOCK",
+        "shape": [
+          1,
+          2,
+          3,
+          128,
+          128
+        ],
+        "endpoint_reuse": false
+      },
+      {
+        "producer": "R_EXPERT_BLOCK",
+        "shape": [
+          1,
+          3,
+          3,
+          128,
+          128
+        ],
+        "endpoint_reuse": false
+      },
+      {
+        "producer": "R_EXPERT_BLOCK_REUSE",
+        "shape": [
+          2,
+          3,
+          3,
+          128,
+          128
+        ],
+        "endpoint_reuse": true
+      },
+      {
+        "producer": "R_EXPERT_BLOCK_REUSE",
+        "shape": [
+          3,
+          3,
+          3,
+          128,
+          128
+        ],
+        "endpoint_reuse": true
+      },
+      {
+        "producer": "R_EXPERT_BLOCK_REUSE",
+        "shape": [
+          4,
+          3,
+          3,
+          128,
+          128
+        ],
+        "endpoint_reuse": true
+      },
+      {
+        "producer": "R_EXPERT_BLOCK_REUSE",
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "endpoint_reuse": true
+      }
+    ]
+  },
+  "synthetic_shape_priming_seconds": 15.005117000022437,
+  "unprimed_shapes_remain_inside_measurement": true,
+  "history_initialization_seconds": 0.11406190000707284,
+  "initial_interval_us": [
+    16130664,
+    16730664
+  ],
+  "initial_raw_bytes": 45897654,
+  "source_lifecycle": {
+    "warmup": {
+      "started_ns": 304650027174500,
+      "thread_id": 53488,
+      "result": {
+        "scope": "PACED_PRELOADED_RAW_CPU_ARRIVALS_NOT_PHYSICAL_SENSOR",
+        "acquired_updates": 0,
+        "unique_frames_frozen": 13,
+        "frame_freeze_bytes": 89856000,
+        "frame_freeze_seconds": 0.055655499978456646,
+        "event_packet_copy_bytes": 0,
+        "payload_frame_copy_bytes": 0,
+        "peak_frame_token_count": 13,
+        "peak_frame_token_bytes": 89856000,
+        "bbox_validations": 0,
+        "bbox_cache_hits": 0,
+        "physical_sensor_claim": false,
+        "targets_read": false,
+        "warmup_cutoff_us": 16730664,
+        "warmup_frames": 13,
+        "preload": {
+          "scope": "PACED_PRELOADED_RAW_CPU_ARRIVALS_NOT_PHYSICAL_SENSOR",
+          "preload_seconds": 0.5412876999471337,
+          "raw_event_bytes": 104590525,
+          "raw_rgb_bytes": 228096000,
+          "archive_bytes": 332914352,
+          "token_ring_upper_bound_bytes": 110592000,
+          "live_payload_upper_bound_bytes": 671088640,
+          "scratch_upper_bound_bytes": 536870912,
+          "source_total_upper_bound_bytes": 1651465904,
+          "max_total_bytes": 2147483648,
+          "memory_exclusions": "Python object overhead, HDF5 internals, model/GPU storage and result receipts",
+          "event_archive_rows": 8045425,
+          "rgb_archive_frames": 33,
+          "future_raw_bytes_preloaded_private_to_feeder": true,
+          "future_tokens_or_hashes_prepared": false,
+          "representations_precomputed": false,
+          "physical_sensor_claim": false
+        }
+      },
+      "ended_ns": 304650083202500
+    },
+    "finalize": {
+      "started_ns": 304651114142200,
+      "thread_id": 53488,
+      "result": {
+        "scope": "PACED_PRELOADED_RAW_CPU_ARRIVALS_NOT_PHYSICAL_SENSOR",
+        "acquired_updates": 50,
+        "unique_frames_frozen": 33,
+        "frame_freeze_bytes": 228096000,
+        "frame_freeze_seconds": 0.1565361997927539,
+        "event_packet_copy_bytes": 90715315,
+        "payload_frame_copy_bytes": 0,
+        "peak_frame_token_count": 13,
+        "peak_frame_token_bytes": 89856000,
+        "bbox_validations": 24,
+        "bbox_cache_hits": 126,
+        "physical_sensor_claim": false,
+        "targets_read": false,
+        "closed_on_owner_thread": true
+      },
+      "ended_ns": 304651128708600
+    },
+    "errors": []
+  }
+}

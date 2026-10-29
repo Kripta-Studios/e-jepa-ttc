@@ -1,0 +1,16 @@
+{
+  "source_commit": "1c251781ac845a5d661523e607e0f7c4a8d3af8a",
+  "source_zip_sha256": "c540a53a4ebdcc4dc047d6b29340e429468ce77ce5602e938ad2292081a3dc71",
+  "full_clone": false,
+  "access": "attached ZIP plus GitHub connector",
+  "docs_read": 6,
+  "new_optimization": false,
+  "network_inference_replayed": false,
+  "scored_predictions_recomputed": 98592,
+  "outside_research_used": "only official Codex CLI usage documentation; scientific recommendations are explicitly proposed hypotheses",
+  "github_reports_match": "All six match pinned Git blob SHA1 after CRLF-to-LF normalization; exact ZIP bytes preserved",
+  "zip_members": 772,
+  "zip_bytes": 96867789,
+  "manifest_entries": 771,
+  "crc_validated": true
+}

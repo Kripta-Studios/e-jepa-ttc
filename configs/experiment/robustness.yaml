@@ -1,0 +1,8 @@
+name: robustness
+retrain: false
+seed: 7
+perturbations:
+  event_dropout: [0.1, 0.3, 0.5, 0.7]
+  timestamp_jitter_us: [50, 200, 1000]
+  polarity_drop: [positive, negative]
+  spatial_crop_fraction: [0.9, 0.75]

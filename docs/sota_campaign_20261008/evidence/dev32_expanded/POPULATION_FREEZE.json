@@ -1,0 +1,15 @@
+{
+  "data_root": "${DATA}",
+  "dependency_source_sha256": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+  "gpu_used": false,
+  "inventory_path": "${REPO}\\data\\manifests\\evttc_all32_local.yaml",
+  "inventory_sha256": "607f8faa2aebeaa95ac7b61fb5bbcbe105c9e3606152ee6584e2e8cb4621722c",
+  "manifest_rows": 3947,
+  "manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "optimizer_updates": 0,
+  "population_source_sha256": "c8532b973aa2bc58ce2ac98cfa27406477618d09ae95fb494ad4bc3181db9f2f",
+  "prior_manifest_path": "${REPO}\\artifacts\\evttc_transfer_20261008\\QUERY_MANIFEST.json",
+  "prior_manifest_sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+  "status": "FROZEN_LABEL_FREE",
+  "targets_read": false
+}

@@ -1,0 +1,1117 @@
+{
+  "fcwd_verifier_recovery_sha256": "18d26d9ffa5875af2d2039e0cc2dc2c7b82c70710d3ee671a770ab0146114eaa",
+  "no_failed_branch_interpreted_as_scientific_negative": true,
+  "optimizer_updates": 0,
+  "receipts": [
+    {
+      "path": "followups_resume/FCWD_BRANCH.json",
+      "receipt": {
+        "checked_utc": "2026-10-08T19:19:43.887950+00:00",
+        "error_type": "AttributeError",
+        "reason": "'NoneType' object has no attribute 'splitlines'",
+        "scientific_negative": false,
+        "status": "FAILED_PRESERVED"
+      },
+      "sha256": "da8e6495be1f123d3a26e2417d55d1e1c3456f7351a0a8e3e1e1cfebc2fbe2bd"
+    },
+    {
+      "path": "followups_resume/COST_BRANCH.json",
+      "receipt": {
+        "checked_utc": "2026-10-08T19:19:44.877514+00:00",
+        "error_type": "RuntimeError",
+        "reason": "cost exited 1",
+        "scientific_negative": false,
+        "status": "FAILED_PRESERVED"
+      },
+      "sha256": "ba77428a384da8a92d04410294afcb1401c6380077aea648054bbb6122468eb6"
+    },
+    {
+      "path": "cost_preflight_failed_20261008/EXECUTION_FREEZE.json",
+      "receipt": {
+        "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+        "code_root": "${DATA}/Garl-TTC",
+        "manifest": "${REPO}\\artifacts\\sota_campaign_20261008\\dev32_expanded\\QUERY_MANIFEST.json",
+        "manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+        "optimizer_updates": 0,
+        "preprocessing_disclosure": {
+          "garl_event_only_shared_preparation": "the exact same measured H8+event-only bundle preparation as H8, shared without duplicate CPU execution; includes unused H8 history and is conservative",
+          "garl_full_rgb_event": "published full Garl RGB+event sensor preparation",
+          "h8_system_three_heads": "native frozen H8 history8 preparation; existing helper also prepares the event-only Garl tensor, so this is a conservative H8-system cost"
+        },
+        "protocol": {
+          "batch_size": 1,
+          "cache_state": "warm_after_explicit_per-query_warmups",
+          "cpu_measurements": 3,
+          "cpu_warmups": 1,
+          "gpu_measurements": 20,
+          "gpu_warmups": 5,
+          "h8_history": 8,
+          "h8_native_producer_dispatch": 16,
+          "h8_prediction": "system_three_heads",
+          "precision": "float32_no_tf32",
+          "sequential_e2e_measurements": 3
+        },
+        "public_full_dir": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl",
+        "schema": "sota_system_cost_fixed8_v1",
+        "selected_before_latency_and_without_targets": true,
+        "selected_queries": [
+          {
+            "anchor_us": 14400373,
+            "metadata_sha256": "b7530bd32376f9646aaa8d06c19d76928298f1d6078bf13596e4b5e14b50afb9",
+            "query_id": "CCRm-low-0-overlap-0:00",
+            "scenario_family": "CCRm",
+            "sequence_id": "CCRm-low-0-overlap-0"
+          },
+          {
+            "anchor_us": 14786485,
+            "metadata_sha256": "ad1510e288e86efc30f56c2c625e4f9cc1e6496bf0439576593028a71d9a841d",
+            "query_id": "CCRs-1-high-0-overlap-0:00",
+            "scenario_family": "CCRs-1",
+            "sequence_id": "CCRs-1-high-0-overlap-0"
+          },
+          {
+            "anchor_us": 12750327,
+            "metadata_sha256": "ccd86fe0452189052f3ccb5b98303b452e03530662d35c86cdc7c9806770dca0",
+            "query_id": "CCRs-2-high-100-overlap-100:00",
+            "scenario_family": "CCRs-2",
+            "sequence_id": "CCRs-2-high-100-overlap-100"
+          },
+          {
+            "anchor_us": 6550181,
+            "metadata_sha256": "8377991e000459371d9f533d6e4815eaa392deac1cf891168de060c37a7e8e2d",
+            "query_id": "CCRs-3-low-100-overlap-100:00",
+            "scenario_family": "CCRs-3",
+            "sequence_id": "CCRs-3-low-100-overlap-100"
+          },
+          {
+            "anchor_us": 12012093,
+            "metadata_sha256": "962f8ac1a3c93dfe3c4d8c8b182a94497e2dc808e4ada2e6143dee304f81fa2f",
+            "query_id": "CCRs-side-high:00",
+            "scenario_family": "CCRs-side",
+            "sequence_id": "CCRs-side-high"
+          },
+          {
+            "anchor_us": 15626369,
+            "metadata_sha256": "6be5566e6e1d92eefcb549e882ff9c802e5dc51ddab25b84f6ef4e926616da09",
+            "query_id": "CPLA-high:00",
+            "scenario_family": "CPLA",
+            "sequence_id": "CPLA-high"
+          },
+          {
+            "anchor_us": 19652381,
+            "metadata_sha256": "cfd0fbe72a1f4fa35f6f04751c164908a0ee8fd2ab8f57ceb48d8c06aa342368",
+            "query_id": "CPNA-high:00",
+            "scenario_family": "CPNA",
+            "sequence_id": "CPNA-high"
+          },
+          {
+            "anchor_us": 13050415,
+            "metadata_sha256": "c9f59e99649eed319a0397f8d34844b17a939b1d7cfde4a30f4e0e775a8b2145",
+            "query_id": "CPNAO-high:00",
+            "scenario_family": "CPNAO",
+            "sequence_id": "CPNAO-high"
+          }
+        ],
+        "source": "${REPO}\\operational\\sota_eval\\cost.py",
+        "source_closure": {
+          "operational/efficient_context/common.py": "689ac6f0437807e9c86c41104b3a8d24d6c991a01b1e2eb57b52ed74ff8dcae3",
+          "operational/evttc_rgb_transfer/inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+          "operational/evttc_rgb_transfer/model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+          "operational/evttc_transfer/inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+          "operational/evttc_transfer/models.py": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+          "operational/simplex_t_closure/runtime.py": "871d94da9509ffd9206f44a74722c2a1913c5383c3914d3fe3de91a89a11b17a",
+          "operational/simplex_t_cost_context/model.py": "6d170283bc66367f0acfe7670d8d79853d63cf1888500d76bb4b05aa7e239e47",
+          "operational/simplex_t_h16_replication/common.py": "7348866cb8b592b23abc765309e8ad51448e79b875cc66acff58209779c58d45",
+          "operational/simplex_t_post_campaign/route_policy.py": "fcc7e6f75da09f906494ba3fefc5c7ce2c011974afb0dd3043086f8ffaa9725c",
+          "operational/simplex_t_shared_route/adapter.py": "be5b2bcbc22a60b89c6e0b1ccb52a26820e02a8c57fef14bd00fb248a2ca9f47",
+          "operational/sota_eval/cost.py": "c790981b1bbbe6909395ec9df1d9254fad6d6fe27124d23b52bd0a502a3137fc",
+          "operational/train40_system/checkpoint.py": "d6dc92450add2588fc146fa41cdd9ef01eacf549116e05e0382c32313e67ab5b",
+          "operational/train40_system/contracts.py": "89baa2709c0095ee10c9c567ba61dd16fdb106527dc7ad63c9b26dc811629d0b",
+          "operational/train40_system/data_audit.py": "58a982a0f8d6ef29dce0a1ba755748c70b2cc076aeed8963f564f812b60afe22",
+          "operational/train40_system/durable_io.py": "421b2aa34f5d05dc39c34e131fcf1380372c04c97cc0978212aa6e9449da9ba0",
+          "operational/train40_system/garl_predictions.py": "4724789fc054d396354f68c5d55489515accce04a80af0b4ada20781b4e3ea7e",
+          "operational/train40_system/models.py": "3d00e181805b97a24a0ff10531bfe2bb57f2f73f4d3bb861718e5d40d70bd50f",
+          "src/e_jepa_ttc/artifacts/hashing.py": "703d3f8c486045a3566d7514ad26c04979e264d7a73a82b01364ec4977de6903",
+          "src/e_jepa_ttc/artifacts/protocol.py": "a6b3d452e00375e41651776534681fb98ad674f632f328e9494dfc82790c8c5f",
+          "src/e_jepa_ttc/artifacts/risk_geometry_v10.py": "98465f55b0170a3dbef3b347e096666aa81647ec0bcd73a877dc013fe977f971",
+          "src/e_jepa_ttc/artifacts/simplex_t_preflight.py": "82212aef8db0e8182daa3d0fd9b1eb5b72181e1c78057a8f724e941721f03a7b",
+          "src/e_jepa_ttc/data/annotations.py": "7d52a84976353cddcdc219cd98bf8ed67778698cce0094f6ae07b1d7d08e1376",
+          "src/e_jepa_ttc/data/benchmark10_guard.py": "80fe0b6d74e6b09a93dfd904bfcbcf1cf5d5e9423a3cbabe1cd223d640ca1fb1",
+          "src/e_jepa_ttc/data/canonical_token_identity.py": "65d339764ae9ac93c47aaa6ac2cbbbaef1047b35d0708a86ae0d3510bd0e9a0e",
+          "src/e_jepa_ttc/data/carla_looming.py": "f925fb5da82ec6485efaa638c9c2e2a6dd62847d01f565d9fe7c4b8915a79288",
+          "src/e_jepa_ttc/data/eap.py": "1ac679c886763f35698ebff2fa484064d95c65bbbf9ff5d3e420a5e9a7c4d40f",
+          "src/e_jepa_ttc/data/eap_cache.py": "0d903e5c2fcfea80886666a315445b411d2813e0acadaf7ce314bc003c1a9a53",
+          "src/e_jepa_ttc/data/eap_geometry_v2.py": "6e82731a51fbbdc5a9b5edfc34bdccf7d547fa08b44fd73d949adb2c5752745e",
+          "src/e_jepa_ttc/data/eap_representation.py": "1698434a1a5c1e41557e12221c96e545cb5208b57c35541a15599ac5c7fcaa14",
+          "src/e_jepa_ttc/data/event_v4_geometry.py": "0ab7b81fb85122fbaeb9527192675ebc77c33c27e50b5ed9b73bca8dec74d206",
+          "src/e_jepa_ttc/data/evttc.py": "b2a691744dc5cf8dbb0ee4258b39673c4520bfdee373aa8e0e33963275085d6a",
+          "src/e_jepa_ttc/data/evttc_object_cache.py": "f43197734388e2d8160d9c702bdf55e1a2e08adfb15c81c607fa7d7dca6176b6",
+          "src/e_jepa_ttc/data/garl_input_contract.py": "e9ea3a32738d8bd1ca73bca039697aa87c9ecbfefee4958fe14d20e575cacd8d",
+          "src/e_jepa_ttc/data/garl_official_preprocessing.py": "10e8cc2bbb998144006a81e276942b76d8620a51b9ba778b62577d23ed8edd7e",
+          "src/e_jepa_ttc/data/garlttc_calibration.py": "9291e062cc1ad7c6c484157161c1b896233e0dd37f6009e9fa9a561b471af69e",
+          "src/e_jepa_ttc/data/garlttc_eap.py": "09abe746b406b40cd136481803bb39b51f8af0cdeac0e865bfbe27c91eef2a54",
+          "src/e_jepa_ttc/data/garlttc_lhr_cache.py": "70a768846dcaf7a3271f38c7991f65caffc412d0482fff98064ca3a904e154ff",
+          "src/e_jepa_ttc/data/garlttc_sampling.py": "c98f533bd921239845917e7baaf621b0cb95e8d37e371d64c56a318f80e09bb7",
+          "src/e_jepa_ttc/data/ml_cache.py": "2a359239b49f97ceee28504d4ecc95e67529f2b90f5f56346c4176c3dbbf5d66",
+          "src/e_jepa_ttc/data/object_event_v4.py": "84f7a1895523bb0c28cfd1f13b47ae4f86d906aed93e26354796df02999587b4",
+          "src/e_jepa_ttc/data/stage61_pair_feature_cache.py": "83c0801435d57a854dd17a7ce302eeaa156290c0f065078439119a15ac611cf1",
+          "src/e_jepa_ttc/data/storage_guard.py": "55207163ba57e8de71da72c820a2cf45a6a40f06198a42130d6b15f68c777d64",
+          "src/e_jepa_ttc/data/targets.py": "500b76d28ff688cd53bc3e903c073b8f070e23f368e6d1f3b9a3fc92cb67b5bd",
+          "src/e_jepa_ttc/data/types.py": "79121bf50fc8a060bd8fa8c73bc4c572ed28ad960d6bf8e7476af6b5c450bd48",
+          "src/e_jepa_ttc/data/validation.py": "363c411bb20ee48caa8900f09467ddeddac5c2d5edac44ac3d0c51154c56cee9",
+          "src/e_jepa_ttc/distillation/dinov3_relational.py": "e778eb51d46514beef2a1700d22d26b08ad3453a3fda628df4fb811afedd57ed",
+          "src/e_jepa_ttc/efficient_context/garl_input.py": "915153f34b6de0803059c709fbb668958a1ee843dabf09265393b9830a22449d",
+          "src/e_jepa_ttc/efficient_context/mapped_union.py": "48a4ea70aefec43924ad9729ef8e354befaadf4b48195bd6182d61069a25937a",
+          "src/e_jepa_ttc/evaluation/collision_clock_protocol.py": "cdb7fe1e87cd4f7776c3b736b9f256e5c56696207ed843a4b7cc6b56f9962f1a",
+          "src/e_jepa_ttc/evaluation/garl_ttc_protocol.py": "4db6a883b73f04e9ec3c002de180ee7c7557551f23fc06fe1e0e2f4d50d9b05e",
+          "src/e_jepa_ttc/evaluation/scientific_recovery_v8.py": "3356bc9421951107682baacf1e1558a3bbb3cedd0491970d989f820d99533ca1",
+          "src/e_jepa_ttc/evaluation/stage61_nested_pair_router.py": "0ae9080df81c402a75527d3d06d26cd59f32b45c6a46c42fe223adba791f6488",
+          "src/e_jepa_ttc/evaluation/stage63_65.py": "b04ea2e5857b9afb9442df933714b15e5592517063b074df5fd48866bf57cf77",
+          "src/e_jepa_ttc/geometry/__init__.py": "3adacf8543a9442555d7b78174c6c3affe2a92995b0f670cb58cc23b930f68e7",
+          "src/e_jepa_ttc/geometry/affine_expansion_ttc.py": "bfb50f906da06e31228fc9d77b73c01b84fe4e7969ccab7f238f9248afdfdd8b",
+          "src/e_jepa_ttc/geometry/area_rate_ttc.py": "52e9957098d5ce6742ab1a81b0f810c60cd1b8549d5f752e8e0214375c512889",
+          "src/e_jepa_ttc/geometry/cmax.py": "a39bcc06101ceb9c4b41636647e1d12e779d880e74253224d3b4cd662e29627e",
+          "src/e_jepa_ttc/geometry/ego_motion_compensation.py": "73d080ed4c22917d33546f527684ba72ce36ae802318f8540b5a33c25e3eebaf",
+          "src/e_jepa_ttc/geometry/event_contrast.py": "83244a213d654a58ba09fdb12414f7d9ae4393c15a0205d3d05e5491e6fb94a9",
+          "src/e_jepa_ttc/geometry/geometry_confidence.py": "ad3df69e7e25cfadcfb2c667d689d2ddcd0688a728acc95fa32f3f0dfced594c",
+          "src/e_jepa_ttc/geometry/height_ratio_ttc.py": "71db9a683c416c30b26d6535bb1f443e824c64a2df5676a935109a54f2037494",
+          "src/e_jepa_ttc/geometry/rgb_foe.py": "7a894e91840bb7514312d8c387a4e0f34baa2a170d4f07e9d8ae38f9450d7155",
+          "src/e_jepa_ttc/geometry/strttc.py": "c65ee6f27dd5e9e8776da93950ec5a5e5fc50244399cf962316b184974563e0d",
+          "src/e_jepa_ttc/geometry/weighted_solver.py": "7b406f8b06a674b0b8501adef3d73e9ff8ff6041f707ffb2d1d073e917e948b1",
+          "src/e_jepa_ttc/losses/causal_scale_ttc.py": "f82ca020f351671e0d4837fdb7bf9c9e93a5fc2755eb16078e241475c7ee719d",
+          "src/e_jepa_ttc/models/__init__.py": "3dcc6ed01e38a737a91206a1a8456a9f3975405e27e7312b8fa0607500e15431",
+          "src/e_jepa_ttc/models/attention_residual_router.py": "aee02323dbe17422bdb0dbee8a3faf7c7048e0e0c542cb77c0659406e33b4da9",
+          "src/e_jepa_ttc/models/block_causal_transformer.py": "a571812e2d4cca85d1adcbe1987b444218076b2707bc40e85f2f7c9c783c36bd",
+          "src/e_jepa_ttc/models/causal_scale_ttc.py": "30a19e6935d237f4347473532d76ffbb5ddeeb0aff6c0d3911fcb60ce2816ef9",
+          "src/e_jepa_ttc/models/collision_clock_math.py": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f",
+          "src/e_jepa_ttc/models/dense_patch_ttc.py": "983c000c31119fc06ff490b07d4f21f18479076802285d9bf71519ef3bbf0ef5",
+          "src/e_jepa_ttc/models/foreground_training_decoder.py": "51b89f9192fde1dcaf9e416a994122f380245e003d3c2cd5df1b98342b0157b1",
+          "src/e_jepa_ttc/models/garl_ttc_replica.py": "3d9733133a4c372b932d259bf12c0d14e35ccb81a1c2eadc18b528862ab5568f",
+          "src/e_jepa_ttc/models/geometry_mixture.py": "68b35d1c8c10563aff3c72bea3b7c653f62f1b113f03082668824b8937061da6",
+          "src/e_jepa_ttc/models/height_ratio_head.py": "d1a979524d98429537e1c8d586bf602c4b0428b95cc7f133a360849084cdfc76",
+          "src/e_jepa_ttc/models/highres_factorized.py": "a58d778edcbd3002b7910334433a2d19193abf0d2b8bd6dd48c4090f34335df5",
+          "src/e_jepa_ttc/models/highres_refiner.py": "c0c86379a1b64342349525118cf791eabc377f4c69bb444d3868c87c8400eb8a",
+          "src/e_jepa_ttc/models/highres_token_pyramid.py": "31d4dd658f44cefca4f4e0bd374122a9f069cefbf3a6d47bb2fa2da45744cf9b",
+          "src/e_jepa_ttc/models/hybrid_spatiotemporal_mixer.py": "8dbfd6403c74c061f6c2ea0e56a8096fdb9d2c77e7ba6ca765dac6a8426d987a",
+          "src/e_jepa_ttc/models/incremental_residual.py": "296b3397ba3ea5ee9fce0782b40cf8f810800f9b680870bd4ee2f32f1bc7a975",
+          "src/e_jepa_ttc/models/local_transport.py": "f19064b09a10c9e0c1cf9e9f5b654ab611fe1785fc01f51ef132cd5a171604d4",
+          "src/e_jepa_ttc/models/motion_head.py": "a17badfbe0fdc6668d4c09a05e6628f0188ebabc490a34291fc8ae0141cad54a",
+          "src/e_jepa_ttc/models/multimodal.py": "ab454ca39d1a0ba9f31c8ee7bdbb75ca582900bf4d79fe7cc7d85c8e447da4f7",
+          "src/e_jepa_ttc/models/object_geo_jepa_ttc.py": "c382a77b3530da632b2f1598682f23f88224608457fe68e74bb4f83bae83cad9",
+          "src/e_jepa_ttc/models/object_jepa.py": "4f4d3dd69af5a70f143192b92f902b5e1b36075776e07425d00096319e028b58",
+          "src/e_jepa_ttc/models/residual_ttc.py": "80eae2ca94b232057676147c04214d4165048bda26d8847deb0cfbc6e441aee6",
+          "src/e_jepa_ttc/models/risk_selector.py": "2b9345f81e28a44014ae7a0f948051247a7a1578e1252a65650a5126f13bf2fb",
+          "src/e_jepa_ttc/models/spatial_patch_mixer.py": "89d7f30b3abde1acd20747c588c9eccb5e382bebcceb98c4f87510eca1ffd03b",
+          "src/e_jepa_ttc/models/stable_geometry_router.py": "847e2f86954a2a2f9fff43df8814d62221841135b1ae86c838d1e9c55fe375f4",
+          "src/e_jepa_ttc/models/target_query.py": "5a36f4fc18a41565a6bed0aefc85d308df9996a2ebbbb944a886a6f230d3614c",
+          "src/e_jepa_ttc/models/temporal_kda.py": "eb604aa8eb401961186138cab7073a6f6dcaa302cc2a810f63e1e3227133e375",
+          "src/e_jepa_ttc/models/three_expert_router.py": "bdbf0da18c93f8de9b3200aa31c69a4da3180db42795a9d8e3bebf0ec88b8279",
+          "src/e_jepa_ttc/models/tiny_cnn.py": "6d0d96b3b80e175b3baf3ca8d6f7f658487a01d4bc26158dea462103e540110b",
+          "src/e_jepa_ttc/models/token_transformer.py": "f80cecc2ee22d96ec60199831eb7fa7f10e6ff60009594c426ee73091f1f1237",
+          "src/e_jepa_ttc/models/uncertainty_head.py": "0868d24e25bea31dd5d4f8534d0bea22fce440be2d9bb31d44c1134a1cbca93d",
+          "src/e_jepa_ttc/representations/corruptions.py": "c4ca96ef0cc9484a070dc0bef1f0ab22f0ff611fb8142a3914264e80bcc329b3",
+          "src/e_jepa_ttc/representations/voxel_grid.py": "2669d0eda1b56ad2c404c162577c0ccc6870ba61c68984781f79fb0c445edf08",
+          "src/e_jepa_ttc/reproducibility.py": "2f1b3183b0288d996fa6082290cc4e14fe20c7371139fdf96665dad59d88000e",
+          "src/e_jepa_ttc/simplex_t/arms.py": "c54b8d28c8b81bd2f9ba974404067ee0816398f0ea1f2e1c20bd1c23e213a2f1",
+          "src/e_jepa_ttc/simplex_t/cache.py": "481d45dc6a5ed6c436f68c18d1e6f9ca80794f600cb074935b4fbfdacbf0ed13",
+          "src/e_jepa_ttc/simplex_t/cached_event_reader.py": "3d98509354694fd8688bb611014a9d69c55c1db65541f63db41d7f272e31db85",
+          "src/e_jepa_ttc/simplex_t/campaign_sources.py": "a92a3b9dd1fc7af1508dbbfe5e1b64ca0711ff03c89b4957fee3a9b59943299f",
+          "src/e_jepa_ttc/simplex_t/configuration_preflight.py": "d574b018f2af0e636c22efc444389e6b56303bcebe7f057262e3cbe3ae12bc2b",
+          "src/e_jepa_ttc/simplex_t/context_raw_union.py": "184c1094903e5bf0d6eeb6b87408f81d59012e22a015a577e277e651c438aca4",
+          "src/e_jepa_ttc/simplex_t/context_sources.py": "33a0253bf3770c69374dc7f4e483f441ff51366528317a1da6fd3ffa14575e35",
+          "src/e_jepa_ttc/simplex_t/controls.py": "d74fde2dcf68fe972965f884e8c3fa746a2961509cd24080c1f27a9cbfdae422",
+          "src/e_jepa_ttc/simplex_t/coordination.py": "03b611e7568006ed29e7d1e9174150625439df6599a13ba91f16058a7e3bc89e",
+          "src/e_jepa_ttc/simplex_t/current_inputs.py": "84ff3e6c99e6c500e40c40d278e116d7d9f74f1d9884dccf13bfae8005eea24f",
+          "src/e_jepa_ttc/simplex_t/dense_file_sources.py": "76687c96093039fee0ed29b9dc0b2316e8a099a357592d8b2028c67d65956241",
+          "src/e_jepa_ttc/simplex_t/dense_sources.py": "d3f1fb847a68a86bebba65d19269c006bdd219e848ad88a3d919ae6e620c49d9",
+          "src/e_jepa_ttc/simplex_t/density_selection.py": "2fc7e3b247102ab9768cd731798087d6ab89db43d5091e91ecac686d017f7cb4",
+          "src/e_jepa_ttc/simplex_t/diverse_sources.py": "a70a8163c103a182d6dcca88df2dbb07bc4d955039a8659118b21a1cf26cc16e",
+          "src/e_jepa_ttc/simplex_t/endpoint.py": "5e1964afa15d92467699f3159b827dd1ccf7e1681c7966a432e6154f2fd7bfd5",
+          "src/e_jepa_ttc/simplex_t/expanded_sources.py": "fa68bc06f0598de94a479fd925b6d1b7b40df478ad8e33ae0a5c22aece3b0e09",
+          "src/e_jepa_ttc/simplex_t/expansion_selection.py": "fbbf35e602b3c287af055a1406c36bb4f5c42dbea94b79d31ecea39228d14b17",
+          "src/e_jepa_ttc/simplex_t/expansion_sources.py": "0da5f7ed188214d05786a57e7821e04192f8d5da2f435462970c47099e30a676",
+          "src/e_jepa_ttc/simplex_t/expansion_targets.py": "c21a85d5ba7e7353172b88cd9a513d470649b3e8510dc6ce7669ba23bdea9e5d",
+          "src/e_jepa_ttc/simplex_t/expert_phase.py": "ea8019c76f1f96647a2623911ce8ebb10b5f84734edd2289e291dff41c870ba4",
+          "src/e_jepa_ttc/simplex_t/lifecycle.py": "b490a3cd56e3462459c060d0357257eb50df8c9d58865b1cabd69085f7f96e1a",
+          "src/e_jepa_ttc/simplex_t/matched_sources.py": "e141af8cb4bd40fd0c3bb75aa4bfe987bf2abc16e2e99f0f0acfb09dbd011b9e",
+          "src/e_jepa_ttc/simplex_t/model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+          "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+          "src/e_jepa_ttc/simplex_t/phase_manifest.py": "6944218ad7575a8892867446f6871075f36d93396ff22d4e5c99352cf013a6cb",
+          "src/e_jepa_ttc/simplex_t/pools.py": "01f88a1e7c5e2c514be6f5ce749bb52d9aaf0bed619306376722763038867830",
+          "src/e_jepa_ttc/simplex_t/query_context_voxel.py": "8e50002378e129a22085e0ccc4797d4cd28af0837e82ca195d4bf5059f048113",
+          "src/e_jepa_ttc/simplex_t/registry.py": "b79a802ac8b73abd6ca75c14fc1bff14c5012896f9d078c83518c65595bb40e2",
+          "src/e_jepa_ttc/simplex_t/selected_targets.py": "86dd3f80434221d9528ea3e70ecb651d6916f3474d17a53a7f81eab69c72e13c",
+          "src/e_jepa_ttc/simplex_t/source_configuration.py": "6e35cf3a217ed3004b0611da75c7564d0be0ff8c565341ed69292066d5a94ff5",
+          "src/e_jepa_ttc/simplex_t/training.py": "9235114356f066d5b787703cecb81fd7d970a605830a9ecb1ce0207706abd36e",
+          "src/e_jepa_ttc/training/carla_jepa.py": "1f793f939e641265c9325cf8c1a3d0dd41ec5199dffbe46e02aafd3895b644a5",
+          "src/e_jepa_ttc/training/causal_scale_eap.py": "0528dc1dd691b9f4650c7bd7c5cfdcbe9ef2a543e7f53646190da7b2fbf65185",
+          "src/e_jepa_ttc/training/eap_jepa.py": "9c842ad1d32c4661f11aeeffb73931fd1e02b93d503a81510bdfee27f7b367c5",
+          "src/e_jepa_ttc/training/incremental_residual.py": "61da5ab87df81059124a30bcb7a06545ff93c5021f84ad572074c9acd916f956",
+          "src/e_jepa_ttc/training/jepa.py": "346d619a76a35a5cc929c232c493fa189fa6c50a65b56cd24d7f78f4b2ce83fe",
+          "src/e_jepa_ttc/training/stage61_pair_head.py": "0c1cca4ecb1b2975709ba95e77cba616b363d5bb2e0d005605b075ef1265bdb3",
+          "src/e_jepa_ttc/utils/io.py": "7270b939248b2b940e8e06b48564fdc05b82c932fbf79337e942ea05c764f02e"
+        },
+        "source_sha256": "c790981b1bbbe6909395ec9df1d9254fad6d6fe27124d23b52bd0a502a3137fc",
+        "status": "EXECUTION_FROZEN",
+        "targets_read": false
+      },
+      "sha256": "087525716af026a4a7e05e377a2f04fe8bc4717b5a4d2be63db71acb61b895fa"
+    },
+    {
+      "path": "viable_continuation/FCWD_RESULT.json",
+      "receipt": {
+        "error": "FCWD scoring/coverage/target-join contract changed",
+        "error_type": "ValueError",
+        "scientific_negative": false,
+        "status": "FAILED_PRESERVED"
+      },
+      "sha256": "3dcaed756810e739b26b77383838d61d38f0664104dd6df36d126fe2784af45b"
+    },
+    {
+      "path": "viable_continuation/COST_VERIFIED_RESULT.json",
+      "receipt": {
+        "evidence": {
+          "completed_utc": "2026-10-08T19:47:01.574007+00:00",
+          "execution_freeze_sha256": "31ee30645f44829e79165d9d7b110c92d0835c790e25c158d03308c5f22cc8fa",
+          "interpretation": [
+            "Measured on this host only; no comparison to published hardware latency.",
+            "One project GPU worker ran on a WDDM desktop; physical GPU exclusivity is not claimed and ambient NVIDIA clients are recorded in preflight.",
+            "Architecture contexts differ by design and are reported, not normalized.",
+            "Sequential execution excludes model setup and includes warm-cache preparation.",
+            "This is observational system cost, not causal architecture efficiency."
+          ],
+          "metrics": {
+            "garl_event_only_shared_preparation": {
+              "by_sequence": {
+                "CCRm-low-0-overlap-0": {
+                  "count": 3,
+                  "maximum_ms": 982.342800009,
+                  "mean_ms": 944.6298666686666,
+                  "minimum_ms": 869.899699988,
+                  "p50_ms": 981.647100009,
+                  "p95_ms": 982.273230009,
+                  "samples_per_second_from_mean": 1.058615692013425
+                },
+                "CCRs-1-high-0-overlap-0": {
+                  "count": 3,
+                  "maximum_ms": 1090.264300001,
+                  "mean_ms": 959.3464333349999,
+                  "minimum_ms": 726.843600016,
+                  "p50_ms": 1060.931399988,
+                  "p95_ms": 1087.3310099997,
+                  "samples_per_second_from_mean": 1.0423763150123726
+                },
+                "CCRs-2-high-100-overlap-100": {
+                  "count": 3,
+                  "maximum_ms": 1196.417500003,
+                  "mean_ms": 1026.0876666676666,
+                  "minimum_ms": 907.425099984,
+                  "p50_ms": 974.420400016,
+                  "p95_ms": 1174.2177900043,
+                  "samples_per_second_from_mean": 0.9745755966910808
+                },
+                "CCRs-3-low-100-overlap-100": {
+                  "count": 3,
+                  "maximum_ms": 561.275199987,
+                  "mean_ms": 514.622533325,
+                  "minimum_ms": 453.830699989,
+                  "p50_ms": 528.761699999,
+                  "p95_ms": 558.0238499881999,
+                  "samples_per_second_from_mean": 1.9431718108784586
+                },
+                "CCRs-side-high": {
+                  "count": 3,
+                  "maximum_ms": 2221.598000004,
+                  "mean_ms": 1763.287766662,
+                  "minimum_ms": 1117.322099977,
+                  "p50_ms": 1950.943200005,
+                  "p95_ms": 2194.5325200040998,
+                  "samples_per_second_from_mean": 0.5671224056031731
+                },
+                "CPLA-high": {
+                  "count": 3,
+                  "maximum_ms": 1141.243699996,
+                  "mean_ms": 1101.061200005,
+                  "minimum_ms": 1062.059700023,
+                  "p50_ms": 1099.880199996,
+                  "p95_ms": 1137.107349996,
+                  "samples_per_second_from_mean": 0.9082147295676742
+                },
+                "CPNA-high": {
+                  "count": 3,
+                  "maximum_ms": 1081.607200002,
+                  "mean_ms": 1023.705133334,
+                  "minimum_ms": 955.853099993,
+                  "p50_ms": 1033.655100007,
+                  "p95_ms": 1076.8119900025,
+                  "samples_per_second_from_mean": 0.9768437877645517
+                },
+                "CPNAO-high": {
+                  "count": 3,
+                  "maximum_ms": 792.178400006,
+                  "mean_ms": 777.2076666686667,
+                  "minimum_ms": 756.102099986,
+                  "p50_ms": 783.342500014,
+                  "p95_ms": 791.2948100067999,
+                  "samples_per_second_from_mean": 1.286657405589274
+                }
+              },
+              "cpu_prepare": {
+                "count": 24,
+                "maximum_ms": 1181.511700008,
+                "mean_ms": 847.4050208326667,
+                "minimum_ms": 539.329899999,
+                "p50_ms": 838.4263999904999,
+                "p95_ms": 1163.3313050099998,
+                "samples_per_second_from_mean": 1.180073253539839
+              },
+              "gpu_inference": {
+                "count": 160,
+                "maximum_ms": 16.068500001,
+                "mean_ms": 8.227323748893749,
+                "minimum_ms": 6.02630002,
+                "p50_ms": 7.596350013,
+                "p95_ms": 11.692054999199986,
+                "samples_per_second_from_mean": 121.5462075543655
+              },
+              "sequential_end_to_end": {
+                "count": 24,
+                "maximum_ms": 2221.598000004,
+                "mean_ms": 1013.7435333332501,
+                "minimum_ms": 453.830699989,
+                "p50_ms": 981.994950009,
+                "p95_ms": 1837.7643450046985,
+                "samples_per_second_from_mean": 0.9864427906256916
+              }
+            },
+            "garl_full_rgb_event": {
+              "by_sequence": {
+                "CCRm-low-0-overlap-0": {
+                  "count": 3,
+                  "maximum_ms": 781.236200011,
+                  "mean_ms": 599.2255333303333,
+                  "minimum_ms": 470.377899997,
+                  "p50_ms": 546.062499983,
+                  "p95_ms": 757.7188300082,
+                  "samples_per_second_from_mean": 1.6688207434056936
+                },
+                "CCRs-1-high-0-overlap-0": {
+                  "count": 3,
+                  "maximum_ms": 636.009300011,
+                  "mean_ms": 600.606766675,
+                  "minimum_ms": 552.584999998,
+                  "p50_ms": 613.226000016,
+                  "p95_ms": 633.7309700115001,
+                  "samples_per_second_from_mean": 1.6649829064298896
+                },
+                "CCRs-2-high-100-overlap-100": {
+                  "count": 3,
+                  "maximum_ms": 658.789300011,
+                  "mean_ms": 615.439600001,
+                  "minimum_ms": 571.617999987,
+                  "p50_ms": 615.911500005,
+                  "p95_ms": 654.5015200104,
+                  "samples_per_second_from_mean": 1.6248548192192622
+                },
+                "CCRs-3-low-100-overlap-100": {
+                  "count": 3,
+                  "maximum_ms": 610.957900004,
+                  "mean_ms": 568.001733336,
+                  "minimum_ms": 515.870999981,
+                  "p50_ms": 577.176300023,
+                  "p95_ms": 607.5797400058999,
+                  "samples_per_second_from_mean": 1.7605580076785654
+                },
+                "CCRs-side-high": {
+                  "count": 3,
+                  "maximum_ms": 977.520100016,
+                  "mean_ms": 886.6970000093334,
+                  "minimum_ms": 779.159900005,
+                  "p50_ms": 903.411000007,
+                  "p95_ms": 970.1091900151,
+                  "samples_per_second_from_mean": 1.127780966879863
+                },
+                "CPLA-high": {
+                  "count": 3,
+                  "maximum_ms": 669.807400001,
+                  "mean_ms": 591.179933331,
+                  "minimum_ms": 541.580399993,
+                  "p50_ms": 562.151999999,
+                  "p95_ms": 659.0418600008,
+                  "samples_per_second_from_mean": 1.6915323806163474
+                },
+                "CPNA-high": {
+                  "count": 3,
+                  "maximum_ms": 652.948200004,
+                  "mean_ms": 628.6503333346667,
+                  "minimum_ms": 612.449200009,
+                  "p50_ms": 620.553599991,
+                  "p95_ms": 649.7087400027,
+                  "samples_per_second_from_mean": 1.590709408671613
+                },
+                "CPNAO-high": {
+                  "count": 3,
+                  "maximum_ms": 700.979099987,
+                  "mean_ms": 624.916299993,
+                  "minimum_ms": 523.138999997,
+                  "p50_ms": 650.630799995,
+                  "p95_ms": 695.9442699878,
+                  "samples_per_second_from_mean": 1.6002143007170744
+                }
+              },
+              "cpu_prepare": {
+                "count": 24,
+                "maximum_ms": 731.740399991,
+                "mean_ms": 493.9231958305833,
+                "minimum_ms": 358.177999995,
+                "p50_ms": 485.552800004,
+                "p95_ms": 670.9909700093998,
+                "samples_per_second_from_mean": 2.024606271666176
+              },
+              "gpu_inference": {
+                "count": 160,
+                "maximum_ms": 61.661199987,
+                "mean_ms": 39.3674087486875,
+                "minimum_ms": 34.77530001,
+                "p50_ms": 38.573750003499995,
+                "p95_ms": 44.90349497494998,
+                "samples_per_second_from_mean": 25.401722688525687
+              },
+              "sequential_end_to_end": {
+                "count": 24,
+                "maximum_ms": 977.520100016,
+                "mean_ms": 639.3396500012917,
+                "minimum_ms": 470.377899997,
+                "p50_ms": 614.5687500105,
+                "p95_ms": 885.0847800075998,
+                "samples_per_second_from_mean": 1.5641138477771237
+              }
+            },
+            "h8_system_three_heads": {
+              "by_sequence": {
+                "CCRm-low-0-overlap-0": {
+                  "count": 3,
+                  "maximum_ms": 1172.563600005,
+                  "mean_ms": 1108.5033666653333,
+                  "minimum_ms": 1043.616999988,
+                  "p50_ms": 1109.329500003,
+                  "p95_ms": 1166.2401900047998,
+                  "samples_per_second_from_mean": 0.9021172421047853
+                },
+                "CCRs-1-high-0-overlap-0": {
+                  "count": 3,
+                  "maximum_ms": 1031.512699992,
+                  "mean_ms": 959.557066662,
+                  "minimum_ms": 907.50110001,
+                  "p50_ms": 939.657399984,
+                  "p95_ms": 1022.3271699912001,
+                  "samples_per_second_from_mean": 1.0421475019497155
+                },
+                "CCRs-2-high-100-overlap-100": {
+                  "count": 3,
+                  "maximum_ms": 2632.203000016,
+                  "mean_ms": 1858.1040333373332,
+                  "minimum_ms": 1454.324299993,
+                  "p50_ms": 1487.784800003,
+                  "p95_ms": 2517.7611800146997,
+                  "samples_per_second_from_mean": 0.5381829983996665
+                },
+                "CCRs-3-low-100-overlap-100": {
+                  "count": 3,
+                  "maximum_ms": 1526.967099984,
+                  "mean_ms": 1400.6121666656666,
+                  "minimum_ms": 1197.614200006,
+                  "p50_ms": 1477.255200007,
+                  "p95_ms": 1521.9959099863,
+                  "samples_per_second_from_mean": 0.7139735208645416
+                },
+                "CCRs-side-high": {
+                  "count": 3,
+                  "maximum_ms": 1627.3048,
+                  "mean_ms": 1540.0131333443333,
+                  "minimum_ms": 1367.143400013,
+                  "p50_ms": 1625.59120002,
+                  "p95_ms": 1627.1334400019998,
+                  "samples_per_second_from_mean": 0.6493451116409465
+                },
+                "CPLA-high": {
+                  "count": 3,
+                  "maximum_ms": 1632.727699995,
+                  "mean_ms": 1517.7641333336667,
+                  "minimum_ms": 1315.425100009,
+                  "p50_ms": 1605.139599997,
+                  "p95_ms": 1629.9688899952,
+                  "samples_per_second_from_mean": 0.6588639025245427
+                },
+                "CPNA-high": {
+                  "count": 3,
+                  "maximum_ms": 1600.207499985,
+                  "mean_ms": 1433.0046333293333,
+                  "minimum_ms": 1190.480399993,
+                  "p50_ms": 1508.32600001,
+                  "p95_ms": 1591.0193499875,
+                  "samples_per_second_from_mean": 0.6978344498975391
+                },
+                "CPNAO-high": {
+                  "count": 3,
+                  "maximum_ms": 1382.348500018,
+                  "mean_ms": 1179.0061333353335,
+                  "minimum_ms": 1019.713499991,
+                  "p50_ms": 1134.956399997,
+                  "p95_ms": 1357.6092900159001,
+                  "samples_per_second_from_mean": 0.8481720083771435
+                }
+              },
+              "cpu_prepare": {
+                "count": 24,
+                "maximum_ms": 1181.511700008,
+                "mean_ms": 847.4050208326667,
+                "minimum_ms": 539.329899999,
+                "p50_ms": 838.4263999904999,
+                "p95_ms": 1163.3313050099998,
+                "samples_per_second_from_mean": 1.180073253539839
+              },
+              "gpu_inference": {
+                "count": 160,
+                "maximum_ms": 262.420799991,
+                "mean_ms": 140.45620250143125,
+                "minimum_ms": 102.537599974,
+                "p50_ms": 129.2952999935,
+                "p95_ms": 209.76284500784988,
+                "samples_per_second_from_mean": 7.119657104425915
+              },
+              "sequential_end_to_end": {
+                "count": 24,
+                "maximum_ms": 2632.203000016,
+                "mean_ms": 1374.570583334125,
+                "minimum_ms": 907.50110001,
+                "p50_ms": 1374.7459500155,
+                "p95_ms": 1631.91426499575,
+                "samples_per_second_from_mean": 0.7274999277042756
+              }
+            }
+          },
+          "model_freeze_sha256": "69f5f8d17a2f691ab096a03efb58a6e36d1d8ff8715ac034b8b64d59fae7e4de",
+          "optimizer_updates": 0,
+          "peak_cuda_allocated_bytes": 1599129600,
+          "peak_cuda_reserved_bytes": 1841299456,
+          "peak_process_rss_bytes_observed_50ms": 2789138432,
+          "post_hardware": {
+            "available": true,
+            "returncode": 0,
+            "rows": [
+              "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 4968, 76, 40.92, 1755, 9001"
+            ]
+          },
+          "preflight": {
+            "checked_utc": "2026-10-08T19:44:03.904393+00:00",
+            "gpu_execution_scope": "one_project_gpu_worker_on_wddm_desktop",
+            "hardware_identity": {
+              "available": true,
+              "returncode": 0,
+              "rows": [
+                "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227, 12.0"
+              ]
+            },
+            "hardware_telemetry": {
+              "available": true,
+              "returncode": 0,
+              "rows": [
+                "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227, 8930, 75, 26.89, 930, 9001"
+              ]
+            },
+            "latency_interpretation": "observational_with_recorded_desktop_gpu_contention",
+            "nvidia_client_count": 35,
+            "nvidia_clients": [
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "dwm.exe",
+                "pid": 2764,
+                "reported_process": "[Insufficient Permissions]",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "crossdeviceresume.exe",
+                "pid": 11440,
+                "reported_process": "${DATA}/Windows/SystemApps/MicrosoftWindows.Client.CBS_cw5n1h2txyewy/CrossDeviceResume.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "explorer.exe",
+                "pid": 11144,
+                "reported_process": "${DATA}/Windows/explorer.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "startmenuexperiencehost.exe",
+                "pid": 13300,
+                "reported_process": "${DATA}/Windows/SystemApps/Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy/StartMenuExperienceHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "searchhost.exe",
+                "pid": 13260,
+                "reported_process": "${DATA}/Windows/SystemApps/MicrosoftWindows.Client.CBS_cw5n1h2txyewy/SearchHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "msedgewebview2.exe",
+                "pid": 13996,
+                "reported_process": "${DATA}/EdgeWebView/Application/154.0.4258.53/msedgewebview2.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "textinputhost.exe",
+                "pid": 18092,
+                "reported_process": "${DATA}/Windows/SystemApps/MicrosoftWindows.Client.CBS_cw5n1h2txyewy/TextInputHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "phoneexperiencehost.exe",
+                "pid": 18536,
+                "reported_process": "${DATA}/Program Files/WindowsApps/Microsoft.YourPhone_1.26072.257.0_x64__8wekyb3d8bbwe/PhoneExperienceHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "powertoys.quickaccess.exe",
+                "pid": 14696,
+                "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\WinUI3Apps\\PowerToys.QuickAccess.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "microsoft.cmdpal.ui.exe",
+                "pid": 20216,
+                "reported_process": "${DATA}/Program Files/WindowsApps/Microsoft.CommandPalette_0.8.10371.0_x64__8wekyb3d8bbwe/Microsoft.CmdPal.UI.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "powertoys.exe",
+                "pid": 15228,
+                "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "amdrssrcext.exe",
+                "pid": 20640,
+                "reported_process": "${DATA}/AMD/CNext/CNext/AMDRSSrcExt.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "windowsterminal.exe",
+                "pid": 10704,
+                "reported_process": "${DATA}/Program Files/WindowsApps/Microsoft.WindowsTerminal_1.24.12741.0_x64__8wekyb3d8bbwe/WindowsTerminal.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "msedgewebview2.exe",
+                "pid": 5632,
+                "reported_process": "${DATA}/EdgeWebView/Application/154.0.4258.53/msedgewebview2.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "ms-teams.exe",
+                "pid": 16360,
+                "reported_process": "${DATA}/Program Files/WindowsApps/MSTeams_26246.1604.5133.838_x64__8wekyb3d8bbwe/ms-teams.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "jabra-direct.exe",
+                "pid": 6616,
+                "reported_process": "${DATA}/Program Files (x86)/Jabra/Direct6/jabra-direct.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "chatgpt classic.exe",
+                "pid": 25580,
+                "reported_process": "${DATA}/WindowsApps/OpenAI.ChatGPT-Desktop_1.2026.190.0_x64__2p2nqsd0c76g0/app/ChatGPT Classic.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "radeonsoftware.exe",
+                "pid": 7764,
+                "reported_process": "${DATA}/AMD/CNext/CNext/RadeonSoftware.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "shellexperiencehost.exe",
+                "pid": 30772,
+                "reported_process": "${DATA}/Windows/SystemApps/ShellExperienceHost_cw5n1h2txyewy/ShellExperienceHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "lockapp.exe",
+                "pid": 2540,
+                "reported_process": "${DATA}/Windows/SystemApps/Microsoft.LockApp_cw5n1h2txyewy/LockApp.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "printdialog.exe",
+                "pid": 33184,
+                "reported_process": "${DATA}/Windows/SystemApps/Windows.PrintDialog_cw5n1h2txyewy/PrintDialog.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "powertoys.powerlauncher.exe",
+                "pid": 20520,
+                "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.PowerLauncher.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "shellhost.exe",
+                "pid": 39632,
+                "reported_process": "${DATA}/Windows/System32/ShellHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "notepad.exe",
+                "pid": 37440,
+                "reported_process": "${DATA}/WindowsApps/Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe/Notepad/Notepad.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "applicationframehost.exe",
+                "pid": 30908,
+                "reported_process": "${DATA}/Windows/System32/ApplicationFrameHost.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "systemsettings.exe",
+                "pid": 19036,
+                "reported_process": "${DATA}/Windows/ImmersiveControlPanel/SystemSettings.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "ms-teams.exe",
+                "pid": 37472,
+                "reported_process": "${DATA}/Program Files/WindowsApps/MSTeams_26246.1604.5133.838_x64__8wekyb3d8bbwe/ms-teams.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "firefox.exe",
+                "pid": 6880,
+                "reported_process": "${DATA}/Program Files/Mozilla Firefox/firefox.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "firefox.exe",
+                "pid": 25912,
+                "reported_process": "${DATA}/Program Files/Mozilla Firefox/firefox.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "mpc-hc64.exe",
+                "pid": 20944,
+                "reported_process": "${DATA}/Program Files/MPC-HC/mpc-hc64.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "discord.exe",
+                "pid": 40368,
+                "reported_process": "${DATA}\\AppData\\Local\\Discord\\app-1.0.9261\\Discord.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "powertoys.fancyzones.exe",
+                "pid": 20084,
+                "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.FancyZones.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "powertoys.colorpickerui.exe",
+                "pid": 19916,
+                "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.ColorPickerUI.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "explorer.exe",
+                "pid": 37824,
+                "reported_process": "${DATA}/Windows/explorer.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              },
+              {
+                "classification": "wddm_desktop_environment",
+                "observed_process_name": "powertoys.powerocr.exe",
+                "pid": 22152,
+                "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.PowerOCR.exe",
+                "used_gpu_memory_reported": "[N/A]"
+              }
+            ],
+            "physical_gpu_exclusive": false,
+            "project_gpu_conflicts": 0
+          },
+          "query_count": 8,
+          "schema": "sota_system_cost_fixed8_v1",
+          "setup_seconds": {
+            "excluded_from_latency": true,
+            "garl_event_only_shared_preparation": 0.7793345999962185,
+            "garl_full_rgb_event": 3.0889598000212573,
+            "h8_system_three_heads": 0.7793345999962185,
+            "model_bindings": {
+              "garl_event_only_shared_preparation": {
+                "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+                "device": "cuda",
+                "garl": {
+                  "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+                  "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+                  "event_only_lhr": true,
+                  "native_code_root": "${DATA}/Garl-TTC",
+                  "source_sha256": {
+                    "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+                    "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+                    "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+                    "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+                    "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+                    "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+                    "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+                    "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+                    "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+                    "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+                    "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+                    "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+                    "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+                    "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+                    "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+                    "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+                    "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+                    "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+                    "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+                  },
+                  "strict_state_load": true
+                },
+                "h8_heads": {
+                  "13": {
+                    "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+                    "committed_updates": 2500,
+                    "strict_state_load": true
+                  },
+                  "23": {
+                    "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+                    "committed_updates": 2500,
+                    "strict_state_load": true
+                  },
+                  "7": {
+                    "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+                    "committed_updates": 2500,
+                    "strict_state_load": true
+                  }
+                },
+                "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+                "normalization": {
+                  "arrays_read": [
+                    "mean",
+                    "scale"
+                  ],
+                  "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+                  "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+                  "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+                  "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+                  "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba"
+                },
+                "optimizer_updates": 0,
+                "producers": {
+                  "a5": {
+                    "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+                    "committed_updates": 49932,
+                    "strict_state_load": true
+                  },
+                  "c2f": {
+                    "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+                    "committed_updates": 49932,
+                    "strict_state_load": true
+                  },
+                  "pair": {
+                    "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+                    "committed_updates": 6840,
+                    "strict_state_load": true
+                  },
+                  "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b"
+                },
+                "targets_read": false
+              },
+              "garl_full_rgb_event": {
+                "checkpoint": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth",
+                "checkpoint_bytes": 973290993,
+                "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+                "config": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\configs\\ablation\\ours_full.yaml",
+                "config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+                "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+                "input": {
+                  "channel_order": [
+                    "RGB0[3]",
+                    "RGB1[3]",
+                    "EVENT0[20]",
+                    "EVENT1[20]"
+                  ],
+                  "event_normalization": "none",
+                  "rgb_mean": [
+                    0.485,
+                    0.456,
+                    0.406
+                  ],
+                  "rgb_std": [
+                    0.229,
+                    0.224,
+                    0.225
+                  ],
+                  "shape": [
+                    46,
+                    128,
+                    128
+                  ]
+                },
+                "module_sha256": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+                "native_code_root": "${DATA}/Garl-TTC",
+                "native_delta_t_s": 0.1,
+                "native_rgb_sync": "front",
+                "native_source_sha256": {
+                  "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+                  "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+                  "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+                  "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14"
+                },
+                "optimizer_updates": 0,
+                "removed_initializer_paths": {
+                  "pretrained_ckpt_event": "checkpoints/paper_event_only_lhr.pth",
+                  "pretrained_ckpt_rgb": "checkpoints/paper_visual_only_lhr.pth"
+                },
+                "strict_state_load": true,
+                "targets_read": false
+              },
+              "h8_system_three_heads": {
+                "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+                "device": "cuda",
+                "garl": {
+                  "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+                  "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+                  "event_only_lhr": true,
+                  "native_code_root": "${DATA}/Garl-TTC",
+                  "source_sha256": {
+                    "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+                    "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+                    "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+                    "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+                    "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+                    "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+                    "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+                    "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+                    "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+                    "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+                    "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+                    "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+                    "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+                    "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+                    "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+                    "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+                    "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+                    "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+                    "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+                  },
+                  "strict_state_load": true
+                },
+                "h8_heads": {
+                  "13": {
+                    "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+                    "committed_updates": 2500,
+                    "strict_state_load": true
+                  },
+                  "23": {
+                    "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+                    "committed_updates": 2500,
+                    "strict_state_load": true
+                  },
+                  "7": {
+                    "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+                    "committed_updates": 2500,
+                    "strict_state_load": true
+                  }
+                },
+                "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+                "normalization": {
+                  "arrays_read": [
+                    "mean",
+                    "scale"
+                  ],
+                  "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+                  "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+                  "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+                  "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+                  "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba"
+                },
+                "optimizer_updates": 0,
+                "producers": {
+                  "a5": {
+                    "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+                    "committed_updates": 49932,
+                    "strict_state_load": true
+                  },
+                  "c2f": {
+                    "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+                    "committed_updates": 49932,
+                    "strict_state_load": true
+                  },
+                  "pair": {
+                    "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+                    "committed_updates": 6840,
+                    "strict_state_load": true
+                  },
+                  "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b"
+                },
+                "targets_read": false
+              }
+            }
+          },
+          "status": "COMPLETE",
+          "targets_read": false
+        },
+        "status": "COMPLETE"
+      },
+      "sha256": "ec671c03cbda319b3a87c74292839d7b7ad4b8f29072aebe847dd1f1e70aebe5"
+    },
+    {
+      "path": "r1_resume/PRIORITY_PAUSE_RELEASED.json",
+      "receipt": {
+        "note": "Existing supervisor resumes after its configured backoff.",
+        "released_epoch": 1791488827.260296,
+        "retry_budget_reset": false,
+        "sha256": "b86c305c90dd226c256667a77fb9ef9942a28569ea6bf931cad171d378d8a038",
+        "status": "OWNED_PAUSE_RELEASED",
+        "supervisor_restarted": false
+      },
+      "sha256": "0a64478a9ab9bb994f776781a9ea12df9c0b449b8c3b098189d65709d2359bb9"
+    }
+  ],
+  "status": "RECOVERED_WITH_SAVED_WORK"
+}

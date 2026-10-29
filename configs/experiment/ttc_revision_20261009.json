@@ -1,0 +1,50 @@
+{
+  "schema": "ttc_revision_20261009_v1",
+  "purpose": "Fair native/operational evaluation, exact input optimization, TTC-space learning",
+  "gpu_budget_seconds": 28800,
+  "seeds": [7, 13, 23],
+  "original_campaign": "docs/sota_campaign_20261008",
+  "output": "artifacts/ttc_revision_20261009",
+  "comparison": {
+    "primary": "unaltered_native_outputs",
+    "secondary": "predeclared_common_signed_bound_60s",
+    "bound_seconds": 60.0,
+    "gt_rule": "finite and nonzero; preserve every population row and failure",
+    "metrics": ["mae", "median_ae", "rmse", "rte", "bias", "p95_ae", "p99_ae", "sign_error", "coverage"],
+    "ttc_edges_seconds": [0, 0.5, 1, 2, 4, 8],
+    "bootstrap_unit": "scenario_group",
+    "bootstrap_draws": 10000,
+    "development32_is_blind": false,
+    "fcwd_is_blind": false,
+    "no_guaranteed_sota_claim": true
+  },
+  "latency": {
+    "systems": ["h8_legacy_three", "h8_fast_three", "h8_fast_one", "garl_event_only", "garl_full"],
+    "cpu_threads": 2,
+    "precision": "fp32_no_tf32",
+    "batch_external": 1,
+    "warmups": 2,
+    "repetitions": 5,
+    "query_selection": "first query per scenario family, frozen before timing",
+    "modes": ["independent_raw_cache_disabled", "chronological_raw_cache_enabled"],
+    "same_pass_host_stages": true,
+    "cuda_event_metric": "stream_elapsed_including_host_submission_gaps_not_kernel_sum",
+    "compact_execution_admission": {"ttc_atol_seconds": 0.01, "ttc_rtol": 0.0001}
+  },
+  "training": {
+    "source": "TRAIN40 existing frozen producer features only",
+    "updates": 2500,
+    "batch_size": 256,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.001,
+    "endpoint_selection": "fixed_update_count_no_dev32_or_fcwd_selection",
+    "model": "direct_signed_asinh_ttc_temporal_head",
+    "loss": "symmetric_smooth_l1_ttc_plus_relative_plus_asinh",
+    "ttc_loss_scale_seconds": 4.0,
+    "relative_denominator_floor_seconds": 0.5,
+    "weights": [1.0, 1.0, 0.25],
+    "normalization": "existing_TRAIN40_only",
+    "scope": "new head on shared frozen producers; not independent producer replicas",
+    "training_fit_metrics_are_generalization": false
+  }
+}

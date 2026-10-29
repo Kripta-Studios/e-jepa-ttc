@@ -1,0 +1,79 @@
+{
+  "checks": {
+    "CORRESPONDENCE/1": {
+      "eager_numerical": {
+        "cuda_rng_state_all": true,
+        "curve": true,
+        "model_state_dict": true,
+        "numpy_random_state": true,
+        "optimizer_state_dict": true,
+        "python_random_state": true,
+        "sampler_generator_state": true,
+        "scheduler_state_dict": true,
+        "torch_rng_state": true
+      },
+      "exact_resume": {
+        "cuda_rng_state_all": true,
+        "curve": true,
+        "model_state_dict": true,
+        "numpy_random_state": true,
+        "optimizer_state_dict": true,
+        "python_random_state": true,
+        "sampler_generator_state": true,
+        "scheduler_state_dict": true,
+        "torch_rng_state": true
+      }
+    },
+    "TTC-CONTROL/1": {
+      "eager_numerical": {
+        "cuda_rng_state_all": true,
+        "curve": true,
+        "model_state_dict": true,
+        "numpy_random_state": true,
+        "optimizer_state_dict": true,
+        "python_random_state": true,
+        "sampler_generator_state": true,
+        "scheduler_state_dict": true,
+        "torch_rng_state": true
+      },
+      "exact_resume": {
+        "cuda_rng_state_all": true,
+        "curve": true,
+        "model_state_dict": true,
+        "numpy_random_state": true,
+        "optimizer_state_dict": true,
+        "python_random_state": true,
+        "sampler_generator_state": true,
+        "scheduler_state_dict": true,
+        "torch_rng_state": true
+      }
+    },
+    "TTC-CONTROL/2": {
+      "eager_numerical": {
+        "cuda_rng_state_all": true,
+        "curve": true,
+        "model_state_dict": true,
+        "numpy_random_state": true,
+        "optimizer_state_dict": true,
+        "python_random_state": true,
+        "sampler_generator_state": true,
+        "scheduler_state_dict": true,
+        "torch_rng_state": true
+      },
+      "exact_resume": {
+        "cuda_rng_state_all": true,
+        "curve": true,
+        "model_state_dict": true,
+        "numpy_random_state": true,
+        "optimizer_state_dict": true,
+        "python_random_state": true,
+        "sampler_generator_state": true,
+        "scheduler_state_dict": true,
+        "torch_rng_state": true
+      }
+    }
+  },
+  "physical_technical_updates": 90,
+  "registration_sha256": "8c9d4c3ee43e244c5777657e4ecd14c9bfdfe7e5128ec40d8de7bfc8b2ef8479",
+  "status": "PASS"
+}

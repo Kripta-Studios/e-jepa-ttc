@@ -1,0 +1,379 @@
+{
+  "observed_utc": "2026-10-17T09:31:43.549263+00:00",
+  "git_commit": "dec4e050e3e1cc959b33aee3e0daf98487efd53a",
+  "snapshots": {
+    "REGISTRATION.json": {
+      "source": "e-jepa-ttc-v19-decision-recovery/artifacts/decision_recovery_20261017/REGISTRATION.json",
+      "sha256": "4470a3d4d8b334e8c7e0122b306ab0ea3662155e56fd4efa6ebd18f392a75489",
+      "record": {
+        "ancestry": {
+          "H_exposure": "Architecture and experiment development exposed; router group exclusion is not confirmatory validation.",
+          "H_groups": [
+            "2JkLL5W891",
+            "34K84TaN11",
+            "CzyQ8HKP6X",
+            "JaGC4Q9pgU",
+            "L36QTEoVkB",
+            "mHGFBekt7X",
+            "pBqGOb2vYq",
+            "qGsgzl4Q8B"
+          ],
+          "P_groups": [
+            "2Y46OkK3ff",
+            "6WCDpro5rE",
+            "8SdieOgbva",
+            "8mNnrXjpVB",
+            "9ITOs4twfk",
+            "A1Nhv0KtmL",
+            "ClXqVoZOFu",
+            "DGqicHUGWb",
+            "EllUE6bwVp",
+            "EuFGqTcqIz",
+            "GjMYZjmSQb",
+            "LMHPShQkaU",
+            "OBneIVg4Cw",
+            "OYgB6RGWcq",
+            "Po6ePjWYAz",
+            "VLA3oBKFyX",
+            "eX8t2nGd6O",
+            "nRcwUlHyAd",
+            "pakWgyPNTL",
+            "q2k6O0X6JY",
+            "qoohcdtLDH",
+            "vWp9XNYQ9V",
+            "wE9MZUmiJP",
+            "xkiVthsGwf"
+          ],
+          "evidence": {
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\H_MANIFEST.json": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\P_MANIFEST.json": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\RUN_PROVENANCE.json": "5457d346b57f7909d18b195fba5a3c690655ad09b92ca652f881df819215b2d2",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\ADMISSION.json": "6f88b5e5b1c2862055dac8451b5a3655b2fa6998e66efac4d72619c287c5cdbc",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\PRIMARY_ENDPOINTS.json": "929c897e52c150ee3b0803086a3fb99facc618e7b90a48a1d421ad0f90064e1a",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\A1_adaptation_depth\\ENDPOINTS.json": "0bf82b1960d56db9832c889bcc1cfa5103e4dd1f25d75959d600953aaeffdbda",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\A1_adaptation_depth\\REGISTRATION.json": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\B1_correspondence\\REGISTRATION.json": "8c9d4c3ee43e244c5777657e4ecd14c9bfdfe7e5128ec40d8de7bfc8b2ef8479",
+            "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\C1_geometry\\REGISTRATION.json": "77d12a005b337039b47f3c153b1341113de8b484a777f9b4ab42e685aa731db6"
+          },
+          "generic_teacher": "646d5569671e9d8af9b21c84c12a55584be675ccfc77dc5e996ccea6fb8d38de",
+          "generic_teacher_limit": "Historical generic teacher provenance retained; exhaustive external pretraining membership is not independently certified here.",
+          "lineage": {
+            "A5": "fresh_seed7 task-specific P training with generic teacher",
+            "B1": "C1 -> P correspondence -> P TTC",
+            "C1": "A5 -> P geometric pair adaptation",
+            "CORR": "A5 -> P pair adaptation",
+            "FULL": "C1 -> P correspondence stage1 -> P FULL TTC",
+            "LAST": "C1 -> P correspondence stage1 -> P last-block TTC",
+            "NATIVE": "A5 -> P native adaptation"
+          },
+          "task_specific_groups_disjoint": true,
+          "task_specific_training_role": "P"
+        },
+        "git_commit": "e768765543d9dcb3d14cfba7abe0c0149e3ed30f",
+        "populations": {
+          "H": {
+            "groups": [
+              "2JkLL5W891",
+              "34K84TaN11",
+              "CzyQ8HKP6X",
+              "JaGC4Q9pgU",
+              "L36QTEoVkB",
+              "mHGFBekt7X",
+              "pBqGOb2vYq",
+              "qGsgzl4Q8B"
+            ],
+            "rows": 18422
+          },
+          "P": {
+            "groups": [
+              "2Y46OkK3ff",
+              "6WCDpro5rE",
+              "8SdieOgbva",
+              "8mNnrXjpVB",
+              "9ITOs4twfk",
+              "A1Nhv0KtmL",
+              "ClXqVoZOFu",
+              "DGqicHUGWb",
+              "EllUE6bwVp",
+              "EuFGqTcqIz",
+              "GjMYZjmSQb",
+              "LMHPShQkaU",
+              "OBneIVg4Cw",
+              "OYgB6RGWcq",
+              "Po6ePjWYAz",
+              "VLA3oBKFyX",
+              "eX8t2nGd6O",
+              "nRcwUlHyAd",
+              "pakWgyPNTL",
+              "q2k6O0X6JY",
+              "qoohcdtLDH",
+              "vWp9XNYQ9V",
+              "wE9MZUmiJP",
+              "xkiVthsGwf"
+            ],
+            "rows": 53890
+          }
+        },
+        "predictions": {
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/H/A1-FULL-S7/COMPLETE.json": "32684aedc006a2809ab0a6fcadcfb4893841b98b6282568807676161b21ec7b4",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/H/A1-FULL-S7/METRICS.json": "774c751e4aaa91d73bc1b4e588d3626e14fde71f4a68925c7754513a8eef3b80",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/H/A1-FULL-S7/predictions.parquet": "8c7bfd3835e2287406f3ffb8e5ed7bd1e9bac96523d0ee9a8b5aea869da51cf5",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/H/A1-LAST-BLOCK-S7/COMPLETE.json": "647a4f3f7fc2fb081a0e951f0a71d9e37123c8d46d46fed2d9e66f13af63d113",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/H/A1-LAST-BLOCK-S7/METRICS.json": "5f3789bd7efebce31e17d0bb2f3b65dacec24a3158225412661873b6295d7a8a",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/H/A1-LAST-BLOCK-S7/predictions.parquet": "13bfd1ec06de3206179a1f0fbd3e7ce03188fb3e1c19e1be07e722514efa0a52",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/P/A1-FULL-S7/COMPLETE.json": "a1052d52490da62011947cc919e81cfc9b295df834f7bf7d29b3933a62127634",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/P/A1-FULL-S7/METRICS.json": "70cfaea203883f59117bfb0109182b0921db59b44330231b666fc362b05b247c",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/P/A1-FULL-S7/predictions.parquet": "10de1084de9d99498d384d73f622b7222cc2e0cb75033892a5d523cccb29e6df",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/P/A1-LAST-BLOCK-S7/COMPLETE.json": "14f0ef47419cb5e48b20d26f2349b0ad9e628a48e57bd2d0b157914a25df6f84",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/P/A1-LAST-BLOCK-S7/METRICS.json": "394900abb1fde2009ed85cda3a31a4e5a43317dd66f5f50d120910ebc10c354e",
+          "artifacts/joint_measurement_20261012/adaptive/A1_adaptation_depth/predictions/P/A1-LAST-BLOCK-S7/predictions.parquet": "5e3a438860746c8ddd635687a221845b7e5fc463408863e3ba1fa0618185d145",
+          "artifacts/joint_measurement_20261012/adaptive/B1_correspondence/predictions/H/B1-CORRESPONDENCE-STAGE2-S7/COMPLETE.json": "cc2d0d1110b7ce7c10be084e3629a73984f170549e12e677f3a2ab7f6f0708b9",
+          "artifacts/joint_measurement_20261012/adaptive/B1_correspondence/predictions/H/B1-CORRESPONDENCE-STAGE2-S7/METRICS.json": "0698e433731da0d3d4e85d3d8099fd47fe39870eb5ffe82fefcf463c89066fd2",
+          "artifacts/joint_measurement_20261012/adaptive/B1_correspondence/predictions/H/B1-CORRESPONDENCE-STAGE2-S7/predictions.parquet": "8208b9e1204b57d9aa8d1beaeb1c170a070d8348ebc2712c9880f14c8e358d4f",
+          "artifacts/joint_measurement_20261012/adaptive/B1_correspondence/predictions/P/B1-CORRESPONDENCE-STAGE2-S7/COMPLETE.json": "fcc9ca41bcf9cd2512b68b40e7011cd31089e6bb5b2008f195d800249dae5f5c",
+          "artifacts/joint_measurement_20261012/adaptive/B1_correspondence/predictions/P/B1-CORRESPONDENCE-STAGE2-S7/METRICS.json": "0f066909f04b9f5793386e2c036b4d89afd7bfc0558bb7e48e47c9b0ba48be57",
+          "artifacts/joint_measurement_20261012/adaptive/B1_correspondence/predictions/P/B1-CORRESPONDENCE-STAGE2-S7/predictions.parquet": "c17d7c743e851a2bd1ae3aa89c622d860c86c248c1d12c161fa905f138869ecf",
+          "artifacts/joint_measurement_20261012/adaptive/C1_geometry/predictions/H/PAIR-CORR-GEOMETRY-S7/COMPLETE.json": "e469c92429c07c4da8e649d41aca9b9e84a19a8df8e9194d9713c1e663d76c84",
+          "artifacts/joint_measurement_20261012/adaptive/C1_geometry/predictions/H/PAIR-CORR-GEOMETRY-S7/METRICS.json": "6d15d1acfad385929e6da6867ffef0bad49cdfe6d23c1770845e5b54516afcb3",
+          "artifacts/joint_measurement_20261012/adaptive/C1_geometry/predictions/H/PAIR-CORR-GEOMETRY-S7/predictions.parquet": "06f3f80a3d2734e9ca46a04dd135e50299da57676376a9d3f09ec69aa20edc8a",
+          "artifacts/joint_measurement_20261012/adaptive/C1_geometry/predictions/P/PAIR-CORR-GEOMETRY-S7/COMPLETE.json": "df1b80cef1eafcf45925d1ac53bf96b53f156c884784bf53f59ef57439819c62",
+          "artifacts/joint_measurement_20261012/adaptive/C1_geometry/predictions/P/PAIR-CORR-GEOMETRY-S7/METRICS.json": "51ab9b450f7c73aefecece8b5a6e3f7f0de242b11d66e5fa804286a7c9e2e44b",
+          "artifacts/joint_measurement_20261012/adaptive/C1_geometry/predictions/P/PAIR-CORR-GEOMETRY-S7/predictions.parquet": "b35ef11fb3cfb3a47473c7eb7f71e1f64ddf7b0690d666dbbda102bdbd71f3dd",
+          "artifacts/joint_measurement_20261012/predictions/H/A5-P2-FROZEN/COMPLETE.json": "762428a315c42d827595f878c04c37a614cf69f4045d03f58bd5aefeb55376ac",
+          "artifacts/joint_measurement_20261012/predictions/H/A5-P2-FROZEN/METRICS.json": "f5bf12b2873a2ee4fad7ce2acfd6ced586bdccfa197b4ed2f4609f3f8b40ba5d",
+          "artifacts/joint_measurement_20261012/predictions/H/A5-P2-FROZEN/predictions.parquet": "3c08bcac736d930abab5b814af7630aec23309654534e56cc6eeb461e33a5890",
+          "artifacts/joint_measurement_20261012/predictions/H/NATIVE-P2-FT-S7/COMPLETE.json": "9976d781d1fb4b08eaab00c5f2a56e2716e1a441b5d227ce58880638f2e1bf13",
+          "artifacts/joint_measurement_20261012/predictions/H/NATIVE-P2-FT-S7/METRICS.json": "0588956e96dab44f0f5277fc4b995fa385c431eb0dc8469974bba41058ddc3f3",
+          "artifacts/joint_measurement_20261012/predictions/H/NATIVE-P2-FT-S7/predictions.parquet": "7fcd1c04aa820423f87c17fbd0a265411f6671976c4dfb0b2d921af06ca7d994",
+          "artifacts/joint_measurement_20261012/predictions/H/PAIR-CORR-S7/COMPLETE.json": "0c617ede155fa32e69ff9687f60730d15f7b31f90ebf9cb90b9b130373453a84",
+          "artifacts/joint_measurement_20261012/predictions/H/PAIR-CORR-S7/METRICS.json": "fafd9cefbeddcd49cc1bb51ea67d63596a13c7c85ada0e666e846276cd3ac051",
+          "artifacts/joint_measurement_20261012/predictions/H/PAIR-CORR-S7/predictions.parquet": "52487a2ee5a512c566961c370c313066a640438c0f2c6b5ebd7c630c337ed693",
+          "artifacts/joint_measurement_20261012/predictions/P/A5-P2-FROZEN/COMPLETE.json": "fd3fbbe2d770add3bf612f4c7676ad157bd3d6977f4bfcecb10b57e1be916255",
+          "artifacts/joint_measurement_20261012/predictions/P/A5-P2-FROZEN/METRICS.json": "6ca06f1b3992b884fc895cd9585182c425bfd728407d032ab2e8507b6676e913",
+          "artifacts/joint_measurement_20261012/predictions/P/A5-P2-FROZEN/predictions.parquet": "621f28eb108268443902ca6ab09b3d4527cd69de502ae89ed115157dd4fd30d8",
+          "artifacts/joint_measurement_20261012/predictions/P/NATIVE-P2-FT-S7/COMPLETE.json": "640b6b93cbe93d38e3019526818292e8b713448eaeb14ae680a95638d910f554",
+          "artifacts/joint_measurement_20261012/predictions/P/NATIVE-P2-FT-S7/METRICS.json": "3c7715e0857b29d739c0d492a3b4e8629fdcfc5a332399ae775a8a069d28f577",
+          "artifacts/joint_measurement_20261012/predictions/P/NATIVE-P2-FT-S7/predictions.parquet": "975d5f944d1f07ccd6d4debd1bb09632b32c4bf7034cd5638f4355ec8e82d156",
+          "artifacts/joint_measurement_20261012/predictions/P/PAIR-CORR-S7/COMPLETE.json": "691737cadf30bf0afc78b9d72d90c4dab23c2d2451c9a8764a34d1e2b03b5e1e",
+          "artifacts/joint_measurement_20261012/predictions/P/PAIR-CORR-S7/METRICS.json": "30316bce12aed42dea8bf4d287f48d7397560d9935159ac025519b914aadf4df",
+          "artifacts/joint_measurement_20261012/predictions/P/PAIR-CORR-S7/predictions.parquet": "d7c5a0fe370518858b67343b383ebf8568a0093cdd8d8e94fee3917e01d4981e"
+        },
+        "protocol": {
+          "authorization": "Realiza todo lo que consideres para conseguir SOTA y avanzar en todas las métricas a mejor",
+          "base_commit": "fb41681",
+          "claim_policy": "Report all metrics and individual regressions. Passing numerical gates is not improvement in every metric, independent validation, or SOTA.",
+          "deferred_families": [
+            "specialized_heads",
+            "geometry_reliability_features",
+            "temporal_context",
+            "PCGrad",
+            "new_datasets"
+          ],
+          "deferred_family_rule": "No automatic cartesian search: choose and register a single mechanistic contrast if initial branches reject.",
+          "diagnostics": {
+            "experts": [
+              "A5",
+              "NATIVE",
+              "CORR",
+              "C1",
+              "B1",
+              "FULL",
+              "LAST"
+            ],
+            "oracle_cost": "native query MiD, ties to base; every metric on the same selected output vector",
+            "oracle_export_as_candidate": false,
+            "oracles_pairs": [
+              [
+                "A5",
+                "FULL"
+              ],
+              [
+                "NATIVE",
+                "FULL"
+              ],
+              [
+                "NATIVE",
+                "CORR"
+              ],
+              [
+                "NATIVE",
+                "B1"
+              ]
+            ],
+            "oracles_role": "P",
+            "prior_exposure": "A5/FULL P oracle and per-model conditional P/H signs were calculated in the preceding read-only analysis. New results are not claimed prospectively unseen.",
+            "roles": [
+              "P",
+              "H"
+            ]
+          },
+          "exposure": {
+            "H": "Repeatedly exposed development; group-excluded router fitting does not erase architecture-selection exposure.",
+            "P": "Producer training; oracle and residual diagnostics are not generalization.",
+            "V": "Previously exposed development; not opened for this initial stage.",
+            "external": "FCWD/Dev32 previously exposed; no selection on their outcomes.",
+            "official_test": "Private test labels remain inaccessible; no automated submission in this stage."
+          },
+          "immutable_history": true,
+          "loss_screen": {
+            "LS": "Deferred. Requires a separate registration; sign-only hinge does not directly fix same-sign magnitude errors.",
+            "arms": {
+              "L0": [
+                0.5,
+                0.3,
+                0.1,
+                0.1
+              ],
+              "LW": [
+                0.4444444444444444,
+                0.26666666666666666,
+                0.08888888888888889,
+                0.2
+              ]
+            },
+            "effective_batch": 32,
+            "endpoint": "Fixed final endpoint; never choose checkpoint using H",
+            "fresh_control": true,
+            "keep_raw_and_emitted_loss": true,
+            "microbatch": 4,
+            "parent": "V18 B1-CORRESPONDENCE-STAGE1-S7",
+            "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+            "question": "Does increasing negative-band mass repair the current A1 FULL adaptation rather than merely change the historical CORR recipe?",
+            "replicate_both_control_and_candidate": true,
+            "replication_seeds_if_enabled": [
+              13,
+              23
+            ],
+            "replication_trigger": "LW admitted against A5 under unchanged H safeguards, aggregate improves at least 3 percent versus L0, no band worsens over 10 percent versus L0, sign increases at most 0.5pp and MAE at most 2 percent versus L0.",
+            "sampler": "Identical uniform row IDs and RNG initialization for both arms; change loss mass only",
+            "seed": 7,
+            "shared_parent_limit": "Replicates adaptation, not independent historical pretraining.",
+            "trainable_policy": "FULL",
+            "updates_per_arm": 12000
+          },
+          "objective": "Improve signed TTC jointly while preserving historical admission safeguards; official SOTA remains unconfirmed until comparable independent scoring.",
+          "resources": {
+            "cloud_spend": false,
+            "maximum_new_gpu_scope_seconds": 60000,
+            "maximum_new_scientific_updates": 100000,
+            "minimum_free_disk_bytes": 4000000000
+          },
+          "router": {
+            "advancement": "Preserve all original A5 H safeguards; primary router must also pass numerical original system gates against its fixed NATIVE base and improve aggregate relative to the best fixed expert and shuffled control. This permits further evaluation, never system promotion.",
+            "all_pairs_reported": true,
+            "bootstrap": {
+              "replicates": 2000,
+              "scope": "Descriptive paired intervals conditional on the already fitted OOF predictions; not independent training replicates",
+              "seed": 12345,
+              "unit": "acquisition_group"
+            },
+            "cost_scale": 100.0,
+            "evaluation": "H leave-one-acquisition-group-out, train-only normalizer; fixed ridge and threshold",
+            "failure_action": "Record rejection. At most one later feature extension may be separately registered after inspecting P diagnostics; no threshold/ridge sweep on H or V.",
+            "features": [
+              "phase_base",
+              "phase_special",
+              "phase_difference",
+              "absolute_phase_difference",
+              "absolute_phase_base",
+              "absolute_phase_special",
+              "sign_disagreement",
+              "log_magnitude_difference"
+            ],
+            "historical_pair": [
+              "NATIVE",
+              "CORR"
+            ],
+            "negative_control": "Shuffle cost targets independently within each training fold using seed 7; never touch held-out labels",
+            "primary_pair": [
+              "NATIVE",
+              "FULL"
+            ],
+            "ridge": 0.01,
+            "secondary_pair": [
+              "A5",
+              "FULL"
+            ],
+            "threshold": 0.0,
+            "tie_policy": "base",
+            "training_mass": "Native scorer band masses 0.5/0.3/0.1/0.1; within each band equal mass per acquisition group containing that band, then equal mass per query in that cell; training fold only."
+          },
+          "schema": "v19_decision_recovery_protocol_v1",
+          "source_campaign": "joint_measurement_20261012",
+          "source_worktree": "e-jepa-ttc-v18-joint-measurement"
+        },
+        "schema": "v19_decision_recovery_registration_v1",
+        "source_root": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+        "sources": {
+          "configs/decision_recovery/protocol.json": "1b405b1f59512839373cdcd3653a05f48f0a00580b3126a2bffbcfc80a70c3ed",
+          "operational/decision_recovery/__init__.py": "78e7e0e257536c1f1c8ab28b9ca9d991e8bbfc0bb3b294a8e36ae04b002c8a31",
+          "operational/decision_recovery/campaign.py": "613749a722628aa1fb0b398595e6af0a161748cea1cd7ad9ce7757ad0e7f9c87",
+          "operational/decision_recovery/common.py": "28d9687433a9bb8cb33ddcb49d8620f9d48ee6d68af655d4e4d786086fe6dd8d",
+          "operational/decision_recovery/diagnostics.py": "bdb199dea142ede66d14806d36e6a08da6c0c58f405f0e6842add222b529378e",
+          "operational/decision_recovery/registration.py": "92bdc508b2580ba4988c9336ee96a7fe6bfd526d3de24e50d40b90efd0a4db46",
+          "operational/decision_recovery/router.py": "cef591be835a3f6804d031f9ae53ec0414be4cd29d0ea34befd6199cf298173f",
+          "operational/range_transfer/analyze.py": "5871f8145d0e8b736c087a9e676e075e3c69ded459cae866eb235dd6ad9bd214",
+          "operational/rgb_port/evaluate.py": "9ba168380ac8432429b0585b49cc3ec5f5511ee7a019189ed8adbf02a2da86c8",
+          "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+        },
+        "status": "REGISTERED_BEFORE_NEW_ROUTER_OR_LOSS_FITS",
+        "submission_authorized_by_this_registration": false,
+        "system_promotion": false,
+        "utc": "2026-10-16T22:40:03.122069+00:00"
+      }
+    },
+    "PIPELINE_STATE.json": {
+      "source": "e-jepa-ttc-v19-decision-recovery/artifacts/decision_recovery_20261017/PIPELINE_STATE.json",
+      "sha256": "0a76a5536d455918bca571a5ba17f098d8e86a96c252fa034c1a5798788cc6c2",
+      "record": {
+        "decision": {
+          "checks": {
+            "A5_development_eligible": true,
+            "aggregate_3pct_vs_L0": false,
+            "band_crucial_max_10pct": true,
+            "band_large_max_10pct": true,
+            "band_negative_max_10pct": true,
+            "band_small_max_10pct": true,
+            "mae_max_2pct": true,
+            "sign_max_0_5pp": true
+          },
+          "cost_complete": false,
+          "enabled": false,
+          "failed_checks": [
+            "aggregate_3pct_vs_L0"
+          ],
+          "replicate_control_and_candidate": false,
+          "scope": "H development numerical trigger; no system promotion",
+          "seeds_if_enabled": [],
+          "status": "REPLICATION_NOT_ENABLED",
+          "system_promotion": false
+        },
+        "next_step": "Assess registered replication trigger and full system cost",
+        "pid": 13380,
+        "pipeline_sha256": "0290c483db1ad54c617f291d9a9c6cbcdc1548821711ca2d7a4db8890a384dda",
+        "report": "evaluation/REPORT.json",
+        "report_sha256": "1073ab21e307ae266221816fd52422f5117f23b0fb7927429e89970a6d996927",
+        "status": "INITIAL_SCREEN_COMPLETE",
+        "system_promotion": false,
+        "utc": "2026-10-17T01:33:06.288277+00:00"
+      }
+    },
+    "USER_CONTINUE_RECEIPT.json": {
+      "source": "e-jepa-ttc-v19-decision-recovery/artifacts/decision_recovery_20261017/USER_CONTINUE_RECEIPT.json",
+      "sha256": "d6477369d426c1b53641e7d5cf9b50b20dff67613bd4ab7a412dc32c2b418478",
+      "record": {
+        "utc": "2026-10-16T23:02:57.7408680+00:00",
+        "reason": "User explicitly corrected interpretation: do not stop or delete; continue original V19 plan",
+        "interruption": "Assistant acted on pasted zero-update instruction before correction",
+        "checkpoint_to_resume": 700,
+        "previous_completed": 787,
+        "expected_recovery_updates": 87,
+        "files_deleted": 0,
+        "original_receipt_preserved": true
+      }
+    }
+  },
+  "process_liveness_checked": false,
+  "actions_on_v19": [],
+  "scope": "Recorded history, not proof of current process liveness or successful training"
+}

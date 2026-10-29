@@ -1,0 +1,22 @@
+{
+  "schema": "final_train40_official_evaluation_intent_v1",
+  "status": "WAITING_FOR_FINAL_TRAIN40_MODEL",
+  "user_direction": "Train the final model using all available public TRAIN40 before official evaluation; do not submit historical V16 first",
+  "candidate_family": "V16-derived PHASE_ONLY RGB+event seed7",
+  "candidate_identity": "NOT_YET_FROZEN_FINAL_WEIGHTS_PENDING",
+  "public_train_queries": 88744,
+  "public_train_sequences": 40,
+  "historical_candidate_role": "FROZEN_REFERENCE_NOT_NEXT_SUBMISSION",
+  "historical_submission_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "external_submission_performed_by_this_work": false,
+  "external_submission_separate_authorization_required": true,
+  "account_submission_history_verified": false,
+  "official_score_used_to_choose_recipe": false,
+  "private_test_targets_accessed": false,
+  "temporal_contract": {
+    "maximum_causal_history_ms": 650,
+    "public_text_has_explicit_200ms_limit": false,
+    "organizers_explicitly_confirmed_650ms": false,
+    "interpretation": "No explicit prohibition found in supplied rules; additional history beyond the annotated window not explicitly confirmed"
+  }
+}

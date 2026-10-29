@@ -1,0 +1,206 @@
+{
+  "artifact_sha256": "37832d426334a93c1e6d25f89d2dd00f304abe6f853719cebf4a8386557feea8",
+  "geometric_contracts": {
+    "cmax_reference": "Corrected affine reference-time equation; 15/32 raw coverage. Local EvTTC observed-box adaptation, not a full paper reproduction.",
+    "strttc_adapted": "Nonlinear source-port adaptation; 11/32 raw coverage. It does not reproduce MATLAB sequential lastOptimizedResult state, exact 0.4 s epochs, undistortion, bilateral filtering, or official 1000-iteration RANSAC."
+  },
+  "inputs": {
+    "cmax_fragments": {
+      "path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments",
+      "sha256": "8cc90b0d4bcdc2bd6117c51ad22c8fd5a329cb9ae158fcf5f0674af10f92e952"
+    },
+    "expanded_manifest": {
+      "path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/QUERY_MANIFEST.json",
+      "sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b"
+    },
+    "exposed_predictions": {
+      "path": "${REPO}/docs/research_review_20261004_08/evidence/rgb_event/SCORED_PREDICTIONS.csv",
+      "sha256": "fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e"
+    },
+    "historical_manifest": {
+      "path": "${REPO}/artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json",
+      "sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5"
+    },
+    "strttc_fragments": {
+      "path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments",
+      "sha256": "d1936d09a7c5124482a5bbcf497a7650ec9f7d99b29e1470ef900b66d532b3c5"
+    }
+  },
+  "interpretation": "Diagnostic pilot, not a SOTA ranking. Incomplete methods have N/A complete-cohort metrics; conditional metrics describe only successful predictions and cannot be ranked against complete-coverage methods.",
+  "methods": {
+    "H8_seed13": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": {
+        "mae_seconds": 1.8846916179034003,
+        "median_absolute_error_seconds": 1.1407883886419432,
+        "rmse_seconds": 3.127101128241887,
+        "signed_bias_seconds": -0.32144906156630465
+      },
+      "complete_exposed_cohort_status": "AVAILABLE",
+      "conditional_metrics_not_rankable": false,
+      "conditional_success_metrics": {
+        "mae_seconds": 1.8846916179034003,
+        "median_absolute_error_seconds": 1.1407883886419432,
+        "rmse_seconds": 3.127101128241887,
+        "signed_bias_seconds": -0.32144906156630465
+      },
+      "conditional_support": 29,
+      "prediction_coverage_all_queries": 1.0,
+      "prediction_coverage_on_exposed_truth": 1.0,
+      "predictions_all_queries": 32,
+      "predictions_on_exposed_truth": 29,
+      "truth_exposed_queries": 29
+    },
+    "H8_seed23": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": {
+        "mae_seconds": 1.879505428860286,
+        "median_absolute_error_seconds": 1.0183881048284666,
+        "rmse_seconds": 3.054059931213306,
+        "signed_bias_seconds": -0.2042801335514836
+      },
+      "complete_exposed_cohort_status": "AVAILABLE",
+      "conditional_metrics_not_rankable": false,
+      "conditional_success_metrics": {
+        "mae_seconds": 1.879505428860286,
+        "median_absolute_error_seconds": 1.0183881048284666,
+        "rmse_seconds": 3.054059931213306,
+        "signed_bias_seconds": -0.2042801335514836
+      },
+      "conditional_support": 29,
+      "prediction_coverage_all_queries": 1.0,
+      "prediction_coverage_on_exposed_truth": 1.0,
+      "predictions_all_queries": 32,
+      "predictions_on_exposed_truth": 29,
+      "truth_exposed_queries": 29
+    },
+    "H8_seed7": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": {
+        "mae_seconds": 1.8822097198149363,
+        "median_absolute_error_seconds": 0.9798414654760741,
+        "rmse_seconds": 3.1225140420270976,
+        "signed_bias_seconds": -0.47388463560458
+      },
+      "complete_exposed_cohort_status": "AVAILABLE",
+      "conditional_metrics_not_rankable": false,
+      "conditional_success_metrics": {
+        "mae_seconds": 1.8822097198149363,
+        "median_absolute_error_seconds": 0.9798414654760741,
+        "rmse_seconds": 3.1225140420270976,
+        "signed_bias_seconds": -0.47388463560458
+      },
+      "conditional_support": 29,
+      "prediction_coverage_all_queries": 1.0,
+      "prediction_coverage_on_exposed_truth": 1.0,
+      "predictions_all_queries": 32,
+      "predictions_on_exposed_truth": 29,
+      "truth_exposed_queries": 29
+    },
+    "cmax_reference": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": null,
+      "complete_exposed_cohort_status": "N/A_INCOMPLETE_PREDICTION_COVERAGE",
+      "conditional_metrics_not_rankable": true,
+      "conditional_success_metrics": {
+        "mae_seconds": 3.7314863020124296,
+        "median_absolute_error_seconds": 1.522788338449394,
+        "rmse_seconds": 6.243125731077465,
+        "signed_bias_seconds": 0.3497538283979089
+      },
+      "conditional_support": 15,
+      "prediction_coverage_all_queries": 0.46875,
+      "prediction_coverage_on_exposed_truth": 0.5172413793103449,
+      "predictions_all_queries": 15,
+      "predictions_on_exposed_truth": 15,
+      "truth_exposed_queries": 29
+    },
+    "public_Garl_event_lhr": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": {
+        "mae_seconds": 5.93348082843254,
+        "median_absolute_error_seconds": 1.5767678953110398,
+        "rmse_seconds": 14.252470976265949,
+        "signed_bias_seconds": 0.2223723308218749
+      },
+      "complete_exposed_cohort_status": "AVAILABLE",
+      "conditional_metrics_not_rankable": false,
+      "conditional_success_metrics": {
+        "mae_seconds": 5.93348082843254,
+        "median_absolute_error_seconds": 1.5767678953110398,
+        "rmse_seconds": 14.252470976265949,
+        "signed_bias_seconds": 0.2223723308218749
+      },
+      "conditional_support": 29,
+      "prediction_coverage_all_queries": 1.0,
+      "prediction_coverage_on_exposed_truth": 1.0,
+      "predictions_all_queries": 32,
+      "predictions_on_exposed_truth": 29,
+      "truth_exposed_queries": 29
+    },
+    "public_Garl_rgb_event_full": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": {
+        "mae_seconds": 3.6605131385426133,
+        "median_absolute_error_seconds": 1.0976692264153574,
+        "rmse_seconds": 8.557277178806093,
+        "signed_bias_seconds": -1.5651176424436746
+      },
+      "complete_exposed_cohort_status": "AVAILABLE",
+      "conditional_metrics_not_rankable": false,
+      "conditional_success_metrics": {
+        "mae_seconds": 3.6605131385426133,
+        "median_absolute_error_seconds": 1.0976692264153574,
+        "rmse_seconds": 8.557277178806093,
+        "signed_bias_seconds": -1.5651176424436746
+      },
+      "conditional_support": 29,
+      "prediction_coverage_all_queries": 1.0,
+      "prediction_coverage_on_exposed_truth": 1.0,
+      "predictions_all_queries": 32,
+      "predictions_on_exposed_truth": 29,
+      "truth_exposed_queries": 29
+    },
+    "strttc_adapted": {
+      "cohort_queries": 32,
+      "complete_exposed_cohort_metrics": null,
+      "complete_exposed_cohort_status": "N/A_INCOMPLETE_PREDICTION_COVERAGE",
+      "conditional_metrics_not_rankable": true,
+      "conditional_success_metrics": {
+        "mae_seconds": 6.512758705439506,
+        "median_absolute_error_seconds": 3.48336362754569,
+        "rmse_seconds": 9.53342631595942,
+        "signed_bias_seconds": -2.2685932919263014
+      },
+      "conditional_support": 11,
+      "prediction_coverage_all_queries": 0.34375,
+      "prediction_coverage_on_exposed_truth": 0.3793103448275862,
+      "predictions_all_queries": 11,
+      "predictions_on_exposed_truth": 11,
+      "truth_exposed_queries": 29
+    }
+  },
+  "outputs": {
+    "method_metrics": "METHOD_METRICS.csv",
+    "scored_rows": "SCORED_ROWS.csv"
+  },
+  "query_identity": {
+    "anchor_identity_exact": true,
+    "count": 32,
+    "historical_manifest_identity_exact": true,
+    "metadata_sha256_identity_exact": true,
+    "sequence_count": 32
+  },
+  "runner_source_sha256": "7601c04593066fe7cf63ce039b6b3f70e61c12f797d56ed39861597dca6b1704",
+  "schema": "sota_geometric_baseline_pilot_scoring_v1",
+  "scientific_optimizer_updates": 0,
+  "scope": "32 fixed historical development queries, one per sequence",
+  "status": "COMPLETE",
+  "truth": {
+    "already_exposed_only": true,
+    "exposed_queries": 29,
+    "new_test_labels_opened": false,
+    "not_exposed_queries": 3,
+    "source": "${REPO}/docs/research_review_20261004_08/evidence/rgb_event/SCORED_PREDICTIONS.csv"
+  }
+}

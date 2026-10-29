@@ -1,0 +1,100 @@
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any, cast
+import h5py
+import numpy as np
+from e_jepa_ttc.rgb_port.data import crop_uint8
+from operational.rgb_port_revision.transfer_inputs import sensor_triplets
+Square = tuple[float, float, float, float]
+@dataclass(frozen=True)
+class ObjectRegion:
+    """Current regions supplied by an upstream tracker, not TTC targets."""
+
+    object_id: str
+    event_square: Square
+    rgb_square: Square | None
+
+
+@dataclass(frozen=True)
+class RawRGBHistory:
+    """Original uint8 frames available at one query, without ROI processing."""
+
+    query_us: int
+    frames: Mapping[int, np.ndarray]
+    timestamps_us: Mapping[int, int]
+    triplets: Sequence[tuple[int, ...]]
+    unavailable_reason: str = ""
+
+
+def read_raw_rgb_history(inputs: PersistentSensorInputs, row: Mapping[str, Any]) -> RawRGBHistory:
+    """Read/cache only causal raw frames; all region work remains in update()."""
+    reader = inputs._source(row)
+    handle = reader._require_handle()
+    query = int(row["anchor_us"])
+    data, timestamps = handle.get("blackflys/left/data"), handle.get("blackflys/left/ts")
+    if not isinstance(data, h5py.Dataset) or not isinstance(timestamps, h5py.Dataset):
+        return RawRGBHistory(query, {}, {}, (), "RGB_DATASET_MISSING")
+    if inputs._clock is None:
+        inputs._clock = np.asarray(timestamps, dtype=np.int64)
+    clock = inputs._clock
+    groups = sensor_triplets(clock, query)
+    if not groups:
+        return RawRGBHistory(query, {}, {}, (), "INSUFFICIENT_CAUSAL_RGB_HISTORY")
+    ids = [int(index) for index in np.unique(np.concatenate(groups))]
+    return RawRGBHistory(
+        query,
+        {index: inputs._frame(data, index) for index in ids},
+        {index: int(clock[index]) for index in ids},
+        [tuple(int(index) for index in group) for group in groups],
+    )
+
+
+def artificial_regions(event_square: Any, rgb_square: Any, count: int) -> list[ObjectRegion]:
+    """Keep the original ROI first; translate every other region deterministically."""
+    if not 1 <= count <= 20:
+        raise ValueError("The registered capacity population is one to twenty regions")
+    result = []
+    for index in range(count):
+        dx, dy = (index % 5) * 17, (index // 5) * 13
+        event = tuple(
+            float(value) + (dx if axis % 2 == 0 else dy) for axis, value in enumerate(event_square)
+        )
+        rgb = tuple(
+            float(value) + (dx if axis % 2 == 0 else dy) for axis, value in enumerate(rgb_square)
+        )
+        result.append(ObjectRegion(f"roi_{index:02d}", cast(Square, event), cast(Square, rgb)))
+    if len({item.event_square for item in result}) != count:
+        raise ValueError("Artificial load must contain distinct regions")
+    return result
+
+
+def reference_rgb(
+    history: RawRGBHistory, region: ObjectRegion
+) -> list[tuple[np.ndarray, dict[str, Any]]]:
+    """Use the original PIL crop adapter independently of the optimized workers."""
+    if region.rgb_square is None:
+        return []
+    frames = {
+        index: crop_uint8(frame, region.rgb_square) for index, frame in history.frames.items()
+    }
+    result = []
+    for group in history.triplets:
+        times = [history.timestamps_us[index] for index in group]
+        pixels = np.ascontiguousarray(
+            np.stack([frames[index] for index in group]).astype(np.float32) / 255
+        )
+        result.append(
+            (
+                pixels,
+                {
+                    "first_sensor_ts_us": times[0],
+                    "anchor_us": times[-1],
+                    "available_us": history.query_us,
+                    "timestamps_us": times,
+                    "frame_indices": list(group),
+                    "delta_t_s": (np.diff(times) / 1e6).tolist(),
+                    "square_xyxy": list(region.rgb_square),
+                },
+            )
+        )
+    return result

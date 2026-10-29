@@ -1,0 +1,10 @@
+{
+  "rank": 46,
+  "deterministic_algorithms": false,
+  "cudnn_deterministic": false,
+  "max_feature_error": 0.0,
+  "point_phase_error": 0.0,
+  "ttc_error_seconds": 0.0,
+  "optimizer_updates": 0,
+  "historical_runtime_authority": "scripts/build_simplex_t_context_features.py: FP32, TF32 off, cudnn benchmark false; no deterministic algorithms enabled"
+}

@@ -1,0 +1,135 @@
+import json
+import sys
+import time
+from pathlib import Path
+
+sys.path[:0] = ["src", "."]
+import numpy as np
+import torch
+
+from operational.rgb_port import transfer as engine
+from operational.train40_runtime.context import ContextRuntime
+from operational.train40_runtime.producers import ProducerRuntime
+from scripts.final_train40_transfer import load_models, read, verify_candidate
+
+torch.set_num_threads(2)
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = False
+torch.backends.cudnn.benchmark = False
+paths, _ = verify_candidate(Path("D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE"))
+models, normalizers = load_models(paths, "cuda")
+rows = read(Path("artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"))["rows"]
+runtime = ProducerRuntime(models, "cuda", graphs=True, block_graphs=True, reuse_encodings=True)
+context = ContextRuntime(models, normalizers, "cuda", graphs=True)
+event_stream, rgb_stream = torch.cuda.Stream(), torch.cuda.Stream()
+records = []
+
+
+def predict_context(e, r, metadata, anchor):
+    return context.predict(
+        *e,
+        [anchor - int(lag) for lag in engine.EVENT_LAGS_US],
+        *r,
+        metadata,
+        anchor,
+    )["predictions"]
+
+
+with torch.inference_mode():
+    for index in (0, 200, 553):
+        row = rows[index]
+        raw = engine.prepare_event(row)
+        rgb, _ = engine.raw_rgb_observations(row)
+        es = torch.from_numpy(raw["own_events"]).cuda()
+        ed = torch.full((4, 2), 0.1, device="cuda")
+        rs = torch.from_numpy(np.stack([x[0] for x in rgb])).cuda()
+        rd = torch.tensor([x[1]["delta_t_s"] for x in rgb], device="cuda", dtype=torch.float32)
+        metadata = [x[1] for x in rgb]
+        se, sr = runtime.expert_block("E", es, ed), runtime.expert_block("R", rs, rd)
+        serial_predictions = predict_context(se, sr, metadata, row["anchor_us"])
+        times = {"serial": [], "parallel": []}
+        parallel_predictions = None
+        exact = True
+        for route in ("serial", "parallel"):
+            for rep in range(10):
+                torch.cuda.synchronize()
+                start = time.perf_counter()
+                if route == "serial":
+                    e, r = runtime.expert_block("E", es, ed), runtime.expert_block("R", rs, rd)
+                else:
+                    current = torch.cuda.current_stream()
+                    event_stream.wait_stream(current)
+                    rgb_stream.wait_stream(current)
+                    with torch.cuda.stream(event_stream):
+                        et = runtime.expert_block_async("E", es, ed)
+                    with torch.cuda.stream(rgb_stream):
+                        rt = runtime.expert_block_async("R", rs, rd)
+                    current.wait_stream(event_stream)
+                    current.wait_stream(rgb_stream)
+                    runtime.validate_async_blocks(et, rt)
+                    e, r = (et.raw, et.experts), (rt.raw, rt.experts)
+                torch.cuda.synchronize()
+                times[route].append(time.perf_counter() - start)
+                if route == "parallel" and rep == 9:
+                    exact = all(torch.equal(a, b) for a, b in zip((*se, *sr), (*e, *r)))
+                    parallel_predictions = predict_context(e, r, metadata, row["anchor_us"])
+        record = {
+            "index": index,
+            "times": times,
+            "features_exact": exact,
+            "context_exact": serial_predictions == parallel_predictions,
+            "serial_predictions": serial_predictions,
+            "parallel_predictions": parallel_predictions,
+        }
+        records.append(record)
+        print(json.dumps(record), flush=True)
+
+    # Lifetime: two same-signature replays on different streams must preserve
+    # the first call's cloned outputs, including its guard.
+    reference = runtime.expert_block("E", es, ed)
+    es2 = es * 0.75
+    current = torch.cuda.current_stream()
+    event_stream.wait_stream(current)
+    rgb_stream.wait_stream(current)
+    with torch.cuda.stream(event_stream):
+        first = runtime.expert_block_async("E", es, ed)
+    with torch.cuda.stream(rgb_stream):
+        second = runtime.expert_block_async("E", es2, ed)
+    current.wait_stream(event_stream)
+    current.wait_stream(rgb_stream)
+    runtime.validate_async_blocks(first, second)
+    lifetime_exact = torch.equal(reference[0], first.raw) and torch.equal(reference[1], first.experts)
+    invalid = []
+    for kind in ("sensor_nan", "clock_zero", "overlap"):
+        bad_sensor, bad_delta = es.clone(), ed.clone()
+        if kind == "sensor_nan":
+            bad_sensor[0, 0, 0, 0, 0] = float("nan")
+        elif kind == "clock_zero":
+            bad_delta[0, 0] = 0
+        else:
+            bad_sensor[1, 0, 0, 0, 0] += 1
+        event_stream.wait_stream(current)
+        with torch.cuda.stream(event_stream):
+            bad = runtime.expert_block_async("E", bad_sensor, bad_delta)
+        current.wait_stream(event_stream)
+        try:
+            runtime.validate_async_blocks(bad)
+        except ValueError as error:
+            invalid.append({"kind": kind, "rejected": True, "error": str(error)})
+        else:
+            invalid.append({"kind": kind, "rejected": False})
+    restored = runtime.expert_block("E", es, ed)
+    recovery_exact = all(torch.equal(a, b) for a, b in zip(reference, restored))
+
+result = {
+    "scope": "GPU-resident sensor tensors through joined expert-block outputs; includes deferred guards, excludes raw preprocessing and H2D",
+    "records": records,
+    "lifetime_exact": lifetime_exact,
+    "invalid_inputs": invalid,
+    "recovery_exact": recovery_exact,
+    "graphs": runtime.diagnostics(),
+}
+Path("artifacts/train40_runtime_20261027/producer_probe/async_probe.json").write_text(
+    json.dumps(result, indent=2)
+)
+print(json.dumps({k: v for k, v in result.items() if k not in ("records", "graphs")}), flush=True)

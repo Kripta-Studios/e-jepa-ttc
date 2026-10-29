@@ -1,0 +1,95 @@
+{
+  "evidence_sha256": "f795cd421601c8c0a7ac9a032f8850993012df658d7653bbfb49188083d4dba0",
+  "full_objective_complete": false,
+  "official_comparison": false,
+  "rows": [
+    {
+      "MAE_s": 2.8466265385619187,
+      "MiDc": 131.2829873108998,
+      "aggregate": 89.99482799177008,
+      "model": "R_A5-P2-FROZEN",
+      "negative_MiD": 42.88521435386557,
+      "role": "P",
+      "rows": 53890,
+      "sign_error_rate": 0.02065318240861013
+    },
+    {
+      "MAE_s": 5.246288327982659,
+      "MiDc": 46.53721298031314,
+      "aggregate": 50.52625190387252,
+      "model": "RGB-PAIR-CORR-FT-S7",
+      "negative_MiD": 100.20546343356027,
+      "role": "P",
+      "rows": 53890,
+      "sign_error_rate": 0.0740025978845797
+    },
+    {
+      "MAE_s": 5.224565909709156,
+      "MiDc": 46.41448519518439,
+      "aggregate": 50.98202734928215,
+      "model": "RGB-PAIR-CORR-FROZEN-S7",
+      "negative_MiD": 97.19385809396788,
+      "role": "P",
+      "rows": 53890,
+      "sign_error_rate": 0.0704026721098534
+    },
+    {
+      "MAE_s": 3.8193605778795514,
+      "MiDc": 167.60168076269332,
+      "aggregate": 113.9101102013293,
+      "model": "R_A5-P2-FROZEN",
+      "negative_MiD": 52.966740590858066,
+      "role": "H",
+      "rows": 18422,
+      "sign_error_rate": 0.039952231028118554
+    },
+    {
+      "MAE_s": 5.437178101037181,
+      "MiDc": 115.95067867681932,
+      "aggregate": 90.9096016375995,
+      "model": "RGB-PAIR-CORR-FT-S7",
+      "negative_MiD": 105.6333760972808,
+      "role": "H",
+      "rows": 18422,
+      "sign_error_rate": 0.07664748670068397
+    },
+    {
+      "MAE_s": 5.3313554962447185,
+      "MiDc": 126.81585273966378,
+      "aggregate": 97.85241329207628,
+      "model": "RGB-PAIR-CORR-FROZEN-S7",
+      "negative_MiD": 102.21520107163987,
+      "role": "H",
+      "rows": 18422,
+      "sign_error_rate": 0.068396482466616
+    }
+  ],
+  "selection_sha256": "71828997c2b3f7b9a5a1daf782da935421e1b896705bb895ed69bb392f8c30bb",
+  "source_bindings": {
+    "H/RGB-PAIR-CORR-FROZEN-S7": {
+      "metrics": "c5e8724a6796864fd643fac8dc08d57682fefa3d8eab83742ef9d871031323bc",
+      "predictions": "82b28be44656d91b5cc54f1f1fe632e05d02375b549b1bfd2ca3932fce2d6bee"
+    },
+    "H/RGB-PAIR-CORR-FT-S7": {
+      "metrics": "fd171dc50ff303a5a3c4ba3045f3a42a5a47a3c1d0d3a87e0477849bd1f29a23",
+      "predictions": "9a6e2ef82904a4af2ba5fd6f9d671d0166758d08b4fe05915a4656675af1b881"
+    },
+    "H/R_A5-P2-FROZEN": {
+      "metrics": "4a8041eb1ce082bfc7c4a6376e27fc1f5649df025630c5cdef9c65146204dd79",
+      "predictions": "d626da7f5347e5720f62d2758fade51c5261d815d608fef1fc1cd73222ab3f89"
+    },
+    "P/RGB-PAIR-CORR-FROZEN-S7": {
+      "metrics": "65b5fb9422475c9631404c73be89428447ecdd2dd63b354e78b9a52db8140afa",
+      "predictions": "d9105807e5fb52922f65f8dc7d95445773b5cf694cf75a23ef0adefe3c2bcdf6"
+    },
+    "P/RGB-PAIR-CORR-FT-S7": {
+      "metrics": "86eddef3d9c1967ca9c5c89746dcd3c023943b45a12b5ad443ce4ef32018128e",
+      "predictions": "113451d4581ef24cf438a41014a792d043272b324b7622bebcbf52afdc32941c"
+    },
+    "P/R_A5-P2-FROZEN": {
+      "metrics": "b9cd0fbb1fd797ba066211f5d76a8b6417feaf93e8d077d6c9ad6520dd8618ab",
+      "predictions": "533eeae038b60fae849aada92b86e5edfa3fc6749a0c3b1ddd68ace0c6905c20"
+    }
+  },
+  "status": "NO_CANDIDATE_RGB_PAIR"
+}

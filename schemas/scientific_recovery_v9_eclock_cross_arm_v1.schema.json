@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "E-Clock X0 signed cross-arm comparison",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "status",
+    "primary_comparison",
+    "git_commit",
+    "seed",
+    "row_count",
+    "base_mid",
+    "dyn_mid",
+    "delta_mid_dyn_minus_base",
+    "bootstrap",
+    "gate_decision",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {"const": "eclock_x0_cross_arm_comparison_v1"},
+    "status": {"const": "complete"},
+    "primary_comparison": {"const": "X0-DYN-U_vs_X0-BASE-U"},
+    "git_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "seed": {"const": 7},
+    "row_count": {"const": 8192},
+    "base_mid": {"type": "number"},
+    "dyn_mid": {"type": "number"},
+    "delta_mid_dyn_minus_base": {"type": "number"},
+    "bootstrap": {"type": "object"},
+    "gate_decision": {"type": "object"},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

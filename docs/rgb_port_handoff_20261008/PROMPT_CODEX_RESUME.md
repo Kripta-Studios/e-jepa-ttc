@@ -1,0 +1,3 @@
+Reanuda únicamente RGB-PORT desde su último estado durable. Lee execution_policy.json, RGB_PORT_PROGRESS.json y el registro de propietario vivo antes de crear procesos. No presupongas que este handoff representa el estado local más reciente.
+
+Comprueba identidad de modelo/optimizer/sampler/inputs, restaura sin duplicar fits o resetear cuotas, y continúa ramas listas en P0–P4. Conserva R1 y otras campañas. No uses interrupciones ni presupuesto sobrante para añadir brazos/semillas. Si lo único pendiente es una dependencia externa, entrega el estado y el comando de recuperación real. El objetivo sigue siendo ejecución y resultados dentro del alcance, no otra planificación.

@@ -1,0 +1,16 @@
+{
+  "GT_gate": "Both complete seals, exact query IDs, manifest SHA and model bindings before TTC reads",
+  "GT_matching": "Nearest public ttc.csv row, maximum 50 ms, earlier timestamp wins ties; zero/nonfinite excluded",
+  "ROI": "Public annotated boxes and declared adapters, not detector outputs; shared query ROI differs from native per-anchor ROI",
+  "RTE_pct": "100 * abs(prediction-target) / abs(target); signed nonzero targets, no clipping",
+  "bands": "negative<0; (0,3); [3,6); [6,10]; (10,infinity). Descriptive RTE bins, NOT official MiD bins",
+  "bootstrap": "2000 whole physical sequence draws seed 7, macro paired difference, exploratory",
+  "cohorts": "historical46 contains shared anchors; extended_new excludes all overlaps; no merged primary score",
+  "inputs": "Own RGB+events uses native causal sensor history up to 650 ms; Garl uses two RGB frames and two event segments dt 0.1 s",
+  "macro": "Equal weight per physical sequence; pooled gives equal weight per query",
+  "missing_predictions": "Coverage retained; complete-cohort score withheld; finite and paired subsets labeled conditional",
+  "precision": "Both routes use float32 tensors. Own explicitly disables matmul/cuDNN TF32; Garl preserves backend defaults. Not a matched backend precision benchmark.",
+  "scope": "No official benchmark score, no SOTA claim, no new fitting or checkpoint selection",
+  "timing": "Raw instrumented wall seconds include preprocessing/caches; no isolated kernel or head-to-head latency claim",
+  "transfer": "EvTTC previously observed; descriptive transfer, not blind confirmation or exact paper Table VI reproduction"
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "rgb_port_data_config_v1",
+  "authorized_source": "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAIN40_ROWS.parquet",
+  "eap_root": "E:/eAP_dataset",
+  "metadata_root": "E:/E_JEPA_TTC_RGB_PORT/metadata",
+  "run_root": "artifacts/rgb_port_20261008",
+  "split_manifest": "artifacts/rgb_port_20261008/SPLIT_MANIFEST.json",
+  "frame_availability": "artifacts/rgb_port_20261008/FRAME_AVAILABILITY.json",
+  "input_contracts": "artifacts/rgb_port_20261008/INPUT_CONTRACTS.json",
+  "role_manifests": {
+    "P": "artifacts/rgb_port_20261008/P_MANIFEST.json",
+    "H": "artifacts/rgb_port_20261008/H_MANIFEST.json",
+    "V": "artifacts/rgb_port_20261008/V_MANIFEST.json"
+  },
+  "source_factories": {
+    "rgb_producer": "e_jepa_ttc.rgb_port.data:make_rgb_producer_source",
+    "rgb_inference": "e_jepa_ttc.rgb_port.data:make_rgb_inference_source",
+    "rgb_dataset": "e_jepa_ttc.rgb_port.data:RGBPortDataset"
+  },
+  "generic_dino_manifest": "artifacts/rgb_port_20261008/P_DINO_MANIFEST.json",
+  "prepared_rgb_cache_binding": "artifacts/rgb_port_20261008/P_RGB_CACHE_BINDING.json",
+  "prepared_rgb_cache_root": "E:/E_JEPA_TTC_RGB_PORT/prepared/P",
+  "split_salt": "rgb-port-v13-phv-20261008",
+  "lookback_us": 650000,
+  "max_observations": 8,
+  "max_workers": 4,
+  "bounded_prefetch": 8,
+  "rss_limit_bytes": 23000000000,
+  "hard_available_bytes": 2147483648,
+  "recover_available_bytes": 3221225472,
+  "disk_min_free_bytes": 10000000000
+}

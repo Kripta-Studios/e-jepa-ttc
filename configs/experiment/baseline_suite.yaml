@@ -1,0 +1,5 @@
+name: baseline_suite
+protocol: development_sequence_disjoint
+models: [mean, median, geometric, tiny_cnn_event_count, tiny_cnn_voxel_grid, temporal_gru]
+seeds: [7, 13, 23]
+select_hyperparameters_from: validation_only

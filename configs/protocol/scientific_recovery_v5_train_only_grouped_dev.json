@@ -1,0 +1,150 @@
+{
+  "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+  "artifact_type": "scientific_recovery_v5_train_only_grouped_dev_v1",
+  "cache_identity_check": {
+    "exact_sample_tokens": true,
+    "exact_sequence_ids": true,
+    "exact_track_ids": true,
+    "rows": 8192,
+    "sorted_sample_tokens_sha256": "a4a3174809e696c56e4d94dd9e37fd05cc1a632cf3e5a1363db5f71b1d54684c"
+  },
+  "checks": {
+    "every_train_sequence_dev_exactly_once": true,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "same_cache_universe": true,
+    "sample_token_unique": true,
+    "sequence_disjoint_folds": true,
+    "train_only_grouped_dev": true
+  },
+  "created_at_utc": "2026-08-12T23:06:40.766275+00:00",
+  "fold_count": 3,
+  "folds": [
+    {
+      "dev_rows": 2731,
+      "dev_sample_tokens_sha256": "85326602af71948734ff250a2e95e37d88db0d7cdbcfc494b30536f1956b61c9",
+      "dev_sequence_ids": [
+        "5ilM1PX2vz",
+        "OYgB6RGWcq",
+        "qGsgzl4Q8B"
+      ],
+      "fold": 0,
+      "train_rows": 5461,
+      "train_sample_tokens_sha256": "8f88d14d5f88228a7d59b853a8da86c9120d53c1fc7dcb94f94ae18f9a73d798",
+      "train_sequence_ids": [
+        "2cyv0Oedzg",
+        "6h5yRW2LGc",
+        "OBneIVg4Cw",
+        "WbCh1DRerJ",
+        "mHGFBekt7X",
+        "t79dBxj1WS"
+      ]
+    },
+    {
+      "dev_rows": 2731,
+      "dev_sample_tokens_sha256": "5ea864aaa339ac5140bb61357e45b620f5819c42fa9db1542179658395d4fa77",
+      "dev_sequence_ids": [
+        "2cyv0Oedzg",
+        "6h5yRW2LGc",
+        "mHGFBekt7X"
+      ],
+      "fold": 1,
+      "train_rows": 5461,
+      "train_sample_tokens_sha256": "b57f1d9667c25a97a6f812406a534c63678d0cfce4dc25749efcd5c5c131f552",
+      "train_sequence_ids": [
+        "5ilM1PX2vz",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "WbCh1DRerJ",
+        "qGsgzl4Q8B",
+        "t79dBxj1WS"
+      ]
+    },
+    {
+      "dev_rows": 2730,
+      "dev_sample_tokens_sha256": "e09980a547cf9c71c27cda9ee02c2ff12de6857dea47ced64ae61acb7a876f17",
+      "dev_sequence_ids": [
+        "OBneIVg4Cw",
+        "WbCh1DRerJ",
+        "t79dBxj1WS"
+      ],
+      "fold": 2,
+      "train_rows": 5462,
+      "train_sample_tokens_sha256": "b4163c61800ff36de95b2c764182b63a9a6b38f7975ea8a1db94f9b20f83fb24",
+      "train_sequence_ids": [
+        "2cyv0Oedzg",
+        "5ilM1PX2vz",
+        "6h5yRW2LGc",
+        "OYgB6RGWcq",
+        "mHGFBekt7X",
+        "qGsgzl4Q8B"
+      ]
+    }
+  ],
+  "git_commit": "f21ffc5422e4e9b0e5b3f0a2f1cba5ad5c96469c",
+  "git_tracked_dirty": false,
+  "protocol_version": "scientific_recovery_v5_train_only_grouped_dev_v1",
+  "sample_count": 8192,
+  "sequence_count": 9,
+  "sequence_ids": [
+    "2cyv0Oedzg",
+    "5ilM1PX2vz",
+    "6h5yRW2LGc",
+    "OBneIVg4Cw",
+    "OYgB6RGWcq",
+    "WbCh1DRerJ",
+    "mHGFBekt7X",
+    "qGsgzl4Q8B",
+    "t79dBxj1WS"
+  ],
+  "sequence_sample_counts": {
+    "2cyv0Oedzg": 911,
+    "5ilM1PX2vz": 911,
+    "6h5yRW2LGc": 910,
+    "OBneIVg4Cw": 910,
+    "OYgB6RGWcq": 910,
+    "WbCh1DRerJ": 910,
+    "mHGFBekt7X": 910,
+    "qGsgzl4Q8B": 910,
+    "t79dBxj1WS": 910
+  },
+  "sorted_sample_tokens_sha256": "a4a3174809e696c56e4d94dd9e37fd05cc1a632cf3e5a1363db5f71b1d54684c",
+  "source_universe_contract": {
+    "fixed_before_v5": true,
+    "fold_assignment_columns": [
+      "sequence_id",
+      "sample_token",
+      "track_id"
+    ],
+    "fold_assignment_reads_target_or_performance": false,
+    "historical_8192_selection_used_official_ttc_bucket": true,
+    "historical_selection_limitation_acknowledged": true
+  },
+  "sources": {
+    "cache_manifest": {
+      "artifact_sha256": "f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec",
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\cache\\garl_object_event_common_roi_train8192_v1\\manifest.json",
+      "sha256": "063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39"
+    },
+    "metric_implementation": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\src\\e_jepa_ttc\\evaluation\\garl_ttc_protocol.py",
+      "sha256": "4db6a883b73f04e9ec3c002de180ee7c7557551f23fc06fe1e0e2f4d50d9b05e"
+    },
+    "public_split": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\data\\splits\\eap_pilot12_v1.json",
+      "sha256": "39bf3943c728a7455d025cf60ff7f1d6fa60d6c126faa4c8c79463813c24147f"
+    },
+    "train_metadata": {
+      "columns_used_for_split": [
+        "sequence_id",
+        "sample_token",
+        "track_id"
+      ],
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_master_v3\\garl_budget_subset\\train_data.parquet",
+      "sha256": "50534e49323b10fb5cc1ab850391d85b88c7669b39f866e798cf0a18d621bbcd"
+    }
+  },
+  "split_algorithm": "sequence_row_count_greedy_sha256_tiebreak_v1",
+  "split_seed": 20260813,
+  "status": "frozen_before_a8_results"
+}

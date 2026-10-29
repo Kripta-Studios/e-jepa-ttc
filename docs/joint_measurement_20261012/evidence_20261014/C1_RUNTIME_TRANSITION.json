@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-14T15:37:12.096575+00:00",
+  "status": "ADMITTED_CAPTURE_RESTORED_AND_ADVANCING",
+  "driver_pid": 37692,
+  "driver_created": 1791992126.9746847,
+  "observer_pid": 18476,
+  "origin_updates": 472,
+  "current_journal": {
+    "completed_updates": 484,
+    "durable_updates": 472,
+    "identity_sha256": "beba9f4a201478558cab5be976288fca6d130201eede33dee2930c55d6098190",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "lost_updates": 0,
+  "restoration_sha256": "135c80dff8a347d86bb245c48616c89f29aea2f0f590b9dcfa1cb21f0e0fa4aa",
+  "runtime_registration_sha256": "db16cbcec9ba94239b9df36985b84fb3de730618028df42ff71014b3919d660d",
+  "probe_result_sha256": "97da8df5fb8db2cd345384337f2b40c752103138bc8831a8ae8853a118a6871b",
+  "QA_result_sha256": "233ddbfc8c3318d1ede4d4cb8b0e89add4c4a2397c1f5968739b5db709bee2e4",
+  "CPU_tests": 15,
+  "admission_and_driver_guard_tests": 22,
+  "ruff": "PASS",
+  "pyright": "PASS",
+  "commit": "d33e708",
+  "prepared_compute_speedup": 3.3774186966289164,
+  "end_to_end_speedup_measured": false,
+  "next_hour": "2026-10-14T18:00:00+02:00"
+}

@@ -1,0 +1,49 @@
+{
+  "scope": "RAW_CPU_PACKET_TO_ALL_EVENT_TENSORS_NO_MODELS_OR_TTC",
+  "data": {
+    "synthetic": true,
+    "seed": 7
+  },
+  "sources": {
+    "scripts\\benchmark_train40_compiled_prefix.py": "4ddf05b1977f20b285ef1bf96af993d2688e1894e6ee41fcd18c063e845442dd",
+    "scripts\\benchmark_train40_prefix.py": "ed70d21229e0c4842d1bba22e9b1120ff1f8f8285501e950c65c048ac50bfc32",
+    "scripts\\benchmark_train40_transport.py": "122f8954567bdb43acd04363e055314e57e1b4d3377254125a74580d19064b20",
+    "operational\\train40_runtime\\compiled_prefix.py": "591a7de8f1ec8be28bd1c0183d3ebc623d3fb8df1e3e8e4123f2ba11a90c6cb6",
+    "operational\\train40_runtime\\temporal_prefix.py": "0d9c55068f2068150e4cc61d21ae0ecae06842817dd6ba28ab1389e7a6bd3115",
+    "operational\\train40_runtime\\integral.py": "cb4fba28675cde66dfbab6e191a179317924bc3113594cffff361f81b53c6680",
+    "operational\\train40_runtime\\normalization.py": "2c7dc863d525338fb703085d221cd8d1d0b1e7432bee39bdb34ce9c7de1fa816"
+  },
+  "source_commit": "8c5226ddb668b13dc0233f65b2089488c49aa87a",
+  "python": "3.11.15",
+  "torch": "2.11.0+cu128",
+  "cuda": "12.8",
+  "device": "cpu",
+  "gpu": null,
+  "normalization": "topk",
+  "graphs": false,
+  "compile_backend": "eager",
+  "source_timestamps_us": [
+    738,
+    600738,
+    660738
+  ],
+  "objects": [
+    1,
+    20
+  ],
+  "measured_updates": 2,
+  "warmup_updates": 1,
+  "reference_host_bytes": 2322432,
+  "packet_events": [
+    219,
+    206,
+    207
+  ],
+  "input_sha256": {
+    "x": "194acfd8bfb4da34da1a34d969eb6b40ceb74501ab6d63add150570fbf5e6385",
+    "y": "1b7bfdb0c98439ce5484f71228c09c1624fc7167aa791da91bd909183f07607a",
+    "t": "400e305da142239b901967e64c5a9f86d185ae6501ee563ef8fa4d06c9c93a38",
+    "p": "5fa4283276049d5c8f6f61d76986050bd8c9076278e486114d67fe3b80658734"
+  },
+  "target_50hz_demonstrated": false
+}

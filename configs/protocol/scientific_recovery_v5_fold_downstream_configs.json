@@ -1,0 +1,103 @@
+{
+  "artifact_sha256": "df49be2a3972874525484b8e09ff29144aa90a111316f8610b042484be3f74a5",
+  "artifact_type": "scientific_recovery_v5_fold_downstream_frozen_configs_v1",
+  "configs": [
+    {
+      "arm": "a6_comparator",
+      "fold": 0,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a6_grouped_fold0_seed7.yaml",
+      "seed": 7,
+      "sha256": "3f6b7f3ced38bc15df7b7296a5b7826029f52ab427f3d7b7664ce7d894c8fceb"
+    },
+    {
+      "arm": "a6_comparator",
+      "fold": 1,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a6_grouped_fold1_seed7.yaml",
+      "seed": 7,
+      "sha256": "afcc446326b9b13c143ca6407698a1a04e02d53f09f3b04307f43e0d7955c03a"
+    },
+    {
+      "arm": "a6_comparator",
+      "fold": 2,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a6_grouped_fold2_seed7.yaml",
+      "seed": 7,
+      "sha256": "117b6c3eea48e8f0875c2847b327da5cbb5103cbe3a0dac675dbeec03f2e14da"
+    },
+    {
+      "arm": "a8_0",
+      "fold": 0,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a8_0_dual_transport_grouped_fold0_seed7.yaml",
+      "seed": 7,
+      "sha256": "7b9e799eb2f15eecbc0c060a2ac92ba99d6a5a79033054ebc996fc6e381ece04"
+    },
+    {
+      "arm": "a8_0",
+      "fold": 1,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a8_0_dual_transport_grouped_fold1_seed7.yaml",
+      "seed": 7,
+      "sha256": "54051375eb4269e7efa626d008aa71ee65c1c4f6c472b499df0abbc16a0e1182"
+    },
+    {
+      "arm": "a8_0",
+      "fold": 2,
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a8_0_dual_transport_grouped_fold2_seed7.yaml",
+      "seed": 7,
+      "sha256": "de70341c3d065a3abe148a1c3602ed98bf417d0db9008148242dfd747c946770"
+    }
+  ],
+  "contracts": {
+    "causal_left": true,
+    "cuda_runs_concurrent": false,
+    "event_only": true,
+    "num_workers": 0,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "train_only_grouped_dev": true
+  },
+  "created_at_utc": "2026-08-13T03:53:51.330930+00:00",
+  "git_commit": "e5e76bde758cc71d93a70701c7bbcc8ff42d04f0",
+  "parents": {
+    "0": {
+      "checkpoint": "artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold0_seed7/model_best.pt",
+      "checkpoint_sha256": "bb9d087c88b49641d0054aa38a24537354fff3db0aac66b557373a9e8fd8cc9c",
+      "parent_contract": "artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold0_seed7/parent_contract.json",
+      "parent_contract_artifact_sha256": "f91d1d3aa1e9428ca110d4eb7d6790397ae58d8ca63679d255a92556ba076c57",
+      "parent_contract_sha256": "d2f2cc124a217fe4e87491e782995cf671c60f2008267abf1bb677bdcac83fd6"
+    },
+    "1": {
+      "checkpoint": "artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold1_seed7/model_best.pt",
+      "checkpoint_sha256": "181d2db3cc0c661036a98151ceb3b00f6bc59df7d0cbe1c3b6265c4ec1039f39",
+      "parent_contract": "artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold1_seed7/parent_contract.json",
+      "parent_contract_artifact_sha256": "95d719ea1557ce4135be0651dd09d51817fe8c74a34749e74e9098bd51964f7b",
+      "parent_contract_sha256": "3d722004cebc056ac20c177e8fae9813d615e7280e7624cc26f2da1a6f43f66f"
+    },
+    "2": {
+      "checkpoint": "artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold2_seed7/model_best.pt",
+      "checkpoint_sha256": "da1a498b6d2286df085415b1c34d5dc13227fc6d6e78c2dcdc6473f53fdeb879",
+      "parent_contract": "artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold2_seed7/parent_contract.json",
+      "parent_contract_artifact_sha256": "b81ff61a5667ac08b66edc96b69131939e3b819351b609c25b93381015b30569",
+      "parent_contract_sha256": "c354a91fa249276522bb640661c90b0e36b6bb15effa69af30830461b3d1101b"
+    }
+  },
+  "protocol": {
+    "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+    "file_sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874",
+    "path": "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
+  },
+  "seed_policy": {
+    "folds_measure_sequence_population_change_not_multiseed": true,
+    "parent_seed": 7,
+    "transport_training_seed": 7
+  },
+  "sources": {
+    "a6": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_master_v3\\configs\\causal_a6\\a6_s1_causal_left_seed7.yaml",
+      "sha256": "114b07cbdfcc75875855d7dd66e38739b91cb056b9f806efa05f6fefabcf55ae"
+    },
+    "a8": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_master_v3\\configs\\a6_a7_s1\\a7_s1_seed7.yaml",
+      "sha256": "64e9bc94836ceae18801f61ad66ac8f889f07007ebc73059e88ccd5b635378d1"
+    }
+  },
+  "status": "frozen_after_parents_before_a6_a8_training"
+}

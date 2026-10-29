@@ -1,0 +1,19 @@
+{
+  "kind": "PRE_FREEZE_EXACT_INPUT_IO_OPTIMIZATION",
+  "old_runner_sha256": "830a20be35fb604ea0bbf41c6272cf02384c08798a2ebffe6b3ee124618ab0ea",
+  "new_runner_sha256": "63fbbd85024cf6e58215eefa9043562e783aabea5c9ab4957ecbbe841e594f80",
+  "union_reader_sha256": "4b9493b76ebd4efff859000a89e2b64541687f6d14d4b5e1ac9534ff97742d32",
+  "proof": "artifacts/simplex_t/T0/UNION_READ_PARITY_64.json",
+  "proof_sha256": "a94b4b879eb63dea5fd9ddf149419dabd57b44a2239184b178a81c27ebfbb699",
+  "real_queries": 64,
+  "real_windows": 3063,
+  "all_input_tensors_bit_identical": true,
+  "independent_read_seconds": 246.833833400102,
+  "union_read_seconds": 93.6788675999269,
+  "timing_limit": "Same host, alternating method order, filesystem caches not cleared",
+  "unchanged": ["event ordering", "ROI", "window boundaries", "voxel arithmetic", "expert weights", "batch layout", "precision", "scientific constants"],
+  "existing_blocks_preserved": 324,
+  "old_identity": "artifacts/simplex_t/T1/context_features_fp32/IDENTITY_INDEPENDENT_WINDOWS.json",
+  "scientific_freeze_exists": false,
+  "optimizer_updates": 0
+}

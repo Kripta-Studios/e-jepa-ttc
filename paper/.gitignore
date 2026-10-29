@@ -1,0 +1,24 @@
+# TeX build intermediates; the delivered manuscript and figure PDFs are tracked.
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+/main.pdf
+
+# Local inspection images and Python caches.
+/revision/branding_review*.png
+/figures/*.png
+!/figures/fcwd_example.png
+!/figures/logo-evocon.png
+__pycache__/
+*.pyc

@@ -1,0 +1,27 @@
+\begin{tikzpicture}[x=1cm,y=1cm,>=Latex,
+  every node/.style={font=\sffamily\scriptsize,text=ink}]
+  % Declared causal input support.
+  \fill[pale,rounded corners=2pt] (0.55,0.15) rectangle (10.75,1.70);
+  \draw[rulegray,line width=.6pt,rounded corners=2pt] (0.55,0.15) rectangle (10.75,1.70);
+  \draw[teal,line width=1.15pt] (0.90,1.37)--(10.45,1.37);
+  \draw[teal,line width=1.15pt] (0.90,1.22)--(0.90,1.52);
+  \draw[teal,line width=1.15pt] (10.45,1.22)--(10.45,1.52);
+  \node[anchor=south,text=teal] at (5.68,1.43) {declared causal support: up to 650 ms};
+  \node[anchor=north,text=muted] at (0.90,1.18) {$t-650\,\mathrm{ms}$};
+
+  % Illustrative asynchronous observations, available before the query.
+  \foreach \x/\c in {1.45/teal,2.15/blue,3.20/teal,4.65/blue,5.10/teal,6.85/blue,7.75/teal,8.25/teal,9.55/blue} {
+    \draw[\c,line width=1.05pt] (\x,.42)--(\x,.83);
+  }
+  \node[anchor=north,text=muted] at (5.55,.42) {available event and RGB observations};
+
+  % Query and later output.
+  \draw[blue,line width=1.25pt] (10.45,-.18)--(10.45,1.86);
+  \fill[blue] (10.45,.70) circle (2pt);
+  \node[anchor=south west,text=blue] at (10.57,.78) {query $t$};
+  \draw[-{Latex[length=2mm]},coral,line width=1.1pt] (10.55,-.55)--(14.55,-.55);
+  \fill[coral] (14.55,.70) circle (2pt);
+  \draw[coral,line width=1.25pt] (14.55,-.18)--(14.55,1.28);
+  \node[anchor=south,text=coral,align=center] at (14.05,.76) {complete host\\TTC output $t+L$};
+  \node[anchor=north,text=coral] at (12.55,-.62) {measured response time $L$};
+\end{tikzpicture}

@@ -1,0 +1,52 @@
+{
+  "schema": "simplex_t_component_evidence_profile_v1",
+  "ack_sha256": "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318",
+  "historical_replay": {
+    "path": "artifacts/simplex_t/T0/current_expert_replay_64/HISTORICAL_REPLAY_QA_PASSED.json",
+    "sha256": "7d1d97dfbeb0fcad2cad440957b1531aa2d007fc6093986570496d2476aa8e9d"
+  },
+  "coherent_replay": {
+    "path": "artifacts/simplex_t/T0/coherent_fp32_extractor_receipt/QA.json",
+    "sha256": "5801fee3e03f967b471344a72bdbaa9830679a1e0d71539478fc578c5a1694de"
+  },
+  "unit_qa": {
+    "root": "artifacts/simplex_t/T0/full_unit_qa_76660d9",
+    "pins": {
+      "CONTRACT.json": "bc5dd90c8addd99c7792c50bfa9c0a0976bdf8cf741269fde9fce2928562a1e5",
+      "COLLECTED.json": "6d57fdd4876c8f380163788ddf3376d78989150bbe1960177e5c8359165b66fe",
+      "RESULT.json": "f00a18d7c67cfa093a0858bfbb482f116cd63b5807ee407d58fec966a1956ed3",
+      "UPDATE_PROGRESS.json": "5215e43cc052074f6b52c4e6ea4f5be7cb81d8e0eaa247c5709914c168138d8c",
+      "reports.jsonl": "733827c04436df407f1341694ce4ab3b672e854650d7b77690001b6c733b5940",
+      "QA.xml": "a8ff3a99398137c9ad1a9172215e566be94aaaea206e275e35f774c9c0f7a8dd"
+    },
+    "technical_ledger_sha256": "dd8435c4c93cb1f65e06710796a3fea00230b52daa9c8f97adf88392a4057cb5"
+  },
+  "static_qa": {
+    "root": "artifacts/simplex_t/T0/static_failure_comparison_76660d9",
+    "pins": {
+      "COMPARISON.json": "64042e35204bb3e39c72279275e89dd0309787fd182077a724e53060412a535b",
+      "BASELINE_RUFF.json": "40e54cd06436437402aee3ebabd5a37cac5b3cb44c6591f31b72755c4bff8f6f",
+      "CURRENT_RUFF.json": "bd7b1a58302e2e59c943d387deaf2d4836a50719075ebd290e90078c4f908542"
+    }
+  },
+  "types_qa": {
+    "path": "artifacts/simplex_t/T0/COMPANION_FULL_TYPES_76660d9.json",
+    "sha256": "16602ffd5d55f2071cf653084c88eec01fd82fe82c8bad7a6721cbf1f0b0bb29"
+  },
+  "powershell_qa": {
+    "path": "artifacts/simplex_t/T0/POWERSHELL_BASELINE_CURRENT_AST_UTF8.json",
+    "sha256": "3a7c1a73977b7a0790c204d240437c67eef994da5616cce4ea439aab3c449cd9"
+  },
+  "resume": {
+    "root": "artifacts/simplex_t/T0/real_context_cpu_resume_journal_v2",
+    "source_sha256": "79f711eecf6f5b6f8bf0ae7d6cbac5982a137784dcf3bc215fa62a1abb5c851b",
+    "compiled_sha256": "498e5bb23d93a23f7513c6f268620138da084ed39e73c9164e958554d8b13cb4",
+    "pins": {
+      "continuous/checkpoint_last.pt": "023b15660f5aa5d61320266e70151bb4e099c41f2741cccb862ea1795d706b4a",
+      "split/checkpoint_last.pt": "023b15660f5aa5d61320266e70151bb4e099c41f2741cccb862ea1795d706b4a",
+      "TECHNICAL_JOURNAL.json": "84e64784e9c2149a2e1acaaabc3035e3ddb951258e8fb7adeecd09e9bbf6e954",
+      "RESUME_QA.json": "1f6c85182c34174282d962615cbe45e468a3919b60c87122fc46ec95e56e4f0c",
+      "CONTRACT.json": "45657b897499773d8ce3b5ce4cf295f6d58d2f8a652c364391f96628c6add1ab"
+    }
+  }
+}

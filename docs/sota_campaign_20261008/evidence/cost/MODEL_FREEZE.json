@@ -1,0 +1,251 @@
+{
+  "execution_freeze_sha256": "31ee30645f44829e79165d9d7b110c92d0835c790e25c158d03308c5f22cc8fa",
+  "models": {
+    "garl_event_only_shared_preparation": {
+      "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+      "device": "cuda",
+      "garl": {
+        "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+        "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+        "event_only_lhr": true,
+        "native_code_root": "${DATA}/Garl-TTC",
+        "source_sha256": {
+          "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+          "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+          "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+          "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+          "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+          "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+          "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+          "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+          "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+          "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+          "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+          "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+          "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+          "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+          "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+          "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+          "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+          "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+          "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+        },
+        "strict_state_load": true
+      },
+      "h8_heads": {
+        "13": {
+          "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+          "committed_updates": 2500,
+          "strict_state_load": true
+        },
+        "23": {
+          "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+          "committed_updates": 2500,
+          "strict_state_load": true
+        },
+        "7": {
+          "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+          "committed_updates": 2500,
+          "strict_state_load": true
+        }
+      },
+      "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+      "normalization": {
+        "arrays_read": [
+          "mean",
+          "scale"
+        ],
+        "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+        "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+        "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+        "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+        "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba"
+      },
+      "optimizer_updates": 0,
+      "producers": {
+        "a5": {
+          "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+          "committed_updates": 49932,
+          "strict_state_load": true
+        },
+        "c2f": {
+          "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+          "committed_updates": 49932,
+          "strict_state_load": true
+        },
+        "pair": {
+          "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+          "committed_updates": 6840,
+          "strict_state_load": true
+        },
+        "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b"
+      },
+      "targets_read": false
+    },
+    "garl_full_rgb_event": {
+      "checkpoint": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth",
+      "checkpoint_bytes": 973290993,
+      "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+      "config": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\configs\\ablation\\ours_full.yaml",
+      "config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+      "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+      "input": {
+        "channel_order": [
+          "RGB0[3]",
+          "RGB1[3]",
+          "EVENT0[20]",
+          "EVENT1[20]"
+        ],
+        "event_normalization": "none",
+        "rgb_mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "rgb_std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "shape": [
+          46,
+          128,
+          128
+        ]
+      },
+      "module_sha256": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+      "native_code_root": "${DATA}/Garl-TTC",
+      "native_delta_t_s": 0.1,
+      "native_rgb_sync": "front",
+      "native_source_sha256": {
+        "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+        "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+        "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+        "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14"
+      },
+      "optimizer_updates": 0,
+      "removed_initializer_paths": {
+        "pretrained_ckpt_event": "checkpoints/paper_event_only_lhr.pth",
+        "pretrained_ckpt_rgb": "checkpoints/paper_visual_only_lhr.pth"
+      },
+      "strict_state_load": true,
+      "targets_read": false
+    },
+    "h8_system_three_heads": {
+      "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+      "device": "cuda",
+      "garl": {
+        "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+        "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+        "event_only_lhr": true,
+        "native_code_root": "${DATA}/Garl-TTC",
+        "source_sha256": {
+          "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+          "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+          "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+          "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+          "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+          "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+          "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+          "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+          "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+          "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+          "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+          "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+          "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+          "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+          "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+          "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+          "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+          "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+          "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+        },
+        "strict_state_load": true
+      },
+      "h8_heads": {
+        "13": {
+          "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+          "committed_updates": 2500,
+          "strict_state_load": true
+        },
+        "23": {
+          "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+          "committed_updates": 2500,
+          "strict_state_load": true
+        },
+        "7": {
+          "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+          "committed_updates": 2500,
+          "strict_state_load": true
+        }
+      },
+      "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+      "normalization": {
+        "arrays_read": [
+          "mean",
+          "scale"
+        ],
+        "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+        "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+        "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+        "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+        "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba"
+      },
+      "optimizer_updates": 0,
+      "producers": {
+        "a5": {
+          "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+          "committed_updates": 49932,
+          "strict_state_load": true
+        },
+        "c2f": {
+          "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+          "committed_updates": 49932,
+          "strict_state_load": true
+        },
+        "pair": {
+          "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+          "committed_updates": 6840,
+          "strict_state_load": true
+        },
+        "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b"
+      },
+      "targets_read": false
+    }
+  },
+  "optimizer_updates": 0,
+  "runtime_identity": {
+    "cuda_device_capability": [
+      12,
+      0
+    ],
+    "cuda_device_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "cuda_total_memory_bytes": 12820480000,
+    "cudnn_version": 91900,
+    "nvidia_smi": {
+      "available": true,
+      "returncode": 0,
+      "rows": [
+        "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227, 12.0"
+      ]
+    },
+    "packages": {
+      "PyYAML": "6.0.3",
+      "h5py": "3.16.0",
+      "numpy": "2.4.6"
+    },
+    "platform": {
+      "cpu_count": 32,
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "release": "10",
+      "system": "Windows"
+    },
+    "python_version": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+    "torch_cuda_version": "12.8",
+    "torch_version": "2.11.0+cu128"
+  },
+  "schema": "sota_system_cost_fixed8_v1",
+  "status": "MODELS_FROZEN_BEFORE_MEASUREMENT",
+  "targets_read": false
+}

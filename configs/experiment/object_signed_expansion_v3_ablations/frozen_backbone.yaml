@@ -1,0 +1,4 @@
+model: ../../model/e_jepa_object_signed_expansion_event_v3.yaml
+finetuning: ../../train/object_signed_expansion_v3_ablations/frozen_backbone.yaml
+protocol: object_signed_expansion_v3_ablation_frozen_backbone
+selection: same_gated_selection_as_v3

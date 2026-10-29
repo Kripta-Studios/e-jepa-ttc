@@ -1,0 +1,11 @@
+dataset: GarlTTC
+version: garlttc_public_train_v4
+eap_root: ${EAP_ROOT}
+garlttc_root: ${GARLTTC_DATA_ROOT}
+split: data/splits/eap_train40_v1.json
+expected_train_rows: 88744
+official_labels: true
+include_rgb: false
+compression: gzip
+compression_level: 1
+shard_size: 4096

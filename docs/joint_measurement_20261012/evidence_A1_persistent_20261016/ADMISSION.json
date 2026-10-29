@@ -1,0 +1,19 @@
+{
+  "checkpoint_policy": "Original complete state, no resets",
+  "proofs": {
+    "FULL": "04d517e57e4e4166b63fda9b4f5c7dd34713549f203d7c386bd7609ad98b7324",
+    "LAST-BLOCK": "04d517e57e4e4166b63fda9b4f5c7dd34713549f203d7c386bd7609ad98b7324",
+    "cpu": "32ffe7fab05f98184528496a55a0b89aed888fd19911ddebcff3f9d6424eecb7",
+    "native": "a7b5a251724bf51557e15bacbe5416c9ef61f27be3d0b7d86f4b638969088b51"
+  },
+  "registration_sha256": "5f6e5c7d21dc32b1116c596e1cb4dab5821a36410c609b48299924fa47c5fc12",
+  "sources": {
+    "operational/joint_measurement/adaptation_runtime.py": "becde5e793ced4abfe4a6b3981a55d774f1eb8b699838644a0f2abf55180c8ec",
+    "operational/joint_measurement/adaptation_runtime_qa.py": "b963bd9011b52247fd83d8a36536888bb4d0bef912536ec688ff6be9d4b531fd",
+    "operational/joint_measurement/parallel_training_sensor.py": "91bbb2ad0accda141534c15ed8b695e36b99e1f7d7459ccb154748f8acb8ea48",
+    "operational/joint_measurement/persistent_adaptation.py": "24df7d16d05003609637e71d6f6d328df5530a2bb5a9c9b7398ae1ff8217b231",
+    "operational/joint_measurement/phase_transport_loss.py": "47e21e0c6ece47a21bbededdc919bd29d3ae1ec56c3764ae445eef211a77fa24",
+    "operational/joint_measurement/prefetched_sensor.py": "7cc8b4deab97254d3381f569c041a5ea52387af53a57b3e2a04d9eba80ee6759"
+  },
+  "status": "ADMITTED"
+}

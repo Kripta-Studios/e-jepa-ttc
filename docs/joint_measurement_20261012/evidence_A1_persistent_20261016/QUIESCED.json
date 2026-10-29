@@ -1,0 +1,28 @@
+{
+  "utc_epoch": 1792170992.8491232,
+  "status": "QUIESCED_WITHOUT_LOST_UPDATES",
+  "checkpoint_sha256": "80abe18a5b973a83267f6039383247d4772bedbb0a18808709a5f3d6d0339069",
+  "journal": {
+    "completed_updates": 1086,
+    "durable_updates": 1086,
+    "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "receipt": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\A1_adaptation_depth\\fits\\A1-LAST-BLOCK-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "80abe18a5b973a83267f6039383247d4772bedbb0a18808709a5f3d6d0339069",
+    "complete_state": true,
+    "completed_updates": 1086,
+    "fit_id": "A1-LAST-BLOCK-S7",
+    "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": false,
+    "status": "PAUSED"
+  },
+  "original_child_exited_naturally": true,
+  "driver_stopped_only_after_child_exit": true
+}

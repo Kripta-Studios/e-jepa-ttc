@@ -1,0 +1,127 @@
+{
+  "status": "BOUNDED_REVIEW_COMPLETE",
+  "comparisons": [
+    {
+      "id": "OFFICIAL_V7_C2F",
+      "evidence_paths": [
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\manifest.json",
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold0_seed7\\dev_predictions.csv",
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold1_seed7\\dev_predictions.csv",
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold2_seed7\\dev_predictions.csv"
+      ],
+      "evidence_sha256": [
+        "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304",
+        "e2fd196abc998fa7260250f64dc3193d2af075267127af9e2e3aa94f500f90b1",
+        "9fbc43e6cc00e05f3b357098bd462fc33ea7140c15b44aabe7fb30e18f9be628",
+        "5db0625ca2c857d257024bfb21db33e06a8ffa6678b05f08cf9ba02039ef6734"
+      ],
+      "queries": 8192,
+      "published_MiD": 158.57314044954794,
+      "classification": "INSUFFICIENT_CONTRACT_EVIDENCE",
+      "scientific_commit": "not_resolved_from_bound_baseline_manifest",
+      "source_manifest_type": "scientific_recovery_v7_baseline_reevaluation_v1",
+      "context": "not established",
+      "ROI": "not established",
+      "training_groups": "not fully bound",
+      "missing": [
+        "frozen producer source commit",
+        "complete TRAIN genealogy and checkpoint selection",
+        "ROI/modality/availability contract"
+      ],
+      "no_automatic_comparator_admission": true,
+      "columns": [
+        "sample_token",
+        "sequence_id",
+        "track_id",
+        "target_ttc_s",
+        "prediction_ttc_s",
+        "point_prediction_ttc_s",
+        "auxiliary_prediction_ttc_s",
+        "known_mask",
+        "guard_margin",
+        "ttc_log_variance",
+        "ttc_variance",
+        "event_count_log1p",
+        "event_rate_log1p",
+        "transport_flow_magnitude",
+        "fold",
+        "seed",
+        "cache_manifest_sha256",
+        "config_sha256"
+      ],
+      "identical_query_tokens": true,
+      "identical_sequence_id": true,
+      "identical_track_id": true,
+      "identical_outer_fold": true,
+      "identical_target_ttc": false,
+      "alias_mapping": {
+        "fold": "outer_fold",
+        "target_ttc_s": "target_ttc"
+      },
+      "max_target_difference": 1.7763568394002505e-15,
+      "identical_macro_mass": true,
+      "target_difference_interpretation": "CSV last-bit serialization differences; not evidence of different scientific population.",
+      "queries_and_folds_match_after_alias_resolution": true
+    },
+    {
+      "id": "GARL_LOCAL_FROZEN",
+      "evidence_paths": [
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\manifest.json",
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\garl_oof_predictions.csv"
+      ],
+      "evidence_sha256": [
+        "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304",
+        "9b7ff010c0ae5ac2bc3c5e91c323ee238d4434f3b2194ec1beb26d660926f0bd"
+      ],
+      "queries": 8192,
+      "published_MiD": 144.35302716563487,
+      "classification": "INSUFFICIENT_CONTRACT_EVIDENCE",
+      "scientific_commit": "not_resolved_from_bound_baseline_manifest",
+      "source_manifest_type": "scientific_recovery_v7_baseline_reevaluation_v1",
+      "context": "not established",
+      "ROI": "not established",
+      "training_groups": "not fully bound",
+      "missing": [
+        "frozen producer source commit",
+        "complete TRAIN genealogy and checkpoint selection",
+        "ROI/modality/availability contract"
+      ],
+      "no_automatic_comparator_admission": true,
+      "columns": [
+        "sample_token",
+        "track_id",
+        "sequence_id",
+        "target_ttc_s",
+        "prediction_ttc_s",
+        "point_prediction_ttc_s",
+        "auxiliary_prediction_ttc_s",
+        "known_mask",
+        "guard_margin",
+        "ttc_log_variance",
+        "ttc_variance",
+        "event_count_log1p",
+        "event_rate_log1p",
+        "transport_flow_magnitude",
+        "fold",
+        "seed"
+      ],
+      "identical_query_tokens": true,
+      "identical_sequence_id": true,
+      "identical_track_id": true,
+      "identical_outer_fold": true,
+      "identical_target_ttc": false,
+      "alias_mapping": {
+        "fold": "outer_fold",
+        "target_ttc_s": "target_ttc"
+      },
+      "max_target_difference": 8.881784197001252e-16,
+      "identical_macro_mass": true,
+      "target_difference_interpretation": "CSV last-bit serialization differences; not evidence of different scientific population.",
+      "queries_and_folds_match_after_alias_resolution": true
+    }
+  ],
+  "model_selection": false,
+  "additional_archeology": false,
+  "supersedes_unmapped_column_flags": "COMPARATOR_REVIEW.json",
+  "classification_unchanged": "Producer genealogy/ROI/information contract remains insufficient; float rounding alone is not a scientific mismatch."
+}

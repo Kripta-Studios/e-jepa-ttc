@@ -182,10 +182,7 @@ def _state_voxel(
         output_size=(config.roi_width, config.roi_height),
         expansion=config.roi_expansion,
     )
-    if (
-        config.adaptive_event_count is not None
-        and cropped.num_events > config.adaptive_event_count
-    ):
+    if config.adaptive_event_count is not None and cropped.num_events > config.adaptive_event_count:
         first = cropped.num_events - config.adaptive_event_count
         count_start_us = int(cropped.t_us[first])
         minimum_duration_start_us = end_us - config.minimum_adaptive_window_ms * 1000
@@ -330,9 +327,7 @@ def _window_sample(
     horizon_count = len(config.prediction_horizons_ms)
     sample: dict[str, np.ndarray | str] = {
         "context_events": np.stack(context_voxels),
-        "context_boxes": np.stack([_normalized_box(state) for state in window.history])[
-            :, None, :
-        ],
+        "context_boxes": np.stack([_normalized_box(state) for state in window.history])[:, None, :],
         "context_sampling_boxes": np.tile(
             _full_sampling_box(),
             (history_count, 1, 1),
@@ -402,10 +397,7 @@ def _write_shard(
         key: np.stack([np.asarray(sample[key]) for sample in samples]) for key in array_keys
     }
     payload.update(
-        {
-            key: np.asarray([str(sample[key]) for sample in samples])
-            for key in string_keys
-        }
+        {key: np.asarray([str(sample[key]) for sample in samples]) for key in string_keys}
     )
     payload.update(
         {
@@ -415,9 +407,7 @@ def _write_shard(
             )
             * 1e-3,
             "cache_format_version": np.asarray(2, dtype=np.int64),
-            "future_window_semantics": np.asarray(
-                "endpoint_offset_disjoint_fixed_duration"
-            ),
+            "future_window_semantics": np.asarray("endpoint_offset_disjoint_fixed_duration"),
         }
     )
     np.savez_compressed(path, **payload)
@@ -679,6 +669,9 @@ class EAPObjectCacheDataset(Dataset[dict[str, torch.Tensor | str]]):
         self.counts: list[int] = []
         for path in selected:
             with np.load(path, allow_pickle=False) as shard:
+                if "cache_format_version" not in shard or int(shard["cache_format_version"]) < 2:
+                    msg = f"Shard {path} has invalid cache_format_version. Must be >= 2."
+                    raise ValueError(msg)
                 self.counts.append(int(shard["sample_token"].shape[0]))
         self.cumulative = np.cumsum(self.counts).astype(np.int64).tolist()
         self._open_index: int | None = None
@@ -793,6 +786,13 @@ class ShardLocalSampler(Sampler[int]):
             positions = self._groups[shard_index].copy()
             rng.shuffle(positions)
             yield from positions
+
+    def set_epoch(self, epoch: int) -> None:
+        """Select the deterministic epoch order, including after resume."""
+
+        if epoch < 0:
+            raise ValueError("epoch must be non-negative.")
+        self.epoch = int(epoch)
 
 
 __all__ = [

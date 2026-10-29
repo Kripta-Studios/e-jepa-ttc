@@ -1,0 +1,21 @@
+{
+  "id": "SIMPLEX_T_CURRENT_RESUME_QA_2026-09-08",
+  "authority": "Authorized completion of real exact resume and final pre-fit QA",
+  "reason": "The saved real resume contract pins an earlier probe and journal module. The current probe also records model_sha256, which the verifier must validate.",
+  "previous_technical_reservation_cap": 1085,
+  "technical_reservation_cap": 1125,
+  "additional_authorized_optimizer_updates_max": 40,
+  "operations": {
+    "real_context_cpu_resume_current_contract": 20,
+    "full_unit_qa_current_resume_contract": 20
+  },
+  "resume_operation_key": "real_context_cpu_resume_ followed by the actual contract state digest, as required by the existing probe",
+  "ordering": "Commit all code first; execute real resume and final full suite without subsequent source changes",
+  "scientific_update_cap": 210000,
+  "total_new_optimizer_update_cap": 250000,
+  "new_scientific_arms_authorized": false,
+  "numerical_recipe_changed": false,
+  "old_evidence_promoted_to_current": false,
+  "historical_work_removed": false,
+  "scores_used": false
+}

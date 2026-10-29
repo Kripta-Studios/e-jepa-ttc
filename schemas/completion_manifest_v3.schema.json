@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "completion_manifest_v3"
+      ]
+    },
+    "smoke_completed": {
+      "type": "boolean"
+    },
+    "full_completed": {
+      "type": "boolean"
+    },
+    "failures": {
+      "type": "array"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed"]
+    },
+    "exit_code": {
+      "type": "integer"
+    },
+    "all_required_artifacts_exist": {
+      "type": "boolean"
+    },
+    "cache_v2_validation_passed": {
+      "type": "boolean"
+    },
+    "pytorch_onnx_equivalence_passed": {
+      "type": "boolean"
+    },
+    "final_test_opened": {
+      "type": "boolean"
+    },
+    "required_artifact_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "validated_artifact_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "completed_stages": {
+      "type": "array"
+    },
+    "failed_stages": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
+    ,"status"
+    ,"exit_code"
+    ,"all_required_artifacts_exist"
+    ,"cache_v2_validation_passed"
+    ,"pytorch_onnx_equivalence_passed"
+    ,"final_test_opened"
+    ,"required_artifact_count"
+    ,"validated_artifact_count"
+    ,"completed_stages"
+    ,"failed_stages"
+    ,"smoke_completed"
+    ,"full_completed"
+    ,"failures"
+  ],
+  "additionalProperties": false
+}

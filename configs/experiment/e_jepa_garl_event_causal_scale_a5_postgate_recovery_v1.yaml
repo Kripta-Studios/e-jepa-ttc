@@ -1,0 +1,58 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_a5_postgate_recovery_v1
+  protocol_version: causal_scale_a5_postgate_recovery_v1
+  evidence_scope: public_eap_garl_train_validation_only
+  purpose: replicate_the_seed7_transport_signal_then_test_A4_geometry_anchoring
+source_evidence:
+  a4_summary: artifacts/runs/causal_scale_eap_screen_a4_dinov3_relational_rgb_v2_seed7/summary.json
+  a4_summary_artifact_sha256: 5a9a34a0de14d30749bde0e2d650e83171537f8e26ec95b12cb570f1df4e3cf1
+  a4_checkpoint: artifacts/runs/causal_scale_eap_screen_a4_dinov3_relational_rgb_v2_seed7/model_best.pt
+  a4_checkpoint_sha256: db4cf4a112df66c5ef8f291f83c05c76fe263e3fb11c0665d649acf91a193c35
+  observed_a5_seed7_summary: artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed7/summary.json
+  observed_a5_seed7_artifact_sha256: 620ed61f6e90fb28a498c81bb74d020e14287afafaf04b61ed2c55f4ca90bac3
+  observed_a5_seed7_checkpoint_sha256: b1ae5a6d93d19c83f53981c2b94b52b59568a795ca8850f5bbddaa8833012b53
+  selected_transport_radius: 1
+  selected_transport_temperature: 0.02
+parent_metrics:
+  log_ratio_pearson: 0.26009801030158997
+  sequence_macro_MiD: 322.6813364242674
+  failure_rate_pct: 11.083984375
+  delta_log_height_vs_physical: 0.2476144314489911
+  delta_log_height_vs_physical_macro: 0.2526319214906502
+  absolute_log_height_macro: 0.5469041860501996
+diagnostic_replication_gate:
+  minimum_passing_seeds: 2
+  seeds: [7, 13, 23]
+  log_ratio_min_gain_vs_a4: 0.15
+  max_MiD_fraction_of_a4: 0.85
+  maximum_failure_rate_pct: 11.083984375
+  foreground_divergence_y_global_min: 0.35
+  foreground_divergence_y_macro_min: 0.30
+  minimum_positive_foreground_divergence_y_sequences: 2
+  interpretation: diagnostic_only_not_promotion
+anchor_gate:
+  log_ratio_min_gain_vs_a4: 0.15
+  max_MiD_fraction_of_a4: 0.85
+  maximum_failure_rate_pct: 11.083984375
+  geometry_absolute_tolerance: 0.005
+  foreground_divergence_y_global_min: 0.35
+  foreground_divergence_y_macro_min: 0.30
+  minimum_positive_foreground_divergence_y_sequences: 2
+  minimum_passing_seeds: 2
+anchor_contract:
+  initialization_mode: shape_compatible
+  parent_encoder_frozen_for_entire_run: true
+  geometry_must_equal_parent_by_construction: true
+  foreground_warmup_epochs: 0
+  A4_checkpoint_is_the_only_initialization_source: true
+  no_capacity_change: true
+  no_resolution_change: true
+  no_radius_or_temperature_change: true
+  no_DINO_lambda_change: true
+  no_new_teacher: true
+  no_JEPA_objective: true
+  private_test_remains_closed: true
+stopping_rule:
+  if_diagnostic_replication_fails: stop_without_anchor_training
+  if_anchor_seed7_fails: stop_without_anchor_replication
+  if_anchor_replication_passes: stop_and_analyze_before_capacity_or_scale

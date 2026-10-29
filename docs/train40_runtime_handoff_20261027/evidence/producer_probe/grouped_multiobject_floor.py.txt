@@ -1,0 +1,97 @@
+import gc
+import json
+import sys
+import time
+from pathlib import Path
+
+sys.path[:0] = ["src", "."]
+import numpy as np
+import torch
+
+from operational.rgb_port import transfer as engine
+from operational.train40_runtime.producers import ProducerRuntime
+from scripts.final_train40_transfer import load_models, read, verify_candidate
+
+torch.set_num_threads(2)
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = False
+torch.backends.cudnn.benchmark = False
+paths, _ = verify_candidate(Path("D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE"))
+models, _ = load_models(paths, "cuda")
+row = read(Path("artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"))["rows"][0]
+raw = engine.prepare_event(row)
+rgb, _ = engine.raw_rgb_observations(row)
+event_base = torch.from_numpy(raw["own_events"]).cuda()
+rgb_base = torch.from_numpy(np.stack([x[0] for x in rgb])).cuda()
+rgb_clock = torch.tensor([x[1]["delta_t_s"] for x in rgb], device="cuda", dtype=torch.float32)
+event_stream, rgb_stream = torch.cuda.Stream(), torch.cuda.Stream()
+records = []
+output = Path("artifacts/train40_runtime_20261027/producer_probe/grouped_multiobject_floor.json")
+
+
+def save():
+    output.write_text(json.dumps({
+        "scope": "Prepared GPU sensor tensors through every producer/PAIR/PHASE17 for all objects, guards and copies included; excludes preprocessing,H2D,context and final TTC. Compute capacity probe only, not20-real-object accuracy evidence.",
+        "inputs": "Real query0 sensor histories scaled perobject: event*(1+0.001*i),RGB*(1-0.001*i). Distinct inputs, no aliases; every object has4event and5RGB histories.",
+        "precision": "FP32 TF32disabled",
+        "reuse_encodings": True,
+        "records": records,
+    }, indent=2))
+
+
+with torch.inference_mode():
+    for objects in (1, 2, 5, 10, 20):
+        runtime = None
+        try:
+            es = torch.cat([event_base * (1 + 0.001 * i) for i in range(objects)])
+            rs = torch.cat([rgb_base * (1 - 0.001 * i) for i in range(objects)])
+            ed = torch.full((len(es), 2), 0.1, device="cuda")
+            rd = rgb_clock.repeat(objects, 1)
+            torch.cuda.reset_peak_memory_stats()
+            runtime = ProducerRuntime(models, "cuda", graphs=True, block_graphs=True, reuse_encodings=True)
+            setup = time.perf_counter()
+            e = runtime.expert_block("E", es, ed, history_group_size=4)
+            r = runtime.expert_block("R", rs, rd, history_group_size=5)
+            torch.cuda.synchronize()
+            setup = time.perf_counter() - setup
+            times = {"serial": [], "parallel": []}
+            exact = None
+            for route in ("serial", "parallel"):
+                for _ in range(4):
+                    torch.cuda.synchronize()
+                    start = time.perf_counter()
+                    if route == "serial":
+                        runtime.expert_block("E", es, ed, history_group_size=4)
+                        runtime.expert_block("R", rs, rd, history_group_size=5)
+                    else:
+                        current = torch.cuda.current_stream()
+                        event_stream.wait_stream(current)
+                        rgb_stream.wait_stream(current)
+                        with torch.cuda.stream(event_stream):
+                            et = runtime.expert_block_async("E", es, ed, history_group_size=4)
+                        with torch.cuda.stream(rgb_stream):
+                            rt = runtime.expert_block_async("R", rs, rd, history_group_size=5)
+                        current.wait_stream(event_stream)
+                        current.wait_stream(rgb_stream)
+                        runtime.validate_async_blocks(et, rt)
+                    torch.cuda.synchronize()
+                    times[route].append(time.perf_counter() - start)
+                if route == "parallel":
+                    exact = all(torch.equal(a, b) for a, b in zip((*e, *r), (et.raw, et.experts, rt.raw, rt.experts)))
+            rec = {
+                "objects": objects, "event_shape": list(es.shape), "rgb_shape": list(rs.shape),
+                "setup_seconds": setup, "history_group_sizes": {"E":4,"R":5}, "times": times, "serial_parallel_exact": exact,
+                "peak_allocated_bytes": torch.cuda.max_memory_allocated(),
+                "peak_reserved_bytes": torch.cuda.max_memory_reserved(),
+            }
+        except Exception as error:
+            rec = {"objects": objects, "error": repr(error), "status": "FAILED"}
+        records.append(rec)
+        save()
+        print(json.dumps(rec), flush=True)
+        del runtime
+        for variable in ("et", "rt", "e", "r", "es", "rs", "ed", "rd"):
+            if variable in globals():
+                del globals()[variable]
+        gc.collect()
+        torch.cuda.empty_cache()

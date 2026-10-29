@@ -1,0 +1,78 @@
+         54570 function calls (52240 primitive calls) in 0.699 seconds
+
+   Ordered by: cumulative time
+   List reduced from 574 to 70 due to restriction <70>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.699    0.699 final_train40_transfer.py:289(predict)
+        6    0.000    0.000    0.337    0.056 transfer.py:372(_expert_block)
+  1077/21    0.001    0.000    0.318    0.015 module.py:1775(_wrapped_call_impl)
+  1077/21    0.001    0.000    0.318    0.015 module.py:1783(_call_impl)
+        6    0.000    0.000    0.317    0.053 transfer.py:380(<listcomp>)
+       12    0.003    0.000    0.317    0.026 train_producers.py:239(producer_features)
+       12    0.000    0.000    0.310    0.026 causal_scale_ttc.py:841(forward)
+       12    0.009    0.001    0.309    0.026 causal_scale_ttc.py:869(_forward_impl)
+        1    0.000    0.000    0.234    0.234 transfer_inputs.py:20(prepare_event)
+       67    0.193    0.003    0.194    0.003 dataset.py:853(__getitem__)
+        1    0.001    0.001    0.176    0.176 mapped_union.py:65(encode_union)
+       36    0.001    0.000    0.153    0.004 local_transport.py:310(transport_physical_features)
+       72    0.012    0.000    0.151    0.002 local_transport.py:239(_summarise_one)
+        1    0.013    0.013    0.149    0.149 context_raw_union.py:13(_read_crop)
+       15    0.015    0.001    0.121    0.008 inputs.py:234(iter_window_chunks)
+        1    0.000    0.000    0.118    0.118 transfer_inputs.py:84(raw_rgb_observations)
+        1    0.002    0.002    0.113    0.113 transfer_inputs.py:102(<dictcomp>)
+       36    0.071    0.002    0.095    0.003 local_transport.py:66(local_correlation_match)
+       72    0.005    0.000    0.070    0.001 local_transport.py:171(_sample_reverse_flow)
+       60    0.040    0.001    0.059    0.001 local_transport.py:149(deterministic_bilinear_sample)
+        1    0.000    0.000    0.057    0.057 inputs.py:183(__init__)
+        1    0.000    0.000    0.057    0.057 inputs.py:78(_left_event_layout)
+        1    0.001    0.001    0.057    0.057 evttc.py:207(discover_event_layout)
+        1    0.000    0.000    0.051    0.051 evttc.py:159(describe_hdf5)
+        1    0.043    0.043    0.050    0.050 group.py:739(visititems)
+     1008    0.018    0.000    0.047    0.000 local_transport.py:219(_weighted_mean)
+      144    0.007    0.000    0.037    0.000 local_transport.py:225(_weighted_slope)
+        1    0.000    0.000    0.033    0.033 inputs.py:213(_bounds)
+     2798    0.029    0.000    0.029    0.000 {method 'sum' of 'torch._C.TensorBase' objects}
+       12    0.000    0.000    0.023    0.002 mapped_union.py:46(encode_mapped)
+       12    0.001    0.000    0.023    0.002 eap_representation.py:63(event_voxel_with_scalars)
+  183/147    0.001    0.000    0.022    0.000 container.py:248(forward)
+       12    0.009    0.001    0.022    0.002 voxel_grid.py:29(encode_voxel_grid)
+        7    0.002    0.000    0.020    0.003 data.py:145(crop_uint8)
+        7    0.000    0.000    0.016    0.002 Image.py:3378(fromarray)
+     1668    0.016    0.000    0.016    0.000 {method 'clamp_min' of 'torch._C.TensorBase' objects}
+        7    0.000    0.000    0.016    0.002 Image.py:3288(frombuffer)
+        7    0.000    0.000    0.016    0.002 Image.py:3242(frombytes)
+      125    0.012    0.000    0.013    0.000 {built-in method numpy.asarray}
+       12    0.010    0.001    0.012    0.001 voxel_grid.py:10(robust_normalize)
+        7    0.000    0.000    0.011    0.002 Image.py:3193(new)
+       12    0.000    0.000    0.011    0.001 causal_scale_ttc.py:612(forward)
+        7    0.011    0.002    0.011    0.002 {built-in method PIL._imaging.fill}
+       45    0.005    0.000    0.008    0.000 {built-in method builtins.all}
+      227    0.008    0.000    0.008    0.000 {built-in method torch.isfinite}
+        1    0.000    0.000    0.008    0.008 test12.py:777(predict)
+      756    0.007    0.000    0.007    0.000 {method 'clamp' of 'torch._C.TensorBase' objects}
+       14    0.007    0.001    0.007    0.001 context_raw_union.py:39(<dictcomp>)
+       15    0.004    0.000    0.007    0.000 features.py:174(raw_rgb_statistics)
+      7/3    0.000    0.000    0.007    0.002 module.py:1795(inner)
+      197    0.000    0.000    0.007    0.000 linear.py:130(forward)
+      197    0.006    0.000    0.006    0.000 {built-in method torch._C._nn.linear}
+       78    0.001    0.000    0.006    0.000 group.py:767(proxy)
+      205    0.003    0.000    0.006    0.000 group.py:409(_get)
+        2    0.000    0.000    0.006    0.003 features.py:809(frozen_context_state)
+      203    0.000    0.000    0.006    0.000 group.py:405(__getitem__)
+       24    0.000    0.000    0.006    0.000 causal_scale_ttc.py:461(forward)
+        2    0.001    0.001    0.006    0.003 model.py:67(forward)
+       12    0.003    0.000    0.006    0.000 causal_scale_ttc.py:224(soft_vertical_extent_from_logits)
+      357    0.006    0.000    0.006    0.000 {built-in method torch.stack}
+      480    0.006    0.000    0.006    0.000 {method 'long' of 'torch._C.TensorBase' objects}
+        5    0.000    0.000    0.005    0.001 features.py:260(rgb_phase17)
+      456    0.005    0.000    0.005    0.000 {method 'square' of 'torch._C.TensorBase' objects}
+        7    0.000    0.000    0.004    0.001 Image.py:925(frombytes)
+        9    0.000    0.000    0.004    0.000 phase.py:33(emitted_phase)
+        7    0.004    0.001    0.004    0.001 {method 'decode' of 'ImagingDecoder' objects}
+       96    0.000    0.000    0.004    0.000 conv.py:552(forward)
+        6    0.000    0.000    0.004    0.001 features.py:91(from_output)
+      192    0.004    0.000    0.004    0.000 {method 'to' of 'torch._C.TensorBase' objects}
+       96    0.000    0.000    0.004    0.000 conv.py:534(_conv_forward)
+
+

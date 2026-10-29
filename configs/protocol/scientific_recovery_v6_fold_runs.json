@@ -1,0 +1,73 @@
+{
+  "artifact_sha256": "757e2f0fda8b7647ba42a879aa85b966aa21d0aed7dd492798e39775947b6379",
+  "artifact_type": "scientific_recovery_v6_fold_run_configs_v1",
+  "configs": {
+    "a5_causal_fold0": {
+      "path": "configs/experiment/scientific_recovery_v6_fold_chain/a5_causal_fold0.yaml",
+      "sha256": "3b70eef2bd88e2a16384c5b2bc07de017c6059dd0abe806e650f3a9d11057cd2"
+    },
+    "a5_causal_fold1": {
+      "path": "configs/experiment/scientific_recovery_v6_fold_chain/a5_causal_fold1.yaml",
+      "sha256": "c89a4e8ccfceed1059c29f3f4143179a347b9c0b541b1325f2a5da12e30d3100"
+    },
+    "a5_causal_fold2": {
+      "path": "configs/experiment/scientific_recovery_v6_fold_chain/a5_causal_fold2.yaml",
+      "sha256": "0724e9a381e6f6c2eaa45dcddd6fd6497f8b013a3d19284896582a3c25c5bc45"
+    },
+    "v6_1_r2_fold0": {
+      "path": "configs/experiment/scientific_recovery_v6_fold_chain/v6_1_r2_fold0.yaml",
+      "sha256": "bc894366c235ec5601fbe220b0666d6fed4f8d5ccfde74af9db3ec49a4ae7f7c"
+    },
+    "v6_1_r2_fold1": {
+      "path": "configs/experiment/scientific_recovery_v6_fold_chain/v6_1_r2_fold1.yaml",
+      "sha256": "66bb34a24c07981033e6ec506eac4599f8baac9ad01437f3eb73952ed04f6299"
+    },
+    "v6_1_r2_fold2": {
+      "path": "configs/experiment/scientific_recovery_v6_fold_chain/v6_1_r2_fold2.yaml",
+      "sha256": "1c478daccb6a1b22f0650292d4f3e9f1d6d3a9e15e0ea165a62578391d004b98"
+    }
+  },
+  "contracts": {
+    "a5_causal_is_diagnostic_geometry_unconstrained": true,
+    "folds_unchanged_from_v5": true,
+    "private_test_opened": false,
+    "public_validation_opened": false,
+    "v6_1_single_change_transport_radius_1_to_2": true
+  },
+  "created_at_utc": "2026-08-13T10:45:15.226870+00:00",
+  "d0": {
+    "artifact_sha256": "32ec156f6dab87645e0272af8bc006e5d9a741bdbc1bca535937e5fca5130bcd",
+    "path": "artifacts/scientific_recovery_v6/diagnostics/a8_oof_failure_modes.json",
+    "sha256": "3ff7897ec6a24fc7d17a064de180198eb86f8fb3b3bb8695a0c6756fbc609be1"
+  },
+  "git_commit": "ef671311a55c4a02d0cd4ea69aafdffd4c2efbe9",
+  "model_configs": {
+    "a5_causal": {
+      "path": "configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_causal.yaml",
+      "sha256": "25e38b61b273dba2e72a39bb9eb8caef41833ad0515d31d007db6c0cff1749a0"
+    },
+    "v6_1_radius2": {
+      "path": "configs/model/e_jepa_causal_scale_event_v12_dual_transport_r2_t002_causal.yaml",
+      "sha256": "a9f8e95728c6be457e60ac0e7f551436c127fc414364f77fb0b65fdc22a9fcc7"
+    }
+  },
+  "runner": {
+    "path": "scripts/train_causal_scale_eap_screen.py",
+    "sha256": "6ee107473d0320d68eb9a7db279799a729e9b32147eae83f3ac156fe0e1df5ed"
+  },
+  "source_a8_configs": [
+    {
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a8_0_dual_transport_grouped_fold0_seed7.yaml",
+      "sha256": "7b9e799eb2f15eecbc0c060a2ac92ba99d6a5a79033054ebc996fc6e381ece04"
+    },
+    {
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a8_0_dual_transport_grouped_fold1_seed7.yaml",
+      "sha256": "54051375eb4269e7efa626d008aa71ee65c1c4f6c472b499df0abbc16a0e1182"
+    },
+    {
+      "path": "configs/experiment/scientific_recovery_v5_fold_chain/a8_0_dual_transport_grouped_fold2_seed7.yaml",
+      "sha256": "de70341c3d065a3abe148a1c3602ed98bf417d0db9008148242dfd747c946770"
+    }
+  ],
+  "status": "frozen_before_v6_training"
+}

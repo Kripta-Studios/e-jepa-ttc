@@ -181,8 +181,7 @@ class StreamingTTCEstimator:
         if self._t_us.size == 0 or int(self._t_us[0]) > oldest:
             return False
         return all(
-            self._observation_for(endpoint) is not None
-            for endpoint in self._endpoints(int(now_us))
+            self._observation_for(endpoint) is not None for endpoint in self._endpoints(int(now_us))
         )
 
     def predict(self, now_us: int) -> StreamingPrediction:
@@ -234,11 +233,15 @@ class StreamingTTCEstimator:
         context_events = torch.from_numpy(np.stack(frames))[None].to(self.device)
         context_boxes = torch.from_numpy(np.stack(boxes))[:, None, :][None].to(self.device)
         object_mask = torch.ones((1, self.history_steps, 1), dtype=torch.bool, device=self.device)
-        sampling_boxes = torch.tensor(
-            [0.0, 0.0, 1.0, 1.0],
-            dtype=torch.float32,
-            device=self.device,
-        ).reshape(1, 1, 1, 4).expand(1, self.history_steps, 1, 4)
+        sampling_boxes = (
+            torch.tensor(
+                [0.0, 0.0, 1.0, 1.0],
+                dtype=torch.float32,
+                device=self.device,
+            )
+            .reshape(1, 1, 1, 4)
+            .expand(1, self.history_steps, 1, 4)
+        )
         ego_actions = torch.from_numpy(np.stack(actions))[None].to(self.device)
         action_mask = torch.tensor(action_masks, dtype=torch.bool, device=self.device)[None]
         preprocessing_ms = (time.perf_counter() - preprocessing_start) * 1000.0
@@ -335,4 +338,3 @@ class StreamingTTCEstimator:
 
 
 __all__ = ["StreamingPrediction", "StreamingTTCEstimator"]
-

@@ -1,0 +1,11 @@
+{
+  "status": "DELIVERED_REGENERATED_INDEPENDENT_H16",
+  "archive": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\h16_replication_20261003\\E_JEPA_TTC_H16_REPLICATION_20261003.zip",
+  "sha256": "08ee2aae60d56006a73fdb8b249a6467cee0704b0a258bb9ad5659f863b3e348",
+  "bytes": 80619961,
+  "protocol_sha256": "708f7b0d7669643feee8f6199104bac914049c15a754a91fc88dd394652fb8c5",
+  "regeneration_sha256": "9e6c2a75c58dcb1c5cb1e8eaa613d8a714644574ca82f6e4ee1a4dabfc21bad7",
+  "scientific_saved_updates": 15000,
+  "conclusion": "POSITIVE_LOCAL_OLD_DEV",
+  "no_push": true
+}

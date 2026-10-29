@@ -1,0 +1,50 @@
+{
+  "status": "VERIFIED_ACTUAL_INTERRUPTED_CONTINUATION",
+  "confirmed_measurements": 723,
+  "planned_measurements": 1728,
+  "protocol_sha256": "d69abd8f05918383411acabf6a5b5b0ccd549070c5d8a3931f0aa00e816f7e31",
+  "proofs": [
+    {
+      "previous_measurements": 27,
+      "unchanged_measurement_files": 27,
+      "new_measurements_after_boundary": 696,
+      "parity_files_unchanged": 64
+    },
+    {
+      "previous_measurements": 675,
+      "unchanged_measurement_files": 675,
+      "new_measurements_after_boundary": 48,
+      "parity_files_unchanged": 0
+    },
+    {
+      "previous_measurements": 697,
+      "unchanged_measurement_files": 697,
+      "new_measurements_after_boundary": 26,
+      "parity_files_unchanged": 0
+    }
+  ],
+  "attempts_by_pid_and_purpose": {
+    "p30812:measurement:COMPLETED": 22,
+    "p30812:warmup:COMPLETED": 9,
+    "p30812:measurement:STARTED": 1,
+    "p38448:measurement:COMPLETED": 648,
+    "p38448:warmup:COMPLETED": 216,
+    "p51304:validation:COMPLETED": 64,
+    "p51304:measurement:COMPLETED": 27,
+    "p51304:warmup:COMPLETED": 9,
+    "p60840:measurement:COMPLETED": 26,
+    "p60840:warmup:COMPLETED": 9,
+    "p8468:validation:COMPLETED": 18,
+    "p8468:validation:STARTED": 1
+  },
+  "scientific_optimizer_updates": 0,
+  "technical_optimizer_updates": 0,
+  "last_resource_pause": {
+    "status": "PAUSED",
+    "observed_utc": "2026-10-04T01:30:25.694662+00:00",
+    "optimizer_updates": 0,
+    "fragments": 723,
+    "error_type": "InterruptedError",
+    "error": "Windows commit headroom below 1 GiB: {\"available_ram_bytes\": 2956726272, \"delivery_tree_rss_bytes\": 2131472384, \"tree_owner_pid\": 42864, \"disk_free_after_reserve_bytes\": 134808154112, \"disk_reserve_bytes\": 1073741824, \"windows_commit_headroom_bytes\": 907096064}"
+  }
+}

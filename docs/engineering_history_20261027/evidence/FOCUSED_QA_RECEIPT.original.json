@@ -1,0 +1,84 @@
+{
+  "schema": "publication_focused_qa_v1",
+  "captured_utc": "2026-10-27T19:00:27.007391+00:00",
+  "scientific_inference_runs": 0,
+  "scientific_optimizer_updates": 0,
+  "production_sources_modified": false,
+  "test_files_modified": {
+    "tests/unit/test_final_refit_export.py": "37f6ff03bfc4acdecbfd9d7471b8abcfcf38782b5347367d4b126c42871b9671",
+    "tests/unit/test_pod2_rgb_handoff.py": "b457484585c16c270ac1c93af4d7808391ae111ba46c5e3c9615f58f5a2bd4d3",
+    "tests/unit/test_runpod_rgb_context_v8.py": "8c7436c8fd501afd54e9339d9b6f387290698cb59b616e9016f3fadd6e6e4fb7",
+    "tests/unit/test_runpod_rgb_context_v9.py": "ac1d83d1564cfa95e81e518d54fa9917e994f9890ce3ae3342fa9a3e917cc678",
+    "tests/unit/test_runpod_rgb_return_archive_r4_v8.py": "c94ae1b4b38b93ed140a20a821c7b83170b04ed6aa749cc27732273f66b15ed5"
+  },
+  "pytest_initial": {
+    "files": 128,
+    "total": 873,
+    "passed": 864,
+    "failed": 8,
+    "skipped": 1,
+    "collection_errors": 0,
+    "seconds": 41.56
+  },
+  "pytest_targeted_recheck": {
+    "passed": 22,
+    "failed": 0,
+    "resolved_initial_failures": 8,
+    "note": "Other previously passing tests not rerun; aggregate evidence covers 872 pass and 1 skip."
+  },
+  "test_fixture_fixes": [
+    "Exact full RGB runtime source closure in export fixture",
+    "Deterministic clock instead of expired hardcoded wall clock",
+    "V8/V9 RGB media and composed authority fixtures generated under tmp_path, no local artifacts"
+  ],
+  "ruff": {
+    "issues": 495,
+    "files": 33,
+    "modified_tests": "PASS",
+    "global_status": "FAIL_REPORTED_NOT_SUPPRESSED",
+    "format_summary": "144 files would be reformatted, 2624 files already formatted"
+  },
+  "pyright": {
+    "configured_scope_files": 5,
+    "actual_environment_errors": 0,
+    "actual_environment_warnings": 0,
+    "command": "python -m pyright --venvpath ../e-jepa-ttc --outputjson",
+    "default_environment_errors": 12,
+    "default_error_cause": "Repo .venv torch type resolution; actual installed environment passes",
+    "scope_limitation": "Existing pyrightconfig includes five files only; not full new subsystem type coverage"
+  },
+  "powershell": {
+    "files": 80,
+    "parse_errors": 0
+  },
+  "excluded": [
+    "Real V12 event reuse parity test (previous real inference, no repetition)",
+    "Integration checkpoint fault suite uses multiple Torch subprocesses; coordinated memory limit"
+  ],
+  "logs": [
+    "CRLF_BYTE_IDENTITY.json",
+    "PYTEST_COMMAND.json",
+    "PYTEST_EXIT.json",
+    "QA_SELECTION.json",
+    "READ_ONLY_AUDIT.json",
+    "RUFF_CHECK.json",
+    "RUFF_FORMAT_CHECK.txt",
+    "RUFF_RESIDUAL_BY_FILE.json",
+    "SECONDARY_SECRET_CANDIDATES.json",
+    "SUMMARY.json",
+    "powershell_parse.json",
+    "pyright_actual_env.json",
+    "pyright_actual_env.stderr.log",
+    "pyright_global.json",
+    "pyright_global.stderr.log",
+    "pytest_fixture_recheck.log",
+    "pytest_fixture_recheck.xml",
+    "pytest_focused.log",
+    "pytest_focused.xml",
+    "ruff_changed_tests.log",
+    "ruff_final.json",
+    "ruff_format_final.log",
+    "ruff_format_global.log",
+    "ruff_global.json"
+  ]
+}

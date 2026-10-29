@@ -1,0 +1,128 @@
+{
+  "status": "COMPLETE",
+  "seed": 13,
+  "comparisons": {
+    "H8": {
+      "candidate_score": 119.3326508780037,
+      "reference_score": 121.8409520461135,
+      "point_delta": -2.5083011681097975,
+      "weighted_sign_error_delta": -0.0007520438010854701,
+      "crucial_bucket_mid_delta": -4.038367270005816,
+      "candidate_finite_fraction": 1.0,
+      "reference_finite_fraction": 1.0,
+      "sequence_deltas": {
+        "2cyv0Oedzg": -2.140950181950436,
+        "5ilM1PX2vz": -0.7353598047841762,
+        "6h5yRW2LGc": 1.6352267301238903,
+        "OBneIVg4Cw": 3.286161897547977,
+        "OYgB6RGWcq": -4.655416233967584,
+        "WbCh1DRerJ": -5.647922351476483,
+        "mHGFBekt7X": -0.8120808016886646,
+        "qGsgzl4Q8B": -6.37791126841686,
+        "t79dBxj1WS": -7.1264584983758406
+      },
+      "sequence_wins": 7,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "gate_authorized": false,
+      "hierarchical_ci95": [
+        -5.941177209541652,
+        0.5541399167679866
+      ],
+      "sequence_only": {
+        "point_delta": -2.5083011681097975,
+        "ci95": [
+          -4.719246422758178,
+          -0.21365235781931435
+        ],
+        "fraction_negative": 0.9845955385183566,
+        "sequence_wins": 7,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          -2.5542200413797174,
+          -2.7299188385254998,
+          -3.026242155389008,
+          -3.232609051317019,
+          -2.239911784877574,
+          -2.115848520188962,
+          -2.720328713912439,
+          -2.0245999055714146,
+          -1.931031501826542
+        ],
+        "signflip_p_two_sided_descriptive": 0.08203125,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "noninferiority_margin_mid": 2,
+      "noninferiority_supported": true
+    },
+    "H16": {
+      "candidate_score": 119.3326508780037,
+      "reference_score": 119.69680178724647,
+      "point_delta": -0.36415090924279847,
+      "weighted_sign_error_delta": 0.0008979339287883786,
+      "crucial_bucket_mid_delta": -1.1564189958342326,
+      "candidate_finite_fraction": 1.0,
+      "reference_finite_fraction": 1.0,
+      "sequence_deltas": {
+        "2cyv0Oedzg": -0.40699447113701986,
+        "5ilM1PX2vz": -0.28922392090693816,
+        "6h5yRW2LGc": -2.1756744617231676,
+        "OBneIVg4Cw": 2.852558755975602,
+        "OYgB6RGWcq": 2.128098070739439,
+        "WbCh1DRerJ": -4.0485850796022875,
+        "mHGFBekt7X": 0.3970936506818588,
+        "qGsgzl4Q8B": -0.18019354214663058,
+        "t79dBxj1WS": -1.5544371850660468
+      },
+      "sequence_wins": 6,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "gate_authorized": false,
+      "hierarchical_ci95": [
+        -2.4371215757454068,
+        1.654923200555605
+      ],
+      "sequence_only": {
+        "point_delta": -0.364150909242799,
+        "ci95": [
+          -1.6747890741101428,
+          0.9174572199228819
+        ],
+        "fraction_negative": 0.7075276186541595,
+        "sequence_wins": 6,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          -0.3587954640060214,
+          -0.3735167827847816,
+          -0.13771046518275293,
+          -0.7662396173950992,
+          -0.6756820317405787,
+          0.09640336205213706,
+          -0.45930647923338125,
+          -0.38714558012982003,
+          -0.21536512476489303
+        ],
+        "signflip_p_two_sided_descriptive": 0.6328125,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "noninferiority_margin_mid": 2,
+      "noninferiority_supported": true
+    }
+  },
+  "replication_authorized": false,
+  "replication_rule": "prospective_all_five_conditions",
+  "bootstrap": {
+    "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+    "valid_draws": 8192,
+    "attempts": 8195,
+    "discarded": 3,
+    "validity_fraction": 0.999633923123856
+  },
+  "scientific_updates": 7500,
+  "encoder_replicas": false,
+  "head_replicas": true,
+  "confirmation": false,
+  "candidate_promoted": false
+}

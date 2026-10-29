@@ -1,0 +1,48 @@
+{
+  "anchor_us": 6550181,
+  "artifact_sha256": "bb11d01d146fb9d1a705da5eaf98cf00bbbb9b18a38593a9fc42feb534dfdad3",
+  "config": {
+    "coarse_log_steps": 65,
+    "maximum_events": 50000,
+    "maximum_inverse_ttc_per_s": 10.0,
+    "minimum_events": 1000,
+    "minimum_inverse_ttc_per_s": 0.01,
+    "minimum_relative_contrast_gain": 0.01,
+    "minimum_survival_fraction": 0.8,
+    "optimizer_absolute_tolerance": 1e-05,
+    "optimizer_maximum_iterations": 64
+  },
+  "diagnostics": {
+    "contrast": 5.32295904442014,
+    "evaluations": 78,
+    "event_count": 6249,
+    "inverse_ttc_per_s": 0.010005727185029399,
+    "null_contrast": 5.34620090168336,
+    "null_survival_fraction": 0.9651144183069291,
+    "object_event_count": 6249,
+    "prediction_ttc_s": null,
+    "reason": "insufficient_positive_contrast_gain",
+    "relative_contrast_gain": -0.004347359497077984,
+    "roi_event_count": 6558,
+    "roi_xyxy": [
+      634,
+      327,
+      697,
+      386
+    ],
+    "survival_fraction": 0.9649543927028325,
+    "valid": false
+  },
+  "failure": "insufficient_positive_contrast_gain",
+  "prediction_ttc_s": null,
+  "query_id": "CCRs-3-low-100-overlap-100:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "8377991e000459371d9f533d6e4815eaa392deac1cf891168de060c37a7e8e2d",
+  "runtime_s": 1.4452777999977116,
+  "schema": "evttc_cmax_reference_equation_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CCRs-3-low-100-overlap-100",
+  "source_sha256": "7d4e9443541fa52e5ecf8f89c186eccd35adb75e21fe290643204bc3bf063f92",
+  "status": "FAILED_RETAINED",
+  "target_fields_opened": []
+}

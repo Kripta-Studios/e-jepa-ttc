@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "error": null,
+  "sources_unchanged": true,
+  "results": [
+    {
+      "objects": 1,
+      "windows": 6,
+      "columns": 163840,
+      "requested_occupancy": 0.5,
+      "actual_occupied_values": 491147,
+      "topk_size": 8193,
+      "parity": {
+        "normalized_float64_exact": true,
+        "normalized_float32_exact": true,
+        "scale_float64_exact": true,
+        "max_abs": 0.0,
+        "after_repetitions_exact": true
+      },
+      "passed": true,
+      "latency_ms": {
+        "sort": {
+          "count": 3,
+          "mean_ms": 72.09446666666666,
+          "p50_ms": 72.3261,
+          "p95_ms": 72.93027,
+          "p99_ms": 72.983974,
+          "min_ms": 70.9599,
+          "max_ms": 72.9974,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 0,
+          "at_least_20ms_count": 3,
+          "over_50ms_count": 3,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 13.870690029840478
+        },
+        "topk": {
+          "count": 3,
+          "mean_ms": 22.186999999999998,
+          "p50_ms": 21.6377,
+          "p95_ms": 23.76134,
+          "p99_ms": 23.950108,
+          "min_ms": 20.926,
+          "max_ms": 23.9973,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 0,
+          "at_least_20ms_count": 3,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 45.07143822959391
+        }
+      },
+      "samples_ms": {
+        "sort": [
+          70.9599,
+          72.3261,
+          72.9974
+        ],
+        "topk": [
+          21.6377,
+          20.926,
+          23.9973
+        ]
+      },
+      "topk_retained_scratch_bytes": 1769568,
+      "sort_retained_scratch_bytes": 16711680
+    }
+  ],
+  "full_pipeline_claim": false
+}

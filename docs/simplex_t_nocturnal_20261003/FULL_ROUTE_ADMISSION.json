@@ -1,0 +1,28 @@
+{
+  "status": "BLOCKED_NO_EXCLUSIVE_GPU_HEAVY_IO_LEASE",
+  "observed_at_utc": "2026-10-03T18:05:38.164736+00:00",
+  "coordination_ack": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\E_JEPA_SHARED_COORDINATION\\SIMPLEX_T_STAGE70_ACK.json",
+  "coordination_ack_sha256": "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318",
+  "acknowledged_slot": null,
+  "resource_owner": "Stage70-76 campaign; no exclusive lease acquired by this ACK",
+  "current_owner_metadata": [
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-stage70-architecture\\artifacts\\stage70_76_architecture\\expansion_raw_bindings\\ACTIVE_OWNER.json",
+      "exists": false,
+      "pid": null,
+      "alive": false,
+      "sha256": null
+    }
+  ],
+  "gpu_process_observation": {
+    "returncode": 0,
+    "output": null,
+    "error": ""
+  },
+  "eap_root": "E:\\eAP_dataset",
+  "eap_root_exists": true,
+  "cached_train_available": true,
+  "raw_payloads_read": false,
+  "missing_dependency": "Explicit exclusive GPU/heavy-I/O slot from the shared resource owner; no such lease is present in the acknowledged interface.",
+  "no_owner_or_stage70_changes": true
+}

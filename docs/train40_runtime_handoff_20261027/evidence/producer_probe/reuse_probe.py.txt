@@ -1,0 +1,72 @@
+import json
+import sys
+import time
+from pathlib import Path
+
+sys.path[:0] = ["src", "."]
+import torch
+
+from operational.rgb_port import transfer as engine
+from operational.train40_runtime.producers import ProducerRuntime
+from scripts.final_train40_transfer import load_models, read, verify_candidate
+
+torch.set_num_threads(2)
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = False
+torch.backends.cudnn.benchmark = False
+paths, _ = verify_candidate(Path("D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE"))
+models, _ = load_models(paths, "cuda")
+rows = read(Path("artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"))["rows"]
+eager = ProducerRuntime(models, "cuda", graphs=False)
+graph = ProducerRuntime(models, "cuda", graphs=True, block_graphs=True, reuse_encodings=True)
+records = []
+
+
+def diff(a, b):
+    return [
+        {"exact": torch.equal(x, y), "max": float((x - y).abs().max())}
+        for x, y in zip(a, b)
+    ]
+
+
+with torch.inference_mode():
+    for index in (0, 200, 553):
+        row = rows[index]
+        raw = engine.prepare_event(row)
+        rgb, _ = engine.raw_rgb_observations(row)
+        sensor = torch.from_numpy(raw["own_events"]).cuda()
+        delta = torch.full((4, 2), 0.1, device="cuda")
+        a = eager.expert_block("E", sensor, delta)
+        b = graph.expert_block("E", sensor, delta)
+        rec = {"index": index, "event_diff": diff(a, b)}
+        sensors = [torch.from_numpy(x[0])[None].cuda() for x in rgb]
+        clocks = [
+            torch.tensor([x[1]["delta_t_s"]], device="cuda", dtype=torch.float32) for x in rgb
+        ]
+        refs = [eager.expert_block("R", s, d) for s, d in zip(sensors, clocks)]
+        ref = [torch.cat([x[i] for x in refs]) for i in (0, 1)]
+        singles = [graph.expert_block("R", s, d) for s, d in zip(sensors, clocks)]
+        single = [torch.cat([x[i] for x in singles]) for i in (0, 1)]
+        bs, bd = torch.cat(sensors), torch.cat(clocks)
+        batch = graph.expert_block("R", bs, bd)
+        rec["rgb_single_diff"] = diff(ref, single)
+        rec["rgb_batch_diff"] = diff(ref, batch)
+        rec["times"] = {}
+        for label, fn in (
+            ("event", lambda: graph.expert_block("E", sensor, delta)),
+            ("rgb_loop", lambda: [graph.expert_block("R", s, d) for s, d in zip(sensors, clocks)]),
+            ("rgb_batch", lambda: graph.expert_block("R", bs, bd)),
+        ):
+            times = []
+            for _ in range(5):
+                torch.cuda.synchronize()
+                start = time.perf_counter()
+                fn()
+                torch.cuda.synchronize()
+                times.append(time.perf_counter() - start)
+            rec["times"][label] = times
+        records.append(rec)
+        print(json.dumps(rec), flush=True)
+Path("artifacts/train40_runtime_20261027/producer_probe/reuse_probe.json").write_text(
+    json.dumps({"records": records, "graphs": graph.diagnostics()}, indent=2)
+)

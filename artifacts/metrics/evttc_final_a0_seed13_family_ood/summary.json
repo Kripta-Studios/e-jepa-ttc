@@ -1,0 +1,318 @@
+{
+  "artifact_sha256": "c2ab7a4c63054d4aeaacf72c313f4416a0955c210b69d2e47fab26006e0dd96a",
+  "artifact_type": "evttc_oge_split_evaluation_v1",
+  "benchmark10_opened": false,
+  "cache_manifest": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/features/evttc32_final_family_holdout_core/manifest.json",
+  "cache_manifest_sha256": "249fbb1aca0388376e6712b5540ccd8511e34d74b3483247a0fd76427e6da0eb",
+  "checkpoint": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/runs/evttc32_final_family_holdout_matched/core/fold-0/A0_MATCHED_GLOBAL/seed-13/best.pt",
+  "checkpoint_epoch": 19,
+  "checkpoint_role": "best",
+  "checkpoint_sha256": "93ba0f6baf5b146a1b5ffdc8ed732032aec81482c2c1dd43ae57cea6c235ded4",
+  "device": "cuda",
+  "diagnostic_test_opened": true,
+  "git_commit": "655be4d1d5ec49b152be3937a6d85d504588855a",
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "metrics": {
+    "checkpoint_selection": {
+      "high_ttc_min_s": 6.0,
+      "high_ttc_relative_error": 0.19513976062472219,
+      "high_ttc_support": 23,
+      "low_ttc_max_s": 2.0,
+      "low_ttc_relative_error": 0.2805222898671619,
+      "low_ttc_support": 175,
+      "mean_relative_error": 0.303298737251307,
+      "normalized_rmse": 0.41685087444187174,
+      "selection_score": 0.526426968484746
+    },
+    "embedding_health": {
+      "collapsed_dimension_fraction": 0.0,
+      "effective_rank": 11.871627807617188,
+      "mean_dimension_std": 0.9971790909767151,
+      "mean_embedding_norm": 28.842201232910156
+    },
+    "evaluation_seconds": 2.7437480999942636,
+    "garl_ttc": {
+      "bins": {
+        "crucial": {
+          "count": 330,
+          "failure_rate_pct": 0.0,
+          "failure_ratio": 0.0,
+          "mid": 182.39159946262149,
+          "rte_pct": 29.461082579517274
+        },
+        "large": {
+          "count": 19,
+          "failure_rate_pct": 0.0,
+          "failure_ratio": 0.0,
+          "mid": 20.91781991694618,
+          "rte_pct": 15.749189240222568
+        },
+        "negative": {
+          "count": 0,
+          "failure_rate_pct": NaN,
+          "failure_ratio": NaN,
+          "mid": NaN,
+          "rte_pct": NaN
+        },
+        "small": {
+          "count": 128,
+          "failure_rate_pct": 0.0,
+          "failure_ratio": 0.0,
+          "mid": 109.66966885983723,
+          "rte_pct": 34.51320750867427
+        }
+      },
+      "delta_t_s": 0.1,
+      "weighted_mid": NaN,
+      "weighted_rte_pct": NaN
+    },
+    "milliseconds_per_window": 5.704258004146078,
+    "per_sequence_checkpoint_selection": {
+      "CCRs-2-high-100-overlap-100": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.19909272551540216,
+        "high_ttc_support": 0,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.20986791049467743,
+        "low_ttc_support": 27,
+        "mean_relative_error": 0.19909272551540216,
+        "normalized_rmse": 0.3084197710385007,
+        "selection_score": 0.37843782727754727
+      },
+      "CCRs-2-low-100-overlap-100": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.2182576047145396,
+        "high_ttc_support": 15,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.3529106204136677,
+        "low_ttc_support": 15,
+        "mean_relative_error": 0.47111548538727294,
+        "normalized_rmse": 0.46042454322783244,
+        "selection_score": 0.7290136774762829
+      },
+      "CCRs-2-medium-100-overlap-100": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.19265087896295321,
+        "high_ttc_support": 0,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.11113342256949045,
+        "low_ttc_support": 30,
+        "mean_relative_error": 0.19265087896295321,
+        "normalized_rmse": 0.3294077995345502,
+        "selection_score": 0.3509489042297017
+      },
+      "CCRs-3-low-100-overlap-100": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.15179380295631462,
+        "high_ttc_support": 8,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.26176718580540564,
+        "low_ttc_support": 0,
+        "mean_relative_error": 0.26176718580540564,
+        "normalized_rmse": 0.31620566247410814,
+        "selection_score": 0.4442088486143627
+      },
+      "CCRs-3-medium-100-overlap-100": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.32544295457040656,
+        "high_ttc_support": 0,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.21532337327495965,
+        "low_ttc_support": 30,
+        "mean_relative_error": 0.32544295457040656,
+        "normalized_rmse": 0.5834552535608191,
+        "selection_score": 0.6064983499219528
+      },
+      "CPNAO-high": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.3287741382850818,
+        "high_ttc_support": 0,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.350806300936226,
+        "low_ttc_support": 18,
+        "mean_relative_error": 0.3287741382850818,
+        "normalized_rmse": 0.33967164116935544,
+        "selection_score": 0.5835871583827476
+      },
+      "CPNAO-low": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.32463275928692403,
+        "high_ttc_support": 0,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.48903955032674273,
+        "low_ttc_support": 22,
+        "mean_relative_error": 0.32463275928692403,
+        "normalized_rmse": 0.3329609582846632,
+        "selection_score": 0.6112910762615065
+      },
+      "CPNAO-medium": {
+        "high_ttc_min_s": 6.0,
+        "high_ttc_relative_error": 0.3413400132672152,
+        "high_ttc_support": 0,
+        "low_ttc_max_s": 2.0,
+        "low_ttc_relative_error": 0.3413400132672152,
+        "low_ttc_support": 33,
+        "mean_relative_error": 0.3413400132672152,
+        "normalized_rmse": 0.3470381761370018,
+        "selection_score": 0.5987695639350732
+      }
+    },
+    "regression": {
+      "log_mae": 0.21126779833366577,
+      "log_mae_15s": 0.21126779833366577,
+      "log_rmse": 0.26480125804481697,
+      "log_rmse_15s": 0.26480125804481697,
+      "mae_s": 0.8323898098572872,
+      "mae_s_15s": 0.8323898098572872,
+      "mean_abs_relative_error_pct": 30.329873725130696,
+      "median_abs_error_s": 0.6186059713363647,
+      "median_abs_relative_error_pct": 26.09517072564308,
+      "rmse_s": 1.1578534067313087,
+      "rmse_s_15s": 1.1578534067313087,
+      "signed_log1p_mae": 0.21126779833366577
+    },
+    "risk": {
+      "0.5": {
+        "auprc": NaN,
+        "auroc": NaN,
+        "brier": NaN,
+        "calibration_fitted": false,
+        "ece_10": NaN,
+        "f1_at_0_5": NaN,
+        "false_negative_rate_at_0_5": NaN,
+        "minimum_negative_support": 25,
+        "minimum_positive_support": 25,
+        "negative_count": 481,
+        "nll": NaN,
+        "positive_count": 0,
+        "precision_at_0_5": NaN,
+        "recall_at_0_5": NaN,
+        "reportable_metrics": [],
+        "support_status": "unsupported",
+        "threshold_s": 0.5
+      },
+      "1.0": {
+        "auprc": NaN,
+        "auroc": NaN,
+        "brier": NaN,
+        "calibration_fitted": false,
+        "ece_10": NaN,
+        "f1_at_0_5": NaN,
+        "false_negative_rate_at_0_5": NaN,
+        "minimum_negative_support": 25,
+        "minimum_positive_support": 25,
+        "negative_count": 468,
+        "nll": NaN,
+        "positive_count": 13,
+        "precision_at_0_5": NaN,
+        "recall_at_0_5": NaN,
+        "reportable_metrics": [],
+        "support_status": "unsupported",
+        "threshold_s": 1.0
+      },
+      "2.0": {
+        "auprc": 0.5691774017280321,
+        "auroc": 0.7932586367880485,
+        "brier": 0.21462911947414565,
+        "calibration_fitted": true,
+        "ece_10": 0.22915303149490995,
+        "f1_at_0_5": 0.0,
+        "false_negative_rate_at_0_5": 1.0,
+        "minimum_negative_support": 25,
+        "minimum_positive_support": 25,
+        "negative_count": 306,
+        "nll": 0.6200577809163996,
+        "positive_count": 175,
+        "precision_at_0_5": 0.0,
+        "recall_at_0_5": 0.0,
+        "reportable_metrics": [
+          "auroc",
+          "auprc",
+          "precision_at_0_5",
+          "recall_at_0_5",
+          "f1_at_0_5",
+          "false_negative_rate_at_0_5",
+          "brier",
+          "ece_10",
+          "nll"
+        ],
+        "support_status": "supported",
+        "threshold_s": 2.0
+      },
+      "4.0": {
+        "auprc": 0.9470073767755537,
+        "auroc": 0.7681498829039812,
+        "brier": 0.29709796407923517,
+        "calibration_fitted": true,
+        "ece_10": 0.4396538640258218,
+        "f1_at_0_5": 0.24896265560165973,
+        "false_negative_rate_at_0_5": 0.8571428571428571,
+        "minimum_negative_support": 25,
+        "minimum_positive_support": 25,
+        "negative_count": 61,
+        "nll": 0.7887020277501581,
+        "positive_count": 420,
+        "precision_at_0_5": 0.967741935483871,
+        "recall_at_0_5": 0.14285714285714285,
+        "reportable_metrics": [
+          "auroc",
+          "auprc",
+          "precision_at_0_5",
+          "recall_at_0_5",
+          "f1_at_0_5",
+          "false_negative_rate_at_0_5",
+          "brier",
+          "ece_10",
+          "nll"
+        ],
+        "support_status": "supported",
+        "threshold_s": 4.0
+      }
+    },
+    "sequence_macro_high_ttc_relative_error": 0.2602481096948546,
+    "sequence_macro_low_ttc_relative_error": 0.2915235471360481,
+    "sequence_macro_mae_s": 0.8050673417747021,
+    "sequence_macro_mean_relative_error": 0.3056020176350827,
+    "sequence_macro_normalized_rmse": 0.3771979756783539,
+    "sequence_macro_selection_score": 0.5378444257623969,
+    "worst_sequence_mae_s": 1.7092535495758057,
+    "worst_sequence_selection_score": 0.7290136774762829
+  },
+  "predictions": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/metrics/evttc_final_a0_seed13_family_ood/predictions.npz",
+  "run_fingerprint": "91fa19fabbb68f1f27faa5261b91c15dd64b1e4bcf1f98028638fd3cfa2c3efa",
+  "sample_count": 481,
+  "scientific_scope": "Sequence-disjoint EvTTC family-holdout diagnostic; not the sealed official Benchmark-10 and not an official leaderboard result.",
+  "sequence_bootstrap_95": {
+    "mae_s": {
+      "confidence": 0.95,
+      "estimate": 0.8323898098572872,
+      "iterations": 2000,
+      "lower": 0.592863395157946,
+      "sequence_count": 8,
+      "status": "sequence_cluster_bootstrap",
+      "upper": 1.1283462789557823
+    },
+    "mean_abs_relative_error": {
+      "confidence": 0.95,
+      "estimate": 0.303298737251307,
+      "iterations": 2000,
+      "lower": 0.24952966619323858,
+      "sequence_count": 8,
+      "status": "sequence_cluster_bootstrap",
+      "upper": 0.36669894357521265
+    }
+  },
+  "sequence_counts": {
+    "CCRs-2-high-100-overlap-100": 64,
+    "CCRs-2-low-100-overlap-100": 64,
+    "CCRs-2-medium-100-overlap-100": 64,
+    "CCRs-3-low-100-overlap-100": 64,
+    "CCRs-3-medium-100-overlap-100": 64,
+    "CPNAO-high": 64,
+    "CPNAO-low": 64,
+    "CPNAO-medium": 33
+  },
+  "splits": [
+    "test"
+  ]
+}

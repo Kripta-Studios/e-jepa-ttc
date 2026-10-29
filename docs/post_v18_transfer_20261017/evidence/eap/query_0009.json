@@ -1,0 +1,12 @@
+{
+  "sample_token": "5ilM1PX2vz_000099_9737600000",
+  "group_id": "5ilM1PX2vz",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": 2.8387603759765625,
+  "sensor_sha256": "e2a3cd198780de39c013a464e5a7f3d4646b965dfccd729020e8ef9bade84c1d",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.4855925000156276,
+  "seconds_preprocess_including_parity": 0.9461927000083961,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

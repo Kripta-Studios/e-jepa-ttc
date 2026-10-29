@@ -1,0 +1,25 @@
+{
+  "status": "PASSED",
+  "query_id": "CCRm-low-0-overlap-0:00",
+  "cpu": {
+    "ttc": 5.741473197937012,
+    "heights": [
+      91.67999267578125,
+      93.30509948730469
+    ]
+  },
+  "gpu": {
+    "ttc": 5.741453647613525,
+    "heights": [
+      91.67998504638672,
+      93.30509948730469
+    ]
+  },
+  "heights_rtol": 0.0001,
+  "heights_atol": 0.0001,
+  "ttc_atol_s": 0.01,
+  "sensor_sha256": "2ae83fc4003efbc1b08e35ca4b479a74846fc2741e1aed82d773bd31dbb10f04",
+  "module_sha256": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+  "no_labels_read": true,
+  "optimizer_updates": 0
+}

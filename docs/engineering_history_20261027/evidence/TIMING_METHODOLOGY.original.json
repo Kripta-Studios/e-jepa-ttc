@@ -1,0 +1,45 @@
+{
+  "alias_policy": "Time each physical query once; aliases are not extra inference.",
+  "compression": "On-disk sizes: H5, TAR and NPZ contain different data; their size ratios are not equivalent-content compression trials.",
+  "deterministic": "Sorted tables and hashes, no report-generation time in content.",
+  "expected_alias_tokens": 957,
+  "expected_official_tokens": 6762,
+  "expected_physical_queries": 5805,
+  "gpu_kernel_latency_measured": false,
+  "head_export_receipt": {
+    "checkpoint_sha256": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+    "end_to_end_sensor_runtime_exported": false,
+    "export_level": "PHASE_ONLY_HEAD_OVER_PHYSICAL_STATE340",
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "output": "/workspace/ejepa_final_runs/final/PHASE_ONLY_HEAD.ts",
+    "output_sha256": "e28b95cdc9cfcebf4597356d04ec1f2dccca7b9bc17a2f6e6c1d431e1a7e4e37",
+    "parity_batches": [
+      1,
+      7
+    ],
+    "parity_max_abs": 0.0,
+    "parity_tolerance": 1e-06,
+    "receipt_sha256": "430d1352374396c8f32d91b272f2a3f278efce09f173cc51dec6a7b6fe566638",
+    "schema": "scientific_oof_phase_only_torchscript_v1",
+    "state_dict_exact": true,
+    "status": "EXPORTED_NOT_EVALUATED"
+  },
+  "interval_calibration": "Not calibrated or coverage-scored on private test targets.",
+  "latency_benchmark": false,
+  "model_seal_file_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+  "observed_physical_query_diagnostics": 5805,
+  "official_accuracy": "No test GT, leaderboard score, error metric or SOTA claim.",
+  "phase_units": "Native point_phase/raw_location/q10/q90; TTC outputs in seconds.",
+  "quantiles": "numpy.percentile(method=linear); physical queries, no alias weighting.",
+  "query_resource_alignment": "query_time_us is sensor time, not execution UTC; no invented alignment of individual query latency to passive device telemetry.",
+  "raw_retention": "Report does not delete or regenerate any raw input.",
+  "report_code_sha256": {
+    "runpod_final_diagnostics_report.py": "13f8e5d5d1027efe42f3ea17a3659eb6410fcff516976dca46a5c73818693f99",
+    "runpod_final_diagnostics_tables.py": "4a951fd7041b2c58da14ba1ae36928eaef12df62ed27686ffc5d6ed5fb1660f8"
+  },
+  "resource_windows": "Five-minute UTC bins; observed samples only, no gap filling.",
+  "status": "FINAL",
+  "training_ledger": "Snapshots may repeat fits and include zero-update re-entry; calendar spans are not active GPU time.",
+  "training_losses": "Saved stage-specific training objectives, not test errors; loss magnitudes are not directly comparable across different stages.",
+  "wall_timing": "Recorded eager predict() with caches and read-only hooks; excludes diagnostic writes, model initialization and raw preparation."
+}

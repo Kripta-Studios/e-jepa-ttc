@@ -1,0 +1,75 @@
+{
+  "checkpoints": [
+    {
+      "bytes": 973290993,
+      "config": "configs/ablation/ours_full.yaml",
+      "name": "paper_ours_full.pth",
+      "path": "paper_ours_full.pth",
+      "sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e"
+    },
+    {
+      "bytes": 98591869,
+      "config": "configs/ablation/visual_lhr.yaml",
+      "name": "paper_visual_only_lhr.pth",
+      "path": "paper_visual_only_lhr.pth",
+      "sha256": "02d900d0ddf81086f4176b63663f952a7c753eeb033b13acc5030a892a88cf70"
+    },
+    {
+      "bytes": 99018365,
+      "config": "configs/ablation/event_lhr.yaml",
+      "name": "paper_event_only_lhr.pth",
+      "path": "paper_event_only_lhr.pth",
+      "sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef"
+    },
+    {
+      "bytes": 99016317,
+      "config": "configs/ablation/event_baseline.yaml",
+      "name": "paper_event_only_baseline.pth",
+      "path": "ablation/paper_event_only_baseline.pth",
+      "sha256": "210ca4c78694164e4e524196c0c795c4646dd54b540efbe40fad011a94861ab5"
+    },
+    {
+      "bytes": 98589821,
+      "config": "configs/ablation/visual_baseline.yaml",
+      "name": "paper_visual_only_baseline.pth",
+      "path": "ablation/paper_visual_only_baseline.pth",
+      "sha256": "04f59c7324a06200519e52805c61bcd6c11ab17f838d296572942bb13a7d5f7e"
+    },
+    {
+      "bytes": 99091581,
+      "config": "configs/ablation/multimodal_baseline.yaml",
+      "name": "paper_multi_modal_baseline.pth",
+      "path": "ablation/paper_multi_modal_baseline.pth",
+      "sha256": "19ca6c22528636c97c88a99257c3e8dac8791c21df1a024d40755e3ccc328761"
+    },
+    {
+      "bytes": 99093629,
+      "config": "configs/ablation/multimodal_lhr_early.yaml",
+      "name": "paper_multi_modal_lhr_early_fusion.pth",
+      "path": "ablation/paper_multi_modal_lhr_early_fusion.pth",
+      "sha256": "1365f774324fd7f9327cf581b2b1ccae1a7b6341e3dbc41e8d1624da9698171f"
+    },
+    {
+      "bytes": 197608193,
+      "config": "configs/ablation/multimodal_lhr_late.yaml",
+      "name": "paper_multi_modal_lhr_late_fusion.pth",
+      "path": "ablation/paper_multi_modal_lhr_late_fusion.pth",
+      "sha256": "23371fc95f836b13c005edb0161759e2678a84ba1b033373ea531f55df8e7dfa"
+    }
+  ],
+  "configs": [
+    "configs/ablation/event_baseline.yaml",
+    "configs/ablation/event_lhr.yaml",
+    "configs/ablation/multimodal_baseline.yaml",
+    "configs/ablation/multimodal_lhr_early.yaml",
+    "configs/ablation/multimodal_lhr_late.yaml",
+    "configs/ablation/ours_full.yaml",
+    "configs/ablation/visual_baseline.yaml",
+    "configs/ablation/visual_lhr.yaml",
+    "configs/garl_ttc_eventdecoder.yaml"
+  ],
+  "metrics": [
+    "metrics/paper_test12.json"
+  ],
+  "repo_id": "NAIL-HNU/GarlTTC-model"
+}

@@ -1,0 +1,9 @@
+{
+  "bytes": 1355451,
+  "destination": "${REPO}\\artifacts\\sota_campaign_20261008\\fcwd_inference\\QUERY_MANIFEST.json",
+  "labels_read": false,
+  "optimizer_updates": 0,
+  "sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+  "source": "${REPO}\\artifacts\\sota_campaign_20261008\\fcwd_population\\QUERY_MANIFEST.json",
+  "status": "BYTE_EXACT_IMMUTABLE_COPY"
+}

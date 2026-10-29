@@ -1,0 +1,32 @@
+{
+  "actual_delta_ranges": [
+    [
+      0.10000099986791611,
+      0.10000099986791611
+    ],
+    [
+      0.10000099986791611,
+      0.5000069737434387
+    ]
+  ],
+  "effective_batch_examples": 32,
+  "homogeneous_shapes": [
+    [
+      3,
+      2,
+      3,
+      128,
+      128
+    ],
+    [
+      29,
+      3,
+      3,
+      128,
+      128
+    ]
+  ],
+  "optimizer_boundaries": 1,
+  "optimizer_updates": 0,
+  "real_P_source": true
+}

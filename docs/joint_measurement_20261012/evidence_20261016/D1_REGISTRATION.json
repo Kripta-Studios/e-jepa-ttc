@@ -1,0 +1,109 @@
+{
+  "P_manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+  "batch_size": 32,
+  "capacity": {
+    "control": 578337,
+    "encoder_shared_architecture": 176192,
+    "wide": 1693185
+  },
+  "development_gates": {
+    "all_routes_band_ratio_max": 1.1,
+    "all_routes_sign_increase_max": 0.005,
+    "common_reference": "A5-P2-FROZEN",
+    "final_promotion": "V14 numerical gate unchanged vs matched full E_CTX on V; comparable E2E cost required; internal development only",
+    "mandatory_complete_coverage": true,
+    "max_integrations": 2,
+    "ranking": [
+      "overall_MiD",
+      "MiDc",
+      "fit_id"
+    ],
+    "routes": {
+      "cost_ratio_max": 0.7,
+      "cost_route_overall_ratio_max": 1.02,
+      "crucial_ratio_max": 0.95,
+      "crucial_route_overall_ratio_max": 1.02,
+      "overall_ratio_max": 0.97
+    }
+  },
+  "evaluation": "Freeze fixed12k before complete P/H. Same A5-P2 reference and original band/sign protections. Open V only after prospective H admission.",
+  "evidence": {
+    "P_H_diagnostic_sha256": "323631eefa66d72c55d958080b979229da8251b0d86e28cf375f5609b122d011",
+    "P_aggregate": 75.73606167200634,
+    "P_sign_error": 0.1757468918166636,
+    "control_endpoint_proof_sha256": "f1621fe5ded8c11dd51abec18749996da69b13b29d3b5e5ec61b0e9112da203e",
+    "control_gradient_proof_sha256": "898a84a8dfa5ca541b3f300dc63b74496f36db922923364bfbdc5d4b162086b6",
+    "correspondence_sha256": "214f9959d342204efdc1d761efc8a9b44cfd1e30718349a7d7e6521b89b2b663",
+    "limit": "Substantial P error enables a capacity test; it does not prove capacity is the cause. Frozen CORR has better P objective, so objective/optimization tradeoffs remain alternatives."
+  },
+  "experiment_id": "V18_ADAPTIVE_D1",
+  "family": "D",
+  "fits": [
+    "PAIR-CORR-WIDE-S7"
+  ],
+  "hypothesis": "Increasing spatial predictor capacity may reduce limited P fit without changing inputs, objective or native encoder initialization",
+  "initialization": "Same seed7 and constructor law; different tensor shapes imply different random tensors. Width-one constructor is bit-exact with the original. No widening of pretrained CNN or loss change.",
+  "mass_sha256": "7fb24c3f3e02c6715562bebf3bb1d6c6042c3d0931457f145bb23a473044174e",
+  "maximum_new_scientific_updates": 12000,
+  "maximum_synthetic_qa_updates": 30,
+  "mechanism_rule": "At fixed12k, P aggregate improves>=3% versus free CORR with sign not worse; also report objective/bands. This is not H admission or promotion.",
+  "microbatch_size": 4,
+  "objective": "Unchanged emitted phase L1 plus0.1 raw phase L1, native signed decoder and global P masses",
+  "official_claim": false,
+  "only_scientific_factor": "Spatial tower width96 to192 and readout hidden128 to256; native64 encoder remains fully trainable and identically initialized",
+  "optimizer": {
+    "backbone_lr": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "clip_norm": 1.0,
+    "eps": 1e-08,
+    "final_lr_fraction": 0.1,
+    "readout_lr": 0.0003,
+    "warmup": 200,
+    "weight_decay": 0.0001
+  },
+  "paired_control": {
+    "checkpoint_sha256": "7acebaaee16d77a2afd7d0c68c5ee9cdd42a3d1e31ddbe1e38c845bcad24beaf",
+    "cost": "already charged; never count twice",
+    "fit_id": "PAIR-CORR-S7",
+    "identity_sha256": "dbd1652526a141cc9b1464c9bcff47a8ebac7563ba62f29e78af9a1f819c6aba",
+    "reused_without_new_updates": true,
+    "updates": 12000
+  },
+  "parent_sha256": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+  "population": "P",
+  "population_size": 53890,
+  "prototype_sha256": "380a7877dea32ba1a27a70ea12e32abbeadd9eef22a2aac2daac3ec0fd04e1a8",
+  "replication": "Existing single selected family remains C1 fusion; D1 does not authorize another replication family",
+  "runtime": "FP32_no_TF32; full forward/backward capture after exact/numerical QA; owned gradients; pinned slices; lossless8GiB LRU; one prefetch",
+  "schema": "v18_adaptive_D1_predictor_width_v1",
+  "seed": 7,
+  "sensor_binding": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a",
+  "sources": {
+    "configs/joint_measurement/primary.json": "5ef559bf0d9e955d3ad82e51eb5f745c4af3a0f7c6891def80b44f61d75e778a",
+    "operational/joint_measurement/capacity_model.py": "13ca1ab8b333a085f26f76b79820cb89943bb54f3db11c590d28ed56a33c2ee5",
+    "operational/joint_measurement/capacity_train.py": "236bd5e987357d89bcb63caca0e5b72ae9780f5d22127e759565773542580e94",
+    "operational/joint_measurement/common.py": "74af008e2d6edb65d67b1ac3da1ee3e5467c7b5a62ff9ac43cf9b70e2ffce122",
+    "operational/joint_measurement/data.py": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+    "operational/joint_measurement/fast_runtime.py": "3c2557f47ea93fe4dcc1d4f267ab6d2df0d4e0b443b9fe393b687f8a3836aff5",
+    "operational/joint_measurement/geometry_capture.py": "d30578e9d1a90cdc19a893dd4f5e78cc442144545c52debe70fac01d41704640",
+    "operational/joint_measurement/geometry_capture_qa.py": "124e6cd584f5dfe72e28ef7e079aee6fb6db380950be881b9c7bb230c25be2c3",
+    "operational/joint_measurement/geometry_train.py": "e67dc3079eac435f137a553b211355d04ab8144c49d874e7c20e37c40cdfbebe",
+    "operational/joint_measurement/native_loss.py": "a78b1b4b78352a47b6c0c65146587dd742acbb9e50a3a580aae34bf491f6e189",
+    "operational/joint_measurement/qa.py": "1463f72ae2dfd5db614bbc1151a3b5dfeb0916f68c45535f7deb37cad8aa41f1",
+    "operational/joint_measurement/resume_fast_proof.py": "432bab8f742910ea0c0573dd07e310f0f6389f6626d543594c76b5f6fcd1aad3",
+    "operational/joint_measurement/train.py": "0bf92b0f46993c01223db72fedf3a4e2a3d32fb81cbc7ada7806d6e205d7ad80",
+    "operational/rgb_port/train_producers.py": "0fad9b57fd529489b55e9313fbe938fd0b84481cd3877cf5dab7f9b918544757",
+    "operational/rgb_port_revision/loss.py": "4a7cf77505ce2db6afe37a3ee6eb9fa44cbd15882be39f81076250b8e62f449d",
+    "src/e_jepa_ttc/joint_measurement/__init__.py": "0f7ebcc4d14c59cee5f7fea3acefcb58e734e56bf33bad286e0ce6eee8ab63a4",
+    "src/e_jepa_ttc/joint_measurement/loss.py": "aed34461a89639e0b8a1c699e32376419bf32e83ec351e17101e7a635f2d57ca",
+    "src/e_jepa_ttc/joint_measurement/model.py": "276251a86a96cbd399ac53eed8a3d0480597ed438e2b9b4b2b8a38aaad640bc3",
+    "src/e_jepa_ttc/losses/causal_scale_ttc.py": "f82ca020f351671e0d4837fdb7bf9c9e93a5fc2755eb16078e241475c7ee719d",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": "acbf1b6583798b12ed88df173e5e5589d597d11acd4e15d376d9ee6482ff52e7",
+    "src/e_jepa_ttc/models/local_transport.py": "7177531b930bbdb359c8390eb7d1f4f377010d695b6e0919e5c255600bf2e3ec",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "updates_per_fit": 12000
+}

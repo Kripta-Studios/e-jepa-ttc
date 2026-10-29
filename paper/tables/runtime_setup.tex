@@ -1,0 +1,19 @@
+\begin{table}[H]\centering\small
+\caption{Paced-replay hardware, configuration, and initialization timings. Startup stages were timed separately and excluded from the arrival clock; unexpected shapes were processed within the measured update. \evidence{L40,R02}}
+\label{tab:runtime-setup}
+\begin{tabularx}{\linewidth}{@{}p{.31\linewidth}X@{}}\toprule
+Item & Recorded value\\\midrule
+GPU & NVIDIA GeForce RTX 5070 Ti Laptop GPU\\
+Software & Python 3.11.15; PyTorch 2.11.0+cu128; CUDA build 12.8\\
+Precision & FP32; TF32 disabled for matrix multiplication and cuDNN\\
+CPU / preparation & 2 PyTorch CPU threads; 8 RGB workers; queue capacity 2\\
+Parity tolerance & Absolute and relative tolerance both $10^{-5}$; all 250 outputs checked\\
+\midrule\multicolumn{2}{l}{\textbf{Outside the measured arrival clock}}\\
+RAW preload & 2.769 s\\
+Model and service initialization & 0.516 s\\
+Synthetic shape priming & 12.095 s; 7 layouts; synthetic tensors only, no RAW/future sensor data\\
+History initialization & 0.132 s for 600 ms of preceding sensor history\\
+Source warmup & 0.051 s; 13 already-available RGB frames\\
+\midrule
+Unrecorded hardware fields & CPU model and GPU driver version\\
+\bottomrule\end{tabularx}\end{table}

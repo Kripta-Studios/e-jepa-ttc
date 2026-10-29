@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-28T11:34:24.6057874Z",
+  "git_commit": "bfa67f5ad0843f79665f563f146c0f5b5ad01520",
+  "gpu": [
+    "name, memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 2679 MiB, 9 %, 30.11 W, 74"
+  ],
+  "os": {
+    "FreePhysicalMemory": 8270600,
+    "FreeVirtualMemory": 10678008
+  },
+  "note": "Root exclusive GPU; state/pixel diagnostic20ms vs5ms, 93boundaries; memory two histories +1GiB guard then release before models; no latency admission"
+}

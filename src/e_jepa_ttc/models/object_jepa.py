@@ -124,9 +124,7 @@ def roi_sample(
         raise ValueError(msg)
     batch, object_count = boxes_xyxy.shape[:2]
     if object_count == 0:
-        return feature_map.new_empty(
-            (batch, 0, feature_map.shape[1], output_size, output_size)
-        )
+        return feature_map.new_empty((batch, 0, feature_map.shape[1], output_size, output_size))
     boxes = boxes_xyxy.clamp(0.0, 1.0)
     x_min, y_min, x_max, y_max = boxes.unbind(dim=-1)
     line = torch.linspace(0.0, 1.0, output_size, device=boxes.device, dtype=boxes.dtype)
@@ -249,9 +247,7 @@ class ObjectCentricRecurrentEncoder(nn.Module):
                 )
             roi_embedding = self.roi_projection(roi.mean(dim=(-1, -2)))
             if self.config.use_geometry:
-                geometry = self.geometry_projection(
-                    normalized_box_features(boxes_xyxy[:, step])
-                )
+                geometry = self.geometry_projection(normalized_box_features(boxes_xyxy[:, step]))
             else:
                 geometry = torch.zeros_like(roi_embedding)
             action_input = torch.cat(
@@ -462,24 +458,33 @@ class ObjectCentricEventJEPA(nn.Module):
         )
 
     @torch.no_grad()
-    def update_target_encoder(self, momentum: float) -> None:
-        """Update the target encoder by exponential moving average."""
+    def update_target_encoder(self, momentum: float) -> float:
+        """Update the target encoder by exponential moving average and return L2 divergence."""
 
-        if not 0.0 <= momentum < 1.0:
-            msg = "EMA momentum must lie in [0, 1)."
+        if not 0.0 <= momentum <= 1.0:
+            msg = "EMA momentum must lie in [0, 1]."
             raise ValueError(msg)
+
+        divergence_sq = 0.0
         for target, context in zip(
             self.target_encoder.parameters(),
             self.context_encoder.parameters(),
             strict=True,
         ):
-            target.mul_(momentum).add_(context.detach(), alpha=1.0 - momentum)
+            delta = target.data - context.data
+            divergence_sq += delta.pow(2).sum().item()
+            if momentum < 1.0:
+                target.mul_(momentum).add_(context.detach(), alpha=1.0 - momentum)
+
         for target, context in zip(
             self.target_encoder.buffers(),
             self.context_encoder.buffers(),
             strict=True,
         ):
-            target.copy_(context)
+            if momentum < 1.0:
+                target.copy_(context)
+
+        return float(divergence_sq**0.5)
 
     def train(self, mode: bool = True) -> ObjectCentricEventJEPA:
         """Keep the EMA teacher in evaluation mode."""

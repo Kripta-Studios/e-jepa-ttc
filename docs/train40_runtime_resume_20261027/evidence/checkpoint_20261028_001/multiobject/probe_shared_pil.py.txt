@@ -1,0 +1,57 @@
+"""CPU-only paired crop experiment; no model or CUDA execution."""
+from pathlib import Path
+import sys, json, time, hashlib
+from concurrent.futures import ThreadPoolExecutor
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT), str(ROOT / 'src')]
+from operational.train40_runtime.inputs import PersistentSensorInputs
+from operational.train40_runtime.multiobject import MultiObjectTrain40Service, read_raw_rgb_history
+from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
+from scripts.benchmark_train40_multiobject import artificial_regions, reference_rgb
+
+manifest = ROOT / 'artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json'
+records = []
+with PersistentSensorInputs() as inputs:
+    for index in (0, 553):
+        row = json.loads(manifest.read_text(encoding='utf-8'))['rows'][index]
+        raw = read_raw_rgb_history(inputs, row)
+        boxes = [inputs._box(source) for source in row['bbox_sources'][-2:]]
+        square = common_square_from_boxes(boxes, (0,1), margin_fraction=0.25)
+        objects = artificial_regions(row['square_xyxy'], square, 20)
+        service = MultiObjectTrain40Service.__new__(MultiObjectTrain40Service)
+        service._crops = ThreadPoolExecutor(max_workers=8)
+        service.last_rgb_profile = {}
+        timings = {'legacy': [], 'shared': []}
+        exact = {}
+        try:
+            expected = [reference_rgb(raw, obj) for obj in objects]
+            for mode in ('legacy', 'shared'):
+                service.shared_rgb_images = mode == 'shared'
+                actual = service._rgb(objects, raw)
+                exact[mode] = all(np.array_equal(a[0], b[0]) and a[1] == b[1]
+                                  for xs, ys in zip(actual, expected, strict=True)
+                                  for a,b in zip(xs,ys,strict=True))
+            for repetition in range(8):
+                for mode in (('legacy','shared') if repetition % 2 == 0 else ('shared','legacy')):
+                    service.shared_rgb_images = mode == 'shared'
+                    begin = time.perf_counter_ns()
+                    actual = service._rgb(objects, raw)
+                    timings[mode].append((time.perf_counter_ns()-begin)/1e6)
+            records.append({'index': index, 'objects': 20, 'exact_against_original': exact,
+                            'milliseconds': timings,
+                            'medians_ms': {k: float(np.median(v)) for k,v in timings.items()},
+                            'raw_frame_shapes': [list(v.shape) for v in raw.frames.values()],
+                            'rgb_square': square})
+        finally:
+            service._crops.shutdown(wait=True)
+result = {'scope': 'CPU_RGB_CROP_STACK_ONLY_20_ARTIFICIAL_ROIS_NO_GPU_OR_MODELS',
+          'manifest_sha256': hashlib.sha256(manifest.read_bytes()).hexdigest(),
+          'sources': {name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
+                      for name in ('operational/train40_runtime/multiobject.py',
+                                   'operational/train40_runtime/encoding.py')}, 'records': records}
+output = Path(__file__).with_name('shared_pil_cpu_v1.json')
+with output.open('x', encoding='utf-8') as stream:
+    json.dump(result, stream, indent=2)
+print(json.dumps(result, indent=2))

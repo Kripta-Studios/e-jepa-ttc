@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-28T11:21:34.0458319Z",
+  "git_commit": "9e752ae478721c5d8434f5f85e0167e2b70a2d21",
+  "gpu": [
+    "name, memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 2652 MiB, 6 %, 27.28 W, 74"
+  ],
+  "os": {
+    "FreePhysicalMemory": 8700404,
+    "FreeVirtualMemory": 11671492
+  },
+  "note": "Root exclusive GPU; same250 CPLA queries as control, add crop cache only; full SHA256 V1 arrival sealing retained, exact reverse-summaries and lifecyclev2; conservative source envelope3GiB includes crop bound"
+}

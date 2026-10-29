@@ -1,0 +1,36 @@
+{
+  "cache_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\E_HISTORY.npz",
+  "files": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\H_MANIFEST.json": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\SPLIT_MANIFEST.json": "d199273f48bc7905a0fc32f4fe23c431a93d42580231fd6a213e8e57ef23dbd9",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\admissions\\E_CTX_MATCHED.json": "53d48d53d791ba59a2a5b0a0628659c523411614e67f2a0a04e7c38095aca604",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\E_HISTORY.json": "0fc750b6c373eff761079ad882430dee4b4f6fb41d8a8ca3c500e2ccb145b37a",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\E_HISTORY.npz": "38901ab7cf95f5ccb9c8c7c1dd29176ffe1afc002785193aa8766b65d2354e89",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\E_NORMALIZER.json": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\CHECKPOINT_RECEIPT.json": "a335caca13bac1f6238f5e627f6fbf57936c5d49e5acd359bc54accdeaa695ca",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\RUN_PROVENANCE.json": "5457d346b57f7909d18b195fba5a3c690655ad09b92ca652f881df819215b2d2",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\UPDATE_JOURNAL.json": "b5276e2c4e2ac1c41dea4a252f67d4e7852c41a617c4f4d1b0c44dce153174e7",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\checkpoint_last.pt": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\CHECKPOINT_RECEIPT.json": "56f732fd0973e92042bb41585228cafa6db6e3c4a5e4b16f50eef7fef1a2e869",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\RUN_PROVENANCE.json": "57e02441fead66d785c2b5ba95845bab464502c0e4c250574afe972328ac67e6",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\UPDATE_JOURNAL.json": "b49d2de3ddcd702ff0a8bc02e3580b70f666625c8d42a99cff6a03f88d1fb7a4",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\checkpoint_last.pt": "468f69aee68a0a5f8e2b536ba8c790ed45620251682aa0c70108625c426b30ec",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_E_MATCHED\\CHECKPOINT_RECEIPT.json": "1f9a0b80ac4a52db38cc61eed87a32a2035f5ed23a9856fccc4ea0258b93d281",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_E_MATCHED\\RUN_PROVENANCE.json": "e545ceb1634f26cd3d08522b6827f94fc290df805b32068e0612b4fa063a45de",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_E_MATCHED\\UPDATE_JOURNAL.json": "d4e18357e3c3b2da473257fcc91d05786a196bcb395f3c106b8159d9e9c150d1",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_E_MATCHED\\checkpoint_last.pt": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\rounds\\PRODUCERS_PAIR_ENDPOINT_FREEZE.json": "558134b9b6d90a464048ee2323b90d845d1dad4d7fc1becc3c2b94602c6da42c"
+  },
+  "native_device": "cuda",
+  "native_endpoint_reused": false,
+  "new_device": "cpu",
+  "normalizer_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\features\\H\\E_NORMALIZER.json",
+  "owner_run": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008",
+  "parents": {
+    "E_A5_MATCHED": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+    "E_C2F_MATCHED": "468f69aee68a0a5f8e2b536ba8c790ed45620251682aa0c70108625c426b30ec",
+    "PAIR_E_MATCHED": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883"
+  },
+  "precision": "float32",
+  "status": "ADMITTED"
+}

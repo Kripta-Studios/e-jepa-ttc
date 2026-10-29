@@ -1,0 +1,1277 @@
+"""Complete last-packet TRAIN40 pilot using distinct artificial regions.
+
+Each population shares one real raw sensor history. Object zero is the original
+annotated ROI; the others are deterministic translated regions, not annotated
+tracks. Every declared region receives its own original-model parity check.
+History rebuilding, raw disk loading and synthetic shape priming are excluded.
+Current ROI work, the new raw packet, all transfers/models and all TTC outputs
+are included. This pilot does not establish sustained 50 Hz operation.
+"""
+
+from __future__ import annotations
+
+import argparse
+import gc
+import hashlib
+import importlib
+import json
+import platform
+import subprocess
+import sys
+import time
+from collections.abc import Iterator
+from contextlib import contextmanager, nullcontext
+from dataclasses import asdict
+from pathlib import Path
+from typing import Any, cast
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import numpy as np  # noqa: E402
+import torch  # noqa: E402
+
+from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes  # noqa: E402
+from e_jepa_ttc.rgb_port.data import crop_uint8  # noqa: E402
+from operational.evttc_transfer.inputs import EvTTCEventReader  # noqa: E402
+from operational.rgb_port import transfer as engine  # noqa: E402
+from operational.train40_runtime.defaults import DEFAULT_PROFILE  # noqa: E402
+from operational.train40_runtime.inputs import PersistentSensorInputs  # noqa: E402
+from operational.train40_runtime.integral import IntegralEventHistory  # noqa: E402
+from operational.train40_runtime.measurement import (  # noqa: E402
+    latency_distribution,
+    prediction_parity,
+    snapshot_files,
+    verify_snapshot,
+)
+from operational.train40_runtime.multiobject import (  # noqa: E402
+    MultiObjectTrain40Service,
+    ObjectRegion,
+    RawRGBHistory,
+    Square,
+    read_raw_rgb_history,
+)
+from operational.train40_runtime.producers import (  # noqa: E402
+    TRANSPORT_REUSE_MODES,
+    transport_reuse_contract,
+)
+from operational.train40_runtime.rgb_crop_cache import CROP_ABI, CROP_BYTES  # noqa: E402
+from scripts.benchmark_train40_runtime import (  # noqa: E402
+    _candidate_inventory,
+    _source_inventory,
+    _validate_output,
+    _validate_reference,
+    _write,
+)
+from scripts.final_train40_transfer import (  # noqa: E402
+    FinalTransferPredictor,
+    load_models,
+    read,
+    reject_targets,
+    sha,
+    verify_candidate,
+    verify_frozen_runtime,
+)
+
+SCOPE = "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE"
+IMMUTABLE_ADMISSION_SCOPE = (
+    "IMMUTABLE_RGB_CACHE_INPUT_ADMISSION_FIXED_QUERY_REPEATS_NO_ARRIVAL_TIMING"
+)
+CROP_ADMISSION_SCOPE = (
+    "IMMUTABLE_RGB_CROP_AND_FEATURE_CACHE_ADMISSION_FORCED_MISS_NO_ARRIVAL_TIMING"
+)
+CROP_REQUIRED_CASES = tuple((count, index) for count in (1, 2) for index in (0, 137, 553))
+
+
+def _array_sha256(value: np.ndarray) -> str:
+    # NumPy implements the buffer protocol; its stubs do not expose __buffer__.
+    return hashlib.sha256(memoryview(cast(Any, np.ascontiguousarray(value)))).hexdigest()
+
+
+def immutable_history_for_admission(
+    history: RawRGBHistory, row: dict[str, Any], manifest_sha256: str
+) -> tuple[RawRGBHistory, dict[str, Any]]:
+    """Seal only available frames; preserve the independent RAW oracle untouched.
+
+    This diagnostic reconstructs one fixed causal history. Its sealing receipt is
+    outside the internal update clock and must not be presented as paced timing.
+    """
+    from operational.train40_runtime.rgb_immutable_history import FrozenRGBHistory
+    from operational.train40_runtime.rgb_raw_ring import RGBSourceIdentity, freeze_rgb_frame
+
+    required = {index for group in history.triplets for index in group}
+    if set(history.frames) != required or set(history.timestamps_us) != required:
+        raise ValueError("Immutable admission requires exactly the referenced RAW frames")
+    if history.query_us != int(row["anchor_us"]) or any(
+        history.timestamps_us[index] > history.query_us for index in required
+    ):
+        raise ValueError("Future RGB observation cannot enter immutable admission")
+    descriptor = {
+        "raw_path": str(Path(row["raw_path"]).resolve()),
+        "raw_stat": dict(row["raw_stat"]),
+        "calibration_sha256": row["calibration_sha256"],
+        "manifest_sha256": manifest_sha256,
+        "dataset": "blackflys/left/data",
+    }
+    origin = RGBSourceIdentity(
+        descriptor["raw_path"] + "::blackflys/left/data",
+        hashlib.sha256(json.dumps(descriptor, sort_keys=True).encode()).hexdigest(),
+    )
+    started = time.perf_counter()
+    tokens = {
+        index: freeze_rgb_frame(
+            history.frames[index], index, int(history.timestamps_us[index]), origin
+        )
+        for index in sorted(required, key=lambda index: (history.timestamps_us[index], index))
+    }
+    frozen = FrozenRGBHistory(
+        history.query_us, tokens, history.triplets, history.unavailable_reason
+    )
+    receipt = {
+        "schema": "train40_immutable_rgb_history_admission_v1",
+        "query_us": history.query_us,
+        "source_descriptor": descriptor,
+        "source_revision_sha256": origin.revision_sha256,
+        "source_revision_is_full_hdf5_hash": False,
+        "arrival_stream_simulated": False,
+        "sealing_excluded_from_internal_update_clock": True,
+        "freeze_wall_seconds": time.perf_counter() - started,
+        "hashed_bytes": sum(token.hashed_bytes for token in tokens.values()),
+        "all_raw_frames_exact": all(
+            np.array_equal(token.array, history.frames[index]) for index, token in tokens.items()
+        ),
+        "frames": [
+            {
+                "frame_id": index,
+                "timestamp_us": token.timestamp_us,
+                "shape": list(token.shape),
+                "content_sha256": token.content_sha256,
+                "identity_sha256": token.identity_sha256,
+                "bytes": token.hashed_bytes,
+                "freeze_seconds": token.freeze_seconds,
+            }
+            for index, token in tokens.items()
+        ],
+    }
+    return frozen, receipt
+
+
+@contextmanager
+def capture_rgb_producer_inputs(
+    service: MultiObjectTrain40Service,
+) -> Iterator[list[dict[str, Any]]]:
+    """Retain actual producer arguments; hash them only after update synchronization."""
+    captured: list[dict[str, Any]] = []
+    synchronous = service.producers.expert_block
+    asynchronous = service.producers.expert_block_async
+
+    def sync(modality: str, sensor: torch.Tensor, delta: torch.Tensor, **kwargs: Any) -> Any:
+        if modality == "R":
+            captured.append({"route": "expert_block", "sensor": sensor, "delta": delta})
+        return synchronous(modality, sensor, delta, **kwargs)
+
+    def asynchronous_call(
+        modality: str, sensor: torch.Tensor, delta: torch.Tensor, **kwargs: Any
+    ) -> Any:
+        if modality == "R":
+            captured.append({"route": "expert_block_async", "sensor": sensor, "delta": delta})
+        return asynchronous(modality, sensor, delta, **kwargs)
+
+    with (
+        patch.object(service.producers, "expert_block", side_effect=sync),
+        patch.object(service.producers, "expert_block_async", side_effect=asynchronous_call),
+    ):
+        yield captured
+
+
+def captured_rgb_digests(captured: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Record hashes of actual device producer pixels and deltas after the final fence."""
+    result = []
+    for call in captured:
+        pixels = call["sensor"].detach().cpu().numpy()
+        deltas = call["delta"].detach().cpu().numpy()
+        result.append(
+            {
+                "route": call["route"],
+                "pixel_shape": list(pixels.shape),
+                "pixel_dtype": str(pixels.dtype),
+                "delta_shape": list(deltas.shape),
+                "delta_dtype": str(deltas.dtype),
+                "pixel_row_sha256": [_array_sha256(row) for row in pixels],
+                "delta_row_sha256": [_array_sha256(row) for row in deltas],
+            }
+        )
+    return result
+
+
+def attest_actual_rgb_calls(
+    result: dict[str, Any], references: list[list[Any]], chunk_size: int | None
+) -> dict[str, Any]:
+    """Require every observed producer call to equal a canonical object chunk.
+
+    Startup paths may execute the same native chunk more than once. Each must
+    match, and every expected chunk must occur on MISS. HIT must have no R call.
+    """
+    calls = result["actual_rgb_producer_inputs"]
+    status = (result.get("rgb_feature_cache") or {}).get("status")
+    present = [observations for observations in references if observations]
+    width = chunk_size or len(present) or 1
+    expected = []
+    for start in range(0, len(present), width):
+        rows = [row for observations in present[start : start + width] for row in observations]
+        expected.append(
+            {
+                "pixel_shape": [len(rows), *rows[0][0].shape],
+                "pixel_dtype": "float32",
+                "delta_shape": [len(rows), len(rows[0][1]["delta_t_s"])],
+                "delta_dtype": "float32",
+                "pixel_row_sha256": [_array_sha256(pixels) for pixels, _ in rows],
+                "delta_row_sha256": [
+                    _array_sha256(np.asarray(meta["delta_t_s"], dtype=np.float32))
+                    for _, meta in rows
+                ],
+            }
+        )
+    observed = [{key: value for key, value in call.items() if key != "route"} for call in calls]
+    checks = [call in expected for call in observed]
+    covered = [chunk in observed for chunk in expected]
+    passed = (
+        not calls
+        if status in {"HIT", "NO_RGB"}
+        else status == "MISS" and bool(expected) and all(checks) and all(covered)
+    )
+    return {
+        "passed": passed,
+        "cache_status": status,
+        "producer_calls": len(calls),
+        "every_actual_pixel_and_delta_exact": all(checks),
+        "expected_miss_chunks_observed": covered if status == "MISS" else None,
+        "hit_has_no_rgb_producer_call": not calls if status == "HIT" else None,
+        "scope": "ACTUAL_PRODUCER_ARGUMENTS_AFTER_SYNC_VS_INDEPENDENT_RAW_PIL_ORACLE",
+    }
+
+
+def imported_runtime_paths() -> set[Path]:
+    """Snapshot actual runtime module files, excluding unrelated experiments."""
+    runtime_root = ROOT / "operational/train40_runtime"
+    paths = set()
+    for name, module in tuple(sys.modules.items()):
+        if name == "operational.train40_runtime" or name.startswith("operational.train40_runtime."):
+            filename = getattr(module, "__file__", None)
+            if filename is not None:
+                path = Path(filename).resolve()
+                if path.parent == runtime_root:
+                    paths.add(path)
+    return paths
+
+
+def artificial_regions(event_square: Any, rgb_square: Any, count: int) -> list[ObjectRegion]:
+    """Keep the original ROI first; translate every other region deterministically."""
+    if not 1 <= count <= 20:
+        raise ValueError("The registered capacity population is one to twenty regions")
+    result = []
+    for index in range(count):
+        dx, dy = (index % 5) * 17, (index // 5) * 13
+        event = tuple(
+            float(value) + (dx if axis % 2 == 0 else dy) for axis, value in enumerate(event_square)
+        )
+        rgb = tuple(
+            float(value) + (dx if axis % 2 == 0 else dy) for axis, value in enumerate(rgb_square)
+        )
+        result.append(ObjectRegion(f"roi_{index:02d}", cast(Square, event), cast(Square, rgb)))
+    if len({item.event_square for item in result}) != count:
+        raise ValueError("Artificial load must contain distinct regions")
+    return result
+
+
+def reference_rgb(
+    history: RawRGBHistory, region: ObjectRegion
+) -> list[tuple[np.ndarray, dict[str, Any]]]:
+    """Use the original PIL crop adapter independently of the optimized workers."""
+    if region.rgb_square is None:
+        return []
+    frames = {
+        index: crop_uint8(frame, region.rgb_square) for index, frame in history.frames.items()
+    }
+    result = []
+    for group in history.triplets:
+        times = [history.timestamps_us[index] for index in group]
+        pixels = np.ascontiguousarray(
+            np.stack([frames[index] for index in group]).astype(np.float32) / 255
+        )
+        result.append(
+            (
+                pixels,
+                {
+                    "first_sensor_ts_us": times[0],
+                    "anchor_us": times[-1],
+                    "available_us": history.query_us,
+                    "timestamps_us": times,
+                    "frame_indices": list(group),
+                    "delta_t_s": (np.diff(times) / 1e6).tolist(),
+                    "square_xyxy": list(region.rgb_square),
+                },
+            )
+        )
+    return result
+
+
+def reference_receipt(row: dict[str, Any], region: ObjectRegion, rgb: list[Any]) -> dict[str, Any]:
+    """Bind every ROI, clock, frame and window, beyond history-length parity."""
+    anchor = int(row["anchor_us"])
+    windows = np.asarray(row["windows_us"], dtype=np.int64)
+    return {
+        "query_us": anchor,
+        "event_square": list(region.event_square),
+        "rgb_square": list(region.rgb_square) if region.rgb_square is not None else None,
+        "event_windows_us": (windows[None] - engine.EVENT_LAGS_US[:, None, None]).tolist(),
+        "rgb_observations": [dict(metadata) for _, metadata in rgb],
+    }
+
+
+def prime(service: MultiObjectTrain40Service, count: int) -> float:
+    """Capture standard shapes using synthetic zero data before sensor queries."""
+    query = 1_000_000
+    objects = artificial_regions((0, 0, 128, 128), (0, 0, 128, 128), count)
+    rgb = [
+        [
+            (
+                np.zeros((3, 3, 128, 128), dtype=np.float32),
+                {
+                    "delta_t_s": [0.1, 0.1],
+                    "first_sensor_ts_us": query - (6 - i) * 100_000,
+                    "anchor_us": query - (4 - i) * 100_000,
+                    "available_us": query,
+                },
+            )
+            for i in range(5)
+        ]
+        for _ in range(count)
+    ]
+    begin = time.perf_counter()
+    service.infer_prepared(objects, query, torch.zeros((count, 4, 3, 12, 128, 128)), rgb)
+    torch.cuda.synchronize()
+    return time.perf_counter() - begin
+
+
+def input_digests(service: MultiObjectTrain40Service) -> list[dict[str, Any]]:
+    """Hash the actual consumed tensors after the timed update, not reconstructions."""
+    assert service.last_event_inputs is not None
+    event = service.last_event_inputs.cpu().numpy()
+    receipt = service.last_rgb_cache_receipt or {}
+    prepared = service.last_rgb_prepared_inputs
+    pixel_hashes: dict[int, list[str]] = {}
+    if prepared is not None and prepared.pixels is not None:
+        prepared_pixels = prepared.pixels.cpu().numpy()
+        position = 0
+        for index, metadata in enumerate(prepared.metadata):
+            pixel_hashes[index] = [
+                _array_sha256(prepared_pixels[position + offset]) for offset in range(len(metadata))
+            ]
+            position += len(metadata)
+    keys = dict(
+        zip(receipt.get("present_indices", []), receipt.get("key_digests", []), strict=True)
+    )
+    features = service.last_rgb_producer_features
+    present = (
+        receipt.get("present_indices", [])
+        if receipt
+        else [
+            index
+            for index, rows in enumerate(
+                prepared.metadata if prepared is not None else service.last_rgb_inputs or []
+            )
+            if rows
+        ]
+    )
+    feature_hashes = {}
+    delta_hashes = {}
+    if service.last_rgb_input_delta is not None:
+        deltas = service.last_rgb_input_delta.cpu().numpy()
+        groups = len(deltas) // len(present)
+        delta_hashes = {
+            index: _array_sha256(deltas[position * groups : (position + 1) * groups])
+            for position, index in enumerate(present)
+        }
+    if features is not None:
+        raw, experts = (tensor.cpu().numpy() for tensor in features)
+        groups = len(raw) // len(present)
+        for position, index in enumerate(present):
+            begin, end = position * groups, (position + 1) * groups
+            feature_hashes[index] = {
+                "raw": _array_sha256(raw[begin:end]),
+                "experts": _array_sha256(experts[begin:end]),
+            }
+    return [
+        {
+            "event_sha256": _array_sha256(event[index]),
+            "rgb_sha256": [_array_sha256(pixels) for pixels, _ in service.last_rgb_inputs[index]]
+            if service.last_rgb_inputs is not None
+            else pixel_hashes.get(index),
+            "rgb_delta_sha256": delta_hashes.get(index),
+            "rgb_producer_features": feature_hashes.get(index),
+            "rgb_cache_key": keys.get(index),
+        }
+        for index in range(len(event))
+    ]
+
+
+def attest_cached_inputs(timings: list[dict[str, Any]], expected_rgb: list[list[str]]) -> None:
+    """Require every cache hit to match an independently checked miss in this case.
+
+    Hits have no RGB pixel tensor and never claim one. Their actual producer
+    feature hashes and full cache key must match a preceding pixel-checked miss.
+    All event tensors must match the repeat independently compared numerically.
+    """
+    ledger: dict[str, dict[str, str]] = {}
+    checked_event = [item["event_sha256"] for item in timings[-1]["input_digests"]]
+    for result in timings:
+        checks = []
+        for position, digest in enumerate(result["input_digests"]):
+            pixels, key = digest["rgb_sha256"], digest["rgb_cache_key"]
+            features = digest["rgb_producer_features"]
+            if pixels is not None:
+                valid = pixels == expected_rgb[position]
+                if valid and key is not None and features is not None:
+                    ledger[key] = features
+            elif not expected_rgb[position]:
+                valid = features is None and key is None
+            else:
+                valid = key is not None and key in ledger and ledger[key] == features
+            checks.append(valid)
+        result["rgb_input_provenance_passed"] = checks
+        result["same_inputs_as_tensor_checked_repeat"] = (
+            all(checks)
+            and [item["event_sha256"] for item in result["input_digests"]] == checked_event
+        )
+
+
+def cache_exercise_receipt(timings: list[dict[str, Any]]) -> dict[str, Any]:
+    """A cache experiment must exercise stored-miss to actual-feature-hit reuse."""
+    receipts = [row.get("rgb_feature_cache") or {} for row in timings]
+    statuses = [receipt.get("status") for receipt in receipts]
+    hits = statuses.count("HIT")
+    eligible = any(receipt.get("present_objects", 0) > 0 for receipt in receipts)
+    passed = bool(receipts) and (
+        (
+            statuses[0] == "MISS"
+            and receipts[0].get("stored") is True
+            and hits > 0
+            and all(
+                all(digest["rgb_sha256"] is None for digest in row["input_digests"])
+                for row, status in zip(timings, statuses, strict=True)
+                if status == "HIT"
+            )
+        )
+        if eligible
+        else all(status == "NO_RGB" for status in statuses)
+    )
+    return {
+        "passed": passed,
+        "eligible": eligible,
+        "statuses": statuses,
+        "hit_updates": hits,
+        "miss_updates": statuses.count("MISS"),
+        "no_rgb_updates": statuses.count("NO_RGB"),
+    }
+
+
+def validate_crop_admission_options(args: argparse.Namespace) -> None:
+    """Reject a crop diagnostic that changes the admitted pixels or R/E batches."""
+    if not args.rgb_crop_cache:
+        return
+    if not args.immutable_rgb_history or not args.rgb_feature_cache or args.repeats < 3:
+        raise ValueError(
+            "RGB crop admission requires --immutable-rgb-history, --rgb-feature-cache "
+            "and at least three repeats"
+        )
+    if (
+        args.rgb_uint8
+        or args.shared_rgb_images
+        or args.rgb_object_chunk_size != 1
+        or not args.no_event_reuse
+    ):
+        raise ValueError(
+            "RGB crop admission preserves ROI-first PIL, RGB object chunks of one "
+            "and original event encoder batches"
+        )
+
+
+def reset_case_crop_cache(service: MultiObjectTrain40Service) -> dict[str, Any]:
+    """Clear crops on their owner between diagnostic cases, outside every update clock."""
+    cache = service._rgb_crop_cache
+    if cache is None:
+        raise ValueError("Crop admission requires an enabled crop cache")
+    before = cache.stats
+    if service.parallel_preprocessing:
+        service._preprocess.submit(cache.clear).result()
+    else:
+        cache.clear()
+    after = cache.stats
+    return {
+        "action": "CASE_START_CROP_CACHE_CLEAR",
+        "outside_update_clock": True,
+        "before": before,
+        "after": after,
+        "empty_after": after["entries"] == 0 and after["crop_bytes"] == 0,
+    }
+
+
+def force_feature_miss_for_crop_admission(
+    service: MultiObjectTrain40Service, repetition: int
+) -> dict[str, Any] | None:
+    """On repeat two, clear only features so the unchanged producer consumes crop hits."""
+    if repetition != 2:
+        return None
+    cache = service.rgb_feature_cache
+    if cache is None or service.rgb_crop_cache_stats is None:
+        raise ValueError("Forced feature MISS requires both feature and crop caches")
+    crop_before = service.rgb_crop_cache_stats
+    before = cache.stats
+    started_ns = time.perf_counter_ns()
+    cache.clear()
+    completed_ns = time.perf_counter_ns()
+    after = cache.stats
+    crop_after = service.rgb_crop_cache_stats
+    return {
+        "action": "CLEAR_FEATURE_CACHE_ONLY",
+        "repetition": repetition,
+        "outside_update_clock": True,
+        "started_ns": started_ns,
+        "completed_ns": completed_ns,
+        "feature_before": before,
+        "feature_after": after,
+        "crop_before": crop_before,
+        "crop_after": crop_after,
+        "crop_cache_unchanged": crop_before == crop_after,
+        "features_were_resident": before["entries"] > 0,
+        "features_empty_after": after["entries"] == 0 and after["tensor_bytes"] == 0,
+    }
+
+
+def crop_cache_exercise_receipt(timings: list[dict[str, Any]]) -> dict[str, Any]:
+    """Attest MISS, whole-feature HIT, then forced feature MISS with exact crop HIT."""
+    statuses = [(row.get("rgb_feature_cache") or {}).get("status") for row in timings]
+    expected = ["MISS", "HIT", "MISS", *(["HIT"] * max(0, len(timings) - 3))]
+    first, second, third = (
+        [row.get("rgb_preprocess") or {} for row in timings[:3]]
+        if (len(timings) >= 3)
+        else ({}, {}, {})
+    )
+    forced = timings[2].get("forced_feature_cache_reset") or {} if len(timings) >= 3 else {}
+    reset = timings[0].get("case_crop_cache_reset") or {} if timings else {}
+    cold_misses = first.get("crop_cache_misses", 0)
+    zero_work = (
+        "crop_cache_hits",
+        "crop_cache_misses",
+        "crop_cache_stored_crops",
+        "roi_frame_tasks",
+    )
+    checks = {
+        "exact_feature_sequence": len(timings) >= 3 and statuses == expected,
+        "case_starts_empty": reset.get("empty_after") is True
+        and reset.get("outside_update_clock") is True,
+        "cold_crops_stored": cold_misses > 0
+        and first.get("crop_cache_stored_crops") == cold_misses
+        and first.get("crop_cache_hits") == 0
+        and first.get("roi_frame_tasks") == cold_misses,
+        "whole_feature_hit_skips_all_crops": all(second.get(key) == 0 for key in zero_work),
+        "forced_clear_only_features": forced.get("action") == "CLEAR_FEATURE_CACHE_ONLY"
+        and forced.get("repetition") == 2
+        and forced.get("outside_update_clock") is True
+        and forced.get("crop_cache_unchanged") is True
+        and forced.get("features_were_resident") is True
+        and forced.get("features_empty_after") is True,
+        "forced_miss_uses_only_crop_hits": cold_misses > 0
+        and third.get("crop_cache_hits") == cold_misses
+        and all(third.get(key) == 0 for key in zero_work[1:]),
+        "feature_misses_stored": all(
+            row["rgb_feature_cache"].get("stored") is True
+            for row in timings
+            if (row.get("rgb_feature_cache") or {}).get("status") == "MISS"
+        ),
+        "immutable_frames_never_bypassed": bool(timings)
+        and all(
+            (row.get("rgb_preprocess") or {}).get("crop_cache_bypassed_frames") == 0
+            for row in timings
+        ),
+    }
+    return {
+        "passed": all(checks.values()),
+        "checks": checks,
+        "statuses": statuses,
+        "cold_crop_misses": cold_misses,
+        "forced_crop_hits": third.get("crop_cache_hits", 0),
+        "scope": CROP_ADMISSION_SCOPE,
+    }
+
+
+def crop_admission_matrix(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Require all six declared numerical companion cases; never infer streaming capacity."""
+    available = set()
+    for case in CROP_REQUIRED_CASES:
+        rows = [row for row in records if (row["object_count"], row["index"]) == case]
+        if {row["repetition"] for row in rows} >= {0, 1, 2} and all(
+            (row.get("crop_cache_exercise") or {}).get("passed") is True for row in rows
+        ):
+            available.add(case)
+    missing = [list(case) for case in CROP_REQUIRED_CASES if case not in available]
+    return {
+        "passed": not missing,
+        "required_cases": [list(case) for case in CROP_REQUIRED_CASES],
+        "missing_cases": missing,
+        "arrival_or_latency_claim": False,
+    }
+
+
+def run(args: argparse.Namespace) -> None:
+    """Persist failures, partial results and immutable-candidate checks."""
+    immutable_history = bool(getattr(args, "immutable_rgb_history", False))
+    validate_crop_admission_options(args)
+    transport_contract = transport_reuse_contract(args.transport_reuse)
+    scope = (
+        CROP_ADMISSION_SCOPE
+        if args.rgb_crop_cache
+        else (IMMUTABLE_ADMISSION_SCOPE if immutable_history else SCOPE)
+    )
+    _validate_output(args.output, [args.candidate, args.reference, args.manifest.parent])
+    args.output.mkdir(parents=True, exist_ok=False)
+    paths, binding = verify_candidate(args.candidate)
+    frozen = verify_frozen_runtime(args.candidate)
+    rows = read(args.manifest)["rows"]
+    reject_targets(rows)
+    original_reference, reference_files, reference_binding = _validate_reference(
+        args.reference, args.manifest, rows, binding
+    )
+    if (
+        not args.indices
+        or len(set(args.indices)) != len(args.indices)
+        or any(not 0 <= index < len(rows) for index in args.indices)
+        or not args.counts
+        or len(set(args.counts)) != len(args.counts)
+        or any(not 1 <= count <= 20 for count in args.counts)
+        or args.repeats < 1
+        or (args.rgb_feature_cache and args.repeats < 2)
+        or (immutable_history and not args.rgb_feature_cache)
+    ):
+        raise ValueError(
+            "Unique valid indices/counts and positive repeats required; cache needs >=2 repeats; "
+            "immutable RGB admission requires --rgb-feature-cache"
+        )
+    if args.rgb_feature_cache:
+        # Import enabled dependencies before source inventory/exclusion decisions.
+        from operational.train40_runtime.multiobject_cache import RGBBatchCache
+    if args.rgb_uint8:
+        importlib.import_module("operational.train40_runtime.rgb_uint8")
+    if immutable_history:
+        importlib.import_module("operational.train40_runtime.rgb_immutable_history")
+    if args.backend == "prefix":
+        importlib.import_module("operational.train40_runtime.temporal_prefix")
+    inventory = _source_inventory(frozen, reference_binding)
+    # Load optional paths above, then bind their actual import closure. A new
+    # runtime import later in this run invalidates admission, even if that file
+    # did not exist when the initial inventory was built.
+    loaded_runtime = imported_runtime_paths()
+    excluded = [
+        path
+        for path in inventory
+        if path.parent == ROOT / "operational/train40_runtime" and path not in loaded_runtime
+    ]
+    sources = [*[path for path in inventory if path not in excluded], Path(__file__).resolve()]
+    metadata_paths = (
+        [Path(source["path"]) for index in args.indices for source in rows[index]["bbox_sources"]]
+        if immutable_history
+        else []
+    )
+    originals = snapshot_files(
+        [
+            *_candidate_inventory(args.candidate),
+            *reference_files,
+            args.manifest,
+            *sources,
+            *metadata_paths,
+        ]
+    )
+    _write(args.output / "original_snapshot.json", originals)
+    records: list[dict[str, Any]] = []
+    startup = []
+    caught: BaseException | None = None
+    service = None
+    inputs = PersistentSensorInputs(rgb_workers=1)
+    finished = False
+    raw_before: dict[Path, dict[str, int]] = {}
+    try:
+        if immutable_history:
+            for index in args.indices:
+                row = rows[index]
+                raw_path = Path(row["raw_path"]).resolve()
+                stat = raw_path.stat()
+                actual_stat = {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+                if actual_stat != row["raw_stat"]:
+                    raise ValueError("RAW source differs from the immutable-admission manifest")
+                raw_before[raw_path] = actual_stat
+                for source in row["bbox_sources"]:
+                    if sha(Path(source["path"])) != source["sha256"]:
+                        raise ValueError("Annotation differs from immutable-admission manifest")
+        torch.set_num_threads(2)
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+        torch.manual_seed(7)
+        binding.update(
+            scope=scope,
+            source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+            sources={str(path.relative_to(ROOT)): sha(path) for path in sources},
+            indices=args.indices,
+            counts=args.counts,
+            repeats=args.repeats,
+            representation_backend=args.backend,
+            manifest_sha256=sha(args.manifest),
+            torch=torch.__version__,
+            cuda=torch.version.cuda,
+            python=platform.python_version(),
+            gpu=torch.cuda.get_device_name(),
+            precision="FP32_TF32_OFF",
+            seed=7,
+            twenty_real_annotated_tracks=False,
+            physical_50hz_goal_demonstrated=False,
+            last_packet_timing=not immutable_history,
+            disk_and_initial_history_excluded=True,
+            future_frames_or_representations_precomputed=False,
+            target_20_objects_50hz_demonstrated=False,
+            reuse_event_encodings_override=False if args.no_event_reuse else None,
+            shared_rgb_images=args.shared_rgb_images,
+            rgb_object_chunk_size=args.rgb_object_chunk_size,
+            parallel_preprocessing=not args.serial_preprocessing,
+            overlap_event_with_rgb_preparation=args.overlap_event_with_rgb_preparation,
+            event_query_graphs=args.event_query_graphs,
+            event_normalization=args.event_normalization,
+            rgb_feature_cache=args.rgb_feature_cache,
+            rgb_crop_cache=args.rgb_crop_cache,
+            rgb_crop_abi=list(CROP_ABI),
+            rgb_crop_memory_upper_bound_bytes=(max(args.counts) * 16 + 1) * CROP_BYTES
+            if args.rgb_crop_cache
+            else 0,
+            rgb_crop_memory_exclusions="Original PIL/stack workspace and Python metadata",
+            transport_reuse=transport_contract,
+            rgb_uint8=args.rgb_uint8,
+            immutable_rgb_history=immutable_history,
+            immutable_history_sealing_excluded_from_update_clock=immutable_history,
+            actual_producer_input_capture=immutable_history,
+            latency_is_paced_or_arrival_measurement=False,
+            forced_feature_clear_outside_update_clock=args.rgb_crop_cache,
+            crop_admission_required_cases=[list(case) for case in CROP_REQUIRED_CASES]
+            if args.rgb_crop_cache
+            else None,
+            cache_scope="PER_CASE_COLD_MISS_THEN_IDENTICAL_RAW_REPEATS"
+            if args.rgb_feature_cache
+            else None,
+            unrelated_unimported_source_exclusions=[
+                str(path.relative_to(ROOT)) for path in excluded
+            ],
+        )
+        _write(args.output / "binding.json", binding)
+        models, norms = load_models(paths, "cuda")
+        cache_identity = (
+            {
+                "model_sha256": hashlib.sha256(
+                    json.dumps(binding["components"], sort_keys=True).encode()
+                ).hexdigest(),
+                "runtime_sha256": hashlib.sha256(
+                    json.dumps(
+                        {
+                            "sources": binding["sources"],
+                            "torch": torch.__version__,
+                            "cuda": torch.version.cuda,
+                            "cudnn": torch.backends.cudnn.version(),
+                            "precision": "FP32_TF32_OFF_NO_AUTOCAST",
+                            "layout": "CONTIGUOUS",
+                            "rgb_object_chunk_size": args.rgb_object_chunk_size,
+                            "shared_rgb_images": args.shared_rgb_images,
+                            "parallel": args.parallel,
+                            "overlap_event_with_rgb_preparation": (
+                                args.overlap_event_with_rgb_preparation
+                            ),
+                            "rgb_endpoint_reuse": True,
+                            "rgb_uint8": args.rgb_uint8,
+                            "immutable_rgb_history": immutable_history,
+                            "rgb_crop_cache": args.rgb_crop_cache,
+                            "rgb_crop_abi": list(CROP_ABI),
+                            "transport_reuse": transport_contract,
+                        },
+                        sort_keys=True,
+                    ).encode()
+                ).hexdigest(),
+            }
+            if args.rgb_feature_cache
+            else None
+        )
+        if cache_identity is not None:
+            binding["rgb_cache_identity"] = cache_identity
+            _write(args.output / "binding.json", binding)
+        oracle = FinalTransferPredictor.__new__(FinalTransferPredictor)
+        oracle.device = torch.device("cuda")
+        oracle.models, oracle.normalizers = models, norms
+        for count in args.counts:
+            if args.backend == "prefix":
+                from operational.train40_runtime.temporal_prefix import TemporalPrefixEventHistory
+
+                history = TemporalPrefixEventHistory(
+                    device="cuda",
+                    max_objects=count,
+                    roi_batch_size=min(4, count),
+                    graphs=args.event_query_graphs,
+                    normalization=args.event_normalization,
+                )
+                if args.event_query_graphs:
+                    history.prime_query_graphs([count])
+            else:
+                if args.event_query_graphs or args.event_normalization != "sort":
+                    raise ValueError("Event query graphs/topk require the prefix backend")
+                history = IntegralEventHistory(
+                    device="cuda", max_objects=count, roi_batch_size=min(4, count)
+                )
+            feature_cache = (
+                RGBBatchCache(
+                    model_sha256=cache_identity["model_sha256"],
+                    runtime_sha256=cache_identity["runtime_sha256"],
+                    rgb_object_chunk_size=args.rgb_object_chunk_size,
+                )
+                if cache_identity is not None
+                else None
+            )
+            service = MultiObjectTrain40Service(
+                models,
+                norms,
+                history,
+                max_objects=count,
+                parallel_branches=args.parallel,
+                rgb_workers=args.rgb_workers,
+                retain_input_diagnostics=True,
+                reuse_event_encodings=False if args.no_event_reuse else None,
+                shared_rgb_images=args.shared_rgb_images,
+                rgb_object_chunk_size=args.rgb_object_chunk_size,
+                parallel_preprocessing=not args.serial_preprocessing,
+                overlap_event_with_rgb_preparation=args.overlap_event_with_rgb_preparation,
+                rgb_feature_cache=feature_cache,
+                rgb_uint8=args.rgb_uint8,
+                rgb_crop_cache=args.rgb_crop_cache,
+                transport_reuse=args.transport_reuse,
+            )
+            startup.append(
+                {
+                    "objects": count,
+                    "synthetic_priming_seconds": prime(service, count),
+                    "rgb_uint8_allocation": (
+                        service._rgb_uint8.allocation_receipt
+                        if service._rgb_uint8 is not None
+                        else None
+                    ),
+                }
+            )
+            _write(args.output / "startup.json", startup)
+            for index in args.indices:
+                if feature_cache is not None:
+                    feature_cache.clear()
+                case_crop_reset = reset_case_crop_cache(service) if args.rgb_crop_cache else None
+                row = rows[index]
+                anchor = int(row["anchor_us"])
+                boxes = [inputs._box(source) for source in list(row["bbox_sources"])[-2:]]
+                rgb_square = common_square_from_boxes(boxes, (0, 1), margin_fraction=0.25)
+                objects = artificial_regions(row["square_xyxy"], rgb_square, count)
+                raw_rgb_control = read_raw_rgb_history(inputs, row)
+                raw_rgb = raw_rgb_control
+                immutable_receipt = None
+                if immutable_history:
+                    raw_rgb, immutable_receipt = immutable_history_for_admission(
+                        raw_rgb_control, row, binding["manifest_sha256"]
+                    )
+                with EvTTCEventReader(Path(row["raw_path"])) as reader:
+                    old = reader.read_window(anchor - 620_000, anchor - 20_000)
+                    packet = reader.read_window(anchor - 20_000, anchor)
+                timings = []
+                for repetition in range(args.repeats):
+                    forced_feature_reset = (
+                        force_feature_miss_for_crop_admission(service, repetition)
+                        if args.rgb_crop_cache
+                        else None
+                    )
+                    history.initialize(old, anchor - 620_000, anchor - 20_000)
+                    torch.cuda.synchronize()
+                    with (
+                        capture_rgb_producer_inputs(service)
+                        if immutable_history
+                        else nullcontext([])
+                    ) as captured:
+                        result = service.update(packet, anchor - 20_000, anchor, objects, raw_rgb)
+                    result.update(
+                        index=index,
+                        repetition=repetition,
+                        regions=[asdict(x) for x in objects],
+                        scope=scope,
+                        packet_events=len(packet["t"]),
+                        ring=history.stats,
+                        diagnostic_tensor_hashes_outside_clock=True,
+                        case_crop_cache_reset=case_crop_reset,
+                        forced_feature_cache_reset=forced_feature_reset,
+                    )
+                    result["input_digests"] = input_digests(service)
+                    if immutable_history:
+                        result["immutable_rgb_history"] = immutable_receipt
+                        result["actual_rgb_producer_inputs"] = captured_rgb_digests(captured)
+                    # Recorded immediately: later parity failures do not erase measured cases.
+                    timings.append(result)
+                    with (args.output / "updates.jsonl").open("a", encoding="utf-8") as stream:
+                        stream.write(json.dumps(result, allow_nan=False) + "\n")
+                    print(
+                        json.dumps(
+                            {
+                                "objects": count,
+                                "index": index,
+                                "repeat": repetition,
+                                "ms": result["complete_wall_ms"],
+                            }
+                        ),
+                        flush=True,
+                    )
+                assert service.last_event_inputs is not None
+                actual_event = service.last_event_inputs.cpu().numpy()
+                expected_outputs = []
+                input_checks = []
+                receipts = []
+                expected_rgb_digests = []
+                canonical_rgb = []
+                for position, obj in enumerate(objects):
+                    modified = {**row, "square_xyxy": list(obj.event_square)}
+                    raw = engine.prepare_event(modified)
+                    reference_pixels = reference_rgb(raw_rgb_control, obj)
+                    canonical_rgb.append(reference_pixels)
+                    expected_pixels = [_array_sha256(pixels) for pixels, _ in reference_pixels]
+                    expected_rgb_digests.append(expected_pixels)
+                    actual_pixel_digests = [
+                        result["input_digests"][position]["rgb_sha256"]
+                        for result in timings
+                        if result["input_digests"][position]["rgb_sha256"] is not None
+                    ]
+                    expected_delta_digest = _array_sha256(
+                        np.asarray(
+                            [meta["delta_t_s"] for _, meta in reference_pixels], dtype=np.float32
+                        )
+                    )
+                    actual_delta_digests = [
+                        result["input_digests"][position]["rgb_delta_sha256"]
+                        for result in timings
+                        if result["input_digests"][position]["rgb_delta_sha256"] is not None
+                    ]
+                    input_checks.append(
+                        {
+                            "object_id": obj.object_id,
+                            "event_exact": bool(
+                                np.array_equal(actual_event[position], raw["own_events"])
+                            ),
+                            "event_passed": bool(
+                                np.allclose(
+                                    actual_event[position], raw["own_events"], rtol=1e-5, atol=1e-5
+                                )
+                            ),
+                            "event_max_abs": float(
+                                np.abs(actual_event[position] - raw["own_events"]).max()
+                            ),
+                            "rgb_exact": (bool(actual_pixel_digests) or not expected_pixels)
+                            and all(actual == expected_pixels for actual in actual_pixel_digests),
+                            "rgb_validation": "SHA256_OF_ACTUAL_MISSES_AND_CANONICAL_PIXELS",
+                            "rgb_delta_exact": (bool(actual_delta_digests) or not expected_pixels)
+                            and all(
+                                actual == expected_delta_digest for actual in actual_delta_digests
+                            ),
+                        }
+                    )
+                    with (
+                        patch.object(engine, "prepare_event", return_value=raw),
+                        patch.object(
+                            engine,
+                            "raw_rgb_observations",
+                            return_value=(reference_pixels, raw_rgb_control.unavailable_reason),
+                        ),
+                    ):
+                        expected = oracle.predict(modified)
+                    expected["query_id"] = obj.object_id
+                    expected_outputs.append(expected)
+                    receipts.append(reference_receipt(row, obj, reference_pixels))
+                attest_cached_inputs(timings, expected_rgb_digests)
+                cache_exercise = cache_exercise_receipt(timings) if args.rgb_feature_cache else None
+                crop_exercise = (
+                    crop_cache_exercise_receipt(timings) if args.rgb_crop_cache else None
+                )
+                for result in timings:
+                    if immutable_history:
+                        result["actual_rgb_producer_input_attestation"] = attest_actual_rgb_calls(
+                            result, canonical_rgb, args.rgb_object_chunk_size
+                        )
+                    result["cache_exercise"] = cache_exercise
+                    result["crop_cache_exercise"] = crop_exercise
+                    candidates = [
+                        {**output, "query_id": output["object_id"]} for output in result["objects"]
+                    ]
+                    result["parity"] = prediction_parity(
+                        expected_outputs, candidates, [obj.object_id for obj in objects]
+                    )
+                    result["input_parity"] = input_checks
+                    result["history_receipts_exact"] = [
+                        output["input_receipt"] == expected_receipt
+                        for output, expected_receipt in zip(
+                            result["objects"], receipts, strict=True
+                        )
+                    ]
+                    primary = {**result["objects"][0], "query_id": row["query_id"]}
+                    result["preserved_primary_parity"] = prediction_parity(
+                        [original_reference[index]], [primary], [row["query_id"]]
+                    )
+                    records.append(result)
+                _write(
+                    args.output / f"case_{count:02d}_{index:05d}.json",
+                    {"reference": expected_outputs, "updates": timings},
+                )
+                del actual_event, old, packet
+            service.close()
+            service = None
+            del history
+            gc.collect()
+            torch.cuda.empty_cache()
+        finished = True
+    except BaseException as exc:
+        caught = exc
+    finally:
+        cleanup_errors = []
+        for resource in (service, inputs):
+            if resource is not None:
+                try:
+                    resource.close()
+                except BaseException as exc:
+                    cleanup_errors.append(f"{type(exc).__name__}: {exc}")
+        intact = verify_snapshot(originals)
+        raw_checks = []
+        for raw_path, before in raw_before.items():
+            try:
+                stat = raw_path.stat()
+                after = {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+                raw_checks.append(
+                    {
+                        "path": str(raw_path),
+                        "before": before,
+                        "after": after,
+                        "passed": before == after,
+                    }
+                )
+            except OSError as exc:
+                raw_checks.append(
+                    {
+                        "path": str(raw_path),
+                        "before": before,
+                        "passed": False,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+        unexpected_imports = sorted(
+            str(path.relative_to(ROOT)) for path in imported_runtime_paths() - loaded_runtime
+        )
+        admitted = bool(records) and all(
+            record["parity"]["passed"]
+            and record["preserved_primary_parity"]["passed"]
+            and all(
+                row["event_passed"] and row["rgb_exact"] and row["rgb_delta_exact"]
+                for row in record["input_parity"]
+            )
+            and record["same_inputs_as_tensor_checked_repeat"]
+            and all(record["history_receipts_exact"])
+            and (not args.rgb_feature_cache or record["cache_exercise"]["passed"])
+            and (not args.rgb_crop_cache or record["crop_cache_exercise"]["passed"])
+            and (
+                not immutable_history
+                or (
+                    record["immutable_rgb_history"]["all_raw_frames_exact"]
+                    and record["actual_rgb_producer_input_attestation"]["passed"]
+                    and record["rgb_feature_cache"]["hashed_bytes"] == 0
+                )
+            )
+            for record in records
+        )
+        cache_hit_updates = sum(
+            (record.get("rgb_feature_cache") or {}).get("status") == "HIT" for record in records
+        )
+        if args.rgb_feature_cache:
+            admitted = admitted and cache_hit_updates > 0
+        crop_matrix = crop_admission_matrix(records) if args.rgb_crop_cache else None
+        if crop_matrix is not None:
+            admitted = admitted and crop_matrix["passed"]
+        complete_count = len(args.counts) * len(args.indices) * args.repeats
+        expected_schedule = [
+            (count, index, repetition)
+            for count in args.counts
+            for index in args.indices
+            for repetition in range(args.repeats)
+        ]
+        recorded_schedule = [
+            (row["object_count"], row["index"], row["repetition"]) for row in records
+        ]
+        passed = (
+            finished
+            and admitted
+            and len(records) == complete_count
+            and intact["passed"]
+            and not cleanup_errors
+            and not unexpected_imports
+            and (
+                not immutable_history
+                or (
+                    recorded_schedule == expected_schedule
+                    and len(raw_checks)
+                    == len({Path(rows[index]["raw_path"]).resolve() for index in args.indices})
+                    and all(check["passed"] for check in raw_checks)
+                )
+            )
+        )
+        summary = {
+            "status": "COMPLETE" if passed else "FAILED",
+            "passed": passed,
+            "scope": scope,
+            "expected_updates": complete_count,
+            "validated_updates": len(records),
+            "immutable_rgb_history": immutable_history,
+            "rgb_crop_cache": args.rgb_crop_cache,
+            "transport_reuse": transport_contract,
+            "crop_admission_matrix": crop_matrix,
+            "latency_is_paced_or_arrival_measurement": False,
+            "raw_source_stat_checks": raw_checks,
+            "schedule_exact": recorded_schedule == expected_schedule,
+            "expected_case_schedule": [list(item) for item in expected_schedule],
+            "observed_case_schedule": [list(item) for item in recorded_schedule],
+            "originals": intact,
+            "cleanup_errors": cleanup_errors,
+            "unexpected_excluded_source_imports": unexpected_imports,
+            "error": f"{type(caught).__name__}: {caught}" if caught else None,
+            "target_20_objects_50hz_demonstrated": False,
+            "rgb_cache_hit_updates": cache_hit_updates,
+            "rgb_cache_miss_updates": sum(
+                (record.get("rgb_feature_cache") or {}).get("status") == "MISS"
+                for record in records
+            ),
+            "latency_by_count_ms": {
+                str(count): latency_distribution(
+                    [row["complete_wall_ms"] for row in records if row["object_count"] == count]
+                )
+                for count in args.counts
+                if any(row["object_count"] == count for row in records)
+            },
+        }
+        _write(args.output / "summary.json", summary)
+    if caught is not None:
+        raise caught
+    if not passed:
+        raise RuntimeError("Multiobject pilot failed; inspect preserved summary and case files")
+
+
+def parser() -> argparse.ArgumentParser:
+    """Build the persistent profile CLI without initializing CUDA."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--candidate", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--reference", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--counts", nargs="+", type=int, default=[1, 2])
+    parser.add_argument("--indices", nargs="+", type=int, default=[0, 137, 553])
+    parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--rgb-workers", type=int, default=DEFAULT_PROFILE.rgb_workers)
+    parser.add_argument(
+        "--parallel", action="store_true", default=DEFAULT_PROFILE.parallel_branches
+    )
+    parser.add_argument("--serial", dest="parallel", action="store_false")
+    parser.add_argument(
+        "--no-event-reuse",
+        action="store_true",
+        default=not DEFAULT_PROFILE.reuse_event_encodings,
+        help="Preserve original event encoder batch; retain RGB endpoint reuse",
+    )
+    parser.add_argument(
+        "--event-reuse",
+        dest="no_event_reuse",
+        action="store_false",
+        help="Experimental: changes event encoder batch and requires parity admission",
+    )
+    parser.add_argument(
+        "--backend", choices=["integral", "prefix"], default=DEFAULT_PROFILE.backend
+    )
+    parser.add_argument(
+        "--shared-rgb-images",
+        action="store_true",
+        default=DEFAULT_PROFILE.shared_rgb_images,
+        help="Convert each shared raw RGB frame to PIL once per update",
+    )
+    parser.add_argument(
+        "--rgb-object-chunk-size",
+        type=int,
+        default=DEFAULT_PROFILE.rgb_object_chunk_size,
+        help="Run RGB producers on this many objects per call; one preserves B7 encoders",
+    )
+    parser.add_argument(
+        "--serial-preprocessing",
+        action="store_true",
+        help="Prepare RGB before event dispatch, with both inside the update clock",
+    )
+    parser.add_argument(
+        "--overlap-event-with-rgb-preparation",
+        action="store_true",
+        help="Experimental: launch unchanged event producers while CPU RGB crops finish",
+    )
+    parser.add_argument(
+        "--event-query-graphs",
+        action="store_true",
+        default=DEFAULT_PROFILE.event_query_graphs,
+        help="Prime prefix ROI query graphs using synthetic data at startup",
+    )
+    parser.add_argument("--no-event-query-graphs", dest="event_query_graphs", action="store_false")
+    parser.add_argument(
+        "--event-normalization",
+        choices=["sort", "topk"],
+        default=DEFAULT_PROFILE.event_normalization,
+    )
+    parser.add_argument(
+        "--rgb-feature-cache",
+        action="store_true",
+        help="Measure a cold miss then identical-history feature hits; context always recomputed",
+    )
+    parser.add_argument(
+        "--rgb-crop-cache",
+        action="store_true",
+        help="Diagnostic crop MISS/HIT admission; requires immutable history, feature cache "
+        "and >=3 repeats; clears only features before repeat 2 outside the update clock",
+    )
+    parser.add_argument(
+        "--transport-reuse",
+        choices=TRANSPORT_REUSE_MODES,
+        default="original",
+        help="Opt-in exact transport reuse with unchanged producer batches",
+    )
+    parser.add_argument(
+        "--immutable-rgb-history",
+        action="store_true",
+        help="Diagnostic cache admission with causal immutable tokens and actual device inputs; "
+        "requires --rgb-feature-cache and excludes history sealing from internal timing",
+    )
+    parser.add_argument(
+        "--rgb-uint8",
+        action="store_true",
+        default=DEFAULT_PROFILE.rgb_uint8,
+        help="Transfer unique uint8 crops with exact FP32 LUT and bounded buffer leases",
+    )
+    return parser
+
+
+def main() -> None:
+    """Parse an explicitly artificial population and fresh output directory."""
+    run(parser().parse_args())
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,76 @@
+model:
+  in_channels: 12
+  temporal_steps: 3
+  input_size: 64
+  stem_dim: 48
+  embed_dim: 96
+  spatial_grid: 4
+  encoded_hidden_dim: 384
+  activity_hidden_dim: 128
+  dropout: 0.1
+  max_abs_expansion: 0.25
+  ttc_clip_seconds: 60.0
+  min_abs_expansion_for_ttc: 0.0001
+
+foreground:
+  decoder_hidden_dim: 96
+  mask_size: 64
+  foreground_temperature: 1.0
+  edge_temperature: 0.08
+  moment_floor: 0.0001
+  event_skip_epsilon: 0.0001
+
+motion:
+  motion_hidden_dim: 128
+  motion_refine_dim: 96
+  field_size: 64
+  maximum_abs_log_eta: 0.30
+  confidence_floor: 0.10
+  activity_floor: 0.10
+  weight_epsilon: 0.00001
+  freeze_foreground: true
+
+train:
+  batch_size: 24
+  maximum_epochs: 20
+  minimum_epochs: 8
+  patience_epochs: 7
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  max_grad_norm: 2.0
+  precision: fp32
+  seed: 7
+  shuffle_repeats_during_training: 2
+  shuffle_repeats_final: 8
+  bootstrap_repeats_during_training: 250
+  bootstrap_repeats_final: 2000
+  overfit_samples: 64
+  overfit_maximum_epochs: 100
+  overfit_pearson_gate: 0.97
+  overfit_balanced_sign_gate: 0.95
+  overfit_log_eta_pearson_gate: 0.97
+  overfit_log_eta_mae_gate: 0.008
+  overfit_mask_iou_gate: 0.65
+  screen_log_eta_pearson_gate: 0.50
+  screen_min_sequence_log_eta_pearson_gate: 0.25
+  screen_expansion_pearson_gate: 0.50
+  screen_balanced_sign_gate: 0.68
+  screen_negative_accuracy_gate: 0.55
+  screen_mask_iou_gate: 0.70
+  zero_event_pearson_drop_gate: 0.40
+  shuffled_event_pearson_drop_gate: 0.40
+  per_sequence_negative_min_count: 20
+
+loss:
+  pooled_log_eta_weight: 4.0
+  dense_log_eta_weight: 2.0
+  expansion_weight: 1.0
+  correlation_weight: 1.0
+  sign_weight: 0.75
+  confidence_weight: 0.25
+  background_zero_weight: 0.20
+  total_variation_weight: 0.05
+  smooth_l1_beta: 0.005
+  sign_temperature: 0.02
+  max_abs_expansion: 0.25
+  epsilon: 0.000001

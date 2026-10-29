@@ -1,0 +1,21 @@
+{
+  "generator_sha256": "a1cadff2ff7234b704575c91fc0e9cdab2c9c1507672f0c759b192ae6b7c294a",
+  "tables": {
+    "dev32_metrics.csv": "37460ed05c2dba73fa3abb1fabedf206ebd085feea37d3f55beb7a54f2590e40",
+    "dev32_paired_bootstrap.csv": "c2cb3c867a64758531c5b2b039b839d3a65504cab5cac552c4f45fff118bb926",
+    "error_concentration.csv": "55fd8291a8f6ca51cd8da9edf4c0535486bc47397a363a5f30604e5039179862",
+    "fcwd_metrics.csv": "dc1fc8715b4bd74160eb7ba81d09d41e3886cc877ee91a04d0ec902d45e32034",
+    "fcwd_paired_bootstrap.csv": "d529d85820236783515d4ceef504e5808782ea0c1d60165e08c24786b8164b8e",
+    "feature_shift.csv": "066c0497824c66609d140d600504de93a3db5b7c46ea34602643ff5e80bb457a",
+    "latency.csv": "289281d971fcc086f90d7a84929ed98cc528d9028c4fc4388099bff922ad72e3",
+    "latency_families.csv": "78bc09df39af4d194ee688ac9999be82536e8ccabb89dde9e2ed57c8e53fed0e",
+    "latency_paired_bootstrap.csv": "83031c35f561f27c00e94daa6aae717c0c94740749fa5a8ba85c1bf159f13cd6",
+    "numerical_metric_impact.csv": "3024cd753d5d0a966ab10a199859fffc0b918457420063709e80f4891858f46c",
+    "training.csv": "04e200f98e9c3707269e5597bebbad1c29b66959bc228983d536f8c55eb519ad",
+    "train_fit_metrics.csv": "06940dd747ad64cd397cc9df3af08fe86e4802a804578b462f9b061f005ca6db",
+    "upstream_metrics.csv": "a25a22e9a2e12378147cf9649677219642085ad8d4f47edff198640fa5418be0"
+  },
+  "benchmark_sha256": "855ec71ec9f79fad8748fe73c7def8ff2b0a412b0c571e96bb72f5b1c5201b9e",
+  "cache512_benchmark_sha256": "022c44f005ccf9bbe0bc4ed9b78cd63805708603d04cabe32319f61bbf3df5e5",
+  "report_sha256": "7a4388ac2a3fc2903bc7f4193b8652af5b1df9ed758c0acecfd395f2e1668e19"
+}

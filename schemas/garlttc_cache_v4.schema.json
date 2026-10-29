@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "garlttc_cache_v4.schema.json",
+  "title": "GarlTTC official LHR cache v4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "split_counts", "input_schema", "shards", "discard_fraction"],
+  "properties": {
+    "artifact_type": {"const": "garlttc_official_lhr_object_cache_v4"},
+    "schema_version": {"const": "garlttc_cache_v4"},
+    "evidence_type": {"type": "string"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"type": "string"},
+    "protocol_sha256": {"type": "string"},
+    "created_at": {"type": "string"},
+    "artifact_sha256": {"type": "string"},
+    "split_counts": {"type": "object", "required": ["train", "validation"]},
+    "input_schema": {"type": "object", "required": ["version", "event_roi_shape", "channel_names", "normalization"]},
+    "shards": {"type": "array", "items": {"type": "object", "required": ["path", "sha256", "count", "split"]}},
+    "discard_fraction": {"type": "number", "maximum": 0.01},
+    "uses_official_garl_ttc_labels": {"const": true},
+    "no_label_fallback": {"const": true}
+  }
+}

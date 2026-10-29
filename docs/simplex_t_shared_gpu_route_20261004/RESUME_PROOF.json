@@ -1,0 +1,66 @@
+{
+  "status": "VERIFIED_ACTUAL_INTERRUPTED_CONTINUATION",
+  "confirmed_measurements": 1728,
+  "planned_measurements": 1728,
+  "protocol_sha256": "d69abd8f05918383411acabf6a5b5b0ccd549070c5d8a3931f0aa00e816f7e31",
+  "proofs": [
+    {
+      "previous_measurements": 27,
+      "unchanged_measurement_files": 27,
+      "new_measurements_after_boundary": 1701,
+      "parity_files_unchanged": 64
+    },
+    {
+      "previous_measurements": 675,
+      "unchanged_measurement_files": 675,
+      "new_measurements_after_boundary": 1053,
+      "parity_files_unchanged": 0
+    },
+    {
+      "previous_measurements": 697,
+      "unchanged_measurement_files": 697,
+      "new_measurements_after_boundary": 1031,
+      "parity_files_unchanged": 0
+    },
+    {
+      "previous_measurements": 723,
+      "unchanged_measurement_files": 723,
+      "new_measurements_after_boundary": 1005,
+      "parity_files_unchanged": 64
+    },
+    {
+      "previous_measurements": 1114,
+      "unchanged_measurement_files": 1114,
+      "new_measurements_after_boundary": 614,
+      "parity_files_unchanged": 64
+    }
+  ],
+  "attempts_by_pid_and_purpose": {
+    "p22324:measurement:COMPLETED": 614,
+    "p22324:warmup:COMPLETED": 207,
+    "p30812:measurement:COMPLETED": 22,
+    "p30812:warmup:COMPLETED": 9,
+    "p30812:measurement:STARTED": 1,
+    "p38448:measurement:COMPLETED": 648,
+    "p38448:warmup:COMPLETED": 216,
+    "p50136:measurement:COMPLETED": 391,
+    "p50136:warmup:COMPLETED": 126,
+    "p50136:measurement:STARTED": 1,
+    "p51304:validation:COMPLETED": 64,
+    "p51304:measurement:COMPLETED": 27,
+    "p51304:warmup:COMPLETED": 9,
+    "p60840:measurement:COMPLETED": 26,
+    "p60840:warmup:COMPLETED": 9,
+    "p8468:validation:COMPLETED": 18,
+    "p8468:validation:STARTED": 1
+  },
+  "scientific_optimizer_updates": 0,
+  "technical_optimizer_updates": 0,
+  "last_execution_state": {
+    "status": "MEASUREMENTS_COMPLETE",
+    "observed_utc": "2026-10-04T14:13:18.438284+00:00",
+    "optimizer_updates": 0,
+    "fragments": 1728,
+    "confirmed_measurements": 1728
+  }
+}

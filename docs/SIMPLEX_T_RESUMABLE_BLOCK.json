@@ -1,0 +1,132 @@
+{
+  "schema": "simplex_t_resumable_block_v1",
+  "status": "ACTIVE_QUERY_CONTEXT_CACHE_EXTRACTION",
+  "current_execution": {
+    "cache": "artifacts/simplex_t/T1/context_features_fp32",
+    "last_audited_blocks_at_this_update": 644,
+    "last_audited_observations_at_this_update": 10244,
+    "required_D0_query_family_blocks": 24576,
+    "status_command_reads_live_processes": true,
+    "original_history_block_statements_below_are_historical": true,
+    "scientific_fit_authorized_by_partial_cache": false
+  },
+  "latest_replay_resolution": {
+    "evidence": "artifacts/simplex_t/T0/current_expert_replay_64/HISTORICAL_REPLAY_QA_PASSED.json",
+    "raw_windows_bit_identical": 192,
+    "original_and_recovered_input_queries_bit_identical": 64,
+    "a5_phase_and_latent_queries_bit_identical": 64,
+    "historical_expert_predictions_exact_in_source_fp32": 192,
+    "passed_simplex_tests": 151,
+    "qa_evidence": "artifacts/simplex_t/T0/qa_after_raw64_parity.xml",
+    "optimizer_updates_this_resolution": 0,
+    "production_temporal_cache_ready": false,
+    "production_scientific_freeze": false,
+    "prior_unresolved_replay_statements_below_are_historical": true
+  },
+  "latest_user_amendment": {
+    "source_alternative_authorized": true,
+    "effective_replay_handoff_confirmed": true,
+    "original_source_dependency_not_silently_satisfied": true,
+    "new_estimand": "Retrospective past sensor windows conditioned on the currently supplied query ROI; not verified same-object trajectory history",
+    "document": "docs/SIMPLEX_T_QUERY_CONTEXT_AMENDMENT.md",
+    "real_replay": "artifacts/simplex_t/T0/current_expert_replay_64/REPLAY_DIAGNOSTIC.json",
+    "real_replay_rows": 64,
+    "real_replay_checkpoints": 36,
+    "real_replay_predictions": 192,
+    "precision_diagnostic_additional_predictions": 384,
+    "parity_passed": false,
+    "replay_input_bytes": 150999453,
+    "replay_input_sha256": "5b509f3f2eb5549e2dcc4fa82ad4a8d809d80dce92c328faaf3d04d39467fb47",
+    "new_optimizer_updates": 0,
+    "new_tests_passed": 5,
+    "preserved_failure_ids": ["REPLAY_COHORT_CP1252_DECODE", "REPLAY_INPUT_HASH_METADATA_SIZE_BOUND", "REAL_REPLAY_NUMERICAL_DIFFERENCES_UNRESOLVED"],
+    "historical_block_audits_below_superseded": true
+  },
+  "resumed_block_recurrence_audit": {
+    "consecutive_resumed_turns": 3,
+    "turns": [
+      "9539dd37e5bb: additional HF history and nine ZIP directory checks; 64-row cohort prepared",
+      "verified live PID29120 wait; historical loader requires verification of 32 shards totaling21639043680 bytes",
+      "current recheck: same live PID29120, no new shared acknowledgement and no Garl PKL/crosswalk in the bounded local search"
+    ],
+    "latest_read_transfer_bytes": 41098757557,
+    "latest_write_transfer_bytes": 6529486168,
+    "no_other_job_modified": true,
+    "reason": "The source dependency remains unsatisfied after public, archive and local checks. The newly granted replay authorization conflicts with a verified live Stage70 heavy-I/O job; its scheduling handoff is unresolved. No scientific fit can yet satisfy the mandatory replay and freeze prerequisites. Remaining production integration is explicitly incomplete, not certified by synthetic tests.",
+    "resume_triggers": [
+      "Authoritative unfiltered Garl TRAIN input history or Garl-to-eAP crosswalk with box/time provenance",
+      "Resolved actual exclusive replay handoff and bounded output reservations"
+    ]
+  },
+  "resumed_user_authorization": {
+    "replay_authorized": true,
+    "old_absent_permission_status_superseded": true,
+    "active_stage70_worker_pid": 29120,
+    "active_stage70_launcher_pid": 11124,
+    "command": "build_stage71_expansion_cache.py --build-count-cache",
+    "observed_worker_read_bytes_first": 23848080845,
+    "observed_worker_read_bytes_later": 37088571100,
+    "observed_worker_write_bytes_first": 3229987159,
+    "observed_worker_write_bytes_later": 5721265478,
+    "question_pending": "Does the granted replay slot permit overlap with this still-active heavy-I/O worker, or will Stage70 hand off after it exits?",
+    "source_search_continued": true,
+    "replay_cohort": "artifacts/simplex_t/T0/REPLAY_COHORT_64.json",
+    "cohort_rows": 64,
+    "producer_families": 12,
+    "raw_replay_executed": false,
+    "new_optimizer_updates": 0,
+    "new_unit_tests_passed": 3,
+    "prior_block_recurrence_audit_is_historical": true
+  },
+  "scientific_fits": 0,
+  "scientific_updates": 0,
+  "technical_updates": 625,
+  "scientific_freeze": false,
+  "implementation_complete": false,
+  "latest_qa": {
+    "path": "artifacts/simplex_t/T0/qa_all_simplex_no_updates.xml",
+    "passed": 143,
+    "failed": 0,
+    "excluded": "test_production_cpu_10_versus_5_plus_5, to avoid unreserved repeated optimizer work",
+    "optimizer_updates": 0,
+    "real_array_journal_resume_evidence": "artifacts/simplex_t/T0/current_array_journal_resume/RESUME_QA.json",
+    "full_repository_qa": false
+  },
+  "external_dependencies": [
+    {
+      "id": "UNFILTERED_GARL_HISTORY_OR_AUTHORITATIVE_CROSSWALK",
+      "affects": "Genuine past scalar and latent history families",
+      "required": "Unfiltered Garl TRAIN per-track source before valid_ts_list/TTC/height filtering, or an authoritative Garl-to-eAP instance crosswalk with box/time provenance",
+      "exhausted_checks": [
+        "Local dataset/repository source and metadata searches",
+        "Stage70 owner's independent bounded search relayed by user",
+        "Official eAP ZIP annotation/frame download and SHA256 checks",
+        "All182086 original/HF frame-instance keys and all22716 original-role Garl input observations",
+        "Official publisher pages, repository releases/issues and current recursive HF API tree"
+      ],
+      "source_request": "docs/SIMPLEX_T_SOURCE_ESCALATION.json"
+    },
+    {
+      "id": "USER_REPLAY_GRANTED_BUT_ACTIVE_STAGE70_IO_CONFLICT",
+      "affects": "Required real64 TRAIN replay parity, including current-only family, and new history feature inference",
+      "required": "Resolve the actual active Stage70 I/O overlap despite the new user replay authorization; preserve other jobs and reserve pending outputs",
+      "latest_shared_files": ["SIMPLEX_T_STAGE70_ACK.json", "SIMPLEX_T_STAGE70_REQUEST.json"],
+      "existing_ack_grants_slot": false,
+      "process_exit_is_not_permission": true
+    }
+  ],
+  "integration_remaining_not_hidden_as_data_absence": [
+    "Bind production cache loader and readiness validator to CLI",
+    "Complete real producer preprocessing/time parity and all pre-fit QA",
+    "Freeze code/config/roles/producer/normalizer/schema identities",
+    "Execute available registered phases and report real outputs"
+  ],
+  "recurrence_audit": {
+    "same_external_conditions_persisted_at": ["d5fd9ca49baa", "ce1686a95d00", "current143-test-validation"],
+    "independent_progress_was_made": true,
+    "reason_for_pause_now": "No scientific fit satisfies source/replay/freeze prerequisites. Speculative source adapters or further synthetic probes cannot certify the missing real contract. Resume on usable source evidence or coordinated replay access; this is not a completion claim."
+  },
+  "holdout_opened": false,
+  "new_experiments_invented": false,
+  "background_completion_promised": false
+}

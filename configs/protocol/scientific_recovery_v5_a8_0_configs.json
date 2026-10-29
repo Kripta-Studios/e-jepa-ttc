@@ -1,0 +1,82 @@
+{
+  "artifact_sha256": "00f17b866bc8cb00e58bd91308e2fbf20e6568cd73361c1a8d026b8b56f10ebb",
+  "artifact_type": "scientific_recovery_v5_a8_0_frozen_configs_v1",
+  "configs": [
+    {
+      "arm": "a6_comparator",
+      "fold": 0,
+      "path": "configs/experiment/scientific_recovery_v5/a6_grouped_fold0_seed7.yaml",
+      "seed": 7,
+      "sha256": "8246f653afeff0b77f11416d33048d2557fcf5836454a04eda80adb7bb63d01c"
+    },
+    {
+      "arm": "a6_comparator",
+      "fold": 1,
+      "path": "configs/experiment/scientific_recovery_v5/a6_grouped_fold1_seed7.yaml",
+      "seed": 7,
+      "sha256": "528eec1b95d3e81c7a625f1b94b4c3962b56cfe13fa8ee187bbd5b65b75f45a9"
+    },
+    {
+      "arm": "a6_comparator",
+      "fold": 2,
+      "path": "configs/experiment/scientific_recovery_v5/a6_grouped_fold2_seed7.yaml",
+      "seed": 7,
+      "sha256": "6c30b2ddfa76b1893ba4359be4a9518a6495ac231a0510210816396fc0b2e221"
+    },
+    {
+      "arm": "a8_0",
+      "fold": 0,
+      "path": "configs/experiment/scientific_recovery_v5/a8_0_dual_transport_grouped_fold0_seed7.yaml",
+      "seed": 7,
+      "sha256": "1ea1a9fb7df1e8703e22e4a1d0f5d16fad1cb5ed750de22321622f8af4166309"
+    },
+    {
+      "arm": "a8_0",
+      "fold": 1,
+      "path": "configs/experiment/scientific_recovery_v5/a8_0_dual_transport_grouped_fold1_seed7.yaml",
+      "seed": 7,
+      "sha256": "8dd54c528d5b1cd9358802c6136ec9bfa2fc5e1f62f3166849de860dd3e4f93a"
+    },
+    {
+      "arm": "a8_0",
+      "fold": 2,
+      "path": "configs/experiment/scientific_recovery_v5/a8_0_dual_transport_grouped_fold2_seed7.yaml",
+      "seed": 7,
+      "sha256": "6014985825d2ebc4dcdf4c5cf24e2cb7dd096f3acb3314340501e05c82c7fab3"
+    }
+  ],
+  "contracts": {
+    "causal_left": true,
+    "cuda_runs_concurrent": false,
+    "event_only": true,
+    "num_workers": 0,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "train_only_grouped_dev": true
+  },
+  "created_at_utc": "2026-08-12T23:24:17.309446+00:00",
+  "git_commit": "915976ff343280f98d57f038025fdf62c4a941c1",
+  "protocol": {
+    "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+    "file_sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874",
+    "path": "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
+  },
+  "seed_policy": {
+    "folds_are_replications": true,
+    "parent_checkpoint": "artifacts/runs/scientific_recovery_a4_causal_left_seed7/model_best.pt",
+    "parent_checkpoint_sha256": "ac3a0ff7ec4fba3fcde31c95f18ba33e7905a0fb0c9ea70bb3541ffb12515431",
+    "parent_seed": 7,
+    "transport_training_seed": 7
+  },
+  "sources": {
+    "a6": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_master_v3\\configs\\causal_a6\\a6_s1_causal_left_seed7.yaml",
+      "sha256": "114b07cbdfcc75875855d7dd66e38739b91cb056b9f806efa05f6fefabcf55ae"
+    },
+    "a8": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_master_v3\\configs\\a6_a7_s1\\a7_s1_seed7.yaml",
+      "sha256": "64e9bc94836ceae18801f61ad66ac8f889f07007ebc73059e88ccd5b635378d1"
+    }
+  },
+  "status": "frozen_before_grouped_dev_training"
+}

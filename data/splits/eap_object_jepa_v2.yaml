@@ -1,0 +1,17 @@
+protocol: "eap_object_jepa_v2"
+commit: "scientific-recovery-v2"
+justification: "Calibration now includes specific sequences to ensure sufficient representation of both positive and negative samples for TTC <= 0.5s, 1.0s, 2.0s and 4.0s. Test sequences are isolated."
+statistics_hash: "none_yet"
+splits:
+  train:
+    - "2cyv0Oedzg"
+    - "6h5yRW2LGc"
+    - "DGqicHUGWb"
+    - "OBneIVg4Cw"
+  validation:
+    - "mHGFBekt7X"
+  calibration:
+    - "pBqGOb2vYq"
+  test:
+    - "qGsgzl4Q8B"
+    - "qoohcdtLDH"

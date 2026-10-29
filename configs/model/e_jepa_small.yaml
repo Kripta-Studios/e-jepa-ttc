@@ -1,0 +1,8 @@
+name: event-tubelet-transformer
+in_channels: 10
+embedding_dim: 192
+depth: 4
+heads: 4
+predictor: residual_mlp
+target_ema_start: 0.99
+target_ema_end: 0.9999

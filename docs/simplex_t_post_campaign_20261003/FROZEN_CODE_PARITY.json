@@ -1,0 +1,30 @@
+{
+  "status": "BYTE_IDENTICAL_TO_CLOSED_BUNDLE",
+  "files": [
+    {
+      "source": "src/e_jepa_ttc/simplex_t/model.py",
+      "current_sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+      "delivered_sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+      "byte_identical": true
+    },
+    {
+      "source": "src/e_jepa_ttc/simplex_t/phase.py",
+      "current_sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+      "delivered_sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+      "byte_identical": true
+    },
+    {
+      "source": "src/e_jepa_ttc/evaluation/stage63_65.py",
+      "current_sha256": "b04ea2e5857b9afb9442df933714b15e5592517063b074df5fd48866bf57cf77",
+      "delivered_sha256": "b04ea2e5857b9afb9442df933714b15e5592517063b074df5fd48866bf57cf77",
+      "byte_identical": true
+    },
+    {
+      "source": "operational/simplex_t_cost_context/model.py",
+      "current_sha256": "6d170283bc66367f0acfe7670d8d79853d63cf1888500d76bb4b05aa7e239e47",
+      "delivered_sha256": "6d170283bc66367f0acfe7670d8d79853d63cf1888500d76bb4b05aa7e239e47",
+      "byte_identical": true
+    }
+  ],
+  "optimizer_updates": 0
+}

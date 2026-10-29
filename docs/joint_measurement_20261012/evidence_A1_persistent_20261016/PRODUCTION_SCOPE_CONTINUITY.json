@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-16T17:53:27.913134+00:00",
+  "status": "PASS",
+  "pid": 16080,
+  "create_time": 1792171996.036665,
+  "command": [
+    "C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe",
+    "-u",
+    "-B",
+    "-m",
+    "operational.joint_measurement.adaptation_runtime",
+    "child",
+    "--arm",
+    "LAST-BLOCK"
+  ],
+  "checks": {
+    "same_parameter_objects": true,
+    "one_capture": true,
+    "multiple_scopes": true,
+    "progress": true,
+    "cache_hits_cumulative": true,
+    "cache_retained": true,
+    "all_packs_still_admitted": true
+  },
+  "earlier_snapshot_sha256": "684da9b1c0e23ac0b422b6673434356eaa11484b6558329f95a07008efc7e2d2",
+  "current_snapshot_sha256": "88d6a278559280970ea8762a8aab1c70a207385f7ac8b0a71ba98de338ca52d4",
+  "completed_updates": 2600,
+  "scopes": 2,
+  "captures": 1,
+  "scope": "Read-only production observation; parameter objects and cumulative cache counters across accounting scopes, no optimizer updates added by verification"
+}

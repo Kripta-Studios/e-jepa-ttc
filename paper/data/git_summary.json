@@ -1,0 +1,25 @@
+{
+  "head": "0219a84f0fc3b07c171295a8a65176a7e0f631c1",
+  "reachable_commits": 1406,
+  "local_head_union_commits": 1403,
+  "commits_outside_current_head": 252,
+  "local_branches": 33,
+  "remote_tracking_branches_excluding_symbolic": 22,
+  "tags": 3,
+  "other_refs": [
+    "refs/stash"
+  ],
+  "first_author_date": "2026-06-30T20:59:04+02:00",
+  "last_author_date": "2026-10-28T13:07:57+01:00",
+  "elapsed_days": 120,
+  "commits_by_author_month": {
+    "2026-06": 11,
+    "2026-07": 192,
+    "2026-08": 217,
+    "2026-09": 433,
+    "2026-10": 553
+  },
+  "changed_path_entries": 15515,
+  "unique_changed_path_strings": 10744,
+  "coverage": "All reachable commit messages and non-merge numstat paths inventoried. Merge commits may have no numstat output. This is not a claim that every patch line was read or every historic run was reproduced."
+}

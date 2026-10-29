@@ -1,0 +1,5 @@
+population,method,n,mae_change_compact_minus_canonical,max_prediction_change_seconds,alarm_decision_changes,urgent_miss_changes,sign_changes
+dev32,H8_median3,3640,-4.828303724854857e-07,0.0034866333007812,0,0,0
+dev32,Direct_median3,3640,3.0191226319952324e-08,6.29425048828125e-05,0,0,0
+fcwd,H8_median3,597,2.5619014823057346e-07,0.0001325607299804,0,0,0
+fcwd,Direct_median3,597,2.9492817532077705e-07,6.771087646484375e-05,0,0,0

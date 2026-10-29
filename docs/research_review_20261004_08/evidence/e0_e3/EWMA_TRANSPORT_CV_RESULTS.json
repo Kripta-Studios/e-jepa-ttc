@@ -1,0 +1,93 @@
+{
+  "candidate_score": 155.44217565885657,
+  "reference_score": 121.64633225755645,
+  "point_delta": 33.79584340130009,
+  "weighted_sign_error_delta": 0.0149076874601884,
+  "crucial_bucket_mid_delta": 78.85931571040932,
+  "candidate_finite_fraction": 1.0,
+  "reference_finite_fraction": 1.0,
+  "sequence_deltas": {
+    "2cyv0Oedzg": 20.214790764539664,
+    "5ilM1PX2vz": 45.9827540487359,
+    "6h5yRW2LGc": 66.13820797386025,
+    "OBneIVg4Cw": 63.2970488541783,
+    "OYgB6RGWcq": 5.304397607350639,
+    "WbCh1DRerJ": 50.295998673484085,
+    "mHGFBekt7X": 4.266691522528074,
+    "qGsgzl4Q8B": 37.621141111427924,
+    "t79dBxj1WS": 11.041560055596063
+  },
+  "sequence_wins": 0,
+  "sequence_count": 9,
+  "query_count": 8192,
+  "gate_authorized": false,
+  "status": "COMPLETE",
+  "optimizer_updates": 0,
+  "historical_ewma_modified": false,
+  "bootstrap": {
+    "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+    "valid_draws": 8192,
+    "attempts": 8195,
+    "discarded": 3,
+    "validity_fraction": 0.999633923123856
+  },
+  "hierarchical_ci95": [
+    17.090426468060453,
+    51.04156646799293
+  ],
+  "sequence_only": {
+    "point_delta": 33.7958434013001,
+    "ci95": [
+      18.91454142655807,
+      48.71611664297107
+    ],
+    "fraction_negative": 0.0,
+    "sequence_wins": 0,
+    "sequence_count_vectors": 24310,
+    "omit_one_score_deltas": [
+      35.49347498089515,
+      32.27247957037062,
+      29.75304782973008,
+      30.108192719690322,
+      37.357274125543775,
+      31.733323992277096,
+      37.4869873861466,
+      33.31768118753412,
+      36.6401288195131
+    ],
+    "signflip_p_two_sided_descriptive": 0.00390625,
+    "retraining_performed": false,
+    "confirmatory": false
+  },
+  "rejected_terms": 0,
+  "valid_terms": 65498,
+  "zero_phase_terms": 0,
+  "cap60_terms": 5169,
+  "infinite_terms": 0,
+  "cap_sensitivity": {
+    "candidate_score": 155.44402244937496,
+    "reference_score": 121.64633225755645,
+    "point_delta": 33.79769019181846,
+    "weighted_sign_error_delta": 0.014459351568023162,
+    "crucial_bucket_mid_delta": 78.85057071712922,
+    "candidate_finite_fraction": 1.0,
+    "reference_finite_fraction": 1.0,
+    "sequence_deltas": {
+      "2cyv0Oedzg": 20.201791047370214,
+      "5ilM1PX2vz": 45.9974809337608,
+      "6h5yRW2LGc": 66.01380051758908,
+      "OBneIVg4Cw": 63.343982784973264,
+      "OYgB6RGWcq": 5.314587104531697,
+      "WbCh1DRerJ": 50.3187420994226,
+      "mHGFBekt7X": 4.288788740807343,
+      "qGsgzl4Q8B": 37.66418466493959,
+      "t79dBxj1WS": 11.035853832971556
+    },
+    "sequence_wins": 0,
+    "sequence_count": 9,
+    "query_count": 8192,
+    "gate_authorized": false
+  },
+  "physical_label_acquisition_independently_replayed": false,
+  "confirmation": false
+}

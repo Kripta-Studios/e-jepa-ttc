@@ -1,0 +1,91 @@
+model:
+  search_radius: 4
+  correlation_temperature: 0.07
+  foreground_floor: 0.05
+  confidence_floor: 0.05
+  epsilon: 1.0e-6
+
+orchestrator:
+  fold_count: 3
+  stage1_seed: 13
+  stage1_keep: 3
+  stage2_seeds: [7, 23]
+  final_seeds: [7, 13, 23]
+  batch_size: 8
+  final_extra_epochs: 2
+  max_grad_norm: 1.0
+  last_geometry_parameter_tensors: 8
+  seed: 2424
+
+# All arm selection is train-only grouped CV. Development validation is touched
+# once, after a single champion has been selected.
+arms:
+  v423_control:
+    epochs: 6
+    train_geometry: true
+    train_motion: true
+    geometry_learning_rate: 1.0e-5
+    motion_learning_rate: 5.0e-5
+    weight_decay: 1.0e-5
+    ttc_weight: 1.0
+    geometry_weight: 0.25
+    anchor_weight: 0.005
+
+  geometry_only_regularized:
+    epochs: 5
+    train_geometry: true
+    train_motion: false
+    geometry_learning_rate: 1.0e-5
+    motion_learning_rate: 0.0
+    weight_decay: 1.0e-5
+    ttc_weight: 0.75
+    geometry_weight: 0.50
+    anchor_weight: 0.010
+
+  motion_only_control:
+    epochs: 4
+    train_geometry: false
+    train_motion: true
+    geometry_learning_rate: 0.0
+    motion_learning_rate: 2.0e-5
+    weight_decay: 1.0e-5
+    ttc_weight: 1.0
+    geometry_weight: 0.0
+    anchor_weight: 0.010
+
+  joint_conservative:
+    epochs: 4
+    train_geometry: true
+    train_motion: true
+    geometry_learning_rate: 5.0e-6
+    motion_learning_rate: 2.0e-5
+    weight_decay: 1.0e-5
+    ttc_weight: 0.75
+    geometry_weight: 0.50
+    anchor_weight: 0.010
+
+  joint_geometry_heavy:
+    epochs: 5
+    train_geometry: true
+    train_motion: true
+    geometry_learning_rate: 1.0e-5
+    motion_learning_rate: 1.0e-5
+    weight_decay: 1.0e-5
+    ttc_weight: 0.50
+    geometry_weight: 1.00
+    anchor_weight: 0.020
+
+selection:
+  minimum_pearson: 0.65
+  minimum_balanced_sign: 0.72
+  minimum_positive_accuracy: 0.82
+  minimum_negative_accuracy: 0.55
+  minimum_sequence_pearson: 0.45
+  minimum_geometry_pearson: 0.20
+  maximum_negative_prior_gap: 0.16
+
+final_decision:
+  baseline_pearson_tolerance: 0.015
+  baseline_negative_accuracy_tolerance: 0.03
+  minimum_sequence_negative_accuracy: 0.20
+  geometry_retention_floor: 0.27

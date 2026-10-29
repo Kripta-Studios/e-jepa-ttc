@@ -1,0 +1,4 @@
+model: e_jepa_tubelet_lhr_rgbe
+base: configs/model/e_jepa_tubelet_lhr_small.yaml
+use_rgb: true
+fusion: late

@@ -20,9 +20,17 @@ from e_jepa_ttc.baselines.roi_events import (
 )
 from e_jepa_ttc.data.annotations import load_measurements_from_manifest
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES, read_manifest
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.data.split import read_splits
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.reproducibility import (
+    cuda_device_count,
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.training.jepa import (
     EVENT_MOTION_FEATURE_NAMES,
@@ -97,8 +105,9 @@ class LatentResidualTTCProber(nn.Module):
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _split_indices(split: np.ndarray, name: str) -> np.ndarray:
@@ -668,6 +677,7 @@ def train_latent_ttc_prober(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
@@ -683,8 +693,7 @@ def train_latent_ttc_prober(
     navigation_feature_count = len(navigation_feature_names)
     available_splits = _available_split_names(split)
     missing_names = sorted(
-        (set(train_splits) | set(validation_splits) | set(evaluation_splits))
-        - available_splits
+        (set(train_splits) | set(validation_splits) | set(evaluation_splits)) - available_splits
     )
     if missing_names:
         msg = f"Requested split names are missing from cache: {missing_names}."
@@ -698,18 +707,13 @@ def train_latent_ttc_prober(
         split_name: _split_indices(split, split_name) for split_name in available_splits
     }
     missing_eval_splits = [
-        split_name
-        for split_name in evaluation_splits
-        if split_indices[split_name].size == 0
+        split_name for split_name in evaluation_splits if split_indices[split_name].size == 0
     ]
     if missing_eval_splits:
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
 
     start_time = time.perf_counter()
     encoder, encoder_metadata = _load_frozen_encoder(
@@ -743,9 +747,7 @@ def train_latent_ttc_prober(
             y_log[train_idx].astype(np.float64),
             alpha=ridge_alpha,
         )
-        prior_log = _predict_ridge(physics_scaled.astype(np.float64), prior_beta).astype(
-            np.float32
-        )
+        prior_log = _predict_ridge(physics_scaled.astype(np.float64), prior_beta).astype(np.float32)
     else:
         prior_log = np.zeros_like(y_log, dtype=np.float32)
     raw_features = np.concatenate(
@@ -889,8 +891,9 @@ def train_latent_ttc_prober(
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "epochs": epochs,
         "batch_size": batch_size,
@@ -1005,6 +1008,7 @@ def train_roi_latent_ttc_prober(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     cache_sequence_id = cache["sequence_id"].astype(str)
     cache_timestamp_us = cache["timestamp_us"].astype(np.int64)
@@ -1045,10 +1049,7 @@ def train_roi_latent_ttc_prober(
         msg = f"Requested evaluation splits have no matched ROI rows: {missing_eval_splits}."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
 
     start_time = time.perf_counter()
     encoder, encoder_metadata = _load_frozen_encoder(
@@ -1224,8 +1225,9 @@ def train_roi_latent_ttc_prober(
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "epochs": epochs,
         "batch_size": batch_size,
@@ -1353,6 +1355,7 @@ def train_roi_rollout_ttc_prober(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     metadata_channels = _cache_bool(cache, "metadata_channels")
@@ -1402,10 +1405,7 @@ def train_roi_rollout_ttc_prober(
         msg = f"Requested evaluation splits have no matched ROI rows: {missing_eval_splits}."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
 
     start_time = time.perf_counter()
     encoder, predictor, jepa_checkpoint, jepa_metadata = _load_frozen_jepa_rollout_components(
@@ -1616,8 +1616,9 @@ def train_roi_rollout_ttc_prober(
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "epochs": epochs,
         "batch_size": batch_size,
@@ -1713,10 +1714,7 @@ def evaluate_roi_latent_ttc_prober_checkpoint(
         msg = "context_ms must be positive and max_cache_slop_ms must be non-negative."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     checkpoint = torch.load(prober_checkpoint_path, map_location=device, weights_only=False)
     if checkpoint.get("model") != "roi_latent_ttc_prober":
         msg = f"Checkpoint {prober_checkpoint_path} is not a roi_latent_ttc_prober checkpoint."
@@ -1733,6 +1731,7 @@ def evaluate_roi_latent_ttc_prober_checkpoint(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     cache_sequence_id = cache["sequence_id"].astype(str)
     cache_timestamp_us = cache["timestamp_us"].astype(np.int64)
@@ -1866,8 +1865,9 @@ def evaluate_roi_latent_ttc_prober_checkpoint(
         "checkpoint_cache": checkpoint.get("cache_path"),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "batch_size": batch_size,
         "encoder_checkpoint": encoder_metadata,
         "context_ms": context_ms,
@@ -1940,10 +1940,7 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
         msg = "context_ms must be positive and max_cache_slop_ms must be non-negative."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     checkpoint = torch.load(prober_checkpoint_path, map_location=device, weights_only=False)
     if checkpoint.get("model") != "roi_rollout_ttc_prober":
         msg = f"Checkpoint {prober_checkpoint_path} is not a roi_rollout_ttc_prober checkpoint."
@@ -1960,6 +1957,7 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     metadata_channels = _cache_bool(cache, "metadata_channels")
@@ -2130,8 +2128,9 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
         "checkpoint_cache": checkpoint.get("cache_path"),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "batch_size": batch_size,
         "jepa_checkpoint": jepa_metadata,
         "context_ms": context_ms,

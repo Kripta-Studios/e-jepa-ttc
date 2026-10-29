@@ -1,0 +1,62 @@
+{
+  "anchor_us": 12012093,
+  "artifact_sha256": "8f82fba4156644a3cf2d7d0d6bc978a65d1a0b5ccc73807764da771a04a4e142",
+  "claim": {
+    "differences": [
+      "causal 200 ms observed-box ROI instead of the official FCWD epoch construction",
+      "deterministic bounded RANSAC and contour budgets",
+      "median plus Gaussian approximation; MATLAB bilateral filtering omitted",
+      "independent queries without official lastOptimizedResult sequence fallback",
+      "no TTC ground truth is opened or printed",
+      "published nonlinear least-squares stage is enabled"
+    ],
+    "label": "local_causal_strttc_source_port_adaptation",
+    "official_commit": "79ff0842955304ec4f6164ec09baddc71386d225",
+    "reference": "https://github.com/NAIL-HNU/event_aided_ttc",
+    "reproduction_of_paper_result": false
+  },
+  "config": {
+    "cmax_coarse_steps": 65,
+    "cmax_maximum_events": 50000,
+    "cmax_maximum_ttc_s": 100.0,
+    "cmax_minimum_events": 1000,
+    "cmax_minimum_relative_contrast_gain": 0.01,
+    "cmax_minimum_ttc_s": 0.1,
+    "lookback_us": 200000,
+    "object_margin_fraction": 0.1,
+    "roi_margin_fraction": 0.1,
+    "strttc_maximum_events": 250000,
+    "strttc_minimum_events": 2000,
+    "strttc_nonlinear_maximum_function_evaluations": 40,
+    "strttc_nonlinear_refinement": true
+  },
+  "diagnostics": {
+    "inverse_ttc_at_endpoint": 0.3085989306806732,
+    "linear_inlier_ratio": 1.0,
+    "linear_inverse_ttc_at_reference": 0.05270830769874292,
+    "nonlinear_inverse_ttc_at_reference": 0.2993605125111104,
+    "nonlinear_refinement": true,
+    "normal_flow_count": 107,
+    "optimized_event_count": 36735,
+    "roi_event_count": 36735,
+    "roi_xyxy": [
+      594,
+      291,
+      714,
+      342
+    ]
+  },
+  "failure": null,
+  "method": "strttc",
+  "prediction_ttc_s": 3.2404519283145645,
+  "query_id": "CCRs-side-high:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "962f8ac1a3c93dfe3c4d8c8b182a94497e2dc808e4ada2e6143dee304f81fa2f",
+  "runner_source_sha256": "69ac030922fdc723cfead0847aa7d6b9f71e423cc99cae534f92cd170b5e319e",
+  "runtime_s": 2.9737867999938317,
+  "schema": "evttc_fixed_query_geometric_baselines_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CCRs-side-high",
+  "status": "SUCCESS",
+  "target_fields_opened": []
+}

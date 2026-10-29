@@ -1,0 +1,61 @@
+{
+  "D1": {
+    "condition": "P fit remains limited after gradient, loader/cursor and correspondence verification",
+    "control_reused": true,
+    "evaluation_registration_sha256": "5f7e89df695d80bcfe49a6575f616f667672f47808e9bd11b3bf98676c81f686",
+    "interpretation": "Predictor capacity test, not proof of capacity cause; native64 encoder remains trainable",
+    "new_scientific_updates": 12000,
+    "qa_sha256": "208f30dd0bb39e206bb94cb22cee5b4f91f523a5d5bd9066673295a9effc73dd",
+    "registration_sha256": "a6c4363d06997fd51e0ed3c1b09ce62fd031bafaae113e95552013a78d28aab0",
+    "status": "CUDA_QA_PASS_SCIENTIFIC_TRAINING_STARTED",
+    "technical_updates": 30
+  },
+  "active_driver": {
+    "created_local": "2026-10-16T04:27:06.049247+02:00",
+    "launcher_pid": 6484,
+    "module": "operational.joint_measurement.capacity_train",
+    "pid": 29220
+  },
+  "cost": {
+    "first_two_failed_admissions_retained": true,
+    "full_cost_qualified": false,
+    "maximum_observed_absolute_difference_s": 0.00116729736328125,
+    "path": "fusion/cost/raw_e2e_native_v2/PARITY_FAILURE.json",
+    "sha256": "a33f8139a0fd1ca6de11311a1fe57658ebabe34bbba80c0aa98899889324b93f",
+    "status": "STRICT_PARITY_FAILED_REQUIRES_DIAGNOSIS",
+    "tolerances_unchanged": true
+  },
+  "full_objective_complete": false,
+  "monitoring": {
+    "cadence": "Europe/Madrid clock hours",
+    "driver_create_time": 1792117626.0492473,
+    "driver_pid": 29220,
+    "job": "capacity",
+    "next_local_hour": "2026-10-16T05:00:00+02:00",
+    "observer_launcher_pid": 13508,
+    "pid": 24168,
+    "training_actions": []
+  },
+  "replication": {
+    "V16_comparison_sha256": "ac7bee7134436671a0cbabcf541c2a50edfc2274ea84303041b24d5cf23d9a6f",
+    "all_six_new_endpoints_complete": true,
+    "failed_mean_gates": {
+      "mean_TRUE_vs_F_TRUE": [
+        "crucial_10pct"
+      ],
+      "mean_TRUE_vs_R_CTX": [
+        "crucial_10pct"
+      ],
+      "mean_TRUE_vs_ZERO": [
+        "crucial_10pct"
+      ]
+    },
+    "four_independent_head_replays": "PASS",
+    "path": "replication/fusion_C1/evaluation/RESULT.json",
+    "scientific_updates": 34000,
+    "sha256": "4af996900a99c585f8e4a86fae5eba89a28e3f49cf9e2307f1298209850d747c",
+    "system_promotion": false,
+    "two_producer_exports": "COMPLETE"
+  },
+  "utc": "2026-10-16T02:28:28.858025+00:00"
+}

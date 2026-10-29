@@ -10,4 +10,3 @@ __all__ = [
     "benchmark_object_ttc_model",
     "export_object_ttc_onnx",
 ]
-

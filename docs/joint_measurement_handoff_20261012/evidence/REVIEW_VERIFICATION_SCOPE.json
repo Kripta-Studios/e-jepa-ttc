@@ -1,0 +1,15 @@
+{
+  "scope": "Reference code and review only; no integrated trainer, eAP inference or new optimizer updates.",
+  "unit_tests": 23,
+  "native_interface_probe": "random-weight native CNN, synthetic 128x128 forward/backward, zero updates",
+  "python": "3.13.5",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "powershell_runtime_tested": false,
+  "cuda_tested": false,
+  "v17_metric_replay_tables": 44,
+  "v17_metric_replay_rows_including_reused_controls": 1360146,
+  "v17_metric_max_abs_difference": 1.3193736549510504e-05,
+  "v17_metric_replay_bitwise_exact": false,
+  "v17_clone": "FAILED_DNS",
+  "v17_zip_verified": true
+}

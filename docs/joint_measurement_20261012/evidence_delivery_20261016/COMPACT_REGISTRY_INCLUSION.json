@@ -1,0 +1,14 @@
+{
+  "status": "PASS_SELECTION_ONLY",
+  "utc": "2026-10-16T13:11:58.662273+00:00",
+  "registry_bytes": 17662,
+  "registry_sha256": "2c552dabb8e91cd21580484055d193e1430b6ef2ab95a15d8bce89b1310a8692",
+  "registry_entries": 18,
+  "registry_archive_name": "campaign/EXPERIMENT_REGISTRY.jsonl",
+  "registry_bytes_unchanged": true,
+  "fusion_and_replication_registrations_included": true,
+  "collector_source_sha256": "5c8af7ecdd1cc481412c7313c02c6ff436558e051eb94a966605260dea095d5c",
+  "archive_created": false,
+  "final_archive_replay_pending": true,
+  "optimizer_updates": 0
+}

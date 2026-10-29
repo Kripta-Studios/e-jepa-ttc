@@ -1,0 +1,8 @@
+model: garl_reference
+source_commit: 256661242b8a7f5e56aa3c1c02348b30f6e89de6
+backbone: resnet50
+event_channels: 40
+roi_size: 128
+objective: height_ratio
+fusion: late
+foreground_supervision: true

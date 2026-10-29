@@ -1,0 +1,19 @@
+{
+  "status": "REGENERATED_METRICS_RECONCILED",
+  "heads": 18,
+  "prediction_rows": 49152,
+  "inference_fragments": 396,
+  "max_ttc_error": 0.0,
+  "per_arm_absolute_mid_difference": {
+    "A5_ONLY_C0": 1.1368683772161603e-13,
+    "A5_PAIR_C0": 5.684341886080802e-14,
+    "C2F_ONLY_C0": 1.8474111129762605e-13,
+    "FULL_C0": 1.4210854715202004e-13,
+    "SET_AGE_C0": 8.526512829121202e-14,
+    "SET_NOTIME_C0": 5.684341886080802e-14
+  },
+  "maximum_absolute_mid_difference": 1.8474111129762605e-13,
+  "explanation": "TTC predictions are exact; macro-score differences arise from summation order at floating-point precision.",
+  "regeneration_receipt_sha256": "982d08946f4e9f1deb167768f041835cacccbede35101a0ab96783b5c1cb7441",
+  "optimizer_updates": 0
+}

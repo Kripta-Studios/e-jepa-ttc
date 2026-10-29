@@ -1,0 +1,30 @@
+protocol:
+  artifact_type: a5_transport_preflight_train_only_v2
+  public_train_only: true
+  validation_or_test_opened: false
+  optimizer_steps: 0
+  seed: 7
+  sample_count: 512
+  radii: [1, 2, 4]
+  temperatures: [0.02, 0.04, 0.07, 0.10]
+  selection:
+    # Select the smallest radius that both covers the bbox-implied affine flow
+    # and survives a same-sequence shuffled-pair null control.
+    bbox_physical_coverage_min: 0.90
+    teacher_excess_error_reduction_min: 0.10
+    teacher_real_vs_shuffled_best_error_improvement_min: 0.05
+    teacher_real_vs_spatial_null_best_error_improvement_min: 0.05
+    teacher_foreground_excess_error_reduction_min: 0.10
+    student_hard_epe_improvement_over_zero_min: 0.10
+    student_hard_epe_advantage_over_random_min: 0.05
+    student_real_vs_shuffled_top1_cosine_min: 0.005
+    student_real_vs_spatial_null_top1_cosine_min: 0.005
+    student_confidence_margin_min: 0.005
+    student_entropy_max: 0.92
+  interpretation:
+    radius_is_selected_from_train_only_physical_coverage_not_validation: true
+    temperature_only_calibrates_soft_distribution_hard_argmax_is_temperature_invariant: true
+    same_sequence_shuffled_pairs_control_best_of_k_bias: true
+    bbox_is_diagnostic_only_and_never_a_model_input: true
+    ttc_labels_are_not_used_by_v2: true
+    no_training_or_optimizer_steps: true

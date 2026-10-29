@@ -1,0 +1,15 @@
+{
+  "child_create_time": 1792176433.849598,
+  "child_pid": 27264,
+  "driver_create_time": 1792176429.0295343,
+  "driver_pid": 35796,
+  "mean_seconds_per_update": 0.6589579599999706,
+  "optimizer_updates_from_observation": 0,
+  "sample_end": 6700,
+  "sample_size": 100,
+  "scope": "100 recent live host update intervals after initial capture/cache warmup; not a controlled before-after benchmark; excludes time between update intervals",
+  "snapshot": "PRODUCTION_6700_PERSISTENT_RUNTIME.json",
+  "snapshot_sha256": "8f46954430f3f7fd6224ab7bc2979ce80f3f16c6d435005a884e87a264e6c2ff",
+  "updates_per_hour": 5463.170973760087,
+  "utc": "2026-10-16T20:51:03.359668+02:00"
+}

@@ -1,0 +1,602 @@
+{
+  "artifact_sha256": "92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52",
+  "artifact_type": "garl_official_event_only_matched_preprocessing_cache_v1",
+  "checks": {
+    "all_tensors_finite": true,
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "exact_tokens": true,
+    "private_test_opened": false,
+    "release_unchanged": true,
+    "targets_equal_public_labels": true,
+    "torch_roundtrip": true
+  },
+  "created_at_utc": "2026-08-10T01:52:49.940619+00:00",
+  "format": "torch_sharded_tensor_batches_v1",
+  "input_contract": {
+    "bbox_oracle_crop_used_in_preprocessing": true,
+    "bbox_stored_as_model_input": false,
+    "dtype": "float32",
+    "modality": "event_only",
+    "representation": "official_garl_timevolume20_two_endpoints",
+    "rgb_stored": false,
+    "shape": [
+      40,
+      128,
+      128
+    ],
+    "target_stored_as_model_input": false
+  },
+  "parameters": {
+    "batch_size": 32,
+    "num_workers": 16,
+    "seed": 7,
+    "shard_size": 64
+  },
+  "shards": [
+    {
+      "path": "train/shard-00000.pt",
+      "rows": 64,
+      "sha256": "11ed67759c08ee97c93eab19567aede7ce45956f9b766a4cf2e4887069600748",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00001.pt",
+      "rows": 64,
+      "sha256": "cc92034a07822b413b4e3b0a3e7a8d7b86219809dc3a3be0beba21b5c18a0b67",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00002.pt",
+      "rows": 64,
+      "sha256": "aca0e7d9f0bff43148f5fc6bd0c5b1f82131cc5b3996c3d4314def6c85f29406",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00003.pt",
+      "rows": 64,
+      "sha256": "b7b82f83bc5bc9282e322906f3a1a4f6f1a206e20b2713395de1bf674a72cd76",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00004.pt",
+      "rows": 64,
+      "sha256": "0eb574de3298282f6508b9692e209515ea036d39b6aab62ec45aae725d1d0875",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00005.pt",
+      "rows": 64,
+      "sha256": "543b412f9900924733597e3e077a8ee00b21525c543680e41ab62baafd195bbf",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00006.pt",
+      "rows": 64,
+      "sha256": "c95f2913c57c099a99e4f990757b1660c906e252d4fd770bb99b89f9825fa492",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00007.pt",
+      "rows": 64,
+      "sha256": "9c50607c9289f1b1e4c02f9a726da78a0e594ddda2ce7c863f9bd9f61cc96983",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00008.pt",
+      "rows": 64,
+      "sha256": "bb060ffa9025a73157b95e7370636f739c302754f4237fd9f8a8db93bc22522c",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00009.pt",
+      "rows": 64,
+      "sha256": "f201df98f61a82485bb64f7454c56cce7245906d456630bc8af2dcdfeae7c6d9",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00010.pt",
+      "rows": 64,
+      "sha256": "bb7e2ac453c36bc5b8146be0419508173e33b6c6af257813b1848795991656b4",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00011.pt",
+      "rows": 64,
+      "sha256": "f094e9318c84268392bb1214e63034144d3c5eb12032913ab9571a8548f746ea",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00012.pt",
+      "rows": 64,
+      "sha256": "94f4e4ba49e32f6334da596ec6336705fd4d001bbad7cf222a24e81a6d5db0e6",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00013.pt",
+      "rows": 64,
+      "sha256": "2afb601bb23bad3b013243f060e8a6b73eda6eb532d172c8207bc5c360e20d97",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00014.pt",
+      "rows": 64,
+      "sha256": "6a8c7b72656e941099646919ce1a0e860da14325acfadf6cd2e65aa14d418f28",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00015.pt",
+      "rows": 64,
+      "sha256": "3982e7263ee2f7a230e3894be83b463050805bf03ca5504395b2a0de08074931",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00016.pt",
+      "rows": 64,
+      "sha256": "dc39bd0e83e8fe795fe51e38c68c641023e609dda56afd8c6df27cec2b372cbb",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00017.pt",
+      "rows": 64,
+      "sha256": "c80d74967faf4180d6c19a02ddee7b9aeb0b400d04463f945d1b079260555558",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00018.pt",
+      "rows": 64,
+      "sha256": "74ef27a679560181442f0ff860e505e5e38c09afcc27afd493b44a486df90086",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00019.pt",
+      "rows": 64,
+      "sha256": "75dcc29f4bcb4467f4851a619fc5a54ee1400afa64523a246cb8fe4e5e689dea",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00020.pt",
+      "rows": 64,
+      "sha256": "68a0c722226d8a618188eae70959b6b389119e61f8493da617303b8cb065a31c",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00021.pt",
+      "rows": 64,
+      "sha256": "dfadb13fbf526dc6693bfeffe40af5b489e566a395514bb52fff58267751a4b5",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00022.pt",
+      "rows": 64,
+      "sha256": "32dfa6c05deb7e5a4b699740019895cced1df8182d0bfb08fec760058f187c66",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00023.pt",
+      "rows": 64,
+      "sha256": "b5f188e65a0bc8b58a2b2a9d5bada4ebb89d674e59c01c58a9a511cbdda8af0b",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00024.pt",
+      "rows": 64,
+      "sha256": "9d7e27782d4c3616fc865c956f2d1d6351594d63d436aed3d21c6f333e34f2fa",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00025.pt",
+      "rows": 64,
+      "sha256": "a652fbeb6ef790dda7d9edb22231077c011214eca880462f9ba52f99a8d5058e",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00026.pt",
+      "rows": 64,
+      "sha256": "f0c3263495eafd708e9c2f790b99ecde9714e943dfb0324fe09d3e4a6278ef77",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00027.pt",
+      "rows": 64,
+      "sha256": "1c51d534cbb621ce11a52f1c69eb2df88d0018cc3594d086a26ecd1efaf994b0",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00028.pt",
+      "rows": 64,
+      "sha256": "d5d0085ea2b7316c5aa72019ffd61f5618d24a97475ffd50e79e44a1ca26011f",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00029.pt",
+      "rows": 64,
+      "sha256": "01549c63849fe1c0bdbde06f4f857037d0dd0b264689afe2a6f19d8992369fcb",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00030.pt",
+      "rows": 64,
+      "sha256": "70aa5c8119977a8c31f37f7d50add0136613f716029a18ea56908925b6159f77",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "train/shard-00031.pt",
+      "rows": 64,
+      "sha256": "32bbc35f6664105939620bdd0c1f50cabbee36a6576a6aea226a36014538f88f",
+      "size_bytes": 167778537,
+      "split": "train",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00000.pt",
+      "rows": 64,
+      "sha256": "e2c08f384984f717b272f09dbaf4b6b6a11dce4d547ca876a0dd83688ee7c1cc",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00001.pt",
+      "rows": 64,
+      "sha256": "c1928b453d7bcecdba6433e0b591846cc2239e7c2e6f90c89d90efd16b56cf82",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00002.pt",
+      "rows": 64,
+      "sha256": "32cc12d16bbeedee81f2a0d8786e34528bdb6f4614d7fd0c496c508be1429ece",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00003.pt",
+      "rows": 64,
+      "sha256": "a344c67868f27614cdc97fb828b42f623e8da99484ad1e035b9ecfe64ebe98eb",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00004.pt",
+      "rows": 64,
+      "sha256": "19ed909d1b2fa049911400ffe17b41b2f94db9d68d4bcfe6f083c73df9d11e3f",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00005.pt",
+      "rows": 64,
+      "sha256": "44e65a5216bc920f3e1fe96917e4625075daf31a2b59a7a71cb7ba92865559c4",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00006.pt",
+      "rows": 64,
+      "sha256": "bd2bea564ba8476c3b0dfbceaa99be60fd48b0ea4a24f3f22150feec9d4122db",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00007.pt",
+      "rows": 64,
+      "sha256": "81cbbabf2bc970b6d780e8abf2d7b771b83594b2398eece640a2dadf8ac86b31",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00008.pt",
+      "rows": 64,
+      "sha256": "918387789eb63db1957e7ebc10b02fe847492df1e2e408333cf12dd95f50e269",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00009.pt",
+      "rows": 64,
+      "sha256": "168e77471eee0d662cb402ea30ba92ee126673962a3c7a64ef112c2fa219a11d",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00010.pt",
+      "rows": 64,
+      "sha256": "baff1f08eb845aa00193ef29ba8f4d4c90e2542f18b27e19d7cc6da93f8ef470",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00011.pt",
+      "rows": 64,
+      "sha256": "15886854cf549a97b2e7825dc4cb3794fe2eaa7fbf2c1a09d09945c057708f1a",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00012.pt",
+      "rows": 64,
+      "sha256": "b3bad343e520ce54402661a71a9a07c43deacb0285b11dafc70dc659dd41a6c8",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00013.pt",
+      "rows": 64,
+      "sha256": "c8da59dde005a29a7e6d8bb69e0b1279a64d91d3be3c036d71a48bc8cf045052",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00014.pt",
+      "rows": 64,
+      "sha256": "1aa410685b1f42ced0a6b5090b03387a6bb9d2558f0a381f27958e8c40f8e35f",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00015.pt",
+      "rows": 64,
+      "sha256": "6c47a7e82a86308817d47470a34cb2647edd9355ef9f9a09dbde92c1e2d95e8d",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00016.pt",
+      "rows": 64,
+      "sha256": "d5fa1fe812d62beaf5faad756fe8930cbed00535bfa51fab7fb9290ddbc24548",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00017.pt",
+      "rows": 64,
+      "sha256": "71d8205073d210df654ffd4d6cccf3c2a113157b0eaa21fbe80c57db6bea6858",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00018.pt",
+      "rows": 64,
+      "sha256": "d2fe16e2067bfa63052107b3dae7b8c1ce1272bd8a4da71fa2de3faae5ea6800",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00019.pt",
+      "rows": 64,
+      "sha256": "ad331de5c398731d1cba29d75f1cdb69d5b4167232194820f991522ed8aaa591",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00020.pt",
+      "rows": 64,
+      "sha256": "1fc84af39e5d0db9793d2db3d7e0ce2dfc8f8836ea3d78eb7c4ba796e16ed431",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00021.pt",
+      "rows": 64,
+      "sha256": "3371649c20466328826873e7973380925c6e2137a568ec3a06e489fea715d8f1",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00022.pt",
+      "rows": 64,
+      "sha256": "3b7efa880540a216070b1f76be1cd7dca1e385c23d7a765bae1b5f738f06644b",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00023.pt",
+      "rows": 64,
+      "sha256": "837792396b3260f4dfdb0237c0f63647f0a04c2dafa7fbdad6dbf2751c3956c2",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00024.pt",
+      "rows": 64,
+      "sha256": "69dea30250e831b92df9253adc48567f0af83e84eed5d3a4936713874502a6ae",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00025.pt",
+      "rows": 64,
+      "sha256": "b5bb8a8fb07a8afaab8afd370089fbaec95896177ea0bc54178bed0d5c36c5e4",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00026.pt",
+      "rows": 64,
+      "sha256": "0e178724d0bdefcdbf5f9808136862b7bf2541f276c0ed67b851f1ae864ff283",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00027.pt",
+      "rows": 64,
+      "sha256": "cbafb13fb3d674e9d7749a76b6b195b01653b5ec2e74620785a4129806a92e9e",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00028.pt",
+      "rows": 64,
+      "sha256": "4e86a7d155245e6f8e9050acba313ced8290422c66e3734ed17cf6338a526906",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00029.pt",
+      "rows": 64,
+      "sha256": "d11978033e811c8f4f6842eeab49d5df3280d4eb47c66743d331e4ee65ebafb9",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00030.pt",
+      "rows": 64,
+      "sha256": "6cfdb8f5ee820b458581e19fd0f753e2a17631521658099bee97f48de1431920",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    },
+    {
+      "path": "validation/shard-00031.pt",
+      "rows": 64,
+      "sha256": "d9d1520c6d0b1446441e886e04ea91a571d3ed59f7d232d46beb64ab3f4781bb",
+      "size_bytes": 167778537,
+      "split": "validation",
+      "torch_load_verified": true
+    }
+  ],
+  "sources": {
+    "materialized_config": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\cache\\garl_official_event_only_matched_preprocessing_v1\\official_preprocessing_config.yaml",
+      "sha256": "35c37c8e9683641e3cff838e000af7c44cd7a1b62e7aad0bbea0cd1c64c1a92f"
+    },
+    "official_config": {
+      "path": "E:\\Garl-TTC\\configs\\ablation\\event_lhr.yaml",
+      "sha256": "2620bd5d21faf485d7ef10f2ef851e72693074ea78c3ef42aec24620a78c357a"
+    },
+    "official_dataset_source": {
+      "path": "E:\\Garl-TTC\\garl_ttc\\datasets\\ttc_dataset.py",
+      "sha256": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592"
+    },
+    "official_representation_source": {
+      "path": "E:\\Garl-TTC\\garl_ttc\\datasets\\event_representation.py",
+      "sha256": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6"
+    },
+    "release_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "release_dirty": false,
+    "subset_manifest": {
+      "artifact_sha256": "dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3",
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\manifest.json",
+      "sha256": "dea74cdc610841e75ab8a827e9f01f3b2d660432cf5cadbc88d0cff46927d6ec"
+    }
+  },
+  "split_counts": {
+    "train": 2048,
+    "validation": 2048
+  },
+  "status": "completed_public_train_validation_only",
+  "timing": {
+    "dataset_initialization_seconds": {
+      "train": 0.0499126000004253,
+      "validation": 0.053592899999785004
+    },
+    "preprocessing_by_split": {
+      "train": {
+        "elapsed_seconds": 166.75005760000022,
+        "maximum_target_absolute_error_s": 4.672776459102579e-07,
+        "rows": 2048,
+        "rows_per_second": 12.281854827976966,
+        "sequence_count": 9
+      },
+      "validation": {
+        "elapsed_seconds": 155.32834229999935,
+        "maximum_target_absolute_error_s": 4.7578271811232753e-07,
+        "rows": 2048,
+        "rows_per_second": 13.1849730041187,
+        "sequence_count": 3
+      }
+    }
+  }
+}

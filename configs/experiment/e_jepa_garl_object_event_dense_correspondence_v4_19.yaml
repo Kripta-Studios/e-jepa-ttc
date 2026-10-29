@@ -1,0 +1,19 @@
+model:
+  search_radius: 4
+  correlation_temperature: 0.07
+  foreground_floor: 0.05
+  confidence_floor: 0.05
+  minimum_score_scale: 1.0e-4
+  epsilon: 1.0e-6
+
+run:
+  seed: 1919
+  descriptor_batch_size: 6
+
+# These are development-decision thresholds, not pass/fail gates.
+decision:
+  baseline_pearson_tolerance: 0.03
+  minimum_sequence_negative_accuracy_floor: 0.35
+  positive_accuracy_floor: 0.86
+  dense_score_validation_abs_pearson_support: 0.10
+  dense_score_train_abs_pearson_support: 0.15

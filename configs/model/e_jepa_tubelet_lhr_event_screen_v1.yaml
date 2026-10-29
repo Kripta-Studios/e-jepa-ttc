@@ -1,0 +1,15 @@
+model: e_jepa_tubelet_lhr_event_screen_v1
+in_channels: 21
+embed_dim: 32
+patch_size: 8
+spatial_window: 8
+heads: 4
+spatial_depth: 1
+temporal_depth: 1
+temporal_mixer: block_causal
+merge_2x2: true
+global_attention: false
+memory_budget_gb: 12.0
+pooling: query
+query_count: 8
+use_rgb: false

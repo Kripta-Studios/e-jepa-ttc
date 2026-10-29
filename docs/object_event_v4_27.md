@@ -1,0 +1,11 @@
+# Object Event v4.27 — explicit event-native scale-correlation LHR
+
+V4.26 closes the post-hoc readout family: after making the first-level anchor and geometry features fully grouped-OOF, train-only selection still chooses the unmodified anchor. The full-train anchor then underperforms v4.10 on development validation, especially on negative TTC tracks. The next change therefore moves the geometry inside the forward model.
+
+V4.8 already maps a predicted pooled `log_eta` to expansion using `g = 1 - exp(log_eta)`, but its `log_eta` is a free dense regression field. V4.27 replaces that free scalar mechanism for the experimental branch with a constrained **vertical scale-correlation volume**. Event-only geometry features at the last two temporal steps are projected into a compact feature space. The learned foreground maps define soft vertical profiles and centroids. The model evaluates a fixed grid of candidate `log(h_prev / h_curr)` values by warping the previous profile around its event-derived centroid and measuring cosine correlation to the current profile. A softmax/soft-argmax produces the LHR, from which expansion is derived analytically.
+
+Boxes and visible heights remain training-only supervision. They are never forward inputs. Training explicitly balances positive and negative expansion samples and directly supervises LHR, TTC expansion, correlation and sign. The model starts from each v4.22 adapted checkpoint, trains only the new scale projection plus the final geometry-encoder tensors, and anchors the geometry tail to its initialization.
+
+The run is grouped by sequence: three seeds x three held-sequence-out folds provide OOF predictions. Development-validation is not materialized at all unless the fixed architecture passes the OOF gate. Only then are three final models trained on all development-train sequences and development-validation is opened once. Official eAP test and EvTTC remain sealed.
+
+The OOF track audit uses four negative samples as the signed-track threshold. V4.26 used eight, for which the current train subset contained zero eligible negative tracks, so that robustness term was not active. V4.27 therefore makes negative-track macro accuracy an explicit OOF and final comparison criterion.

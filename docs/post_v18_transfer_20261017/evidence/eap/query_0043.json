@@ -1,0 +1,12 @@
+{
+  "sample_token": "pzJcg1OCfc_000832_12513900000",
+  "group_id": "pzJcg1OCfc",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": -7.670706748962402,
+  "sensor_sha256": "185f09a1c30b94c6e5ef6d719ea1b818a4c7af55c079b9ccd24043ecd324a0c1",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.3836903000192251,
+  "seconds_preprocess_including_parity": 0.353181799990125,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

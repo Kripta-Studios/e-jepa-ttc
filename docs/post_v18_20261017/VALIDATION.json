@@ -1,0 +1,60 @@
+{
+  "schema": "post_v18_review_validation_v1",
+  "utc": "2026-10-17T09:32:07.664661+00:00",
+  "status": "PASS_FOR_PREPARATION_AND_FROZEN_DIAGNOSTICS",
+  "checks_observed_this_turn": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS",
+    "pyright_explicit_file": "0 errors, 0 warnings",
+    "signed_metrics_unit_tests": {
+      "passed": 7,
+      "file": "tests/unit/test_garl_signed_metrics_v4.py",
+      "scope": "Passed in preceding preparation turn; not repeated"
+    },
+    "review_prepare": "PASS",
+    "review_validate": "PASS",
+    "refit_dry_run": "PASS_ACTUAL_CACHES_AND_GENEALOGY",
+    "git_diff_check": "PASS",
+    "local_markdown_links": 13,
+    "refit_adapter_tests": {
+      "passed": 6,
+      "file": "tests/unit/test_post_v18_refit.py",
+      "optimizer_step_blocked_in_synthetic_test": true
+    },
+    "no_refit_run_directory": true
+  },
+  "training_readiness": "ADAPTER_IMPLEMENTED_PREFLIGHT_AND_ZERO_UPDATE_TESTS_PASS; FULL_OPTIMIZATION_NOT_EXECUTED",
+  "source_environment": "Shared sibling e-jepa-ttc/.venv, explicit interpreter; local .venv absent",
+  "actions": {
+    "optimizer_updates": 0,
+    "gradient_evaluations": 0,
+    "submissions": 0,
+    "pushes": 0,
+    "merges": 0,
+    "v19_mutations": 0,
+    "scientific_model_inferences": 0,
+    "synthetic_model_forward_tests": "Checkpoint/export QA only; temporary synthetic state, no optimizer steps"
+  },
+  "not_repeated": [
+    "4260-test full suite",
+    "V18 archive replay",
+    "V16 parent-model replay",
+    "raw sensor inference"
+  ],
+  "files": {
+    "docs/joint_measurement_20261012/README.md": "0676ad54ed72aabd03d304b725cfb034da4cf796cc89752a5751e8b21668412b",
+    "docs/post_v18_20261017/A1_NEGATIVE_ANALYSIS.md": "8494eb35e505d622544d29ff4479d0ad1431d5a268d1ee348349e1eb7f3ae65a",
+    "docs/post_v18_20261017/A1_NEGATIVE_DIAGNOSTICS.json": "9538f082d3db979a2437c054240e33fec253011c99be35f313239c7d47508e6d",
+    "docs/post_v18_20261017/A1_NEGATIVE_RANGE_GROUP.csv": "d6bc00529fa721f9ca9291025a92196aa9ca49eb76add2536271ac36ba6444ee",
+    "docs/post_v18_20261017/CANDIDATE_REGISTRY.json": "407c3fc3dbf0672992f13ae4fe6e992f9ad59797a1e49520b1c65af3adcb6444",
+    "docs/post_v18_20261017/DECISION_POST_V18.md": "880fa096542950234056cf9b19d82f84e9bc38468faed5d1952c4d8af487eb9b",
+    "docs/post_v18_20261017/FROZEN_COMPARISON_PROTOCOL.json": "70174ae2ec2e75d8de35dec987257eb0c434949d4a52c8edf004b26d88b753c7",
+    "docs/post_v18_20261017/OFFICIAL_EVALUATION_STATUS.json": "6238fe60aa0a984d3691691c7e21c65968d310757f97945d170c472b3ddf9e89",
+    "docs/post_v18_20261017/REFIT_PLAN.json": "47b1165d5fa1b3ab6ca593de382998fc3c58b755630b85d0ffde8b92f7e452cc",
+    "docs/post_v18_20261017/REFIT_PREFLIGHT.json": "ad2c292573ed52754d360c3ca8a063f5704e7aa333a637787332f211fa736038",
+    "docs/post_v18_20261017/V19_RECONCILIATION.json": "5d08852d494aed40b33b1c11bd1fbe7472a80b5e77855592d6e91921a4f097bf",
+    "scripts/post_v18_review.py": "08b5413bfc1e2a2f2080f46a1bad954125aad8741d3ebf3f1f1c741b8c0bdcb0",
+    "scripts/run_post_v18_refit.py": "309c0b5f47d93495ac9ead04fbc99e24120f65af4ad795e942800aa0ef87797d",
+    "tests/unit/test_post_v18_refit.py": "dd9743bebc08e9bf742765908083b1dd9d219c30543641bcb6a9e998b410c20a"
+  }
+}

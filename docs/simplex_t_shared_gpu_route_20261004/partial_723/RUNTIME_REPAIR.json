@@ -1,0 +1,12 @@
+{
+  "cause": "Profiler enabled deterministic CUDA algorithms, unlike the pinned historical cache generators",
+  "repair": "Restore torch.use_deterministic_algorithms(False); all other recipe/runtime, parity tolerances and scheduled measurements unchanged",
+  "diagnostic": "DIAGNOSTIC_HISTORICAL_RUNTIME.json",
+  "failed_query_feature_phase_ttc_errors_after_repair": [
+    0,
+    0,
+    0
+  ],
+  "previous_parity_receipts_retained": 18,
+  "previous_unresolved_attempts_retained": 1
+}

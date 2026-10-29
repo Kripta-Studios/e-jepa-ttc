@@ -174,10 +174,7 @@ class RotaryTransformerEncoderLayer(nn.Module):
     def _attention(self, tokens: torch.Tensor, positions: torch.Tensor) -> torch.Tensor:
         batch, token_count, dim = tokens.shape
         if positions.shape != (token_count, 3):
-            msg = (
-                "positions must have shape "
-                f"({token_count}, 3), got {tuple(positions.shape)}."
-            )
+            msg = f"positions must have shape ({token_count}, 3), got {tuple(positions.shape)}."
             raise ValueError(msg)
         qkv = self.qkv(tokens).reshape(
             batch,

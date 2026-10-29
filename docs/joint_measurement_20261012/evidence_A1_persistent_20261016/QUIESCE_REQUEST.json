@@ -1,0 +1,16 @@
+{
+  "time": 1792170889.191078,
+  "driver_pid": 38884,
+  "driver_create_time": 1792169077.6128533,
+  "child_pid": 28392,
+  "child_create_time": 1792170041.5421,
+  "journal": {
+    "completed_updates": 1041,
+    "durable_updates": 1000,
+    "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "action": "Suspend only coordinator; child continues to original bounded checkpoint exit"
+}

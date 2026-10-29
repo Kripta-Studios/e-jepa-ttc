@@ -53,10 +53,7 @@ def verify_file_manifest(
                 "sha256_matches": hash_matches,
             }
         )
-    valid = all(
-        row["size_matches"] and row["sha256_matches"] is not False
-        for row in rows
-    )
+    valid = all(row["size_matches"] and row["sha256_matches"] is not False for row in rows)
     return {
         "format": payload.get("format"),
         "repository": payload.get("repository"),
@@ -64,8 +61,7 @@ def verify_file_manifest(
         "file_count": len(rows),
         "present_file_count": sum(bool(row["exists"]) for row in rows),
         "valid_file_count": sum(
-            bool(row["size_matches"] and row["sha256_matches"] is not False)
-            for row in rows
+            bool(row["size_matches"] and row["sha256_matches"] is not False) for row in rows
         ),
         "expected_total_bytes": expected_total,
         "present_total_bytes": present_total,
@@ -84,4 +80,3 @@ def _sha256(path: Path) -> str:
 
 
 __all__ = ["verify_file_manifest"]
-

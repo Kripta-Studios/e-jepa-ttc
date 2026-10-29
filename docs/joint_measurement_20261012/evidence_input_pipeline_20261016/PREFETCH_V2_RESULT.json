@@ -1,0 +1,106 @@
+{
+  "cache_scope": "OS cache uncontrolled; paired warm-cache fixed P population; startup and future drain included",
+  "exact_pixels_clocks_phase_ttc": true,
+  "input_parity": [
+    {
+      "packs": [
+        {
+          "compressed_bytes": 116296353,
+          "decode_s": 0.31718670000554994,
+          "decoded_bytes": 402654208,
+          "pack": "E:\\E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012\\sensor\\P\\pack_00000.zip",
+          "read_hash_s": 0.08059610001510009,
+          "rows": 256,
+          "sha256": "0599a77ebec2ae6f3d00c43e9e7381c60ecb4db2b022d18bb61b625fc76ceecb"
+        },
+        {
+          "compressed_bytes": 125277859,
+          "decode_s": 0.33697160001611337,
+          "decoded_bytes": 402654208,
+          "pack": "E:\\E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012\\sensor\\P\\pack_00001.zip",
+          "read_hash_s": 0.08677500000339933,
+          "rows": 256,
+          "sha256": "bf7f7bd8b994c4ee5e231dadfdcdeed14fad18bb4be30e1bd9ddbbc728237510"
+        },
+        {
+          "compressed_bytes": 31811792,
+          "decode_s": 0.1408666999777779,
+          "decoded_bytes": 204472840,
+          "pack": "E:\\E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012\\sensor\\P\\pack_00210.zip",
+          "read_hash_s": 0.03907160001108423,
+          "rows": 130,
+          "sha256": "e8ba77c0c78fb46155a3955c375a998aae4a9522037acc7d1d14ea9293434dbd"
+        }
+      ],
+      "role": "P",
+      "rows": 514
+    },
+    {
+      "packs": [
+        {
+          "compressed_bytes": 110231553,
+          "decode_s": 0.28779270002269186,
+          "decoded_bytes": 386925528,
+          "pack": "E:\\E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012\\sensor\\H\\pack_00071.zip",
+          "read_hash_s": 0.07588590000523254,
+          "rows": 246,
+          "sha256": "e13e770a8f737bb7b08427e12b6308e61e42b927b7bec1b6dc56426af7172a63"
+        }
+      ],
+      "role": "H",
+      "rows": 2
+    }
+  ],
+  "measurements": [
+    {
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "ratio": 0.5572611239530484,
+      "routes": {
+        "original": {
+          "batches": 128,
+          "elapsed_s_including_drain": 3.8985699999902863,
+          "forward_decode_d2h_s": 0.46722559991758317,
+          "h2d_s": 0.12392730003921315,
+          "load_wait_s": 3.307092699833447,
+          "max_load_wait_s": 0.12229340002522804
+        },
+        "prefetch": {
+          "batches": 128,
+          "elapsed_s_including_drain": 2.1725215000042226,
+          "forward_decode_d2h_s": 1.207165299943881,
+          "h2d_s": 0.1595711002300959,
+          "load_wait_s": 0.7159817998763174,
+          "max_load_wait_s": 0.530182499991497
+        }
+      }
+    },
+    {
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "ratio": 0.5212876777419638,
+      "routes": {
+        "original": {
+          "batches": 128,
+          "elapsed_s_including_drain": 3.9392061000107788,
+          "forward_decode_d2h_s": 0.47738029996980913,
+          "h2d_s": 0.1943209999881219,
+          "load_wait_s": 3.2671797998191323,
+          "max_load_wait_s": 0.172741499991389
+        },
+        "prefetch": {
+          "batches": 128,
+          "elapsed_s_including_drain": 2.053459600021597,
+          "forward_decode_d2h_s": 1.109357600013027,
+          "h2d_s": 0.1929798999626655,
+          "load_wait_s": 0.6673704001295846,
+          "max_load_wait_s": 0.49418160002096556
+        }
+      }
+    }
+  ],
+  "optimizer_updates": 0,
+  "registration_sha256": "bf8ad4e806bf5e2a1934ac2b746c447e2e5f9b095ef4660cc264b146c5dfaf50",
+  "rss_bytes": 4373716992,
+  "status": "ADMITTED",
+  "utc": "2026-10-16T15:34:39.249539+00:00",
+  "weights_unchanged": true
+}

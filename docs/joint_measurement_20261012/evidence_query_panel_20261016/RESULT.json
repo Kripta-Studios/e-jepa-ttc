@@ -1,0 +1,332 @@
+{
+  "V_opened": false,
+  "bindings": {
+    "H": {
+      "manifest_sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+      "models": {
+        "A5": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+            "evaluator": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+            "fit_id": "A5-P2-FROZEN",
+            "precision": "FP32",
+            "role": "H",
+            "sensor_complete": "0ec5c191155f94dc7f254df742d6aee6ae3edeef696a751890eef9c497479d1d"
+          },
+          "predictions_sha256": "3c08bcac736d930abab5b814af7630aec23309654534e56cc6eeb461e33a5890"
+        },
+        "C1": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "76ba6e75ce6d877a7ab1de3b7e22585aadc2450b44868bc310ae1413696bbd1f",
+            "fit_id": "PAIR-CORR-GEOMETRY-S7",
+            "manifest_sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+            "precision": "FP32_no_TF32",
+            "registration_sha256": "77d12a005b337039b47f3c153b1341113de8b484a777f9b4ab42e685aa731db6",
+            "role": "H",
+            "rows_sha256": "137420177757b802abd66b9077cb50ef0a37d8d55951dbcb8582d316d1ee60a1",
+            "sensor_complete": "0ec5c191155f94dc7f254df742d6aee6ae3edeef696a751890eef9c497479d1d",
+            "sources": {
+              "operational/joint_measurement/geometry_evaluate.py": "82b329e917fb5028a98ab12c7c544a98909c0a2a2761a5fb1e0e1773720350ba",
+              "operational/joint_measurement/geometry_model.py": "63b0d2642f0e8f8558b798603a8b480272630104e8822c5eec46cb619ce90312",
+              "operational/joint_measurement/rgb_evaluate.py": "1496e4a8552e2066aeefba3131606b677e06e1b53b703d355f1ff84dc6af9d4b",
+              "operational/range_transfer/analyze.py": "5871f8145d0e8b736c087a9e676e075e3c69ded459cae866eb235dd6ad9bd214"
+            }
+          },
+          "predictions_sha256": "06f3f80a3d2734e9ca46a04dd135e50299da57676376a9d3f09ec69aa20edc8a"
+        },
+        "CORR": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "7acebaaee16d77a2afd7d0c68c5ee9cdd42a3d1e31ddbe1e38c845bcad24beaf",
+            "evaluator": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+            "fit_id": "PAIR-CORR-S7",
+            "precision": "FP32",
+            "role": "H",
+            "sensor_complete": "0ec5c191155f94dc7f254df742d6aee6ae3edeef696a751890eef9c497479d1d"
+          },
+          "predictions_sha256": "52487a2ee5a512c566961c370c313066a640438c0f2c6b5ebd7c630c337ed693"
+        },
+        "NATIVE": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "7fee4171269785893bdbdd5e04602d01be8552215a59a1ef7a9a26653253ef3d",
+            "evaluator": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+            "fit_id": "NATIVE-P2-FT-S7",
+            "precision": "FP32",
+            "role": "H",
+            "sensor_complete": "0ec5c191155f94dc7f254df742d6aee6ae3edeef696a751890eef9c497479d1d"
+          },
+          "predictions_sha256": "7fcd1c04aa820423f87c17fbd0a265411f6671976c4dfb0b2d921af06ca7d994"
+        }
+      },
+      "native_index_sha256": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+      "rows_sha256": "137420177757b802abd66b9077cb50ef0a37d8d55951dbcb8582d316d1ee60a1",
+      "sensor_binding": {
+        "admission": "3a6ff682b29d399dc14df60213ff30e1f1b0b45ac2ce0868e978398d14efa0ec",
+        "events": "last two common-ROI FP32 windows, no quantization",
+        "manifest_sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+        "pack_size": 256,
+        "role": "H",
+        "schema": "v18_exact_native_p2_sensor_v1",
+        "source_code_sha256": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+        "source_identity": {
+          "decoded_event_cache_limit_bytes": 2147483648,
+          "dino_targets_sha256": "646d5569671e9d8af9b21c84c12a55584be675ccfc77dc5e996ccea6fb8d38de",
+          "dino_teacher_freeze_sha256": "a80896b73b241b5570861c381497585348196ff06dac180dd9e343af4d753fbb",
+          "event_source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005",
+          "input_span_clock": "TRAIN40_INDEX.windows_us sensor microseconds",
+          "input_span_definition": "windows_us[-1,1]-windows_us[0,0]",
+          "population_size": 18422,
+          "prepare_freeze_sha256": "39911009cffc5198bba0c6fbf18c699fe93e7003418184ffcf67bc24023f44bf",
+          "role": "H",
+          "role_manifest_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\H_MANIFEST.json",
+          "role_manifest_sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+          "rows_sha256": "137420177757b802abd66b9077cb50ef0a37d8d55951dbcb8582d316d1ee60a1",
+          "schema": "rgb_port_event_producer_source_v1",
+          "split_assignment_sha256": "dcdd5de9d159f3a3bd5b7dd140ae325d7e96e9e8ce1fedfe9486a1d0b4e79ca0",
+          "target_anchor": "query_time_us",
+          "train40_index_sha256": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+          "train40_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+        },
+        "teacher": "P-only historical last pair; separate target arrays"
+      },
+      "sensor_complete_sha256": "0ec5c191155f94dc7f254df742d6aee6ae3edeef696a751890eef9c497479d1d"
+    },
+    "P": {
+      "manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+      "models": {
+        "A5": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+            "evaluator": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+            "fit_id": "A5-P2-FROZEN",
+            "precision": "FP32",
+            "role": "P",
+            "sensor_complete": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a"
+          },
+          "predictions_sha256": "621f28eb108268443902ca6ab09b3d4527cd69de502ae89ed115157dd4fd30d8"
+        },
+        "C1": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "76ba6e75ce6d877a7ab1de3b7e22585aadc2450b44868bc310ae1413696bbd1f",
+            "fit_id": "PAIR-CORR-GEOMETRY-S7",
+            "manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+            "precision": "FP32_no_TF32",
+            "registration_sha256": "77d12a005b337039b47f3c153b1341113de8b484a777f9b4ab42e685aa731db6",
+            "role": "P",
+            "rows_sha256": "d0341f7aedede35e47ba2e8afa1452478fd39ba43615a85627804ab1fa183b94",
+            "sensor_complete": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a",
+            "sources": {
+              "operational/joint_measurement/geometry_evaluate.py": "82b329e917fb5028a98ab12c7c544a98909c0a2a2761a5fb1e0e1773720350ba",
+              "operational/joint_measurement/geometry_model.py": "63b0d2642f0e8f8558b798603a8b480272630104e8822c5eec46cb619ce90312",
+              "operational/joint_measurement/rgb_evaluate.py": "1496e4a8552e2066aeefba3131606b677e06e1b53b703d355f1ff84dc6af9d4b",
+              "operational/range_transfer/analyze.py": "5871f8145d0e8b736c087a9e676e075e3c69ded459cae866eb235dd6ad9bd214"
+            }
+          },
+          "predictions_sha256": "b35ef11fb3cfb3a47473c7eb7f71e1f64ddf7b0690d666dbbda102bdbd71f3dd"
+        },
+        "CORR": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "7acebaaee16d77a2afd7d0c68c5ee9cdd42a3d1e31ddbe1e38c845bcad24beaf",
+            "evaluator": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+            "fit_id": "PAIR-CORR-S7",
+            "precision": "FP32",
+            "role": "P",
+            "sensor_complete": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a"
+          },
+          "predictions_sha256": "d7c5a0fe370518858b67343b383ebf8568a0093cdd8d8e94fee3917e01d4981e"
+        },
+        "NATIVE": {
+          "identity": {
+            "batch_size": 4,
+            "endpoint": "7fee4171269785893bdbdd5e04602d01be8552215a59a1ef7a9a26653253ef3d",
+            "evaluator": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+            "fit_id": "NATIVE-P2-FT-S7",
+            "precision": "FP32",
+            "role": "P",
+            "sensor_complete": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a"
+          },
+          "predictions_sha256": "975d5f944d1f07ccd6d4debd1bb09632b32c4bf7034cd5638f4355ec8e82d156"
+        }
+      },
+      "native_index_sha256": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+      "rows_sha256": "d0341f7aedede35e47ba2e8afa1452478fd39ba43615a85627804ab1fa183b94",
+      "sensor_binding": {
+        "admission": "3a6ff682b29d399dc14df60213ff30e1f1b0b45ac2ce0868e978398d14efa0ec",
+        "events": "last two common-ROI FP32 windows, no quantization",
+        "manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+        "pack_size": 256,
+        "role": "P",
+        "schema": "v18_exact_native_p2_sensor_v1",
+        "source_code_sha256": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+        "source_identity": {
+          "decoded_event_cache_limit_bytes": 2147483648,
+          "dino_targets_sha256": "646d5569671e9d8af9b21c84c12a55584be675ccfc77dc5e996ccea6fb8d38de",
+          "dino_teacher_freeze_sha256": "a80896b73b241b5570861c381497585348196ff06dac180dd9e343af4d753fbb",
+          "event_source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005",
+          "input_span_clock": "TRAIN40_INDEX.windows_us sensor microseconds",
+          "input_span_definition": "windows_us[-1,1]-windows_us[0,0]",
+          "population_size": 53890,
+          "prepare_freeze_sha256": "39911009cffc5198bba0c6fbf18c699fe93e7003418184ffcf67bc24023f44bf",
+          "role": "P",
+          "role_manifest_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\P_MANIFEST.json",
+          "role_manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+          "rows_sha256": "d0341f7aedede35e47ba2e8afa1452478fd39ba43615a85627804ab1fa183b94",
+          "schema": "rgb_port_event_producer_source_v1",
+          "split_assignment_sha256": "dcdd5de9d159f3a3bd5b7dd140ae325d7e96e9e8ce1fedfe9486a1d0b4e79ca0",
+          "target_anchor": "query_time_us",
+          "train40_index_sha256": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+          "train40_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+        },
+        "teacher": "P-only historical last pair; separate target arrays"
+      },
+      "sensor_complete_sha256": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a"
+    }
+  },
+  "clock_scope": "Same bound sensor cohort for all four models; query/annotation clock and native event sensor clock retained separately. Native model delta and fixed metric delta are not inferred by subtracting different clocks.",
+  "interpretation": "Outcome-conditioned descriptive sets; no inference-time selector, no evidence that the winning model is predictable without targets",
+  "optimizer_updates": 0,
+  "outputs": {
+    "H": {
+      "columns": [
+        "sample_token",
+        "sequence_id",
+        "group_id",
+        "track_id",
+        "role",
+        "target_ttc",
+        "target_phase",
+        "query_time_us",
+        "cutoff_us",
+        "event_previous_start_us",
+        "event_previous_end_us",
+        "event_current_start_us",
+        "event_current_end_us",
+        "native_delta_t_s",
+        "metric_delta_t_s",
+        "event_end_separation_us",
+        "target_phase_recomputed",
+        "A5_ttc",
+        "A5_phase_saved",
+        "A5_phase_emitted",
+        "A5_valid",
+        "A5_sign_correct",
+        "A5_MiD",
+        "A5_AE_s",
+        "NATIVE_ttc",
+        "NATIVE_phase_saved",
+        "NATIVE_phase_emitted",
+        "NATIVE_valid",
+        "NATIVE_sign_correct",
+        "NATIVE_MiD",
+        "NATIVE_AE_s",
+        "CORR_ttc",
+        "CORR_phase_saved",
+        "CORR_phase_emitted",
+        "CORR_valid",
+        "CORR_sign_correct",
+        "CORR_MiD",
+        "CORR_AE_s",
+        "C1_ttc",
+        "C1_phase_saved",
+        "C1_phase_emitted",
+        "C1_valid",
+        "C1_sign_correct",
+        "C1_MiD",
+        "C1_AE_s",
+        "negative",
+        "crucial",
+        "negative_CORR_sign_error",
+        "A5_minus_CORR_MiD",
+        "A5_minus_CORR_AE_s",
+        "crucial_CORR_beats_A5",
+        "NATIVE_minus_CORR_MiD",
+        "NATIVE_minus_CORR_AE_s",
+        "crucial_CORR_beats_NATIVE",
+        "C1_minus_CORR_MiD",
+        "C1_minus_CORR_AE_s",
+        "crucial_CORR_beats_C1",
+        "crucial_CORR_beats_A5_and_NATIVE"
+      ],
+      "path": "artifacts/joint_measurement_20261012/diagnostics/query_panel/H_QUERY_PANEL.parquet",
+      "rows": 18422,
+      "sha256": "68236742613a83afa1838fe39e747d8b0545698630ebf828e1b5039aeeb39311"
+    },
+    "P": {
+      "columns": [
+        "sample_token",
+        "sequence_id",
+        "group_id",
+        "track_id",
+        "role",
+        "target_ttc",
+        "target_phase",
+        "query_time_us",
+        "cutoff_us",
+        "event_previous_start_us",
+        "event_previous_end_us",
+        "event_current_start_us",
+        "event_current_end_us",
+        "native_delta_t_s",
+        "metric_delta_t_s",
+        "event_end_separation_us",
+        "target_phase_recomputed",
+        "A5_ttc",
+        "A5_phase_saved",
+        "A5_phase_emitted",
+        "A5_valid",
+        "A5_sign_correct",
+        "A5_MiD",
+        "A5_AE_s",
+        "NATIVE_ttc",
+        "NATIVE_phase_saved",
+        "NATIVE_phase_emitted",
+        "NATIVE_valid",
+        "NATIVE_sign_correct",
+        "NATIVE_MiD",
+        "NATIVE_AE_s",
+        "CORR_ttc",
+        "CORR_phase_saved",
+        "CORR_phase_emitted",
+        "CORR_valid",
+        "CORR_sign_correct",
+        "CORR_MiD",
+        "CORR_AE_s",
+        "C1_ttc",
+        "C1_phase_saved",
+        "C1_phase_emitted",
+        "C1_valid",
+        "C1_sign_correct",
+        "C1_MiD",
+        "C1_AE_s",
+        "negative",
+        "crucial",
+        "negative_CORR_sign_error",
+        "A5_minus_CORR_MiD",
+        "A5_minus_CORR_AE_s",
+        "crucial_CORR_beats_A5",
+        "NATIVE_minus_CORR_MiD",
+        "NATIVE_minus_CORR_AE_s",
+        "crucial_CORR_beats_NATIVE",
+        "C1_minus_CORR_MiD",
+        "C1_minus_CORR_AE_s",
+        "crucial_CORR_beats_C1",
+        "crucial_CORR_beats_A5_and_NATIVE"
+      ],
+      "path": "artifacts/joint_measurement_20261012/diagnostics/query_panel/P_QUERY_PANEL.parquet",
+      "rows": 53890,
+      "sha256": "6e7f182db0fca7405bc90296fdffd5a337a131d024a40bb0188d8c9a71088c7a"
+    }
+  },
+  "rows": 72312,
+  "saved_phase_scope": "A5/NATIVE saved raw_phase is phase recomputed from native TTC; CORR/C1 saved raw_phase is actual pre-emission head output.",
+  "selection_changed": false,
+  "source_sha256": "23450c9199ecc037ea430d89a1620a2097b9e9cef2401aed9440ae2beae7db14",
+  "status": "COMPLETE_DESCRIPTIVE_QUERY_PANEL",
+  "utc": "2026-10-16T11:45:12.261129+00:00"
+}

@@ -1,0 +1,336 @@
+# Protocolo experimental
+
+## Scientific Recovery V5 fold-local (2026-08-13)
+
+La unidad experimental es la cadena completa por fold, no solo el entrenamiento
+del child. A4 se entrena en seis secuencias; A6 y A8.0 parten de ese A4; Garl parte
+de cero; las tres outer-dev nunca participan en gradientes de la cadena. Outer-dev
+selecciona checkpoint, por lo que es desarrollo y no test. Los tres folds ya estaban
+congelados antes de observar A8.
+
+Todas las comparaciones exigen identidad de sample token, sequence, track y target,
+sin filtrar NaN. El bootstrap resamplea `sequence_id+track_id`. El matching Garl es
+exact-sample/target/budget/metric/oracle-ROI; preprocessing es `PARTIAL`, no idéntico.
+El gate A8.0 requiere mejorar A6, MiD≤175, geometry exacta, prefix causality y
+coverage no materialmente peor. A8.0 falla MiD≤175; no se autoriza A8.1. Véase
+[el estado V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
+## Event-only screen A0 / release reference (2026-08-10)
+
+A0 usa 2.048 train y 2.048 validation con secuencias disjuntas. La tabla release
+usa los mismos tokens de validation, pero queda separada porque el checkpoint vio
+las tres secuencias durante train y usó 88.744 filas/50 épocas. Los intervalos del
+comparador resamplean secuencias completas (10.000 iteraciones), nunca ventanas.
+La tabla matched desactiva la inicialización desde el checkpoint release.
+Usa el cache oficial firmado `92af2810…f564b52`, seed 7, batch 32, máximo 18
+épocas, selección elegible desde época 8 y desempate por failure. Preprocessing,
+training, validation e inferencia se cronometran por separado. Resume rechaza
+cualquier cambio de config, cache, seed, épocas, batch, paciencia o guard temporal.
+
+El resultado matched seed 7 es el baseline principal a batir en este screen: MiD
+global `203.0982270`, macro-secuencia `203.6341709`, failure `0%`. El checkpoint
+seleccionado es época 11 de 16 ejecutadas. La tabla release (`117.4282` macro)
+permanece separada por presupuesto desigual y exposición de validation. A1 se
+compara causalmente contra matched, no usa la release como gate.
+
+### A1 congelado antes de ejecución y resultado
+
+A1 cambia exclusivamente `weak_box -> bbox_geometry`. La bbox se transforma en
+`h,w,cx,cy` visibles sin crear una máscara. El model config/hash, 344.591 parámetros,
+prediction path y todo el protocolo de optimización son idénticos a A0. BCE/Dice y
+pair-ratio pesan cero; `h,w,cx,cy` pesan efectivamente 1.25 cada uno. Los diagnósticos
+se reportan por época, globales y macro por secuencia, pero no alteran selección.
+Un resultado distinto posterior requerirá una nueva identidad A1-R/A2; no se
+reescribirá A1 tras observar validation.
+
+A1 seed 7 completó 18 épocas y seleccionó la 18 bajo ese contrato inmutable:
+MiD macro `346.8294571`, failure `9.9609375%`, Pearson log-ratio `.1108212`.
+Frente a Garl matched queda `+143.1953` MiD y el IC95% de tres secuencias completas
+es `[115.1042,166.6705]`. El resultado no autoriza promoción ni escalado. Dado que
+anchura y centros permanecen en Pearson `<=.079` y `delta log h`/bbox en `.0591`,
+el siguiente protocolo debe modificar una sola vez la representación densa
+event-native conservando la cabeza geométrica. A1-R solo se reconsiderará si una
+representación futura mide bien los endpoints pero falla su diferencia temporal.
+
+La auditoría posterior es diagnóstica, no un sweep: mide por separado t1/t2 y los
+momentos de actividad derivados solo de events. Confirma target width variable y
+fallo en ambos endpoints. La siguiente identidad cambiará una sola línea del model
+config: `equivariant_separable -> equivariant_fullres`. Todos los pesos de loss,
+seed, filas, schedule, selección y conversiones físicas quedan iguales a A1. No se
+activará pair-ratio ni se usará RGB teacher en ese control.
+
+El brazo recibe la identidad A1-FR, 340.870 parámetros y config firmada
+`7ceb1149…772c42e`. Debe ejecutarse una sola vez con seed 7 desde Git limpio y
+seleccionarse con el mismo criterio MiD macro/failure. No se usará su validation
+para alterar retrospectivamente pesos o definir otra ejecución bajo el mismo nombre.
+
+Corrección preregistrada del selector: un checkpoint solo es seleccionable si
+`paper_MiD_overall` es finito para cada una de las tres secuencias completas. Un
+macro calculado sobre un subconjunto finito no actualiza best ni stale. Esto no
+cambia A0/A1, cuyos checkpoints elegidos tenían cobertura 3/3, y evita premiar
+unknown/failures. El primer A1-FR queda invalidado y se repite desde cero.
+
+La repetición válida seleccionó epoch 11/16 con cobertura 3/3 y falló: macro
+`380.2202`, failure `28.7598%`, ratio `-.0181`. Queda cerrada sin ajustar pesos.
+El siguiente cambio aislado permitido es `foreground_decoder=resize_conv`, que usa
+features del encoder; todo lo demás debe permanecer igual a A1.
+
+A1-DF materializa ese cambio único. Su selección exige MiD finito en las tres
+secuencias; seed, filas, épocas, warm-up, optimizer, CVaR, loss geométrica, física,
+unknown y clip permanecen congelados. No usa RGB, SAM, DINO ni objetivo JEPA.
+
+Resultado A1-DF: macro `350.3020`, failure `21.0938%`, ratio `.1865`; no se
+promueve. Como la señal temporal aumenta pero queda subescalada, el siguiente
+cambio permitido es activar una única loss pair-ratio directa sobre el mismo
+A1-DF. El peso debe preregistrarse sin sweep; unknown/clip permanecen inmutables.
+
+El preregistro A1-DF-R fija peso `5.0` usando únicamente magnitudes de train. La
+loss pair-ratio geometry-only se desactiva durante warm-up y después supervisa la
+altura analítica, no el residual ni una salida TTC directa. Todos los demás campos
+de data, training, model y loss son idénticos a A1-DF.
+
+A1-DF-R terminó sin mejora distribuida. Queda prohibido ajustar otro peso mirando
+validation o escalar este brazo. La próxima rama cambia representación y conserva
+readout/protocolo; cualquier teacher RGB se declara RGB-distilled y usa solo train.
+
+La auditoría firmada `garl_foreground_resource_audit_v2.json` abrió exclusivamente
+el parquet público de train (88.744 filas/40 secuencias) y no cargó pesos. Verificó
+177.488 referencias `mask_paths`, 64.629 únicas, pero resolvió cero bajo los seis
+roots locales. No existe un brazo de máscaras oficiales materialmente ejecutable.
+Los 64.629 RGB únicos sí tienen cobertura exacta en 135 TAR. SAM ViT-L y DINOv3
+ConvNeXt-Tiny están íntegros en caché. Cualquier máscara SAM se generará únicamente
+sobre train con bbox prompt preregistrado; validation/test no reciben pseudo-targets.
+Ese protocolo se denomina `event-only inference with RGB distillation`.
+
+Antes de A3 se ejecutó un audit train-only sin TTC sobre 36 pares/9 secuencias.
+Los gates preregistrados de finitud, score, solapamiento bbox, degeneración,
+coherencia temporal, runtime y VRAM pasaron. Área SAM/bbox correlaciona `.6471` y
+su signo acierta `.8286`; la mediana bbox–mask IoU es `.5761`. Estos datos solo
+pueden definir filtros de train y no autorizan tuning con validation.
+
+El cache completo usa exactamente `train_data.parquet` del subset matched y rechaza
+validation por contrato. Cobertura final `.9492` endpoint/`.7822` par. A3 podrá
+añadir loss densa únicamente en las 3.204 máscaras válidas; geometry A1 permanece
+para todas las filas. El cache teacher nunca es input del forward ni se abre durante
+validation/inferencia. Runtime de materialización se reporta separado del training.
+
+El brazo A3 está congelado antes de su ejecución con SHA-256 de config
+`83e8c7166f2f1c42d50dc4da210b20b50e0172268a7214b75b177fe7ab9b7754`.
+La única diferencia frente a A1 es `BCE=1.0` y `Dice=.5` sobre los endpoints SAM
+filtrados; son los pesos densos históricos de A0 y no proceden de observar
+validation. Los endpoints inválidos contribuyen cero a la loss densa pero conservan
+la loss geometry A1. La selección continúa siendo MiD macro-secuencia y failure en
+validation pública sin teacher.
+
+A3 terminó best 8/13 con macro `353.6351` y failure `10.8887%`. La comparación
+pareada exact-token contra A1 da A3−A1 `+7.5388`, IC95% por secuencia
+`[1.5525,10.6383]`; pierde en las tres secuencias. Se aplica el rechazo
+preregistrado: no sweep de teacher weights, no seeds 13/23 y no scaling. La próxima
+rama vuelve a event-only puro y cambia como máximo un componente de representación.
+
+El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
+checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
+extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda
+preregistrado antes de ejecutarse y solo cambia el tipo de supervisión bbox. Sus
+gates diagnósticos incluyen correlación analítica-bbox y analítica-TTC; las métricas
+recortadas/saturadas no pueden usarse como gate principal.
+
+Actualizado: 2026-08-10.
+
+## Gate previo Causal Scale v5
+
+Antes de abrir eAP/EvTTC, el brazo event-only debe aprender foreground y razón de
+escala sobre dinámicas sintéticas con seeds 101/202/303 disjuntas. Train y validation
+pueden usarse para arquitectura, selección y una calibración escalar de varianza. El
+test se abre una sola vez desde Git limpio después de congelar código, configuración y
+gates. Fallar cualquier gate mantiene cerrados todos los datos reales. Un pass solo
+autoriza diseñar un screen eAP train-only; no autoriza test, Garl-TTC ni claim SOTA.
+
+V5 consumió seed 303 una vez en `d9d20af` y falló correlación/traslación. Esa seed
+queda congelada para auditoría y no puede entrar en selección de v5 o sucesores. Un
+nuevo protocolo debe declarar grupos test nuevos antes de entrenar.
+
+V7 consumió seed 603 una vez desde el commit limpio publicado `0bc781f` y falló
+solo el gate de Pearson (`.9201432 < .95`). La seed 603 queda igualmente cerrada. El
+sucesor debe seleccionar sobre varios grupos train/validation, agregar por grupo y
+declarar nuevas seeds test antes de cualquier entrenamiento; no puede ajustar gates
+ni arquitectura con 303 o 603.
+
+V8 satisface ese requisito con train 701/702/703, validation 801/802/803 y test
+901/902/903. Mantiene 1536/384 muestras train/validation, selecciona con media macro
+y peor grupo, y exige pass individual de todos los tests. Los grupos test no se
+instancian durante `diagnostic`.
+
+Tras los diagnósticos `.10/.15`, el usuario autorizó abrir eAP exclusivamente para
+un screen exploratorio train/validation aunque el gate sintético siga fallido. Esta
+excepción no permite ajustar con test, ejecutar CodaBench/EvTTC test ni afirmar
+superioridad sobre Garl-TTC. Toda comparación debe usar el mismo split y presupuesto.
+
+### Protocolo congelado del screen eAP causal-scale v1
+
+- cache identity `36c12d75...f1fac309`, file SHA256 `bba9ff9b...557eb72`;
+- 2.048 train de 9 secuencias y 2.048 validation de 3 secuencias disjuntas;
+- seed 7, máximo 18 épocas, BF16, batch 32, máximo total 6 h;
+- warm-up foreground 3 épocas;
+- pérdida física NLL + CVaR top 10% peso 2;
+- checkpoint selection: MiD macro por secuencia, desempate failure rate;
+- early stopping no antes de época 8, paciencia 5;
+- cajas t1/t2 solo como weak supervision; t0 proxy inválido; ninguna caja entra al
+  forward;
+- Garl primario: checkpoint oficial event-only sobre los mismos 2.048 tokens;
+- test privado, CodaBench, EvTTC test y seeds V8 901/902/903 permanecen cerrados;
+- una seed/validation local nunca autoriza claim SOTA.
+
+La ejecución completa no se había iniciado al congelar este documento. El benchmark
+128+128 es solo throughput (`5.289 s`, `395.6 MiB`), no métrica científica.
+
+## Pregunta
+
+¿Un encoder event-only high-resolution con pretraining JEPA multihorizonte mejora
+TTC frente a entrenamiento supervisado desde cero y frente a Garl-TTC bajo el
+mismo protocolo? RGB-E es una segunda comparación aislada, no una mezcla con el
+resultado event-only.
+
+## Jerarquía de evidencia
+
+```text
+unit/synthetic smoke
+  contrato matemático; nunca promoción
+
+raw screen
+  datos reales, 256–2.048 muestras/split, una seed
+
+semantic representation gate
+  level vs level+residual, probes congelados, igual compute
+
+paired confirmation
+  random vs JEPA, mismo split/seed/trainer
+
+full candidate
+  todas las filas válidas, seeds 7/13/23, commit limpio
+
+freeze
+  selección solo con validation Garl; EvTTC permanece cerrado
+
+EvTTC Table VI predict
+  inferencia label-free, cero updates
+
+EvTTC Table VI score
+  targets abiertos en proceso separado
+
+eAP/CodaBench
+  submission congelada y número de intentos registrado
+```
+
+## Datos
+
+- GarlTTC/eAP: train y validation del candidato; lectura raw bajo demanda.
+- EvTTC-32: evaluación grouped y Tabla VI; nunca selecciona el supuesto zero-shot.
+- Benchmark-10: sellado hasta freeze.
+- CARLA: resultado negativo histórico, fuera del camino activo.
+
+## Screen
+
+El screen activo usa `configs/experiment/e_jepa_garl_event_screen_v1.yaml`:
+
+- event-only, 320x192, cinco pasos;
+- máximo 2.048 muestras por split;
+- seed 7;
+- hasta ocho épocas;
+- selección MiD macro por secuencia;
+- `claim_eligible=false`.
+
+Antes de ampliar debe pasar:
+
+1. loss finita y descenso respecto al inicio;
+2. ninguna fuga de target al input;
+3. cobertura de todas las secuencias del split;
+4. mejora pareada frente a random/control;
+5. coste compatible con el presupuesto del host.
+
+## Gate semántico de representación
+
+El benchmark sintético fija la hipótesis, no promueve el modelo. En eAP se
+compararán únicamente:
+
+```text
+JEPA level
+JEPA level + temporal residual
+```
+
+Ambos deben compartir filas, inicialización del backbone, predictor, batch/accum,
+seeds y tiempo aproximado. Tras congelar el encoder se ajustan probes por secuencia
+para TTC/log-TTC, dirección/tasa de expansión, event rate e ID de secuencia. El
+residual solo se promociona si mejora señal dinámica/TTC sin aumentar memorización
+de secuencia y no empeora MiD macro. No se añaden rate, HSIC, CMI, MMD ni INTACT
+antes de superar esta comparación mínima.
+
+## Full candidate
+
+`configs/experiment/e_jepa_garl_event_full_v1.yaml` congela:
+
+- encoder event-only dim 192, patch 16 y block-causal;
+- todas las filas válidas del split 32/8;
+- seeds 7/13/23;
+- BF16, batch 4, acumulación 6;
+- máximo 30 épocas, mínimo 10, paciencia 6;
+- Git limpio obligatorio;
+- resume determinista por seed+época.
+
+El freeze exige que los tres runs compartan commit, config y dataset hashes. El
+seed elegido minimiza MiD macro en validation Garl. El freeze no convierte el run
+en resultado oficial.
+
+## EvTTC Tabla VI
+
+`predict` recibe solo un checkpoint congelado y shards label-free con identidades:
+
+```text
+sequence_id, sample_token, track_id, timestamp_us
+```
+
+Se rechazan TTC, depth, category, bbox/masks privilegiadas o cobertura incompleta.
+El score recibe un payload de targets separado y no puede retroalimentar training,
+normalización o selección.
+
+Protocolos bbox:
+
+- `P0_oracle_bbox_roi`: diagnóstico asistido, nunca raw/bbox-free;
+- `P1_predicted_bbox_roi`: deployable solo si el detector es causal y congelado;
+- `P2_raw_fullframe`: candidato sin cajas GT.
+
+## Comparaciones mínimas
+
+1. trivial mean/median y geometría analítica;
+2. Garl event-only oficial/local comparable;
+3. high-res supervisado random;
+4. high-res con JEPA denso compatible, `level` vs `level+residual`;
+5. RGB-E como ablación posterior;
+6. geometría causal bbox-free solo si supera al control.
+
+No ejecutar el cartesiano completo. Se promociona un único finalista por gate.
+
+## Métricas
+
+- eAP/Garl: MiD firmado, RTE ponderado, failure rate y macro por secuencia;
+- EvTTC: RTE, MAE/RMSE y métricas declaradas de Tabla VI;
+- estadística: media/desviación entre seeds y bootstrap por secuencia;
+- eficiencia: preprocessing e inferencia separados, RAM, VRAM y throughput;
+- incertidumbre: NLL, ECE/cobertura y aumento bajo corrupción.
+
+No se hace bootstrap por ventanas correlacionadas.
+
+## Claim boundary
+
+Un claim SOTA requiere al menos:
+
+- protocolo igual al baseline;
+- modalidad declarada event-only o RGB-E;
+- tres seeds y freeze previo;
+- resultado EvTTC comparable;
+- submission oficial eAP/CodaBench;
+- hashes de commit/config/dataset/checkpoint;
+- latencia y memoria del candidato real;
+- resultados negativos y número de submissions visibles.
+
+Actualmente ninguno de esos gates externos está cerrado.

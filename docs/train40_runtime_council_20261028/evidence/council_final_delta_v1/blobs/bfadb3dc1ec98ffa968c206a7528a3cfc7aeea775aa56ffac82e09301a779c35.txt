@@ -1,0 +1,37 @@
+1 file left unchanged
+All checks passed!
+...................................F                                     [100%]
+================================== FAILURES ===================================
+____ test_raw_slices_preserve_half_open_boundaries_and_all_field_alignment ____
+
+    def test_raw_slices_preserve_half_open_boundaries_and_all_field_alignment() -> None:
+        times = np.array([99, 100, 100, 104, 105, 105, 109, 110], dtype=np.int64)
+        raw: Raw = {
+            "x": np.arange(len(times), dtype=np.int32),
+            "y": np.arange(len(times), dtype=np.int32) + 10,
+            "t": times,
+            "p": np.arange(len(times), dtype=np.int64) - 4,
+        }
+        first = benchmark.slice_raw(raw, 100, 105)
+        second = benchmark.slice_raw(raw, 105, 110)
+        for key in raw:
+            np.testing.assert_array_equal(first[key], raw[key][1:4])
+            np.testing.assert_array_equal(second[key], raw[key][4:7])
+            np.testing.assert_array_equal(
+                np.concatenate((first[key], second[key])), benchmark.slice_raw(raw, 100, 110)[key]
+            )
+>       assert all(len(value) == 0 for value in benchmark.slice_raw(raw, 110, 115).values())
+E       assert False
+E        +  where False = all(<generator object test_raw_slices_preserve_half_open_boundaries_and_all_field_alignment.<locals>.<genexpr> at 0x0000028FF1807760>)
+
+tests\unit\test_train40_subpacket_backend_benchmark.py:258: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_train40_subpacket_backend_benchmark.py::test_raw_slices_preserve_half_open_boundaries_and_all_field_alignment
+1 file already formatted
+All checks passed!
+0 errors, 0 warnings, 0 informations
+WARNING: there is a new pyright version available (v1.1.411 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
+....................................                                     [100%]
+36 passed in 5.15s

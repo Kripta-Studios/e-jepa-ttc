@@ -1,0 +1,51 @@
+{
+  "created_utc": "2026-10-16T05:12:45.204984+00:00",
+  "files": {
+    "B1_CUDA_QA.json": {
+      "bytes": 2357,
+      "sha256": "625e8fab8e1bdfc3c41f195ce02f3814c32c8447c241633e0a73506c682c4a0b",
+      "source": "qa/correspondence_B1/RESULT.json"
+    },
+    "B1_EVALUATION_REGISTRATION.json": {
+      "bytes": 2758,
+      "sha256": "5fe15c3833087ed5223ae21e1ed3f970663100405993703948be0aabd5072abd",
+      "source": "adaptive/B1_correspondence/evaluation/REGISTRATION.json"
+    },
+    "B1_FAILED_FIRST_CAPTURE.json": {
+      "bytes": 715,
+      "sha256": "2c02096a3b63b115b5cdc113b51ffd268df7d1bf8e5992846ba5dca337d9bf71",
+      "source": "runtime/correspondence_buffered_capture_v1/FAILED_FIRST_CAPTURE.json"
+    },
+    "B1_RUNTIME_CPU_PROOF.json": {
+      "bytes": 3361,
+      "sha256": "b9935aa20d3f7467eb93ed905fbd6aa11667e3392e1cad6b95ed41d5f864dd2b",
+      "source": "runtime/correspondence_buffered_capture_v1/CPU_PROOF.json"
+    },
+    "B1_RUNTIME_REGISTRATION.json": {
+      "bytes": 3408,
+      "sha256": "b697bbf1d831ab164400656040ccbb86f106e63dcee99fcbe9bf925e8ea27079",
+      "source": "runtime/correspondence_buffered_capture_v1/REGISTRATION.json"
+    },
+    "D1_COMPLETE.json": {
+      "bytes": 62211,
+      "sha256": "a47cf900bc8a863cec180e086abf6589b3c597c183cf8f762581ec60e49c7101",
+      "source": "adaptive/D1_predictor_width/evidence/COMPLETE.json"
+    },
+    "D1_COST_SCOPE_ERRATUM.json": {
+      "bytes": 587,
+      "sha256": "f900ce0811c76d7fb9499408d4f7d0f499d365a0f892daa4c759deb5b54d2c71",
+      "source": "adaptive/D1_predictor_width/evidence/COST_SCOPE_ERRATUM.json"
+    },
+    "FUSION_BACKEND_DIAGNOSTIC.json": {
+      "bytes": 18644,
+      "sha256": "5085c1a88ea18de70685e0a18ab458baa08f14d066676115b9df7003d1bd68a4",
+      "source": "fusion/cost/backend_diagnostic_v1/RESULT.json"
+    },
+    "FUSION_GPU_PARITY_DIAGNOSTIC.json": {
+      "bytes": 15990,
+      "sha256": "66975efa18b0cb61cf2db50e81b8207a2886f6c7ca60502536267b7146ccea97",
+      "source": "fusion/cost/parity_diagnostic_v1/GPU_RESULT.json"
+    }
+  },
+  "scope": "Closed D1 and diagnostic receipts plus B1 runtime admission/QA. B1 science is ongoing; no B1 accuracy claim. Additive snapshot supersedes only B1 evaluation metadata label, never historical metrics."
+}

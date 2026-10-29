@@ -1,0 +1,11 @@
+{
+  "completed_pairs": 486,
+  "cpu_input_parity_sha256": "4cf08d30828200150da06172380443c33ddb8b47227645a7a84ff47252ef1594",
+  "optimizer_updates": 0,
+  "parent_freeze_sha256": "92875ac7375c075c4b56cbccc334e2c693f847cd8a92137ed4f5577bd2f8c582",
+  "plan_sha256": "a81f86217e4d9684abb7c6b6b899bc349ee8c501eb2bc0c849f05c79e5fcf817",
+  "restore_prefix_advances_per_route": 0,
+  "test_sha256": "7c109bf492b758e591505903fdca4bcfcf3c636b8d2c44dd31871aa8499c2d9c",
+  "tests_passed": 38,
+  "wrapper_sha256": "e5712a5081285a3b33be469db2cbf9dcbcee866cbfeabf9646bc571d80db1e6a"
+}

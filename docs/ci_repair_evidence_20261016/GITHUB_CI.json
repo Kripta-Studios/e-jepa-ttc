@@ -1,0 +1,158 @@
+{
+  "conclusion": "success",
+  "headSha": "5ab5f2720ab6ff5570c913922fa430943ceff2b1",
+  "jobs": [
+    {
+      "completedAt": "2026-10-16T20:54:32Z",
+      "conclusion": "success",
+      "databaseId": 117189006137,
+      "name": "test",
+      "startedAt": "2026-10-16T20:49:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-16T20:49:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-16T20:49:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:09Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-10-16T20:49:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:11Z",
+          "conclusion": "success",
+          "name": "Run astral-sh/setup-uv@v4",
+          "number": 3,
+          "startedAt": "2026-10-16T20:49:09Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:44Z",
+          "conclusion": "success",
+          "name": "Run uv sync --all-groups --no-editable",
+          "number": 4,
+          "startedAt": "2026-10-16T20:49:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:44Z",
+          "conclusion": "success",
+          "name": "Run uv run --no-sync ruff check .",
+          "number": 5,
+          "startedAt": "2026-10-16T20:49:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:45Z",
+          "conclusion": "success",
+          "name": "Run uv run --no-sync ruff format --check .",
+          "number": 6,
+          "startedAt": "2026-10-16T20:49:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:50Z",
+          "conclusion": "success",
+          "name": "Run uvx --from pyright==1.1.411 pyright",
+          "number": 7,
+          "startedAt": "2026-10-16T20:49:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:49:53Z",
+          "conclusion": "success",
+          "name": "Validate PowerShell script syntax",
+          "number": 8,
+          "startedAt": "2026-10-16T20:49:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:53:29Z",
+          "conclusion": "success",
+          "name": "Run uv run --no-sync pytest tests/unit",
+          "number": 9,
+          "startedAt": "2026-10-16T20:49:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:54:19Z",
+          "conclusion": "success",
+          "name": "Run uv run --no-sync pytest tests/integration",
+          "number": 10,
+          "startedAt": "2026-10-16T20:53:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:54:22Z",
+          "conclusion": "success",
+          "name": "Run uv run --no-sync pytest tests/regression",
+          "number": 11,
+          "startedAt": "2026-10-16T20:54:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:54:28Z",
+          "conclusion": "success",
+          "name": "Run uv run --no-sync pytest tests/scientific",
+          "number": 12,
+          "startedAt": "2026-10-16T20:54:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:54:28Z",
+          "conclusion": "success",
+          "name": "Post Run astral-sh/setup-uv@v4",
+          "number": 23,
+          "startedAt": "2026-10-16T20:54:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:54:28Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 24,
+          "startedAt": "2026-10-16T20:54:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-16T20:54:28Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 25,
+          "startedAt": "2026-10-16T20:54:28Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/actions/runs/38964951869/job/117189006137"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/Kripta-Studios/e-jepa-ttc/actions/runs/38964951869",
+  "test_counts": {
+    "unit": {
+      "passed": 4063,
+      "skipped": 9
+    },
+    "integration": {
+      "passed": 158,
+      "skipped": 12
+    },
+    "regression": {
+      "passed": 11,
+      "skipped": 2
+    },
+    "scientific": {
+      "passed": 12,
+      "skipped": 0
+    }
+  },
+  "log_sha256": "010cb9402c15f09c6e71316498435bb050a5095e5bfd5694f22975807539536d"
+}

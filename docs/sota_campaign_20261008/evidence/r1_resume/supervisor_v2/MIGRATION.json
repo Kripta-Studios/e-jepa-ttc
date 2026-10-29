@@ -1,0 +1,27 @@
+{
+  "attempts_already_consumed": 2,
+  "deadline_reset": false,
+  "max_attempts": 3,
+  "old_records": [
+    {
+      "copy": "${REPO}\\artifacts\\sota_campaign_20261008\\r1_resume\\supervisor_v2\\attempts\\attempt_001.json",
+      "copy_sha256": "f109fa03deeff91ba0555c158e2366a8fdfa1f95da1f2d0d0f85ea24e5d6abc6",
+      "source": "${REPO}\\artifacts\\sota_campaign_20261008\\r1_resume\\supervisor\\attempts\\attempt_001.json",
+      "source_sha256": "f109fa03deeff91ba0555c158e2366a8fdfa1f95da1f2d0d0f85ea24e5d6abc6"
+    },
+    {
+      "copy": "${REPO}\\artifacts\\sota_campaign_20261008\\r1_resume\\supervisor_v2\\attempts\\attempt_002.json",
+      "copy_sha256": "e954557b43a2682fe2c35593d48bbd99f931c9c45a6dbb6823cacbcf0c8022ff",
+      "source": "${REPO}\\artifacts\\sota_campaign_20261008\\r1_resume\\supervisor\\attempts\\attempt_002.json",
+      "source_sha256": "f48d4c7f5ac3642a8521aff4c702f473fc29e8cffb5013b0d78536c06e31d1a3"
+    }
+  ],
+  "old_supervisor_freeze_sha256": "3b400ebe43d3dc3c3b4589ca590fa2b208342d838575342754733223c6e7593a",
+  "optimizer_updates": 0,
+  "preserved_pairs": 497,
+  "reason": "GPU owner classifier corrected; CPU publication no longer stops R1.",
+  "remaining_attempts": 1,
+  "scientific_resume_source_sha256": "e5712a5081285a3b33be469db2cbf9dcbcee866cbfeabf9646bc571d80db1e6a",
+  "status": "MIGRATION_READY",
+  "supervisor_source_sha256": "19f58bdbcc0a83d04519f7dab36aa4ed41dfca0ec92d2647e15d7650500da3a4"
+}

@@ -1,0 +1,84 @@
+{
+  "baseline": "geometric_bbox_expansion",
+  "manifest": "data/manifests/evttc_full_starter_local.yaml",
+  "notes": "Diagnostic analytic baseline on frames with ISAT labels only. This implementation uses a centered derivative window and therefore includes future bboxes; do not use it for anti-lookahead claims. Use baseline causal-geometry instead.",
+  "split": "data/splits/evttc_full_starter_dev_multival.yaml",
+  "splits": {
+    "test": {
+      "invalid_prediction_count": 0,
+      "label_count": 83,
+      "metrics": {
+        "log_mae": 0.05440285309106857,
+        "log_mae_15s": 0.05440285309106857,
+        "log_rmse": 0.07885572571653487,
+        "log_rmse_15s": 0.07885572571653487,
+        "mae_s": 0.1580427799744597,
+        "mae_s_15s": 0.1580427799744597,
+        "mean_abs_relative_error_pct": 8.656974958675347,
+        "median_abs_error_s": 0.07719519397881536,
+        "median_abs_relative_error_pct": 5.4224667251325425,
+        "rmse_s": 0.2496196307355641,
+        "rmse_s_15s": 0.2496196307355641,
+        "signed_log1p_mae": 0.05440285309106857
+      },
+      "prediction_count": 83
+    },
+    "train": {
+      "invalid_prediction_count": 1,
+      "label_count": 786,
+      "metrics": {
+        "log_mae": 0.11692760861639971,
+        "log_mae_15s": 0.11692760861639971,
+        "log_rmse": 0.20201683289731964,
+        "log_rmse_15s": 0.20201683289731964,
+        "mae_s": 0.7376953072531268,
+        "mae_s_15s": 0.7376953072531268,
+        "mean_abs_relative_error_pct": 17.173752130792106,
+        "median_abs_error_s": 0.24613790138133496,
+        "median_abs_relative_error_pct": 8.790143525112166,
+        "rmse_s": 2.01284435383718,
+        "rmse_s_15s": 2.01284435383718,
+        "signed_log1p_mae": 0.11692760861639971
+      },
+      "prediction_count": 785
+    },
+    "validation_car": {
+      "invalid_prediction_count": 0,
+      "label_count": 108,
+      "metrics": {
+        "log_mae": 0.09260842264197924,
+        "log_mae_15s": 0.09260842264197924,
+        "log_rmse": 0.1431361564695012,
+        "log_rmse_15s": 0.1431361564695012,
+        "mae_s": 0.3474135632599966,
+        "mae_s_15s": 0.3474135632599966,
+        "mean_abs_relative_error_pct": 13.722166176258701,
+        "median_abs_error_s": 0.10169129168257218,
+        "median_abs_relative_error_pct": 6.456541529561305,
+        "rmse_s": 0.5883422282065515,
+        "rmse_s_15s": 0.5883422282065515,
+        "signed_log1p_mae": 0.09260842264197924
+      },
+      "prediction_count": 108
+    },
+    "validation_pedestrian": {
+      "invalid_prediction_count": 0,
+      "label_count": 85,
+      "metrics": {
+        "log_mae": 0.1959684080316825,
+        "log_mae_15s": 0.1959684080316825,
+        "log_rmse": 0.3606733811859322,
+        "log_rmse_15s": 0.3606733811859322,
+        "mae_s": 1.2078946041955978,
+        "mae_s_15s": 1.2078946041955978,
+        "mean_abs_relative_error_pct": 42.28438205239474,
+        "median_abs_error_s": 0.29798940480247804,
+        "median_abs_relative_error_pct": 19.974031411022306,
+        "rmse_s": 5.456981290682546,
+        "rmse_s_15s": 5.456981290682546,
+        "signed_log1p_mae": 0.1959684080316825
+      },
+      "prediction_count": 85
+    }
+  }
+}

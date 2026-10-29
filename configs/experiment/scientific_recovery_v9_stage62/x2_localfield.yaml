@@ -1,0 +1,12 @@
+artifact_type: scientific_recovery_v9_stage62_config_v1
+arm_id: X2-LOCALFIELD
+field: local_temporal_phase_field_4x4
+shape: [16, 34]
+head: [34, 48, 32]
+residual_bound: 0.05
+batch_size: 256
+update_budget: 2000
+learning_rate: 0.0003
+weight_decay: 0.0001
+precision: float32
+checkpoint_policy: last_update_fixed_budget

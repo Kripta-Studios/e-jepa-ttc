@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "e-jepa-ttc/jepa_pretrain_run_v4",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256",
+    "pretraining_regime",
+    "provenance",
+    "migration_version",
+    "source_sha256"
+  ],
+  "properties": {
+    "artifact_type": {"type": "string", "pattern": "^eap_(geo|ssl)(|_v2)_pretraining_run_v4$"},
+    "schema_version": {"const": "v4"},
+    "evidence_type": {"type": "string"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"type": "string"},
+    "protocol_sha256": {"type": "string"},
+    "created_at": {"type": "string"},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pretraining_regime": {"type": "string", "enum": ["eap_ssl", "eap_geo", "eap_geo_v2"]},
+    "migration_version": {"const": "jepa_pretrain_run_v4"},
+    "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_contract": {"type": "string"},
+    "migration_changes": {"type": "array", "items": {"type": "string"}},
+    "status": {},
+    "failure": {"type": "object"},
+    "run_id": {"type": "string"},
+    "model_name": {"type": "string"},
+    "model_config": {"type": "object"},
+    "model_config_sha256": {"type": "string"},
+    "cache_sha256": {"type": "string"},
+    "split_manifest_sha256": {"type": "string"},
+    "seed": {"type": "integer"},
+    "navigation_mode": {"type": "string"},
+    "label_fraction": {"type": "number"},
+    "train_sample_count": {"type": "integer"},
+    "validation_sample_count": {"type": "integer"},
+    "selection_split": {"type": "string"},
+    "selection_metric": {"type": "string"},
+    "checkpoint_sha256": {"type": "string"},
+    "final_test_opened": {"type": "boolean"},
+    "best_checkpoint": {"type": ["string", "null"]},
+    "best_checkpoint_sha256": {"type": ["string", "null"]},
+    "best_epoch": {"type": ["integer", "null"]},
+    "best_validation_loss": {"type": ["number", "null"]},
+    "device": {"type": "string"},
+    "elapsed_seconds": {"type": "number"},
+    "epochs_completed": {"type": "integer"},
+    "gpu_name": {"type": ["string", "null"]},
+    "history": {},
+    "inventory_artifact_sha256": {"type": "string"},
+    "last_checkpoint": {"type": ["string", "null"]},
+    "last_checkpoint_sha256": {"type": ["string", "null"]},
+    "peak_vram_bytes": {"type": ["integer", "null"]},
+    "pretraining_dataset_id": {"type": "string"},
+    "provenance": {
+      "type": "object",
+      "required": [
+        "uses_ttc_for_sampling",
+        "uses_boxes_for_sampling",
+        "uses_category_for_sampling",
+        "uses_depth_for_sampling",
+        "uses_masks_for_sampling",
+        "uses_3d_for_sampling",
+        "uses_future_labels_for_sampling"
+      ],
+      "properties": {
+        "uses_ttc_for_sampling": {"type": "boolean"},
+        "uses_boxes_for_sampling": {"type": "boolean"},
+        "uses_category_for_sampling": {"type": "boolean"},
+        "uses_depth_for_sampling": {"type": "boolean"},
+        "uses_masks_for_sampling": {"type": "boolean"},
+        "uses_3d_for_sampling": {"type": "boolean"},
+        "uses_future_labels_for_sampling": {"type": "boolean"}
+      }
+    },
+    "run_fingerprint": {"type": "string"},
+    "selected_train_samples": {"type": "integer"},
+    "selected_validation_samples": {"type": "integer"},
+    "split_artifact_sha256": {"type": "string"},
+    "train_sequences": {"type": "array"},
+    "train_window_count": {"type": "integer"},
+    "trainer_config": {"type": "object"},
+    "validation_sequences": {"type": "array"},
+    "validation_window_count": {"type": "integer"},
+    "geometry_target_version": {"type": "string"},
+    "geometry_sampling_strategy": {"type": "string"},
+    "uses_labels_for_window_sampling": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"pretraining_regime": {"const": "eap_ssl"}},
+        "required": ["pretraining_regime"]
+      },
+      "then": {
+        "properties": {
+          "provenance": {
+            "properties": {
+              "uses_ttc_for_sampling": {"const": false},
+              "uses_boxes_for_sampling": {"const": false},
+              "uses_category_for_sampling": {"const": false},
+              "uses_depth_for_sampling": {"const": false},
+              "uses_masks_for_sampling": {"const": false},
+              "uses_3d_for_sampling": {"const": false},
+              "uses_future_labels_for_sampling": {"const": false}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

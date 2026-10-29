@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_continuity\queue.py", line 40, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_continuity\queue.py", line 36, in main
+    return io_queue.main(["resume", "--run", str(run)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_io_recovery\queue.py", line 172, in main
+    return frozen_queue.main(["resume", "--run", str(run)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\run.py", line 1351, in main
+    return supervise(config_path, once=args.once)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\run.py", line 1306, in supervise
+    preflight(config_path)
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\run.py", line 1273, in preflight
+    raise RuntimeError(f"Git base changed: expected {config['base_commit']}, found {head}")
+RuntimeError: Git base changed: expected b44443ae331b5e84b94e940801468449b2858de4, found b5effd4c387442c52cfc411c184e1416fa202313

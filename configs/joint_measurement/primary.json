@@ -1,0 +1,63 @@
+{
+  "schema": "v18_primary_v1",
+  "base_commit": "396abe922537d9dac19d6db3451e59d283636e20",
+  "owner_relative": "../e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008",
+  "v15_admission_relative": "../e-jepa-ttc-v15-range-readout/artifacts/range_readout_20261012/ADMISSION.json",
+  "cache_root": "E:/E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012",
+  "batch_size": 32,
+  "microbatch_size": 4,
+  "updates": 12000,
+  "seed": 7,
+  "precision": "FP32",
+  "tf32": false,
+  "optimizer": {
+    "backbone_lr": 0.0001,
+    "readout_lr": 0.0003,
+    "weight_decay": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup": 200,
+    "final_lr_fraction": 0.1,
+    "clip_norm": 1.0
+  },
+  "fits": [
+    "NATIVE-P2-FT-S7",
+    "PAIR-DIRECT-S7",
+    "PAIR-CORR-S7",
+    "PAIR-CORR-FROZEN-S7"
+  ],
+  "caps": {
+    "physical": 1000000,
+    "scientific": 994000,
+    "technical": 1000,
+    "recovery": 5000,
+    "gpu_seconds": 64800
+  },
+  "selection": {
+    "common_reference": "A5-P2-FROZEN",
+    "mandatory_complete_coverage": true,
+    "all_routes_sign_increase_max": 0.005,
+    "all_routes_band_ratio_max": 1.1,
+    "routes": {
+      "overall_ratio_max": 0.97,
+      "crucial_ratio_max": 0.95,
+      "crucial_route_overall_ratio_max": 1.02,
+      "cost_ratio_max": 0.7,
+      "cost_route_overall_ratio_max": 1.02
+    },
+    "max_integrations": 2,
+    "ranking": [
+      "overall_MiD",
+      "MiDc",
+      "fit_id"
+    ],
+    "final_promotion": "V14 numerical gate unchanged vs matched full E_CTX on V; comparable E2E cost required; internal development only"
+  },
+  "sampler": "uniform_with_replacement_shared_seed",
+  "data": "exact native event P2 suffix, common ROI, native query anchor",
+  "native_teacher_weight": 8.0,
+  "resume_save_every": 100
+}

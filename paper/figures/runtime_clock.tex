@@ -1,0 +1,22 @@
+\begin{tikzpicture}[x=1cm,y=1cm,>=Latex,
+  stage/.style={draw=rulegray,fill=pale,rounded corners=2pt,minimum height=10mm,text width=2.55cm,align=center,font=\sffamily\scriptsize,text=ink},
+  every node/.style={font=\sffamily\scriptsize,text=ink}]
+  \node[stage,draw=blue!45,fill=blue!5] (arrival) at (1.55,0) {scheduled\\arrival};
+  \node[stage,draw=teal!55,fill=teal!6] (raw) at (5.25,0) {RAW observations\\available};
+  \node[stage,text width=3.15cm] (work) at (9.50,0) {preparation, queues,\\branches and fusion};
+  \node[stage,draw=coral!55,fill=coral!6] (out) at (14.05,0) {complete host\\TTC output};
+
+  \draw[-{Latex[length=2mm]},blue,line width=.9pt] (arrival)--(raw);
+  \draw[-{Latex[length=2mm]},teal,line width=.9pt] (raw)--(work);
+  \draw[-{Latex[length=2mm]},coral,line width=.9pt] (work)--(out);
+
+  \draw[blue,line width=1pt] (0.12,-1.00)--(15.42,-1.00);
+  \draw[blue,line width=1pt] (0.12,-.87)--(0.12,-1.13);
+  \draw[blue,line width=1pt] (15.42,-.87)--(15.42,-1.13);
+  \node[anchor=north,text=blue,align=center] at (7.77,-1.08) {deadline-response clock: scheduled arrival to complete output\\includes preparation and queueing};
+
+  \draw[teal,line width=.9pt] (3.83,1.00)--(15.42,1.00);
+  \draw[teal,line width=.9pt] (3.83,.87)--(3.83,1.13);
+  \draw[teal,line width=.9pt] (15.42,.87)--(15.42,1.13);
+  \node[anchor=south,text=teal] at (9.62,1.08) {secondary clock: RAW availability to output};
+\end{tikzpicture}

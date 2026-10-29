@@ -1,0 +1,803 @@
+"""Fail-closed seed-7 aggregate for the frozen V8 downstream screen."""
+
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
+import math
+import subprocess
+from collections import Counter
+from collections.abc import Mapping
+from decimal import Decimal
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
+from e_jepa_ttc.data.canonical_token_identity import hash_canonical_json_records
+from e_jepa_ttc.evaluation.garl_ttc_protocol import (
+    PAPER_MID_WEIGHTS,
+    sequence_macro_signed_metrics,
+    signed_garl_metrics,
+)
+
+ROOT = Path(__file__).resolve().parents[3]
+_SEALED = ("public_validation", "private_test", "evttc_test", "codabench")
+_DEFAULT_BOOTSTRAP_SEED = 20260814
+_CANDIDATES = {
+    "router": "R",
+    "timevol20_3": "B1_TIMEVOL20_3",
+    "exp6_3": "B2_EXP6_3",
+    "pair20_2": "B3_PAIR20_2",
+    "gated_exp6_3": "C1_GATED_EXP6_3",
+}
+
+
+class V8AggregateIntegrityError(RuntimeError):
+    """Raised when seed-7 selection inputs are not exact frozen OOF evidence."""
+
+
+def _sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _records_hash(rows: list[dict[str, str]]) -> str:
+    return hash_canonical_json_records(rows)
+
+
+def contract_hashes(rows: list[dict[str, str]]) -> dict[str, str]:
+    """Return immutable row-contract hashes using the exact macro-MiD weight definition."""
+    expected_weights = _expected_weights(rows)
+    return {
+        "ordered_token_ids_sha256": _records_hash([{"token_id": r["token_id"]} for r in rows]),
+        "row_identity_sha256": _records_hash(
+            [{k: r[k] for k in ("sequence_id", "token_id", "track_id")} for r in rows]
+        ),
+        "target_sha256": _records_hash(
+            [{"target_ttc_s": r["target_ttc"], "token_id": r["token_id"]} for r in rows]
+        ),
+        "mid_sample_weight_sha256": _records_hash(
+            [
+                {"sample_weight": expected_weights[r["token_id"]], "token_id": r["token_id"]}
+                for r in rows
+            ]
+        ),
+        "fold_assignment_sha256": _records_hash(
+            [{k: r[k] for k in ("outer_fold", "sequence_id", "token_id")} for r in rows]
+        ),
+    }
+
+
+def _expected_weights(rows: list[dict[str, str]]) -> dict[str, str]:
+    """Recreate the frozen Decimal macro-MiD coefficient per token."""
+
+    def bucket(value: Decimal) -> tuple[str, Decimal]:
+        if Decimal("0") < value <= Decimal("3"):
+            return "crucial", Decimal("0.5")
+        if Decimal("3") < value <= Decimal("6"):
+            return "small", Decimal("0.3")
+        if Decimal("6") < value <= Decimal("10"):
+            return "large", Decimal("0.1")
+        if Decimal("-10") < value <= Decimal("0"):
+            return "negative", Decimal("0.1")
+        raise V8AggregateIntegrityError("target outside frozen signed MiD domain")
+
+    parsed = [(r, Decimal(r["target_ttc"])) for r in rows]
+    counts = Counter((r["sequence_id"], bucket(value)[0]) for r, value in parsed)
+    return {
+        r["token_id"]: str(
+            bucket(value)[1] / Decimal(9) / counts[(r["sequence_id"], bucket(value)[0])]
+        )
+        for r, value in parsed
+    }
+
+
+def _closed(value: object) -> None:
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            if str(key).lower().endswith(("_opened", "_used_for_selection")) and item is not False:
+                raise V8AggregateIntegrityError("sealed evaluation flag is not false")
+            _closed(item)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _closed(item)
+    elif isinstance(value, str) and any(x in value.lower().replace("\\", "/") for x in _SEALED):
+        raise V8AggregateIntegrityError("sealed evaluation source rejected")
+
+
+def _first_present(row: Mapping[str, str | None], choices: tuple[str, ...]) -> str | None:
+    return next((row.get(choice) for choice in choices if row.get(choice) not in (None, "")), None)
+
+
+def _finite_flag(row: Mapping[str, str]) -> bool | None:
+    raw = row.get("finite")
+    if raw is None or str(raw).strip() == "":
+        return None
+    token = str(raw).strip().lower()
+    if token in {"true", "1", "yes"}:
+        return True
+    if token in {"false", "0", "no"}:
+        return False
+    raise V8AggregateIntegrityError("invalid finite flag")
+
+
+def _documented_nonfinite_prediction(row: Mapping[str, str], raw_prediction: str | None) -> bool:
+    """True when the OOF contract already recorded an unknown/failed point TTC."""
+    token = "" if raw_prediction is None else str(raw_prediction).strip()
+    is_blank_or_nan = token == "" or token.lower() in {"nan", "+nan", "-nan", "inf", "+inf", "-inf"}
+    reason = str(row.get("failure_reason") or "").strip()
+    return _finite_flag(row) is False and bool(reason) and is_blank_or_nan
+
+
+def _read_rows(path: Path, *, candidate: bool) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        raw = list(csv.DictReader(handle))
+    if not raw:
+        raise V8AggregateIntegrityError(f"empty predictions: {path}")
+    aliases = {
+        "token_id": ("token_id", "sample_token"),
+        "outer_fold": ("outer_fold", "fold"),
+        "target_ttc": ("target_ttc", "target_ttc_s"),
+        "prediction_ttc": ("prediction_ttc", "point_prediction_ttc_s", "prediction_ttc_s"),
+        "sample_weight": ("sample_weight",),
+        "sequence_id": ("sequence_id",),
+        "track_id": ("track_id",),
+        "seed": ("seed",),
+    }
+    out = []
+    for row in raw:
+        normalized = {k: str(v) for k, v in row.items() if v is not None}
+        for key, choices in aliases.items():
+            value = _first_present(row, choices)
+            if value is None and key == "sample_weight" and not candidate:
+                value = "1"
+            if value is None and key == "seed" and not candidate:
+                value = "7"
+            if (
+                value is None
+                and key == "prediction_ttc"
+                and _documented_nonfinite_prediction(row, _first_present(row, choices))
+            ):
+                value = "nan"
+            if value is None:
+                raise V8AggregateIntegrityError(f"missing {key} in {path}")
+            normalized[key] = str(value)
+        out.append(normalized)
+    if len({r["token_id"] for r in out}) != len(out):
+        raise V8AggregateIntegrityError("duplicate token_id in predictions")
+    for r in out:
+        try:
+            target = float(r["target_ttc"])
+            weight = float(r["sample_weight"])
+            prediction = float(r["prediction_ttc"])
+        except ValueError as e:
+            raise V8AggregateIntegrityError("non-numeric OOF value") from e
+        if not math.isfinite(target) or not math.isfinite(weight):
+            raise V8AggregateIntegrityError("NaN or infinity in OOF predictions")
+        if math.isfinite(prediction):
+            if _finite_flag(r) is False:
+                raise V8AggregateIntegrityError("finite prediction marked non-finite")
+            continue
+        reason = str(r.get("failure_reason") or "").strip()
+        if _finite_flag(r) is not False or not reason:
+            raise V8AggregateIntegrityError("NaN or infinity in OOF predictions")
+    return out
+
+
+def _resolve(root: Path, owner: Path, value: object) -> Path:
+    if not isinstance(value, str):
+        raise V8AggregateIntegrityError("artifact path is missing")
+    path = Path(value)
+    path = path if path.is_absolute() else owner / path
+    path = path.resolve()
+    try:
+        path.relative_to(root.resolve())
+    except ValueError as e:
+        raise V8AggregateIntegrityError("artifact path escapes repository") from e
+    if not path.is_file():
+        raise V8AggregateIntegrityError(f"artifact is missing: {path}")
+    return path
+
+
+def _fold_rows(
+    *,
+    arm: str,
+    fold: int,
+    config_hash: str,
+    protocol: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    results_root: Path,
+    repository_root: Path,
+    allow_fixture: bool,
+) -> tuple[list[dict[str, str]], dict[str, Any]]:
+    run = results_root / "runs" / f"{arm}_fold{fold}_seed7"
+    summary_path = run / "summary.json"
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise V8AggregateIntegrityError(f"missing/invalid summary for {arm} fold {fold}") from e
+    if not isinstance(summary, dict) or not verify_artifact_hash(summary):
+        raise V8AggregateIntegrityError("fold summary is unsigned")
+    _closed(summary)
+    required = {
+        "artifact_type": "scientific_recovery_v8_fold_result_v1",
+        "status": "completed",
+        "arm": arm,
+        "outer_fold": fold,
+        "seed": 7,
+        "config_sha256": config_hash,
+        "protocol_sha256": protocol.get("artifact_sha256"),
+        "frozen_manifest_sha256": manifest.get("artifact_sha256"),
+    }
+    if any(summary.get(k) != v for k, v in required.items()):
+        raise V8AggregateIntegrityError("fold summary is not bound to its frozen job")
+    if summary.get("fixture") is True and not allow_fixture:
+        raise V8AggregateIntegrityError("fixture result rejected")
+    checkpoint = summary.get("checkpoint")
+    prediction = summary.get("dev_predictions")
+    if not isinstance(checkpoint, Mapping) or not isinstance(prediction, Mapping):
+        raise V8AggregateIntegrityError("summary lacks checkpoint/prediction bindings")
+    cp = _resolve(repository_root, run, checkpoint.get("path"))
+    pp = _resolve(repository_root, run, prediction.get("path"))
+    if checkpoint.get("sha256") != _sha(cp):
+        raise V8AggregateIntegrityError("checkpoint hash mismatch")
+    if prediction.get("sha256") not in (None, _sha(pp)):
+        raise V8AggregateIntegrityError("prediction hash mismatch")
+    rows = _read_rows(pp, candidate=True)
+    if any(
+        int(r["outer_fold"]) != fold
+        or int(r["seed"]) != 7
+        or r.get("config_sha256") != config_hash
+        or r.get("checkpoint_sha256") != checkpoint["sha256"]
+        for r in rows
+    ):
+        raise V8AggregateIntegrityError("OOF rows are not bound to summary config/checkpoint")
+    return rows, {
+        "summary": str(summary_path),
+        "summary_sha256": _sha(summary_path),
+        "prediction": str(pp),
+        "prediction_sha256": _sha(pp),
+        "checkpoint": str(cp),
+        "checkpoint_sha256": _sha(cp),
+    }
+
+
+def _metrics(
+    rows: list[dict[str, str]], baseline: list[dict[str, str]]
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    by_token = {r["token_id"]: r for r in baseline}
+    if set(by_token) != {r["token_id"] for r in rows}:
+        raise V8AggregateIntegrityError("candidate and A5 token universes differ")
+    for r in rows:
+        b = by_token[r["token_id"]]
+        keys = (
+            ("track_id", "outer_fold", "target_ttc")
+            if "__draw" in r["sequence_id"]
+            else ("sequence_id", "track_id", "outer_fold", "target_ttc")
+        )
+        if any(r[k] != b[k] for k in keys):
+            raise V8AggregateIntegrityError("candidate/A5 identity mismatch")
+    target = np.array([float(r["target_ttc"]) for r in rows])
+    pred = np.array([float(r["prediction_ttc"]) for r in rows])
+    base = np.array([float(by_token[r["token_id"]]["prediction_ttc"]) for r in rows])
+    seq = np.array([r["sequence_id"] for r in rows])
+    cm = sequence_macro_signed_metrics(target, pred, seq)
+    bm = sequence_macro_signed_metrics(target, base, seq)
+    mid = float(cm["sequence_macro_paper_MiD_overall"])
+    base_mid = float(bm["sequence_macro_paper_MiD_overall"])
+    finite_fraction = float(np.isfinite(pred).mean())
+    if not math.isfinite(mid) or not math.isfinite(base_mid):
+        if finite_fraction == 1.0:
+            raise V8AggregateIntegrityError("non-finite sequence macro MiD")
+    failure = float(np.mean(~np.isfinite(pred) | (np.abs(pred) < 0.1)))
+    per_seq = {}
+    per_bucket = {}
+    for key, groups in (("sequence_id", sorted(set(seq))),):
+        for group in groups:
+            ix = np.array([r[key] == group for r in rows])
+            per_seq[group] = {
+                "mid_macro_sequence": float(
+                    sequence_macro_signed_metrics(target[ix], pred[ix], seq[ix])[
+                        "sequence_macro_paper_MiD_overall"
+                    ]
+                ),
+                "delta_mid_vs_a5": float(
+                    sequence_macro_signed_metrics(target[ix], pred[ix], seq[ix])[
+                        "sequence_macro_paper_MiD_overall"
+                    ]
+                    - sequence_macro_signed_metrics(target[ix], base[ix], seq[ix])[
+                        "sequence_macro_paper_MiD_overall"
+                    ]
+                ),
+                "row_count": int(ix.sum()),
+            }
+    for name in PAPER_MID_WEIGHTS:
+        # signed metric bucket membership is exact and target-defined.
+        mask = (
+            (target > 0) & (target <= 3)
+            if name == "crucial"
+            else (target > 3) & (target <= 6)
+            if name == "small"
+            else (target > 6) & (target <= 10)
+            if name == "large"
+            else (target > -10) & (target <= 0)
+        )
+        if not mask.any():
+            per_bucket[name] = {"mid_macro_sequence": 0.0, "delta_mid_vs_a5": 0.0, "row_count": 0}
+        else:
+            per_bucket[name] = {
+                "mid_macro_sequence": float(
+                    signed_garl_metrics(target[mask], pred[mask])["paper_MiD_overall"]
+                ),
+                "delta_mid_vs_a5": float(
+                    signed_garl_metrics(target[mask], pred[mask])["paper_MiD_overall"]
+                    - signed_garl_metrics(target[mask], base[mask])["paper_MiD_overall"]
+                ),
+                "row_count": int(mask.sum()),
+            }
+    return (
+        {
+            "mid_macro_sequence": mid,
+            "delta_mid_vs_a5": mid - base_mid,
+            "finite_fraction": finite_fraction,
+            "failure_rate": failure,
+            "coverage_drop_max_pp": 0.0,
+        },
+        per_seq,
+        per_bucket,
+    )
+
+
+def _bootstrap(
+    rows: list[dict[str, str]], baseline: list[dict[str, str]], n: int, seed: int
+) -> dict[str, Any]:
+    if n < 1:
+        raise ValueError("resamples must be positive")
+    b = {r["token_id"]: r for r in baseline}
+    by_seq = {
+        s: [r for r in rows if r["sequence_id"] == s]
+        for s in sorted({r["sequence_id"] for r in rows})
+    }
+    if len(by_seq) < 2:
+        raise V8AggregateIntegrityError("bootstrap requires at least two sequences")
+    rng = np.random.default_rng(seed)
+    deltas = []
+    for _ in range(n):
+        chosen = rng.choice(list(by_seq), size=len(by_seq), replace=True)
+        cr = []
+        br = []
+        for draw, s in enumerate(chosen):
+            tracks = sorted({r["track_id"] for r in by_seq[s]})
+            picked = rng.choice(tracks, size=len(tracks), replace=True)
+            for ti, t in enumerate(picked):
+                for r in by_seq[s]:
+                    if r["track_id"] == t:
+                        q = dict(r)
+                        q["sequence_id"] = f"{s}__draw{draw}__track{ti}"
+                        cr.append(q)
+                        x = dict(b[r["token_id"]])
+                        x["sequence_id"] = q["sequence_id"]
+                        br.append(x)
+        m, _, _ = _metrics(cr, br)
+        deltas.append(m["delta_mid_vs_a5"])
+    arr = np.asarray(deltas, dtype=np.float64)
+    finite = arr[np.isfinite(arr)]
+    if finite.size == 0:
+        return {
+            "probability_delta_lt_zero": 0.0,
+            "ci95_low": float("nan"),
+            "ci95_high": float("nan"),
+            "resamples": n,
+        }
+    return {
+        "probability_delta_lt_zero": float(np.mean(arr < 0)),
+        "ci95_low": float(np.quantile(finite, 0.025)),
+        "ci95_high": float(np.quantile(finite, 0.975)),
+        "resamples": n,
+    }
+
+
+def _implementation_commit(repository_root: Path) -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=repository_root, text=True
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+_COMPLETE_STATUSES = {
+    "completed",
+    "complete",
+    "passed",
+    "success",
+    "completed_train_only_grouped_dev",
+}
+
+
+def _conditional_fold_signed(run_dir: Path) -> bool:
+    """True only for a signed completed fold summary, not a leftover run directory."""
+
+    summary = run_dir / "summary.json"
+    if not summary.is_file():
+        return False
+    try:
+        payload = json.loads(summary.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        return False
+    return str(payload.get("status", "")).lower() in _COMPLETE_STATUSES
+
+
+def _candidate_config_entries(
+    manifest: Mapping[str, Any], *, arm: str, results_root: Path
+) -> list[tuple[str, Mapping[str, Any]]]:
+    """Return enabled configs or preregistered conditional configs once executed."""
+    enabled = manifest.get("enabled_seed7_configs", {})
+    if not isinstance(enabled, Mapping):
+        raise V8AggregateIntegrityError("missing frozen configs")
+    entries = [
+        (str(name), entry)
+        for name, entry in enabled.items()
+        if str(name).startswith(f"{arm}_fold")
+        and str(name).endswith("_seed7")
+        and isinstance(entry, Mapping)
+    ]
+    if entries:
+        return entries
+    templates = manifest.get("conditional_templates", {})
+    template = templates.get(arm) if isinstance(templates, Mapping) else None
+    if not isinstance(template, Mapping):
+        return []
+    completed = [
+        _conditional_fold_signed(results_root / "runs" / f"{arm}_fold{fold}_seed7")
+        for fold in range(3)
+    ]
+    if not any(completed):
+        return []
+    if not all(completed):
+        raise V8AggregateIntegrityError(f"partial conditional run set for {arm}")
+    raw = template.get("fold_configs")
+    if not isinstance(raw, list) or len(raw) != 3 or not all(isinstance(x, Mapping) for x in raw):
+        raise V8AggregateIntegrityError(f"conditional template for {arm} lacks three configs")
+    return [(f"{arm}_fold{fold}_seed7", entry) for fold, entry in enumerate(raw)]
+
+
+def _load_signed_seed7_aggregate(path: Path) -> dict[str, Any] | None:
+    """Return a signed seed-7 screen aggregate, or None if it cannot be reused as evidence."""
+
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if (
+        not isinstance(payload, dict)
+        or not verify_artifact_hash(payload)
+        or payload.get("artifact_type") != "scientific_recovery_v8_seed7_aggregate_v1"
+        or payload.get("status") != "completed"
+    ):
+        return None
+    return payload
+
+
+def _ref_identity(refs: object) -> list[tuple[str, str]] | None:
+    if not isinstance(refs, list) or not refs:
+        return None
+    identity: list[tuple[str, str]] = []
+    for item in refs:
+        if not isinstance(item, Mapping):
+            return None
+        prediction = item.get("prediction_sha256")
+        checkpoint = item.get("checkpoint_sha256")
+        if not isinstance(prediction, str) or not isinstance(checkpoint, str):
+            return None
+        identity.append((prediction, checkpoint))
+    return identity
+
+
+def _collect_current_refs(
+    *,
+    protocol: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    results_root: Path,
+    repository_root: Path,
+    allow_fixture: bool,
+) -> dict[str, list[tuple[str, str]]]:
+    """Hash the current completed fold OOF/checkpoints without running bootstrap."""
+
+    current: dict[str, list[tuple[str, str]]] = {}
+    for arm in _CANDIDATES:
+        entries = _candidate_config_entries(manifest, arm=arm, results_root=results_root)
+        if not entries:
+            continue
+        if len(entries) != 3:
+            raise V8AggregateIntegrityError(f"incomplete frozen configs for {arm}")
+        refs: list[tuple[str, str]] = []
+        for fold in range(3):
+            entry = next((item for name, item in entries if f"fold{fold}_" in str(name)), None)
+            if not isinstance(entry, Mapping) or not isinstance(entry.get("sha256"), str):
+                raise V8AggregateIntegrityError("invalid frozen config hash")
+            _, ref = _fold_rows(
+                arm=arm,
+                fold=fold,
+                config_hash=entry["sha256"],
+                protocol=protocol,
+                manifest=manifest,
+                results_root=results_root,
+                repository_root=repository_root,
+                allow_fixture=allow_fixture,
+            )
+            identity = _ref_identity([ref])
+            if identity is None:
+                raise V8AggregateIntegrityError(f"incomplete fold refs for {arm} fold {fold}")
+            refs.extend(identity)
+        current[arm] = refs
+    return current
+
+
+def _existing_bootstrap_for_arm(
+    existing: Mapping[str, Any] | None,
+    *,
+    arm: str,
+    refs: list[dict[str, Any]],
+    resamples: int,
+    bootstrap_seed: int,
+) -> dict[str, Any] | None:
+    """Reuse one arm's signed bootstrap only when OOF/checkpoint bytes are unchanged."""
+
+    if existing is None or bootstrap_seed != _DEFAULT_BOOTSTRAP_SEED:
+        return None
+    current = _ref_identity(refs)
+    if current is None:
+        return None
+    for candidate in existing.get("candidate_results", []):
+        if not isinstance(candidate, Mapping) or candidate.get("arm") != arm:
+            continue
+        stored_refs = _ref_identity(candidate.get("refs"))
+        bootstrap = candidate.get("bootstrap")
+        if (
+            stored_refs == current
+            and isinstance(bootstrap, Mapping)
+            and bootstrap.get("resamples") == resamples
+        ):
+            return dict(bootstrap)
+    return None
+
+
+def _full_seed7_aggregate_reusable(
+    existing: Mapping[str, Any] | None,
+    *,
+    protocol: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    a5_sha256: str,
+    current_refs: Mapping[str, list[tuple[str, str]]],
+    resamples: int,
+    bootstrap_seed: int,
+    allow_fixture: bool,
+) -> bool:
+    """True when the signed screen already is the exact current OOF decision."""
+
+    if existing is None or bootstrap_seed != _DEFAULT_BOOTSTRAP_SEED:
+        return False
+    if existing.get("protocol_sha256") != protocol.get("artifact_sha256"):
+        return False
+    if existing.get("frozen_manifest_sha256") != manifest.get("artifact_sha256"):
+        return False
+    if existing.get("seed") != 7 or bool(existing.get("fixture")) != bool(allow_fixture):
+        return False
+    a5_control = existing.get("a5_control")
+    if not isinstance(a5_control, Mapping) or a5_control.get("sha256") != a5_sha256:
+        return False
+    stored_results = existing.get("candidate_results")
+    if not isinstance(stored_results, list):
+        return False
+    stored_refs: dict[str, list[tuple[str, str]]] = {}
+    for candidate in stored_results:
+        if not isinstance(candidate, Mapping):
+            return False
+        arm = candidate.get("arm")
+        identity = _ref_identity(candidate.get("refs"))
+        bootstrap = candidate.get("bootstrap")
+        if not isinstance(arm, str) or identity is None:
+            return False
+        if not isinstance(bootstrap, Mapping) or bootstrap.get("resamples") != resamples:
+            return False
+        stored_refs[arm] = identity
+    return stored_refs == dict(current_refs)
+
+
+def _bind_candidate_to_baseline_contract(
+    rows: list[dict[str, str]], baseline: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    """Validate protected row values numerically and canonicalize their exact text."""
+    by_token = {row["token_id"]: row for row in baseline}
+    expected_weights = _expected_weights(baseline)
+    if set(by_token) != {row["token_id"] for row in rows}:
+        raise V8AggregateIntegrityError("candidate token set differs from frozen A5 baseline")
+    normalized: list[dict[str, str]] = []
+    for row in rows:
+        base = by_token[row["token_id"]]
+        for key in ("sequence_id", "track_id", "outer_fold"):
+            if str(row[key]) != str(base[key]):
+                raise V8AggregateIntegrityError(f"candidate {key} differs from baseline")
+        if abs(float(row["target_ttc"]) - float(base["target_ttc"])) > 1e-6:
+            raise V8AggregateIntegrityError("candidate target differs from baseline")
+        expected_weight = float(expected_weights[row["token_id"]])
+        if not math.isclose(
+            float(row["sample_weight"]), expected_weight, rel_tol=2e-5, abs_tol=1e-10
+        ):
+            raise V8AggregateIntegrityError(
+                "candidate MiD sample weight differs from frozen definition"
+            )
+        item = dict(row)
+        item["sequence_id"] = base["sequence_id"]
+        item["track_id"] = base["track_id"]
+        item["outer_fold"] = base["outer_fold"]
+        item["target_ttc"] = base["target_ttc"]
+        item["sample_weight"] = expected_weights[row["token_id"]]
+        normalized.append(item)
+    return normalized
+
+
+def aggregate_seed7(
+    *,
+    protocol: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    results_root: Path,
+    repository_root: Path = ROOT,
+    allow_fixture: bool = False,
+    resamples: int = 5000,
+    bootstrap_seed: int = _DEFAULT_BOOTSTRAP_SEED,
+    existing_output: Path | None = None,
+) -> dict[str, Any]:
+    """Recompute and sign one screen decision; fixtures can never nominate a winner."""
+    _closed(protocol.get("closed_evaluation", {}))
+    _closed(manifest.get("closed_evaluation", {}))
+    configs = manifest.get("enabled_seed7_configs")
+    if not isinstance(configs, Mapping):
+        raise V8AggregateIntegrityError("missing frozen configs")
+    source = (
+        protocol.get("sources", {}).get("a5_oof_predictions")
+        if isinstance(protocol.get("sources"), Mapping)
+        else None
+    )
+    if not isinstance(source, Mapping):
+        raise V8AggregateIntegrityError("missing frozen A5 control")
+    a5 = _resolve(repository_root, repository_root, source.get("path"))
+    if isinstance(source.get("sha256"), str) and source["sha256"] != _sha(a5):
+        raise V8AggregateIntegrityError("frozen A5 hash mismatch")
+    a5_sha256 = _sha(a5)
+    existing = (
+        _load_signed_seed7_aggregate(existing_output) if existing_output is not None else None
+    )
+    if existing is not None:
+        current_refs = _collect_current_refs(
+            protocol=protocol,
+            manifest=manifest,
+            results_root=results_root,
+            repository_root=repository_root,
+            allow_fixture=allow_fixture,
+        )
+        if _full_seed7_aggregate_reusable(
+            existing,
+            protocol=protocol,
+            manifest=manifest,
+            a5_sha256=a5_sha256,
+            current_refs=current_refs,
+            resamples=resamples,
+            bootstrap_seed=bootstrap_seed,
+            allow_fixture=allow_fixture,
+        ):
+            return existing
+    base = _read_rows(a5, candidate=False)
+    candidates = []
+    for arm, candidate_id in _CANDIDATES.items():
+        entries = _candidate_config_entries(manifest, arm=arm, results_root=results_root)
+        if not entries:
+            continue
+        if len(entries) != 3:
+            raise V8AggregateIntegrityError(f"incomplete frozen configs for {arm}")
+        rows = []
+        refs = []
+        for fold in range(3):
+            entry = next((e for n, e in entries if f"fold{fold}_" in str(n)), None)
+            if not isinstance(entry, Mapping) or not isinstance(entry.get("sha256"), str):
+                raise V8AggregateIntegrityError("invalid frozen config hash")
+            r, ref = _fold_rows(
+                arm=arm,
+                fold=fold,
+                config_hash=entry["sha256"],
+                protocol=protocol,
+                manifest=manifest,
+                results_root=results_root,
+                repository_root=repository_root,
+                allow_fixture=allow_fixture,
+            )
+            rows += r
+            refs.append(ref)
+        if len({r["token_id"] for r in rows}) != len(rows):
+            raise V8AggregateIntegrityError("duplicate OOF tokens across folds")
+        if not allow_fixture:
+            rows = _bind_candidate_to_baseline_contract(rows, base)
+        hashes = contract_hashes(rows)
+        expected = protocol.get("sample_contract", {})
+        if len(rows) != expected.get("rows") or any(hashes[k] != expected.get(k) for k in hashes):
+            raise V8AggregateIntegrityError(
+                "OOF rows/folds/targets/weights differ from frozen contract"
+            )
+        metrics, per_sequence, per_bucket = _metrics(rows, base)
+        boot = _existing_bootstrap_for_arm(
+            existing,
+            arm=arm,
+            refs=refs,
+            resamples=resamples,
+            bootstrap_seed=bootstrap_seed,
+        )
+        if boot is None:
+            boot = _bootstrap(rows, base, resamples, bootstrap_seed)
+        gate = protocol.get("gates", {}).get("ttc_candidate_gate", {})
+        passed = (
+            math.isfinite(metrics["mid_macro_sequence"])
+            and math.isfinite(metrics["delta_mid_vs_a5"])
+            and metrics["delta_mid_vs_a5"] <= float(gate.get("delta_MiD_max", -3))
+            and boot["probability_delta_lt_zero"]
+            >= float(gate.get("bootstrap_probability_delta_below_zero_min", 0.9))
+            and metrics["finite_fraction"] == 1
+            and metrics["failure_rate"] == 0
+            and metrics["coverage_drop_max_pp"] <= float(gate.get("coverage_drop_max_pp", 1))
+        )
+        candidates.append(
+            {
+                "arm": arm,
+                "candidate_id": candidate_id,
+                "metrics": metrics,
+                "bootstrap": boot,
+                "per_sequence": per_sequence,
+                "per_bucket": per_bucket,
+                "passed": passed,
+                "refs": refs,
+                "rows": rows,
+                "hashes": hashes,
+            }
+        )
+    admissible = [x for x in candidates if x["passed"]]
+    winner = (
+        min(admissible, key=lambda x: x["metrics"]["mid_macro_sequence"]) if admissible else None
+    )
+    report = {
+        "artifact_type": "scientific_recovery_v8_seed7_aggregate_v1",
+        "schema_version": protocol.get("schema_version", "scientific_recovery_v8_temporal_v1"),
+        "status": "completed",
+        "git_commit": protocol.get("git_base_commit"),
+        "base_git_commit": protocol.get("git_base_commit"),
+        "implementation_git_commit": _implementation_commit(repository_root),
+        "protocol_sha256": protocol.get("artifact_sha256"),
+        "frozen_manifest_sha256": manifest.get("artifact_sha256"),
+        "seed": 7,
+        "candidate_id": winner["candidate_id"] if winner else "A5",
+        "multiseed_replication_candidate": bool(winner and not allow_fixture),
+        "selection_reason": "admissible_lowest_macro_MiD"
+        if winner and not allow_fixture
+        else "fixture_smoke_no_nomination"
+        if allow_fixture
+        else "no_downstream_arm_passed; fallback_A5",
+        "fixture": allow_fixture,
+        "candidate_results": [
+            {k: v for k, v in x.items() if k not in {"rows"}} for x in candidates
+        ],
+        "a5_control": {"path": str(a5), "sha256": a5_sha256},
+        "closed_evaluation": {
+            "public_validation_used_for_selection": False,
+            "private_test_opened": False,
+            "evttc_test_opened": False,
+            "codabench_opened": False,
+        },
+    }
+    sign_artifact(report)
+    return report
+
+
+__all__ = ["V8AggregateIntegrityError", "aggregate_seed7", "contract_hashes"]

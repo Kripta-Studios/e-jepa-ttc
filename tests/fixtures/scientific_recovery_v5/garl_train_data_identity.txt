@@ -1,0 +1,4 @@
+V5 Garl grouped-development identity-metadata fixture.
+Historical ignored source: artifacts/scientific_recovery_master_v3/garl_budget_subset/train_data.parquet
+Historical SHA-256 recorded in V7 evidence fold0 summary: 50534e49323b10fb5cc1ab850391d85b88c7669b39f866e798cf0a18d621bbcd
+This text fixture exercises only manifest source hashing; it is not training data.

@@ -1,0 +1,31 @@
+name: release-validation
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - run: uv sync --locked --all-groups --no-editable
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check .
+      - name: Type-check maintained modules and the manuscript CI entry point
+        run: |
+          uvx --from pyright==1.1.411 pyright
+          uvx --from pyright==1.1.411 pyright scripts/ci_paper_validation.py
+      - run: uv run --no-sync pytest -q
+      - run: uv build --wheel --no-sources
+      - name: Verify current and legacy command entry points
+        run: |
+          uv run --no-sync phase-ttc --help
+          uv run --no-sync e-jepa-ttc --help

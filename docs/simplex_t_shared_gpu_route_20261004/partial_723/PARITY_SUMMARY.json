@@ -1,0 +1,12 @@
+{
+  "status": "VERIFIED_WITH_PREREGISTERED_NUMERICAL_TOLERANCES",
+  "queries": 64,
+  "maximum_normalized_feature_error": 0.0,
+  "maximum_point_phase_error": 0.0,
+  "maximum_ttc_error_seconds": 0.0,
+  "canonical_adapter_raw_feature_difference": 0,
+  "measured_routes_checked": 723,
+  "excluded_producer_call_contract_verified": true,
+  "normalizer_reused": true,
+  "optimizer_updates": 0
+}

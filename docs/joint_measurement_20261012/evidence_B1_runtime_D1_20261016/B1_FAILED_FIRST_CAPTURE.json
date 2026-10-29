@@ -1,0 +1,17 @@
+{
+  "cause": "pixels.new_tensor copies CPU constants to CUDA inside capture",
+  "checkpoint_sha256": "fe507e6f94db164b63a83b9425d2bc446d9434dfdbc91da6cda00b43fd37dddd",
+  "eager_updates_already_counted": 10,
+  "journal": {
+    "completed_updates": 0,
+    "durable_updates": 0,
+    "identity_sha256": "48c3fa915ff5d1d0032d663bdb49a812f08798775844b8c4afc2f6e30ac58d2b",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "repair": "Immutable affine matrices allocated as a core buffer before capture",
+  "scientific_updates": 0,
+  "stderr_sha256": "f3cb50186010a0b296d46dc480ac11cb80beda1e00c8f86b9ec48aa0c96c28dd",
+  "utc": "2026-10-16T05:04:53.882082+00:00"
+}

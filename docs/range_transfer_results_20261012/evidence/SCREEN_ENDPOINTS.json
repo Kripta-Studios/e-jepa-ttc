@@ -1,0 +1,80 @@
+{
+  "RT-M0-L0-S7": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M0-L0-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "82d6993d4ceabab35af8f6363fdbe13e91bf09ac7109ffc89951e591fb16e49c",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "RT-M0-L0-S7",
+    "identity_sha256": "daa40bb0b5833c2e8da6a5e87a43c5cf5f5e86b4a85afe1958b11e33962e7784",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  },
+  "RT-M0-L1-S7": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M0-L1-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "e568a5c328e553f53c421bf1c5e1e362016b537ac775fe1351e8e74b52595624",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "RT-M0-L1-S7",
+    "identity_sha256": "c323a5600e3d3800d1acdf3dde7ea340e9193b7ba76bbcde7e308fb4057cdc8b",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  },
+  "RT-M1-L0-S7": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M1-L0-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "e9898f484f7ced79c68476552878703d9aa55a418045388d9d3131bfcfdf08a3",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "RT-M1-L0-S7",
+    "identity_sha256": "63ffd8bd2e4a1456b6c54c5b74d8dc06e5c68c2f2ce5668c318eb24249f443af",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  },
+  "RT-M1-L1-S7": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M1-L1-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "5ca79e22431ec20b37bef5cf900300470701a4c1fb31ad8ba054d18f0cd1d7da",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "RT-M1-L1-S7",
+    "identity_sha256": "f12007be28648238c622dd3be38f6395c54683300a46443e92edab6316428845",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  },
+  "RT-M2-L0-S7": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M2-L0-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "0fa09ff3d63f0b11ba55712500ad96ea8025ba11bcbb5293b82ee35131e16752",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "RT-M2-L0-S7",
+    "identity_sha256": "99195eb18a6b96b0a356cabc4c716ca994f7178e73be3e8f13426bd0f196ba0a",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  },
+  "RT-M2-L1-S7": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M2-L1-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "f32ed81eddbf526e30fea234fb905ec5b8755e3f92a25dea5bccb2907caea1c9",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "RT-M2-L1-S7",
+    "identity_sha256": "5ff2fd71353110213aca8ab341a2164917f3b1c9531d73cde0ae86351bcaf9b8",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "train40_causal_pilot_generation_receipt_v1",
+  "status": "COMPLETE",
+  "started_utc": "2026-10-28T08:54:15.749553+00:00",
+  "ended_utc": "2026-10-28T08:54:16.036383+00:00",
+  "command_argv": [
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+    "docs/train40_runtime_council_20261028/audit_and_build_manifest.py",
+    "--base-manifest",
+    "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json",
+    "--output",
+    "artifacts/train40_runtime_council_20261028/measurement_audit_v1",
+    "--sequence",
+    "CPLA-low",
+    "--updates",
+    "250"
+  ],
+  "git_commit": "2521de1a585f515d4d4a7d184fce5193ffc65658",
+  "python": "3.11.15",
+  "host": "DESKTOP-2N393IP",
+  "base_manifest": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\QUERY_MANIFEST.json",
+  "base_manifest_sha256": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31",
+  "base_manifest_canonical_sha256": "3ee044ae790c60db3ebeb36efc01ea0b18629927daa53d2037b0b222c643d38d",
+  "configuration": {
+    "sequence_ids": [
+      "CPLA-low"
+    ],
+    "bounds_us": {
+      "CPLA-low": [
+        16750664,
+        21730664
+      ]
+    },
+    "max_updates_per_sequence": 250,
+    "step_us": 20000,
+    "annotation_delay_us": 0
+  },
+  "configuration_hash": "f36ece8db55b2e678db4ffbd4f5a58de0b6af6dd2263c335e6c9f10a9a999a21",
+  "source_sha256": {
+    "docs\\train40_runtime_council_20261028\\audit_and_build_manifest.py": "6542085a8a199cc96c4ff555f8a872202bf6b12b106e77ebb6a75270a0810d65",
+    "operational\\train40_runtime\\replay_inputs.py": "3d2bc7f0053b307276be5c53c913f7eea104f9245929c75e13800171a13de17b",
+    "operational\\rgb_port_revision\\transfer_inputs.py": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+    "operational\\evttc_transfer\\inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417"
+  },
+  "output_sha256": {
+    "raw_sequence_inventory.json": "3a6a5be2050ced47305346a94a17c0e9e9dd48237cd8933da318303211d00444",
+    "causal_pilot_manifest.json": "b23cbb361c98810d666192c5535d846af99248774c5327ff97f15461befa118e"
+  },
+  "checks": {
+    "scheduled_count_exact": true,
+    "accepted_count_exact": true,
+    "no_excluded_slots": true,
+    "unchanged_base_bytes": true,
+    "base_canonical_binding_exact": true,
+    "fixed_20ms_grid": true,
+    "full_620ms_initial_sensor_support": true,
+    "ttc_targets_not_read": true,
+    "no_optimizer_updates": true
+  },
+  "offered_duration_s_if_replayed_at_50hz": 5.0,
+  "sensor_anchor_span_s": 4.98,
+  "latency_measured": false,
+  "numerical_ttc_parity_measured": false,
+  "gpu_used": false,
+  "weights_or_normalizers_loaded": false,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

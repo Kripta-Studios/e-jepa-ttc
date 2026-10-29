@@ -1,0 +1,48 @@
+{
+  "anchor_us": 7600223,
+  "artifact_sha256": "dcb52014046818cfe33d6b5fdfecc95122b6b085cbf941886bfdad241464cbec",
+  "config": {
+    "coarse_log_steps": 65,
+    "maximum_events": 50000,
+    "maximum_inverse_ttc_per_s": 10.0,
+    "minimum_events": 1000,
+    "minimum_inverse_ttc_per_s": 0.01,
+    "minimum_relative_contrast_gain": 0.01,
+    "minimum_survival_fraction": 0.8,
+    "optimizer_absolute_tolerance": 1e-05,
+    "optimizer_maximum_iterations": 64
+  },
+  "diagnostics": {
+    "contrast": 1.2789338473081335,
+    "evaluations": 78,
+    "event_count": 6667,
+    "inverse_ttc_per_s": 0.04127059280760788,
+    "null_contrast": 1.2284004759763603,
+    "null_survival_fraction": 0.999550022498875,
+    "object_event_count": 6667,
+    "prediction_ttc_s": 24.230327988302086,
+    "reason": "ok",
+    "relative_contrast_gain": 0.04113753805867603,
+    "roi_event_count": 6748,
+    "roi_xyxy": [
+      602,
+      327,
+      659,
+      377
+    ],
+    "survival_fraction": 0.999550022498875,
+    "valid": true
+  },
+  "failure": null,
+  "prediction_ttc_s": 24.230327988302086,
+  "query_id": "CCRs-2-medium-100-overlap-100:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "4223ccd2a1aa40198b9e169ec27b4b54a8b3d0fcd8fcd945270e93896775003f",
+  "runtime_s": 1.2830915999948047,
+  "schema": "evttc_cmax_reference_equation_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CCRs-2-medium-100-overlap-100",
+  "source_sha256": "7d4e9443541fa52e5ecf8f89c186eccd35adb75e21fe290643204bc3bf063f92",
+  "status": "SUCCESS",
+  "target_fields_opened": []
+}

@@ -1,0 +1,9 @@
+{
+  "tool": "py-spy 0.4.2",
+  "command": "uv tool run --from py-spy py-spy record --pid 28392 --duration 40 --rate 50 --threads --idle --nonblocking --format speedscope --output artifacts/joint_measurement_20261012/runtime/A1_live_profile_20261016/STACKS.json",
+  "reported_thread_samples": 5760,
+  "reported_errors": 79,
+  "mode": "Nonblocking external stack sampling; no code injection, stop, restart or optimizer updates",
+  "resource_sampling": "20 psutil/nvidia-smi observations with 2s spacing plus query overhead",
+  "scope": "A1-LAST-BLOCK scientific child, second bounded segment; earlier CPU unit tests and Pyright had finished"
+}

@@ -1,0 +1,322 @@
+{
+  "status": "FAILED",
+  "scope": "REGISTERED_SINGLE_OBJECT_LAST_PACKET_REPLAY_WITH_PER_QUERY_HISTORY_INITIALIZATION",
+  "coverage": {
+    "passed": true,
+    "expected": 554,
+    "records": 554,
+    "unique_present": 554,
+    "missing_ids": [],
+    "unexpected_ids": [],
+    "duplicate_ids": [],
+    "invalid_id_record_indices": []
+  },
+  "prediction_components": {
+    "PHASE_ONLY_TRAIN40_S7": {
+      "finite_pairs": 554,
+      "max_abs_error": 0.0001888275146484375,
+      "max_relative_error": 7.335873175646146e-06,
+      "passed_count": 554
+    },
+    "E_CTX_TRAIN40": {
+      "finite_pairs": 554,
+      "max_abs_error": 0.000637054443359375,
+      "max_relative_error": 3.846582242337017e-05,
+      "passed_count": 549
+    },
+    "R_CTX_TRAIN40": {
+      "finite_pairs": 554,
+      "max_abs_error": 0.00031280517578125,
+      "max_relative_error": 8.604765592018891e-06,
+      "passed_count": 554
+    }
+  },
+  "failed_queries": [
+    {
+      "index": 137,
+      "predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 5.479012489318848,
+        "E_CTX_TRAIN40": 9.398966789245605,
+        "R_CTX_TRAIN40": 4.972960948944092
+      },
+      "query_id": "EXTENDED:CCRs-1-high-50-overlap-50:15002363",
+      "passed": false,
+      "exact": false,
+      "metadata_mismatches": [],
+      "components": {
+        "PHASE_ONLY_TRAIN40_S7": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 9.5367431640625e-06,
+          "allowed_abs_error": 6.479002952575685e-05
+        },
+        "E_CTX_TRAIN40": {
+          "passed": false,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.00014495849609375,
+          "allowed_abs_error": 0.00010398821830749512
+        },
+        "R_CTX_TRAIN40": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 4.76837158203125e-07,
+          "allowed_abs_error": 5.9729614257812506e-05
+        }
+      }
+    },
+    {
+      "index": 488,
+      "predictions": {
+        "PHASE_ONLY_TRAIN40_S7": -59.999996185302734,
+        "E_CTX_TRAIN40": -6.1393022537231445,
+        "R_CTX_TRAIN40": 36.352237701416016
+      },
+      "query_id": "EXTENDED:CPNA-low:25250866",
+      "passed": false,
+      "exact": false,
+      "metadata_mismatches": [],
+      "components": {
+        "PHASE_ONLY_TRAIN40_S7": {
+          "passed": true,
+          "exact": true,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.0,
+          "allowed_abs_error": 0.0006099999618530274
+        },
+        "E_CTX_TRAIN40": {
+          "passed": false,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 7.724761962890625e-05,
+          "allowed_abs_error": 7.139225006103516e-05
+        },
+        "R_CTX_TRAIN40": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.00031280517578125,
+          "allowed_abs_error": 0.000373525505065918
+        }
+      }
+    },
+    {
+      "index": 505,
+      "predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 2.9750123023986816,
+        "E_CTX_TRAIN40": 13.065287590026855,
+        "R_CTX_TRAIN40": 2.0763726234436035
+      },
+      "query_id": "EXTENDED:CPNA-medium:20550743",
+      "passed": false,
+      "exact": false,
+      "metadata_mismatches": [],
+      "components": {
+        "PHASE_ONLY_TRAIN40_S7": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 3.814697265625e-06,
+          "allowed_abs_error": 3.9750161170959476e-05
+        },
+        "E_CTX_TRAIN40": {
+          "passed": false,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.0005025863647460938,
+          "allowed_abs_error": 0.000140657901763916
+        },
+        "R_CTX_TRAIN40": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 2.384185791015625e-07,
+          "allowed_abs_error": 3.076372861862183e-05
+        }
+      }
+    },
+    {
+      "index": 514,
+      "predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 3.416823625564575,
+        "E_CTX_TRAIN40": 13.049092292785645,
+        "R_CTX_TRAIN40": 2.861302375793457
+      },
+      "query_id": "EXTENDED:CPNAO-high:15900477",
+      "passed": false,
+      "exact": false,
+      "metadata_mismatches": [],
+      "components": {
+        "PHASE_ONLY_TRAIN40_S7": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 2.6226043701171875e-06,
+          "allowed_abs_error": 4.4168262481689454e-05
+        },
+        "E_CTX_TRAIN40": {
+          "passed": false,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.0003070831298828125,
+          "allowed_abs_error": 0.00014049399375915529
+        },
+        "R_CTX_TRAIN40": {
+          "passed": true,
+          "exact": true,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.0,
+          "allowed_abs_error": 3.8613023757934575e-05
+        }
+      }
+    },
+    {
+      "index": 533,
+      "predictions": {
+        "PHASE_ONLY_TRAIN40_S7": 2.466357946395874,
+        "E_CTX_TRAIN40": -34.32868194580078,
+        "R_CTX_TRAIN40": 2.1045165061950684
+      },
+      "query_id": "EXTENDED:CPNAO-low:24600842",
+      "passed": false,
+      "exact": false,
+      "metadata_mismatches": [],
+      "components": {
+        "PHASE_ONLY_TRAIN40_S7": {
+          "passed": true,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 2.384185791015625e-07,
+          "allowed_abs_error": 3.4663577079772955e-05
+        },
+        "E_CTX_TRAIN40": {
+          "passed": false,
+          "exact": false,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.000637054443359375,
+          "allowed_abs_error": 0.00035328044891357426
+        },
+        "R_CTX_TRAIN40": {
+          "passed": true,
+          "exact": true,
+          "reference_state": "finite",
+          "candidate_state": "finite",
+          "finite_mask_equal": true,
+          "abs_error": 0.0,
+          "allowed_abs_error": 3.1045165061950685e-05
+        }
+      }
+    }
+  ],
+  "input_parity": {
+    "passed_count": 554,
+    "exact_count": 553,
+    "max_abs_error": 5.820766091346741e-11,
+    "nonexact": [
+      {
+        "index": 321,
+        "query_id": "CCRs2-medium:11400314",
+        "exact": false,
+        "max_abs": 5.820766091346741e-11,
+        "different_values": 3,
+        "passed": true
+      }
+    ]
+  },
+  "latency_ms": {
+    "count": 554,
+    "mean_ms": 44.24839440433213,
+    "p50_ms": 40.590599999999995,
+    "p95_ms": 63.77779,
+    "p99_ms": 98.4152660000001,
+    "min_ms": 26.4448,
+    "max_ms": 294.5156,
+    "quantile_method": "linear",
+    "strictly_under_20ms_count": 0,
+    "at_least_20ms_count": 554,
+    "over_50ms_count": 118,
+    "over_100ms_count": 6,
+    "inverse_mean_capacity_hz_not_sustained_throughput": 22.599690078293442
+  },
+  "originals": {
+    "passed": true,
+    "files": 603,
+    "changed": [],
+    "missing": []
+  },
+  "cleanup_errors": [],
+  "runtime_error": null,
+  "source_relocation": {
+    "status": "VERIFIED",
+    "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+    "runtime_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc",
+    "wrapper_sha256": "811eae1ebbe58c9fcee62dd222d73c64a74f07c7c18ba0f3622dc1464bb029d1",
+    "source_relocations": [
+      {
+        "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\final_refit\\test12.py",
+        "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\final_refit\\test12.py",
+        "sha256": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6"
+      },
+      {
+        "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port\\transfer.py",
+        "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\rgb_port\\transfer.py",
+        "sha256": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73"
+      },
+      {
+        "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port_revision\\transfer_inputs.py",
+        "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\rgb_port_revision\\transfer_inputs.py",
+        "sha256": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad"
+      },
+      {
+        "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\rgb_port_streaming\\contracts.py",
+        "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\operational\\rgb_port_streaming\\contracts.py",
+        "sha256": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c"
+      },
+      {
+        "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\final_train40_transfer.py",
+        "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\scripts\\final_train40_transfer.py",
+        "sha256": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730"
+      },
+      {
+        "original": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py",
+        "relocated": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py",
+        "sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934"
+      }
+    ],
+    "original_and_relocated_sources_intact": true
+  },
+  "binding_sha256": "ab9fab7563d952cb28a44dd2e66a175e170ebd0ba195abdba3ed4369fcf8e603",
+  "summary_sha256": "b58c2d0ef05c6cd8e66a4bcca2147bb79c5ec611c99ba0ec2c4e578adfe56d00",
+  "queries_sha256": "f0e567078fdeedbf66a32c83d7d17a7f62700ed95100ac25e8e808ecff15aa92",
+  "timing_caveat": "Other swarm agents performed CPU development; desktop GPU shared. Single-object registered replay with per-query history initialization outside clock. Not sustained and not isolated before/after performance evidence."
+}

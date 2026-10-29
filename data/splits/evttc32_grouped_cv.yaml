@@ -1,0 +1,237 @@
+protocol: evttc32_grouped_cv_v1
+role: development_model_selection
+seed: 7
+fold_count: 5
+sequence_count: 32
+manifest: data/manifests/evttc32_local.yaml
+manifest_sha256: f555067ad2e8a1556b45095d98287582f4fccd4afa7fed6784b7aa8d4c938bc3
+benchmark10_opened: false
+folds:
+- fold: 0
+  train:
+  - CCRm-low-100-overlap-100
+  - CCRm-low-50-overlap-50
+  - CCRm-medium-0-overlap-0
+  - CCRm-medium-100-overlap-100
+  - CCRs-1-high-0-overlap-0
+  - CCRs-1-high-100-overlap-100
+  - CCRs-1-high-50-overlap-50
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-low-50-overlap-50
+  - CCRs-1-medium-0-overlap-0
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-1-medium-50-overlap-50
+  - CCRs-2-low-100-overlap-100
+  - CCRs-2-medium-100-overlap-100
+  - CCRs-3-low-100-overlap-100
+  - CCRs-side-high
+  - CCRs-side-low
+  - CCRs-side-medium
+  - CPLA-high
+  - CPLA-low
+  - CPNA-high
+  - CPNA-low
+  - CPNA-medium
+  - CPNAO-high
+  - CPNAO-medium
+  validation:
+  - CCRm-low-0-overlap-0
+  - CCRm-medium-50-overlap-50
+  - CCRs-1-low-0-overlap-0
+  - CCRs-2-high-100-overlap-100
+  - CCRs-3-medium-100-overlap-100
+  - CPLA-medium
+  - CPNAO-low
+  validation_family_counts:
+    CCRm: 2
+    CCRs-1: 1
+    CCRs-2: 1
+    CCRs-3: 1
+    CPLA: 1
+    CPNAO: 1
+  validation_speed_counts:
+    low: 3
+    medium: 3
+    high: 1
+- fold: 1
+  train:
+  - CCRm-low-0-overlap-0
+  - CCRm-low-50-overlap-50
+  - CCRm-medium-0-overlap-0
+  - CCRm-medium-100-overlap-100
+  - CCRm-medium-50-overlap-50
+  - CCRs-1-high-0-overlap-0
+  - CCRs-1-high-100-overlap-100
+  - CCRs-1-low-0-overlap-0
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-low-50-overlap-50
+  - CCRs-1-medium-0-overlap-0
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-2-high-100-overlap-100
+  - CCRs-2-medium-100-overlap-100
+  - CCRs-3-low-100-overlap-100
+  - CCRs-3-medium-100-overlap-100
+  - CCRs-side-high
+  - CCRs-side-low
+  - CPLA-high
+  - CPLA-low
+  - CPLA-medium
+  - CPNA-low
+  - CPNA-medium
+  - CPNAO-high
+  - CPNAO-low
+  validation:
+  - CCRm-low-100-overlap-100
+  - CCRs-1-high-50-overlap-50
+  - CCRs-1-medium-50-overlap-50
+  - CCRs-2-low-100-overlap-100
+  - CCRs-side-medium
+  - CPNA-high
+  - CPNAO-medium
+  validation_family_counts:
+    CCRm: 1
+    CCRs-1: 2
+    CCRs-2: 1
+    CCRs-side: 1
+    CPNA: 1
+    CPNAO: 1
+  validation_speed_counts:
+    low: 2
+    high: 2
+    medium: 3
+- fold: 2
+  train:
+  - CCRm-low-0-overlap-0
+  - CCRm-low-100-overlap-100
+  - CCRm-medium-0-overlap-0
+  - CCRm-medium-100-overlap-100
+  - CCRm-medium-50-overlap-50
+  - CCRs-1-high-0-overlap-0
+  - CCRs-1-high-50-overlap-50
+  - CCRs-1-low-0-overlap-0
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-low-50-overlap-50
+  - CCRs-1-medium-0-overlap-0
+  - CCRs-1-medium-50-overlap-50
+  - CCRs-2-high-100-overlap-100
+  - CCRs-2-low-100-overlap-100
+  - CCRs-3-low-100-overlap-100
+  - CCRs-3-medium-100-overlap-100
+  - CCRs-side-high
+  - CCRs-side-medium
+  - CPLA-high
+  - CPLA-low
+  - CPLA-medium
+  - CPNA-high
+  - CPNA-medium
+  - CPNAO-high
+  - CPNAO-low
+  - CPNAO-medium
+  validation:
+  - CCRm-low-50-overlap-50
+  - CCRs-1-high-100-overlap-100
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-2-medium-100-overlap-100
+  - CCRs-side-low
+  - CPNA-low
+  validation_family_counts:
+    CCRm: 1
+    CCRs-1: 2
+    CCRs-2: 1
+    CCRs-side: 1
+    CPNA: 1
+  validation_speed_counts:
+    low: 3
+    high: 1
+    medium: 2
+- fold: 3
+  train:
+  - CCRm-low-0-overlap-0
+  - CCRm-low-100-overlap-100
+  - CCRm-low-50-overlap-50
+  - CCRm-medium-0-overlap-0
+  - CCRm-medium-50-overlap-50
+  - CCRs-1-high-100-overlap-100
+  - CCRs-1-high-50-overlap-50
+  - CCRs-1-low-0-overlap-0
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-medium-0-overlap-0
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-1-medium-50-overlap-50
+  - CCRs-2-high-100-overlap-100
+  - CCRs-2-low-100-overlap-100
+  - CCRs-2-medium-100-overlap-100
+  - CCRs-3-medium-100-overlap-100
+  - CCRs-side-high
+  - CCRs-side-low
+  - CCRs-side-medium
+  - CPLA-low
+  - CPLA-medium
+  - CPNA-high
+  - CPNA-low
+  - CPNAO-high
+  - CPNAO-low
+  - CPNAO-medium
+  validation:
+  - CCRm-medium-100-overlap-100
+  - CCRs-1-high-0-overlap-0
+  - CCRs-1-low-50-overlap-50
+  - CCRs-3-low-100-overlap-100
+  - CPLA-high
+  - CPNA-medium
+  validation_family_counts:
+    CCRm: 1
+    CCRs-1: 2
+    CCRs-3: 1
+    CPLA: 1
+    CPNA: 1
+  validation_speed_counts:
+    medium: 2
+    high: 2
+    low: 2
+- fold: 4
+  train:
+  - CCRm-low-0-overlap-0
+  - CCRm-low-100-overlap-100
+  - CCRm-low-50-overlap-50
+  - CCRm-medium-100-overlap-100
+  - CCRm-medium-50-overlap-50
+  - CCRs-1-high-0-overlap-0
+  - CCRs-1-high-100-overlap-100
+  - CCRs-1-high-50-overlap-50
+  - CCRs-1-low-0-overlap-0
+  - CCRs-1-low-50-overlap-50
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-1-medium-50-overlap-50
+  - CCRs-2-high-100-overlap-100
+  - CCRs-2-low-100-overlap-100
+  - CCRs-2-medium-100-overlap-100
+  - CCRs-3-low-100-overlap-100
+  - CCRs-3-medium-100-overlap-100
+  - CCRs-side-low
+  - CCRs-side-medium
+  - CPLA-high
+  - CPLA-medium
+  - CPNA-high
+  - CPNA-low
+  - CPNA-medium
+  - CPNAO-low
+  - CPNAO-medium
+  validation:
+  - CCRm-medium-0-overlap-0
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-medium-0-overlap-0
+  - CCRs-side-high
+  - CPLA-low
+  - CPNAO-high
+  validation_family_counts:
+    CCRm: 1
+    CCRs-1: 2
+    CCRs-side: 1
+    CPLA: 1
+    CPNAO: 1
+  validation_speed_counts:
+    medium: 2
+    low: 2
+    high: 2
+protocol_sha256: f42a35e4b853bc1874bc2eacbbf49604a7daf9a69191af91fd4d87e05d741910

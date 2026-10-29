@@ -1,0 +1,521 @@
+{
+  "cost_admitted": false,
+  "optimizer_updates": 0,
+  "registration_sha256": "875755e52aa7baa9775b826f9449b728f730dfbf3da49790b486b5efb90bf500",
+  "rows": [
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 5.065463483333588e-06,
+          "mean_absolute_difference": 3.3409645160039267e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0017981529235839844,
+          "mean_absolute_difference": 0.00035918304039274943,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_cached_vs_raw_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0011682510375976562,
+        "mean_absolute_difference": 0.0011682510375976562,
+        "shape_equal": true
+      },
+      "R_CTX_same_cache_cpu_vs_gpu": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 4.76837158203125e-07,
+        "mean_absolute_difference": 4.76837158203125e-07,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 3.485940396785736e-06,
+          "mean_absolute_difference": 2.581315735975901e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0007705092430114746,
+          "mean_absolute_difference": 0.00014197035309146432,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "event_batch1_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 8.7738037109375e-05,
+        "mean_absolute_difference": 5.80608350585918e-06,
+        "shape_equal": true
+      },
+      "event_batch8_ttc_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_batch8_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "index": 16169,
+      "raw_delta_exact": true,
+      "raw_pixels_exact": true,
+      "raw_rgb28_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0005678236484527588,
+        "mean_absolute_difference": 0.00010585545429161616,
+        "shape_equal": true
+      },
+      "raw_rgb_anchor_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.00015878677368164062,
+        "mean_absolute_difference": 0.00015878677368164062,
+        "shape_equal": true
+      }
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.553686499595642e-06,
+          "mean_absolute_difference": 2.117517093817393e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.000828862190246582,
+          "mean_absolute_difference": 0.00024524287265889784,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_cached_vs_raw_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.002192974090576172,
+        "mean_absolute_difference": 0.002192974090576172,
+        "shape_equal": true
+      },
+      "R_CTX_same_cache_cpu_vs_gpu": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 9.5367431640625e-07,
+        "mean_absolute_difference": 9.5367431640625e-07,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 4.291534423828125e-06,
+          "mean_absolute_difference": 1.591397449374199e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0012111663818359375,
+          "mean_absolute_difference": 0.00014660914665928074,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "event_batch1_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 3.0517578125e-05,
+        "mean_absolute_difference": 3.834801478957643e-06,
+        "shape_equal": true
+      },
+      "event_batch8_ttc_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_batch8_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "index": 7651,
+      "raw_delta_exact": true,
+      "raw_pixels_exact": true,
+      "raw_rgb28_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0006653070449829102,
+        "mean_absolute_difference": 0.00011280775236498033,
+        "shape_equal": true
+      },
+      "raw_rgb_anchor_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0007419586181640625,
+        "mean_absolute_difference": 0.0007419586181640625,
+        "shape_equal": true
+      }
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.985820174217224e-06,
+          "mean_absolute_difference": 1.413126786549886e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0021099448204040527,
+          "mean_absolute_difference": 0.0003640371210434858,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_cached_vs_raw_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0003352165222167969,
+        "mean_absolute_difference": 0.0003352165222167969,
+        "shape_equal": true
+      },
+      "R_CTX_same_cache_cpu_vs_gpu": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.9206275939941406e-06,
+          "mean_absolute_difference": 1.5261272589365642e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0011847615242004395,
+          "mean_absolute_difference": 0.00019519847324665855,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "event_batch1_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 3.528594970703125e-05,
+        "mean_absolute_difference": 5.179640779993972e-06,
+        "shape_equal": true
+      },
+      "event_batch8_ttc_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_batch8_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "index": 1762,
+      "raw_delta_exact": true,
+      "raw_pixels_exact": true,
+      "raw_rgb28_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0005082190036773682,
+        "mean_absolute_difference": 8.535667854760374e-05,
+        "shape_equal": true
+      },
+      "raw_rgb_anchor_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 1.71661376953125e-05,
+        "mean_absolute_difference": 1.71661376953125e-05,
+        "shape_equal": true
+      }
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 1.5176832675933838e-05,
+          "mean_absolute_difference": 9.1275821129481e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.007574945688247681,
+          "mean_absolute_difference": 0.0010167407693670077,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_cached_vs_raw_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.004827022552490234,
+        "mean_absolute_difference": 0.004827022552490234,
+        "shape_equal": true
+      },
+      "R_CTX_same_cache_cpu_vs_gpu": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 6.616115570068359e-06,
+          "mean_absolute_difference": 2.68593430519104e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0011324882507324219,
+          "mean_absolute_difference": 0.000213517204803579,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "event_batch1_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 3.814697265625e-05,
+        "mean_absolute_difference": 4.0793829426473505e-06,
+        "shape_equal": true
+      },
+      "event_batch8_ttc_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_batch8_vs_stored": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "event_raw_vs_prepared_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "index": 1515,
+      "raw_delta_exact": true,
+      "raw_pixels_exact": true,
+      "raw_rgb28_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0011324882507324219,
+        "mean_absolute_difference": 0.00016739618565355028,
+        "shape_equal": true
+      },
+      "raw_rgb_anchor_vs_stored": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0003676414489746094,
+        "mean_absolute_difference": 0.0003676414489746094,
+        "shape_equal": true
+      }
+    }
+  ],
+  "status": "COMPLETE_DIAGNOSTIC",
+  "tolerance_changes": false
+}

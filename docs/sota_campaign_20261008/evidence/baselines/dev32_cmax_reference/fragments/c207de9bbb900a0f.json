@@ -1,0 +1,48 @@
+{
+  "anchor_us": 12750327,
+  "artifact_sha256": "c81f529ccf90c3231cf5802c6b61b18af1a91c9e7c7622fbd86fcbf0039ea9c7",
+  "config": {
+    "coarse_log_steps": 65,
+    "maximum_events": 50000,
+    "maximum_inverse_ttc_per_s": 10.0,
+    "minimum_events": 1000,
+    "minimum_inverse_ttc_per_s": 0.01,
+    "minimum_relative_contrast_gain": 0.01,
+    "minimum_survival_fraction": 0.8,
+    "optimizer_absolute_tolerance": 1e-05,
+    "optimizer_maximum_iterations": 64
+  },
+  "diagnostics": {
+    "contrast": 6.113550747882441,
+    "evaluations": 85,
+    "event_count": 3698,
+    "inverse_ttc_per_s": 0.18659918361991362,
+    "null_contrast": 5.976633570634814,
+    "null_survival_fraction": 1.0,
+    "object_event_count": 3698,
+    "prediction_ttc_s": 5.3590802521243255,
+    "reason": "ok",
+    "relative_contrast_gain": 0.022908745471756413,
+    "roi_event_count": 3815,
+    "roi_xyxy": [
+      624,
+      323,
+      665,
+      358
+    ],
+    "survival_fraction": 1.0,
+    "valid": true
+  },
+  "failure": null,
+  "prediction_ttc_s": 5.3590802521243255,
+  "query_id": "CCRs-2-high-100-overlap-100:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "ccd86fe0452189052f3ccb5b98303b452e03530662d35c86cdc7c9806770dca0",
+  "runtime_s": 1.4254451000015251,
+  "schema": "evttc_cmax_reference_equation_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CCRs-2-high-100-overlap-100",
+  "source_sha256": "7d4e9443541fa52e5ecf8f89c186eccd35adb75e21fe290643204bc3bf063f92",
+  "status": "SUCCESS",
+  "target_fields_opened": []
+}

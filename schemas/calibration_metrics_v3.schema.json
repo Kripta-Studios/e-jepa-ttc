@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "calibration_metrics_v3"
+      ]
+    },
+    "evaluation_split": {
+      "type": "string"
+    },
+    "sample_count": {
+      "type": "integer"
+    },
+    "sample_id_hash": {
+      "type": "string"
+    },
+    "regression": {
+      "type": "object",
+      "properties": {
+        "mae_s": {
+          "type": "number"
+        },
+        "rmse_s": {
+          "type": "number"
+        },
+        "median_abs_error_s": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "mae_s",
+        "rmse_s",
+        "median_abs_error_s"
+      ],
+      "additionalProperties": false
+    },
+    "risk_support": {
+      "type": "array"
+    },
+    "calibration": {
+      "type": "object",
+      "properties": {
+        "conformal_coverage": {
+          "type": "number"
+        },
+        "conformal_scale": {
+          "type": "number"
+        },
+        "temperatures": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "evaluation_split",
+    "sample_count",
+    "sample_id_hash",
+    "regression",
+    "risk_support",
+    "calibration",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
+  ],
+  "additionalProperties": false
+}

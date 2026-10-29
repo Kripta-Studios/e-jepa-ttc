@@ -1,0 +1,24 @@
+{
+  "activation": "Requires every proof; restore complete original scientific checkpoint, verify curve prefix, sample sequence, Adam/scheduler advance and no added recovery. This QA module does not install the candidate or change the live process.",
+  "capture_gate": "One model capture and one loss capture retained across two scopes",
+  "complete_state_gate": "Both A1 arms: current Session4 vs candidate2+2 vs candidate2 then fresh resume2; exact model/Adam/scheduler/sampler/all RNG/cursor curves, excluding timings only",
+  "native": "Next real P B32 from an immutable complete checkpoint captured at quiescence; four alternating paired prepared forward/backward trials, zero optimizer updates",
+  "native_gate": "Bitwise exact loss dict, all parameter gradients, CPU/CUDA RNG and unchanged weights; median warm candidate/reference time ratio <=0.85, first trial excluded",
+  "physical_technical_updates": 24,
+  "preserved": "Same phase terms, reduction order, microbatch ordering, FP32, model guards before backward, sign support, weights, sampler, optimizer and registered objective",
+  "prior_admission_sha256": "3a445e4d25c1f0e6bfc86e4fe53a4c01c5fd2c3600736227f9cb7f0132abecbd",
+  "scientific_registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+  "scientific_updates": 0,
+  "sources": {
+    "operational/joint_measurement/adaptation_loss_graph_runtime.py": "544f7eee2ac6f69b6f49a9b97b6482dd9f603f2702d9534de0837e5a89c38455",
+    "operational/joint_measurement/adaptation_runtime.py": "becde5e793ced4abfe4a6b3981a55d774f1eb8b699838644a0f2abf55180c8ec",
+    "operational/joint_measurement/adaptation_runtime_qa.py": "b963bd9011b52247fd83d8a36536888bb4d0bef912536ec688ff6be9d4b531fd",
+    "operational/joint_measurement/captured_phase_loss.py": "4482a6a2ec82863262b9f39df1cf3226204fc89b2425c95675656eb825fd1a0d",
+    "operational/joint_measurement/captured_phase_loss_qa.py": "58dd595bd958d1b1096d8d9607e7307372638d4ccc7478918fb44d992d21b8f6",
+    "operational/joint_measurement/parallel_training_sensor.py": "91bbb2ad0accda141534c15ed8b695e36b99e1f7d7459ccb154748f8acb8ea48",
+    "operational/joint_measurement/persistent_adaptation.py": "24df7d16d05003609637e71d6f6d328df5530a2bb5a9c9b7398ae1ff8217b231",
+    "operational/joint_measurement/phase_transport_loss.py": "47e21e0c6ece47a21bbededdc919bd29d3ae1ec56c3764ae445eef211a77fa24",
+    "operational/joint_measurement/prefetched_sensor.py": "7cc8b4deab97254d3381f569c041a5ea52387af53a57b3e2a04d9eba80ee6759",
+    "tests/unit/test_captured_phase_loss.py": "036b0af0da0cfb91ec4580a590e5755679025953d7abb4be3ae9395d006a9c55"
+  }
+}

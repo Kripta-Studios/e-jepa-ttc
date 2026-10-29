@@ -1,0 +1,31 @@
+{
+  "V12_commit": "1a686e338a1145c6794bec0704bdae4cda95f06d",
+  "V13_commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+  "files": [
+    {
+      "snapshot": "V12",
+      "path": "src/e_jepa_ttc/simplex_t/cache.py",
+      "sha256": "481d45dc6a5ed6c436f68c18d1e6f9ca80794f600cb074935b4fbfdacbf0ed13"
+    },
+    {
+      "snapshot": "V13",
+      "path": "operational/rgb_port/prepare.py",
+      "sha256": "b21a6c6716aa739064a70245d70ad15bf3e1f1e9073325724a193d73a24b7c9a"
+    },
+    {
+      "snapshot": "V13",
+      "path": "operational/rgb_port/train_heads.py",
+      "sha256": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060"
+    },
+    {
+      "snapshot": "V13",
+      "path": "src/e_jepa_ttc/simplex_t/model.py",
+      "sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd"
+    },
+    {
+      "snapshot": "V13",
+      "path": "src/e_jepa_ttc/simplex_t/phase.py",
+      "sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+    }
+  ]
+}

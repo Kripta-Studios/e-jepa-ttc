@@ -1,0 +1,21 @@
+seeds: [7, 13, 23]
+require_all_seed_screens: true
+mean_pearson_gate: 0.45
+worst_pearson_gate: 0.35
+pearson_std_gate: 0.10
+mean_balanced_sign_gate: 0.68
+worst_balanced_sign_gate: 0.60
+mean_negative_accuracy_gate: 0.55
+ensemble_pearson_gate: 0.55
+ensemble_track_bootstrap_lower_gate: 0.45
+ensemble_sequence_macro_pearson_gate: 0.45
+ensemble_min_sequence_pearson_gate: 0.30
+ensemble_balanced_sign_gate: 0.70
+ensemble_negative_accuracy_gate: 0.60
+ensemble_expansion_mae_gate: 0.022
+ensemble_saturation_gate: 0.08
+per_sequence_negative_min_count: 20
+ensemble_min_sequence_negative_accuracy_gate: 0.20
+pairwise_prediction_pearson_gate: 0.75
+mean_sample_prediction_std_gate: 0.018
+track_bootstrap_repeats: 3000

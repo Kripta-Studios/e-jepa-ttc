@@ -1,0 +1,2976 @@
+{
+  "complete_camera_calibration_counts": {
+    "blackfly_left": 32,
+    "blackfly_right": 32,
+    "event_left": 32,
+    "event_right": 32
+  },
+  "fcwd_dependency": "FCWD requires a separately authorized public inventory, target/ROI/timestamp semantics and ancestry audit. It cannot be added by changing architecture, context length, or windows in this campaign.",
+  "first_sequence_fov_example_deg": {
+    "blackfly_left": 56.592445893931874,
+    "blackfly_right": 23.193148220771967,
+    "event_left": 53.666070584099955,
+    "event_right": 21.830422725217307
+  },
+  "forbidden_reads": [
+    "ttc.csv",
+    "gt.hdf5",
+    "distance",
+    "depth",
+    "sealed benchmark"
+  ],
+  "optics_uncertainty": "The stored pinhole intrinsics imply approximately 54 degrees for event-left and 22 degrees for event-right in the first sequence. A claimed 16 mm lens mapping cannot be verified from focal length in pixels without authoritative sensor pitch/active-area metadata; it is recorded but not used to select queries or models.",
+  "right_camera_dependency": "Right RGB/event calibration and media exist, but the frozen object labels and ROI contract are left-camera only. A right-camera arm needs an independently frozen right ROI correspondence and checkpoint input contract.",
+  "sequence_count": 32,
+  "sequences": [
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRm-low-0-overlap-0"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRm-low-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRm-low-50-overlap-50"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRm-medium-0-overlap-0"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRm-medium-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRm-medium-50-overlap-50"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-high-0-overlap-0"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-high-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-high-50-overlap-50"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-low-0-overlap-0"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-low-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-low-50-overlap-50"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-medium-0-overlap-0"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-medium-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-1-medium-50-overlap-50"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-2-high-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-2-low-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-2-medium-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-3-low-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.20557421328508185,
+            0.14097781624894024,
+            0.0009497814918572887,
+            0.0007149079867400403
+          ],
+          "horizontal_fov_deg_pinhole": 56.592445893931874,
+          "intrinsics": [
+            1783.1950841096034,
+            1782.229678725287,
+            953.2811090578076,
+            608.0900287870767
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            0.007854585582891378,
+            -0.07588188416794327,
+            0.0004248544697792097,
+            0.0014231224401358945
+          ],
+          "horizontal_fov_deg_pinhole": 23.193148220771967,
+          "intrinsics": [
+            4678.175433331083,
+            4675.916093832853,
+            971.0517127273132,
+            590.1940189903296
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2038531903241191,
+            0.13116572142833433,
+            0.0005211190736452007,
+            0.0007977210496758273
+          ],
+          "horizontal_fov_deg_pinhole": 53.666070584099955,
+          "intrinsics": [
+            1265.1715468268378,
+            1263.9320953172312,
+            614.7679130443773,
+            362.5208207897328
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.0012966394634865413,
+            -0.16636604328999108,
+            0.00010240333339156836,
+            0.0010389816555963398
+          ],
+          "horizontal_fov_deg_pinhole": 21.830422725217307,
+          "intrinsics": [
+            3318.7275633511367,
+            3315.8078180219154,
+            641.4355976139799,
+            335.02519149405884
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CCRs-3-medium-100-overlap-100"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "bbox_segmentation",
+      "sequence_id": "CCRs-side-high"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "bbox_segmentation",
+      "sequence_id": "CCRs-side-low"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "bbox_segmentation",
+      "sequence_id": "CCRs-side-medium"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "bbox_segmentation",
+      "sequence_id": "CPLA-high"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "bbox_segmentation",
+      "sequence_id": "CPLA-low"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "bbox_segmentation",
+      "sequence_id": "CPLA-medium"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CPNA-high"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CPNA-low"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CPNA-medium"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.2075830165321507,
+            0.13944857814576048,
+            -0.00047666420156094764,
+            0.0001413605123397915
+          ],
+          "horizontal_fov_deg_pinhole": 56.64514175188112,
+          "intrinsics": [
+            1781.2321200506412,
+            1781.424137450093,
+            969.8189662154316,
+            610.6005730492242
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.0006493884229779502,
+            -0.00854609846383313,
+            0.0006116354140483586,
+            0.0013332696960929482
+          ],
+          "horizontal_fov_deg_pinhole": 23.162095439818152,
+          "intrinsics": [
+            4684.621833707343,
+            4684.788010153691,
+            965.2762110070464,
+            591.0359348499603
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            -0.2066955101193858,
+            0.1335557328001197,
+            0.0009400804679475766,
+            -0.00021485435956761738
+          ],
+          "horizontal_fov_deg_pinhole": 53.69497736476848,
+          "intrinsics": [
+            1264.3795879309337,
+            1264.0594821599805,
+            618.8693821682403,
+            350.459269859969
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_right/calib/T_bfs_to_prophesee"
+          ],
+          "distortion_coeffs": [
+            0.015526182326080693,
+            -0.6696369958762965,
+            0.00016616923458348916,
+            0.001552476009246031
+          ],
+          "horizontal_fov_deg_pinhole": 21.828680367700677,
+          "intrinsics": [
+            3318.998982261081,
+            3318.0789536908683,
+            637.2961331163233,
+            333.7131603581845
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CPNAO-high"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CPNAO-low"
+    },
+    {
+      "cameras": {
+        "blackfly_left": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.1998744843832792,
+            0.13312966939707707,
+            0.0010197906920601468,
+            0.0004796761215432188
+          ],
+          "horizontal_fov_deg_pinhole": 56.7029749433798,
+          "intrinsics": [
+            1779.0816380010128,
+            1778.2373343999473,
+            951.719094313971,
+            611.0659125449033
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "blackfly_right": {
+          "available": true,
+          "distortion_coeffs": [
+            -0.021212915858101842,
+            0.34718504214213775,
+            0.0009471375269003584,
+            0.0016539789715052818
+          ],
+          "horizontal_fov_deg_pinhole": 23.15049534847777,
+          "intrinsics": [
+            4687.034330133933,
+            4683.719657599617,
+            972.7478795373573,
+            591.2940997605618
+          ],
+          "resolution": [
+            1920,
+            1200
+          ]
+        },
+        "event_left": {
+          "available": true,
+          "cross_camera_transform_datasets": [
+            "prophesee/event_cam_left/calib/T_to_left_bfs"
+          ],
+          "distortion_coeffs": [
+            -0.1984456498672196,
+            0.1272993499056175,
+            0.0007517938115857689,
+            0.0006285094718187441
+          ],
+          "horizontal_fov_deg_pinhole": 53.736561892554896,
+          "intrinsics": [
+            1263.2416804265802,
+            1262.5946501376516,
+            614.2413086401032,
+            365.4983767180256
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        },
+        "event_right": {
+          "available": true,
+          "cross_camera_transform_datasets": [],
+          "distortion_coeffs": [
+            0.003924603462167624,
+            -0.23464324162360672,
+            -2.528518876856676e-05,
+            0.0026365755511751263
+          ],
+          "horizontal_fov_deg_pinhole": 21.831481809692963,
+          "intrinsics": [
+            3318.5626034552356,
+            3316.1738815047224,
+            651.548156668202,
+            329.8003144701837
+          ],
+          "resolution": [
+            1280,
+            720
+          ]
+        }
+      },
+      "label_camera_contract": "blackflys/left only",
+      "label_directory_name": "leftlabel",
+      "sequence_id": "CPNAO-medium"
+    }
+  ],
+  "status": "METADATA_ONLY_NO_TARGETS"
+}

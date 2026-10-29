@@ -1,0 +1,76 @@
+{
+  "asset_manifest_sha256": "bfc10347d85c7fbe786e67607bd15581fa4b4182f4dcd937b99c90f57d6f28c8",
+  "bootstrap_warning": "Only three sequences: descriptive cluster intervals are coarse and cannot certify broad generalization or independence.",
+  "checkpoint_training_exclusion_certified": false,
+  "comparison_warning": "Common local causal oracle-event-ROI queries; no paper/table reproduction claim. Full model may be unavailable because event-to-RGB mapping is unresolved.",
+  "gt_contract": {
+    "header": false,
+    "local_primary_differs_from_upstream_outside_GT_support": true,
+    "official_commit": "79ff0842955304ec4f6164ec09baddc71386d225",
+    "official_plotSimpleResult_interpolation": "linear_with_linear_extrapolation",
+    "official_repository": "https://github.com/NAIL-HNU/event_aided_ttc",
+    "other_gt_columns": "Ignored; never inputs to models",
+    "primary_interpolation": "linear_only_inside_measured_GT_time_support; no extrapolation",
+    "rte": "100 * abs(prediction - truth) / abs(truth)",
+    "selection_uses_gt": false,
+    "sources": [
+      "matlab_code/utils/plotSimpleResult.m",
+      "matlab_code/utils/metricRee.m"
+    ],
+    "time_column_zero_based": 1,
+    "time_unit": "relative_seconds",
+    "ttc_column_zero_based": 4,
+    "ttc_unit": "seconds"
+  },
+  "gt_files": {
+    "FCWD1": {
+      "bytes": 6913,
+      "columns": 5,
+      "nonfinite_target_rows": 0,
+      "path": "${DATA}\\sealed_labels\\sequence_1\\gt_ttc.csv",
+      "rows": 106,
+      "sha256": "20af46fab5fc4d423f6d6b894b26727b0c4fe26106dd81614fc43f8c6bc4216e",
+      "time_max_s": 16.115925,
+      "time_min_s": 5.605546
+    },
+    "FCWD2": {
+      "bytes": 7077,
+      "columns": 5,
+      "nonfinite_target_rows": 0,
+      "path": "${DATA}\\sealed_labels\\sequence_2\\gt_ttc.csv",
+      "rows": 109,
+      "sha256": "ec1c7769def687d9c92f83685ac495dc92e36c7a489fb9d2d88049fc5090e4c8",
+      "time_max_s": 14.464294,
+      "time_min_s": 3.703658
+    },
+    "FCWD3": {
+      "bytes": 7395,
+      "columns": 5,
+      "nonfinite_target_rows": 0,
+      "path": "${DATA}\\sealed_labels\\sequence_3\\gt_ttc.csv",
+      "rows": 114,
+      "sha256": "97761ceca733a65e3057ef2beebd28cbf7abc8a690bd20603c3a6fc177d8f862",
+      "time_max_s": 14.914751,
+      "time_min_s": 3.603562
+    }
+  },
+  "gt_join_counts": {
+    "EXACT": 299,
+    "INTERPOLATED_LINEAR": 298,
+    "OUTSIDE_MEASURED_GT_SUPPORT": 33
+  },
+  "joined_predictions_sha256": "69d619c3b2864e6dfaec86156fd5756a05b72207e766997ea74abd3b441a352b",
+  "labels_opened_only_after_verified_prediction_seal": true,
+  "model_coverage_sha256": "a0427e229f57aa5f511a30e53cd3a9082d8f439bc5dc9e34dc0cbbf2506c39d6",
+  "model_predictions_rerun": false,
+  "optimizer_updates": 0,
+  "population_selection_used_gt": false,
+  "prediction_seal_sha256": "61c840969f2e02ff012a4f906ed4e822125cd2cd3aecd8ee82a57c7f84353236",
+  "query_manifest_sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+  "reference_contract_sha256": "b294bf7fbdf702272401b9abc79b7761e4b33818d536071e9b0c26b5f1ece833",
+  "rows_retained": 630,
+  "scorer_module_sha256": "cac2db7825550c9815a4e01ca75f62fe43a6a5bc549b5c0b696cea4aa113f7bb",
+  "scoring_manifest_sha256": "528192ca8348a419eb07f149a1bba6922b238c775c30c92d88db4fd2a605e41c",
+  "source_freeze_sha256": "f73b3e15db53ac60ff5468dff54f2621e23febb3319e87877023a4d4018c380c",
+  "status": "COMPLETE"
+}

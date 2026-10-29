@@ -1,0 +1,54 @@
+{
+  "schema": "post_v18_official_status_v1",
+  "observed_utc": "2026-10-17T09:31:38.676462+00:00",
+  "candidate": "PHASE_ONLY_EVENT_S7",
+  "package": {
+    "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/PHASE_ONLY_S7_GarlTTC_submission.zip",
+    "sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+    "bytes": 88954
+  },
+  "local_checks": {
+    "status": "PASS",
+    "rows": 6762,
+    "crc": true,
+    "exact_frozen_tokens": true,
+    "exact_sealed_csv_values": true,
+    "private_targets_read": false
+  },
+  "submission_status": "NOT_CONFIRMED_WITH_AUTHENTICATED_ACCOUNT",
+  "last_local_status": "PACKAGED_NOT_SUBMITTED",
+  "receipt_search_scope": [
+    "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only",
+    "e-jepa-ttc-v16-multimodal-validation/docs/continuidad_v16_v18_20261012/submission"
+  ],
+  "official_score": null,
+  "modalities": [
+    "RGB",
+    "event"
+  ],
+  "history": {
+    "causal": true,
+    "same_object": true,
+    "max_observations_per_modality": 8,
+    "admitted_support_ms": 650
+  },
+  "pending": [
+    "authenticated_submission_history",
+    "participation_approval",
+    "current_quota",
+    "organizer_admission_of_cross_sample_causal_history"
+  ],
+  "current_rules_status": "UNVERIFIED: web reader returned unrelated content; browser inventory empty",
+  "official_repository": "https://github.com/NAIL-HNU/Garl-TTC",
+  "competition": "https://www.codabench.org/competitions/17289/",
+  "historical_rules_evidence": "e-jepa-ttc-v16-multimodal-validation/docs/continuidad_v16_v18_20261012/EVALUACION_OFICIAL.md",
+  "submission_authorized": false,
+  "external_actions": [],
+  "next_action": "Confirm account history and history eligibility; obtain separate explicit authorization before uploading exact frozen ZIP once.",
+  "source_hashes": {
+    "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/MODEL_INPUT_FREEZE.json": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+    "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/INPUTS.json": "b78730abe68de7fbe06c6c98b25d5fa025c04d9303720b680ce0c0f575d2e526",
+    "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/TEST_PREDICTIONS.csv": "99aa79053c50d5348e238e32270f156009590f0ef0deda250504b23aa3792e63",
+    "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/PACKAGE_VERIFICATION.json": "5a5838385359faad5391ba2403589802692f16565ff3524a7e563f23938c62f3"
+  }
+}

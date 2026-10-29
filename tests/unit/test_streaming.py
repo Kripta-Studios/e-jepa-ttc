@@ -74,4 +74,3 @@ def test_streaming_rejects_timestamp_rollback_and_reset_recovers() -> None:
         np.asarray([99]),
         np.asarray([1]),
     )
-

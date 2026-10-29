@@ -1,0 +1,8 @@
+{
+  "E_CTX_MATCHED": "artifacts/rgb_port_20261008/features/V/E_HISTORY.npz",
+  "E_H1_MATCHED": "artifacts/rgb_port_20261008/features/V/E_HISTORY.npz",
+  "F_TRUE": "artifacts/rgb_port_20261008/features/V/FUSION.npz",
+  "F_ZERO": "artifacts/rgb_port_20261008/features/V/FUSION.npz",
+  "R_CTX": "artifacts/rgb_port_20261008/features/V/R_HISTORY.npz",
+  "R_H1": "artifacts/rgb_port_20261008/features/V/R_HISTORY.npz"
+}

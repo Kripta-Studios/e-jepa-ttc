@@ -1,0 +1,23 @@
+[
+  {
+    "index": 0,
+    "events": 19084116,
+    "raw_archive_bytes": 324429972,
+    "max_packet_events": 433704,
+    "peak_archive_and_concat_upper_bytes": 648859944
+  },
+  {
+    "index": 137,
+    "events": 9458135,
+    "raw_archive_bytes": 160788295,
+    "max_packet_events": 347743,
+    "peak_archive_and_concat_upper_bytes": 321576590
+  },
+  {
+    "index": 553,
+    "events": 31048089,
+    "raw_archive_bytes": 527817513,
+    "max_packet_events": 573720,
+    "peak_archive_and_concat_upper_bytes": 1055635026
+  }
+]

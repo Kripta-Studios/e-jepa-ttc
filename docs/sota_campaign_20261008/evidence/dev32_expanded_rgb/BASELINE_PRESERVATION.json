@@ -1,0 +1,10 @@
+{
+  "baseline": "${REPO}\\artifacts\\sota_campaign_20261008\\dev32_expanded",
+  "key_files": {
+    "INFERENCE_FREEZE.json": "24522515e7876b46ca627ddf5c676c2e5c74e1b7cb3492009d75be68a0753ac9",
+    "PREDICTIONS_SEALED.json": "6869057554a51826ad75130b1926448552fe537baa469e3e0d60e339a50a21b0",
+    "QUERY_MANIFEST.json": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b"
+  },
+  "optimizer_updates": 0,
+  "status": "FROZEN"
+}

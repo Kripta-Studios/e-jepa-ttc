@@ -1,0 +1,5 @@
+name: sparse_tokens
+max_tokens: 4096
+features: [x_norm, y_norm, t_norm, polarity, local_event_density, inter_event_time]
+reduction: temporal_reservoir_plus_cell_grouping
+sampling_uses_labels: false

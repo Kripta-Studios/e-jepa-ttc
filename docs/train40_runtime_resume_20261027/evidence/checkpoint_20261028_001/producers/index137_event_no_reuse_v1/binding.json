@@ -1,0 +1,71 @@
+{
+  "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+  "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+  "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3",
+  "components": {
+    "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+    "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+    "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+    "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+    "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+    "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+    "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+    "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+    "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+    "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+    "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59",
+    "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+  },
+  "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+  "source_commit": "bc386dd002cad7090f5ae39e0ae8e6e86152eb0a",
+  "sources": {
+    "operational\\final_refit\\features.py": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+    "operational\\final_refit\\test12.py": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6",
+    "operational\\final_refit\\training.py": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+    "operational\\rgb_port\\train_producers.py": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc",
+    "operational\\rgb_port\\transfer.py": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73",
+    "operational\\rgb_port_revision\\transfer_inputs.py": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+    "operational\\rgb_port_streaming\\contracts.py": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c",
+    "operational\\train40_runtime\\context.py": "29a8051ca2a8fdb9521b2eca5ef6c59d8d914d5342a123ecf01250bafb65ecd8",
+    "operational\\train40_runtime\\measurement.py": "448cd81437f165f5c3b399f790f8be2867c75113ef11ec2fc123ea56fbf5bb42",
+    "operational\\train40_runtime\\producers.py": "756d564d0391299788d6ed03531f45b25ebe413fbf21e9eb465fb3f1725da8b9",
+    "scripts\\benchmark_train40_runtime.py": "190aae46d5568ab1ea0e392e8f45b9c9a5eeb645ce5fcbcabd617a7b076a7ad2",
+    "scripts\\final_train40_transfer.py": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730",
+    "src\\e_jepa_ttc\\models\\causal_scale_ttc.py": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+    "src\\e_jepa_ttc\\models\\local_transport.py": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d",
+    "src\\e_jepa_ttc\\rgb_port\\features.py": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114",
+    "src\\e_jepa_ttc\\simplex_t\\model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+    "src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+    "scripts\\benchmark_train40_producer_variants.py": "66e8ec576b721489b99a13b64292b10feb77ea3fd9f1a3237a70db63aa331aed"
+  },
+  "manifest_sha256": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31",
+  "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "python": "3.11.15",
+  "torch": "2.11.0+cu128",
+  "cuda": "12.8",
+  "precision": "FP32_TF32_OFF",
+  "seed": 7,
+  "objects": [
+    1
+  ],
+  "query_index": 137,
+  "encoder_layout": "contiguous",
+  "transport_variant": "original",
+  "endpoint_reuse": true,
+  "event_endpoint_reuse": false,
+  "cudnn_benchmark": false,
+  "cublas_workspace_config": null,
+  "cudnn_deterministic": false,
+  "scope": "PREPARED_GPU_MULTIOBJECT_PRODUCERS_PAIR_PHASE17_GUARDS_NO_SENSOR_H2D_CONTEXT",
+  "input_population": "Artificial capacity objects: real histories scaled differently per ID",
+  "scaling": {
+    "event": "1+0.001*object_index",
+    "rgb": "1-0.001*object_index"
+  },
+  "target_20_objects_50hz_demonstrated": false,
+  "acceptance_tolerance": {
+    "atol": 1e-05,
+    "rtol": 1e-05
+  }
+}

@@ -1,0 +1,10 @@
+artifact_type: scientific_recovery_v9_stage61_config_v1
+arm_id: S61-R2-SHUFFLE
+features: PHASE17_DERANGED_PAIR
+derangement: within_sequence_cross_track_no_fixed_points
+experts: [A5, C2F, PAIR]
+solver: lbfgs
+C: 1.0
+class_weight: null
+max_iter: 2000
+hard_argmax: true

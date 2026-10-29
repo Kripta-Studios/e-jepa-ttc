@@ -1,0 +1,80 @@
+{
+  "status": "PINNED_SCIENTIFIC_SOURCES_UNCHANGED",
+  "training_commit": "be0776659595c212761bbe15f10b7370362c01fd",
+  "historical_scientific_commit": "0c1a7285b6b5af869b0bf5a13a9629f08997e7a2",
+  "historical_candidate": "TPR-D1-H8-C160",
+  "historical_freeze_sha256": "2eb3fff9ea24145c4af16c0c8645eb65893144580e41880790e169239fa8f3a7",
+  "source_checks": [
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\analyze.py",
+      "sha256": "c58cb57c9bd2b5752b1049868f5dd0a0a366b98a10176782842266ba15931b87",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\contracts.py",
+      "sha256": "ac8a1cc6b8f3c46734478e9042de81ac49807fcd5308ded30cce6fdb4732ffe6",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\deliver.py",
+      "sha256": "d44d240f42feec926680eb550675729a206c731202906c00b517f5e583716c90",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\driver.py",
+      "sha256": "4a05e42e3f231bed4bd64674a9b565ce832695bb66be34c87bd7e5133a311ce1",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\engine.py",
+      "sha256": "fa65b4190a2f55696fe3d515ad96d0575451cf5936d01d16c7c2e4218c138c3a",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\model.py",
+      "sha256": "6d170283bc66367f0acfe7670d8d79853d63cf1888500d76bb4b05aa7e239e47",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\profile.py",
+      "sha256": "f8804c556e7c18c6c6cc3a222a3990b49806711e11d51504934bdd14fc9cf29e",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\regenerate.py",
+      "sha256": "355b7cdfc372c2ac85a0b98a2984ea09d273659c23c165c3ea96637c1b0a1a8d",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\register.py",
+      "sha256": "a071f1e7ace3746506b56127a7df62b29df50db3b1a5e5a9608ebc8186c52ecc",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\technical.py",
+      "sha256": "759720026f862f501eb229f8a2fd2f784bcf6dc38e6ec1b8d4be7f837d2fcc2f",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\test_delivery_driver.py",
+      "sha256": "9d28472a6bc91ba87b3a107ad587ab0953bf3d52ea13fbceac3383004437e58c",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\test_engine.py",
+      "sha256": "311c575de21750be3263b256c69ffb83f8db1054638509cf0ee125e66c8cb517",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\test_model.py",
+      "sha256": "f508d10e081614cf9469776525d3cb154e6425890ed41532cf9b4e8b9b96fca3",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\operational\\simplex_t_cost_context\\verify_checkpoints.py",
+      "sha256": "f9a14d033aed5e3bcf9ca8cbde71e56658ae1bde25ada4e47fdcfdec0d4fe97f",
+      "unchanged": true
+    }
+  ],
+  "optimizer_updates": 0
+}

@@ -1,0 +1,81 @@
+{
+  "SOTA_confirmation": false,
+  "files": {
+    "C1_EVIDENCE.json": {
+      "bytes": 30081,
+      "sha256": "275d4b1954b8a2933d9e20f7510e22d529a8a56a85583392336bbb43ebd9577a",
+      "source": "adaptive/C1_geometry/evidence/COMPLETE.json"
+    },
+    "D1_CUDA_QA.json": {
+      "bytes": 754,
+      "sha256": "208f30dd0bb39e206bb94cb22cee5b4f91f523a5d5bd9066673295a9effc73dd",
+      "source": "qa/capacity_D1/RESULT.json"
+    },
+    "D1_REGISTRATION.json": {
+      "bytes": 6696,
+      "sha256": "a6c4363d06997fd51e0ed3c1b09ce62fd031bafaae113e95552013a78d28aab0",
+      "source": "adaptive/D1_predictor_width/REGISTRATION.json"
+    },
+    "FUSION_REPLICATION.json": {
+      "bytes": 46019,
+      "sha256": "4af996900a99c585f8e4a86fae5eba89a28e3f49cf9e2307f1298209850d747c",
+      "source": "replication/fusion_C1/evaluation/RESULT.json"
+    },
+    "FUSION_REPLICATION_ENDPOINTS.json": {
+      "bytes": 650,
+      "sha256": "d6c23b136aafdf8bc0d84ba43382096ef9b6e45cb18fb0b0b7d478f49d1868d6",
+      "source": "replication/fusion_C1/ENDPOINTS.json"
+    },
+    "FUSION_REPLICATION_REGISTRATION.json": {
+      "bytes": 6670,
+      "sha256": "9fefeea4173dca88fe472a4fb989d0cd8d99c9ce0dda92270691e67540363699",
+      "source": "replication/fusion_C1/REGISTRATION.json"
+    },
+    "FUSION_SEED7.json": {
+      "bytes": 77130,
+      "sha256": "90a250138d4f161e294a34328d17a919cc614239effab2677d7dc172e04e7e4a",
+      "source": "fusion/evaluation/RESULT.json"
+    },
+    "HOURLY_0500.json": {
+      "bytes": 874,
+      "sha256": "64a7b05055a895b3b2d68a1c1dd96389904cbbfd0717124a34d139d74468b6c9",
+      "source": "verification/HOURLY_REVIEW_20261016T0500.json"
+    },
+    "KNOWN_SCALE_P.json": {
+      "bytes": 239122,
+      "sha256": "6e8c38c0613db722fd6c0e90981ee4e97f5a1fb9641b18497dcc34446ad5b0a4",
+      "source": "diagnostics/known_scale_P/RESULT.json"
+    },
+    "KNOWN_SCALE_REGISTRATION.json": {
+      "bytes": 4423,
+      "sha256": "065f67e3eec14ef27e09a6b88d8a8113dd17db8030f8d3e12b6e6d017193655e",
+      "source": "diagnostics/known_scale_P/REGISTRATION.json"
+    },
+    "RAW_COST_CPU_DIAGNOSTIC.json": {
+      "bytes": 3895,
+      "sha256": "8ebc05adac761f087d3d3ab18c4e994d24a333b596552d644c179ee3b6d4c137",
+      "source": "fusion/cost/parity_diagnostic_v1/CPU_RESULT.json"
+    },
+    "RAW_COST_PARITY_FAILURE.json": {
+      "bytes": 1317,
+      "sha256": "a33f8139a0fd1ca6de11311a1fe57658ebabe34bbba80c0aa98899889324b93f",
+      "source": "fusion/cost/raw_e2e_native_v2/PARITY_FAILURE.json"
+    },
+    "RESUME_TRANSITION.json": {
+      "bytes": 2318,
+      "sha256": "98a9986b0a77ca7943dbda8265d6dfebb3c64362c91e9bb5c39cffe03f2ff0a4",
+      "source": "verification/REPLICA_TO_D1_20261016.json"
+    },
+    "V16_THREE_SEEDS.json": {
+      "bytes": 33346,
+      "sha256": "ac7bee7134436671a0cbabcf541c2a50edfc2274ea84303041b24d5cf23d9a6f",
+      "source": "fusion/v16_compare/THREE_SEEDS.json"
+    }
+  },
+  "full_objective_complete": false,
+  "research_status": "RESEARCH_ONGOING_D1_TRAINING",
+  "scope": "Closed scientific evidence plus explicitly dated live-stage handoff; no raw sensors, caches or optimizer payloads",
+  "source_commit": "41dffbaf93c40a8c74bb5e86d32f6e97219594a1",
+  "system_promotion": false,
+  "utc": "2026-10-16T03:10:21.965274+00:00"
+}

@@ -1,0 +1,104 @@
+[
+  {
+    "branch": "scoring_existing_946",
+    "files": {
+      "METADATA.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true
+      },
+      "METHOD_METRICS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PAIRED.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PER_SEQUENCE.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "REPORT.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true
+      },
+      "SCORED_ROWS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "SHA256.json": {
+        "same_bytes": false,
+        "same_newline_normalized": false
+      }
+    },
+    "metadata_differences": {}
+  },
+  {
+    "branch": "expanded_metrics",
+    "files": {
+      "METADATA.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true
+      },
+      "METHOD_METRICS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PAIRED.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PER_SEQUENCE.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "REPORT.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true
+      },
+      "SCORED_ROWS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "SHA256.json": {
+        "same_bytes": false,
+        "same_newline_normalized": false
+      }
+    },
+    "metadata_differences": {}
+  },
+  {
+    "branch": "fcwd_metrics",
+    "files": {
+      "METADATA.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true
+      },
+      "METHOD_METRICS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PAIRED.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PER_SEQUENCE.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "REPORT.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true
+      },
+      "SCORED_ROWS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "SHA256.json": {
+        "same_bytes": false,
+        "same_newline_normalized": false
+      }
+    },
+    "metadata_differences": {}
+  }
+]

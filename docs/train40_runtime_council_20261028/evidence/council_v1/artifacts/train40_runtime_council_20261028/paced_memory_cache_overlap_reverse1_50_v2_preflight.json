@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-28T10:29:17.6255224Z",
+  "git_commit": "df8837f894261fe625ebf86e2c59fe4679d20637",
+  "gpu": [
+    "name, memory.used [MiB], utilization.gpu [%], power.draw [W], temperature.gpu",
+    "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 3667 MiB, 5 %, 25.37 W, 71"
+  ],
+  "note": "Root exclusive GPU; no council CPU tests; repeat prior50 with only lifecycle v2, finalize after consumer drain, source cleanup still recorded and included in total wall duration"
+}

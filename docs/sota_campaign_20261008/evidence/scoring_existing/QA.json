@@ -1,0 +1,27 @@
+{
+  "deterministic_real_regeneration": true,
+  "gpu_used": false,
+  "inference_runs": 0,
+  "missing_gt_rows_preserved": 78,
+  "optimizer_updates": 0,
+  "output_hashes": {
+    "METADATA.json": "adb7fd82fef15ae07d9798c8ba37aaf03876d901882ec6e174799e25b0a4660a",
+    "METHOD_METRICS.csv": "03c57b4503ca95f4a0875885fed971d013c4acab73e7fb79f88d136c27248e7a",
+    "PAIRED.csv": "5fee507ffe8a4aca40fcf8281eb06a660648074a20ca0c828ee374bdbe62d74c",
+    "PER_SEQUENCE.csv": "88cd7ba04613376a5b30fe32ff06a2282e230304023fbea4a334c50a78f9f21f",
+    "REPORT.json": "5869cb248997774fc7e3fccc6bb5f6abe7994b399829e1ad2a89f43aaf9094c4",
+    "SCORED_ROWS.csv": "d284e52a0c25a8978cffb03943480b247fdfd95f0e9f1c3fc4d861a5921d4f9f",
+    "SHA256.json": "5d4e8cb4d73895e5be148f53a310d490183e5f437465e9ea54500decf8ccd091"
+  },
+  "pyright": "0 errors, 0 warnings",
+  "real_input_sha256": "fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e",
+  "rows": 1024,
+  "ruff": "PASSED",
+  "scoring_output_hashes_verified": true,
+  "source_code_sha256": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec",
+  "source_fields_all_rows_preserved": true,
+  "source_unchanged": true,
+  "status": "PASSED",
+  "tests_sha256": "cef95e486a8e5046531e694251417e075d17172636204a8eaca6d4666086ff43",
+  "unit_tests": 11
+}

@@ -1,0 +1,12 @@
+{
+  "cpu_exclusive": false,
+  "notes": [
+    "Windows WDDM desktop clients recorded in cost preflight.",
+    "A brief CPU-only verifier unit-test run occurred during the cost measurement before the reviewer received the request to postpone QA; no additional GPU evaluator was launched.",
+    "Do not interpret this fixed-eight-query observation as intrinsic architectural efficiency, dedicated-host latency, or a sustained streaming throughput benchmark."
+  ],
+  "physical_gpu_exclusive": false,
+  "project_gpu_workers": 1,
+  "raw_and_freeze_preserved": true,
+  "status": "OBSERVATIONAL_HOST_MEASUREMENT"
+}

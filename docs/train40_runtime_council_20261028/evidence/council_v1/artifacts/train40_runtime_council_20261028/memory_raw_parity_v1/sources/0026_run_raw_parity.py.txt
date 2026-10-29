@@ -1,0 +1,319 @@
+"""Compare every causal CPU RAW value against the disk control; no models or CUDA."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import platform
+import subprocess
+import sys
+import threading
+import time
+import traceback
+from collections.abc import Mapping
+from concurrent.futures import ThreadPoolExecutor
+from datetime import UTC, datetime
+from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
+
+import h5py  # noqa: E402
+import numpy as np  # noqa: E402
+
+from operational.evttc_transfer.inputs import _canonical_sha256  # noqa: E402
+from operational.train40_runtime.replay_memory import PreloadedRawSource  # noqa: E402
+from scripts.benchmark_train40_paced import DiskRawSource, replay_schedule  # noqa: E402
+
+OUTPUT = Path(__file__).resolve().parent
+MANIFEST = (
+    ROOT
+    / "artifacts/train40_runtime_council_20261028/measurement_audit_v1/causal_pilot_manifest.json"
+)
+BASE = ROOT / "artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json"
+PAYLOAD = 128 * 1024**2
+INITIAL = 512 * 1024**2
+TOTAL = 2 * 1024**3
+
+
+def sha(path: Path) -> str:
+    """Hash a small source or metadata file, never complete RAW HDF5."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write(name: str, payload: object) -> None:
+    """Preserve each output once without replacing another run."""
+    with (OUTPUT / name).open("x", encoding="utf-8", newline="\n") as handle:
+        json.dump(payload, handle, ensure_ascii=False, indent=2, allow_nan=False)
+        handle.write("\n")
+
+
+def array_check(actual: np.ndarray, expected: np.ndarray) -> dict[str, Any]:
+    """Require both exact dtype/shape and exact values."""
+    return {
+        "passed": actual.dtype == expected.dtype
+        and actual.shape == expected.shape
+        and np.array_equal(actual, expected),
+        "dtype": str(actual.dtype),
+        "shape": list(actual.shape),
+        "bytes": actual.nbytes,
+    }
+
+
+def check_mapping(
+    actual: Mapping[Any, np.ndarray], expected: Mapping[Any, np.ndarray]
+) -> dict[str, Any]:
+    """Compare every named field without dropping unexpected arrays."""
+    equal_keys = set(actual) == set(expected)
+    fields = {key: array_check(actual[key], expected[key]) for key in actual if key in expected}
+    return {
+        "passed": equal_keys and all(item["passed"] for item in fields.values()),
+        "keys_exact": equal_keys,
+        "fields": fields,
+    }
+
+
+def bound_sources(schedule: list[dict[str, Any]]) -> dict[str, Any]:
+    """Snapshot exact local imported source bytes and all relevant metadata."""
+    paths = {Path(__file__).resolve(), BASE, MANIFEST}
+    for module in tuple(sys.modules.values()):
+        if not isinstance(module, ModuleType):
+            continue
+        filename = vars(module).get("__file__")
+        if not isinstance(filename, str):
+            continue
+        path = Path(filename).resolve()
+        if path.suffix == ".py" and path.is_file() and path.is_relative_to(ROOT):
+            paths.add(path)
+    paths.update(Path(item["path"]).resolve() for row in schedule for item in row["bbox_sources"])
+    snapshots = OUTPUT / "sources"
+    snapshots.mkdir(exist_ok=False)
+    result = {}
+    for index, path in enumerate(sorted(paths)):
+        raw = path.read_bytes()
+        digest = hashlib.sha256(raw).hexdigest()
+        snapshot = snapshots / f"{index:04d}_{path.name}.txt"
+        snapshot.write_bytes(raw)
+        result[str(path)] = {"sha256": digest, "bytes": len(raw), "snapshot": snapshot.name}
+        if sha(snapshot) != digest:
+            raise RuntimeError("Source snapshot changed")
+    return result
+
+
+def compare_updates(
+    memory: PreloadedRawSource, disk: DiskRawSource, result: dict[str, Any]
+) -> None:
+    """Own warmup, all 50 comparisons and cleanup in the same producer thread."""
+    owner = threading.get_ident()
+    try:
+        result["warmup"] = memory.warmup()
+        for index in range(50):
+            actual = memory.acquire_raw(index)
+            expected = disk.acquire_raw(index)
+            frames = check_mapping(actual.rgb.frames, expected.rgb.frames)
+            events = check_mapping(actual.events, expected.events)
+            calibration = check_mapping(actual.calibration, expected.calibration)
+            checks = {
+                "index_exact": actual.index == expected.index == index,
+                "row_json_exact": actual.row_json == expected.row_json,
+                "events_exact": events["passed"],
+                "raw_rgb_pixels_exact": frames["passed"],
+                "triplets_exact": actual.rgb.triplets == expected.rgb.triplets,
+                "timestamps_exact": dict(actual.rgb.timestamps_us)
+                == dict(expected.rgb.timestamps_us),
+                "query_exact": actual.rgb.query_us == expected.rgb.query_us,
+                "rgb_availability_reason_exact": actual.rgb.unavailable_reason
+                == expected.rgb.unavailable_reason,
+                "boxes_exact": actual.boxes == expected.boxes,
+                "calibration_exact": calibration["passed"],
+                "byte_count_exact": actual.byte_count == expected.byte_count,
+                "owner_thread_exact": actual.acquisition_thread
+                == expected.acquisition_thread
+                == owner,
+                "frames_causal": all(
+                    token.timestamp_us <= actual.rgb.query_us
+                    for token in actual.rgb.tokens.values()
+                ),
+            }
+            result["updates"].append(
+                {
+                    "index": index,
+                    "anchor_us": actual.rgb.query_us,
+                    "passed": all(checks.values()),
+                    "checks": checks,
+                    "events": events,
+                    "frames": frames,
+                    "calibration": calibration,
+                    "payload_bytes": actual.byte_count,
+                    "source_diagnostics": dict(actual.source_diagnostics),
+                }
+            )
+        # Keep the final payload alive across owner cleanup to check lifetime.
+        result["final_payload_pixel_sentinel"] = {
+            key: hashlib.sha256(frame.tobytes()).hexdigest()
+            for key, frame in actual.rgb.frames.items()
+        }
+    finally:
+        result["finalize"] = memory.finalize()
+        result["closed"] = memory.closed
+    result["final_payload_survives_finalize"] = all(
+        hashlib.sha256(frame.tobytes()).hexdigest() == result["final_payload_pixel_sentinel"][key]
+        for key, frame in actual.rgb.frames.items()
+    )
+
+
+def main() -> None:
+    """Write complete or failed comparison evidence with source preservation."""
+    if (OUTPUT / "summary.json").exists() or (OUTPUT / "binding.json").exists():
+        raise FileExistsError("This evidence directory has already been used")
+    started = time.perf_counter()
+    result: dict[str, Any] = {
+        "schema": "train40_memory_raw_vs_disk_exact_v1",
+        "scope": "CPU_RAW_PARITY_ALL_50_CAUSAL_SLOTS_NOT_TTC_NOT_LATENCY",
+        "status": "FAILED",
+        "started_utc": datetime.now(UTC).isoformat(),
+        "updates": [],
+        "gpu_functions_called": False,
+        "models_or_normalizers_loaded": False,
+        "ttc_parity_measured": False,
+        "latency_or_50hz_measured": False,
+        "targets_read": False,
+        "optimizer_updates": 0,
+        "cleanup_errors": [],
+    }
+    original: dict[str, Any] = {}
+    memory = None
+    caught = None
+    try:
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        base = json.loads(BASE.read_text(encoding="utf-8"))
+        if manifest["provenance"]["base_manifest_canonical_sha256"] != _canonical_sha256(base):
+            raise ValueError("Pilot does not bind the preserved base manifest")
+        schedule = replay_schedule(manifest, "CPLA-low", 50)
+        original = bound_sources(schedule)
+        write(
+            "binding.json",
+            {
+                "command_argv": [sys.executable, *sys.argv],
+                "git_commit": subprocess.check_output(
+                    ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+                ).strip(),
+                "python": platform.python_version(),
+                "host": platform.node(),
+                "numpy": np.__version__,
+                "h5py": h5py.__version__,
+                "source_sha256": original,
+                "configuration": {
+                    "sequence": "CPLA-low",
+                    "updates": 50,
+                    "max_payload_bytes": PAYLOAD,
+                    "max_initial_bytes": INITIAL,
+                    "max_total_source_bytes": TOTAL,
+                    "max_frame_bytes": PAYLOAD,
+                    "queue_capacity": 2,
+                },
+                "control_payload_extra_memory_scope": (
+                    "Disk comparison arrays outside the source envelope; only one comparison "
+                    "payload retained, plus initial-history comparison before updates"
+                ),
+                "schedule": [
+                    {"index": i, "query_id": row["query_id"], "anchor_us": row["anchor_us"]}
+                    for i, row in enumerate(schedule)
+                ],
+            },
+        )
+        memory = PreloadedRawSource(
+            schedule,
+            PAYLOAD,
+            max_total_bytes=TOTAL,
+            max_frame_bytes=PAYLOAD,
+            max_initial_bytes=INITIAL,
+            queue_capacity=2,
+        )
+        disk = DiskRawSource(schedule, PAYLOAD)
+        result["preload"] = memory.preload()
+        if result["preload"]["source_total_upper_bound_bytes"] > TOTAL:
+            raise RuntimeError("Source exceeded its 2 GiB preflight envelope")
+        if memory.stats["unique_frames_frozen"] or memory.stats["bbox_validations"]:
+            raise RuntimeError("Future tokens or annotation parsing happened during preload")
+        initial_actual = memory.initial_history(INITIAL)
+        initial_expected = disk.initial_history(INITIAL)
+        result["initial_history"] = check_mapping(initial_actual, initial_expected)
+        result["initial_history"]["interval_us"] = [
+            schedule[0]["anchor_us"] - 620_000,
+            schedule[0]["anchor_us"] - 20_000,
+        ]
+        result["initial_history"]["control_array_bytes"] = sum(
+            value.nbytes for value in initial_expected.values()
+        )
+        del initial_actual, initial_expected
+        with ThreadPoolExecutor(max_workers=1, thread_name_prefix="raw-parity-owner") as pool:
+            pool.submit(compare_updates, memory, disk, result).result()
+        result["coverage"] = {
+            "expected": 50,
+            "observed": len(result["updates"]),
+            "indices_exact": [row["index"] for row in result["updates"]] == list(range(50)),
+        }
+        result["all_exact"] = result["initial_history"]["passed"] and all(
+            row["passed"] for row in result["updates"]
+        )
+        result["status"] = (
+            "COMPLETE"
+            if result["coverage"]["indices_exact"]
+            and result["all_exact"]
+            and result["final_payload_survives_finalize"]
+            else "PARITY_FAILED"
+        )
+    except BaseException as error:
+        caught = error
+        result.update(error=f"{type(error).__name__}: {error}", traceback=traceback.format_exc())
+    finally:
+        if memory is not None and not memory.closed:
+            if memory.owner_thread is None or memory.owner_thread == threading.get_ident():
+                result["finalize_after_startup_failure"] = memory.finalize()
+            else:
+                result["cleanup_errors"].append("Source remains owned by a different thread")
+        changed = [
+            name
+            for name, binding in original.items()
+            if not Path(name).exists() or sha(Path(name)) != binding["sha256"]
+        ]
+        result["preservation"] = {
+            "passed": bool(original) and not changed,
+            "files": len(original),
+            "changed": changed,
+        }
+        if memory is not None:
+            raw_stat = memory._path.stat()
+            result["raw_source_stat_preserved"] = {
+                "passed": raw_stat.st_size == memory._stat["size_bytes"]
+                and raw_stat.st_mtime_ns == memory._stat["mtime_ns"],
+                "scope": "SIZE_MTIME_NOT_FULL_HDF5_SHA256",
+                "path": str(memory._path),
+            }
+            if not result["raw_source_stat_preserved"]["passed"]:
+                result["status"] = "FAILED"
+        if changed or result["cleanup_errors"]:
+            result["status"] = "FAILED"
+        result["wall_seconds_not_inference_latency"] = time.perf_counter() - started
+        result["ended_utc"] = datetime.now(UTC).isoformat()
+        write("summary.json", result)
+    print(
+        json.dumps(
+            {
+                key: result.get(key)
+                for key in ("status", "coverage", "all_exact", "preservation", "error")
+            },
+            ensure_ascii=True,
+        )
+    )
+    if caught is not None:
+        raise caught
+    if result["status"] != "COMPLETE":
+        raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

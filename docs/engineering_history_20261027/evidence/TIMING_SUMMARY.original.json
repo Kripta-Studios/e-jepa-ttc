@@ -1,0 +1,20 @@
+{
+  "input_files_read": 17524,
+  "instrumented_wall": {
+    "cache_stratum": "all",
+    "count": 5805,
+    "max_seconds": 1.637775402981788,
+    "mean_seconds": 0.11633581322227572,
+    "min_seconds": 0.08252103591803461,
+    "p50_seconds": 0.11204383405856788,
+    "p95_seconds": 0.1409441004274413,
+    "p99_seconds": 0.16732461644336583,
+    "sequence_id": "ALL_PHYSICAL_QUERIES",
+    "sum_seconds": 675.3293957553105
+  },
+  "physical_queries": 5805,
+  "sequences_with_diagnostics": 12,
+  "source_manifest_sha256": "6062fbc1bcf37312be9572ee6ae8839afa2ac89ffe8c1bb81d503580265b8d0e",
+  "status": "FINAL",
+  "telemetry_samples": 529
+}

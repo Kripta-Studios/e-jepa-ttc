@@ -1,0 +1,39 @@
+{
+  "registered_candidate": "TPR-D1-H8-C160",
+  "candidate_unchanged": true,
+  "independent_sequences": 9,
+  "seed7_exploratory": true,
+  "new_h16_seeds_hierarchical_interval_contains_zero": true,
+  "new_arm_precision_screen_pass": {
+    "FULL_C0_minus_H8@7": true,
+    "A5_ONLY_C0_minus_FULL_C0": false,
+    "C2F_ONLY_C0_minus_FULL_C0": false,
+    "A5_PAIR_C0_minus_FULL_C0": false,
+    "SET_AGE_C0_minus_FULL_C0": false,
+    "SET_NOTIME_C0_minus_SET_AGE_C0": false
+  },
+  "no_system_substitution": true,
+  "future_optimizer_updates_authorized": 0,
+  "next_proposal": "NEXT_EXPERIMENT_NOCTURNA.md",
+  "proposal_executed": false,
+  "stage_interpretations": {
+    "N1": {
+      "execution": "COMPLETE",
+      "head_optimization": "FAVORABLE_THREE_SEEDS",
+      "new13_23_hierarchical_evidence": "UNCERTAIN_INTERVAL_INCLUDES_ZERO"
+    },
+    "N2": {
+      "execution": "COMPLETE",
+      "expert_reduction_screen": "NEGATIVE_ALL_THREE_REDUCTIONS"
+    },
+    "N3": {
+      "execution": "COMPLETE",
+      "aggregation_replacement_screen": "NEGATIVE_BOTH_REGISTERED_CONTRASTS",
+      "effect_uncertainty": "HIERARCHICAL_INTERVALS_INCLUDE_ZERO"
+    },
+    "N4": {
+      "prepared_heads": "COMPLETE_NINE_MODELS",
+      "full_route": "BLOCKED_MISSING_EXCLUSIVE_GPU_HEAVY_IO_LEASE"
+    }
+  }
+}

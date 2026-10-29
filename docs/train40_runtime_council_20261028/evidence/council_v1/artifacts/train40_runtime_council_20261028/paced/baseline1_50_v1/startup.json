@@ -1,0 +1,64 @@
+{
+  "model_and_service_seconds": 0.7318770000129007,
+  "synthetic_shape_priming_seconds": 4.912203199986834,
+  "synthetic_primed_rgb_triplets": 5,
+  "unprimed_shapes_remain_inside_measurement": true,
+  "history_initialization_seconds": 0.48547020001569763,
+  "initial_interval_us": [
+    16130664,
+    16730664
+  ],
+  "initial_raw_bytes": 45897654,
+  "source_lifecycle": {
+    "warmup": {
+      "started_ns": 302132146053200,
+      "thread_id": 71644,
+      "result": {
+        "acquired_updates": 0,
+        "event_packet_read_bytes": 0,
+        "unique_frames_read": 13,
+        "copied_payload_frame_bytes": 0,
+        "peak_frame_cache_bytes": 89856000,
+        "peak_frame_cache_count": 13,
+        "frame_cache_budget_bytes": 134217728,
+        "warmup_cutoff_us": 16730664,
+        "warmup_frames": 13,
+        "owner_thread": 71644,
+        "future_pixels_preloaded": false,
+        "representations_precomputed": false
+      },
+      "ended_ns": 302132389925000
+    },
+    "finalize": {
+      "started_ns": 302134751915000,
+      "thread_id": 71644,
+      "result": {
+        "acquired_updates": 50,
+        "event_packet_read_bytes": 90715315,
+        "unique_frames_read": 33,
+        "copied_payload_frame_bytes": 2370816000,
+        "peak_frame_cache_bytes": 89856000,
+        "peak_frame_cache_count": 13,
+        "frame_cache_budget_bytes": 134217728,
+        "warmup_cutoff_us": 16730664,
+        "warmup_frames": 13,
+        "input_stats": {
+          "source_opens": 1,
+          "event_read_bytes": 0,
+          "event_cache_hit_bytes": 0,
+          "frame_read_bytes": 228096000,
+          "frame_cache_hits": 343,
+          "event_unique_windows_encoded": 0,
+          "event_prepare_seconds": 0.0,
+          "rgb_prepare_seconds": 0.0,
+          "rgb_crop_tasks": 0,
+          "bbox_cache_hits": 126,
+          "bbox_validations": 24
+        },
+        "closed_on_owner_thread": true
+      },
+      "ended_ns": 302134759558800
+    },
+    "errors": []
+  }
+}

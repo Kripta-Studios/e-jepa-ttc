@@ -1,0 +1,226 @@
+{
+  "artifact_sha256": "0bc741a5f732f705e4862a2e40e45413027fa6b28f3e326468ed30cea49900e7",
+  "artifact_type": "causal_scale_eap_failure_decomposition_v2",
+  "created_at_utc": "2026-08-10T04:35:12.158524+00:00",
+  "diagnosis": {
+    "analytic_extent_tracks_bbox_expansion": false,
+    "bbox_scale_target_contains_physical_signal": true,
+    "candidate_label": "causal_scale_a1_deep_features_ratio",
+    "learned_residual_recovers_physical_ratio": false,
+    "observed_failure_stage": "event_to_foreground_temporal_extent",
+    "physical_inverse_amplifies_bad_near_zero_ratios": true,
+    "sensor_support_is_limiting_factor": false
+  },
+  "inputs": {
+    "cache_manifest": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\cache\\garl_object_event_common_roi_screen_v4\\manifest.json",
+      "sha256": "bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72"
+    },
+    "checkpoint": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_deep_features_ratio_v1_seed7\\model_best.pt",
+      "sha256": "d209e08dc15154caeefd6bec06b68f6a0f6ece9955ecb4db5dd5d87e8ff4b721"
+    },
+    "summary": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_deep_features_ratio_v1_seed7\\summary.json",
+      "sha256": "01c6d9cc1c75cf6cf5e16a3d6c96fb4a82784f763124a34b43e9787a6460edbf"
+    }
+  },
+  "localization": {
+    "weak_bbox_iou_from_selected_summary": null,
+    "weak_box_is_filled_rectangle_not_segmentation": true
+  },
+  "per_sequence": {
+    "DGqicHUGWb": {
+      "analytic_vs_physical": {
+        "count": 683,
+        "mae": 0.02814253233373165,
+        "observed_mean": 0.0016686567105352879,
+        "observed_std": 0.014372839592397213,
+        "pearson": 0.20692391854888398,
+        "reference_mean": 0.026948045939207077,
+        "reference_std": 0.02253362350165844,
+        "slope": 0.13198427855968475
+      },
+      "bbox_vs_physical": {
+        "count": 683,
+        "mae": 0.013569994829595089,
+        "observed_mean": 0.025258412584662437,
+        "observed_std": 0.027739420533180237,
+        "pearson": 0.762529071766737,
+        "reference_mean": 0.026948045939207077,
+        "reference_std": 0.02253362350165844,
+        "slope": 0.9386911988258362
+      },
+      "effective_vs_physical": {
+        "count": 683,
+        "mae": 0.028127657249569893,
+        "observed_mean": 0.0013343874597921968,
+        "observed_std": 0.012698205187916756,
+        "pearson": 0.22530839878995124,
+        "reference_mean": 0.026948045939207077,
+        "reference_std": 0.02253362350165844,
+        "slope": 0.12696635723114014
+      }
+    },
+    "pBqGOb2vYq": {
+      "analytic_vs_physical": {
+        "count": 683,
+        "mae": 0.02597964182496071,
+        "observed_mean": 0.0021111774258315563,
+        "observed_std": 0.017917990684509277,
+        "pearson": 0.15585911058283367,
+        "reference_mean": 0.019699277356266975,
+        "reference_std": 0.024286847561597824,
+        "slope": 0.11498742550611496
+      },
+      "bbox_vs_physical": {
+        "count": 683,
+        "mae": 0.01330578699707985,
+        "observed_mean": 0.01966199092566967,
+        "observed_std": 0.026902496814727783,
+        "pearson": 0.7479851773840964,
+        "reference_mean": 0.019699277356266975,
+        "reference_std": 0.024286847561597824,
+        "slope": 0.8285418748855591
+      },
+      "effective_vs_physical": {
+        "count": 683,
+        "mae": 0.02553699165582657,
+        "observed_mean": 0.001906846882775426,
+        "observed_std": 0.0156366229057312,
+        "pearson": 0.17655552329550914,
+        "reference_mean": 0.019699277356266975,
+        "reference_std": 0.024286847561597824,
+        "slope": 0.11367189139127731
+      }
+    },
+    "qoohcdtLDH": {
+      "analytic_vs_physical": {
+        "count": 682,
+        "mae": 0.024177027866244316,
+        "observed_mean": 0.0007692038198001683,
+        "observed_std": 0.010574611835181713,
+        "pearson": 0.08226302612310024,
+        "reference_mean": 0.015479574911296368,
+        "reference_std": 0.02531137503683567,
+        "slope": 0.03436792641878128
+      },
+      "bbox_vs_physical": {
+        "count": 682,
+        "mae": 0.01448114775121212,
+        "observed_mean": 0.014077572152018547,
+        "observed_std": 0.0277392640709877,
+        "pearson": 0.7509378960433657,
+        "reference_mean": 0.015479574911296368,
+        "reference_std": 0.02531137503683567,
+        "slope": 0.8229685425758362
+      },
+      "effective_vs_physical": {
+        "count": 682,
+        "mae": 0.02390885539352894,
+        "observed_mean": 0.000696654140483588,
+        "observed_std": 0.009334050118923187,
+        "pearson": 0.11201498074530221,
+        "reference_mean": 0.015479574911296368,
+        "reference_std": 0.02531137503683567,
+        "slope": 0.04130765423178673
+      }
+    }
+  },
+  "precision": "bf16",
+  "relationships": {
+    "analytic_ratio_vs_bbox_ratio": {
+      "count": 2048,
+      "mae": 0.026944702491164207,
+      "observed_mean": 0.0015167107339948416,
+      "observed_std": 0.014612079598009586,
+      "pearson": 0.11194055264281555,
+      "reference_mean": 0.01966872066259384,
+      "reference_std": 0.027839748188853264,
+      "slope": 0.05875355750322342
+    },
+    "analytic_ratio_vs_physical_ratio": {
+      "count": 2048,
+      "mae": 0.026100672781467438,
+      "observed_mean": 0.0015167107339948416,
+      "observed_std": 0.014612079598009586,
+      "pearson": 0.14985933498154022,
+      "reference_mean": 0.020711518824100494,
+      "reference_std": 0.024532129988074303,
+      "slope": 0.08926074951887131
+    },
+    "bbox_ratio_vs_physical_ratio": {
+      "count": 2048,
+      "mae": 0.013785304501652718,
+      "observed_mean": 0.01966872066259384,
+      "observed_std": 0.027839748188853264,
+      "pearson": 0.7597533292271149,
+      "reference_mean": 0.020711518824100494,
+      "reference_std": 0.024532129988074303,
+      "slope": 0.8621892929077148
+    },
+    "effective_ratio_vs_physical_ratio": {
+      "count": 2048,
+      "mae": 0.025858785957098007,
+      "observed_mean": 0.0013129302533343434,
+      "observed_std": 0.012828596867620945,
+      "pearson": 0.17028732423032275,
+      "reference_mean": 0.020711518824100494,
+      "reference_std": 0.024532129988074303,
+      "slope": 0.08904840797185898
+    },
+    "pair_ratio_vs_physical_ratio": {
+      "count": 2048,
+      "mae": 0.02606656216084957,
+      "observed_mean": 0.0014346903190016747,
+      "observed_std": 0.014543047174811363,
+      "pearson": 0.15811382675406357,
+      "reference_mean": 0.020711518824100494,
+      "reference_std": 0.024532129988074303,
+      "slope": 0.09373243898153305
+    },
+    "predicted_height_vs_bbox_height": {
+      "count": 4096,
+      "mae": 0.18581311404705048,
+      "observed_mean": -0.5453891158103943,
+      "observed_std": 0.045228682458400726,
+      "pearson": 0.47682983833725706,
+      "reference_mean": -0.6338373422622681,
+      "reference_std": 0.2671661376953125,
+      "slope": 0.08072274178266525
+    },
+    "residual_ratio_vs_physical_ratio": {
+      "count": 2048,
+      "mae": 0.0267180185765028,
+      "observed_mean": -8.202047320082784e-05,
+      "observed_std": 0.00149780313950032,
+      "pearson": 0.07324073081835747,
+      "reference_mean": 0.020711518824100494,
+      "reference_std": 0.024532129988074303,
+      "slope": 0.0044716945849359035
+    }
+  },
+  "sample_count": 2048,
+  "sealed_sources": {
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false
+  },
+  "singularity_diagnostics": {
+    "known_saturation_count": 137,
+    "ttc_clip_seconds": 60.0
+  },
+  "status": "completed_public_validation_only",
+  "unknown_diagnostics": {
+    "known_coverage": 0.80224609375,
+    "low_ratio_count": 405,
+    "low_support_count": 0,
+    "min_abs_log_ratio": 0.002,
+    "min_sensor_support": 0.0001,
+    "pair_unknown_count": 405,
+    "support_maximum": 0.9451955556869507,
+    "support_mean": 0.33375680446624756,
+    "support_minimum": 0.1689961850643158,
+    "unknown_count": 405
+  }
+}

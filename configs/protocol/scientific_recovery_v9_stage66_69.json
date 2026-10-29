@@ -1,0 +1,375 @@
+{
+  "protocol_id": "scientific_recovery_v9_stage66_69_risk_geometry_v1",
+  "design_date": "2026-09-06",
+  "base_commit": "5a877f6e7560f3b537ffa1e61298a2a11d8d5dd8",
+  "base_branch": "scientific-recovery-v9-stage63-time-amendment",
+  "new_branch": "scientific-recovery-v9-stage66-69-risk-geometry",
+  "historical_acceptance": "INTEGRITY_BLOCKED",
+  "claim_ceiling": "adaptively_reused_development_only",
+  "runtime_network_access": false,
+  "push_authorized": false,
+  "sealed_evaluation_authorized": false,
+  "authorization": "User execution of the supplied main prompt authorizes the bounded conditional campaign, after the required preflight and lock. This file alone is not an execution receipt.",
+  "source_bundle_sha256": "5bd5a4fc23eab52cf86680e7a8367132d445482433f0c460b38966f6fc2d631f",
+  "data": {
+    "sequences": [
+      "2cyv0Oedzg",
+      "5ilM1PX2vz",
+      "6h5yRW2LGc",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "WbCh1DRerJ",
+      "mHGFBekt7X",
+      "qGsgzl4Q8B",
+      "t79dBxj1WS"
+    ],
+    "tokens": 8192,
+    "sequence_track_pairs": 422,
+    "outer_folds": [
+      0,
+      1,
+      2
+    ],
+    "binding_windows": 16384,
+    "training_role": "outer-specific strictly nested inner-OOF",
+    "evaluation_role": "outer-final held-out prediction",
+    "expert_order": [
+      "A5",
+      "C2F",
+      "PAIR"
+    ],
+    "feature17_order": [
+      "shared_event_count_log1p",
+      "shared_event_rate_log1p",
+      "a5_flow",
+      "a5_margin",
+      "a5_log_variance",
+      "c2f_flow",
+      "c2f_margin",
+      "c2f_log_variance",
+      "a5_benchmark_phase",
+      "c2f_benchmark_phase",
+      "pair_benchmark_phase",
+      "pair_minus_a5_phase",
+      "pair_minus_c2f_phase",
+      "c2f_minus_a5_phase",
+      "abs_pair_minus_a5_phase",
+      "abs_pair_minus_c2f_phase",
+      "abs_c2f_minus_a5_phase"
+    ],
+    "geometry28_order": [
+      "w0_kappa",
+      "w0_omega",
+      "w0_anisotropy",
+      "w0_shear",
+      "w0_bx",
+      "w0_by",
+      "w0_normal_valid_fraction",
+      "w0_inlier_fraction",
+      "w0_log10_condition",
+      "w0_normalized_residual",
+      "w0_full_affine_valid",
+      "w0_fit_valid",
+      "w1_kappa",
+      "w1_omega",
+      "w1_anisotropy",
+      "w1_shear",
+      "w1_bx",
+      "w1_by",
+      "w1_normal_valid_fraction",
+      "w1_inlier_fraction",
+      "w1_log10_condition",
+      "w1_normalized_residual",
+      "w1_full_affine_valid",
+      "w1_fit_valid",
+      "delta_kappa",
+      "delta_omega",
+      "delta_translation_norm",
+      "constant_velocity_residual_abs"
+    ],
+    "geometry_quality_indices": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "evaluation_targets_range_s": [
+      -10,
+      10
+    ],
+    "metric_delta_t_s": 0.1,
+    "bucket_order": [
+      "crucial",
+      "small",
+      "large",
+      "negative"
+    ],
+    "bucket_weights": [
+      0.5,
+      0.3,
+      0.1,
+      0.1
+    ],
+    "bucket_intervals": "(0,3], (3,6], (6,10], (-10,0]; actual phase validity additionally enforced",
+    "normalization_std_floor": 1e-08,
+    "neural_z_clip_abs": 8.0,
+    "outer_fitting_forbidden": true
+  },
+  "training": {
+    "device": "cpu",
+    "dtype": "float64",
+    "torch_intraop_threads": 1,
+    "torch_interop_threads": 1,
+    "deterministic_algorithms": true,
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "gradient_clip_norm": 1.0,
+    "batch_size": 256,
+    "updates": 1500,
+    "scheduler": "constant",
+    "loss": "globally_macro_weighted_two_output_relative_cost_MSE",
+    "relative_cost_divisor": 100.0,
+    "uniform_batch_schedule": "repeated permutation, seed = 10*optimizer_seed + outer_fold",
+    "checkpoint_interval_updates": 100,
+    "milestones": [
+      0,
+      100,
+      500,
+      1000,
+      1500
+    ],
+    "final_checkpoint_selection": "fixed_last_update",
+    "initial_seed": 7,
+    "conditional_replication_seeds": [
+      13,
+      23
+    ],
+    "deployment_seed": 7,
+    "head_init": "zero",
+    "hidden_dims": [
+      32,
+      16
+    ],
+    "nonlinearity": "SiLU",
+    "dropout": 0.0,
+    "parameters_17": 1138,
+    "parameters_45": 2034
+  },
+  "statistics": {
+    "hierarchical_bootstrap_seed": 640065,
+    "hierarchical_valid_draws": 8192,
+    "hierarchical_max_attempts": 32768,
+    "sequence_only": "exact multinomial-weighted 9-sequence bootstrap; 24310 count vectors",
+    "interval_quantiles": [
+      0.025,
+      0.975
+    ],
+    "omit_one": "frozen-score sensitivity, not retraining",
+    "sign_flip": "optional descriptive, not a promotion gate",
+    "high_regret_train_quantiles": [
+      0.5,
+      0.9,
+      0.95
+    ],
+    "all_controls_must_be_reported": true,
+    "average_replication_quantity": "per-row losses, not predictions"
+  },
+  "readiness": {
+    "relative_ttc_replay_tolerance": 1e-12,
+    "absolute_ttc_replay_tolerance": 1e-10,
+    "mid_replay_tolerance": 1e-08,
+    "selected_index_replay": "exact",
+    "finite_fraction": 1.0,
+    "failure_count": 0,
+    "coverage_change": 0,
+    "diagnostics_complete": true,
+    "all_phase_fits_frozen_before_outer": true
+  },
+  "resources": {
+    "hour_limit": null,
+    "one_active_campaign_writer": true,
+    "max_concurrent_training_jobs": 1,
+    "max_raw_chunk_events": 2000000,
+    "max_process_rss_gib": 24.0,
+    "minimum_system_available_ram_gib": 6.0,
+    "minimum_free_disk_gib": 10.0,
+    "disk_required_multiplier_on_estimate": 2.0,
+    "telemetry_interval_s": 5,
+    "immutable_sources": true,
+    "automatic_model_or_precision_fallback": false
+  },
+  "geometry": {
+    "polarity_values": [
+      -1,
+      1
+    ],
+    "snapshots_per_window": 4,
+    "snapshot_rule": "start+floor(k*duration/4), k=1..4, events strictly before snapshot",
+    "lattice_shape": [
+      16,
+      16
+    ],
+    "patch_radius_sensor_pixels": 4,
+    "surface_max_age_us": 10000,
+    "minimum_unique_pixels": 9,
+    "minimum_timestamp_range_s": 1e-06,
+    "gradient_norm_bounds": [
+      1e-08,
+      100000000.0
+    ],
+    "minimum_plane_r2": 0.5,
+    "maximum_plane_median_residual_fraction": 0.2,
+    "minimum_normals": 32,
+    "maximum_scaled_design_condition": 1000000.0,
+    "irls_iterations": 5,
+    "huber_k": 1.345,
+    "mad_multiplier": 1.4826,
+    "mad_floor": 1e-08,
+    "primary_model": "affine_6",
+    "rank_failure_fallback": "isotropic_translation_3",
+    "motion_asinh_clip_abs": 20.0,
+    "condition_log10_bounds": [
+      0,
+      6
+    ],
+    "normalized_residual_bounds": [
+      0,
+      10
+    ],
+    "invalid_condition_log10": 6.0,
+    "invalid_normalized_residual": 10.0,
+    "minimum_time_propagation_denominator": 1e-06,
+    "minimum_train_token_any_window_valid_fraction": 0.2,
+    "probe_tokens": 64,
+    "label_free_constants": true,
+    "ridge_alpha": 0.01,
+    "ridge_normalization": "historical per-arm weighted train-only normalization; no z-score clipping"
+  },
+  "stages": {
+    "66": {
+      "mode": "forensic_preflight_no_historical_refitting"
+    },
+    "67": {
+      "candidate": "S67-SIMPLEX17",
+      "arms": [
+        "S67-SIMPLEX17",
+        "S67-UNCONSTRAINED17",
+        "S67-SIMPLEX8GATE",
+        "S67-SIMPLEX17-PAIRPERM"
+      ],
+      "utility": {
+        "S65-RISK17": {
+          "point_delta_lte": -2.0,
+          "hierarchical_ci95_high_lt": 0.0,
+          "sequence_ci95_high_lt": 0.0,
+          "weighted_sign_error_delta_lte": 0.005,
+          "crucial_bucket_mid_delta_lte": 2.0
+        }
+      },
+      "mechanism_controls": [
+        "S67-UNCONSTRAINED17",
+        "S67-SIMPLEX8GATE",
+        "S67-SIMPLEX17-PAIRPERM"
+      ],
+      "mechanism_point_delta_lt": 0.0,
+      "mechanism_both_ci95_high_lt": 0.0,
+      "seed7_fits": 12,
+      "seed7_updates": 18000,
+      "replication_fits": 24,
+      "replication_updates": 36000
+    },
+    "68": {
+      "candidate": "S68-GTRUE45",
+      "arms": [
+        "S68-GZERO45",
+        "S68-GQUALITY45",
+        "S68-GTRUE45",
+        "S68-GSHUFFLE45"
+      ],
+      "utility": {
+        "S65-RISK17": {
+          "point_delta_lte": -2.0,
+          "hierarchical_ci95_high_lt": 0.0,
+          "sequence_ci95_high_lt": 0.0,
+          "weighted_sign_error_delta_lte": 0.005,
+          "crucial_bucket_mid_delta_lte": 2.0
+        }
+      },
+      "motion": {
+        "S68-GQUALITY45": {
+          "point_delta_lte": -1.0
+        },
+        "S68-GSHUFFLE45": {
+          "point_delta_lt": 0.0
+        }
+      },
+      "motion_both_ci95_high_lt": 0.0,
+      "fits": 12,
+      "optimization_updates": 0
+    },
+    "69": {
+      "candidate": "S69-GSIMPLEX45",
+      "arms": [
+        "S69-GSIMPLEX45",
+        "S69-GUNCONSTRAINED45",
+        "S69-GZERO45",
+        "S69-GQUALITY45",
+        "S69-GSHUFFLE45"
+      ],
+      "utility": {
+        "S65-RISK17": {
+          "point_delta_lte": -2.0,
+          "hierarchical_ci95_high_lt": 0.0,
+          "sequence_ci95_high_lt": 0.0,
+          "weighted_sign_error_delta_lte": 0.005,
+          "crucial_bucket_mid_delta_lte": 2.0
+        },
+        "S68-GTRUE45": {
+          "point_delta_lte": -1.0,
+          "hierarchical_ci95_high_lt": 0.0,
+          "sequence_ci95_high_lt": 0.0,
+          "weighted_sign_error_delta_lte": 0.005,
+          "crucial_bucket_mid_delta_lte": 2.0
+        }
+      },
+      "mechanism_controls": [
+        "S69-GUNCONSTRAINED45",
+        "S69-GZERO45",
+        "S69-GQUALITY45",
+        "S69-GSHUFFLE45"
+      ],
+      "mechanism_point_delta_lt": 0.0,
+      "mechanism_both_ci95_high_lt": 0.0,
+      "seed7_fits": 15,
+      "seed7_updates": 22500,
+      "replication_fits": 30,
+      "replication_updates": 45000
+    }
+  },
+  "replication": {
+    "each_new_seed_point_delta_lt": 0.0,
+    "pooled_seed_loss_gate": "same as the stage utility gate, including guardrails",
+    "all_replication_endpoints_frozen_before_scoring": true,
+    "new_encoder_or_teacher_training": false,
+    "failed_replication_is_terminal": true
+  },
+  "max_branch_budget": {
+    "positive_stage67_neural_updates": 54000,
+    "negative_then_geometry_neural_updates": 85500,
+    "ridge_fits_on_geometry_path": 12
+  }
+}

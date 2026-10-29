@@ -1,0 +1,90 @@
+{
+  "evidence_kind": "derived_summary",
+  "source": {
+    "source_locator": "artifacts/final_train40_transfer_20261027/FINAL_REVIEW.json",
+    "source_sha256": "293780dbb3f439afc4822c24f5c574a301f239bbd0b7c9545a641736dab707d3",
+    "source_bytes": 4643
+  },
+  "recorded": {
+    "schema": "final_train40_transfer_independent_review_v1",
+    "status": "PASS",
+    "review_utc": "2026-10-27T18:23:50.103177+00:00",
+    "files": {
+      "queries_csv": {
+        "filename": "QUERIES.csv",
+        "sha256": "1fbff40f000c879baba3e498eabc86a7d61fc69277299344259d35c871896c87"
+      },
+      "results_json": {
+        "filename": "RESULTS.json",
+        "sha256": "9136babd4a07411e96cc4458856128cc0f6e1b11e424dd2e389ec91efdc9da11"
+      },
+      "manifest": {
+        "filename": "QUERY_MANIFEST.json",
+        "sha256": "9a87a31a435d7922c22c479fe3a8e425e6227b8fab55109c9a2f85a91bb34d31"
+      },
+      "registration": {
+        "filename": "COHORT_REGISTRATION.json",
+        "sha256": "1337a4885ea152a138474938a616b4e7db80a0296f7cf0715115fe88bb0c0ad3"
+      },
+      "own_seal": {
+        "filename": "PREDICTIONS_SEALED.json",
+        "sha256": "bd1c21da0f43d12385ae22f3eb779682737dc83ad361d47669c44753c146d1ec"
+      },
+      "garl_seal": {
+        "filename": "PREDICTIONS_SEALED.json",
+        "sha256": "1462b9d3e6cdc1553356ce4594574dee7fbd1aa1ee216e5bc78ef99422e4a640"
+      },
+      "own_freeze": {
+        "filename": "INFERENCE_FREEZE.json",
+        "sha256": "136a43e07d044e9b5fd1733cbd4aea1d1ea6895c67199bde12fef59c2ce5c5f1"
+      },
+      "garl_freeze": {
+        "filename": "INFERENCE_FREEZE.json",
+        "sha256": "77fd7bd7649a12c3f75f2c371727f6b7f594e7a63a64cd33b545f4c05fdc82bb"
+      }
+    },
+    "checks": {
+      "exact_query_id_matching": true,
+      "dual_seals_and_fragment_hashes": true,
+      "own_13_model_components_and_garl_official_weight_config_bindings": true,
+      "historical_and_extended_disjoint": true,
+      "metrics_recomputed_from_saved_csv": true,
+      "CI_recomputed_2000_whole_physical_sequences_seed7": true,
+      "all_predictions_finite": true
+    },
+    "counts": {
+      "sensor_queries": 554,
+      "valid_gt_queries": 514,
+      "timestamp_mismatch_gt_exclusions": 40,
+      "historical_queries": 46,
+      "historical_valid_gt_queries": 46,
+      "historical_sequences": 3,
+      "extended_new_queries": 508,
+      "extended_valid_gt_queries": 468,
+      "extended_sequences": 32,
+      "extended_sequences_final_RTE_better_than_Garl": 26,
+      "historical_sequences_final_RTE_better_than_Garl": 3
+    },
+    "target_domain": {
+      "minimum_seconds": 0.496052,
+      "maximum_seconds": 17.994177,
+      "negative_targets": 0,
+      "conclusion": "Valid scored targets are positive only; no negative-TTC evidence."
+    },
+    "interpretation": {
+      "final_vs_garl": "Final PHASE_ONLY TRAIN40 improves pooled RTE and MAE on both cohorts, and sequence macro RTE contrasts have negative exploratory bootstrap intervals.",
+      "rgb_control": "R_CTX_TRAIN40 has lower pooled RTE and MAE than PHASE_ONLY_TRAIN40_S7 in both cohorts; do not claim multimodal dominance over RGB.",
+      "scope": "Previously observed EvTTC descriptive transfer; not official benchmark evaluation, SOTA, exact Table VI replication or blind confirmation.",
+      "target_identity": "Extended ROI selection uses a unique scenario category primary annotation group1; scalar scenario TTC has no per-object identifier in the five-column table."
+    },
+    "review_activity": {
+      "new_inference": false,
+      "new_training": false,
+      "tests_rerun": false,
+      "GT_files_reopened": false,
+      "inputs_read": "Source, frozen metadata/seals and generated report CSV/JSON only."
+    }
+  },
+  "large_results_reference": "docs/final_train40_transfer_20261027/RESULTS.json",
+  "publication_scope": "Local absolute paths replaced by filenames; reported checks/counts/limitations retained."
+}

@@ -1,0 +1,826 @@
+{
+  "completed_utc": "2026-10-08T19:47:01.574007+00:00",
+  "execution_freeze_sha256": "31ee30645f44829e79165d9d7b110c92d0835c790e25c158d03308c5f22cc8fa",
+  "interpretation": [
+    "Measured on this host only; no comparison to published hardware latency.",
+    "One project GPU worker ran on a WDDM desktop; physical GPU exclusivity is not claimed and ambient NVIDIA clients are recorded in preflight.",
+    "Architecture contexts differ by design and are reported, not normalized.",
+    "Sequential execution excludes model setup and includes warm-cache preparation.",
+    "This is observational system cost, not causal architecture efficiency."
+  ],
+  "metrics": {
+    "garl_event_only_shared_preparation": {
+      "by_sequence": {
+        "CCRm-low-0-overlap-0": {
+          "count": 3,
+          "maximum_ms": 982.342800009,
+          "mean_ms": 944.6298666686666,
+          "minimum_ms": 869.899699988,
+          "p50_ms": 981.647100009,
+          "p95_ms": 982.273230009,
+          "samples_per_second_from_mean": 1.058615692013425
+        },
+        "CCRs-1-high-0-overlap-0": {
+          "count": 3,
+          "maximum_ms": 1090.264300001,
+          "mean_ms": 959.3464333349999,
+          "minimum_ms": 726.843600016,
+          "p50_ms": 1060.931399988,
+          "p95_ms": 1087.3310099997,
+          "samples_per_second_from_mean": 1.0423763150123726
+        },
+        "CCRs-2-high-100-overlap-100": {
+          "count": 3,
+          "maximum_ms": 1196.417500003,
+          "mean_ms": 1026.0876666676666,
+          "minimum_ms": 907.425099984,
+          "p50_ms": 974.420400016,
+          "p95_ms": 1174.2177900043,
+          "samples_per_second_from_mean": 0.9745755966910808
+        },
+        "CCRs-3-low-100-overlap-100": {
+          "count": 3,
+          "maximum_ms": 561.275199987,
+          "mean_ms": 514.622533325,
+          "minimum_ms": 453.830699989,
+          "p50_ms": 528.761699999,
+          "p95_ms": 558.0238499881999,
+          "samples_per_second_from_mean": 1.9431718108784586
+        },
+        "CCRs-side-high": {
+          "count": 3,
+          "maximum_ms": 2221.598000004,
+          "mean_ms": 1763.287766662,
+          "minimum_ms": 1117.322099977,
+          "p50_ms": 1950.943200005,
+          "p95_ms": 2194.5325200040998,
+          "samples_per_second_from_mean": 0.5671224056031731
+        },
+        "CPLA-high": {
+          "count": 3,
+          "maximum_ms": 1141.243699996,
+          "mean_ms": 1101.061200005,
+          "minimum_ms": 1062.059700023,
+          "p50_ms": 1099.880199996,
+          "p95_ms": 1137.107349996,
+          "samples_per_second_from_mean": 0.9082147295676742
+        },
+        "CPNA-high": {
+          "count": 3,
+          "maximum_ms": 1081.607200002,
+          "mean_ms": 1023.705133334,
+          "minimum_ms": 955.853099993,
+          "p50_ms": 1033.655100007,
+          "p95_ms": 1076.8119900025,
+          "samples_per_second_from_mean": 0.9768437877645517
+        },
+        "CPNAO-high": {
+          "count": 3,
+          "maximum_ms": 792.178400006,
+          "mean_ms": 777.2076666686667,
+          "minimum_ms": 756.102099986,
+          "p50_ms": 783.342500014,
+          "p95_ms": 791.2948100067999,
+          "samples_per_second_from_mean": 1.286657405589274
+        }
+      },
+      "cpu_prepare": {
+        "count": 24,
+        "maximum_ms": 1181.511700008,
+        "mean_ms": 847.4050208326667,
+        "minimum_ms": 539.329899999,
+        "p50_ms": 838.4263999904999,
+        "p95_ms": 1163.3313050099998,
+        "samples_per_second_from_mean": 1.180073253539839
+      },
+      "gpu_inference": {
+        "count": 160,
+        "maximum_ms": 16.068500001,
+        "mean_ms": 8.227323748893749,
+        "minimum_ms": 6.02630002,
+        "p50_ms": 7.596350013,
+        "p95_ms": 11.692054999199986,
+        "samples_per_second_from_mean": 121.5462075543655
+      },
+      "sequential_end_to_end": {
+        "count": 24,
+        "maximum_ms": 2221.598000004,
+        "mean_ms": 1013.7435333332501,
+        "minimum_ms": 453.830699989,
+        "p50_ms": 981.994950009,
+        "p95_ms": 1837.7643450046985,
+        "samples_per_second_from_mean": 0.9864427906256916
+      }
+    },
+    "garl_full_rgb_event": {
+      "by_sequence": {
+        "CCRm-low-0-overlap-0": {
+          "count": 3,
+          "maximum_ms": 781.236200011,
+          "mean_ms": 599.2255333303333,
+          "minimum_ms": 470.377899997,
+          "p50_ms": 546.062499983,
+          "p95_ms": 757.7188300082,
+          "samples_per_second_from_mean": 1.6688207434056936
+        },
+        "CCRs-1-high-0-overlap-0": {
+          "count": 3,
+          "maximum_ms": 636.009300011,
+          "mean_ms": 600.606766675,
+          "minimum_ms": 552.584999998,
+          "p50_ms": 613.226000016,
+          "p95_ms": 633.7309700115001,
+          "samples_per_second_from_mean": 1.6649829064298896
+        },
+        "CCRs-2-high-100-overlap-100": {
+          "count": 3,
+          "maximum_ms": 658.789300011,
+          "mean_ms": 615.439600001,
+          "minimum_ms": 571.617999987,
+          "p50_ms": 615.911500005,
+          "p95_ms": 654.5015200104,
+          "samples_per_second_from_mean": 1.6248548192192622
+        },
+        "CCRs-3-low-100-overlap-100": {
+          "count": 3,
+          "maximum_ms": 610.957900004,
+          "mean_ms": 568.001733336,
+          "minimum_ms": 515.870999981,
+          "p50_ms": 577.176300023,
+          "p95_ms": 607.5797400058999,
+          "samples_per_second_from_mean": 1.7605580076785654
+        },
+        "CCRs-side-high": {
+          "count": 3,
+          "maximum_ms": 977.520100016,
+          "mean_ms": 886.6970000093334,
+          "minimum_ms": 779.159900005,
+          "p50_ms": 903.411000007,
+          "p95_ms": 970.1091900151,
+          "samples_per_second_from_mean": 1.127780966879863
+        },
+        "CPLA-high": {
+          "count": 3,
+          "maximum_ms": 669.807400001,
+          "mean_ms": 591.179933331,
+          "minimum_ms": 541.580399993,
+          "p50_ms": 562.151999999,
+          "p95_ms": 659.0418600008,
+          "samples_per_second_from_mean": 1.6915323806163474
+        },
+        "CPNA-high": {
+          "count": 3,
+          "maximum_ms": 652.948200004,
+          "mean_ms": 628.6503333346667,
+          "minimum_ms": 612.449200009,
+          "p50_ms": 620.553599991,
+          "p95_ms": 649.7087400027,
+          "samples_per_second_from_mean": 1.590709408671613
+        },
+        "CPNAO-high": {
+          "count": 3,
+          "maximum_ms": 700.979099987,
+          "mean_ms": 624.916299993,
+          "minimum_ms": 523.138999997,
+          "p50_ms": 650.630799995,
+          "p95_ms": 695.9442699878,
+          "samples_per_second_from_mean": 1.6002143007170744
+        }
+      },
+      "cpu_prepare": {
+        "count": 24,
+        "maximum_ms": 731.740399991,
+        "mean_ms": 493.9231958305833,
+        "minimum_ms": 358.177999995,
+        "p50_ms": 485.552800004,
+        "p95_ms": 670.9909700093998,
+        "samples_per_second_from_mean": 2.024606271666176
+      },
+      "gpu_inference": {
+        "count": 160,
+        "maximum_ms": 61.661199987,
+        "mean_ms": 39.3674087486875,
+        "minimum_ms": 34.77530001,
+        "p50_ms": 38.573750003499995,
+        "p95_ms": 44.90349497494998,
+        "samples_per_second_from_mean": 25.401722688525687
+      },
+      "sequential_end_to_end": {
+        "count": 24,
+        "maximum_ms": 977.520100016,
+        "mean_ms": 639.3396500012917,
+        "minimum_ms": 470.377899997,
+        "p50_ms": 614.5687500105,
+        "p95_ms": 885.0847800075998,
+        "samples_per_second_from_mean": 1.5641138477771237
+      }
+    },
+    "h8_system_three_heads": {
+      "by_sequence": {
+        "CCRm-low-0-overlap-0": {
+          "count": 3,
+          "maximum_ms": 1172.563600005,
+          "mean_ms": 1108.5033666653333,
+          "minimum_ms": 1043.616999988,
+          "p50_ms": 1109.329500003,
+          "p95_ms": 1166.2401900047998,
+          "samples_per_second_from_mean": 0.9021172421047853
+        },
+        "CCRs-1-high-0-overlap-0": {
+          "count": 3,
+          "maximum_ms": 1031.512699992,
+          "mean_ms": 959.557066662,
+          "minimum_ms": 907.50110001,
+          "p50_ms": 939.657399984,
+          "p95_ms": 1022.3271699912001,
+          "samples_per_second_from_mean": 1.0421475019497155
+        },
+        "CCRs-2-high-100-overlap-100": {
+          "count": 3,
+          "maximum_ms": 2632.203000016,
+          "mean_ms": 1858.1040333373332,
+          "minimum_ms": 1454.324299993,
+          "p50_ms": 1487.784800003,
+          "p95_ms": 2517.7611800146997,
+          "samples_per_second_from_mean": 0.5381829983996665
+        },
+        "CCRs-3-low-100-overlap-100": {
+          "count": 3,
+          "maximum_ms": 1526.967099984,
+          "mean_ms": 1400.6121666656666,
+          "minimum_ms": 1197.614200006,
+          "p50_ms": 1477.255200007,
+          "p95_ms": 1521.9959099863,
+          "samples_per_second_from_mean": 0.7139735208645416
+        },
+        "CCRs-side-high": {
+          "count": 3,
+          "maximum_ms": 1627.3048,
+          "mean_ms": 1540.0131333443333,
+          "minimum_ms": 1367.143400013,
+          "p50_ms": 1625.59120002,
+          "p95_ms": 1627.1334400019998,
+          "samples_per_second_from_mean": 0.6493451116409465
+        },
+        "CPLA-high": {
+          "count": 3,
+          "maximum_ms": 1632.727699995,
+          "mean_ms": 1517.7641333336667,
+          "minimum_ms": 1315.425100009,
+          "p50_ms": 1605.139599997,
+          "p95_ms": 1629.9688899952,
+          "samples_per_second_from_mean": 0.6588639025245427
+        },
+        "CPNA-high": {
+          "count": 3,
+          "maximum_ms": 1600.207499985,
+          "mean_ms": 1433.0046333293333,
+          "minimum_ms": 1190.480399993,
+          "p50_ms": 1508.32600001,
+          "p95_ms": 1591.0193499875,
+          "samples_per_second_from_mean": 0.6978344498975391
+        },
+        "CPNAO-high": {
+          "count": 3,
+          "maximum_ms": 1382.348500018,
+          "mean_ms": 1179.0061333353335,
+          "minimum_ms": 1019.713499991,
+          "p50_ms": 1134.956399997,
+          "p95_ms": 1357.6092900159001,
+          "samples_per_second_from_mean": 0.8481720083771435
+        }
+      },
+      "cpu_prepare": {
+        "count": 24,
+        "maximum_ms": 1181.511700008,
+        "mean_ms": 847.4050208326667,
+        "minimum_ms": 539.329899999,
+        "p50_ms": 838.4263999904999,
+        "p95_ms": 1163.3313050099998,
+        "samples_per_second_from_mean": 1.180073253539839
+      },
+      "gpu_inference": {
+        "count": 160,
+        "maximum_ms": 262.420799991,
+        "mean_ms": 140.45620250143125,
+        "minimum_ms": 102.537599974,
+        "p50_ms": 129.2952999935,
+        "p95_ms": 209.76284500784988,
+        "samples_per_second_from_mean": 7.119657104425915
+      },
+      "sequential_end_to_end": {
+        "count": 24,
+        "maximum_ms": 2632.203000016,
+        "mean_ms": 1374.570583334125,
+        "minimum_ms": 907.50110001,
+        "p50_ms": 1374.7459500155,
+        "p95_ms": 1631.91426499575,
+        "samples_per_second_from_mean": 0.7274999277042756
+      }
+    }
+  },
+  "model_freeze_sha256": "69f5f8d17a2f691ab096a03efb58a6e36d1d8ff8715ac034b8b64d59fae7e4de",
+  "optimizer_updates": 0,
+  "peak_cuda_allocated_bytes": 1599129600,
+  "peak_cuda_reserved_bytes": 1841299456,
+  "peak_process_rss_bytes_observed_50ms": 2789138432,
+  "post_hardware": {
+    "available": true,
+    "returncode": 0,
+    "rows": [
+      "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 4968, 76, 40.92, 1755, 9001"
+    ]
+  },
+  "preflight": {
+    "checked_utc": "2026-10-08T19:44:03.904393+00:00",
+    "gpu_execution_scope": "one_project_gpu_worker_on_wddm_desktop",
+    "hardware_identity": {
+      "available": true,
+      "returncode": 0,
+      "rows": [
+        "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227, 12.0"
+      ]
+    },
+    "hardware_telemetry": {
+      "available": true,
+      "returncode": 0,
+      "rows": [
+        "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227, 8930, 75, 26.89, 930, 9001"
+      ]
+    },
+    "latency_interpretation": "observational_with_recorded_desktop_gpu_contention",
+    "nvidia_client_count": 35,
+    "nvidia_clients": [
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "dwm.exe",
+        "pid": 2764,
+        "reported_process": "[Insufficient Permissions]",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "crossdeviceresume.exe",
+        "pid": 11440,
+        "reported_process": "${DATA}/Windows/SystemApps/MicrosoftWindows.Client.CBS_cw5n1h2txyewy/CrossDeviceResume.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "explorer.exe",
+        "pid": 11144,
+        "reported_process": "${DATA}/Windows/explorer.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "startmenuexperiencehost.exe",
+        "pid": 13300,
+        "reported_process": "${DATA}/Windows/SystemApps/Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy/StartMenuExperienceHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "searchhost.exe",
+        "pid": 13260,
+        "reported_process": "${DATA}/Windows/SystemApps/MicrosoftWindows.Client.CBS_cw5n1h2txyewy/SearchHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "msedgewebview2.exe",
+        "pid": 13996,
+        "reported_process": "${DATA}/EdgeWebView/Application/154.0.4258.53/msedgewebview2.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "textinputhost.exe",
+        "pid": 18092,
+        "reported_process": "${DATA}/Windows/SystemApps/MicrosoftWindows.Client.CBS_cw5n1h2txyewy/TextInputHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "phoneexperiencehost.exe",
+        "pid": 18536,
+        "reported_process": "${DATA}/Program Files/WindowsApps/Microsoft.YourPhone_1.26072.257.0_x64__8wekyb3d8bbwe/PhoneExperienceHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "powertoys.quickaccess.exe",
+        "pid": 14696,
+        "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\WinUI3Apps\\PowerToys.QuickAccess.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "microsoft.cmdpal.ui.exe",
+        "pid": 20216,
+        "reported_process": "${DATA}/Program Files/WindowsApps/Microsoft.CommandPalette_0.8.10371.0_x64__8wekyb3d8bbwe/Microsoft.CmdPal.UI.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "powertoys.exe",
+        "pid": 15228,
+        "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "amdrssrcext.exe",
+        "pid": 20640,
+        "reported_process": "${DATA}/AMD/CNext/CNext/AMDRSSrcExt.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "windowsterminal.exe",
+        "pid": 10704,
+        "reported_process": "${DATA}/Program Files/WindowsApps/Microsoft.WindowsTerminal_1.24.12741.0_x64__8wekyb3d8bbwe/WindowsTerminal.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "msedgewebview2.exe",
+        "pid": 5632,
+        "reported_process": "${DATA}/EdgeWebView/Application/154.0.4258.53/msedgewebview2.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "ms-teams.exe",
+        "pid": 16360,
+        "reported_process": "${DATA}/Program Files/WindowsApps/MSTeams_26246.1604.5133.838_x64__8wekyb3d8bbwe/ms-teams.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "jabra-direct.exe",
+        "pid": 6616,
+        "reported_process": "${DATA}/Program Files (x86)/Jabra/Direct6/jabra-direct.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "chatgpt classic.exe",
+        "pid": 25580,
+        "reported_process": "${DATA}/WindowsApps/OpenAI.ChatGPT-Desktop_1.2026.190.0_x64__2p2nqsd0c76g0/app/ChatGPT Classic.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "radeonsoftware.exe",
+        "pid": 7764,
+        "reported_process": "${DATA}/AMD/CNext/CNext/RadeonSoftware.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "shellexperiencehost.exe",
+        "pid": 30772,
+        "reported_process": "${DATA}/Windows/SystemApps/ShellExperienceHost_cw5n1h2txyewy/ShellExperienceHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "lockapp.exe",
+        "pid": 2540,
+        "reported_process": "${DATA}/Windows/SystemApps/Microsoft.LockApp_cw5n1h2txyewy/LockApp.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "printdialog.exe",
+        "pid": 33184,
+        "reported_process": "${DATA}/Windows/SystemApps/Windows.PrintDialog_cw5n1h2txyewy/PrintDialog.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "powertoys.powerlauncher.exe",
+        "pid": 20520,
+        "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.PowerLauncher.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "shellhost.exe",
+        "pid": 39632,
+        "reported_process": "${DATA}/Windows/System32/ShellHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "notepad.exe",
+        "pid": 37440,
+        "reported_process": "${DATA}/WindowsApps/Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe/Notepad/Notepad.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "applicationframehost.exe",
+        "pid": 30908,
+        "reported_process": "${DATA}/Windows/System32/ApplicationFrameHost.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "systemsettings.exe",
+        "pid": 19036,
+        "reported_process": "${DATA}/Windows/ImmersiveControlPanel/SystemSettings.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "ms-teams.exe",
+        "pid": 37472,
+        "reported_process": "${DATA}/Program Files/WindowsApps/MSTeams_26246.1604.5133.838_x64__8wekyb3d8bbwe/ms-teams.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "firefox.exe",
+        "pid": 6880,
+        "reported_process": "${DATA}/Program Files/Mozilla Firefox/firefox.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "firefox.exe",
+        "pid": 25912,
+        "reported_process": "${DATA}/Program Files/Mozilla Firefox/firefox.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "mpc-hc64.exe",
+        "pid": 20944,
+        "reported_process": "${DATA}/Program Files/MPC-HC/mpc-hc64.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "discord.exe",
+        "pid": 40368,
+        "reported_process": "${DATA}\\AppData\\Local\\Discord\\app-1.0.9261\\Discord.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "powertoys.fancyzones.exe",
+        "pid": 20084,
+        "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.FancyZones.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "powertoys.colorpickerui.exe",
+        "pid": 19916,
+        "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.ColorPickerUI.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "explorer.exe",
+        "pid": 37824,
+        "reported_process": "${DATA}/Windows/explorer.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      },
+      {
+        "classification": "wddm_desktop_environment",
+        "observed_process_name": "powertoys.powerocr.exe",
+        "pid": 22152,
+        "reported_process": "${DATA}\\AppData\\Local\\PowerToys\\PowerToys.PowerOCR.exe",
+        "used_gpu_memory_reported": "[N/A]"
+      }
+    ],
+    "physical_gpu_exclusive": false,
+    "project_gpu_conflicts": 0
+  },
+  "query_count": 8,
+  "schema": "sota_system_cost_fixed8_v1",
+  "setup_seconds": {
+    "excluded_from_latency": true,
+    "garl_event_only_shared_preparation": 0.7793345999962185,
+    "garl_full_rgb_event": 3.0889598000212573,
+    "h8_system_three_heads": 0.7793345999962185,
+    "model_bindings": {
+      "garl_event_only_shared_preparation": {
+        "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+        "device": "cuda",
+        "garl": {
+          "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+          "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+          "event_only_lhr": true,
+          "native_code_root": "${DATA}/Garl-TTC",
+          "source_sha256": {
+            "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+            "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+            "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+            "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+            "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+            "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+            "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+            "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+            "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+            "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+            "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+            "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+            "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+            "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+            "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+            "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+            "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+            "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+            "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+          },
+          "strict_state_load": true
+        },
+        "h8_heads": {
+          "13": {
+            "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+            "committed_updates": 2500,
+            "strict_state_load": true
+          },
+          "23": {
+            "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+            "committed_updates": 2500,
+            "strict_state_load": true
+          },
+          "7": {
+            "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+            "committed_updates": 2500,
+            "strict_state_load": true
+          }
+        },
+        "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+        "normalization": {
+          "arrays_read": [
+            "mean",
+            "scale"
+          ],
+          "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+          "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+          "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+          "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+          "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba"
+        },
+        "optimizer_updates": 0,
+        "producers": {
+          "a5": {
+            "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+            "committed_updates": 49932,
+            "strict_state_load": true
+          },
+          "c2f": {
+            "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+            "committed_updates": 49932,
+            "strict_state_load": true
+          },
+          "pair": {
+            "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+            "committed_updates": 6840,
+            "strict_state_load": true
+          },
+          "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b"
+        },
+        "targets_read": false
+      },
+      "garl_full_rgb_event": {
+        "checkpoint": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth",
+        "checkpoint_bytes": 973290993,
+        "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+        "config": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\configs\\ablation\\ours_full.yaml",
+        "config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+        "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+        "input": {
+          "channel_order": [
+            "RGB0[3]",
+            "RGB1[3]",
+            "EVENT0[20]",
+            "EVENT1[20]"
+          ],
+          "event_normalization": "none",
+          "rgb_mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "rgb_std": [
+            0.229,
+            0.224,
+            0.225
+          ],
+          "shape": [
+            46,
+            128,
+            128
+          ]
+        },
+        "module_sha256": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+        "native_code_root": "${DATA}/Garl-TTC",
+        "native_delta_t_s": 0.1,
+        "native_rgb_sync": "front",
+        "native_source_sha256": {
+          "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+          "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+          "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+          "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14"
+        },
+        "optimizer_updates": 0,
+        "removed_initializer_paths": {
+          "pretrained_ckpt_event": "checkpoints/paper_event_only_lhr.pth",
+          "pretrained_ckpt_rgb": "checkpoints/paper_visual_only_lhr.pth"
+        },
+        "strict_state_load": true,
+        "targets_read": false
+      },
+      "h8_system_three_heads": {
+        "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+        "device": "cuda",
+        "garl": {
+          "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+          "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+          "event_only_lhr": true,
+          "native_code_root": "${DATA}/Garl-TTC",
+          "source_sha256": {
+            "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+            "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+            "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+            "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+            "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+            "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+            "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+            "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+            "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+            "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+            "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+            "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+            "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+            "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+            "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+            "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+            "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+            "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+            "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+          },
+          "strict_state_load": true
+        },
+        "h8_heads": {
+          "13": {
+            "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+            "committed_updates": 2500,
+            "strict_state_load": true
+          },
+          "23": {
+            "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+            "committed_updates": 2500,
+            "strict_state_load": true
+          },
+          "7": {
+            "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+            "committed_updates": 2500,
+            "strict_state_load": true
+          }
+        },
+        "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+        "normalization": {
+          "arrays_read": [
+            "mean",
+            "scale"
+          ],
+          "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+          "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+          "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+          "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+          "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba"
+        },
+        "optimizer_updates": 0,
+        "producers": {
+          "a5": {
+            "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+            "committed_updates": 49932,
+            "strict_state_load": true
+          },
+          "c2f": {
+            "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+            "committed_updates": 49932,
+            "strict_state_load": true
+          },
+          "pair": {
+            "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+            "committed_updates": 6840,
+            "strict_state_load": true
+          },
+          "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b"
+        },
+        "targets_read": false
+      }
+    }
+  },
+  "status": "COMPLETE",
+  "targets_read": false
+}

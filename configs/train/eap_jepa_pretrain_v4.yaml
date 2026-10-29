@@ -1,0 +1,11 @@
+objective: ssl_pure
+uses_ttc_labels: false
+uses_object_bboxes: false
+uses_depth_track_derivatives: false
+uses_rgb: false
+uses_labels_for_window_sampling: false
+context_ms: 100
+horizons_ms: [100, 200, 300]
+mask_ratios: [0.3, 0.45, 0.6]
+epochs: 40
+seed: 7

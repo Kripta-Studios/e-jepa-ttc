@@ -1,0 +1,34 @@
+{
+  "status": "COMPLETE",
+  "passed": true,
+  "scope": "ARTIFICIAL_DISTINCT_ROIS_SHARED_REAL_RAW_LAST_PACKET_COMPLETE_UPDATE",
+  "expected_updates": 3,
+  "validated_updates": 3,
+  "originals": {
+    "passed": true,
+    "files": 607,
+    "changed": [],
+    "missing": []
+  },
+  "cleanup_errors": [],
+  "unexpected_excluded_source_imports": [],
+  "error": null,
+  "target_20_objects_50hz_demonstrated": false,
+  "latency_by_count_ms": {
+    "20": {
+      "count": 3,
+      "mean_ms": 383.71436666666665,
+      "p50_ms": 385.5828,
+      "p95_ms": 386.36472,
+      "p99_ms": 386.434224,
+      "min_ms": 379.1087,
+      "max_ms": 386.4516,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 0,
+      "at_least_20ms_count": 3,
+      "over_50ms_count": 3,
+      "over_100ms_count": 3,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 2.6061051836213935
+    }
+  }
+}

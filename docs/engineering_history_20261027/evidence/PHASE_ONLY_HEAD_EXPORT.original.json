@@ -1,0 +1,18 @@
+{
+  "checkpoint_sha256": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+  "end_to_end_sensor_runtime_exported": false,
+  "export_level": "PHASE_ONLY_HEAD_OVER_PHYSICAL_STATE340",
+  "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+  "output": "/workspace/ejepa_final_runs/final/PHASE_ONLY_HEAD.ts",
+  "output_sha256": "e28b95cdc9cfcebf4597356d04ec1f2dccca7b9bc17a2f6e6c1d431e1a7e4e37",
+  "parity_batches": [
+    1,
+    7
+  ],
+  "parity_max_abs": 0.0,
+  "parity_tolerance": 1e-06,
+  "receipt_sha256": "430d1352374396c8f32d91b272f2a3f278efce09f173cc51dec6a7b6fe566638",
+  "schema": "scientific_oof_phase_only_torchscript_v1",
+  "state_dict_exact": true,
+  "status": "EXPORTED_NOT_EVALUATED"
+}

@@ -1,0 +1,10 @@
+{
+  "band_contributions": {
+    "MiDc": 4.805503228712553,
+    "MiDs": 2.7969743028195686,
+    "MiDl": 1.4892102990742762,
+    "MiDn": 0.13586058856971447
+  },
+  "source": "data/official_benchmark.json",
+  "note": "decomposition of the saved rounded comparator band scores"
+}

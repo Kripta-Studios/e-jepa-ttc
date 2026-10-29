@@ -1,0 +1,11 @@
+{
+  "V_labels_opened": false,
+  "max_phase_cpu_vs_saved_gpu": 6.70403242111206e-05,
+  "optimizer_updates": 0,
+  "producer_observations": 236,
+  "queries": 32,
+  "scope": "CPU_sensor_cache_read_and_native_matched_producers_with_diagnostic_capture_not_E2E_benchmark",
+  "seconds": 32.580690100148786,
+  "status": "COMPLETE",
+  "unique_observations": 118
+}

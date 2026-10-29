@@ -1,0 +1,46 @@
+{
+  "original_bundle_unchanged_sha256": "83c0599944a275a08568259aed69b72eed7ab56f15c7a8972a89abbff081b476",
+  "optimizer_updates": 0,
+  "files": {
+    "docs/simplex_t_route_readiness_20261004/.gitattributes": {
+      "bytes": 29,
+      "sha256": "730a35ae3d558080083c3103d9ac8100c3f6561678092abe341701dfa331eb1d"
+    },
+    "docs/simplex_t_route_readiness_20261004/ESTADO_PENDIENTE.md": {
+      "bytes": 2898,
+      "sha256": "56df1893d055ba80bd8e2d625c55a15752e2faab501d50534b724170038cab41"
+    },
+    "docs/simplex_t_route_readiness_20261004/NEXT_DECISION.json": {
+      "bytes": 910,
+      "sha256": "0c1b7680b56cdd2560b6a75670e7691c33ee165be5c7ca2eee9270c859d6055a"
+    },
+    "docs/simplex_t_route_readiness_20261004/PYRIGHT_FINAL.json": {
+      "bytes": 263,
+      "sha256": "81cda2f0f380dd3ad4f84a377ff34ab2787b014a74271acaa6675027cf8efc80"
+    },
+    "docs/simplex_t_route_readiness_20261004/READINESS_FINAL.json": {
+      "bytes": 50645,
+      "sha256": "59bbd13d416e930a187bc6bc8d56ea846c8aae127f3f7cca55d8753a6d02d066"
+    },
+    "docs/simplex_t_route_readiness_20261004/TESTS_FINAL.xml": {
+      "bytes": 2149,
+      "sha256": "a0b1b2e5ca70e25d81da8669e0758cd2f1d48f18bb4f9591bf02fd6ac90b5686"
+    },
+    "operational/simplex_t_route_readiness/.gitattributes": {
+      "bytes": 29,
+      "sha256": "730a35ae3d558080083c3103d9ac8100c3f6561678092abe341701dfa331eb1d"
+    },
+    "operational/simplex_t_route_readiness/__init__.py": {
+      "bytes": 83,
+      "sha256": "2b90bf734008234a4cb5fcc7c532eee204e4eaec1c69c357f38234458d1623dc"
+    },
+    "operational/simplex_t_route_readiness/inspect.py": {
+      "bytes": 12379,
+      "sha256": "7ff9a2efb73342b0a35c5779194112bedb70df8e9410e8b045b919eabb5925a2"
+    },
+    "operational/simplex_t_route_readiness/test_inspect.py": {
+      "bytes": 4202,
+      "sha256": "ae351c57f6dc4be94a769466eb085ac63635bf1a57a60e86e1f26ae7e409b364"
+    }
+  }
+}

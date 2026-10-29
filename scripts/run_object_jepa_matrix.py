@@ -22,6 +22,26 @@ def _load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _check_provenance(summary_path: Path, expected_fingerprint: str | None = None) -> bool:
+    try:
+        import subprocess
+
+        expected_commit = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+        )
+        summary = _load(summary_path)
+        if summary.get("git_commit") != expected_commit:
+            return False
+
+        if expected_fingerprint is not None:
+            if summary.get("run_fingerprint") != expected_fingerprint:
+                return False
+
+        return True
+    except Exception:
+        return False
+
+
 def _run_or_resume_pretraining(
     *,
     cache: Path,
@@ -29,10 +49,7 @@ def _run_or_resume_pretraining(
     seed: int,
     args: argparse.Namespace,
 ) -> dict[str, Any]:
-    summary_path = output / "summary.json"
-    if args.resume and summary_path.is_file():
-        return _load(summary_path)
-    return pretrain_object_event_jepa(
+    expected_fingerprint = pretrain_object_event_jepa(
         cache_manifest_path=cache,
         output_dir=output,
         epochs=args.pretrain_epochs,
@@ -48,7 +65,40 @@ def _run_or_resume_pretraining(
         use_ego_actions=args.use_ego_actions,
         use_recurrence=args.use_recurrence,
         use_geometry=args.use_geometry,
+        num_workers=args.workers,
+        dry_run_fingerprint=True,
     )
+    assert isinstance(expected_fingerprint, str)
+
+    summary_path = output / "summary.json"
+    if (
+        args.resume
+        and summary_path.is_file()
+        and _check_provenance(summary_path, expected_fingerprint)
+    ):
+        return _load(summary_path)
+    result = pretrain_object_event_jepa(
+        cache_manifest_path=cache,
+        output_dir=output,
+        epochs=args.pretrain_epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.pretrain_learning_rate,
+        weight_decay=args.pretrain_weight_decay,
+        seed=seed,
+        device_name=args.device,
+        embedding_dim=args.embedding_dim,
+        feature_dim=args.feature_dim,
+        predictor_depth=args.predictor_depth,
+        predictor_heads=args.predictor_heads,
+        use_ego_actions=args.use_ego_actions,
+        use_recurrence=args.use_recurrence,
+        use_geometry=args.use_geometry,
+        num_workers=args.workers,
+        dry_run_fingerprint=False,
+    )
+    if isinstance(result, str):
+        raise TypeError("Object-JEPA pretraining returned a fingerprint instead of a summary.")
+    return result
 
 
 def _run_or_resume_finetuning(
@@ -61,10 +111,7 @@ def _run_or_resume_finetuning(
     scratch_config: ObjectJEPAConfig | None,
     args: argparse.Namespace,
 ) -> dict[str, Any]:
-    summary_path = output / "summary.json"
-    if args.resume and summary_path.is_file():
-        return _load(summary_path)
-    return fine_tune_object_ttc(
+    expected_fingerprint = fine_tune_object_ttc(
         cache_manifest_path=cache,
         output_dir=output,
         pretrained_checkpoint_path=pretrained,
@@ -77,13 +124,56 @@ def _run_or_resume_finetuning(
         device_name=args.device,
         scratch_config=scratch_config,
         use_ego_actions=args.use_ego_actions,
+        report_splits=tuple(args.report_splits),
+        allow_final_test_evaluation=args.allow_final_test_evaluation,
+        dry_run_fingerprint=True,
     )
+    assert isinstance(expected_fingerprint, str)
+
+    summary_path = output / "summary.json"
+    if (
+        args.resume
+        and summary_path.is_file()
+        and _check_provenance(summary_path, expected_fingerprint)
+    ):
+        return _load(summary_path)
+    result = fine_tune_object_ttc(
+        cache_manifest_path=cache,
+        output_dir=output,
+        pretrained_checkpoint_path=pretrained,
+        epochs=args.finetune_epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.finetune_learning_rate,
+        weight_decay=args.finetune_weight_decay,
+        label_fraction=fraction,
+        seed=seed,
+        device_name=args.device,
+        scratch_config=scratch_config,
+        use_ego_actions=args.use_ego_actions,
+        report_splits=tuple(args.report_splits),
+        allow_final_test_evaluation=args.allow_final_test_evaluation,
+        dry_run_fingerprint=False,
+    )
+    if isinstance(result, str):
+        raise TypeError("Object-TTC fine-tuning returned a fingerprint instead of a summary.")
+    return result
 
 
 def _row(summary: dict[str, Any]) -> dict[str, Any]:
-    test = summary["test"]
-    regression = test["regression"]
-    garl = test["garl_ttc"]
+    eval_split = summary.get("evaluation_split", "test")
+    split_metrics = summary.get(eval_split, summary.get("validation", {}))
+    regression = split_metrics.get("regression", {})
+    garl = split_metrics.get("garl_ttc", summary.get("validation", {}).get("garl_ttc", {}))
+    if "conformal_90" in split_metrics:
+        conformal = split_metrics["conformal_90"]
+    elif "calibration" in split_metrics:
+        cal = split_metrics["calibration"]
+        conformal = {
+            "coverage": cal.get("conformal_coverage", np.nan),
+            "mean_width_s": 2.0 * cal.get("conformal_scale", np.nan),
+        }
+    else:
+        conformal = {"coverage": np.nan, "mean_width_s": np.nan}
     return {
         "initialization": summary["initialization"],
         "seed": int(summary["seed"]),
@@ -95,8 +185,8 @@ def _row(summary: dict[str, Any]) -> dict[str, Any]:
         "median_abs_error_s": float(regression["median_abs_error_s"]),
         "garl_weighted_mid": float(garl["weighted_mid"]),
         "garl_weighted_rte_pct": float(garl["weighted_rte_pct"]),
-        "conformal_90_coverage": float(test["conformal_90"]["coverage"]),
-        "conformal_90_mean_width_s": float(test["conformal_90"]["mean_width_s"]),
+        "conformal_90_coverage": float(conformal["coverage"]),
+        "conformal_90_mean_width_s": float(conformal["mean_width_s"]),
         "summary": str(summary["best_checkpoint"]).replace("object_ttc_best.pt", "summary.json"),
     }
 
@@ -125,10 +215,16 @@ def _aggregate(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         for metric in metrics:
             values = np.asarray([row[metric] for row in group], dtype=np.float64)
             finite = values[np.isfinite(values)]
-            aggregate[f"{metric}_mean"] = float(np.mean(finite)) if finite.size else float("nan")
-            aggregate[f"{metric}_std"] = (
-                float(np.std(finite, ddof=1)) if finite.size > 1 else 0.0
-            )
+            if finite.size > 0:
+                std = float(np.std(finite, ddof=1)) if finite.size > 1 else 0.0
+                sem = std / np.sqrt(finite.size) if finite.size > 1 else 0.0
+                aggregate[f"{metric}_mean"] = float(np.mean(finite))
+                aggregate[f"{metric}_std"] = std
+                aggregate[f"{metric}_sem"] = sem
+            else:
+                aggregate[f"{metric}_mean"] = float("nan")
+                aggregate[f"{metric}_std"] = 0.0
+                aggregate[f"{metric}_sem"] = 0.0
         payload.append(aggregate)
     return payload
 
@@ -156,10 +252,18 @@ def main() -> int:
     parser.add_argument("--predictor-depth", type=int, default=3)
     parser.add_argument("--predictor-heads", type=int, default=6)
     parser.add_argument("--device", default="auto")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=0,
+        help="Pretraining DataLoader workers; zero is the safe Windows/CI default.",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--no-ego-actions", dest="use_ego_actions", action="store_false")
     parser.add_argument("--no-recurrence", dest="use_recurrence", action="store_false")
     parser.add_argument("--no-geometry", dest="use_geometry", action="store_false")
+    parser.add_argument("--report-splits", nargs="+", default=["validation"])
+    parser.add_argument("--allow-final-test-evaluation", action="store_true")
     parser.set_defaults(use_ego_actions=True, use_recurrence=True, use_geometry=True)
     args = parser.parse_args()
 
@@ -178,6 +282,7 @@ def main() -> int:
         scratch_config = ObjectJEPAConfig(**checkpoint_payload["model_config"])
         for fraction in args.label_fractions:
             fraction_name = f"{fraction:.4f}".rstrip("0").rstrip(".")
+            ckpt_paths = {}
             for initialization, pretrained in (("scratch", None), ("jepa", checkpoint)):
                 run_dir = (
                     args.output_dir
@@ -195,8 +300,20 @@ def main() -> int:
                     scratch_config=scratch_config if pretrained is None else None,
                     args=args,
                 )
+                ckpt_paths[initialization] = Path(summary["best_checkpoint"])
                 rows.append(_row(summary))
                 write_structured(args.output_dir / "runs.json", {"runs": rows})
+
+            # Enforce Architecture Parity (P1.9)
+            import sys
+
+            from e_jepa_ttc.experiments.validation import verify_architecture_parity
+
+            if not verify_architecture_parity(ckpt_paths["scratch"], ckpt_paths["jepa"]):
+                sys.exit(
+                    "FATAL: Architecture parity failed for "
+                    f"fraction {fraction} seed {seed}. Aborting matrix."
+                )
     result = {
         "protocol": "pre_registered_matched_low_label_object_jepa_v1",
         "cache_manifest": args.cache_manifest.as_posix(),
@@ -206,6 +323,7 @@ def main() -> int:
         "uses_recurrence": args.use_recurrence,
         "uses_geometry": args.use_geometry,
         "test_used_for_selection": False,
+        "final_test_opened": False,
         "runs": rows,
         "aggregate": _aggregate(rows),
     }

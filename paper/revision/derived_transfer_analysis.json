@@ -1,0 +1,85 @@
+{
+  "scope": "R01 paired post-hoc analysis of saved labeled transfer predictions with fixed models",
+  "source": "data/transfer_queries.csv",
+  "source_sha256": "2fd4c33716a6c48e50aab581b3a6f172e5492d9136d408433868f63a71431621",
+  "n": 468,
+  "groups": 32,
+  "metrics": {
+    "phase": {
+      "mean": 1.0226772891449645,
+      "median": 0.4635651296310425,
+      "p95": 3.2430100058319082,
+      "max": 32.50547059545899,
+      "rte": 41.226715650131354,
+      "counts_above_s": {
+        "1": 131,
+        "3": 29,
+        "5": 9,
+        "10": 5
+      }
+    },
+    "rgb": {
+      "mean": 1.0153774810531568,
+      "median": 0.40789732163238535,
+      "p95": 3.798780919168089,
+      "max": 16.644879660705566,
+      "rte": 38.55554128641268,
+      "counts_above_s": {
+        "1": 134,
+        "3": 37,
+        "5": 13,
+        "10": 2
+      }
+    },
+    "event": {
+      "mean": 1.4514224779516203,
+      "median": 0.8566000329589842,
+      "p95": 4.397003270892325,
+      "max": 35.95409789135742,
+      "rte": 65.69549923947625,
+      "counts_above_s": {
+        "1": 214,
+        "3": 44,
+        "5": 16,
+        "10": 4
+      }
+    },
+    "garl": {
+      "mean": 3.257595943366874,
+      "median": 0.6738400137939454,
+      "p95": 5.252375501841734,
+      "max": 624.07259503125,
+      "rte": 140.06886644688743,
+      "counts_above_s": {
+        "1": 173,
+        "3": 54,
+        "5": 28,
+        "10": 13
+      }
+    }
+  },
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20261028,
+    "rng": "numpy.default_rng / PCG64",
+    "cluster": "complete physical sequence",
+    "estimand": "pooled query mean, median, and 95th percentile, PHASE minus RGB",
+    "quantile_method": "linear",
+    "interval": "2.5 and 97.5 percentiles",
+    "delta": [
+      0.007299808091807636,
+      0.05566780799865717,
+      -0.5557709133361808
+    ],
+    "ci_low": [
+      -0.11030533126739583,
+      -0.038113062202834856,
+      -1.1257241955566402
+    ],
+    "ci_high": [
+      0.1289711918469575,
+      0.14522507852249125,
+      0.24100974535211603
+    ]
+  }
+}

@@ -13,7 +13,7 @@ import io
 import math
 import tarfile
 from collections import OrderedDict
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from types import ModuleType
@@ -72,6 +72,9 @@ class EAPObjectState:
     depth_velocity_mps: float
     ttc_s: float
     ttc_source: str = "reconstructed_public_3d_track_local_linear"
+    unclipped_bbox_xyxy: tuple[float, float, float, float] | None = None
+    visibility_fraction: float = 1.0
+    first_seen_timestamp_us: int | None = None
 
     @property
     def center_xy(self) -> tuple[float, float]:
@@ -95,6 +98,36 @@ class EAPObjectWindow:
         """Return the last causal state used as the supervised target time."""
 
         return self.history[-1]
+
+
+@dataclass(frozen=True)
+class EAPTemporalWindows:
+    context_start_us: int
+    context_end_us: int
+    future_windows_us: tuple[tuple[int, int], ...]
+
+
+def build_eap_temporal_windows(
+    *,
+    reference_end_us: int,
+    event_window_ms: int,
+    horizons_ms: tuple[int, ...],
+) -> EAPTemporalWindows:
+    window_us = int(event_window_ms * 1000)
+    context_start_us = reference_end_us - window_us
+    context_end_us = reference_end_us
+
+    future_windows: list[tuple[int, int]] = []
+    for h in horizons_ms:
+        f_end = reference_end_us + int(h * 1000)
+        f_start = f_end - window_us
+        future_windows.append((f_start, f_end))
+
+    return EAPTemporalWindows(
+        context_start_us=context_start_us,
+        context_end_us=context_end_us,
+        future_windows_us=tuple(future_windows),
+    )
 
 
 def _require_pandas() -> ModuleType:
@@ -226,14 +259,60 @@ def project_box_3d_to_event(
     projected_homogeneous = (k_event @ corners_camera.T).T
     pixels = projected_homogeneous[:, :2] / projected_homogeneous[:, 2:3]
     width, height = image_size
-    x_min = float(np.clip(np.min(pixels[:, 0]), 0.0, float(width - 1)))
-    y_min = float(np.clip(np.min(pixels[:, 1]), 0.0, float(height - 1)))
-    x_max = float(np.clip(np.max(pixels[:, 0]), 0.0, float(width - 1)))
-    y_max = float(np.clip(np.max(pixels[:, 1]), 0.0, float(height - 1)))
+    raw_x_min = float(np.min(pixels[:, 0]))
+    raw_y_min = float(np.min(pixels[:, 1]))
+    raw_x_max = float(np.max(pixels[:, 0]))
+    raw_y_max = float(np.max(pixels[:, 1]))
+    x_min = float(np.clip(raw_x_min, 0.0, float(width - 1)))
+    y_min = float(np.clip(raw_y_min, 0.0, float(height - 1)))
+    x_max = float(np.clip(raw_x_max, 0.0, float(width - 1)))
+    y_max = float(np.clip(raw_y_max, 0.0, float(height - 1)))
     if x_max <= x_min or y_max <= y_min:
         msg = "Projected 3-D box does not intersect the event image."
         raise ValueError(msg)
     return corners_camera, (x_min, y_min, x_max, y_max), nearest_depth, y_max - y_min
+
+
+def _project_box_with_visibility(
+    bbox_3d_ego: object,
+    intrinsic: object,
+    event_from_ego: object,
+) -> tuple[
+    tuple[float, float, float, float], tuple[float, float, float, float], float, float, float
+]:
+    """Project a box while retaining pre-clipping visibility information."""
+
+    k_event = _numeric_array(intrinsic)
+    transform = _numeric_array(event_from_ego)
+    corners_ego = box_corners_ego(bbox_3d_ego)
+    homogeneous = np.concatenate(
+        [corners_ego, np.ones((corners_ego.shape[0], 1), dtype=np.float64)],
+        axis=1,
+    )
+    corners_camera = (transform @ homogeneous.T).T[:, :3]
+    if float(np.min(corners_camera[:, 2])) <= 0.1:
+        raise ValueError("3-D box is not fully in front of the event camera.")
+    projected = (k_event @ corners_camera.T).T
+    pixels = projected[:, :2] / projected[:, 2:3]
+    raw = (
+        float(np.min(pixels[:, 0])),
+        float(np.min(pixels[:, 1])),
+        float(np.max(pixels[:, 0])),
+        float(np.max(pixels[:, 1])),
+    )
+    width, height = EAP_IMAGE_SIZE
+    clipped = (
+        float(np.clip(raw[0], 0.0, width - 1)),
+        float(np.clip(raw[1], 0.0, height - 1)),
+        float(np.clip(raw[2], 0.0, width - 1)),
+        float(np.clip(raw[3], 0.0, height - 1)),
+    )
+    if clipped[2] <= clipped[0] or clipped[3] <= clipped[1]:
+        raise ValueError("Projected 3-D box does not intersect the event image.")
+    raw_area = max((raw[2] - raw[0]) * (raw[3] - raw[1]), 1e-6)
+    clipped_area = (clipped[2] - clipped[0]) * (clipped[3] - clipped[1])
+    visibility = float(np.clip(clipped_area / raw_area, 0.0, 1.0))
+    return clipped, raw, float(np.min(corners_camera[:, 2])), clipped[3] - clipped[1], visibility
 
 
 def _numeric_array(value: object) -> np.ndarray:
@@ -322,10 +401,12 @@ def reconstruct_eap_object_states(
             )
         )
         try:
-            _corners, bbox_xyxy, nearest_depth, visible_height = project_box_3d_to_event(
-                row.bbox_3d_ego,
-                media["K_event"],
-                media["T_event_ego"],
+            bbox_xyxy, raw_bbox_xyxy, nearest_depth, visible_height, visibility_fraction = (
+                _project_box_with_visibility(
+                    row.bbox_3d_ego,
+                    media["K_event"],
+                    media["T_event_ego"],
+                )
             )
         except ValueError:
             continue
@@ -340,6 +421,8 @@ def reconstruct_eap_object_states(
                 "bbox_3d_ego": tuple(float(value) for value in row.bbox_3d_ego),
                 "nearest_depth_m": nearest_depth,
                 "visible_height_px": visible_height,
+                "unclipped_bbox_xyxy": raw_bbox_xyxy,
+                "visibility_fraction": visibility_fraction,
             }
         )
 
@@ -364,6 +447,7 @@ def reconstruct_eap_object_states(
             radius=derivative_radius,
             maximum_gap_s=maximum_gap_s,
         )
+        first_seen_timestamp_us = int(timestamps[0])
         for row, slope in zip(track, slopes, strict=True):
             ttc = (
                 -float(row["nearest_depth_m"]) / float(slope)
@@ -383,6 +467,9 @@ def reconstruct_eap_object_states(
                     visible_height_px=float(row["visible_height_px"]),
                     depth_velocity_mps=float(slope),
                     ttc_s=ttc,
+                    unclipped_bbox_xyxy=tuple(row["unclipped_bbox_xyxy"]),
+                    visibility_fraction=float(row["visibility_fraction"]),
+                    first_seen_timestamp_us=first_seen_timestamp_us,
                 )
             )
     return sorted(states, key=lambda state: (state.sequence_id, state.track_id, state.timestamp_us))
@@ -397,6 +484,7 @@ def build_eap_object_windows(
     maximum_history_gap_ms: int = 125,
     maximum_interpolation_gap_ms: int = 150,
     ttc_range_s: tuple[float, float] | None = (-10.0, 10.0),
+    require_finite_ttc: bool = True,
 ) -> list[EAPObjectWindow]:
     """Build causal histories and future geometry targets by object track."""
 
@@ -406,11 +494,7 @@ def build_eap_object_windows(
     if not horizons_ms or any(horizon <= 0 for horizon in horizons_ms):
         msg = "horizons_ms must contain positive values."
         raise ValueError(msg)
-    if (
-        maximum_slop_ms < 0
-        or maximum_history_gap_ms <= 0
-        or maximum_interpolation_gap_ms <= 0
-    ):
+    if maximum_slop_ms < 0 or maximum_history_gap_ms <= 0 or maximum_interpolation_gap_ms <= 0:
         msg = "Invalid window slop or history-gap threshold."
         raise ValueError(msg)
     windows: list[EAPObjectWindow] = []
@@ -428,18 +512,20 @@ def build_eap_object_windows(
             if np.any(gaps_ms > maximum_history_gap_ms):
                 continue
             target = history[-1]
-            if not np.isfinite(target.ttc_s):
+            if require_finite_ttc and not np.isfinite(target.ttc_s):
                 continue
-            if ttc_range_s is not None and not ttc_range_s[0] <= target.ttc_s <= ttc_range_s[1]:
+            if (
+                ttc_range_s is not None
+                and np.isfinite(target.ttc_s)
+                and not ttc_range_s[0] <= target.ttc_s <= ttc_range_s[1]
+            ):
                 continue
             future: list[tuple[int, EAPObjectState]] = []
             for horizon_ms in horizons_ms:
                 desired = target.timestamp_us + horizon_ms * 1000
                 insertion = int(np.searchsorted(timestamps, desired, side="left"))
                 candidates = [
-                    index
-                    for index in (insertion - 1, insertion)
-                    if end_index < index < len(track)
+                    index for index in (insertion - 1, insertion) if end_index < index < len(track)
                 ]
                 if not candidates:
                     continue
@@ -498,8 +584,7 @@ def _interpolate_object_state(
 
     depth = float(left.nearest_depth_m + weight * (right.nearest_depth_m - left.nearest_depth_m))
     velocity = float(
-        left.depth_velocity_mps
-        + weight * (right.depth_velocity_mps - left.depth_velocity_mps)
+        left.depth_velocity_mps + weight * (right.depth_velocity_mps - left.depth_velocity_mps)
     )
     ttc = -depth / velocity if np.isfinite(velocity) and abs(velocity) >= 0.05 else float("nan")
     return EAPObjectState(
@@ -512,12 +597,21 @@ def _interpolate_object_state(
         bbox_3d_ego=interpolate_tuple(left.bbox_3d_ego, right.bbox_3d_ego),
         nearest_depth_m=depth,
         visible_height_px=float(
-            left.visible_height_px
-            + weight * (right.visible_height_px - left.visible_height_px)
+            left.visible_height_px + weight * (right.visible_height_px - left.visible_height_px)
         ),
         depth_velocity_mps=velocity,
         ttc_s=ttc,
         ttc_source="interpolated_public_3d_track_local_linear",
+        unclipped_bbox_xyxy=(
+            interpolate_tuple(left.unclipped_bbox_xyxy, right.unclipped_bbox_xyxy)
+            if left.unclipped_bbox_xyxy is not None and right.unclipped_bbox_xyxy is not None
+            else None
+        ),
+        visibility_fraction=float(
+            left.visibility_fraction
+            + weight * (right.visibility_fraction - left.visibility_fraction)
+        ),
+        first_seen_timestamp_us=left.first_seen_timestamp_us,
     )
 
 
@@ -553,6 +647,49 @@ class EAPEventReader:
             self._handle.close()
             self._handle = None
 
+    def _require_open_handle(self) -> h5py.File:
+        if self._handle is not None:
+            return self._handle
+        _require_hdf5plugin()
+        self.open()
+        return self._handle
+
+    @property
+    def t_start_us(self) -> int:
+        """Return the start timestamp in microseconds of the event stream."""
+        handle = self._require_open_handle()
+        events = handle["events"]
+
+        if "t_start_us" in handle.attrs:
+            return int(handle.attrs["t_start_us"])
+
+        if "t_start_us" in events.attrs:
+            return int(events.attrs["t_start_us"])
+
+        timestamps = events["t"]
+        if len(timestamps) == 0:
+            return 0
+
+        return int(timestamps[0])
+
+    @property
+    def t_end_us(self) -> int:
+        """Return the end timestamp in microseconds of the event stream."""
+        handle = self._require_open_handle()
+        events = handle["events"]
+
+        if "t_end_us" in handle.attrs:
+            return int(handle.attrs["t_end_us"])
+
+        if "t_end_us" in events.attrs:
+            return int(events.attrs["t_end_us"])
+
+        timestamps = events["t"]
+        if len(timestamps) == 0:
+            return 0
+
+        return int(timestamps[-1]) + 1
+
     def read_window(self, start_us: int, end_us: int) -> dict[str, np.ndarray]:
         """Read events in the half-open interval ``[start_us, end_us)``."""
 
@@ -564,6 +701,46 @@ class EAPEventReader:
         _require_hdf5plugin()
         with h5py.File(self.path, "r") as handle:
             return self._read_from_handle(handle, start_us=start_us, end_us=end_us)
+
+    def iter_window_chunks(
+        self,
+        start_us: int,
+        end_us: int,
+        *,
+        chunk_events: int = 250_000,
+    ) -> Iterator[dict[str, np.ndarray]]:
+        """Yield exact-boundary event slices without allocating a whole window.
+
+        Large eAP windows can contain millions of events. This iterator keeps the
+        HDF5 index semantics of :meth:`read_window` while bounding temporary NumPy
+        allocations to ``chunk_events`` rows.
+        """
+
+        if start_us < 0 or end_us <= start_us:
+            raise ValueError("Event window requires 0 <= start_us < end_us.")
+        if chunk_events <= 0:
+            raise ValueError("chunk_events must be positive.")
+        handle = self._require_open_handle()
+        required = {"events/x", "events/y", "events/t", "events/p", "ms_to_idx"}
+        missing = sorted(name for name in required if name not in handle)
+        if missing:
+            raise ValueError(f"{self.path} is missing eAP event datasets: {missing}.")
+        millisecond_index = handle["ms_to_idx"]
+        maximum_ms = int(millisecond_index.shape[0] - 1)
+        start_ms = min(maximum_ms, max(0, start_us // 1000))
+        end_ms = min(maximum_ms, max(0, math.ceil(end_us / 1000)))
+        first = int(millisecond_index[start_ms])
+        last = int(millisecond_index[end_ms])
+        for cursor in range(first, last, chunk_events):
+            stop = min(last, cursor + chunk_events)
+            timestamps = np.asarray(handle["events/t"][cursor:stop], dtype=np.int64)
+            exact = (timestamps >= start_us) & (timestamps < end_us)
+            yield {
+                "x": np.asarray(handle["events/x"][cursor:stop], dtype=np.int32)[exact],
+                "y": np.asarray(handle["events/y"][cursor:stop], dtype=np.int32)[exact],
+                "t": timestamps[exact],
+                "p": np.asarray(handle["events/p"][cursor:stop], dtype=np.int8)[exact],
+            }
 
     def _read_from_handle(
         self,
@@ -649,12 +826,8 @@ def crop_events_to_roi(
         & (timestamps >= start_us)
         & (timestamps < end_us)
     )
-    resized_x = np.floor((x[inside] - crop_x_min) / source_width * output_width).astype(
-        np.int32
-    )
-    resized_y = np.floor((y[inside] - crop_y_min) / source_height * output_height).astype(
-        np.int32
-    )
+    resized_x = np.floor((x[inside] - crop_x_min) / source_width * output_width).astype(np.int32)
+    resized_y = np.floor((y[inside] - crop_y_min) / source_height * output_height).astype(np.int32)
     resized_x = np.clip(resized_x, 0, output_width - 1)
     resized_y = np.clip(resized_y, 0, output_height - 1)
     normalized_polarity = np.where(polarity[inside] > 0, 1, -1).astype(np.int8)

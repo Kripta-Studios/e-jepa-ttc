@@ -1,0 +1,53 @@
+\section{Competition adaptation and complete prediction traces}
+\label{app:competition-details}
+This appendix details input construction and timing for the 434-query competition population. Linear and symmetric-log views show the full signed prediction traces.
+
+\subsection{Frozen models and causal input construction}
+
+We use the public Hugging Face full, event-only, and visual-only checkpoints with their released configurations and source revision. Strict state-dictionary loading and float32 inference keep each model fixed. The release identifies the checkpoint bytes but does not document complete training membership, so the evaluation represents frozen-checkpoint adaptation rather than a claim of clean zero-shot transfer.
+
+Garl-TTC predicts the ratio of object heights at two endpoints and converts it to TTC as
+\begin{equation}
+ \widehat T
+ =\frac{\Delta t_{\mathrm{measured}}}
+ {1-\widehat h_0/\widehat h_1}.
+ \label{eq:garl-height-ratio-evttc}
+\end{equation}
+The released configuration sets the native model field $\mathrm{dT}=0.1$\,s. For Equation~\ref{eq:garl-height-ratio-evttc}, the adapter substitutes the measured separation of each endpoint pair while leaving the released representation unchanged. The checkpoint metadata do not establish the cadence used during training.
+
+The full and visual routes select the latest real RGB frame at or before a query, then the preceding frame closest to 100\,ms earlier. Full Garl builds one causal event window per RGB endpoint with support capped at $\min(\Delta t_{\mathrm{measured}},100\,\mathrm{ms})$. Event-only Garl uses two consecutive 100\,ms windows after startup and splits the observed causal prefix into two intervals for earlier queries. Each endpoint uses the released 20-plane, polarity-agnostic time volume. Queries without sufficient history remain gaps.
+
+PHASE-TTC uses its declared 650\,ms causal history. The shared query population therefore compares the frozen systems under their respective temporal support.
+
+Supplied boxes use zero-based, half-open event-plane coordinates. The adapter selects the latest box available at each endpoint; if the endpoint precedes all query-causal boxes, it uses the earliest such box and records availability at query time. Road sequences pair right Blackfly RGB with right Prophesee events. Slider uses its supplied streams and a rotation derived from camera poses because its calibration lacks a named event-to-RGB extrinsic. Calibrated intrinsics, distortion, and rotation-only ray projection map the event box into RGB; unavailable object depth precludes translational correction. A common square edge spans the endpoint boxes, with endpoint-specific event centers and the current center applied to both RGB frames.
+
+
+\subsection{Published three-sequence comparison}
+Table~VI of the eAP paper reports Garl-TTC on three EvTTC sequences, with an unweighted mean RTE of 10.60\% \citep{eap}. That study uses a separate labeled population; shared scenario names do not establish shared recordings or query identities. \evidence{T02}
+\input{tables/evttc_published_rte}
+\input{tables/evttc_sequence_disagreement}
+
+\subsection{Runtime boundary and interpretation}
+
+\input{tables/evttc_runtime}
+
+Timing separates tensor preparation from the synchronized model-to-host call and excludes loading, indexing, calibration, source hashing, and result serialization. The variants run once in full, event-only, visual-only order, so operating-system and HDF5 caches and GPU warm state can carry between runs. Table~\ref{tab:evttc-runtime} reports these observations alongside PHASE-TTC, whose adapter and temporal support differ.
+
+Independent verification accounts for each planned record and replays the float32 height-to-TTC conversion. Full and visual Garl remain partial because of input gaps; event-only contains all 434 rows. Across the ten sequences, the four routes exhibit distinct signed behavior and disagreement tails. \evidence{T01}
+
+\clearpage
+\subsection{All ten sequences, with missing inputs preserved}
+\begin{figure}[H]
+\centering\includegraphics[width=\linewidth,height=.72\textheight,keepaspectratio]{figures/rev_competition_symlog.pdf}
+\caption{\textbf{Signed predictions on a symmetric-log scale.} PHASE-TTC is purple, Garl full gray, event-only teal, and visual-only blue. All panels are linear inside $[-2,2]$\,s and logarithmic outside; gaps mark unavailable inputs. \evidence{T01}}
+\label{fig:evttc-predictions-symlog}
+\end{figure}
+\clearpage
+\begin{figure}[H]
+\centering\includegraphics[width=\linewidth,height=.72\textheight,keepaspectratio]{figures/rev_competition_linear.pdf}
+\caption{\textbf{Signed predictions on a common linear scale.} The same outputs as Figure~\ref{fig:evttc-predictions-symlog} show the full excursion range, which compresses the central values. \evidence{T01}}
+\label{fig:evttc-predictions-linear}
+\end{figure}
+\FloatBarrier
+
+\clearpage

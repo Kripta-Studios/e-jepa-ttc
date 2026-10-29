@@ -1,0 +1,13 @@
+\begin{table}[H]
+\centering\small
+\caption{Evaluation populations and the quantities each supports. Historical46 and Extended-new share three sequence groups but no query identities.}
+\label{tab:evaluation-populations}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.24\linewidth}>{\raggedright\arraybackslash}p{.22\linewidth}X@{}}
+\toprule Population & Size & Interpretation \\\midrule
+Official GarlTTC Test & 6,762 scored tokens & Private targets; band-weighted MiD and scorer-defined failures. \evidence{B01,B02} \\
+Published Garl EvTTC & 3 sequences & Published RTE; target/query correspondence to our run unverified. \evidence{T02} \\
+EvTTC competition & 434 queries; 10 sequences & Unscored predictions, coverage and disagreement. \evidence{T01} \\
+EvTTC Extended-new & 468 targets; 32 sequences & Labeled, development-exposed transfer with annotated ROI. \evidence{L01} \\
+EvTTC Historical46 & 46 targets; 3 sequences & Labeled, development-exposed transfer with annotated ROI. \evidence{L01} \\
+\bottomrule\end{tabularx}
+\end{table}

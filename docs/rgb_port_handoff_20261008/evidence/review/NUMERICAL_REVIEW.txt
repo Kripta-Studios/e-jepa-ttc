@@ -1,0 +1,112 @@
+
+FCWD native Garl vs H8 by bin
+dataset                      model    n       MAE         RTE   median        RMSE  sign_errors   p95_AE  n_cap60  above60
+  dev32                   H8_seed7 3640  1.361284   53.700867 0.721849    3.475393           11 3.822183        6        0
+  dev32                  H8_seed13 3640  1.394970   54.521035 0.699246    3.617749           14 4.047125        4        0
+  dev32                  H8_seed23 3640  1.456492   59.145012 0.702051    4.003138           16 4.158591        5        0
+  dev32      public_Garl_event_lhr 3640  4.559712  161.120694 0.957837   83.896080          173 9.483596       22       22
+  dev32 public_Garl_rgb_event_full 3640 94.509602 5180.181657 0.661416 5561.621766           44 5.037361       11       11
+   fcwd                   H8_seed7  597  1.777725   30.196258 0.674951    3.587901            0 7.502060        0        0
+   fcwd                  H8_seed13  597  1.597361   27.406551 0.579749    3.257992            0 6.705554        0        0
+   fcwd                  H8_seed23  597  1.569221   27.482217 0.597822    3.109231            0 6.388380        0        0
+   fcwd      public_Garl_event_lhr  597  2.146173   26.887265 0.601718    5.071570            8 8.830560        0        0
+
+STRATA
+ dataset                      model     bin    n        mae          rte       bias  sign_errors  AE_share  RTE_share
+  dev32                   H8_seed7     0_1  119   2.345412   266.901889   1.905822            1  0.056327   0.162486
+  dev32                   H8_seed7     1_3 1826   1.119131    64.589400   0.902372            9  0.412412   0.603364
+  dev32                   H8_seed7     3_6 1293   1.087122    26.499850   0.564653            0  0.283679   0.175291
+  dev32                   H8_seed7    6_10  293   1.500219    19.836135  -0.973180            0  0.088710   0.029733
+  dev32                   H8_seed7 10_plus  109   7.222233    52.232040  -7.205227            1  0.158872   0.029126
+  dev32                  H8_seed13     0_1  119   2.704989   307.040471   2.386231            1  0.063394   0.184110
+  dev32                  H8_seed13     1_3 1826   1.105708    62.040982   0.728800           12  0.397626   0.570839
+  dev32                  H8_seed13     3_6 1293   1.192585    28.641420   0.634366            0  0.303684   0.186607
+  dev32                  H8_seed13    6_10  293   1.585435    21.669189  -0.600903            0  0.091485   0.031992
+  dev32                  H8_seed13 10_plus  109   6.699340    48.160472  -6.681504            1  0.143811   0.026452
+  dev32                  H8_seed23     0_1  119   3.415142   386.947125   3.149758            1  0.076656   0.213884
+  dev32                  H8_seed23     1_3 1826   1.141100    64.842960   0.789229           13  0.393021   0.549976
+  dev32                  H8_seed23     3_6 1293   1.264430    30.068034   0.644703            1  0.308378   0.180586
+  dev32                  H8_seed23    6_10  293   1.762437    24.690896  -0.267981            0  0.097403   0.033604
+  dev32                  H8_seed23 10_plus  109   6.057580    43.353119  -5.847288            1  0.124542   0.021950
+  dev32      public_Garl_event_lhr     0_1  119   4.459802   512.053283   2.808665            6  0.031976   0.103899
+  dev32      public_Garl_event_lhr     1_3 1826   4.735541   207.828549   3.606395           74  0.520993   0.647073
+  dev32      public_Garl_event_lhr     3_6 1293   3.641295    90.206058  -0.313519           63  0.283671   0.198876
+  dev32      public_Garl_event_lhr    6_10  293   4.461790    61.596945  -2.510310           17  0.078766   0.030773
+  dev32      public_Garl_event_lhr 10_plus  109  12.881076   104.272649 -11.158368           13  0.084594   0.019380
+  dev32 public_Garl_rgb_event_full     0_1  119   3.048102   350.204272   3.046309            0  0.001054   0.002210
+  dev32 public_Garl_rgb_event_full     1_3 1826 185.396056 10251.864418 183.617363           16  0.984065   0.992790
+  dev32 public_Garl_rgb_event_full     3_6 1293   2.245193    53.977470  -1.109512           11  0.008439   0.003701
+  dev32 public_Garl_rgb_event_full    6_10  293   3.910681    57.152184  -3.269766           11  0.003331   0.000888
+  dev32 public_Garl_rgb_event_full 10_plus  109   9.818013    71.046206  -6.675199            6  0.003111   0.000411
+   fcwd                   H8_seed7     1_3  201   0.759307    48.953435   0.727582            0  0.143805   0.545823
+   fcwd                   H8_seed7     3_6  189   0.561227    12.828851   0.274064            0  0.099945   0.134500
+   fcwd                   H8_seed7    6_10  108   1.065599    12.941984  -0.817913            0  0.108437   0.077535
+   fcwd                   H8_seed7 10_plus   99   6.944693    44.092310  -6.944693            0  0.647812   0.242142
+   fcwd                  H8_seed13     1_3  201   0.690811    44.502743   0.633326            0  0.145606   0.546706
+   fcwd                  H8_seed13     3_6  189   0.540048    12.327554   0.203021            0  0.107033   0.142400
+   fcwd                  H8_seed13    6_10  108   0.943160    11.484374  -0.653743            0  0.106815   0.075806
+   fcwd                  H8_seed13 10_plus   99   6.170112    38.852925  -6.170112            0  0.640547   0.235088
+   fcwd                  H8_seed23     1_3  201   0.695349    44.779429   0.651265            0  0.149190   0.548591
+   fcwd                  H8_seed23     3_6  189   0.558826    12.701367   0.304236            0  0.112740   0.146314
+   fcwd                  H8_seed23    6_10  108   0.989312    12.080726  -0.672338            0  0.114051   0.079523
+   fcwd                  H8_seed23 10_plus   99   5.905008    37.383245  -5.905008            0  0.624018   0.225572
+   fcwd      public_Garl_event_lhr     1_3  201   0.327243    19.306652   0.165923            0  0.051337   0.241759
+   fcwd      public_Garl_event_lhr     3_6  189   0.953610    21.460045   0.278203            0  0.140667   0.252680
+   fcwd      public_Garl_event_lhr    6_10  108   1.897139    22.919632  -1.591681            1  0.159913   0.154209
+   fcwd      public_Garl_event_lhr 10_plus   99   8.387534    56.967592  -8.100636            7  0.648083   0.351352
+
+WINS
+ dataset         h                       garl  row_win_fraction  sequence_wins  sequences  macro_delta
+  dev32  H8_seed7      public_Garl_event_lhr          0.563462             29         32    -3.408308
+  dev32 H8_seed13      public_Garl_event_lhr          0.573352             28         32    -3.377883
+  dev32 H8_seed23      public_Garl_event_lhr          0.567582             28         32    -3.301539
+  dev32  H8_seed7 public_Garl_rgb_event_full          0.487088             18         32   -89.863998
+  dev32 H8_seed13 public_Garl_rgb_event_full          0.496978             19         32   -89.833573
+  dev32 H8_seed23 public_Garl_rgb_event_full          0.489286             17         32   -89.757229
+   fcwd  H8_seed7      public_Garl_event_lhr          0.500838              3          3    -0.364090
+   fcwd H8_seed13      public_Garl_event_lhr          0.522613              3          3    -0.543904
+   fcwd H8_seed23      public_Garl_event_lhr          0.541039              3          3    -0.571160
+
+INVARIANTS {'dev32': {'rows': 3947, 'eligible': 3640, 'sequences': 32, 'truth_min': 0.4765494895999997, 'truth_max': 21.281069798000008, 'neg_targets': 0, 'source_sha256': '265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8'}, 'fcwd': {'rows': 630, 'eligible': 597, 'sequences': 3, 'truth_min': 1.19419533654634, 'truth_max': 28.9226189494698, 'neg_targets': 0, 'source_sha256': '69d619c3b2864e6dfaec86156fd5756a05b72207e766997ea74abd3b441a352b'}}
+
+PAIRED dev32
+    first                     second    status                     metric  first_minus_second    ci95_lower  ci95_upper  draws
+ H8_seed7      public_Garl_event_lhr AVAILABLE          micro_rte_percent         -107.419827   -217.852170  -38.402100  10000
+ H8_seed7      public_Garl_event_lhr AVAILABLE          micro_mae_seconds           -3.198428     -6.384200   -1.253347  10000
+ H8_seed7      public_Garl_event_lhr AVAILABLE macro_sequence_rte_percent         -124.421969   -243.342377  -42.468788  10000
+ H8_seed7      public_Garl_event_lhr AVAILABLE macro_sequence_mae_seconds           -3.408308     -6.828296   -1.249304  10000
+ H8_seed7 public_Garl_rgb_event_full AVAILABLE          micro_rte_percent        -5126.480790 -16022.489562   -2.697863  10000
+ H8_seed7 public_Garl_rgb_event_full AVAILABLE          micro_mae_seconds          -93.148318   -290.743936   -0.246066  10000
+ H8_seed7 public_Garl_rgb_event_full AVAILABLE macro_sequence_rte_percent        -4951.002350 -14786.234281   -5.655161  10000
+ H8_seed7 public_Garl_rgb_event_full AVAILABLE macro_sequence_mae_seconds          -89.863998   -268.048443   -0.289296  10000
+H8_seed13      public_Garl_event_lhr AVAILABLE          micro_rte_percent         -106.599659   -217.339357  -37.817809  10000
+H8_seed13      public_Garl_event_lhr AVAILABLE          micro_mae_seconds           -3.164742     -6.356972   -1.205223  10000
+H8_seed13      public_Garl_event_lhr AVAILABLE macro_sequence_rte_percent         -124.102547   -243.499807  -41.764420  10000
+H8_seed13      public_Garl_event_lhr AVAILABLE macro_sequence_mae_seconds           -3.377883     -6.785366   -1.201776  10000
+H8_seed13 public_Garl_rgb_event_full AVAILABLE          micro_rte_percent        -5125.660621 -16021.640189   -3.436097  10000
+H8_seed13 public_Garl_rgb_event_full AVAILABLE          micro_mae_seconds          -93.114632   -290.700402   -0.258840  10000
+H8_seed13 public_Garl_rgb_event_full AVAILABLE macro_sequence_rte_percent        -4950.682928 -14784.298911   -6.959238  10000
+H8_seed13 public_Garl_rgb_event_full AVAILABLE macro_sequence_mae_seconds          -89.833573   -267.992327   -0.293984  10000
+H8_seed23      public_Garl_event_lhr AVAILABLE          micro_rte_percent         -101.975682   -212.194075  -34.553001  10000
+H8_seed23      public_Garl_event_lhr AVAILABLE          micro_mae_seconds           -3.103220     -6.280679   -1.129140  10000
+H8_seed23      public_Garl_event_lhr AVAILABLE macro_sequence_rte_percent         -118.248412   -237.439931  -37.781510  10000
+H8_seed23      public_Garl_event_lhr AVAILABLE macro_sequence_mae_seconds           -3.301539     -6.732971   -1.120268  10000
+H8_seed23 public_Garl_rgb_event_full AVAILABLE          micro_rte_percent        -5121.036644 -16015.873139   -2.067586  10000
+H8_seed23 public_Garl_rgb_event_full AVAILABLE          micro_mae_seconds          -93.053110   -290.580529   -0.241892  10000
+H8_seed23 public_Garl_rgb_event_full AVAILABLE macro_sequence_rte_percent        -4944.828793 -14775.768632   -4.641572  10000
+H8_seed23 public_Garl_rgb_event_full AVAILABLE macro_sequence_mae_seconds          -89.757229   -267.902886   -0.255584  10000
+
+PAIRED fcwd
+    first                second    status                     metric  first_minus_second  ci95_lower  ci95_upper  draws
+ H8_seed7 public_Garl_event_lhr AVAILABLE          micro_rte_percent            3.308993   -3.341024    9.094762  10000
+ H8_seed7 public_Garl_event_lhr AVAILABLE          micro_mae_seconds           -0.368447   -0.843272   -0.027537  10000
+ H8_seed7 public_Garl_event_lhr AVAILABLE macro_sequence_rte_percent            3.389841   -3.341024    9.094762  10000
+ H8_seed7 public_Garl_event_lhr AVAILABLE macro_sequence_mae_seconds           -0.364090   -0.843272   -0.027537  10000
+H8_seed13 public_Garl_event_lhr AVAILABLE          micro_rte_percent            0.519286   -6.538808    6.276538  10000
+H8_seed13 public_Garl_event_lhr AVAILABLE          micro_mae_seconds           -0.548812   -1.124172   -0.154674  10000
+H8_seed13 public_Garl_event_lhr AVAILABLE macro_sequence_rte_percent            0.597575   -6.538808    6.276538  10000
+H8_seed13 public_Garl_event_lhr AVAILABLE macro_sequence_mae_seconds           -0.543904   -1.124172   -0.154674  10000
+H8_seed23 public_Garl_event_lhr AVAILABLE          micro_rte_percent            0.594951   -6.798261    6.920511  10000
+H8_seed23 public_Garl_event_lhr AVAILABLE          micro_mae_seconds           -0.576952   -1.219967   -0.120787  10000
+H8_seed23 public_Garl_event_lhr AVAILABLE macro_sequence_rte_percent            0.682741   -6.798261    6.920511  10000
+H8_seed23 public_Garl_event_lhr AVAILABLE macro_sequence_mae_seconds           -0.571160   -1.219967   -0.120787  10000

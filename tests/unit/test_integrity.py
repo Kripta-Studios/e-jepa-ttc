@@ -36,4 +36,3 @@ def test_file_manifest_detects_missing_size_and_hash(tmp_path: Path) -> None:
     assert result["valid_file_count"] == 1
     assert result["present_file_count"] == 1
     assert result["files"][0]["sha256_matches"] is True
-

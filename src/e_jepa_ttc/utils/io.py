@@ -8,6 +8,8 @@ from typing import Any
 
 import yaml
 
+from e_jepa_ttc.artifacts.hashing import sign_artifact
+
 
 def ensure_parent(path: str | Path) -> Path:
     """Create the parent directory for a file path and return the path."""
@@ -37,6 +39,8 @@ def write_structured(path: str | Path, data: dict[str, Any]) -> None:
 
     output_path = ensure_parent(path)
     if output_path.suffix.lower() == ".json":
+        if "artifact_type" in data:
+            data = sign_artifact(data)
         output_path.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
     else:
         output_path.write_text(

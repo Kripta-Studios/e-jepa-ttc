@@ -1,0 +1,32 @@
+model:
+  hidden_dim: 32
+  residual_limit: 2.0
+  search_radius: 4
+  correlation_temperature: 0.07
+  foreground_floor: 0.05
+  confidence_floor: 0.05
+  epsilon: 1.0e-6
+
+train:
+  seed: 2020
+  descriptor_batch_size: 6
+  head_batch_size: 32
+  fold_count: 3
+  fold_epochs: 20
+  final_epochs: 20
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  max_grad_norm: 2.0
+
+loss:
+  flow_weight: 1.0
+  divergence_weight: 0.5
+  residual_weight: 0.02
+  smooth_l1_beta: 0.10
+
+# Development decision thresholds only. They never select epochs or parameters.
+decision:
+  minimum_validation_score_pearson: 0.25
+  minimum_all_sequence_score_pearson: 0.05
+  minimum_oof_score_pearson: 0.25
+  required_improvement_over_raw_divergence: 0.03

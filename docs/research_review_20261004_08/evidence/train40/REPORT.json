@@ -1,0 +1,323 @@
+{
+  "status": "TRAINING_COMPLETE",
+  "accounting": {
+    "previous_campaign_physical_upper": 40748,
+    "new_scientific_committed": 114204,
+    "new_pending_upper": 0,
+    "new_recovery_upper": 91,
+    "synthetic_optimizer_updates": 35,
+    "physical_upper": 155078,
+    "physical_cap": 240000,
+    "new_fixed_scientific_endpoint": 114204,
+    "fits": {
+      "a5_seed7": {
+        "committed_updates": 49932,
+        "durable_updates": 49932,
+        "pending_update_upper": 0,
+        "recovery_upper": 91
+      },
+      "c2f_seed7": {
+        "committed_updates": 49932,
+        "durable_updates": 49932,
+        "pending_update_upper": 0,
+        "recovery_upper": 0
+      },
+      "pair_seed7": {
+        "committed_updates": 6840,
+        "durable_updates": 6840,
+        "pending_update_upper": 0,
+        "recovery_upper": 0
+      },
+      "h8_seed7": {
+        "committed_updates": 2500,
+        "durable_updates": 2500,
+        "pending_update_upper": 0,
+        "recovery_upper": 0
+      },
+      "h8_seed13": {
+        "committed_updates": 2500,
+        "durable_updates": 2500,
+        "pending_update_upper": 0,
+        "recovery_upper": 0
+      },
+      "h8_seed23": {
+        "committed_updates": 2500,
+        "durable_updates": 2500,
+        "pending_update_upper": 0,
+        "recovery_upper": 0
+      }
+    },
+    "sampled_utc": "2026-10-08T00:46:12.789766+00:00"
+  },
+  "TRAIN_fit_metrics": {
+    "H8_seed7": {
+      "population": 88744,
+      "finite_coverage": 1.0,
+      "failure_rate": 0.0,
+      "phase_domain_coverage": 1.0,
+      "MAE_seconds_finite": 1.898258812496795,
+      "RMSE_seconds_finite": 6.0442463404386215,
+      "weighted_MiD_phase_valid": 73.02665106353282,
+      "buckets": {
+        "negative": {
+          "population": 37043,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 43.82467050622088
+        },
+        "close": {
+          "population": 9741,
+          "benchmark_weight": 0.5,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 101.5659807531129
+        },
+        "short": {
+          "population": 24251,
+          "benchmark_weight": 0.3,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 44.16346476111733
+        },
+        "long": {
+          "population": 17709,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 46.1215420801909
+        }
+      },
+      "evaluation_role": "TRAIN_FIT_DIAGNOSTIC_NOT_GENERALIZATION",
+      "not_a_reproduction_of_the_published_paper_evaluation": true
+    },
+    "H8_seed13": {
+      "population": 88744,
+      "finite_coverage": 1.0,
+      "failure_rate": 0.0,
+      "phase_domain_coverage": 1.0,
+      "MAE_seconds_finite": 1.815894810111825,
+      "RMSE_seconds_finite": 5.7798026308989945,
+      "weighted_MiD_phase_valid": 72.54463213230568,
+      "buckets": {
+        "negative": {
+          "population": 37043,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 41.913550190105354
+        },
+        "close": {
+          "population": 9741,
+          "benchmark_weight": 0.5,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 100.226782116749
+        },
+        "short": {
+          "population": 24251,
+          "benchmark_weight": 0.3,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 45.7385196722863
+        },
+        "long": {
+          "population": 17709,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 45.183301532347365
+        }
+      },
+      "evaluation_role": "TRAIN_FIT_DIAGNOSTIC_NOT_GENERALIZATION",
+      "not_a_reproduction_of_the_published_paper_evaluation": true
+    },
+    "H8_seed23": {
+      "population": 88744,
+      "finite_coverage": 1.0,
+      "failure_rate": 0.0,
+      "phase_domain_coverage": 1.0,
+      "MAE_seconds_finite": 1.7629846569253127,
+      "RMSE_seconds_finite": 5.674460991611966,
+      "weighted_MiD_phase_valid": 72.70009331346665,
+      "buckets": {
+        "negative": {
+          "population": 37043,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 40.53152707567211
+        },
+        "close": {
+          "population": 9741,
+          "benchmark_weight": 0.5,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 102.14693128860918
+        },
+        "short": {
+          "population": 24251,
+          "benchmark_weight": 0.3,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 44.415624942294656
+        },
+        "long": {
+          "population": 17709,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 42.48787478906453
+        }
+      },
+      "evaluation_role": "TRAIN_FIT_DIAGNOSTIC_NOT_GENERALIZATION",
+      "not_a_reproduction_of_the_published_paper_evaluation": true
+    },
+    "public_Garl_event_lhr": {
+      "population": 88744,
+      "finite_coverage": 1.0,
+      "failure_rate": 0.0,
+      "phase_domain_coverage": 1.0,
+      "MAE_seconds_finite": 3.5768555437929774,
+      "RMSE_seconds_finite": 123.23548115710415,
+      "weighted_MiD_phase_valid": 93.68238334143504,
+      "buckets": {
+        "negative": {
+          "population": 37043,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 45.002444516072025
+        },
+        "close": {
+          "population": 9741,
+          "benchmark_weight": 0.5,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 143.00126052667312
+        },
+        "short": {
+          "population": 24251,
+          "benchmark_weight": 0.3,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 43.220547357773846
+        },
+        "long": {
+          "population": 17709,
+          "benchmark_weight": 0.1,
+          "failure_rate": 0.0,
+          "phase_domain_coverage": 1.0,
+          "MiD_phase_valid": 47.153444191591205
+        }
+      },
+      "evaluation_role": "TRAIN_FIT_DIAGNOSTIC_NOT_GENERALIZATION",
+      "not_a_reproduction_of_the_published_paper_evaluation": true
+    }
+  },
+  "observed_cost": {
+    "a5_seed7": {
+      "recorded_updates": 49932,
+      "last_recorded_update": 49932,
+      "compute_seconds": 33353.938302899056,
+      "unhidden_input_wait_seconds": 17729.915516900983,
+      "head_update_seconds": 0
+    },
+    "c2f_seed7": {
+      "recorded_updates": 49932,
+      "last_recorded_update": 49932,
+      "compute_seconds": 31783.519812099632,
+      "unhidden_input_wait_seconds": 12606.618374099968,
+      "head_update_seconds": 0
+    },
+    "pair_seed7": {
+      "recorded_updates": 6840,
+      "last_recorded_update": 6840,
+      "compute_seconds": 0.0,
+      "unhidden_input_wait_seconds": 0.0,
+      "head_update_seconds": 58.258719699588255
+    },
+    "h8_seed7": {
+      "recorded_updates": 2500,
+      "last_recorded_update": 2500,
+      "compute_seconds": 0.0,
+      "unhidden_input_wait_seconds": 0.0,
+      "head_update_seconds": 98.65838619977876
+    },
+    "h8_seed13": {
+      "recorded_updates": 2500,
+      "last_recorded_update": 2500,
+      "compute_seconds": 0.0,
+      "unhidden_input_wait_seconds": 0.0,
+      "head_update_seconds": 102.11719159984204
+    },
+    "h8_seed23": {
+      "recorded_updates": 2500,
+      "last_recorded_update": 2500,
+      "compute_seconds": 0.0,
+      "unhidden_input_wait_seconds": 0.0,
+      "head_update_seconds": 88.89987439994002
+    }
+  },
+  "comparator_contract": {
+    "role": "TRAIN_FIT_DIAGNOSTIC_NOT_GENERALIZATION",
+    "queries": 88744,
+    "TRAIN_sequences": 40,
+    "public_checkpoint_training_manifest_verified": false,
+    "public_checkpoint_SHA256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+    "checkpoint_strict_load_and_real_sensor_input": "PASSED",
+    "no_published_accuracy_claim_or_paper_score_reused": true,
+    "independent_evaluation_dependency": "Common authorized holdout with accessible signed-TTC labels, exact native evaluation adapter and verified checkpoint training sequence history.",
+    "does_not_block_local_training": true
+  },
+  "checkpoint_receipts": {
+    "a5_seed7": {
+      "status": "COMPLETE",
+      "sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "committed_updates": 49932,
+      "recovery_upper": 91,
+      "full_optimizer_scheduler_sampler_and_all_RNG": true
+    },
+    "c2f_seed7": {
+      "status": "COMPLETE",
+      "sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "committed_updates": 49932,
+      "recovery_upper": 0,
+      "full_optimizer_scheduler_sampler_and_all_RNG": true
+    },
+    "pair_seed7": {
+      "status": "COMPLETE",
+      "sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+      "committed_updates": 6840,
+      "recovery_upper": 0,
+      "full_optimizer_scheduler_sampler_and_all_RNG": true
+    },
+    "h8_seed7": {
+      "status": "COMPLETE",
+      "sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+      "committed_updates": 2500,
+      "recovery_upper": 0,
+      "full_optimizer_scheduler_sampler_and_all_RNG": true
+    },
+    "h8_seed13": {
+      "status": "COMPLETE",
+      "sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+      "committed_updates": 2500,
+      "recovery_upper": 0,
+      "full_optimizer_scheduler_sampler_and_all_RNG": true
+    },
+    "h8_seed23": {
+      "status": "COMPLETE",
+      "sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+      "committed_updates": 2500,
+      "recovery_upper": 0,
+      "full_optimizer_scheduler_sampler_and_all_RNG": true
+    }
+  },
+  "encoder_system_seeds": 1,
+  "temporal_head_seeds": [
+    7,
+    13,
+    23
+  ]
+}

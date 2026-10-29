@@ -1,0 +1,4893 @@
+{
+  "scope": "PREPARED_GPU_PRODUCERS_PAIR_PHASE17_GUARDS_NO_RAW_H2D_CONTEXT",
+  "status": "COMPLETE_WITH_PARITY_FAILURES",
+  "target_20_objects_50hz_demonstrated": false,
+  "complete_update_admitted": false,
+  "records": [
+    {
+      "objects": 1,
+      "index": 0,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CCRm-low-0-overlap-0:14350374",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 5.8032369613647464e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 6.410682678222657e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 5.9776692390441895e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 3.531090200005565,
+        "compiled_transport_graph": 112.40275190002285
+      },
+      "times_ms": {
+        "original_graph": [
+          22.5477,
+          23.3354,
+          17.3493,
+          17.1246,
+          17.72,
+          17.992,
+          16.8282,
+          16.938,
+          17.8451,
+          17.6441,
+          16.8237,
+          16.8149,
+          16.9119,
+          18.4452,
+          17.5585,
+          16.7178,
+          17.4441,
+          16.8426,
+          17.5721,
+          16.8755
+        ],
+        "compiled_transport_graph": [
+          10.5743,
+          10.5707,
+          9.8441,
+          9.2053,
+          9.3346,
+          9.6274,
+          10.0674,
+          9.8459,
+          9.2688,
+          9.5987,
+          9.6628,
+          9.4064,
+          10.4352,
+          9.1044,
+          9.513,
+          9.1992,
+          9.2283,
+          9.1744,
+          9.216,
+          9.1747
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 17.866535,
+          "p50_ms": 17.3967,
+          "p95_ms": 22.587085,
+          "p99_ms": 23.185737,
+          "min_ms": 16.7178,
+          "max_ms": 23.3354,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 18,
+          "at_least_20ms_count": 2,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 55.970561723355985
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 9.60258,
+          "p50_ms": 9.4597,
+          "p95_ms": 10.57088,
+          "p99_ms": 10.573616,
+          "min_ms": 9.1044,
+          "max_ms": 10.5743,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 104.13867939657884
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.873858036585937e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 5.8032369613647464e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 6.410682678222657e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 5.9776692390441895e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.9782238230506184e-07
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.9073486328125e-06,
+              "max_relative_error": 3.5251533794235386e-07
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.430511474609375e-06,
+              "max_relative_error": 2.873858036585937e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 5.8032369613647464e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.9073486328125e-06,
+                  "allowed_abs_error": 6.410682678222657e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.430511474609375e-06,
+                  "allowed_abs_error": 5.9776692390441895e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 4.803236961364746,
+            "E_CTX_TRAIN40": 5.410682678222656,
+            "R_CTX_TRAIN40": 4.9776692390441895
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 4.803236961364746,
+              "E_CTX_TRAIN40": 5.410682678222656,
+              "R_CTX_TRAIN40": 4.977667808532715
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 4.8032355308532715,
+              "E_CTX_TRAIN40": 5.410680770874023,
+              "R_CTX_TRAIN40": 4.977667808532715
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 48,
+                "max_abs": 2.09808349609375e-05,
+                "max_relative": 0.0003495403544339194
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 9,
+                "max_abs": 6.146728992462158e-08,
+                "max_relative": 3.3472243142374185e-06
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 47,
+              "max_abs": 1.5735626220703125e-05,
+              "max_relative": 5.844262103466816e-05
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 7,
+              "max_abs": 3.166496753692627e-08,
+              "max_relative": 2.3678886992024324e-06
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 67,
+                "max_abs": 1.1444091796875e-05,
+                "max_relative": 0.0001747701772169597
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 11,
+                "max_abs": 5.774199962615967e-08,
+                "max_relative": 2.8764554052447805e-06
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            459.0570356398582,
+            301.70797026119465,
+            566.0329603286862,
+            408.6838949500226
+          ],
+          "rgb": [
+            746.0,
+            513.5,
+            896.0,
+            663.5
+          ]
+        }
+      ]
+    },
+    {
+      "objects": 1,
+      "index": 137,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CCRs-1-high-50-overlap-50:15002363",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 6.479002952575685e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.00010398821830749512
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 5.9729614257812506e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 0.018021700030658394,
+        "compiled_transport_graph": 0.009539299993775785
+      },
+      "times_ms": {
+        "original_graph": [
+          17.4825,
+          16.8229,
+          17.3435,
+          16.9651,
+          17.7734,
+          17.4333,
+          16.9826,
+          17.5378,
+          16.7166,
+          17.3095,
+          16.6916,
+          16.9399,
+          16.4704,
+          16.5726,
+          16.8301,
+          16.4825,
+          17.3077,
+          17.7058,
+          17.0059,
+          17.1404
+        ],
+        "compiled_transport_graph": [
+          10.113,
+          9.2428,
+          9.6953,
+          9.1367,
+          9.0726,
+          9.3729,
+          9.3363,
+          9.7218,
+          9.0033,
+          9.1477,
+          9.4308,
+          11.8081,
+          9.9458,
+          9.0749,
+          9.5435,
+          9.3212,
+          10.0264,
+          9.8097,
+          9.2146,
+          9.8618
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 17.075705,
+          "p50_ms": 16.99425,
+          "p95_ms": 17.70918,
+          "p99_ms": 17.760555999999998,
+          "min_ms": 16.4704,
+          "max_ms": 17.7734,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 58.56273576991404
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 9.59396,
+          "p50_ms": 9.40185,
+          "p95_ms": 10.197755,
+          "p99_ms": 11.486030999999997,
+          "min_ms": 9.0033,
+          "max_ms": 11.8081,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 104.23224612151813
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 9.5367431640625e-07,
+              "max_relative_error": 1.740598288887446e-07
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 4.76837158203125e-07,
+              "max_relative_error": 9.588595554573683e-08
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 9.5367431640625e-07,
+                  "allowed_abs_error": 6.479002952575685e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 0.00010398821830749512
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 4.76837158203125e-07,
+                  "allowed_abs_error": 5.9729614257812506e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.86102294921875e-06,
+              "max_relative_error": 5.221794866662338e-07
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 1.71661376953125e-05,
+              "max_relative_error": 1.8264137787090684e-06
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 3.337860107421875e-06,
+              "max_relative_error": 6.712016888201579e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.86102294921875e-06,
+                  "allowed_abs_error": 6.479002952575685e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 1.71661376953125e-05,
+                  "allowed_abs_error": 0.00010398821830749512
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 3.337860107421875e-06,
+                  "allowed_abs_error": 5.9729614257812506e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 5.479002952575684,
+            "E_CTX_TRAIN40": 9.398821830749512,
+            "R_CTX_TRAIN40": 4.97296142578125
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 5.479001998901367,
+              "E_CTX_TRAIN40": 9.398821830749512,
+              "R_CTX_TRAIN40": 4.972960948944092
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 5.479005813598633,
+              "E_CTX_TRAIN40": 9.398838996887207,
+              "R_CTX_TRAIN40": 4.972964763641357
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 45,
+                "max_abs": 6.735324859619141e-06,
+                "max_relative": 2.2375411284315936e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 7,
+                "max_abs": 1.30385160446167e-08,
+                "max_relative": 9.15803930303396e-07
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 46,
+              "max_abs": 3.24249267578125e-05,
+              "max_relative": 7.990369702040065e-05
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 6,
+              "max_abs": 4.377216100692749e-08,
+              "max_relative": 7.0927387005609815e-06
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 49,
+                "max_abs": 7.152557373046875e-06,
+                "max_relative": 2.420640804136875e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 7,
+                "max_abs": 5.960464477539063e-08,
+                "max_relative": 3.108553807512131e-06
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            632.2337316311749,
+            276.47263807939134,
+            687.6910584192339,
+            331.9299648674503
+          ],
+          "rgb": [
+            991.0,
+            498.0,
+            1069.0,
+            576.0
+          ]
+        }
+      ]
+    },
+    {
+      "objects": 1,
+      "index": 488,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNA-low:25250866",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.0006099999618530274
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 7.139225006103516e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.000373525505065918
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 0.01986359996953979,
+        "compiled_transport_graph": 0.010287699988111854
+      },
+      "times_ms": {
+        "original_graph": [
+          18.1654,
+          18.6778,
+          18.686,
+          18.9724,
+          18.9645,
+          19.2329,
+          17.6139,
+          17.9548,
+          18.2902,
+          17.7405,
+          18.3754,
+          17.6294,
+          18.1863,
+          18.2302,
+          18.2284,
+          18.3493,
+          17.477,
+          17.6715,
+          18.0382,
+          18.0119
+        ],
+        "compiled_transport_graph": [
+          11.0566,
+          10.8044,
+          10.666,
+          10.3163,
+          10.1358,
+          9.6028,
+          9.8391,
+          10.8383,
+          10.3733,
+          9.9739,
+          9.7128,
+          9.5963,
+          9.4561,
+          9.7204,
+          10.2388,
+          9.1895,
+          9.3875,
+          10.6039,
+          10.3935,
+          9.8219
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 18.224800000000002,
+          "p50_ms": 18.207349999999998,
+          "p95_ms": 18.985425,
+          "p99_ms": 19.183405,
+          "min_ms": 17.477,
+          "max_ms": 19.2329,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 54.870286642377415
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 10.086359999999999,
+          "p50_ms": 10.05485,
+          "p95_ms": 10.849215000000001,
+          "p99_ms": 11.015122999999999,
+          "min_ms": 9.1895,
+          "max_ms": 11.0566,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 99.14379419334627
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.00031280517578125,
+              "max_relative_error": 8.604765592018891e-06
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 0.0006099999618530274
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 7.139225006103516e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.00031280517578125,
+                  "allowed_abs_error": 0.000373525505065918
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": false,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.4318695068359375e-05,
+              "max_relative_error": 3.9611995071335766e-06
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.001659393310546875,
+              "max_relative_error": 4.5647232104002656e-05
+            }
+          },
+          "failed_query_ids": [
+            "roi_00"
+          ],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": false,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 0.0006099999618530274
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.4318695068359375e-05,
+                  "allowed_abs_error": 7.139225006103516e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": false,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.001659393310546875,
+                  "allowed_abs_error": 0.000373525505065918
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": -59.999996185302734,
+            "E_CTX_TRAIN40": -6.139225006103516,
+            "R_CTX_TRAIN40": 36.3525505065918
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": -59.999996185302734,
+              "E_CTX_TRAIN40": -6.139225006103516,
+              "R_CTX_TRAIN40": 36.352237701416016
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": -59.999996185302734,
+              "E_CTX_TRAIN40": -6.139249324798584,
+              "R_CTX_TRAIN40": 36.354209899902344
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 51,
+                "max_abs": 4.00543212890625e-05,
+                "max_relative": 1.4297220143830034e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 7,
+                "max_abs": 5.774199962615967e-08,
+                "max_relative": 2.258190091236707e-06
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": false,
+          "event": [
+            {
+              "passed": false,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 4,
+              "different_elements": 54,
+              "max_abs": 0.0001621246337890625,
+              "max_relative": 4.068753064153762e-05
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 10,
+              "max_abs": 1.7881393432617188e-07,
+              "max_relative": 4.068753064153762e-05
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": false,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 1,
+                "different_elements": 63,
+                "max_abs": 0.000125885009765625,
+                "max_relative": 3.1559007934015255e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 9,
+                "max_abs": 6.146728992462158e-08,
+                "max_relative": 7.012694379365528e-06
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            600.4584971356996,
+            41.65139909850683,
+            1493.5947304562899,
+            934.787632419097
+          ],
+          "rgb": [
+            944.75,
+            152.75,
+            2200.25,
+            1408.25
+          ]
+        }
+      ]
+    },
+    {
+      "objects": 1,
+      "index": 505,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNA-medium:20550743",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.9750161170959476e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.000140657901763916
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.076372861862183e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 0.019028700015041977,
+        "compiled_transport_graph": 0.011013200040906668
+      },
+      "times_ms": {
+        "original_graph": [
+          20.0468,
+          18.8711,
+          19.022,
+          19.3203,
+          17.8522,
+          17.6386,
+          17.6491,
+          17.5297,
+          19.6171,
+          20.5537,
+          19.6344,
+          19.9002,
+          19.3213,
+          19.814,
+          18.8977,
+          19.2197,
+          18.8777,
+          18.2385,
+          19.0855,
+          18.5002
+        ],
+        "compiled_transport_graph": [
+          11.0725,
+          10.2347,
+          9.7231,
+          10.1986,
+          10.4846,
+          9.7742,
+          9.9781,
+          9.9866,
+          9.7997,
+          10.7215,
+          10.764,
+          12.2584,
+          10.2381,
+          9.8991,
+          10.7427,
+          9.7749,
+          11.383,
+          10.4509,
+          9.4028,
+          9.6851
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 18.979490000000002,
+          "p50_ms": 19.05375,
+          "p95_ms": 20.072145000000003,
+          "p99_ms": 20.457389,
+          "min_ms": 17.5297,
+          "max_ms": 20.5537,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 18,
+          "at_least_20ms_count": 2,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 52.688454747730304
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 10.32863,
+          "p50_ms": 10.216650000000001,
+          "p95_ms": 11.42677,
+          "p99_ms": 12.092073999999998,
+          "min_ms": 9.4028,
+          "max_ms": 12.2584,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 96.81826147320602
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.384185791015625e-07,
+              "max_relative_error": 1.1482454981025817e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 3.9750161170959476e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 0.000140657901763916
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.384185791015625e-07,
+                  "allowed_abs_error": 3.076372861862183e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": false,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 8.58306884765625e-06,
+              "max_relative_error": 2.8850495290877906e-06
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.00060272216796875,
+              "max_relative_error": 4.612979083789364e-05
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 9.5367431640625e-07,
+              "max_relative_error": 4.5929819924103267e-07
+            }
+          },
+          "failed_query_ids": [
+            "roi_00"
+          ],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": false,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 8.58306884765625e-06,
+                  "allowed_abs_error": 3.9750161170959476e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": false,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.00060272216796875,
+                  "allowed_abs_error": 0.000140657901763916
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 9.5367431640625e-07,
+                  "allowed_abs_error": 3.076372861862183e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.9750161170959473,
+            "E_CTX_TRAIN40": 13.065790176391602,
+            "R_CTX_TRAIN40": 2.0763728618621826
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 2.9750161170959473,
+              "E_CTX_TRAIN40": 13.065790176391602,
+              "R_CTX_TRAIN40": 2.0763726234436035
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 2.9750075340270996,
+              "E_CTX_TRAIN40": 13.065187454223633,
+              "R_CTX_TRAIN40": 2.076373815536499
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 44,
+                "max_abs": 5.7220458984375e-06,
+                "max_relative": 2.9067724911521504e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 6,
+                "max_abs": 1.1641532182693481e-08,
+                "max_relative": 1.5005876301159534e-06
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": false,
+          "event": [
+            {
+              "passed": false,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 2,
+              "different_elements": 57,
+              "max_abs": 0.00013065338134765625,
+              "max_relative": 0.0001772735330615139
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 11,
+              "max_abs": 1.1920928955078125e-07,
+              "max_relative": 3.0135757281444724e-05
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": false,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 1,
+                "different_elements": 52,
+                "max_abs": 5.626678466796875e-05,
+                "max_relative": 1.915389820328735e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 7,
+                "max_abs": 1.0710209608078003e-07,
+                "max_relative": 1.3805406197066772e-05
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            722.4183323991215,
+            12.12840061900414,
+            1649.3379853794431,
+            939.0480535993258
+          ],
+          "rgb": [
+            1116.5,
+            111.5,
+            2421.5,
+            1416.5
+          ]
+        }
+      ]
+    },
+    {
+      "objects": 1,
+      "index": 514,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-high:15900477",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 4.4168262481689454e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.00014049399375915529
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.8613023757934575e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 0.019390900037251413,
+        "compiled_transport_graph": 0.009539099992252886
+      },
+      "times_ms": {
+        "original_graph": [
+          19.3001,
+          18.0236,
+          19.853,
+          18.3386,
+          18.0548,
+          18.7026,
+          17.3562,
+          17.6857,
+          18.9342,
+          19.3717,
+          17.7856,
+          19.2041,
+          18.3807,
+          17.6158,
+          18.0122,
+          17.9123,
+          19.0423,
+          18.5747,
+          18.0246,
+          18.5417
+        ],
+        "compiled_transport_graph": [
+          10.2331,
+          10.0609,
+          9.4824,
+          10.4217,
+          10.0687,
+          9.6278,
+          10.3633,
+          10.0785,
+          10.623,
+          9.8746,
+          9.3386,
+          10.0184,
+          10.1822,
+          10.4408,
+          10.9576,
+          10.1118,
+          10.2024,
+          10.7481,
+          10.3527,
+          10.6615
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 18.435725,
+          "p50_ms": 18.359650000000002,
+          "p95_ms": 19.395765,
+          "p99_ms": 19.761553,
+          "min_ms": 17.3562,
+          "max_ms": 19.853,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 54.24251012639861
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 10.192404999999999,
+          "p50_ms": 10.1923,
+          "p95_ms": 10.758575,
+          "p99_ms": 10.917795,
+          "min_ms": 9.3386,
+          "max_ms": 10.9576,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 98.11227085265942
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": true,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": true,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 4.4168262481689454e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 0.00014049399375915529
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 3.8613023757934575e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.6226043701171875e-06,
+              "max_relative_error": 7.675556729062896e-07
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 9.441375732421875e-05,
+              "max_relative_error": 7.2351036706311865e-06
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.6226043701171875e-06,
+                  "allowed_abs_error": 4.4168262481689454e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 9.441375732421875e-05,
+                  "allowed_abs_error": 0.00014049399375915529
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 3.8613023757934575e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 3.4168262481689453,
+            "E_CTX_TRAIN40": 13.049399375915527,
+            "R_CTX_TRAIN40": 2.861302375793457
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 3.4168262481689453,
+              "E_CTX_TRAIN40": 13.049399375915527,
+              "R_CTX_TRAIN40": 2.861302375793457
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 3.416823625564575,
+              "E_CTX_TRAIN40": 13.049304962158203,
+              "R_CTX_TRAIN40": 2.861302375793457
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 52,
+                "max_abs": 1.1444091796875e-05,
+                "max_relative": 9.806565495599304e-06
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 8,
+                "max_abs": 2.60770320892334e-08,
+                "max_relative": 5.13410615321889e-07
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 55,
+              "max_abs": 1.4781951904296875e-05,
+              "max_relative": 4.982607378510745e-05
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 9,
+              "max_abs": 1.2293457984924316e-07,
+              "max_relative": 3.922967656082698e-06
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 64,
+                "max_abs": 3.814697265625e-05,
+                "max_relative": 1.717869733034002e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 10,
+                "max_abs": 8.568167686462402e-08,
+                "max_relative": 2.4751433726798625e-06
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            558.20575368185,
+            233.03164684262737,
+            750.9340800757618,
+            425.7599732365391
+          ],
+          "rgb": [
+            886.75,
+            436.75,
+            1158.25,
+            708.25
+          ]
+        }
+      ]
+    },
+    {
+      "objects": 1,
+      "index": 533,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-low:24600842",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.4663577079772955e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 0.00035328044891357426
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.1045165061950685e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 0.020022700016852468,
+        "compiled_transport_graph": 0.01031340000918135
+      },
+      "times_ms": {
+        "original_graph": [
+          18.876,
+          18.2032,
+          18.8324,
+          18.3804,
+          19.6579,
+          20.1732,
+          19.5301,
+          19.6863,
+          19.3719,
+          18.2342,
+          18.836,
+          18.5044,
+          18.5616,
+          18.689,
+          19.387,
+          19.3598,
+          18.6641,
+          19.3166,
+          19.7591,
+          19.572
+        ],
+        "compiled_transport_graph": [
+          12.056,
+          10.119,
+          10.4861,
+          9.8697,
+          10.4794,
+          10.7485,
+          11.6932,
+          10.3385,
+          10.6206,
+          10.8171,
+          11.8033,
+          10.8923,
+          10.534,
+          10.5469,
+          10.1336,
+          10.3518,
+          11.0094,
+          10.1983,
+          10.1793,
+          10.7924
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 19.07976,
+          "p50_ms": 19.0963,
+          "p95_ms": 19.779805,
+          "p99_ms": 20.094521,
+          "min_ms": 18.2032,
+          "max_ms": 20.1732,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 19,
+          "at_least_20ms_count": 1,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 52.411560732420114
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 10.68347,
+          "p50_ms": 10.54045,
+          "p95_ms": 11.815935,
+          "p99_ms": 12.007986999999998,
+          "min_ms": 9.8697,
+          "max_ms": 12.056,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 93.60254673809165
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.384185791015625e-07,
+              "max_relative_error": 9.666828876055206e-08
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.384185791015625e-07,
+                  "allowed_abs_error": 3.4663577079772955e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 0.00035328044891357426
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 3.1045165061950685e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.384185791015625e-07,
+              "max_relative_error": 9.666828876055206e-08
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.00028228759765625,
+              "max_relative_error": 8.223235507575322e-06
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 2.384185791015625e-07,
+              "max_relative_error": 1.1328900410128852e-07
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.384185791015625e-07,
+                  "allowed_abs_error": 3.4663577079772955e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.00028228759765625,
+                  "allowed_abs_error": 0.00035328044891357426
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 2.384185791015625e-07,
+                  "allowed_abs_error": 3.1045165061950685e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.466357707977295,
+            "E_CTX_TRAIN40": -34.32804489135742,
+            "R_CTX_TRAIN40": 2.1045165061950684
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 2.466357946395874,
+              "E_CTX_TRAIN40": -34.32804489135742,
+              "R_CTX_TRAIN40": 2.1045165061950684
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 2.466357469558716,
+              "E_CTX_TRAIN40": -34.327762603759766,
+              "R_CTX_TRAIN40": 2.1045162677764893
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 56,
+                "max_abs": 7.62939453125e-06,
+                "max_relative": 5.760508030724245e-06
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 9,
+                "max_abs": 1.862645149230957e-08,
+                "max_relative": 1.27197163164069e-06
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 47,
+              "max_abs": 8.106231689453125e-06,
+              "max_relative": 3.2140688250548506e-05
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 8,
+              "max_abs": 6.05359673500061e-08,
+              "max_relative": 4.430342173047393e-06
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 65,
+                "max_abs": 2.193450927734375e-05,
+                "max_relative": 6.606091559603255e-06
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 10,
+                "max_abs": 5.960464477539063e-08,
+                "max_relative": 2.2654839028306767e-06
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            543.3639630430825,
+            213.56267561011282,
+            926.5858803261303,
+            596.7845928931606
+          ],
+          "rgb": [
+            864.25,
+            391.25,
+            1402.75,
+            929.75
+          ]
+        }
+      ]
+    },
+    {
+      "objects": 1,
+      "index": 553,
+      "status": "MEASURED",
+      "preserved_primary_parity": {
+        "passed": true,
+        "exact": true,
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "reference_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "candidate_coverage": {
+          "passed": true,
+          "expected": 1,
+          "records": 1,
+          "unique_present": 1,
+          "missing_ids": [],
+          "unexpected_ids": [],
+          "duplicate_ids": [],
+          "invalid_id_record_indices": []
+        },
+        "components": {
+          "PHASE_ONLY_TRAIN40_S7": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "E_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          },
+          "R_CTX_TRAIN40": {
+            "finite_pairs": 1,
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0
+          }
+        },
+        "failed_query_ids": [],
+        "per_query": [
+          {
+            "query_id": "EXTENDED:CPNAO-medium:20200738",
+            "passed": true,
+            "exact": true,
+            "metadata_mismatches": [],
+            "components": {
+              "PHASE_ONLY_TRAIN40_S7": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 3.6881868839263916e-05
+              },
+              "E_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 2.313684105873108e-05
+              },
+              "R_CTX_TRAIN40": {
+                "passed": true,
+                "exact": true,
+                "reference_state": "finite",
+                "candidate_state": "finite",
+                "finite_mask_equal": true,
+                "abs_error": 0.0,
+                "allowed_abs_error": 8.96652364730835e-05
+              }
+            }
+          }
+        ]
+      },
+      "setup_seconds": {
+        "original_graph": 0.019320399966090918,
+        "compiled_transport_graph": 0.01169590000063181
+      },
+      "times_ms": {
+        "original_graph": [
+          19.164,
+          18.577,
+          18.5167,
+          19.0496,
+          18.1084,
+          18.0809,
+          18.9978,
+          17.9153,
+          17.7266,
+          18.5349,
+          18.1077,
+          17.8474,
+          18.419,
+          18.1294,
+          17.9989,
+          18.0522,
+          18.7975,
+          18.9593,
+          18.7341,
+          18.1216
+        ],
+        "compiled_transport_graph": [
+          12.0353,
+          11.8107,
+          10.1082,
+          9.7928,
+          10.9861,
+          11.048,
+          10.2305,
+          9.6692,
+          11.0296,
+          10.0458,
+          10.0499,
+          10.6011,
+          10.204,
+          10.0019,
+          9.9779,
+          9.8726,
+          9.9073,
+          9.2974,
+          10.2296,
+          10.7198
+        ]
+      },
+      "latency_ms": {
+        "original_graph": {
+          "count": 20,
+          "mean_ms": 18.391915000000004,
+          "p50_ms": 18.2742,
+          "p95_ms": 19.055320000000002,
+          "p99_ms": 19.142264,
+          "min_ms": 17.7266,
+          "max_ms": 19.164,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 54.37171713766618
+        },
+        "compiled_transport_graph": {
+          "count": 20,
+          "mean_ms": 10.380885,
+          "p50_ms": 10.1561,
+          "p95_ms": 11.82193,
+          "p99_ms": 11.992626,
+          "min_ms": 9.2974,
+          "max_ms": 12.0353,
+          "quantile_method": "linear",
+          "strictly_under_20ms_count": 20,
+          "at_least_20ms_count": 0,
+          "over_50ms_count": 0,
+          "over_100ms_count": 0,
+          "inverse_mean_capacity_hz_not_sustained_throughput": 96.3309004964413
+        }
+      },
+      "parity": {
+        "original_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 9.5367431640625e-07,
+              "max_relative_error": 3.547648871098218e-07
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 9.5367431640625e-06,
+              "max_relative_error": 1.1971022225340009e-06
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 9.5367431640625e-07,
+                  "allowed_abs_error": 3.6881868839263916e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 2.313684105873108e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 9.5367431640625e-06,
+                  "allowed_abs_error": 8.96652364730835e-05
+                }
+              }
+            }
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "exact": false,
+          "rtol": 1e-05,
+          "atol": 1e-05,
+          "reference_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "candidate_coverage": {
+            "passed": true,
+            "expected": 1,
+            "records": 1,
+            "unique_present": 1,
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+            "invalid_id_record_indices": []
+          },
+          "components": {
+            "PHASE_ONLY_TRAIN40_S7": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            },
+            "E_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 7.152557373046875e-07,
+              "max_relative_error": 5.444655485340673e-07
+            },
+            "R_CTX_TRAIN40": {
+              "finite_pairs": 1,
+              "max_abs_error": 0.0,
+              "max_relative_error": 0.0
+            }
+          },
+          "failed_query_ids": [],
+          "per_query": [
+            {
+              "query_id": "roi_00",
+              "passed": true,
+              "exact": false,
+              "metadata_mismatches": [],
+              "components": {
+                "PHASE_ONLY_TRAIN40_S7": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 3.6881868839263916e-05
+                },
+                "E_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": false,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 7.152557373046875e-07,
+                  "allowed_abs_error": 2.313684105873108e-05
+                },
+                "R_CTX_TRAIN40": {
+                  "passed": true,
+                  "exact": true,
+                  "reference_state": "finite",
+                  "candidate_state": "finite",
+                  "finite_mask_equal": true,
+                  "abs_error": 0.0,
+                  "allowed_abs_error": 8.96652364730835e-05
+                }
+              }
+            }
+          ]
+        }
+      },
+      "reference_ttc": [
+        {
+          "predictions": {
+            "PHASE_ONLY_TRAIN40_S7": 2.6881868839263916,
+            "E_CTX_TRAIN40": 1.313684105873108,
+            "R_CTX_TRAIN40": 7.96652364730835
+          },
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "rgb_available": true,
+          "query_id": "roi_00",
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "actual_ttc": {
+        "original_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 2.688187837600708,
+              "E_CTX_TRAIN40": 1.313684105873108,
+              "R_CTX_TRAIN40": 7.966533184051514
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ],
+        "compiled_transport_graph": [
+          {
+            "predictions": {
+              "PHASE_ONLY_TRAIN40_S7": 2.6881868839263916,
+              "E_CTX_TRAIN40": 1.3136848211288452,
+              "R_CTX_TRAIN40": 7.96652364730835
+            },
+            "history_lengths": {
+              "event": 4,
+              "rgb": 5
+            },
+            "rgb_available": true,
+            "query_id": "roi_00",
+            "rgb_unavailable_reason": ""
+          }
+        ]
+      },
+      "replay_dispatcher_calls_unchanged": true,
+      "transport_dispatcher_before_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "transport_dispatcher_after_replays": {
+        "E_A5_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 1,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 2,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "E_C2F_MATCHED": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 3,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 4,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_A5": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 5,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 6,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 0,
+            "nested_jit_tracing_calls": 0
+          }
+        ],
+        "R_C2F": [
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 7,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          },
+          {
+            "operator": "train40_compiled_pipeline::transport_pair",
+            "handle": 8,
+            "compile_backend": "inductor",
+            "dispatcher_calls": 6,
+            "nested_jit_tracing_calls": 0
+          }
+        ]
+      },
+      "feature_parity": {
+        "original_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            },
+            {
+              "passed": true,
+              "exact": true,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 0,
+              "max_abs": 0.0,
+              "max_relative": 0.0
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 25,
+                "max_abs": 1.1444091796875e-05,
+                "max_relative": 1.1016613052483145e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 4,
+                "max_abs": 6.705522537231445e-08,
+                "max_relative": 8.257214052677356e-07
+              }
+            ]
+          ]
+        },
+        "compiled_transport_graph": {
+          "passed": true,
+          "event": [
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                17
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 38,
+              "max_abs": 9.5367431640625e-06,
+              "max_relative": 0.000157121533506167
+            },
+            {
+              "passed": true,
+              "exact": false,
+              "shape": [
+                4,
+                3
+              ],
+              "nonfinite_pairs": 0,
+              "outside_tolerance": 0,
+              "different_elements": 6,
+              "max_abs": 5.960464477539063e-08,
+              "max_relative": 9.635515430699832e-07
+            }
+          ],
+          "rgb": [
+            [
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  17
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 48,
+                "max_abs": 9.5367431640625e-06,
+                "max_relative": 1.1016613052483145e-05
+              },
+              {
+                "passed": true,
+                "exact": false,
+                "shape": [
+                  5,
+                  3
+                ],
+                "nonfinite_pairs": 0,
+                "outside_tolerance": 0,
+                "different_elements": 7,
+                "max_abs": 6.705522537231445e-08,
+                "max_relative": 8.257214052677356e-07
+              }
+            ]
+          ]
+        }
+      },
+      "regions": [
+        {
+          "id": "roi_00",
+          "event": [
+            665.8592090711404,
+            -27.01675319980069,
+            1639.1687340021085,
+            946.2927717311672
+          ],
+          "rgb": [
+            1036.5,
+            56.5,
+            2407.5,
+            1427.5
+          ]
+        }
+      ]
+    }
+  ],
+  "compiler_environment": {
+    "TRITON_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~2\\COMPIL~1\\GPU_SE~1\\triton_cache",
+    "TORCHINDUCTOR_CACHE_DIR": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~2\\COMPIL~1\\GPU_SE~1\\inductor_cache",
+    "CUDA_PATH": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\backends\\nvidia",
+    "CC": "C:\\Users\\LVAROS~1\\Desktop\\KRIPTA~1\\EVOCON~1\\E-BACD~1\\ARTIFA~1\\TRAIN4~1\\COMPIL~1\\deps\\triton\\runtime\\tcc\\tcc.exe"
+  },
+  "roi_helper_snapshot": {
+    "executed_sha256": "d0a040635aea9927006f7ffe3cc90112efaccc2323397cd1076a4f05ef12d710",
+    "helpers": {
+      "ObjectRegion": {
+        "source": "operational\\train40_runtime\\multiobject.py",
+        "source_sha256": "e88925198e4ee78be2a7cc3efd47e18c4683a2125695d00efd4c997fde10fd7d",
+        "helper_sha256": "064190546e527044190a3e4dc15f277ca64d049abf309b6ce7de91831fe8badf"
+      },
+      "RawRGBHistory": {
+        "source": "operational\\train40_runtime\\multiobject.py",
+        "source_sha256": "e88925198e4ee78be2a7cc3efd47e18c4683a2125695d00efd4c997fde10fd7d",
+        "helper_sha256": "590dabf6529542b11c73152c85cef3b69213c5a8ab8abcc5ae89fef9200fb2ba"
+      },
+      "read_raw_rgb_history": {
+        "source": "operational\\train40_runtime\\multiobject.py",
+        "source_sha256": "e88925198e4ee78be2a7cc3efd47e18c4683a2125695d00efd4c997fde10fd7d",
+        "helper_sha256": "65ab627ae4fee374dcba4946f56874168f0bbe857b423c95b9259eba92ddc9de"
+      },
+      "artificial_regions": {
+        "source": "scripts\\benchmark_train40_multiobject.py",
+        "source_sha256": "c950b818178982edcfd9ff40107c960e872f4fc5539800f2e352e3003a78adde",
+        "helper_sha256": "3417535ba98af262e22987b747ed07a0b43e67d7049bf81df66cf5043e070915"
+      },
+      "reference_rgb": {
+        "source": "scripts\\benchmark_train40_multiobject.py",
+        "source_sha256": "c950b818178982edcfd9ff40107c960e872f4fc5539800f2e352e3003a78adde",
+        "helper_sha256": "a17f52d06f90d97e3e021dbf51f664315a845f02d8aa28aa6c3a1d5195b9cb00"
+      }
+    }
+  },
+  "binding": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+    },
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "git_commit": "8c5226ddb668b13dc0233f65b2089488c49aa87a",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "python": "3.11.15",
+    "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "seed": 7,
+    "atol": 1e-05,
+    "rtol": 1e-05,
+    "event_endpoint_reuse": false,
+    "rgb_endpoint_reuse": true,
+    "rgb_object_chunk_size": 1,
+    "event_object_chunk_size": 1,
+    "population": "distinct translated real-sensor ROIs; object zero is preserved query",
+    "encoder": "original FP32 contiguous",
+    "precision": "FP32_TF32_OFF",
+    "compiler_options": {
+      "use_fast_math": false,
+      "force_same_precision": true,
+      "triton.cudagraphs": false
+    }
+  },
+  "graphs": {
+    "original_graph": [
+      {
+        "producer": "E_EXPERT_BLOCK",
+        "shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "setup_seconds": 1.5009291000314988,
+        "replays": 168,
+        "trace_warnings": [
+          "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+          "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+        ],
+        "initial_exact_parity": true,
+        "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+        "jit_optimized_execution": false,
+        "endpoint_reuse": false,
+        "endpoint_reuse_fallback_calls": 0,
+        "endpoint_reuse_by_modality": {
+          "E": false,
+          "R": true
+        },
+        "history_group_size": 4,
+        "dedicated_capture_stream": true,
+        "capture_stream_id": 3203468462768,
+        "precision": "FP32_TF32_DISABLED"
+      },
+      {
+        "producer": "R_EXPERT_BLOCK_REUSE",
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "setup_seconds": 2.011319499986712,
+        "replays": 168,
+        "trace_warnings": [
+          "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+          "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+        ],
+        "initial_exact_parity": true,
+        "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+        "jit_optimized_execution": false,
+        "endpoint_reuse": true,
+        "endpoint_reuse_fallback_calls": 0,
+        "endpoint_reuse_by_modality": {
+          "E": false,
+          "R": true
+        },
+        "history_group_size": 5,
+        "dedicated_capture_stream": true,
+        "capture_stream_id": 3203468463488,
+        "precision": "FP32_TF32_DISABLED"
+      }
+    ],
+    "compiled_transport_graph": [
+      {
+        "producer": "E_EXPERT_BLOCK",
+        "shape": [
+          4,
+          3,
+          12,
+          128,
+          128
+        ],
+        "setup_seconds": 55.11062120000133,
+        "replays": 168,
+        "trace_warnings": [
+          "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+          "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+        ],
+        "initial_exact_parity": true,
+        "initial_parity_reference": "COMPILED_CORE_ONLY_REQUIRES_ORIGINAL_FINAL_TTC_GATE",
+        "jit_optimized_execution": false,
+        "endpoint_reuse": false,
+        "endpoint_reuse_fallback_calls": 0,
+        "endpoint_reuse_by_modality": {
+          "E": false,
+          "R": true
+        },
+        "history_group_size": 4,
+        "dedicated_capture_stream": true,
+        "capture_stream_id": 3203468462992,
+        "precision": "FP32_TF32_DISABLED",
+        "transport_mode": "OPAQUE_COMPILED_COMPLETE_BLOCK",
+        "opaque_transport_ir_nodes": 0,
+        "opaque_transport_module_ir_nodes": 3
+      },
+      {
+        "producer": "R_EXPERT_BLOCK_REUSE",
+        "shape": [
+          5,
+          3,
+          3,
+          128,
+          128
+        ],
+        "setup_seconds": 57.277613100013696,
+        "replays": 168,
+        "trace_warnings": [
+          "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+          "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+          "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+        ],
+        "initial_exact_parity": true,
+        "initial_parity_reference": "COMPILED_CORE_ONLY_REQUIRES_ORIGINAL_FINAL_TTC_GATE",
+        "jit_optimized_execution": false,
+        "endpoint_reuse": true,
+        "endpoint_reuse_fallback_calls": 0,
+        "endpoint_reuse_by_modality": {
+          "E": false,
+          "R": true
+        },
+        "history_group_size": 5,
+        "dedicated_capture_stream": true,
+        "capture_stream_id": 3203468463056,
+        "precision": "FP32_TF32_DISABLED",
+        "transport_mode": "OPAQUE_COMPILED_COMPLETE_BLOCK",
+        "opaque_transport_ir_nodes": 0,
+        "opaque_transport_module_ir_nodes": 3
+      }
+    ]
+  },
+  "transport": {
+    "E_A5_MATCHED": [
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 1,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 6,
+        "nested_jit_tracing_calls": 0
+      },
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 2,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 0,
+        "nested_jit_tracing_calls": 0
+      }
+    ],
+    "E_C2F_MATCHED": [
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 3,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 6,
+        "nested_jit_tracing_calls": 0
+      },
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 4,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 6,
+        "nested_jit_tracing_calls": 0
+      }
+    ],
+    "R_A5": [
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 5,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 6,
+        "nested_jit_tracing_calls": 0
+      },
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 6,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 0,
+        "nested_jit_tracing_calls": 0
+      }
+    ],
+    "R_C2F": [
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 7,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 6,
+        "nested_jit_tracing_calls": 0
+      },
+      {
+        "operator": "train40_compiled_pipeline::transport_pair",
+        "handle": 8,
+        "compile_backend": "inductor",
+        "dispatcher_calls": 6,
+        "nested_jit_tracing_calls": 0
+      }
+    ]
+  },
+  "weights_unchanged": true,
+  "all_final_ttc_parity_passed": false,
+  "all_feature_parity_passed": false,
+  "intermediate_feature_gate_role": "DIAGNOSTIC_ONLY; original admission requires final TTC, coverage, guards and preservation",
+  "preservation": {
+    "passed": true,
+    "files": 602,
+    "changed": [],
+    "missing": []
+  }
+}

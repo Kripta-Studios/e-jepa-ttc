@@ -1,0 +1,11 @@
+extend = "../../pyproject.toml"
+
+[lint.per-file-ignores]
+# Entry points bootstrap the pinned source without installing it.
+"worker.py" = ["E402", "ANN401"]
+"saved_analysis.py" = ["E402"]
+"extras.py" = ["E402"]
+# These callbacks adapt original dynamically imported functions.
+"adapters.py" = ["ANN401"]
+# Same annotation policy as repository tests, plus source bootstrapping.
+"test_runtime.py" = ["ANN", "E402"]

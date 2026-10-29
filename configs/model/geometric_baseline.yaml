@@ -1,0 +1,5 @@
+name: geometric
+observable: bbox_expansion
+variants: [bbox_width, bbox_height, sqrt_area, mask_equivalent_radius]
+filter: local_robust_regression
+fallback: nan_with_cause

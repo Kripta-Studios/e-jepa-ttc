@@ -1,0 +1,17 @@
+{
+  "status": "PASSED",
+  "copies": [
+    {
+      "source": "${REPO}\\artifacts\\evttc_transfer_20261008\\EVTTC_ESSENTIAL.zip",
+      "backup": "E:\\EJEPA_results\\comparisons_20261008\\EVTTC_ESSENTIAL_68afaa9a8e5b.zip",
+      "sha256": "68afaa9a8e5b30603d93c524e15be73c9eea6528b480412e9ecd2c613e6721b9",
+      "verified": true
+    },
+    {
+      "source": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\FULL_RGB_ESSENTIAL.zip",
+      "backup": "E:\\EJEPA_results\\comparisons_20261008\\FULL_RGB_ESSENTIAL_5f38258e49d1.zip",
+      "sha256": "5f38258e49d144ddc586f23a67d6afbfcbf8a4557b9ee8184caeb4eb2d6c7208",
+      "verified": true
+    }
+  ]
+}

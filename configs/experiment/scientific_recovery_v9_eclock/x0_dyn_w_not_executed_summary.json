@@ -1,0 +1,13 @@
+{
+  "artifact_sha256": "a8c6ae8f7b7032f7160a91479555eeae5f0c42e7d28138b1a0e2d70d0fa1a9c5",
+  "artifact_type": "eclock_x0_dyn_w_not_executed_v2",
+  "arm_id": "X0-DYN-W",
+  "checkpoint_policy": "last_update_fixed_budget",
+  "execution_authorized": false,
+  "forward_executed": false,
+  "loss_reduction": "normalized_weighted_absolute_phase_error",
+  "oof_executed": false,
+  "scientific_result": false,
+  "status": "not_executed",
+  "training_executed": false
+}

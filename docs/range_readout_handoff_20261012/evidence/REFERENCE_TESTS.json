@@ -1,0 +1,12 @@
+{
+  "status": "PASSED",
+  "test_cases": 28,
+  "python": "3.13.5",
+  "torch": "2.10.0+cpu",
+  "new_optimizer_updates": 0,
+  "trained_models_replayed": false,
+  "raw_cache_gradient_parity_tested": false,
+  "windows_powershell_executed": false,
+  "full_repository_tests_rerun": false,
+  "scope": "Synthetic mathematical operators and sampling RNG only"
+}

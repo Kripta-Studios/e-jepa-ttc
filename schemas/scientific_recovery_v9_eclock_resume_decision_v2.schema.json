@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "decision",
+    "checkpoint_path",
+    "checkpoint_physical_sha256",
+    "checkpoint_manifest_sha256",
+    "scientific_identity",
+    "completed_updates",
+    "rng_state_sha256",
+    "sampler_order_state",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_resume_decision_v2"
+    },
+    "decision": {
+      "const": "resume_accepted"
+    },
+    "checkpoint_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checkpoint_physical_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "checkpoint_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scientific_identity": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "git_commit_observed",
+        "git_dirty_observed",
+        "arm_id",
+        "scientific_role",
+        "reference_family",
+        "seed",
+        "outer_fold",
+        "motion_feature_mode",
+        "model_class",
+        "model_topology_sha256",
+        "initialization_sha256",
+        "config_path",
+        "config_sha256",
+        "protocol_path",
+        "protocol_sha256",
+        "reference_path",
+        "reference_sha256",
+        "split_manifest_path",
+        "split_manifest_sha256",
+        "cache_manifest_path",
+        "cache_manifest_sha256",
+        "ordered_token_identity_sha256",
+        "target_sha256",
+        "fold_assignment_sha256",
+        "sample_weight_sha256",
+        "train_token_subset_sha256",
+        "dev_token_subset_sha256",
+        "optimizer_config",
+        "scheduler_config",
+        "precision_mode",
+        "update_budget",
+        "checkpoint_policy"
+      ],
+      "properties": {
+        "git_commit_observed": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "git_dirty_observed": {
+          "const": false
+        },
+        "arm_id": {
+          "enum": [
+            "X0-PAIR-U",
+            "X0-BASE-U",
+            "X0-DYN-U"
+          ]
+        },
+        "scientific_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_family": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "official_a5_oof",
+            null
+          ]
+        },
+        "seed": {
+          "const": 7
+        },
+        "outer_fold": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "motion_feature_mode": {
+          "enum": [
+            "embedded_a5",
+            "global_uniform_zeroed_control",
+            "global_uniform"
+          ]
+        },
+        "model_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_topology_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "initialization_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "config_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "config_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "protocol_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reference_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "split_manifest_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "split_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "cache_manifest_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cache_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "ordered_token_identity_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "target_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "fold_assignment_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sample_weight_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "train_token_subset_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "dev_token_subset_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "optimizer_config": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "learning_rate",
+            "weight_decay"
+          ],
+          "properties": {
+            "name": {
+              "const": "AdamW"
+            },
+            "learning_rate": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "weight_decay": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "scheduler_config": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "const": "constant"
+            }
+          }
+        },
+        "precision_mode": {
+          "const": "float32"
+        },
+        "update_budget": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "checkpoint_policy": {
+          "const": "last_update_fixed_budget"
+        }
+      }
+    },
+    "completed_updates": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "rng_state_sha256": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python",
+        "numpy",
+        "torch_cpu",
+        "torch_cuda"
+      ],
+      "properties": {
+        "python": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "numpy": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "torch_cpu": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "torch_cuda": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "sampler_order_state": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "next_update",
+        "batch_count"
+      ],
+      "properties": {
+        "next_update": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "batch_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_resume_decision_v2.schema.json"
+}

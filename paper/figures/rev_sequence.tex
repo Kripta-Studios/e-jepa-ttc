@@ -1,0 +1,96 @@
+\documentclass[tikz,border=3pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{XCharter}
+\usepackage[xcharter]{newtxmath}
+\usepackage[scaled=.92]{helvet}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,decorations.pathreplacing,patterns}
+\usepgfplotslibrary{groupplots,fillbetween}
+\pgfplotsset{compat=1.18}
+\definecolor{ink}{HTML}{172536}
+\definecolor{rgb}{HTML}{3563B8}
+\definecolor{event}{HTML}{17857C}
+\definecolor{fusion}{HTML}{76529C}
+\definecolor{reference}{HTML}{8994A3}
+\definecolor{warn}{HTML}{AC5948}
+\definecolor{muted}{HTML}{657183}
+\definecolor{rule}{HTML}{D9E0E8}
+\definecolor{pale}{HTML}{F5F7FA}
+\color{ink}
+\tikzset{box/.style={rounded corners=2pt,draw=rule,fill=white,align=center,inner sep=4pt,font=\sffamily\fontsize{9}{10.8}\selectfont,minimum height=9mm},rb/.style={box,draw=rgb!50,fill=rgb!5},eb/.style={box,draw=event!50,fill=event!5},fb/.style={box,draw=fusion!55,fill=fusion!5},arrow/.style={-{Latex[length=1.8mm]},line width=.65pt,draw=muted},note/.style={font=\sffamily\fontsize{8.4}{10.2}\selectfont,align=center,text=muted},heading/.style={font=\sffamily\fontsize{10}{12}\selectfont\bfseries,align=left,text=ink}}
+\pgfplotsset{paper/.style={width=15.7cm,height=6cm,axis lines*=left,axis line style={rule},tick style={draw=none},tick label style={font=\sffamily\fontsize{8.8}{10.4}\selectfont,text=muted},label style={font=\sffamily\fontsize{9.4}{11}\selectfont,text=ink},title style={font=\sffamily\fontsize{10}{12}\selectfont\bfseries,text=ink},legend style={draw=none,fill=none,font=\sffamily\fontsize{9}{11}\selectfont,cells={anchor=west}},grid=major,grid style={rule!65,line width=.3pt},minor tick num=0,scaled ticks=false,unbounded coords=jump,clip mode=individual}}
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[paper,at={(0.0cm,0)},anchor=south west,width=5.9cm,height=14.1cm,xmin=-6.8104479374191556,xmax=3.025911181891713,ymin=-.5,ymax=31.5,y dir=reverse,ytick={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31},yticklabels={{CPNAO-low (16)},{CPLA-medium (15)},{CPNAO-medium (15)},{CPNA-high (15)},{CPNAO-high (14)},{CPNA-medium (13)},{CPLA-high (15)},{CCRm-medium-0 (13)},{CCRm-low-0 (16)},{CPNA-low (12)},{CCRs-1-high-100 (15)},{CCRs-1-high-50 (15)},{CCRm-low-50 (15)},{CCRs-3-low-100 (13)},{CCRm-medium-50 (15)},{CCRm-medium-100 (14)},{CCRs-1-low-50 (16)},{CCRm-low-100 (13)},{CCRs-1-medium-0 (14)},{CCRs-1-high-0 (15)},{CCRs-1-low-0 (13)},{CCRs-2-high-100 (11)},{CCRs-2-medium-100 (15)},{CCRs-2-low-100 (16)},{CPLA-low (15)},{CCRs-1-medium-50 (15)},{CCRs-3-medium-100 (16)},{CCRs-side-high (16)},{CCRs-1-low-100 (15)},{CCRs-side-low (16)},{CCRs-side-medium (16)},{CCRs-1-medium-100 (15)}},tick label style={font=\sffamily\fontsize{8.2}{9.5}\selectfont,text=muted},xtick={-6.298317366548036,-3.995732273553991,-1.6931471805599454,0.0,1.6931471805599454},xticklabels={-1000,-100,-10,0,10},xlabel={RTE difference (pp)},title={\shortstack{vs. Garl full\\26/32 lower}},title style={font=\sffamily\fontsize{8.5}{10}\selectfont\bfseries},ymajorgrids=false]
+\draw[dashed,reference] (axis cs:0,-.5)--(axis cs:0,31.5);
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-6.510447937419156,0)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-6.4976200267967705,1)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-3.917163331783499,2)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-3.823825739460666,3)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-3.797619162234553,4)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-3.7922814090118613,5)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-3.7842126615227536,6)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-3.1557213198718137,7)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.8958922044701185,8)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.6726913542027866,9)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.6080723238704144,10)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.5190482428449803,11)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.951712323011631,12)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.7245722230093437,13)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.692411062837014,14)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.6712042300416805,15)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.4911110322384566,16)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.4898232812188963,17)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.2503251500124757,18)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.2293673813270778,19)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.1429591179303156,20)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.9809773887373815,21)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.903350145909607,22)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.7540209189347958,23)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.6370344918540589,24)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.5875363596740707,25)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(1.0799130299953696,26)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(1.1428541408878001,27)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(2.2147986394787442,28)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(2.2398537551705155,29)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(2.2888483713866075,30)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(2.725911181891713,31)};
+\end{axis}
+\begin{axis}[paper,at={(5.3cm,0)},anchor=south west,width=5.9cm,height=14.1cm,xmin=-2.7596459535136275,xmax=4.495372159404951,ymin=-.5,ymax=31.5,y dir=reverse,ytick={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31},yticklabels={},tick label style={font=\sffamily\fontsize{8.2}{9.5}\selectfont,text=muted},xtick={-1.6931471805599454,0.0,1.6931471805599454,3.995732273553991},xticklabels={-10,0,10,100},xlabel={RTE difference (pp)},title={\shortstack{vs. RGB context\\14/32 lower}},title style={font=\sffamily\fontsize{8.5}{10}\selectfont\bfseries},ymajorgrids=false]
+\draw[dashed,reference] (axis cs:0,-.5)--(axis cs:0,31.5);
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(1.1586717725061448,0)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(1.6830342641727878,1)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(2.4341561939630108,2)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.07214709600412164,3)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.351352925203252,4)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(2.158719991986887,5)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(1.3880256957529058,6)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.008393248163921996,7)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.9111838046637744,8)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.5236434069648226,9)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.704228470731642,10)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.14144813336084283,11)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(1.1863528935091956,12)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.297018978512724,13)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.505422374590389,14)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.29328326236011754,15)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.7900671387611535,16)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.9454006071283221,17)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.10916750184348363,18)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.83347502602277,19)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.014618570696679711,20)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.28017572775694183,21)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.10999109991499605,22)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(0.4100233763364013,23)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.17987467003274774,24)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-1.1126966771183557,25)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.6429360763798482,26)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-0.7446641356825054,27)};
+\addplot[only marks,mark=*,mark size=2.0pt,warn] coordinates {(4.195372159404951,28)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.4596459535136277,29)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.3375062380569434,30)};
+\addplot[only marks,mark=*,mark size=2.0pt,fusion] coordinates {(-2.4156562012701865,31)};
+\end{axis}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,8 @@
+method,reason,count
+cmax,RuntimeError:cmax_invalid:non_approaching_best_warp,32
+strttc,RuntimeError:Fewer than 12 valid STRTTC normal-flow measurements.,14
+strttc,RuntimeError:insufficient_roi_events:1375,1
+strttc,RuntimeError:insufficient_roi_events:1583,1
+strttc,RuntimeError:insufficient_roi_events:1977,1
+strttc,RuntimeError:non_positive_or_non_finite_endpoint_inverse_ttc,4
+strttc,SUCCESS,11

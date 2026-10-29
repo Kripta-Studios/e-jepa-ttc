@@ -1,0 +1,131 @@
+{
+  "baseline_preservation_sha256": "c5443d28e170c994e425e0a7747b90ec33ba314f1fed247a04e5ac233eb9e125",
+  "manifest_sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+  "model": {
+    "checkpoint": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth",
+    "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+    "checkpoint_bytes": 973290993,
+    "config": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\configs\\ablation\\ours_full.yaml",
+    "config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+    "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+    "native_code_root": "E:\\Garl-TTC",
+    "native_source_sha256": {
+      "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+      "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+      "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+      "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14"
+    },
+    "removed_initializer_paths": {
+      "pretrained_ckpt_rgb": "checkpoints/paper_visual_only_lhr.pth",
+      "pretrained_ckpt_event": "checkpoints/paper_event_only_lhr.pth"
+    },
+    "strict_state_load": true,
+    "input": {
+      "shape": [
+        46,
+        128,
+        128
+      ],
+      "channel_order": [
+        "RGB0[3]",
+        "RGB1[3]",
+        "EVENT0[20]",
+        "EVENT1[20]"
+      ],
+      "rgb_mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "rgb_std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "event_normalization": "none"
+    },
+    "native_delta_t_s": 0.1,
+    "native_rgb_sync": "front",
+    "optimizer_updates": 0,
+    "targets_read": false,
+    "module_sha256": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7"
+  },
+  "input_contract": {
+    "protocol": "evttc_historical_dev32_garl_full_fixed_queries_v1",
+    "query_population": "unchanged QUERY_MANIFEST.json, 1024 rows",
+    "camera": {
+      "rgb": "blackflys/left",
+      "events": "prophesee/event_cam_left"
+    },
+    "sensor_shape": [
+      46,
+      128,
+      128
+    ],
+    "sensor_order": [
+      "rgb_endpoint_0",
+      "rgb_endpoint_1",
+      "event_endpoint_0",
+      "event_endpoint_1"
+    ],
+    "rgb_shape": [
+      2,
+      3,
+      128,
+      128
+    ],
+    "event_shape": [
+      40,
+      128,
+      128
+    ],
+    "rgb_normalization": {
+      "scale": "uint8/255 in float32",
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "order": "normalize full RGB frame before shared crop"
+    },
+    "rgb_sync": "nearest blackflys/left/ts to each fixed event endpoint within 1 ms; ties select the earlier frame index",
+    "rgb_crop": "upstream shared max-edge square centered on endpoint 1; grid_sample bilinear align_corners=True",
+    "event_crop": "native per-endpoint square with shared max edge; 20-plane timevolume and upstream resize",
+    "fixed_dt_s": 0.1,
+    "rgb_interval_target_us": 100000,
+    "rgb_interval_tolerance_us": 1000,
+    "availability": "prediction_available_us=max(anchor_us, RGB endpoint timestamps); positive bounded sync wait is recorded",
+    "unavailable_policy": "retain query; no window/box reselection, interpolation, or extrapolation; preserve event-only comparator",
+    "forbidden_assets": [
+      "ttc.csv",
+      "gt.hdf5",
+      "distance",
+      "depth",
+      "navigation"
+    ]
+  },
+  "sources": {
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_rgb_transfer\\__init__.py": "6092d574279e59acc2c252402f82bcc85a50c929584b259e228bd294ccc4eccb",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_rgb_transfer\\model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_rgb_transfer\\run.py": "f9bb29a949134b18181146f1b25bbd97b6eccf008ea78874a91aa542e0d4a2c5",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_rgb_transfer\\score.py": "77278cd647fed88c542d68dde4b3b6a0bcf108806a2b3ba6a7ba74ade428e03e",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_transfer\\__init__.py": "900fd5bf07d1f101c03496b9473b15d8818f7cb0320159c6dc54208b2d90a551",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_transfer\\inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_transfer\\models.py": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_transfer\\run.py": "a3f879bfc5cd36b4a0e32a27da8f05bb01a2581146e9f7c212a9bc58f691e662",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\operational\\evttc_transfer\\score.py": "37605ac8738484ad04ec3f9d9f4996d5c192330a6dcd5fbe5c8c08631f6e00cc"
+  },
+  "device": "cuda",
+  "precision": "float32",
+  "optimizer_updates": 0,
+  "historical_labels_already_observed": true,
+  "labels_not_used_by_inference": true,
+  "no_model_selection_or_calibration": true,
+  "own_predictions_reused_exactly": true
+}

@@ -1,0 +1,18 @@
+{
+  "cwd": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-train40-baseline-9f62aebc",
+  "python": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+  "arguments": [
+    "scripts/run_baseline_relocated.py",
+    "--candidate",
+    "D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE",
+    "--manifest",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\QUERY_MANIFEST.json",
+    "--reference",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\final_train40_transfer_20261027\\final_train40\\own",
+    "--output",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_resume_20261027\\baseline_all554_v2",
+    "--parallel"
+  ],
+  "started_utc": "2026-10-27T22:33:27.4656282Z",
+  "timing_scope_note": "Other swarm agents may run CPU development; this admission prioritizes parity, not isolated performance comparison."
+}

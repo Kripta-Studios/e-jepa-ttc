@@ -1,0 +1,196 @@
+{
+  "schema": "nocturnal_delivery_decision_v1",
+  "termination_reason": "AUTHORIZED_TRAINING_COMPLETE",
+  "stages": {
+    "N1": {
+      "status": "COMPLETE",
+      "pending_comparators": [],
+      "result_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\h16_replication_20261003\\analysis\\RESULTS.json",
+      "sha256": "46f876a11f7508b2c65855b25f60fc6a55b0b2c8a1e5275f2e85e5f1cc6f0d45",
+      "conclusion": "POSITIVE_LOCAL_OLD_DEV"
+    },
+    "N2": {
+      "status": "COMPLETE",
+      "pending_comparators": [],
+      "result_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\execution\\analysis\\N2\\RESULTS.json",
+      "sha256": "500707893a0f17f5f512b51e0cf69d53e8696885f3a3f9109cf555767b91fdef",
+      "conclusion": "EXPLORATORY"
+    },
+    "N3": {
+      "status": "COMPLETE",
+      "pending_comparators": [],
+      "result_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\execution\\analysis\\N3\\RESULTS.json",
+      "sha256": "36a3eb253b477f2c12aab1afc12bf9c5cf95b02d341e6e3abec30989f7ee61ed",
+      "conclusion": "EXPLORATORY"
+    },
+    "N4": {
+      "prepared_head": "COMPLETE",
+      "models": 9,
+      "missing_head_models": [],
+      "full_route": "NOT_MEASURED",
+      "missing_dependency": "Explicit exclusive GPU/heavy-I/O slot from the shared resource owner; no such lease is present in the acknowledged interface.",
+      "full_route_admission_sha256": "8876d1ed3e853310dc0c518ef325681e45545b0ce1e8e71ea1e6dfcae85ffbe1",
+      "route_cost_does_not_follow_from_head_latency": true,
+      "profile_receipts_reconciled_without_new_measurements": true
+    }
+  },
+  "endpoints": 24,
+  "scientific_saved_updates": 60000,
+  "scientific_physical_updates_upper": 60100,
+  "total_physical_updates_upper": 60180,
+  "technical": {
+    "schema": "cost_context_technical_work_v1",
+    "protocol_sha256": "876a2c2ff8d0d2f3c9796352d9cb009a3d4346a949d5cd3f45c5e015d2053eb2",
+    "synthetic_only": true,
+    "reserved_updates": 80,
+    "cap": 200,
+    "confirmed_updates": 80,
+    "physical_lower": 80,
+    "physical_upper": 80,
+    "scientific_updates": 0,
+    "segments": {
+      "FULL_C0/continuous": {
+        "key": "FULL_C0/continuous",
+        "arm": "FULL_C0",
+        "mode": "continuous",
+        "start": 0,
+        "stop": 20,
+        "authorized_updates": 20,
+        "status": "CONFIRMED",
+        "confirmed_updates": 20,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\FULL_C0\\continuous\\checkpoint_last.pt",
+        "checkpoint_sha256": "edad345b18a3f1c9d7589b78e582b9a6b350ffc62226ea07970e2da7168d4d57"
+      },
+      "FULL_C0/partial": {
+        "key": "FULL_C0/partial",
+        "arm": "FULL_C0",
+        "mode": "partial",
+        "start": 0,
+        "stop": 10,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\FULL_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "cd31bf0b64e2c90a403b3c545ddb6916c31f72c5fe809a05a35d3addf0ec91bf"
+      },
+      "FULL_C0/resume": {
+        "key": "FULL_C0/resume",
+        "arm": "FULL_C0",
+        "mode": "resume",
+        "start": 10,
+        "stop": 20,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\FULL_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "edad345b18a3f1c9d7589b78e582b9a6b350ffc62226ea07970e2da7168d4d57"
+      },
+      "SET_AGE_C0/continuous": {
+        "key": "SET_AGE_C0/continuous",
+        "arm": "SET_AGE_C0",
+        "mode": "continuous",
+        "start": 0,
+        "stop": 20,
+        "authorized_updates": 20,
+        "status": "CONFIRMED",
+        "confirmed_updates": 20,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\SET_AGE_C0\\continuous\\checkpoint_last.pt",
+        "checkpoint_sha256": "ee0c34ace75a370b9cd4e9d8da6378e92efb4f5bfef7d4e975b0af485e5cc142"
+      },
+      "SET_AGE_C0/partial": {
+        "key": "SET_AGE_C0/partial",
+        "arm": "SET_AGE_C0",
+        "mode": "partial",
+        "start": 0,
+        "stop": 10,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\SET_AGE_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "b045182802f753e55b5e1b6b0289866f25fbdfb3266865478d7e5637b722e0d5"
+      },
+      "SET_AGE_C0/resume": {
+        "key": "SET_AGE_C0/resume",
+        "arm": "SET_AGE_C0",
+        "mode": "resume",
+        "start": 10,
+        "stop": 20,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\SET_AGE_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "ee0c34ace75a370b9cd4e9d8da6378e92efb4f5bfef7d4e975b0af485e5cc142"
+      }
+    }
+  },
+  "repeated_or_uncertain_upper": 100,
+  "authorized_updates_ceiling": 60000,
+  "registered_candidate": "TPR-D1-H8-C160",
+  "registered_candidate_unchanged": true,
+  "automatic_promotion": false,
+  "no_push": false,
+  "raw_reconstruction_included": false,
+  "independent_units": 9,
+  "incomplete_fits": [],
+  "resume_command": null,
+  "resume_after_expired_window_requires_new_explicit_window": true,
+  "next_action": "Review paired precision and measured cost independently; no further fits or holdouts authorized by this delivery.",
+  "push_authorized_after_delivery": true,
+  "future_optimizer_updates_authorized": 0,
+  "operational_continuation": {
+    "accepted_at_utc": "2026-10-03T15:44:42.346562+00:00",
+    "deadline_utc": "2026-10-04T01:44:42.346562+00:00",
+    "own_artifact_budget_bytes": 10000000000,
+    "original_window_sha256": "3b975bb73e5749464e5514d0872465372a5537c5f791743723836b7b3acb3938",
+    "scientific_protocol_sha256": "876a2c2ff8d0d2f3c9796352d9cb009a3d4346a949d5cd3f45c5e015d2053eb2",
+    "operational_source_sha256": "18905daf379eded61ee83b9fee183a664a67bc6645742373ec738607436d157a",
+    "startup_margin_waiver_by_user": true
+  },
+  "next_training_task": null,
+  "scientific_interpretation": {
+    "registered_candidate": "TPR-D1-H8-C160",
+    "candidate_unchanged": true,
+    "independent_sequences": 9,
+    "seed7_exploratory": true,
+    "new_h16_seeds_hierarchical_interval_contains_zero": true,
+    "new_arm_precision_screen_pass": {
+      "FULL_C0_minus_H8@7": true,
+      "A5_ONLY_C0_minus_FULL_C0": false,
+      "C2F_ONLY_C0_minus_FULL_C0": false,
+      "A5_PAIR_C0_minus_FULL_C0": false,
+      "SET_AGE_C0_minus_FULL_C0": false,
+      "SET_NOTIME_C0_minus_SET_AGE_C0": false
+    },
+    "no_system_substitution": true,
+    "future_optimizer_updates_authorized": 0,
+    "next_proposal": "NEXT_EXPERIMENT_NOCTURNA.md",
+    "proposal_executed": false,
+    "stage_interpretations": {
+      "N1": {
+        "execution": "COMPLETE",
+        "head_optimization": "FAVORABLE_THREE_SEEDS",
+        "new13_23_hierarchical_evidence": "UNCERTAIN_INTERVAL_INCLUDES_ZERO"
+      },
+      "N2": {
+        "execution": "COMPLETE",
+        "expert_reduction_screen": "NEGATIVE_ALL_THREE_REDUCTIONS"
+      },
+      "N3": {
+        "execution": "COMPLETE",
+        "aggregation_replacement_screen": "NEGATIVE_BOTH_REGISTERED_CONTRASTS",
+        "effect_uncertainty": "HIERARCHICAL_INTERVALS_INCLUDE_ZERO"
+      },
+      "N4": {
+        "prepared_heads": "COMPLETE_NINE_MODELS",
+        "full_route": "BLOCKED_MISSING_EXCLUSIVE_GPU_HEAVY_IO_LEASE"
+      }
+    }
+  },
+  "scientific_interpretation_sha256": "c47796f7f13b8e8cf10bcd3715dfcd52d1c22e1b47de82227e75545e1bad207b"
+}

@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "buffered_weights_unchanged": true,
+    "cuda_uninitialized": true,
+    "gradients_exact": true,
+    "loss_exact": true,
+    "original_weights_unchanged": true,
+    "rng_exact": true,
+    "warp_exact": true
+  },
+  "loss": 3.2009894847869873,
+  "optimizer_updates": 0,
+  "prototype_revision": "Compare forwards with identical dropout RNG. The first retained CPU test incorrectly used consecutive draws; zero optimizer updates in either test.",
+  "sources": {
+    "configs/joint_measurement/primary.json": "5ef559bf0d9e955d3ad82e51eb5f745c4af3a0f7c6891def80b44f61d75e778a",
+    "operational/joint_measurement/common.py": "74af008e2d6edb65d67b1ac3da1ee3e5467c7b5a62ff9ac43cf9b70e2ffce122",
+    "operational/joint_measurement/correspondence_model.py": "2233bd561d71fe3092aa2a9a2646b7b23b2d41b6b1027c84287afe4de4dea551",
+    "operational/joint_measurement/correspondence_run.py": "04517fa82eb3254385eb5ae46baa768c7cc06f13f6c436a999686833c0cfa8b6",
+    "operational/joint_measurement/correspondence_train.py": "f6d9f366cb663a071dd898b069997312c1671b319c668281e140d3794b4cf98a",
+    "operational/joint_measurement/data.py": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+    "operational/joint_measurement/fast_runtime.py": "3c2557f47ea93fe4dcc1d4f267ab6d2df0d4e0b443b9fe393b687f8a3836aff5",
+    "operational/joint_measurement/geometry_capture.py": "d30578e9d1a90cdc19a893dd4f5e78cc442144545c52debe70fac01d41704640",
+    "operational/joint_measurement/geometry_capture_qa.py": "124e6cd584f5dfe72e28ef7e079aee6fb6db380950be881b9c7bb230c25be2c3",
+    "operational/joint_measurement/geometry_model.py": "63b0d2642f0e8f8558b798603a8b480272630104e8822c5eec46cb619ce90312",
+    "operational/joint_measurement/geometry_train.py": "e67dc3079eac435f137a553b211355d04ab8144c49d874e7c20e37c40cdfbebe",
+    "operational/joint_measurement/native_loss.py": "a78b1b4b78352a47b6c0c65146587dd742acbb9e50a3a580aae34bf491f6e189",
+    "operational/joint_measurement/qa.py": "1463f72ae2dfd5db614bbc1151a3b5dfeb0916f68c45535f7deb37cad8aa41f1",
+    "operational/joint_measurement/resume_fast_proof.py": "432bab8f742910ea0c0573dd07e310f0f6389f6626d543594c76b5f6fcd1aad3",
+    "operational/joint_measurement/train.py": "0bf92b0f46993c01223db72fedf3a4e2a3d32fb81cbc7ada7806d6e205d7ad80",
+    "operational/rgb_port/train_producers.py": "0fad9b57fd529489b55e9313fbe938fd0b84481cd3877cf5dab7f9b918544757",
+    "operational/rgb_port_revision/loss.py": "4a7cf77505ce2db6afe37a3ee6eb9fa44cbd15882be39f81076250b8e62f449d",
+    "src/e_jepa_ttc/joint_measurement/__init__.py": "0f7ebcc4d14c59cee5f7fea3acefcb58e734e56bf33bad286e0ce6eee8ab63a4",
+    "src/e_jepa_ttc/joint_measurement/loss.py": "aed34461a89639e0b8a1c699e32376419bf32e83ec351e17101e7a635f2d57ca",
+    "src/e_jepa_ttc/joint_measurement/model.py": "276251a86a96cbd399ac53eed8a3d0480597ed438e2b9b4b2b8a38aaad640bc3",
+    "src/e_jepa_ttc/losses/causal_scale_ttc.py": "f82ca020f351671e0d4837fdb7bf9c9e93a5fc2755eb16078e241475c7ee719d",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": "acbf1b6583798b12ed88df173e5e5589d597d11acd4e15d376d9ee6482ff52e7",
+    "src/e_jepa_ttc/models/local_transport.py": "7177531b930bbdb359c8390eb7d1f4f377010d695b6e0919e5c255600bf2e3ec",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,76 @@
+{
+  "runs": [
+    {
+      "experiment_id": "ttc_revision_20261009",
+      "run_name": "direct_seed7",
+      "seed": 7,
+      "git_commit": "b44443ae331b5e84b94e940801468449b2858de4",
+      "host": "DESKTOP-2N393IP",
+      "python_version": "3.11.15",
+      "torch_version": "2.11.0+cu128",
+      "cuda_version": "12.8",
+      "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "config_hash": "24b288206064306d2fa64eb36abc13a945a057e99ec6bfc9cabdc380a41e4466",
+      "dataset_manifest_hash": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+      "dataset_index_hash": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+      "split_version": "frozen_TRAIN40_20261005_no_new_split",
+      "start_time": "2026-10-09T16:51:54.558007+00:00",
+      "end_time": "2026-10-09T16:54:45.020112+00:00",
+      "status": "COMPLETE",
+      "checkpoint_path": "artifacts\\ttc_revision_20261009\\direct_seed7.pt",
+      "checkpoint_sha256": "d979072161933420fb5e957f62150a771778337efc896fadcb5b7916b1d52070",
+      "metrics_path": [
+        "artifacts\\ttc_revision_20261009\\dev32\\METRICS.csv",
+        "artifacts\\ttc_revision_20261009\\fcwd\\METRICS.csv"
+      ]
+    },
+    {
+      "experiment_id": "ttc_revision_20261009",
+      "run_name": "direct_seed13",
+      "seed": 13,
+      "git_commit": "b44443ae331b5e84b94e940801468449b2858de4",
+      "host": "DESKTOP-2N393IP",
+      "python_version": "3.11.15",
+      "torch_version": "2.11.0+cu128",
+      "cuda_version": "12.8",
+      "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "config_hash": "24b288206064306d2fa64eb36abc13a945a057e99ec6bfc9cabdc380a41e4466",
+      "dataset_manifest_hash": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+      "dataset_index_hash": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+      "split_version": "frozen_TRAIN40_20261005_no_new_split",
+      "start_time": "2026-10-09T16:54:45.268534+00:00",
+      "end_time": "2026-10-09T16:59:34.849235+00:00",
+      "status": "COMPLETE",
+      "checkpoint_path": "artifacts\\ttc_revision_20261009\\direct_seed13.pt",
+      "checkpoint_sha256": "5bb69553288468e49dc4de4c650b4e4f31aff2d86436bd0d05fe65d9b11e04c7",
+      "metrics_path": [
+        "artifacts\\ttc_revision_20261009\\dev32\\METRICS.csv",
+        "artifacts\\ttc_revision_20261009\\fcwd\\METRICS.csv"
+      ]
+    },
+    {
+      "experiment_id": "ttc_revision_20261009",
+      "run_name": "direct_seed23",
+      "seed": 23,
+      "git_commit": "b44443ae331b5e84b94e940801468449b2858de4",
+      "host": "DESKTOP-2N393IP",
+      "python_version": "3.11.15",
+      "torch_version": "2.11.0+cu128",
+      "cuda_version": "12.8",
+      "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "config_hash": "24b288206064306d2fa64eb36abc13a945a057e99ec6bfc9cabdc380a41e4466",
+      "dataset_manifest_hash": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+      "dataset_index_hash": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+      "split_version": "frozen_TRAIN40_20261005_no_new_split",
+      "start_time": "2026-10-09T16:59:35.075129+00:00",
+      "end_time": "2026-10-09T17:03:35.353949+00:00",
+      "status": "COMPLETE",
+      "checkpoint_path": "artifacts\\ttc_revision_20261009\\direct_seed23.pt",
+      "checkpoint_sha256": "58e0e3af349c6cf03159896000e9e693ca3f9836df865d391a5eda2e49f1bdfd",
+      "metrics_path": [
+        "artifacts\\ttc_revision_20261009\\dev32\\METRICS.csv",
+        "artifacts\\ttc_revision_20261009\\fcwd\\METRICS.csv"
+      ]
+    }
+  ]
+}

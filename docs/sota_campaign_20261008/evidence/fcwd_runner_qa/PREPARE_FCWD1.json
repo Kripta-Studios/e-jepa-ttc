@@ -1,0 +1,44 @@
+{
+  "elapsed_prepare_seconds": 0.38871480000671,
+  "full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+  "gpu_initialized": false,
+  "gt_read": false,
+  "process_peak_wset_bytes": 651628544,
+  "process_rss_before_bytes": 597512192,
+  "process_rss_peak_sampled_bytes": 650240000,
+  "query_id": "FCWD1:0000",
+  "sampling_interval_seconds": 0.02,
+  "sequence_id": "FCWD1",
+  "tensors": {
+    "garl_events": {
+      "bytes": 2621440,
+      "dtype": "float32",
+      "sha256": "fd6f643e4b17271feef406488b62bb3f78affc47a9838c97f64e9f5a4efa0852",
+      "shape": [
+        40,
+        128,
+        128
+      ]
+    },
+    "own_events": {
+      "bytes": 18874368,
+      "dtype": "float32",
+      "sha256": "158eca7e5d66c0822f1f51cf5307a5475b19492ebc5ba7d9b5df681677a6e2b2",
+      "shape": [
+        8,
+        3,
+        12,
+        128,
+        128
+      ]
+    },
+    "valid": {
+      "bytes": 8,
+      "dtype": "bool",
+      "sha256": "04abc8821a06e5a30937967d11ad10221cb5ac3b5273e434f1284ee87129a061",
+      "shape": [
+        8
+      ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "status": "COMPLETE_FROZEN_DESCRIPTIVE_COMPARISON",
+  "optimizer_updates": 0,
+  "refit": false,
+  "submission": false,
+  "V18": "CLOSED_NO_CANDIDATE",
+  "git_base": "771c96a23784e1f3955cec21ba1f4d9a063a9145",
+  "generated_utc": "2026-10-17T10:04:45.165956+00:00",
+  "host": "DESKTOP-2N393IP",
+  "python": "3.11.15",
+  "torch": "2.11.0+cu128",
+  "torchvision": "0.26.0+cu128",
+  "numpy": "2.4.6",
+  "device": "CPU FP32, torch threads=2",
+  "GPU_used": false,
+  "opencv": "4.14.0.94; isolated runtime_deps, no global/shared environment modification",
+  "seal_write_times_utc": {
+    "own": "2026-10-17T09:52:16.151186+00:00",
+    "garl": "2026-10-17T09:52:55.111256+00:00",
+    "eap": "2026-10-17T09:59:25.662662+00:00"
+  },
+  "sources": {
+    "scripts\\post_v18_eap_compare.py": "3b6b26437f6d0cbb5f110c91d78fb5d4fc86dfcf3d3dcb1a106e0e205cff1eb5",
+    "scripts\\post_v18_transfer_compare.py": "5012004135b661d53810d48471ea19eb96a080d325c3e930d62632a245d00552",
+    "scripts\\post_v18_transfer_inputs.py": "dd7f9b600378b5136d6f165b485a00a880b9964a58e8bd6fe6c89fbd6f91c133",
+    "scripts\\post_v18_transfer_report.py": "1010c630121d99b1a51ae91d55c202786e8514daef4a8199333375d801969ab0"
+  },
+  "checks": {
+    "targeted_tests": "6 passed",
+    "ruff": "passed",
+    "pyright": "0 errors",
+    "eap_upstream_bit_exact": "8/8",
+    "sealed_outputs": "46 own + 46 Garl + 64 eAP"
+  },
+  "technical_corrections": [
+    "Pre-inference corrections retained; no weights or cohort changes",
+    "Missing OpenCV resolved with the lockfile version in an isolated local target",
+    "Scorer fractional-second matching corrected and regression-tested; no new inference"
+  ]
+}

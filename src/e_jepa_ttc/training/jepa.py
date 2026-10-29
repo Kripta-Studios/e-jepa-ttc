@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import random
@@ -16,8 +17,17 @@ from torch import nn
 from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.reproducibility import (
+    cuda_device_count,
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 EVENT_MOTION_FEATURE_NAMES = (
@@ -28,6 +38,14 @@ EVENT_MOTION_FEATURE_NAMES = (
     "event_centroid_dy",
     "event_polarity_balance",
 )
+
+
+def _hash_file(filepath: str | Path) -> str:
+    hasher = hashlib.sha256()
+    with Path(filepath).open("rb") as file:
+        for chunk in iter(lambda: file.read(8192 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 class VoxelOnlyDataset(Dataset[torch.Tensor]):
@@ -287,8 +305,9 @@ class DenseTemporalTransformerJEPAPredictor(nn.Module):
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _split_indices(split: np.ndarray, names: tuple[str, ...]) -> np.ndarray:
@@ -504,11 +523,22 @@ def _mask_context(
 
 
 @torch.no_grad()
-def _update_ema(target: nn.Module, online: nn.Module, *, momentum: float) -> None:
+def _update_ema(target: nn.Module, online: nn.Module, *, momentum: float) -> float:
+    if not 0.0 <= momentum <= 1.0:
+        raise ValueError("EMA momentum must lie in [0, 1].")
+
+    divergence_sq = 0.0
     for target_param, online_param in zip(target.parameters(), online.parameters(), strict=True):
-        target_param.data.mul_(momentum).add_(online_param.data, alpha=1.0 - momentum)
+        delta = target_param.data - online_param.data
+        divergence_sq += delta.pow(2).sum().item()
+        if momentum < 1.0:
+            target_param.data.mul_(momentum).add_(online_param.data, alpha=1.0 - momentum)
+
     for target_buffer, online_buffer in zip(target.buffers(), online.buffers(), strict=True):
-        target_buffer.copy_(online_buffer)
+        if momentum < 1.0:
+            target_buffer.copy_(online_buffer)
+
+    return float(divergence_sq**0.5)
 
 
 def _variance_loss(z: torch.Tensor, *, min_std: float) -> torch.Tensor:
@@ -550,9 +580,7 @@ def _visreg_sketch_loss(z: torch.Tensor, *, projection_count: int) -> torch.Tens
     )
     projections = functional.normalize(projections, dim=0)
     projected = torch.sort(z @ projections, dim=0).values
-    quantiles = (
-        torch.arange(z.shape[0], device=z.device, dtype=torch.float32) + 0.5
-    ) / z.shape[0]
+    quantiles = (torch.arange(z.shape[0], device=z.device, dtype=torch.float32) + 0.5) / z.shape[0]
     gaussian = math.sqrt(2.0) * torch.special.erfinv(2.0 * quantiles - 1.0)
     gaussian = gaussian[:, None].to(dtype=projected.dtype)
     return torch.square(projected - gaussian.expand_as(projected)).mean()
@@ -1095,9 +1123,7 @@ def _jepa_loss(
         valid_fraction = float(valid.mean().detach().cpu())
         target_pair_count = int(future_mask.sum().detach().cpu())
     if not (dense_tokens and future_x is not None):
-        context_for_variance = (
-            context_z.mean(dim=1) if context_z.ndim == 3 else context_z
-        )
+        context_for_variance = context_z.mean(dim=1) if context_z.ndim == 3 else context_z
     if pred_for_variance.shape[0] <= 1:
         pred_for_variance = pred.reshape(-1, pred.shape[-1])
     if target_for_metrics.shape[0] <= 1:
@@ -1132,11 +1158,15 @@ def _jepa_loss(
         "variance_loss": float(variance.detach().cpu()),
         "visreg_sketch_loss": float(visreg_sketch.detach().cpu()),
         "visreg_sketch_weight": float(visreg_sketch_weight if regularizer == "visreg" else 0.0),
-        "visreg_projection_count": float(
-            visreg_projection_count if regularizer == "visreg" else 0
-        ),
+        "visreg_projection_count": float(visreg_projection_count if regularizer == "visreg" else 0),
         "context_embedding_std": float(
             context_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
+        ),
+        "context_collapsed_dimension_fraction": float(
+            (context_for_variance.detach().float().std(dim=0, unbiased=False) < 1e-3)
+            .float()
+            .mean()
+            .cpu()
         ),
         "pred_embedding_std": float(
             pred_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
@@ -1233,24 +1263,27 @@ def _run_epoch(
                 action_feature_std=action_feature_std,
                 context_token_weight=context_token_weight,
             )
+        if not bool(torch.isfinite(loss)):
+            nonfinite_metrics = {
+                key: value for key, value in metrics.items() if not math.isfinite(value)
+            }
+            raise FloatingPointError(
+                f"JEPA produced a non-finite loss; non-finite metrics={nonfinite_metrics}."
+            )
         if optimizer is not None:
+            optimized_parameters = [*encoder.parameters(), *predictor.parameters()]
             if scaler is None:
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(
-                    [*encoder.parameters(), *predictor.parameters()],
-                    1.0,
-                )
+                torch.nn.utils.clip_grad_norm_(optimized_parameters, 1.0)
                 optimizer.step()
             else:
                 scaler.scale(loss).backward()
                 scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(
-                    [*encoder.parameters(), *predictor.parameters()],
-                    1.0,
-                )
+                torch.nn.utils.clip_grad_norm_(optimized_parameters, 1.0)
                 scaler.step(optimizer)
                 scaler.update()
-            _update_ema(target_encoder, encoder, momentum=ema_momentum)
+            divergence = _update_ema(target_encoder, encoder, momentum=ema_momentum)
+            metrics["target_encoder_divergence_l2"] = divergence
         rows.append({"loss": float(loss.detach().cpu()), **metrics})
 
     if not rows:
@@ -1290,8 +1323,13 @@ def pretrain_jepa(
     dense_predictor: str = "mlp",
     context_token_weight: float = 0.0,
     model_name: str = "tiny-cnn",
-) -> dict[str, Any]:
+    navigation_mode: str = "enabled",
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Pretrain an encoder with a JEPA-style latent prediction objective."""
+
+    if navigation_mode not in ("enabled", "disabled"):
+        raise ValueError("navigation_mode must be 'enabled' or 'disabled'")
 
     if epochs <= 0:
         msg = "epochs must be positive."
@@ -1326,7 +1364,13 @@ def pretrain_jepa(
     _set_seed(seed)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
+    if navigation_mode == "disabled":
+        if bool(cache.get("navigation_channels", False)):
+            nav_count = len(cache["navigation_feature_names"])
+            x[:, -nav_count:, :, :] = 0.0
+
     split = cache["split"].astype(str)
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     metadata_channels = _cache_bool(cache, "metadata_channels")
@@ -1344,9 +1388,7 @@ def pretrain_jepa(
     navigation_feature_count = len(navigation_feature_names) if use_motion_conditioning else 0
     use_action_conditioning = bool(navigation_feature_count)
     action_feature_names = (
-        (*EVENT_MOTION_FEATURE_NAMES, *navigation_feature_names)
-        if use_motion_conditioning
-        else ()
+        (*EVENT_MOTION_FEATURE_NAMES, *navigation_feature_names) if use_motion_conditioning else ()
     )
     action_feature_dim = len(action_feature_names)
     action_feature_mean: torch.Tensor | None = None
@@ -1378,6 +1420,9 @@ def pretrain_jepa(
         timestamp_us = cache["timestamp_us"].astype(np.int64)
         context_start_us = cache["context_start_us"].astype(np.int64)
         context_end_us = cache["context_end_us"].astype(np.int64)
+        context_durations_us = context_end_us - context_start_us
+        if bool(np.any(context_durations_us <= 0)):
+            raise ValueError("Temporal JEPA requires positive cached context durations.")
         sequence_id = cache["sequence_id"].astype(str)
         train_idx, train_target_idx, train_pair_stats = _build_temporal_pairs(
             split=split,
@@ -1430,10 +1475,7 @@ def pretrain_jepa(
                 navigation_feature_count=navigation_feature_count,
             )
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
 
     if use_temporal:
         train_dataset: Dataset[Any] = TemporalVoxelPairDataset(x, train_idx, train_target_idx)
@@ -1457,6 +1499,56 @@ def pretrain_jepa(
         if val_dataset is not None
         else None
     )
+    import subprocess
+
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        commit = "unknown"
+    cache_sha256 = _hash_file(cache_path)
+    split_manifest_sha256 = (
+        str(np.asarray(cache["split_manifest_sha256"]).item())
+        if "split_manifest_sha256" in cache.files
+        else ""
+    )
+    run_fingerprint_payload = {
+        "git_commit": commit,
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "cache_path": str(cache_path),
+        "objective": objective,
+        "model_name": model_name,
+        "navigation_mode": navigation_mode,
+        "seed": seed,
+        "batch_size": batch_size,
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+        "pretrain_splits": list(pretrain_splits),
+        "validation_splits": list(validation_splits),
+        "temporal_horizons_ms": list(temporal_horizons_ms),
+        "max_target_slop_ms": max_target_slop_ms,
+        "mask_ratio": mask_ratio,
+        "block_count": block_count,
+        "mask_mode": mask_mode,
+        "ema_momentum": ema_momentum,
+        "regularizer": regularizer,
+        "variance_weight": variance_weight,
+        "min_std": min_std,
+        "temporal_straightening_weight": temporal_straightening_weight,
+        "dense_tokens": use_dense_tokens,
+        "motion_conditioning": use_motion_conditioning,
+        "deep_supervision_layers": list(deep_supervision_layers),
+        "dense_predictor": dense_predictor,
+        "context_token_weight": context_token_weight,
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
 
     encoder = build_encoder(model_name, in_channels=int(x.shape[1])).to(device)
     target_encoder = build_encoder(model_name, in_channels=int(x.shape[1])).to(device)
@@ -1482,8 +1574,9 @@ def pretrain_jepa(
         ).to(device)
     else:
         predictor = JEPAPredictor(dim=encoder.output_dim).to(device)
+    optimizer_parameters = [*encoder.parameters(), *predictor.parameters()]
     optimizer = torch.optim.AdamW(
-        [*encoder.parameters(), *predictor.parameters()],
+        optimizer_parameters,
         lr=learning_rate,
         weight_decay=weight_decay,
     )
@@ -1520,11 +1613,8 @@ def pretrain_jepa(
         "action_feature_mean": action_feature_mean.tolist()
         if action_feature_mean is not None
         else [],
-        "action_feature_std": action_feature_std.tolist()
-        if action_feature_std is not None
-        else [],
+        "action_feature_std": action_feature_std.tolist() if action_feature_std is not None else [],
     }
-
     with history_path.open("w", encoding="utf-8") as history_file:
         for epoch in range(1, epochs + 1):
             train_metrics = _run_epoch(
@@ -1622,6 +1712,11 @@ def pretrain_jepa(
                         "checkpoint_role": "best",
                         "checkpoint_selected_by": best_selected_by,
                         "cache_path": str(cache_path),
+                        "cache_sha256": cache_sha256,
+                        "split_manifest_sha256": split_manifest_sha256,
+                        "git_commit": commit,
+                        "protocol_version": get_current_protocol_identity()[0],
+                        "protocol_sha256": get_current_protocol_identity()[1],
                         "seed": seed,
                         "in_channels": int(x.shape[1]),
                         "pretrain_splits": list(pretrain_splits),
@@ -1653,6 +1748,8 @@ def pretrain_jepa(
                         "deep_supervision_layer_conditioning": use_deep_supervision,
                         "bins": bins,
                         "encoder_name": encoder.__class__.__name__,
+                        "run_fingerprint": run_fingerprint,
+                        "run_fingerprint_payload": run_fingerprint_payload,
                     },
                     best_path,
                 )
@@ -1669,6 +1766,11 @@ def pretrain_jepa(
             "checkpoint_role": "last",
             "checkpoint_selected_by": "final_epoch",
             "cache_path": str(cache_path),
+            "cache_sha256": cache_sha256,
+            "split_manifest_sha256": split_manifest_sha256,
+            "git_commit": commit,
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
             "seed": seed,
             "in_channels": int(x.shape[1]),
             "pretrain_splits": list(pretrain_splits),
@@ -1683,9 +1785,7 @@ def pretrain_jepa(
             "regularizer": regularizer,
             "visreg_center_weight": visreg_center_weight if regularizer == "visreg" else 0.0,
             "visreg_sketch_weight": visreg_sketch_weight if regularizer == "visreg" else 0.0,
-            "visreg_projection_count": visreg_projection_count
-            if regularizer == "visreg"
-            else 0,
+            "visreg_projection_count": visreg_projection_count if regularizer == "visreg" else 0,
             "temporal_straightening_weight": temporal_straightening_weight,
             **conditioning_metadata,
             "deep_supervision_layers": list(deep_supervision_layers)
@@ -1694,6 +1794,8 @@ def pretrain_jepa(
             "deep_supervision_layer_conditioning": use_deep_supervision,
             "bins": bins,
             "encoder_name": encoder.__class__.__name__,
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
         },
         last_path,
     )
@@ -1702,11 +1804,19 @@ def pretrain_jepa(
         "model_name": model_name,
         "objective": objective,
         "cache": str(cache_path),
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "git_commit": commit,
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "pretrain_seed": seed,
         "epochs": epochs,
@@ -1771,8 +1881,7 @@ def pretrain_jepa(
             "tubelet_masking_preserves_auxiliary_channels": mask_mode == "tubelet",
             "visreg_uses_batch_embeddings_only": regularizer == "visreg",
             "visreg_uses_ttc_labels": False,
-            "temporal_straightening_uses_predictions_only": temporal_straightening_weight
-            > 0.0,
+            "temporal_straightening_uses_predictions_only": temporal_straightening_weight > 0.0,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,

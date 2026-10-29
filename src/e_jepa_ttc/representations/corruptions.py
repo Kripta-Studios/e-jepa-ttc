@@ -18,6 +18,7 @@ CORRUPTION_KINDS = (
     "polarity_drop_positive",
     "polarity_drop_negative",
     "temporal_window_fraction",
+    "temporal_window_scale",
     "spatial_crop_fraction",
 )
 
@@ -51,6 +52,8 @@ class EventCorruptionSpec:
         if self.kind in positive_fraction and self.severity <= 0:
             msg = f"{self.kind} severity must be in (0, 1]."
             raise ValueError(msg)
+        if self.kind == "temporal_window_scale" and self.severity <= 0:
+            raise ValueError("temporal_window_scale severity must be positive.")
 
 
 def corrupt_event_batch(
@@ -103,9 +106,7 @@ def corrupt_event_batch(
         timestamps = np.concatenate(
             (timestamps, rng.integers(start_us, end_us, count, dtype=np.int64))
         )
-        polarity = np.concatenate(
-            (polarity, rng.choice(np.asarray([-1, 1], dtype=np.int8), count))
-        )
+        polarity = np.concatenate((polarity, rng.choice(np.asarray([-1, 1], dtype=np.int8), count)))
     elif spec.kind == "dead_pixel_fraction":
         count = int(round(events.width * events.height * spec.severity))
         dead = rng.choice(events.width * events.height, count, replace=False)
@@ -123,17 +124,21 @@ def corrupt_event_batch(
         start_us = end_us - duration
         keep = timestamps >= start_us
         x, y, timestamps, polarity = x[keep], y[keep], timestamps[keep], polarity[keep]
+    elif spec.kind == "temporal_window_scale":
+        if spec.severity > 1.0:
+            raise ValueError(
+                "temporal_window_scale above one requires rereading a longer source window."
+            )
+        duration = max(1, int(round(events.duration_us * spec.severity)))
+        start_us = end_us - duration
+        keep = timestamps >= start_us
+        x, y, timestamps, polarity = x[keep], y[keep], timestamps[keep], polarity[keep]
     elif spec.kind == "spatial_crop_fraction":
         crop_width = max(1, int(round(events.width * spec.severity)))
         crop_height = max(1, int(round(events.height * spec.severity)))
         x_min = (events.width - crop_width) // 2
         y_min = (events.height - crop_height) // 2
-        keep = (
-            (x >= x_min)
-            & (x < x_min + crop_width)
-            & (y >= y_min)
-            & (y < y_min + crop_height)
-        )
+        keep = (x >= x_min) & (x < x_min + crop_width) & (y >= y_min) & (y < y_min + crop_height)
         x, y, timestamps, polarity = x[keep], y[keep], timestamps[keep], polarity[keep]
 
     if timestamps.size:

@@ -1,0 +1,4 @@
+model: ../model/e_jepa_object_event_v4.yaml
+training: ../train/garl_object_event_full_v4.yaml
+protocol: object_event_ttc_v4_common_roi_full
+claim_scope: full_candidate_requires_freeze

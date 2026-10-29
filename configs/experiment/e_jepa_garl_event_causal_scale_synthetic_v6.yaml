@@ -1,0 +1,83 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_synthetic_v6
+  protocol_version: causal_scale_v6_synthetic_learning_gate_v1
+  artifact_type: causal_scale_v6_synthetic_learning_gate_v1
+  seed: 17
+  evidence_scope: synthetic_event_learning_only
+model_config: configs/model/e_jepa_causal_scale_event_v6.yaml
+data:
+  common:
+    canvas_size: 64
+    endpoints: 3
+    polarity_bins: 5
+    delta_t_s: 0.1
+    accumulation_s: 0.09
+    micro_frames: 6
+    background_events_per_endpoint: 8
+    hot_pixel_probability: 0.1
+    empty_probability: 0.1
+  train:
+    samples: 1536
+    seed: 401
+  validation:
+    samples: 384
+    seed: 502
+  test:
+    samples: 512
+    seed: 603
+  real_data_opened: false
+  ttc_labels_opened: false
+  eap_opened: false
+  evttc_opened: false
+training:
+  seed: 17
+  epochs: 45
+  batch_size: 32
+  learning_rate: 0.0005
+  minimum_learning_rate: 0.00005
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  foreground_warmup_epochs: 12
+  spatial_translation_pixels: 12
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  foreground_bce_weight: 1.0
+  foreground_dice_weight: 1.0
+  foreground_extent_weight: 5.0
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+calibration:
+  split: validation
+  target_ratio_coverage: 0.8
+test_gates:
+  analytic_pearson_min: 0.95
+  slope_min: 0.8
+  slope_max: 1.2
+  sign_accuracy_min: 0.95
+  foreground_iou_min: 0.60
+  known_coverage_min: 0.90
+  empty_unknown_min: 1.0
+  empty_false_positive_fraction_max: 0.01
+  oddness_median_max: 0.05
+  oddness_p95_max: 0.10
+  translation_leakage_p95_max: 0.02
+  ttc_symmetric_relative_error_max: 0.30
+  ratio_80_coverage_min: 0.60
+  ratio_80_coverage_max: 0.95
+decision_contract:
+  supersedes_failed_protocol: causal_scale_v5_synthetic_learning_gate_v1
+  consumed_prior_test_seed: 303
+  diagnostic_opens: [train, validation]
+  full_opens_test_once: true
+  pass_authorizes: train_only_eap_screen_design
+  pass_does_not_authorize:
+    - eap_test
+    - evttc
+    - sota_claim
+    - garl_ttc_comparison

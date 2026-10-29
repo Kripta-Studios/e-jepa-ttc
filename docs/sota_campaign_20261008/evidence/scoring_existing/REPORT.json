@@ -1,0 +1,838 @@
+{
+  "bootstrap": {
+    "draw_indices_sha256": "7b8059b8854e527ca61da83ad5b7baade108e8fde3d5e3c78fe5485f1ae9984c",
+    "groups": [
+      "CCRm-low-0-overlap-0",
+      "CCRm-low-100-overlap-100",
+      "CCRm-low-50-overlap-50",
+      "CCRm-medium-0-overlap-0",
+      "CCRm-medium-100-overlap-100",
+      "CCRm-medium-50-overlap-50",
+      "CCRs-1-high-0-overlap-0",
+      "CCRs-1-high-100-overlap-100",
+      "CCRs-1-high-50-overlap-50",
+      "CCRs-1-low-0-overlap-0",
+      "CCRs-1-low-100-overlap-100",
+      "CCRs-1-low-50-overlap-50",
+      "CCRs-1-medium-0-overlap-0",
+      "CCRs-1-medium-100-overlap-100",
+      "CCRs-1-medium-50-overlap-50",
+      "CCRs-2-high-100-overlap-100",
+      "CCRs-2-low-100-overlap-100",
+      "CCRs-2-medium-100-overlap-100",
+      "CCRs-3-low-100-overlap-100",
+      "CCRs-3-medium-100-overlap-100",
+      "CCRs-side-high",
+      "CCRs-side-low",
+      "CCRs-side-medium",
+      "CPLA-high",
+      "CPLA-low",
+      "CPLA-medium",
+      "CPNA-high",
+      "CPNA-low",
+      "CPNA-medium",
+      "CPNAO-high",
+      "CPNAO-low",
+      "CPNAO-medium"
+    ],
+    "limitations": "Descriptive intervals, no multiplicity correction or independence certification",
+    "median_intervals": "Not computed; medians are descriptive point metrics",
+    "metrics": [
+      "micro_rte_percent",
+      "micro_mae_seconds",
+      "micro_rmse_seconds",
+      "macro_sequence_rte_percent",
+      "macro_sequence_mae_seconds",
+      "macro_sequence_rmse_seconds"
+    ],
+    "requested_draws": 10000,
+    "scheme": "Paired cluster percentile bootstrap; same sampled clusters for every method",
+    "seed": 20261008,
+    "unit": "Whole sequence or explicit group containing complete sequences"
+  },
+  "cohort": {
+    "all_rows_retained": true,
+    "gt_eligible": 946,
+    "gt_nonfinite": 78,
+    "gt_zero": 0,
+    "selection_uses_predictions": false,
+    "sequences": 32,
+    "total_rows": 1024
+  },
+  "methods": {
+    "H8_seed13": {
+      "arithmetic_nonfinite_on_eligible_gt": 0,
+      "complete_cohort_aggregate": {
+        "macro_sequence_mae_seconds": 1.3546312216606218,
+        "macro_sequence_median_absolute_error_seconds": 0.8565845822023985,
+        "macro_sequence_rmse_seconds": 2.1363238961172875,
+        "macro_sequence_rte_percent": 62.233314923624796,
+        "micro_mae_seconds": 1.3528085341054652,
+        "micro_median_absolute_error_seconds": 0.7314128477156492,
+        "micro_rmse_seconds": 3.206100370385306,
+        "micro_rte_percent": 62.9234239935187
+      },
+      "complete_cohort_metrics": {
+        "mae_seconds": 1.3528085341054652,
+        "median_absolute_error_seconds": 0.7314128477156492,
+        "rmse_seconds": 3.206100370385306,
+        "rte_percent": 62.9234239935187
+      },
+      "conditional_on_scorable_predictions_metrics": {
+        "mae_seconds": 1.3528085341054652,
+        "median_absolute_error_seconds": 0.7314128477156492,
+        "rmse_seconds": 3.206100370385306,
+        "rte_percent": 62.9234239935187
+      },
+      "coverage_on_eligible_gt": 1.0,
+      "failure_rate_on_eligible_gt": 0.0,
+      "gt_eligible": 946,
+      "gt_nonfinite": 78,
+      "gt_zero": 0,
+      "prediction_nonfinite_on_eligible_gt": 0,
+      "scorable_predictions": 946,
+      "status": "COMPLETE_COHORT_AVAILABLE",
+      "total_rows": 1024
+    },
+    "H8_seed23": {
+      "arithmetic_nonfinite_on_eligible_gt": 0,
+      "complete_cohort_aggregate": {
+        "macro_sequence_mae_seconds": 1.40600846435309,
+        "macro_sequence_median_absolute_error_seconds": 0.8884083290875238,
+        "macro_sequence_rmse_seconds": 2.178332504849922,
+        "macro_sequence_rte_percent": 67.85726788413905,
+        "micro_mae_seconds": 1.408714142553364,
+        "micro_median_absolute_error_seconds": 0.7384638920614139,
+        "micro_rmse_seconds": 3.392154971186864,
+        "micro_rte_percent": 68.86556210052743
+      },
+      "complete_cohort_metrics": {
+        "mae_seconds": 1.408714142553364,
+        "median_absolute_error_seconds": 0.7384638920614139,
+        "rmse_seconds": 3.392154971186864,
+        "rte_percent": 68.86556210052743
+      },
+      "conditional_on_scorable_predictions_metrics": {
+        "mae_seconds": 1.408714142553364,
+        "median_absolute_error_seconds": 0.7384638920614139,
+        "rmse_seconds": 3.392154971186864,
+        "rte_percent": 68.86556210052743
+      },
+      "coverage_on_eligible_gt": 1.0,
+      "failure_rate_on_eligible_gt": 0.0,
+      "gt_eligible": 946,
+      "gt_nonfinite": 78,
+      "gt_zero": 0,
+      "prediction_nonfinite_on_eligible_gt": 0,
+      "scorable_predictions": 946,
+      "status": "COMPLETE_COHORT_AVAILABLE",
+      "total_rows": 1024
+    },
+    "H8_seed7": {
+      "arithmetic_nonfinite_on_eligible_gt": 0,
+      "complete_cohort_aggregate": {
+        "macro_sequence_mae_seconds": 1.3217241944883995,
+        "macro_sequence_median_absolute_error_seconds": 0.8696986948731579,
+        "macro_sequence_rmse_seconds": 2.0517731323745814,
+        "macro_sequence_rte_percent": 61.62130545013564,
+        "micro_mae_seconds": 1.3208407080791975,
+        "micro_median_absolute_error_seconds": 0.7660472305174808,
+        "micro_rmse_seconds": 3.0272090763541155,
+        "micro_rte_percent": 62.35138260868976
+      },
+      "complete_cohort_metrics": {
+        "mae_seconds": 1.3208407080791975,
+        "median_absolute_error_seconds": 0.7660472305174808,
+        "rmse_seconds": 3.0272090763541155,
+        "rte_percent": 62.35138260868976
+      },
+      "conditional_on_scorable_predictions_metrics": {
+        "mae_seconds": 1.3208407080791975,
+        "median_absolute_error_seconds": 0.7660472305174808,
+        "rmse_seconds": 3.0272090763541155,
+        "rte_percent": 62.35138260868976
+      },
+      "coverage_on_eligible_gt": 1.0,
+      "failure_rate_on_eligible_gt": 0.0,
+      "gt_eligible": 946,
+      "gt_nonfinite": 78,
+      "gt_zero": 0,
+      "prediction_nonfinite_on_eligible_gt": 0,
+      "scorable_predictions": 946,
+      "status": "COMPLETE_COHORT_AVAILABLE",
+      "total_rows": 1024
+    },
+    "public_Garl_event_lhr": {
+      "arithmetic_nonfinite_on_eligible_gt": 0,
+      "complete_cohort_aggregate": {
+        "macro_sequence_mae_seconds": 7.68119824208677,
+        "macro_sequence_median_absolute_error_seconds": 1.4065755235574633,
+        "macro_sequence_rmse_seconds": 33.355151727587405,
+        "macro_sequence_rte_percent": 280.19382126524323,
+        "micro_mae_seconds": 8.048108926636752,
+        "micro_median_absolute_error_seconds": 0.996929195177185,
+        "micro_rmse_seconds": 159.2468081345456,
+        "micro_rte_percent": 293.47190329233473
+      },
+      "complete_cohort_metrics": {
+        "mae_seconds": 8.048108926636752,
+        "median_absolute_error_seconds": 0.996929195177185,
+        "rmse_seconds": 159.2468081345456,
+        "rte_percent": 293.47190329233473
+      },
+      "conditional_on_scorable_predictions_metrics": {
+        "mae_seconds": 8.048108926636752,
+        "median_absolute_error_seconds": 0.996929195177185,
+        "rmse_seconds": 159.2468081345456,
+        "rte_percent": 293.47190329233473
+      },
+      "coverage_on_eligible_gt": 1.0,
+      "failure_rate_on_eligible_gt": 0.0,
+      "gt_eligible": 946,
+      "gt_nonfinite": 78,
+      "gt_zero": 0,
+      "prediction_nonfinite_on_eligible_gt": 0,
+      "scorable_predictions": 946,
+      "status": "COMPLETE_COHORT_AVAILABLE",
+      "total_rows": 1024
+    },
+    "public_Garl_rgb_event_full": {
+      "arithmetic_nonfinite_on_eligible_gt": 0,
+      "complete_cohort_aggregate": {
+        "macro_sequence_mae_seconds": 1.869388781924227,
+        "macro_sequence_median_absolute_error_seconds": 0.860556061642789,
+        "macro_sequence_rmse_seconds": 3.9318571940157945,
+        "macro_sequence_rte_percent": 75.94724491149316,
+        "micro_mae_seconds": 1.8682761924690516,
+        "micro_median_absolute_error_seconds": 0.6915115955657469,
+        "micro_rmse_seconds": 7.875241213954854,
+        "micro_rte_percent": 76.76860192016733
+      },
+      "complete_cohort_metrics": {
+        "mae_seconds": 1.8682761924690516,
+        "median_absolute_error_seconds": 0.6915115955657469,
+        "rmse_seconds": 7.875241213954854,
+        "rte_percent": 76.76860192016733
+      },
+      "conditional_on_scorable_predictions_metrics": {
+        "mae_seconds": 1.8682761924690516,
+        "median_absolute_error_seconds": 0.6915115955657469,
+        "rmse_seconds": 7.875241213954854,
+        "rte_percent": 76.76860192016733
+      },
+      "coverage_on_eligible_gt": 1.0,
+      "failure_rate_on_eligible_gt": 0.0,
+      "gt_eligible": 946,
+      "gt_nonfinite": 78,
+      "gt_zero": 0,
+      "prediction_nonfinite_on_eligible_gt": 0,
+      "scorable_predictions": 946,
+      "status": "COMPLETE_COHORT_AVAILABLE",
+      "total_rows": 1024
+    }
+  },
+  "metric_contract": {
+    "bins": "No eAP bins or benchmark mixture weights",
+    "complete_metrics": "Unavailable if any eligible query fails for that method",
+    "conditional_metrics": "Descriptive only, conditional on finite computable prediction losses",
+    "gt_eligibility": "finite truth and truth != 0; signed negative targets retained",
+    "historical_compatibility": "Not historical TableVI inverse-TTC-relative alias or eAP MiD",
+    "macro_sequence": "Equal weight per sequence with eligible GT; average sequence metric",
+    "micro": "Equal weight per GT-eligible query",
+    "prediction_failure": "Nonfinite prediction/arithmetic counts as failure, never removes GT row",
+    "rte_percent": "abs(prediction-truth)/abs(truth)*100"
+  },
+  "paired": [
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed7",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.12145104538377287,
+            0.03211573704905774
+          ],
+          "point_delta": -0.03290702717222227
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.4490169586735218,
+            0.20594963149743237
+          ],
+          "point_delta": -0.08455076374270609
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -4.25412166350308,
+            2.0019768998415493
+          ],
+          "point_delta": -0.6120094734891595
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.11810567403463079,
+            0.031914215496413
+          ],
+          "point_delta": -0.03196782602626769
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.1676305171957444,
+            0.6611640874275303
+          ],
+          "point_delta": -0.17889129403119064
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -4.082794691449641,
+            2.001205221706783
+          ],
+          "point_delta": -0.5720413848289425
+        }
+      },
+      "second": "H8_seed13",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed7",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.2194308165040808,
+            0.01997545903382175
+          ],
+          "point_delta": -0.0842842698646904
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.35008483411962893,
+            0.05260701793659049
+          ],
+          "point_delta": -0.12655937247534066
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -18.188195334610874,
+            0.6309525039516416
+          ],
+          "point_delta": -6.235962434003412
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.226542626755704,
+            0.018682589176914826
+          ],
+          "point_delta": -0.08787343447416651
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.7482285960968756,
+            0.07659878669081002
+          ],
+          "point_delta": -0.3649458948327484
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -19.005385279652266,
+            0.622380324103184
+          ],
+          "point_delta": -6.514179491837666
+        }
+      },
+      "second": "H8_seed23",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed7",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -16.17565204969345,
+            -1.1172724306082575
+          ],
+          "point_delta": -6.359474047598371
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -86.24324675157706,
+            -2.6831326358254057
+          ],
+          "point_delta": -31.303378595212823
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -557.6349497390287,
+            -33.54886204693361
+          ],
+          "point_delta": -218.57251581510758
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -17.305871913786724,
+            -1.1020877287122561
+          ],
+          "point_delta": -6.727268218557555
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -274.36484105276367,
+            -4.139555931612375
+          ],
+          "point_delta": -156.21959905819148
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -598.0228364603537,
+            -32.62490538197204
+          ],
+          "point_delta": -231.12052068364497
+        }
+      },
+      "second": "public_Garl_event_lhr",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed7",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.3098160867501514,
+            -0.03517499218455976
+          ],
+          "point_delta": -0.5476645874358275
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -4.493066503258646,
+            -0.161983431597772
+          ],
+          "point_delta": -1.8800840616412131
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -31.586642715401634,
+            0.401967206017623
+          ],
+          "point_delta": -14.325939461357521
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.3226632323954197,
+            -0.028413993178873526
+          ],
+          "point_delta": -0.5474354843898541
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -10.22527249992373,
+            0.025700266435939045
+          ],
+          "point_delta": -4.848032137600738
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -32.05746968131972,
+            0.7044560005247642
+          ],
+          "point_delta": -14.417219311477567
+        }
+      },
+      "second": "public_Garl_rgb_event_full",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed13",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.16941265573431108,
+            0.036242231748196255
+          ],
+          "point_delta": -0.05137724269246813
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.4840270989007013,
+            0.41475507981229587
+          ],
+          "point_delta": -0.04200860873263457
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -16.56815113231352,
+            1.0280667474630287
+          ],
+          "point_delta": -5.623952960514252
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.1771220953796352,
+            0.0332763678583013
+          ],
+          "point_delta": -0.055905608447898825
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.3990720931030136,
+            1.142065591174322
+          ],
+          "point_delta": -0.18605460080155778
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -17.266723239320186,
+            0.9073590864334506
+          ],
+          "point_delta": -5.942138107008724
+        }
+      },
+      "second": "H8_seed23",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed13",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -16.14769047254739,
+            -1.082396299510802
+          ],
+          "point_delta": -6.326567020426149
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -86.15489953297607,
+            -2.6578020519855663
+          ],
+          "point_delta": -31.21882783147012
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -558.2300132982248,
+            -33.29223375588734
+          ],
+          "point_delta": -217.96050634161844
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -17.27655283554688,
+            -1.0761151377080136
+          ],
+          "point_delta": -6.695300392531287
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -274.2223425814669,
+            -4.157656890867129
+          ],
+          "point_delta": -156.0407077641603
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -597.8553750711391,
+            -32.508121260590435
+          ],
+          "point_delta": -230.54847929881603
+        }
+      },
+      "second": "public_Garl_event_lhr",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed13",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.244451371459164,
+            0.0033430265088113813
+          ],
+          "point_delta": -0.5147575602636052
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -4.374597676822484,
+            -0.014830138148298916
+          ],
+          "point_delta": -1.795533297898507
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -31.31300280399461,
+            2.268819397563659
+          ],
+          "point_delta": -13.713929987868362
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.2542719911899922,
+            0.008560754428348373
+          ],
+          "point_delta": -0.5154676583635864
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -9.989790025361257,
+            0.44318391545809993
+          ],
+          "point_delta": -4.669140843569547
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -31.754139397578168,
+            2.327805198903536
+          ],
+          "point_delta": -13.845177926648624
+        }
+      },
+      "second": "public_Garl_rgb_event_full",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed23",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -16.090056759798756,
+            -1.0330018567222152
+          ],
+          "point_delta": -6.27518977773368
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -86.13406732952319,
+            -2.5114985361533786
+          ],
+          "point_delta": -31.176819222737482
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -553.7711844672374,
+            -25.602909725045194
+          ],
+          "point_delta": -212.33655338110418
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -17.220436054894904,
+            -1.024736771958581
+          ],
+          "point_delta": -6.639394784083388
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -274.0869230601751,
+            -3.6607844577500823
+          ],
+          "point_delta": -155.85465316335873
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -593.8907929771724,
+            -24.460029404603226
+          ],
+          "point_delta": -224.6063411918073
+        }
+      },
+      "second": "public_Garl_event_lhr",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "H8_seed23",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.167792659262314,
+            0.049732146392621635
+          ],
+          "point_delta": -0.46338031757113707
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -4.225737305267897,
+            -0.06509756067289778
+          ],
+          "point_delta": -1.7535246891658725
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -27.753322104560116,
+            11.636252987862978
+          ],
+          "point_delta": -8.08997702735411
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -1.179283575610842,
+            0.0608409086451529
+          ],
+          "point_delta": -0.4595620499156876
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -9.846918058404851,
+            0.48526673480584676
+          ],
+          "point_delta": -4.48308624276799
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -28.097527377454213,
+            12.494423798223444
+          ],
+          "point_delta": -7.9030398196399005
+        }
+      },
+      "second": "public_Garl_rgb_event_full",
+      "status": "AVAILABLE"
+    },
+    {
+      "bootstrap_groups": 32,
+      "cohort": "ALL_GT_ELIGIBLE_ROWS_NO_PREDICTION_FILTER",
+      "delta_direction": "first_minus_second; negative favors first",
+      "first": "public_Garl_event_lhr",
+      "gt_eligible": 946,
+      "metrics": {
+        "macro_sequence_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            0.2570751608540752,
+            15.809452287457576
+          ],
+          "point_delta": 5.811809460162543
+        },
+        "macro_sequence_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -0.11276102795384309,
+            84.8572536532243
+          ],
+          "point_delta": 29.42329453357161
+        },
+        "macro_sequence_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            17.217248331813167,
+            546.5863996500408
+          ],
+          "point_delta": 204.24657635375007
+        },
+        "micro_mae_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            0.24539858522916558,
+            16.905121310411634
+          ],
+          "point_delta": 6.1798327341677
+        },
+        "micro_rmse_seconds": {
+          "draws": 10000,
+          "percentile_ci95": [
+            -2.9976893122387174,
+            271.4743251004807
+          ],
+          "point_delta": 151.37156692059074
+        },
+        "micro_rte_percent": {
+          "draws": 10000,
+          "percentile_ci95": [
+            16.20895357915452,
+            585.778550726157
+          ],
+          "point_delta": 216.7033013721674
+        }
+      },
+      "second": "public_Garl_rgb_event_full",
+      "status": "AVAILABLE"
+    }
+  ],
+  "schema": "explicit_signed_ttc_rte_v1"
+}

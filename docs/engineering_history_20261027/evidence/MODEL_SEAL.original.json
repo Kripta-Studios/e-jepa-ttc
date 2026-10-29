@@ -1,0 +1,119 @@
+{
+  "ancestry_domains_are_distinct": true,
+  "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+  "deployment_dependencies": {
+    "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+    "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+    "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+    "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+    "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+    "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+    "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+    "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852"
+  },
+  "normalizers": {
+    "event": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+    "rgb": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+  },
+  "recipe_path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/OOF_RECIPE.json",
+  "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3",
+  "schema": "scientific_oof_final_model_seal_v1",
+  "scope": {
+    "external_submission": false,
+    "official_score_available": false,
+    "private_targets_read": false,
+    "test_predictions_computed": false
+  },
+  "seal_identity_sha256": "15ca3385dbdb8a18e67cde3fe678278e60966662e86c9b0a3efc1acd366721cc",
+  "status": "SEALED_NOT_EVALUATED",
+  "trained_endpoints": {
+    "E_CTX_MATCHED": {
+      "checkpoint_path": "/workspace/ejepa_final_runs/final/fits/E_CTX_MATCHED/checkpoint_last.pt",
+      "checkpoint_sha256": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "identity_sha256": "2a5b6efc3aa13f6778ee6b025052560a387f0fb893955faf022ca3b33b1c86ea",
+      "receipt_path": "/workspace/ejepa_final_runs/final/fits/E_CTX_MATCHED/CHECKPOINT_RECEIPT.json",
+      "receipt_sha256": "edde3beade1047722c2a3303929b595538bf1a8e1499a6a95ec926b80c85dff2",
+      "training_cache_sha256": "ab3f2e06c268bd78e33c88b8b63085fb09324cd1f038dfe58b2a92138d436e7c",
+      "training_checkpoint_parents": {}
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40": {
+      "checkpoint_path": "/workspace/ejepa_final_runs/final/fits/PHASE_ONLY_EVENT_S7_TRAIN40/checkpoint_last.pt",
+      "checkpoint_sha256": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "identity_sha256": "f6010e8eab828523d663fe489bcd2fdc57b48ddb1d1ac27d95449a1fbe0209db",
+      "receipt_path": "/workspace/ejepa_final_runs/final/fits/PHASE_ONLY_EVENT_S7_TRAIN40/CHECKPOINT_RECEIPT.json",
+      "receipt_sha256": "a46ebdf4b8e90751c77244579520113c0e0450e0761ad70a011c176b96677efa",
+      "training_cache_sha256": "5a814615630f7e9ae372acf2123b2c9b2da880e9a950b402179adde44ba1293b",
+      "training_checkpoint_parents": {}
+    },
+    "R_CTX": {
+      "checkpoint_path": "/workspace/ejepa_final_runs/final/fits/R_CTX/checkpoint_last.pt",
+      "checkpoint_sha256": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "identity_sha256": "72e3d5991aae883e3a0617e77736c93c62091c24c99414c27176080436879240",
+      "receipt_path": "/workspace/ejepa_final_runs/final/fits/R_CTX/CHECKPOINT_RECEIPT.json",
+      "receipt_sha256": "1927b61fd6f8d37c69e0f776257b31933ac301e6d4e58ed76293eb590711f733",
+      "training_cache_sha256": "c89f461d1028abb47654d4eed2030307d1974bde954ebb58c71f51c94c5c49e7",
+      "training_checkpoint_parents": {}
+    }
+  },
+  "training_feature_ancestry": {
+    "E_CTX_MATCHED": {
+      "ancestry_domains_are_distinct": true,
+      "blind_validation_claim": false,
+      "deployment_dependencies": {
+        "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+        "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+        "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680"
+      },
+      "schema": "final_refit_oof_deployment_transition_v1",
+      "scientific_launch_authorized": false,
+      "stage_id": "E_CTX_MATCHED",
+      "status": "DECLARED_NOT_EXECUTED",
+      "training_feature_ancestry": {
+        "normalizer_sha256": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+        "stitch_file_sha256": "350f4b72ee75f8b8f135fe96986d628e1cc821b9650d28b16681da4c973ef4a0",
+        "stitch_path": "/workspace/ejepa_final_runs/final/oof/PHASE17_RAW_EVENT.authority.json",
+        "stitch_payload_sha256": "37b68838315e25fc85821640c22c67c53ddde9b9044c4cdec4985c5a199a64a5"
+      },
+      "transition_sha256": "35b45c3330acf103a0ce98eb9649308b6354786e8af7a2e0c52d70a8b4fab2b2"
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40": {
+      "ancestry_domains_are_distinct": true,
+      "blind_validation_claim": false,
+      "deployment_dependencies": {
+        "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+        "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852"
+      },
+      "schema": "final_refit_oof_deployment_transition_v1",
+      "scientific_launch_authorized": false,
+      "stage_id": "PHASE_ONLY_EVENT_S7_TRAIN40",
+      "status": "DECLARED_NOT_EXECUTED",
+      "training_feature_ancestry": {
+        "normalizer_sha256": null,
+        "stitch_file_sha256": "d32e65a4d860e698fa811dfbdf810b383b1c9ad4fdd36e71c8dc70eeb0e404d8",
+        "stitch_path": "/workspace/ejepa_final_runs/final/oof/PHASE20_CONTEXT.authority.json",
+        "stitch_payload_sha256": "63500879acb960f96776e6a95239481a62b3f10fc18c693c93e9f4d47ec182c2"
+      },
+      "transition_sha256": "d548b03896583c7cd91f1dbe2f6dbce570b2358420bcabbd3a412b4d6b5cead5"
+    },
+    "R_CTX": {
+      "ancestry_domains_are_distinct": true,
+      "blind_validation_claim": false,
+      "deployment_dependencies": {
+        "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+        "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+        "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35"
+      },
+      "schema": "final_refit_oof_deployment_transition_v1",
+      "scientific_launch_authorized": false,
+      "stage_id": "R_CTX",
+      "status": "DECLARED_NOT_EXECUTED",
+      "training_feature_ancestry": {
+        "normalizer_sha256": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59",
+        "stitch_file_sha256": "52842313f5625efeced47d386ecd45ac02247b8cf2cc4398bacc80e1e6ee75ca",
+        "stitch_path": "/workspace/ejepa_final_runs/final/oof/PHASE17_RAW_RGB.authority.json",
+        "stitch_payload_sha256": "1c97df4d41d8ef016df26ca7e92549666d3b9f83cb99ba3029791c4cf5cdaa80"
+      },
+      "transition_sha256": "267e24d5f46e0c397b53b13b5fddb5b80457f3ffce42c1e7145c5e356c0c8ede"
+    }
+  }
+}

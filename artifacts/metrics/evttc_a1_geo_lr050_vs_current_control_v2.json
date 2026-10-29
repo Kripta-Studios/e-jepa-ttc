@@ -1,0 +1,96 @@
+{
+  "allowed_trainer_differences": [
+    "backbone_learning_rate_scale"
+  ],
+  "artifact_sha256": "ada2694164e4f5411202c4890eddb9a6afcc0f0494dbfd0e33e3d58ba5cc60a0",
+  "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+  "benchmark10_opened": false,
+  "candidate_label": "eap_geo_backbone_lr_050",
+  "comparisons": {
+    "sequence_macro_mae_s": {
+      "candidate_pair_wins": 1,
+      "candidate_relative_improvement_pct": 1.4383610039383323,
+      "candidate_transfer_mean": 1.1791643633374147,
+      "control_mean": 1.1963725191141878,
+      "control_pair_wins": 1,
+      "pair_count": 2
+    },
+    "sequence_macro_mean_relative_error": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 3.191742175634554,
+      "candidate_transfer_mean": 0.28740331371814365,
+      "control_mean": 0.29687892353105416,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    },
+    "sequence_macro_selection_score": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 2.0670988111716695,
+      "candidate_transfer_mean": 0.5635854131088838,
+      "control_mean": 0.5754811776914607,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    }
+  },
+  "control_aggregate": "artifacts/runs/evttc32_eap_geo_current_code_control_v2/core/aggregate.json",
+  "control_aggregate_sha256": "1edb4a9ad72ec7746677fe7fc04d49cb0a30aac30923497c9266e3e016cd9196",
+  "fold_seed_pairs": [
+    {
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "matched_control_audit_passed": true,
+  "observed_trainer_differences": [
+    {
+      "candidate": 0.5,
+      "control": 1.0,
+      "field": "trainer.backbone_learning_rate_scale",
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "candidate": 0.5,
+      "control": 1.0,
+      "field": "trainer.backbone_learning_rate_scale",
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "paired_oof_sequence_bootstrap_by_seed": [
+    {
+      "candidate_minus_control_mae_s": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": -0.01639423370361337,
+        "iterations": 2000,
+        "lower": -0.07981573962461878,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.05163082733398891
+      },
+      "candidate_minus_control_mean_abs_relative_error": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": -0.008327645024033326,
+        "iterations": 2000,
+        "lower": -0.03570882969842661,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.020929966080163818
+      },
+      "sample_count": 160,
+      "seed": 7,
+      "sequence_count": 14
+    }
+  ],
+  "same_initial_backbone_required": true,
+  "test_used_for_selection": false,
+  "transfer_aggregate": "artifacts/runs/evttc32_eap_geo_backbone_lr_050_analysis_v2/core/aggregate.json",
+  "transfer_aggregate_sha256": "2220f42fc45b98fb9442b1600cf1f3a860b4e2fd259798bf291c02d4cf9ce3f4",
+  "variant": "A1_MATCHED_DENSE_BLOCK"
+}

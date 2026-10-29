@@ -1,0 +1,31 @@
+{
+  "active_compatibility_path": "BUDGET_AUTHORIZATION_20261014.json",
+  "additional_cap_seconds": 43200,
+  "authorized_cap_seconds": 216000,
+  "before_ledger_sha256": "3a51687fec6ef9e488b17fd4ec1364005de09c36aabea7cdd8547899dd55923a",
+  "charged_at_amendment_seconds": 164154.36069849986,
+  "forbidden_actions_unchanged": [
+    "submission",
+    "merge",
+    "paid compute",
+    "global machine changes"
+  ],
+  "historical_authorization_preserved": "verification/BUDGET_AMENDMENT_20261016/AUTHORIZATION_BEFORE.json",
+  "interpretation": "Bounded60h accumulated scope ceiling under the existing explicit open-ended resource expansion; preserve registered scientific experiment limits",
+  "ledger_entries_preserved": true,
+  "ledger_sha256": "fb55568e54f6e71796b9ef1219615872b78fd5c4520a517dff7a56a9d4fb8015",
+  "observation": "hourly_on_the_hour_Europe_Madrid",
+  "paid_services": false,
+  "physical_update_cap": 1000000,
+  "previous_authorization_sha256": "3288b0ee93c4c92ab1b1764670e69d71f603c0dad7f7cc71bc57d4224a3c8d90",
+  "previous_cap_seconds": 172800,
+  "publication_authority": "Separate later explicit user request permits documentation/results push; this amendment adds no external actions",
+  "reason": "At13:47,6779 B1 updates remain at0.614updates/s (~11034s), followed by evaluation; remaining48h allowance8619s is insufficient",
+  "scientific_sources_modified": false,
+  "scope": "All evidence-enabled V18 handoff branches: primary, adaptive, RGB/fusion, selected replication, final refit and local evaluation/delivery, within their registered experiment limits",
+  "status": "APPLIED",
+  "supersedes_scope_of": "BUDGET_AUTHORIZATION_20261013.json",
+  "synchronization": "Existing V18_GPU.lock first byte after the current scope releases; no worker termination",
+  "user_authorization": "s\u00ed tienes permiso para continuar y para ampliar el presupuesto de todo, no pares hasta acabar, y vete revisando cada hora en punto que todo se est\u00e9 ejecutando y vaya bien",
+  "utc": "2026-10-16T11:59:15.415516+00:00"
+}

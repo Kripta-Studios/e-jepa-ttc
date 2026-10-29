@@ -1,0 +1,15 @@
+{
+  "command": [
+    "${DATA}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+    "-m",
+    "operational.sota_eval.r1_resume",
+    "--execute"
+  ],
+  "cwd": "${REPO}",
+  "requirements": [
+    "Coordinator released its owned STOP_REQUEST",
+    "Old supervisor lease owner retired so only this invocation owns R1",
+    "Accuracy GPU inference finished; no concurrent GPU benchmark work"
+  ],
+  "scope": "one-shot resumable measurement; coordinator handles scheduling and final bundle"
+}

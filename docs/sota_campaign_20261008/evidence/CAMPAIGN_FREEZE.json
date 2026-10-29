@@ -1,0 +1,39 @@
+{
+  "baseline": "${REPO}\\artifacts\\sota_campaign_20261008\\dev32_expanded",
+  "bootstrap_draws": 10000,
+  "campaign": "${REPO}\\artifacts\\train40_system_20261005",
+  "code_root": "${DATA}/Garl-TTC",
+  "data_repository": "${DATA}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc",
+  "device": "cuda",
+  "event_backend": "prefetch",
+  "full": "${REPO}\\artifacts\\sota_campaign_20261008\\dev32_expanded_rgb",
+  "full_backend": "prefetch",
+  "inventory": "${REPO}\\data\\manifests\\evttc_all32_local.yaml",
+  "metrics": "${REPO}\\artifacts\\sota_campaign_20261008\\expanded_metrics",
+  "models": [
+    "H8_seed7",
+    "H8_seed13",
+    "H8_seed23",
+    "public_Garl_event_lhr",
+    "public_Garl_rgb_event_full"
+  ],
+  "optimizer_updates": 0,
+  "public_full_source": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl",
+  "role": "ZERO_UPDATE_EXPANDED_EVTTC_CAMPAIGN",
+  "schema_version": 1,
+  "seed": 20261008,
+  "sources": {
+    "operational/evttc_rgb_transfer/inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "operational/evttc_rgb_transfer/model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+    "operational/evttc_rgb_transfer/run.py": "f9bb29a949134b18181146f1b25bbd97b6eccf008ea78874a91aa542e0d4a2c5",
+    "operational/evttc_rgb_transfer/score.py": "77278cd647fed88c542d68dde4b3b6a0bcf108806a2b3ba6a7ba74ade428e03e",
+    "operational/evttc_transfer/inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "operational/evttc_transfer/models.py": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+    "operational/evttc_transfer/run.py": "a3f879bfc5cd36b4a0e32a27da8f05bb01a2581146e9f7c212a9bc58f691e662",
+    "operational/evttc_transfer/score.py": "37605ac8738484ad04ec3f9d9f4996d5c192330a6dcd5fbe5c8c08631f6e00cc",
+    "operational/sota_eval/campaign.py": "f2a8f78457c41bb1c7c409cb1dbc43ff6e3d605b0fcbd5f8b8d6b6f742bacb18",
+    "operational/sota_eval/full_prefetch.py": "164bb6e1ef0f33a6f838a964d33cb8b461a92cad175d4d269c1f320a7dc65127",
+    "operational/sota_eval/prefetch.py": "3333f4aa07aeade3743083169057e8ecedddb9e21a1b43296555cdc644927200",
+    "operational/sota_eval/scoring.py": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec"
+  }
+}

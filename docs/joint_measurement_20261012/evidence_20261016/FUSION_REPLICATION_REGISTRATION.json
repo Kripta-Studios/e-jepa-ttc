@@ -1,0 +1,108 @@
+{
+  "H_scope": "Sequential supervised head fitting on H-trained R_CTX; not independent H validation",
+  "P_manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+  "capture_proof_sha256": "233ddbfc8c3318d1ede4d4cb8b0e89add4c4a2397c1f5968739b5db709bee2e4",
+  "effective_batch": 32,
+  "evaluation": "All seeds and controls retained; same complete V cohort, scorer, system gates and acquisition-group bootstrap; report per-seed and seed mean/std, no best-seed selection",
+  "event_recipe_sha256": "77d12a005b337039b47f3c153b1341113de8b484a777f9b4ab42e685aa731db6",
+  "event_updates_per_seed": 12000,
+  "family": "C1 adapted encoder plus RGB-anchored TRUE/ZERO complements",
+  "fit_order": "Both event producers, then their H features/normalizers and four heads; freeze all six endpoints before any replica V prediction",
+  "fresh_features": "Rebuild C1 H/V spatial features and H event normalizer for each seed; fixed unchanged RGB anchor inputs/normalizer",
+  "head_modes": [
+    "TRUE",
+    "ZERO"
+  ],
+  "head_recipe_sha256": "dab1d529feb89978759485cdb5c9875101436104d9a9eaf5c8b88ba163e03812",
+  "head_recipes": {
+    "TRUE": {
+      "batch_size": 128,
+      "clip_norm": 1.0,
+      "hidden": 128,
+      "learning_rate": 0.0003,
+      "mode": "TRUE",
+      "residual_scale": 0.03,
+      "seed": 7,
+      "updates": 2500,
+      "weight_decay": 0.001
+    },
+    "ZERO": {
+      "batch_size": 128,
+      "clip_norm": 1.0,
+      "hidden": 128,
+      "learning_rate": 0.0003,
+      "mode": "ZERO",
+      "residual_scale": 0.03,
+      "seed": 7,
+      "updates": 2500,
+      "weight_decay": 0.001
+    }
+  },
+  "head_seed_rule": "Both TRUE/ZERO use the corresponding encoder seed13 or23; identical new head initialization",
+  "head_updates_per_mode_per_seed": 2500,
+  "mass_sha256": "7fb24c3f3e02c6715562bebf3bb1d6c6042c3d0931457f145bb23a473044174e",
+  "maximum_new_scientific_updates": 34000,
+  "maximum_new_technical_updates": 20,
+  "microbatch": 4,
+  "optimizer": {
+    "backbone_lr": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "clip_norm": 1.0,
+    "eps": 1e-08,
+    "final_lr_fraction": 0.1,
+    "readout_lr": 0.0003,
+    "warmup": 200,
+    "weight_decay": 0.0001
+  },
+  "parent_sha256": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+  "population_size": 53890,
+  "promotion": "Requires original full-system gates and comparable full-pipeline cost; no automatic refit or official claim",
+  "rationale": "Controlled V aggregate improvement exceeds 3%, safeguards pass, paired group interval excludes zero; full promotion fails and F_TRUE interval includes zero",
+  "reused_seed7_endpoints": {
+    "endpoints": {
+      "FUSION-TRUE-S7": "936fd00cc3d37e669e93202a66895ebaf126fa436c689c6e29902ec1640d1cae",
+      "FUSION-ZERO-S7": "c2a60595b59e1e4747a0f534cf8ce75b2312c6891f2a759af23bc987e3aa0c7b"
+    },
+    "registration_sha256": "dab1d529feb89978759485cdb5c9875101436104d9a9eaf5c8b88ba163e03812"
+  },
+  "runtime": "Admitted full forward/backward CUDA capture, FP32 no TF32, pinned contiguous microbatches, bounded 8GiB lossless sensor LRU, one-batch prefetch",
+  "schema": "v18_one_family_replication_v1",
+  "scope_limit": "Replicate multimodal complement mechanism only; does not replicate or promote standalone C1 versus free readout",
+  "seed7_evidence_sha256": "90a250138d4f161e294a34328d17a919cc614239effab2677d7dc172e04e7e4a",
+  "seeds": [
+    13,
+    23
+  ],
+  "sensor_binding": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a",
+  "shared_initialization": "Same historical P-only A5 and H-supervised R_CTX; replicate adaptation and every new module, not original pretraining",
+  "sources": {
+    "configs/joint_measurement/primary.json": "5ef559bf0d9e955d3ad82e51eb5f745c4af3a0f7c6891def80b44f61d75e778a",
+    "operational/joint_measurement/common.py": "74af008e2d6edb65d67b1ac3da1ee3e5467c7b5a62ff9ac43cf9b70e2ffce122",
+    "operational/joint_measurement/data.py": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+    "operational/joint_measurement/fast_runtime.py": "3c2557f47ea93fe4dcc1d4f267ab6d2df0d4e0b443b9fe393b687f8a3836aff5",
+    "operational/joint_measurement/fusion_replication_train.py": "429c99433e9ba42de9e6b5a064a2e39c835c9a4ad9f3ce808ea40b00352fbde6",
+    "operational/joint_measurement/geometry_capture.py": "d30578e9d1a90cdc19a893dd4f5e78cc442144545c52debe70fac01d41704640",
+    "operational/joint_measurement/geometry_capture_probe.py": "c326308702f2bfa7e355d48a7bd72c5f53ebf1008095fa7fd7bf92bf364fb90b",
+    "operational/joint_measurement/geometry_capture_qa.py": "124e6cd584f5dfe72e28ef7e079aee6fb6db380950be881b9c7bb230c25be2c3",
+    "operational/joint_measurement/geometry_capture_run.py": "d66ee8c2fec645a856ac84d5f1129029f8b476c42afaa65ad8a020f41dc1be4f",
+    "operational/joint_measurement/geometry_model.py": "63b0d2642f0e8f8558b798603a8b480272630104e8822c5eec46cb619ce90312",
+    "operational/joint_measurement/geometry_run.py": "a2834c8d6e2a0ad57c5313ffdee9c34429825d9b41da9afe539cb91d976b0fad",
+    "operational/joint_measurement/geometry_train.py": "e67dc3079eac435f137a553b211355d04ab8144c49d874e7c20e37c40cdfbebe",
+    "operational/joint_measurement/native_loss.py": "a78b1b4b78352a47b6c0c65146587dd742acbb9e50a3a580aae34bf491f6e189",
+    "operational/joint_measurement/qa.py": "1463f72ae2dfd5db614bbc1151a3b5dfeb0916f68c45535f7deb37cad8aa41f1",
+    "operational/joint_measurement/rgb_cached_run.py": "8b9277c516ebc7fc966e79f6cbea8669b93f7abb2f74fc4c82cec31c836dd204",
+    "operational/joint_measurement/train.py": "0bf92b0f46993c01223db72fedf3a4e2a3d32fb81cbc7ada7806d6e205d7ad80",
+    "operational/rgb_port/train_producers.py": "0fad9b57fd529489b55e9313fbe938fd0b84481cd3877cf5dab7f9b918544757",
+    "operational/rgb_port_revision/loss.py": "4a7cf77505ce2db6afe37a3ee6eb9fa44cbd15882be39f81076250b8e62f449d",
+    "src/e_jepa_ttc/joint_measurement/__init__.py": "0f7ebcc4d14c59cee5f7fea3acefcb58e734e56bf33bad286e0ce6eee8ab63a4",
+    "src/e_jepa_ttc/joint_measurement/loss.py": "aed34461a89639e0b8a1c699e32376419bf32e83ec351e17101e7a635f2d57ca",
+    "src/e_jepa_ttc/joint_measurement/model.py": "276251a86a96cbd399ac53eed8a3d0480597ed438e2b9b4b2b8a38aaad640bc3",
+    "src/e_jepa_ttc/losses/causal_scale_ttc.py": "f82ca020f351671e0d4837fdb7bf9c9e93a5fc2755eb16078e241475c7ee719d",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": "acbf1b6583798b12ed88df173e5e5589d597d11acd4e15d376d9ee6482ff52e7",
+    "src/e_jepa_ttc/models/local_transport.py": "7177531b930bbdb359c8390eb7d1f4f377010d695b6e0919e5c255600bf2e3ec",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  }
+}

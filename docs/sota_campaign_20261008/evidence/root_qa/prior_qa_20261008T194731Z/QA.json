@@ -1,0 +1,18 @@
+{
+  "checked_utc": "2026-10-08T19:38:17.541074+00:00",
+  "code_commit": "a43c37a08b4d35995a6675a2b26febbb8161eed7",
+  "no_runtime_environment_upgrade": true,
+  "pyright_config_sha256": "8a13a19a6cfcfa8e99fa669b601871d00ea887966a5cc6f9233e888cc5cf02dc",
+  "pyright_output_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332",
+  "ruff_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+  "source_hashes_current": true,
+  "status": "PASSED",
+  "test_receipt_sha256": "50973d5c4eb1d19562737b7b3bcc5b00071cb9d4bb94520be2b951753e9f0abb",
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 191
+  },
+  "type_check_note": "Scoped config uses the actual sibling e-jepa-ttc/.venv; no diagnostic suppression."
+}

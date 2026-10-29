@@ -1,0 +1,12 @@
+{
+  "status": "CANONICAL_PUBLICATION_WITH_OPERATIONAL_METADATA_AMENDMENT",
+  "updated_utc": "2026-10-03T18:49:21.101391+00:00",
+  "publisher_source_sha256": "49ea19a8a965bdb6fba6fb76ba22fa05ac4cd498ee3f3f8a87864719515d5a33",
+  "continuation_authorization_sha256": "9510fa63b26db2ead0cfb5ed7628e2aa49949d7751a50b8cb85169686267a16e",
+  "optimizer_updates": 0,
+  "numeric_implementation_unchanged": true,
+  "journal_sha256": {
+    "N1": "8744456f779d751edcd22a0b32bd9fda4bf2610c7b1cb024fbe6fb27a7a2e70f",
+    "N2_N3": "c45c2dae21e90bfa9dc820d60c07ca2c933a99e502850f56ce0eacd38ec03f08"
+  }
+}

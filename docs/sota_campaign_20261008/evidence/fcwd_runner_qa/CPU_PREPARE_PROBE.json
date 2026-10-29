@@ -1,0 +1,148 @@
+{
+  "created_utc": "2026-10-08T18:46:53.031804+00:00",
+  "gpu_initialized": false,
+  "gt_read": false,
+  "manifest_sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+  "optimizer_updates": 0,
+  "probe_script_sha256": "953ba422f126f730f42fd94dc0fc24dbf6d6132fa56dc3ee3cf17b24d84d35b0",
+  "projected_630_query_prepare_seconds": 220.80625620123465,
+  "projection_limitation": "Only three first queries; not sustained throughput or total inference ETA. Disk cache state uncontrolled; GPU inference excluded.",
+  "queries": [
+    {
+      "elapsed_prepare_seconds": 0.38871480000671,
+      "full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+      "gpu_initialized": false,
+      "gt_read": false,
+      "process_peak_wset_bytes": 651628544,
+      "process_rss_before_bytes": 597512192,
+      "process_rss_peak_sampled_bytes": 650240000,
+      "query_id": "FCWD1:0000",
+      "sampling_interval_seconds": 0.02,
+      "sequence_id": "FCWD1",
+      "tensors": {
+        "garl_events": {
+          "bytes": 2621440,
+          "dtype": "float32",
+          "sha256": "fd6f643e4b17271feef406488b62bb3f78affc47a9838c97f64e9f5a4efa0852",
+          "shape": [
+            40,
+            128,
+            128
+          ]
+        },
+        "own_events": {
+          "bytes": 18874368,
+          "dtype": "float32",
+          "sha256": "158eca7e5d66c0822f1f51cf5307a5475b19492ebc5ba7d9b5df681677a6e2b2",
+          "shape": [
+            8,
+            3,
+            12,
+            128,
+            128
+          ]
+        },
+        "valid": {
+          "bytes": 8,
+          "dtype": "bool",
+          "sha256": "04abc8821a06e5a30937967d11ad10221cb5ac3b5273e434f1284ee87129a061",
+          "shape": [
+            8
+          ]
+        }
+      }
+    },
+    {
+      "elapsed_prepare_seconds": 0.29662889998871833,
+      "full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+      "gpu_initialized": false,
+      "gt_read": false,
+      "process_peak_wset_bytes": 673120256,
+      "process_rss_before_bytes": 647720960,
+      "process_rss_peak_sampled_bytes": 665358336,
+      "query_id": "FCWD2:0000",
+      "sampling_interval_seconds": 0.02,
+      "sequence_id": "FCWD2",
+      "tensors": {
+        "garl_events": {
+          "bytes": 2621440,
+          "dtype": "float32",
+          "sha256": "101a294ecb8b9f43c4b79c10076268a33841ac7204adf4f40b4de94788fa0048",
+          "shape": [
+            40,
+            128,
+            128
+          ]
+        },
+        "own_events": {
+          "bytes": 18874368,
+          "dtype": "float32",
+          "sha256": "878f0d801792aa4f60b8cc595e58b1d7241c9cea7fbdb21647297df98b9c6138",
+          "shape": [
+            8,
+            3,
+            12,
+            128,
+            128
+          ]
+        },
+        "valid": {
+          "bytes": 8,
+          "dtype": "bool",
+          "sha256": "04abc8821a06e5a30937967d11ad10221cb5ac3b5273e434f1284ee87129a061",
+          "shape": [
+            8
+          ]
+        }
+      }
+    },
+    {
+      "elapsed_prepare_seconds": 0.3684656000114046,
+      "full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+      "gpu_initialized": false,
+      "gt_read": false,
+      "process_peak_wset_bytes": 674603008,
+      "process_rss_before_bytes": 650203136,
+      "process_rss_peak_sampled_bytes": 670961664,
+      "query_id": "FCWD3:0000",
+      "sampling_interval_seconds": 0.02,
+      "sequence_id": "FCWD3",
+      "tensors": {
+        "garl_events": {
+          "bytes": 2621440,
+          "dtype": "float32",
+          "sha256": "1fd11d2b3c68aa58aa7de23cbab06ab96feb477394d15f423252b867ba7953b1",
+          "shape": [
+            40,
+            128,
+            128
+          ]
+        },
+        "own_events": {
+          "bytes": 18874368,
+          "dtype": "float32",
+          "sha256": "cc43ffec3897ca671e8192c4ca30751919d88b4d38d4248715204a0d89f3409f",
+          "shape": [
+            8,
+            3,
+            12,
+            128,
+            128
+          ]
+        },
+        "valid": {
+          "bytes": 8,
+          "dtype": "bool",
+          "sha256": "04abc8821a06e5a30937967d11ad10221cb5ac3b5273e434f1284ee87129a061",
+          "shape": [
+            8
+          ]
+        }
+      }
+    }
+  ],
+  "query_selection": "first frozen query per sequence, no selection using GT or outputs",
+  "source_closure_sha256": "f73b3e15db53ac60ff5468dff54f2621e23febb3319e87877023a4d4018c380c",
+  "status": "COMPLETE",
+  "threads": 2
+}

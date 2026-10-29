@@ -1,0 +1,36 @@
+{
+  "automatic_training": false,
+  "decision": "Prepare adaptive family C: a spatially weighted affine scale/translation readout of the same correlation volume, encoder trainable, compared with the free readout. Freeze the complete numeric recipe and control genealogy before any optimizer update.",
+  "independent_integer_count_recalculation": {
+    "PAIR-CORR-FROZEN-S7": {
+      "difference_from_FP32_fraction_aggregation": 1.982184416604582e-10,
+      "fraction_groups_with_advantage": 1,
+      "groups": 24,
+      "macro_nonzero_mutual": 0.4214431524978349,
+      "mechanism_signal": true
+    },
+    "PAIR-CORR-S7": {
+      "difference_from_FP32_fraction_aggregation": -1.971381335952316e-09,
+      "fraction_groups_with_advantage": 1,
+      "groups": 24,
+      "macro_nonzero_mutual": 0.4086953453786706,
+      "mechanism_signal": true
+    }
+  },
+  "numerical_verification": {
+    "decision_matches_exact_integer_recalculation": true,
+    "fraction_tolerance": 1e-07,
+    "initial_1e_minus_12_comparison": "FAILED; original fractions were averaged in FP32"
+  },
+  "registration_sha256": "d383b9b7b9741c7b5475c544e79d97f2919e3e147a867553e32749d6d4f8ec9d",
+  "result_sha256": "214f9959d342204efdc1d761efc8a9b44cfd1e30718349a7d7e6521b89b2b663",
+  "scientific_limitations": [
+    "Reciprocal matches are not motion ground truth.",
+    "The P bbox is a weak diagnostic mask, not an inference input.",
+    "No H/V outcomes or TTC targets were used in this diagnostic.",
+    "This is neither a development candidate nor system promotion."
+  ],
+  "status": "MECHANISM_SIGNAL",
+  "training_started": false,
+  "utc": "2026-10-14T09:11:33.666145+00:00"
+}

@@ -1,0 +1,166 @@
+{
+  "status": "COMPLETE",
+  "role": "FROZEN_EVTTC_FULL_GARL_FOLLOWUP",
+  "optimizer_updates": 0,
+  "own_predictions_reused_exactly": true,
+  "no_checkpoint_selection": true,
+  "manifest_sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+  "prediction_seal_sha256": "ff3121aadcbd9ae60d9de51a113ee9b7c6c4afb508ab40e465a1f51623070dec",
+  "inherited_scored_predictions_sha256": "de00b0420b2ec4421c9e989b4cc4242e012a491fb4b42d8b78528c91a03fa1d2",
+  "metrics": {
+    "H8_seed7": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.3208407080791975,
+      "rmse_seconds": 3.0272090763541155,
+      "median_absolute_error_seconds": 0.7660472305174808,
+      "signed_bias_seconds": 0.5772782609818461
+    },
+    "H8_seed13": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.3528085341054652,
+      "rmse_seconds": 3.206100370385306,
+      "median_absolute_error_seconds": 0.7314128477156492,
+      "signed_bias_seconds": 0.5335948212366387
+    },
+    "H8_seed23": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.4087141425533638,
+      "rmse_seconds": 3.392154971186864,
+      "median_absolute_error_seconds": 0.7384638920614139,
+      "signed_bias_seconds": 0.7289229283915373
+    },
+    "public_Garl_event_lhr": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 8.04810892663675,
+      "rmse_seconds": 159.2468081345456,
+      "median_absolute_error_seconds": 0.996929195177185,
+      "signed_bias_seconds": 5.475819090611121
+    },
+    "public_Garl_rgb_event_full": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.8682761924690514,
+      "rmse_seconds": 7.875241213954855,
+      "median_absolute_error_seconds": 0.6915115955657469,
+      "signed_bias_seconds": -0.2549084367345946
+    }
+  },
+  "common_support_metrics": {
+    "H8_seed7": {
+      "queries": 946,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.3208407080791975,
+      "rmse_seconds": 3.0272090763541155,
+      "median_absolute_error_seconds": 0.7660472305174808,
+      "signed_bias_seconds": 0.5772782609818461
+    },
+    "H8_seed13": {
+      "queries": 946,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.3528085341054652,
+      "rmse_seconds": 3.206100370385306,
+      "median_absolute_error_seconds": 0.7314128477156492,
+      "signed_bias_seconds": 0.5335948212366387
+    },
+    "H8_seed23": {
+      "queries": 946,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.4087141425533638,
+      "rmse_seconds": 3.392154971186864,
+      "median_absolute_error_seconds": 0.7384638920614139,
+      "signed_bias_seconds": 0.7289229283915373
+    },
+    "public_Garl_event_lhr": {
+      "queries": 946,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 8.04810892663675,
+      "rmse_seconds": 159.2468081345456,
+      "median_absolute_error_seconds": 0.996929195177185,
+      "signed_bias_seconds": 5.475819090611121
+    },
+    "public_Garl_rgb_event_full": {
+      "queries": 946,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.8682761924690514,
+      "rmse_seconds": 7.875241213954855,
+      "median_absolute_error_seconds": 0.6915115955657469,
+      "signed_bias_seconds": -0.2549084367345946
+    }
+  },
+  "paired_sequence_comparison": {
+    "H8_seed7": {
+      "metric": "macro_sequence_MAE_difference_model_minus_Garl_full",
+      "sequences": 32,
+      "common_queries": 946,
+      "difference_seconds": -0.5476645874358272,
+      "sequence_bootstrap_95pct_seconds": [
+        -1.28445863997028,
+        -0.03382097457511114
+      ]
+    },
+    "H8_seed13": {
+      "metric": "macro_sequence_MAE_difference_model_minus_Garl_full",
+      "sequences": 32,
+      "common_queries": 946,
+      "difference_seconds": -0.5147575602636052,
+      "sequence_bootstrap_95pct_seconds": [
+        -1.209972285260183,
+        -0.005672692644413694
+      ]
+    },
+    "H8_seed23": {
+      "metric": "macro_sequence_MAE_difference_model_minus_Garl_full",
+      "sequences": 32,
+      "common_queries": 946,
+      "difference_seconds": -0.463380317571137,
+      "sequence_bootstrap_95pct_seconds": [
+        -1.1366743331575597,
+        0.04372328054681424
+      ]
+    },
+    "public_Garl_event_lhr": {
+      "metric": "macro_sequence_MAE_difference_model_minus_Garl_full",
+      "sequences": 32,
+      "common_queries": 946,
+      "difference_seconds": 5.811809460162543,
+      "sequence_bootstrap_95pct_seconds": [
+        0.25438481302193905,
+        15.783927015890496
+      ]
+    }
+  },
+  "unavailability": {},
+  "limitations": [
+    "Historical development cohort and follow-up after seeing event-only results; not blind model selection.",
+    "H8 uses events plus oracle ROI metadata; full Garl additionally receives RGB pixels.",
+    "Native frozen temporal contexts differ across models.",
+    "RGB/event timing and geometry approximations are declared in the frozen input contract.",
+    "H8 native TTC support +/-60 seconds; Garl native conversion unbounded, no clipping.",
+    "Public Garl training/selection ancestry not independently certified.",
+    "Sampled cross-dataset transfer comparison, not a reproduction of the official paper benchmark."
+  ]
+}

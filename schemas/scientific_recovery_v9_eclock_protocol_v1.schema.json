@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_protocol_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type", "protocol_version", "parent_git_commit", "primary_comparison",
+    "authorized_seed", "production_row_count", "outer_fold_count", "metric_delta_t_s",
+    "minimum_abs_prediction_ttc_s", "ttc_clip_seconds", "target_anchor",
+    "global_transport_feature_names", "foreground_weight_used",
+    "upstream_roi_is_box_conditioned", "explicit_foreground_height_interface_bypassed",
+    "official_failure_region_excluded_by_parameterization", "sealed_evaluation",
+    "x0_dyn_w_execution_authorized", "x0_dyn_w_loss_reduction",
+    "future_coordinate_control", "maximum_future_claim", "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_eclock_protocol_v1"},
+    "protocol_version": {"const": "eclock-x0-v1"},
+    "parent_git_commit": {"const": "718e0bf7ca9950fbc0fc2a3537e4b0e0e25a72a2"},
+    "primary_comparison": {"const": "X0-DYN-U_vs_X0-BASE-U"},
+    "authorized_seed": {"const": 7},
+    "production_row_count": {"const": 8192},
+    "outer_fold_count": {"const": 3},
+    "metric_delta_t_s": {"const": 0.1},
+    "minimum_abs_prediction_ttc_s": {"const": 0.1},
+    "ttc_clip_seconds": {"const": 60.0},
+    "target_anchor": {"const": "t2_start_anchor_benchmark_phase"},
+    "global_transport_feature_names": {
+      "const": [
+        "translation_x", "translation_y", "divergence_x", "divergence_y",
+        "divergence_isotropic", "flow_magnitude", "confidence_margin", "entropy",
+        "cycle_error"
+      ]
+    },
+    "foreground_weight_used": {"const": false},
+    "upstream_roi_is_box_conditioned": {"const": true},
+    "explicit_foreground_height_interface_bypassed": {"const": true},
+    "official_failure_region_excluded_by_parameterization": {"const": true},
+    "sealed_evaluation": {"const": "closed"},
+    "x0_dyn_w_execution_authorized": {"const": false},
+    "x0_dyn_w_loss_reduction": {"const": "normalized_weighted_absolute_phase_error"},
+    "future_coordinate_control": {"const": "documented_not_implemented"},
+    "maximum_future_claim": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

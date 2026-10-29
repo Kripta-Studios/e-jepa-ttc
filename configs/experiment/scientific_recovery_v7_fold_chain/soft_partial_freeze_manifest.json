@@ -1,0 +1,82 @@
+{
+  "artifact_sha256": "c41fabd0c4e12220d531bc39748aea40de078a316e14c9eca5b599bd93ecf174",
+  "artifact_type": "scientific_recovery_v7_soft_partial_freeze_manifest_v1",
+  "closed_evaluation": {
+    "allowed_splits": [
+      "train_fold",
+      "outer_dev_fold"
+    ],
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false
+  },
+  "configs": {
+    "v7_soft_partial_freeze_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_soft_partial_freeze_fold0_seed7.yaml",
+      "sha256": "1fd65e2763bac553bd456ce3d5fdf86f1577dcded7c621c008064cd8e7b3ee7d",
+      "source_soft_config_sha256": "0a50fab26a470d31736a817880f3bc4c2889636d2de766cb4ea3f4788bdb211d"
+    },
+    "v7_soft_partial_freeze_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_soft_partial_freeze_fold1_seed7.yaml",
+      "sha256": "fd6ffd8346d7e14675fa857e780013f174626060acd314d14f408dab9d016bfe",
+      "source_soft_config_sha256": "a037353d1286d397c8e160518b0b0ab10818df437198574cbf915f35fb0e61ce"
+    },
+    "v7_soft_partial_freeze_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_soft_partial_freeze_fold2_seed7.yaml",
+      "sha256": "44c464e4f0ff09ddbe8d50a802d24b4bb0d29d3114807775496bfda1e0b6933f",
+      "source_soft_config_sha256": "e725e0f3fd40cfb994d1858506d22eb2e3881fef35a3756d1593a7e73e5ecabb"
+    }
+  },
+  "created_at_utc": "2026-08-14T08:07:39.103936+00:00",
+  "decision": {
+    "layer_or_weight_sweep_allowed": false,
+    "only_authorized_control": "freeze encoder.features[0:3] with unchanged SOFT losses",
+    "reason": "SOFT failed geometry and no initial arm became a candidate"
+  },
+  "initial_config_manifest_artifact_sha256": "f0a06bfeb20f90a50efeb08e84fe027a7cb402b92917566d5b584e7e29f8bea6",
+  "protocol_artifact_sha256": "7267421c288f6a5e68e779e344dabebb62c9d04df5e100186a8013dfe4a93cf9",
+  "status": "frozen_after_negative_initial_screen_before_control_training",
+  "trigger_results": {
+    "c2f": {
+      "artifact_sha256": "576dd99d8c5f49a56ea06b25e152e94a5f29c09db39e90fc1005a0715291d1af",
+      "file_sha256": "d69f8b9082c883dadaac8bf524dcb938242813c4d03d6c5ed2c891899aef7322",
+      "gates": {
+        "confirmation_candidate": false,
+        "geometry_positive": false,
+        "mechanism_positive": false
+      },
+      "path": "artifacts/scientific_recovery_v7/results/c2f_seed7_oof.json"
+    },
+    "cap_s": {
+      "artifact_sha256": "7d247f1f6b1ba9e825eca8590cad99836d060d08747c7bbb27085d859caa9e64",
+      "file_sha256": "d47face1e36d1d2c77fb531c61fca26f3601849f86ffbc898f59412078dea3b6",
+      "gates": {
+        "confirmation_candidate": false,
+        "geometry_positive": false,
+        "mechanism_positive": false
+      },
+      "path": "artifacts/scientific_recovery_v7/results/cap_s_seed7_oof.json"
+    },
+    "soft": {
+      "artifact_sha256": "16979e54f67fe0569a228c06a747ad4aac5883c9d72ebf9010dd95f4231a3f6a",
+      "file_sha256": "d53b6ce406fa7b809c608f4264e87c559f79c346a6d22232c26dad233a2ff94a",
+      "gates": {
+        "confirmation_candidate": false,
+        "geometry_positive": false,
+        "mechanism_positive": false
+      },
+      "path": "artifacts/scientific_recovery_v7/results/soft_seed7_oof.json"
+    },
+    "t20": {
+      "artifact_sha256": "3dc6e00d2a4b34c128123fdd1351bb3d82db31382d4150c20e845824a50a2725",
+      "file_sha256": "9bf197c3d64635a3c3091bce977f8ea1b07f4203eb51b3462b45ab17f16d1fa9",
+      "gates": {
+        "confirmation_candidate": false,
+        "geometry_positive": false,
+        "mechanism_positive": false
+      },
+      "path": "artifacts/scientific_recovery_v7/results/t20_seed7_oof.json"
+    }
+  }
+}

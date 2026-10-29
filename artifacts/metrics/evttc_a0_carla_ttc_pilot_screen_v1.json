@@ -1,0 +1,72 @@
+{
+  "artifact_sha256": "3f1ed56b8c064f6e7ca1ba223493eaf17924c53ccfd25f16053a43a400f62680",
+  "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+  "benchmark10_opened": false,
+  "candidate_label": "carla_ttc_synthetic",
+  "comparisons": {
+    "sequence_macro_mae_s": {
+      "candidate_pair_wins": 0,
+      "candidate_relative_improvement_pct": -21.8378018810278,
+      "candidate_transfer_mean": 1.2652664865766252,
+      "control_mean": 1.0384843349456787,
+      "control_pair_wins": 1,
+      "pair_count": 1
+    },
+    "sequence_macro_mean_relative_error": {
+      "candidate_pair_wins": 0,
+      "candidate_relative_improvement_pct": -17.304470567474382,
+      "candidate_transfer_mean": 0.37846297834128034,
+      "control_mean": 0.3226330390567559,
+      "control_pair_wins": 1,
+      "pair_count": 1
+    },
+    "sequence_macro_selection_score": {
+      "candidate_pair_wins": 0,
+      "candidate_relative_improvement_pct": -16.03257594903811,
+      "candidate_transfer_mean": 0.7354560862011704,
+      "control_mean": 0.6338358690960935,
+      "control_pair_wins": 1,
+      "pair_count": 1
+    }
+  },
+  "control_aggregate": "artifacts/runs/evttc32_carla_pilot_screen_v1/random/aggregate.json",
+  "control_aggregate_sha256": "33dafb9cd9f07b36f7566a038fab3a1954a22c2fd14bbcb5e9883af77bcecd4a",
+  "fold_seed_pairs": [
+    {
+      "fold": 0,
+      "seed": 7
+    }
+  ],
+  "matched_control_audit_passed": true,
+  "paired_oof_sequence_bootstrap_by_seed": [
+    {
+      "candidate_minus_control_mae_s": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 0.22918745875358582,
+        "iterations": 2000,
+        "lower": -0.00015094310422492097,
+        "sequence_count": 7,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.47984399866312705
+      },
+      "candidate_minus_control_mean_abs_relative_error": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 0.058851810408634575,
+        "iterations": 2000,
+        "lower": -0.011542159831028926,
+        "sequence_count": 7,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.1384901862824813
+      },
+      "sample_count": 80,
+      "seed": 7,
+      "sequence_count": 7
+    }
+  ],
+  "test_used_for_selection": false,
+  "transfer_aggregate": "artifacts/runs/evttc32_carla_pilot_screen_v1/carla_ttc/aggregate.json",
+  "transfer_aggregate_sha256": "5e1337bafde77bf2d06701bf2d84a90367d0df4102018ab3de0e01b99208a836",
+  "variant": "A0_MATCHED_GLOBAL"
+}

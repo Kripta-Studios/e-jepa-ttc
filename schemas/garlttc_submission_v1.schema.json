@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "garlttc_submission_v1.schema.json",
+  "title": "Offline GarlTTC submission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "external_submission_sent", "prediction_count"],
+  "properties": {
+    "artifact_type": {"type": "string"},
+    "schema_version": {"type": "string"},
+    "evidence_type": {"type": "string"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"type": "string"},
+    "protocol_sha256": {"type": "string"},
+    "created_at": {"type": "string"},
+    "artifact_sha256": {"type": "string"},
+    "external_submission_sent": {"const": false},
+    "prediction_count": {"type": "integer", "minimum": 0},
+    "complete_token_coverage": {"type": "boolean"}
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "status": "VERIFIED_INCLUDED_SCOPE",
+  "zip_sha256": "081620d8d10a2709283ddaca582685103e16427945a674ebde16f074e872ef6b",
+  "extraction": {
+    "status": "VERIFIED_ZIP_AND_INDEPENDENT_EXTRACTION",
+    "zip_sha256": "081620d8d10a2709283ddaca582685103e16427945a674ebde16f074e872ef6b",
+    "zip_bytes": 23344674,
+    "members": 3358,
+    "extracted_bytes": 26531833,
+    "duplicate_members": 0,
+    "unsafe_members": 0,
+    "crc_verified": true,
+    "member_hashes_verified": 3357,
+    "extraction": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\shared_gpu_route_20261004\\delivery_partial_1114\\extracted_081620d8d10a"
+  },
+  "regeneration": {
+    "status": "VERIFIED",
+    "inventory_complete": false,
+    "planned_fragments": 1728,
+    "pending_fragments": 614,
+    "members": 3357,
+    "fragments": 1114,
+    "cost_rows": 27,
+    "captured_input_files": 315,
+    "raw_parity_predictions_checked": 64,
+    "prediction_scope": "measured requests and admitted raw parity; failed diagnostic evidence hashed",
+    "prospective_inventory_verified": true,
+    "excluded_producer_calls_verified": true,
+    "maximum_quantile_difference": 0.0,
+    "maximum_stage_contribution_difference": 0.0,
+    "referenced_accuracy_scores_verified": 9,
+    "heads_replayed": true,
+    "unique_head_inputs_replayed": 398,
+    "maximum_prediction_difference": 0.0,
+    "optimizer_updates": 0,
+    "raw_reconstruction": false,
+    "timings_recollected": false,
+    "gpu_shared": true
+  },
+  "raw_sources_included": false,
+  "timings_recollected": false,
+  "remaining_dependency": "E:/eAP_dataset/data/train"
+}

@@ -1,0 +1,215 @@
+{
+  "status": "COMPLETE",
+  "passed": true,
+  "scope": "IMMUTABLE_RGB_CACHE_INPUT_ADMISSION_FIXED_QUERY_REPEATS_NO_ARRIVAL_TIMING",
+  "expected_updates": 12,
+  "validated_updates": 12,
+  "immutable_rgb_history": true,
+  "raw_source_stat_checks": [
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\low-0\\overlap-0\\2024-08-08-10-49-53.hdf5",
+      "before": {
+        "size_bytes": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "after": {
+        "size_bytes": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "passed": true
+    },
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRs-1\\high-50\\overlap-50\\2024-09-25-14-38-58.hdf5",
+      "before": {
+        "size_bytes": 7578841115,
+        "mtime_ns": 1785095518390185300
+      },
+      "after": {
+        "size_bytes": 7578841115,
+        "mtime_ns": 1785095518390185300
+      },
+      "passed": true
+    },
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CPNAO\\medium\\2024-07-15-17-34-47.hdf5",
+      "before": {
+        "size_bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      },
+      "after": {
+        "size_bytes": 6412206137,
+        "mtime_ns": 1785101060214587300
+      },
+      "passed": true
+    }
+  ],
+  "schedule_exact": true,
+  "expected_case_schedule": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      137,
+      0
+    ],
+    [
+      1,
+      137,
+      1
+    ],
+    [
+      1,
+      553,
+      0
+    ],
+    [
+      1,
+      553,
+      1
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      137,
+      0
+    ],
+    [
+      2,
+      137,
+      1
+    ],
+    [
+      2,
+      553,
+      0
+    ],
+    [
+      2,
+      553,
+      1
+    ]
+  ],
+  "observed_case_schedule": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      137,
+      0
+    ],
+    [
+      1,
+      137,
+      1
+    ],
+    [
+      1,
+      553,
+      0
+    ],
+    [
+      1,
+      553,
+      1
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      137,
+      0
+    ],
+    [
+      2,
+      137,
+      1
+    ],
+    [
+      2,
+      553,
+      0
+    ],
+    [
+      2,
+      553,
+      1
+    ]
+  ],
+  "originals": {
+    "passed": true,
+    "files": 621,
+    "changed": [],
+    "missing": []
+  },
+  "cleanup_errors": [],
+  "unexpected_excluded_source_imports": [],
+  "error": null,
+  "target_20_objects_50hz_demonstrated": false,
+  "rgb_cache_hit_updates": 6,
+  "rgb_cache_miss_updates": 6,
+  "latency_by_count_ms": {
+    "1": {
+      "count": 6,
+      "mean_ms": 22.976533333333336,
+      "p50_ms": 21.109,
+      "p95_ms": 32.33845,
+      "p99_ms": 33.43049,
+      "min_ms": 16.4307,
+      "max_ms": 33.7035,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 3,
+      "at_least_20ms_count": 3,
+      "over_50ms_count": 0,
+      "over_100ms_count": 0,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 43.52266660476776
+    },
+    "2": {
+      "count": 6,
+      "mean_ms": 34.553916666666666,
+      "p50_ms": 34.42775,
+      "p95_ms": 49.6469,
+      "p99_ms": 52.237300000000005,
+      "min_ms": 22.343,
+      "max_ms": 52.8849,
+      "quantile_method": "linear",
+      "strictly_under_20ms_count": 0,
+      "at_least_20ms_count": 6,
+      "over_50ms_count": 1,
+      "over_100ms_count": 0,
+      "inverse_mean_capacity_hz_not_sustained_throughput": 28.940279321929257
+    }
+  }
+}

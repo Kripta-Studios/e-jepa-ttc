@@ -1,0 +1,144 @@
+"""Regenerate the CPU benchmark note from preserved JSON receipts."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+NAMES = ("cpu_matrix_v1", "cpu_roi_first_v1", "cpu_1200x1920_roi_first_v1")
+
+
+def main() -> None:
+    sources = [(name, ROOT / name / "summary.json") for name in NAMES]
+    runs = [(name, path, json.loads(path.read_text(encoding="utf-8"))) for name, path in sources]
+    for _, _, run in runs:
+        assert run["status"] == "COMPLETE" and run["all_cases_exact"]
+        assert run["sources_unchanged"] and not run["gpu_used"]
+        assert all(case["parity"]["passed"] for case in run["cases"])
+    lines = [
+        "# Unique uint8 RGB preprocessing: CPU evidence",
+        "",
+        "Generated from JSON receipts by `render_notes.py`. No GPU was executed. "
+        "No models, targets, candidate weights or original predictions were accessed.",
+        "",
+        "The matrix contains 48 exact cases: 1/2/20 objects, 1 through 8 RGB observations "
+        "and T2/T3 inputs. Two further runs contribute six exact cases. Sensor pixels, "
+        "delta times, metadata, object ordering and the byte/allocation contracts all pass. "
+        "An independent comparison also checks the original crop_uint8 against the "
+        "ROI-first normalized adapter.",
+        "",
+        "## CPU preparation timing only",
+        "",
+        "Both timed paths use the same synthetic inputs, ROI-first PIL crop, one crop worker "
+        "and one Torch thread. The baseline normalizes and expands triplets on the host; "
+        "the candidate uses unique uint8 crops and its CPU implementation of LUT/gather. "
+        "Raw generation, startup allocation and parity comparison are excluded. "
+        "Device completion and lease release are included. The matrix's single timing "
+        "sample per case is for smoke evidence, so it is omitted below.",
+        "",
+        "| RAW size | Objects | Repetitions | New mean ms | New p95 ms | New p99 ms | Reference mean ms |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for _, _, run in runs[1:]:
+        for case in run["cases"]:
+            new = case["rgb_preparation_latency"]
+            old = case["original_host_expanded_preparation_latency"]
+            height, width, _ = case["raw_frame_shape"]
+            lines.append(
+                f"| {height}x{width} | {case['objects']} | {new['count']} | "
+                f"{new['mean_ms']:.3f} | {new['p95_ms']:.3f} | {new['p99_ms']:.3f} | "
+                f"{old['mean_ms']:.3f} |"
+            )
+    twenty = runs[2][2]["cases"][-1]
+    crop_ms = [row["crop_host_seconds"] * 1000 for row in twenty["measured_receipts"]]
+    lines += [
+        "",
+        "The 1200x1920 workload uses broad synthetic ROIs approximately 82% of frame width "
+        "and 90% of frame height. It is not the actual pilot's ROI population. Its "
+        f"20-object candidate crop stages took {', '.join(f'{value:.3f}' for value in crop_ms)} ms. "
+        "The negative result and large variability are retained. The run does not determine "
+        "their cause and must not be extrapolated to the real pilot. Three or five samples "
+        "do not validate production tail latency. All these are RGB-preparation "
+        "microbenchmarks, not complete TTC latency or sustained-rate measurements.",
+        "",
+        "Whole-host/CPU exclusivity against other agents' work was not imposed. Matching "
+        "inputs and options inside this harness does not establish equal host contention "
+        "between samples or causally attribute the observed jitter. A controlled follow-up "
+        "must reserve the host as well as the GPU before making performance claims.",
+        "",
+        "## Bytes and memory",
+        "",
+    ]
+    receipt = twenty["initial_receipt"]
+    allocation = twenty["runtime_allocation_receipt"]
+    lines += [
+        f"For 20 objects/G5/T3 there are {receipt['unique_crop_count']} distinct crops and "
+        f"{receipt['expanded_crop_count']} expanded crops. The unique uint8 payload is "
+        f"{receipt['unique_crop_bytes']:,} bytes; proposed H2D with mapping/deltas is "
+        f"{receipt['candidate_h2d_bytes']:,} bytes. The previous expanded FP32 sensor is "
+        f"{receipt['baseline_expanded_fp32_bytes']:,} bytes. Actual H2D is **zero in these CPU runs**.",
+        "",
+        f"The configured 20/G5/seven-frame case reserves {allocation['host_buffer_bytes']:,} "
+        f"host-buffer bytes and {allocation['device_buffer_bytes']:,} logical device-buffer "
+        "bytes; device='cpu' means the latter are also CPU allocations here. Allocator "
+        "overhead, Pillow objects and transient bounded crop results are not included in "
+        "those tensor-storage totals. Startup allocation is recorded separately in each case.",
+        "",
+        "## Reproduction",
+        "",
+        "Use the existing environment and a **new** output path; the harness refuses to "
+        "overwrite earlier evidence. Full executed options and source hashes are in each JSON. "
+        "The command below regenerates this note, not the benchmarks:",
+        "",
+        "```powershell",
+        "& '../e-jepa-ttc/.venv/Scripts/python.exe' artifacts/train40_runtime_resume_20261027/rgb_uint8/render_notes.py",
+        "```",
+        "",
+        "Benchmark entry point: `scripts/benchmark_train40_rgb_uint8.py --help`. "
+        "Use `--roi-first-images --crop-workers 1 --measure-reference` for the same crop "
+        "options as the controlled comparison. The default shared-PIL option is also "
+        "covered by the 48-case matrix. CUDA execution remains pending a separate authorized trial.",
+        "",
+        "## Evidence hashes",
+        "",
+    ]
+    for name, path, run in runs:
+        lines.append(
+            f"- `{name}/summary.json`: `{hashlib.sha256(path.read_bytes()).hexdigest()}`; "
+            f"{len(run['cases'])} cases, sources unchanged during execution."
+        )
+    lines += [
+        "",
+        "Executed benchmark source SHA-256: "
+        f"`{runs[0][2]['sources_before']['scripts/benchmark_train40_rgb_uint8.py']}`.",
+        "",
+    ]
+    snapshot_path = ROOT / "source_snapshot_receipt.json"
+    if snapshot_path.exists():
+        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        copied = [row for row in snapshot["rows"] if row["snapshot"] is not None]
+        missing = sorted({row["source"] for row in snapshot["rows"] if row["snapshot"] is None})
+        lines += [
+            "## Source snapshots",
+            "",
+            f"`source_snapshot_receipt.json` records {len(copied)} verified run/source "
+            f"bindings across {len({row['snapshot'] for row in copied})} unique content-addressed "
+            "text snapshots. Only bytes matching the executed SHA were copied. "
+            "Snapshotting did not rerun any benchmark or modify executed source files.",
+            "",
+        ]
+        if missing:
+            lines.append(
+                "Sources already changed or missing when snapshots were captured: "
+                + ", ".join(f"`{name}`" for name in missing)
+                + ". Their current bytes were not copied as executed evidence; the receipt "
+                "retains the executed and observed identities separately."
+            )
+            lines.append("")
+    (ROOT / "CPU_BENCHMARK_NOTES.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,65 @@
+{
+  "checks": {
+    "durable_scope_3616": true,
+    "no_recovery": true,
+    "one_loss_capture": true,
+    "one_model_capture": true,
+    "second_scope": true
+  },
+  "profile_updates": 3800,
+  "recent_mean_host_intervals": {
+    "forward_backward_sync_s": 0.2944713639997644,
+    "input_wait_s": 0.0007885210003587417,
+    "optimizer_journal_s": 0.060348490999022036,
+    "total_s": 0.39508460900106,
+    "transfer_submit_s": 0.03947623300191481
+  },
+  "runtime": {
+    "admission_sha256": "74865462e2f6665a38873ec1b1e37026f5a0534b5359f8fab85f7cdd3d6b8fb3",
+    "completed_updates": 3800,
+    "loss_captures_this_process": 1,
+    "loss_graph_id": 1563581908304,
+    "model_captures_this_process": 1,
+    "scopes_this_process": 2
+  },
+  "scope": {
+    "accounting": {
+      "pending_upper": 0,
+      "physical_upper": 175947,
+      "recovery_upper": 273,
+      "scientific": 174816,
+      "technical": 858
+    },
+    "cache": {
+      "cache_counter_scope": "Unique rows; byte bound includes8192 header allowance per row",
+      "decoder_workers": 8,
+      "duplicate_draws": 17,
+      "hits": 4814,
+      "misses": 65313,
+      "open_packs": 211,
+      "peak_bytes": 7074667420,
+      "retained_bytes": 6796341228,
+      "verified_packs": 211
+    },
+    "captures": 1,
+    "pid": 41016,
+    "receipt": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\A1_adaptation_depth\\fits\\A1-FULL-S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "13142647cc391cd41b734312502e7b1683a57a17a8a6b295b61ec6b1bff76ed8",
+      "complete_state": true,
+      "completed_updates": 3616,
+      "fit_id": "A1-FULL-S7",
+      "identity_sha256": "bfd38ba385743f3c02722407724092578ca7ca2cccb9ddb149d8ddc4ea1dc0e2",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": false,
+      "status": "PAUSED"
+    },
+    "runtime_admission_sha256": "3a445e4d25c1f0e6bfc86e4fe53a4c01c5fd2c3600736227f9cb7f0132abecbd",
+    "same_process_scope": 1,
+    "utc": "2026-10-16T20:22:37.342460+00:00"
+  },
+  "status": "PASS",
+  "utc": "2026-10-16T20:23:50.100417+00:00"
+}

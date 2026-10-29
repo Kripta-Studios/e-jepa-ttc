@@ -1,0 +1,113 @@
+"""Read-only CPU prototypes; never imported by the scientific runtime."""
+from __future__ import annotations
+
+import json
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT / 'src'), str(ROOT)]
+import numpy as np
+import torch
+from PIL import Image
+
+from e_jepa_ttc.efficient_context.mapped_union import map_roi, encode_mapped
+from e_jepa_ttc.simplex_t.context_raw_union import _read_crop
+from e_jepa_ttc.data.eap import EAP_IMAGE_SIZE
+from e_jepa_ttc.representations.voxel_grid import robust_normalize
+from e_jepa_ttc.rgb_port.data import crop_uint8, _effective_square
+from operational.evttc_transfer.inputs import EvTTCEventReader
+
+
+def lut_map(raw, roi, size, offset=0.0):
+    x0,y0,x1,y1=roi
+    x,y,t,p=(raw[k] for k in ('x','y','t','p'))
+    width,height=EAP_IMAGE_SIZE
+    # Guard raw integer coordinates before lookup. Table arithmetic is exactly
+    # the scientific float64 formula; no algebraic simplification is used.
+    xt=np.arange(width,dtype=np.float64)+offset
+    yt=np.arange(height,dtype=np.float64)
+    xkeep=(xt>=0)&(xt<width)&(xt>=x0)&(xt<x1)
+    ykeep=(yt>=0)&(yt<height)&(yt>=y0)&(yt<y1)
+    xlut=np.clip(np.floor((xt-x0)*size/(x1-x0)).astype(np.int32),0,size-1)
+    ylut=np.clip(np.floor((yt-y0)*size/(y1-y0)).astype(np.int32),0,size-1)
+    valid=(x>=0)&(x<width)&(y>=0)&(y<height)
+    idx=np.flatnonzero(valid)
+    idx=idx[xkeep[x[idx]]&ykeep[y[idx]]]
+    return {'x':xlut[x[idx]],'y':ylut[y[idx]],'t':t[idx],
+            'p':np.where(p[idx]>0,1,-1).astype(np.int8)}
+
+
+TEMP={}
+def lut_encode(mapped,start,end,size):
+    lo,hi=np.searchsorted(mapped['t'],[start,end],side='left')
+    t=mapped['t'][lo:hi]
+    n=len(t)
+    output=np.zeros((12,size,size),dtype=np.float32)
+    if n:
+        duration=end-start
+        if duration not in TEMP:
+            scaled=np.clip(np.arange(duration,dtype=np.float64)/float(duration)*4,0,4)
+            lower=np.floor(scaled).astype(np.int32)
+            upper=np.ceil(scaled).astype(np.int32)
+            uw=scaled-lower
+            TEMP[duration]=lower,upper,1.-uw,uw
+        lower,upper,lw,uw=TEMP[duration]
+        elapsed=t-start
+        spatial=mapped['y'][lo:hi].astype(np.int32)*size+mapped['x'][lo:hi].astype(np.int32)
+        polarity=np.where(mapped['p'][lo:hi]>0,0,5).astype(np.int32)
+        li=(lower[elapsed]+polarity)*size*size+spatial
+        ui=(upper[elapsed]+polarity)*size*size+spatial
+        voxel=np.bincount(li,weights=lw[elapsed],minlength=10*size*size)
+        voxel+=np.bincount(ui,weights=uw[elapsed],minlength=10*size*size)
+        output[:10]=robust_normalize(voxel.reshape(10,size,size))
+    output[10]=np.log1p(n)
+    output[11]=np.log1p(n/max((end-start)*1e-6,1e-6))
+    return output
+
+
+def timed(fn,*args,repeats=3):
+    result=None
+    times=[]
+    for _ in range(repeats):
+        begin=time.perf_counter()
+        result=fn(*args)
+        times.append((time.perf_counter()-begin)*1000)
+    return result,times
+
+
+def main():
+    torch.set_num_threads(2)
+    rows=json.loads((ROOT/'artifacts/final_train40_transfer_20261027/QUERY_MANIFEST.json').read_text(encoding='utf-8'))['rows']
+    records=[]
+    for index in (0,200,553):
+        row=rows[index]
+        start=int(row['anchor_us'])-600000
+        end=int(row['anchor_us'])
+        square=tuple(row['square_xyxy'])
+        with EvTTCEventReader(row['raw_path']) as reader:
+            raw=_read_crop(reader,start,end,square,0.,1024*1024**2)
+        if raw is None:
+            raise RuntimeError('Raw capacity exhausted')
+        mapped,tmap=timed(map_roi,raw,square,128,0.)
+        fast,tfast=timed(lut_map,raw,square,128)
+        assert all(np.array_equal(mapped[k],fast[k]) for k in mapped)
+        del raw
+        window=[]
+        for left in range(start,end,100000):
+            ref,tref=timed(encode_mapped,mapped,left,left+100000,128,'probe')
+            lut,tlut=timed(lut_encode,mapped,left,left+100000,128)
+            reference=ref.numpy()
+            window.append({'start':left,'canonical_ms':tref,'lut_ms':tlut,
+                           'equal':bool(np.array_equal(reference,lut)),
+                           'max_abs':float(np.max(np.abs(reference-lut)))})
+        records.append({'index':index,'mapped_events':len(mapped['t']),
+                        'map_ms':tmap,'lut_map_ms':tfast,'windows':window})
+        print(json.dumps(records[-1]),flush=True)
+    path=Path(__file__).parent/'cpu_results.json'
+    path.write_text(json.dumps({'scope':'CPU prototype only, raw IO excluded','records':records},indent=2))
+
+
+if __name__=='__main__':
+    main()

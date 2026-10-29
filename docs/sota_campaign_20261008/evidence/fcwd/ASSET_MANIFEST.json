@@ -1,0 +1,156 @@
+{
+  "assets": [
+    {
+      "bytes": 2383285966,
+      "contents_read": true,
+      "drive_id": "1UP7mGo9Sm-FBe8cw1j51ej2hwlYa-E9Y",
+      "name": "fcwd_1_hdf5",
+      "path": "${DATA}\\inputs\\sequence_1\\2024-03-02-10-35-27.hdf5",
+      "published_size": "2.22G",
+      "role": "sensor_hdf5",
+      "sealed_label": false,
+      "sha256": "24f13357929c4758df425bf02510e17cbd2fe4cec743b3759c9b6deb29c4bab3",
+      "source_url": "https://drive.google.com/file/d/1UP7mGo9Sm-FBe8cw1j51ej2hwlYa-E9Y/view?usp=sharing"
+    },
+    {
+      "bytes": 2158720024,
+      "contents_read": true,
+      "drive_id": "1fQmlxH5JMgV6JzoxjV4XcRQ2uSkLT4fs",
+      "name": "fcwd_2_hdf5",
+      "path": "${DATA}\\inputs\\sequence_2\\2024-03-02-10-37-09.hdf5",
+      "published_size": "2.01G",
+      "role": "sensor_hdf5",
+      "sealed_label": false,
+      "sha256": "d11192014e3fda74777ee7ecf0d7cb4a78417026de66ab8479f7d8dd56214585",
+      "source_url": "https://drive.google.com/file/d/1fQmlxH5JMgV6JzoxjV4XcRQ2uSkLT4fs/view?usp=sharing"
+    },
+    {
+      "bytes": 2141646632,
+      "contents_read": true,
+      "drive_id": "1o0TWqkc6KCbHsEGwwxiVI-XyZeM5FUZZ",
+      "name": "fcwd_3_hdf5",
+      "path": "${DATA}\\inputs\\sequence_3\\2024-03-02-10-38-25.hdf5",
+      "published_size": "1.99G",
+      "role": "sensor_hdf5",
+      "sealed_label": false,
+      "sha256": "d77fe591a7bcd94762ab6625e71e1723e945b6747d86f6a551a8a435f79aca0c",
+      "source_url": "https://drive.google.com/file/d/1o0TWqkc6KCbHsEGwwxiVI-XyZeM5FUZZ/view?usp=sharing"
+    },
+    {
+      "bytes": 6596,
+      "contents_read": false,
+      "drive_id": "160p6IE2BTUJG_4Pw3NoTYKjupV_OtfZm",
+      "name": "fcwd_1_bbox",
+      "path": "${DATA}\\sealed_labels\\sequence_1\\bounding_box.csv",
+      "published_size": "6K",
+      "role": "bbox_label",
+      "sealed_label": true,
+      "sha256": "936fcaa0115ff1e7dbe09bedf472d1eba5196e700a4e82c79c1df86e3d4375b4",
+      "source_url": "https://drive.google.com/file/d/160p6IE2BTUJG_4Pw3NoTYKjupV_OtfZm/view?usp=sharing"
+    },
+    {
+      "bytes": 6913,
+      "contents_read": false,
+      "drive_id": "1Nq7YwqAvua4N2FZqBFq4CLHRQKdHN0om",
+      "name": "fcwd_1_ttc",
+      "path": "${DATA}\\sealed_labels\\sequence_1\\gt_ttc.csv",
+      "published_size": "7K",
+      "role": "ttc_target",
+      "sealed_label": true,
+      "sha256": "20af46fab5fc4d423f6d6b894b26727b0c4fe26106dd81614fc43f8c6bc4216e",
+      "source_url": "https://drive.google.com/file/d/1Nq7YwqAvua4N2FZqBFq4CLHRQKdHN0om/view?usp=sharing"
+    },
+    {
+      "bytes": 6656,
+      "contents_read": false,
+      "drive_id": "1bXw7DTz0symg-liO_t4EsQJQ1cSUoxe2",
+      "name": "fcwd_2_bbox",
+      "path": "${DATA}\\sealed_labels\\sequence_2\\bounding_box.csv",
+      "published_size": "7K",
+      "role": "bbox_label",
+      "sealed_label": true,
+      "sha256": "be8b5933038609c430b1d796038345280a589874fb6b10a06f5c7bdece16c88c",
+      "source_url": "https://drive.google.com/file/d/1bXw7DTz0symg-liO_t4EsQJQ1cSUoxe2/view?usp=sharing"
+    },
+    {
+      "bytes": 7077,
+      "contents_read": false,
+      "drive_id": "1-MTOlgYlXSa7v7MTSdux0mw2smlUd25V",
+      "name": "fcwd_2_ttc",
+      "path": "${DATA}\\sealed_labels\\sequence_2\\gt_ttc.csv",
+      "published_size": "7K",
+      "role": "ttc_target",
+      "sealed_label": true,
+      "sha256": "ec1c7769def687d9c92f83685ac495dc92e36c7a489fb9d2d88049fc5090e4c8",
+      "source_url": "https://drive.google.com/file/d/1-MTOlgYlXSa7v7MTSdux0mw2smlUd25V/view?usp=sharing"
+    },
+    {
+      "bytes": 6094,
+      "contents_read": false,
+      "drive_id": "1obM4PKJyX4VPhpJ8NUJ1Q3snR1StDPxw",
+      "name": "fcwd_3_bbox",
+      "path": "${DATA}\\sealed_labels\\sequence_3\\bounding_box.csv",
+      "published_size": "6K",
+      "role": "bbox_label",
+      "sealed_label": true,
+      "sha256": "69291c08420cdc6629c05d57c57fa7c7c1fe87f5e00273869e6e106df42823d1",
+      "source_url": "https://drive.google.com/file/d/1obM4PKJyX4VPhpJ8NUJ1Q3snR1StDPxw/view?usp=sharing"
+    },
+    {
+      "bytes": 7395,
+      "contents_read": false,
+      "drive_id": "1gH80TDTE-rLW55fkHPAzdGCPXR5yVhn1",
+      "name": "fcwd_3_ttc",
+      "path": "${DATA}\\sealed_labels\\sequence_3\\gt_ttc.csv",
+      "published_size": "7K",
+      "role": "ttc_target",
+      "sealed_label": true,
+      "sha256": "97761ceca733a65e3057ef2beebd28cbf7abc8a690bd20603c3a6fc177d8f862",
+      "source_url": "https://drive.google.com/file/d/1gH80TDTE-rLW55fkHPAzdGCPXR5yVhn1/view?usp=sharing"
+    }
+  ],
+  "calibration_assets": [
+    {
+      "bytes": 114259,
+      "folder_url": "https://drive.google.com/drive/folders/1RH8MnHrv_L_Z_EQLivvwmZ4gHGLY79Lf",
+      "name": "camera_intrinsic",
+      "path": "${DATA}\\inputs\\calibration\\camera_intrinsic\\calibParams.mat",
+      "published_size": "112K",
+      "sha256": "8e16b2261749915b046664b2b544ad6fad23595d1c698e4470ecc630889944e4"
+    },
+    {
+      "bytes": 131,
+      "folder_url": "https://drive.google.com/drive/folders/1Wpgm6pMLHus4JQ4NTEYWk29xQY8aDA6X",
+      "name": "lidar_to_rgb_extrinsic",
+      "path": "${DATA}\\inputs\\calibration\\lidar_to_rgb_extrinsic\\right\\extrinsic.txt",
+      "published_size": "1K",
+      "sha256": "08b334638115341617632dd39df45c4f4621464df480678aa02aa56e306cadad"
+    }
+  ],
+  "capacity_preflight": {
+    "budget_bytes": 10737418240,
+    "existing_bytes": 6683807818,
+    "free_bytes": 367893020672
+  },
+  "created_utc": "2026-10-08T18:10:32.266440+00:00",
+  "dataset_root": "${DATA}",
+  "dependencies": {
+    "gdown": "6.1.0",
+    "h5py": "3.16.0",
+    "python": "3.14.2"
+  },
+  "depth_navigation_read": false,
+  "download_budget_bytes": 10737418240,
+  "labels_downloaded_as_opaque_bytes": true,
+  "labels_opened": false,
+  "missing_assets": [],
+  "missing_calibration_folders": [],
+  "paper": "https://arxiv.org/abs/2407.07324",
+  "project_page": "https://nail-hnu.github.io/EventAidedTTC/",
+  "resume_strategy": "gdown --continue into .partial followed by atomic rename",
+  "schema": "fcwd_public_assets_v1",
+  "source_sha256": "fee3458f994dbc11ada1d6a7dd69e412728a53a91f92d7228eabeef1af16c901",
+  "status": "COMPLETE",
+  "targets_read": false,
+  "total_bytes": 6683807743
+}

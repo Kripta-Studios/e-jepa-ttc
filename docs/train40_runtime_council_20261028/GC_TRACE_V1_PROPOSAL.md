@@ -1,0 +1,88 @@
+# GC trace v1 — instrumentación observacional propuesta
+
+Esta propuesta busca correlacionar outliers con callbacks de GC; no atribuye a
+GC el fallo del ensayo `memory_crops_reverse1_250_v1`. La comparación necesita
+un control con la misma fuente, versión de código, configuración y secuencia.
+El companion de crops admite sus argumentos y caché en consultas fijas; no
+admite la latencia del replay.
+
+El módulo propuesto y sus tests están temporalmente en
+[trace_gc_proposal_v1](../../artifacts/train40_runtime_council_20261028/trace_gc_proposal_v1/).
+No está importado por el runner. Queda congelado como propuesta por el cierre
+solicitado por el usuario. Su integración corresponde a una futura reanudación.
+
+## Captura y límites
+
+`BoundedGCTrace` es opt-in y de un solo uso. Adjunta un callback a `gc.callbacks`
+inmediatamente antes de `run_paced_replay` y lo retira en `finally`, antes del
+oráculo de paridad y de escribir resultados. Ese intervalo incluye warmup del
+productor, ofertas, drenaje y finalize; excluye carga de modelos, primación,
+precarga RAW y la verificación de paridad posterior. Los timestamps de los
+callbacks distinguen qué fase estaba activa.
+
+Cada registro sólo retiene fase `start`/`stop`, `time.perf_counter_ns`, identidad
+del hilo y generación. La capacidad por defecto es 4096 eventos, con máximo
+65536, y un contador explícito de eventos descartados al saturar. El límite es
+de registros Python, no una promesa de RSS exacto. Un `RLock` protege capacidad
+y contadores; su coste y la creación de registros permanecen dentro de los
+relojes existentes. Se guardan errores del observador y callbacks inválidos.
+
+No se llama a `gc.collect`, `gc.disable`, `gc.enable` ni `gc.set_threshold`.
+La política antes/después se registra como observación; igualdad en ambos
+extremos no prueba ausencia de cambios externos intermedios. Se preservan los
+callbacks ajenos y sólo se retira el callback propio. No se serializa durante
+la fase medida, ni se resta tiempo a ningún deadline o latencia.
+
+Integración prevista, tras la autorización de root:
+
+```python
+trace = BoundedGCTrace(args.gc_trace_max_events) if args.trace_gc else None
+try:
+    if trace is not None:
+        trace.attach()
+    paced = run_paced_replay(...)  # Mismos argumentos, clocks y gates.
+finally:
+    if trace is not None:
+        trace.detach()
+        gc_receipt = trace.snapshot()  # Se conserva incluso si el replay lanza.
+```
+
+La serialización del recibo en el `finally` externo debe conservar el error
+original. El binding debe registrar flag, capacidad y scope
+`OBSERVATIONAL_GC_CALLBACKS_DURING_PACED_CALL_NO_PAUSE_SUBTRACTION`. Los archivos
+`gc_trace.json` y `gc_correlation.json` se escriben después de desadjuntar el
+callback; no forman parte de la latencia TTC. La traza captura hasta el fin de
+`run_paced_replay`, por lo que tampoco debe confundirse con un cronómetro de GC
+exclusivo del modelo.
+
+## Correlación posterior
+
+`paced_gc_windows` copia clocks originales de adquisición RAW, espera en cola,
+servicio, deadline→respuesta, RAW disponible→respuesta, warmup y finalize.
+Conserva fallos, drops y errores de fuente. Una respuesta fallida no se etiqueta
+como TTC válido. Un drop puede tener ventana de adquisición pero carece de
+ventana de servicio; no se inventa una. Las ventanas inválidas fallan con error.
+
+`correlate_gc_windows` empareja `start`/`stop` por hilo y generación, conservando
+inicios o finales sin pareja, reemplazos y clocks inválidos. Una traza truncada
+no produce intervalos inferidos. Publica los intervalos y sus solapamientos en
+nanosegundos, sin descontarlos ni sumarlos entre relojes anidados. La identidad
+del hilo no demuestra cuánto tiempo estuvo bloqueado otro hilo o la GPU.
+
+El siguiente A/B debe mantener manifest, datos, opt-ins, primación, shapes,
+wait strategy, límites de memoria, número de slots y commits iguales; sólo
+cambiar la opción que se estudia. La instrumentación debe estar activada en
+ambos brazos para comparar correlaciones. Un control adicional sin traza puede
+medir sensibilidad a su overhead, conservando todos los percentiles y fallos.
+Ningún resultado se limpiará de pausas GC ni se convertirá en una admisión de
+20 ms por restar los solapamientos.
+
+## QA antes de integrar
+
+Los 13 tests del módulo usan callbacks simulados y un registro GC falso; no
+fuerzan colecciones ni importan Torch. Cubren ownership/detach, excepción y
+KeyboardInterrupt, saturación, callbacks inválidos, error de reloj, parejas
+por hilo/generación, ventanas anidadas y clocks de source/service/fallos.
+Junto con los 20 tests del reporter pasaron 33 casos; Ruff y Pyright pasaron
+sobre los cuatro archivos. Esto valida el observador y el reporte en CPU,
+no mide overhead ni demuestra que GC explique un outlier real.

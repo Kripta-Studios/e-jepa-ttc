@@ -15,6 +15,8 @@ class ConformalIntervalCalibrator:
     coverage: float
     scale: float
     calibration_count: int
+    minimum_support: int
+    support_status: str
 
     def interval(
         self,
@@ -38,6 +40,7 @@ def fit_conformal_interval(
     standard_deviation: np.ndarray,
     *,
     coverage: float = 0.9,
+    min_support: int = 10,
 ) -> ConformalIntervalCalibrator:
     """Fit a finite-sample split-conformal standardized residual quantile."""
 
@@ -53,15 +56,27 @@ def fit_conformal_interval(
     valid = np.isfinite(target) & np.isfinite(prediction) & np.isfinite(uncertainty)
     valid &= uncertainty > 0
     scores = np.abs(target[valid] - prediction[valid]) / np.maximum(uncertainty[valid], 1e-6)
-    if scores.size == 0:
-        msg = "No finite positive-uncertainty calibration samples."
-        raise ValueError(msg)
+
+    is_supported = scores.size >= min_support
+    support_status = "supported" if is_supported else "unsupported"
+
+    if not is_supported:
+        return ConformalIntervalCalibrator(
+            coverage=coverage,
+            scale=1.0,
+            calibration_count=int(scores.size),
+            minimum_support=min_support,
+            support_status=support_status,
+        )
+
     rank = min(scores.size, math.ceil((scores.size + 1) * coverage))
     scale = float(np.partition(scores, rank - 1)[rank - 1])
     return ConformalIntervalCalibrator(
         coverage=coverage,
         scale=scale,
         calibration_count=int(scores.size),
+        minimum_support=min_support,
+        support_status=support_status,
     )
 
 
@@ -70,6 +85,9 @@ class TemperatureScaler:
     """Scalar post-hoc logit temperature selected on calibration data."""
 
     temperature: float
+    calibration_count: int
+    minimum_support: int
+    support_status: str
 
     def probabilities(self, logits: np.ndarray) -> np.ndarray:
         """Apply temperature and return sigmoid probabilities."""
@@ -85,6 +103,7 @@ def fit_temperature_scaler(
     minimum: float = 0.05,
     maximum: float = 10.0,
     grid_size: int = 400,
+    min_support: int = 10,
 ) -> TemperatureScaler:
     """Fit a robust scalar temperature using a deterministic logarithmic grid."""
 
@@ -99,7 +118,19 @@ def fit_temperature_scaler(
     valid = np.isfinite(values) & np.isfinite(target)
     values = values[valid]
     target = target[valid]
-    if values.size == 0 or np.any((target < 0) | (target > 1)):
+
+    is_supported = values.size >= min_support
+    support_status = "supported" if is_supported else "unsupported"
+
+    if not is_supported:
+        return TemperatureScaler(
+            temperature=1.0,
+            calibration_count=int(values.size),
+            minimum_support=min_support,
+            support_status=support_status,
+        )
+
+    if np.any((target < 0) | (target > 1)):
         msg = "Temperature scaling requires finite binary labels."
         raise ValueError(msg)
     temperatures = np.geomspace(minimum, maximum, grid_size)
@@ -108,7 +139,12 @@ def fit_temperature_scaler(
         scaled = values / temperature
         losses.append(float(np.mean(np.logaddexp(0.0, scaled) - target * scaled)))
     best = int(np.argmin(losses))
-    return TemperatureScaler(temperature=float(temperatures[best]))
+    return TemperatureScaler(
+        temperature=float(temperatures[best]),
+        calibration_count=int(values.size),
+        minimum_support=min_support,
+        support_status=support_status,
+    )
 
 
 def interval_metrics(

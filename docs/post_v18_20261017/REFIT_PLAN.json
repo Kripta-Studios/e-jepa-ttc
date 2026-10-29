@@ -1,0 +1,219 @@
+{
+  "schema": "post_v18_refit_plan_v1",
+  "family": "PHASE_ONLY_V16",
+  "seed": 7,
+  "status": "PROPOSED_HEAD_ONLY_REFIT_NOT_EXECUTED",
+  "execution_enabled": false,
+  "authorized_optimizer_updates": 0,
+  "scope": "One new PHASE_ONLY EVENT head on H union V; all producers, PAIR, context refiners and normalizers remain frozen. This is not a full TRAIN40 producer refit.",
+  "reason": "Smallest coherent extension of the already prepared family, using more upper-stage TRAIN without swapping parents under an old head",
+  "selection_dependency": "Review current official candidate status first; do not tune this recipe from test12 scores",
+  "parent_freeze": {
+    "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/MODEL_INPUT_FREEZE.json",
+    "sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a"
+  },
+  "candidate_registry": "CANDIDATE_REGISTRY.json",
+  "roles": {
+    "P": "24 producer-training groups; frozen lower stages",
+    "H": "8 historical refiner/head-training groups; becomes final head TRAIN",
+    "V": "8 exposed development groups; proposed conversion to final head TRAIN only after authorization",
+    "FCWD_Dev32": "Exclude from fit and model selection; already exposed transfer",
+    "test12": "Exclude from fit; private TTC not accessed; new predictions/export need separate scope"
+  },
+  "stacking": {
+    "strategy": "Declared sequential in-sample stacking",
+    "OOF": false,
+    "reason": "H features derive from refiners trained on H; no claim that H or H+V residuals estimate generalization",
+    "cross_fitting": "Not performed and not implied; group cross-fitting would require rebuilding fold-specific dependent stages under a different plan",
+    "normalizers": "Retain frozen historical H normalizers; no fitting on test or transfer; bind their hashes through parent freeze"
+  },
+  "training_inputs": {
+    "H": {
+      "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/cache/H/states.npz",
+      "expected_sha256": "7438410d5e39b2f91eb17f9ef2f8c153d2c699bbb9c1ecf2cdf7d380989a331a",
+      "rows": 18422,
+      "seal": {
+        "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/cache/H/SEALED.json",
+        "sha256": "e981eb6e2b59e6971fe33e4daa53544b7ffaf0c870f3a52197fccadaff0cf110"
+      }
+    },
+    "V": {
+      "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/cache/V/states.npz",
+      "expected_sha256": "7881e2745ee94d00a1424e41377e3c46f57680f93c68fe1a2b400db50c5a5a5b",
+      "rows": 16432,
+      "seal": {
+        "path": "e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/cache/V/SEALED.json",
+        "sha256": "0aacc6d2b6a2ada922fb8e553bb3681a686689a7179ed6c5bb97574abe3bfca8"
+      }
+    }
+  },
+  "model": {
+    "class": "PhaseOnlyAnchor",
+    "mode": "EVENT",
+    "parameters": 1955,
+    "initialization": "fresh seed7; zero final output; do not continue old trained head",
+    "architecture": "20->32 LayerNorm SiLU->32 LayerNorm SiLU->3",
+    "source": {
+      "path": "e-jepa-ttc-v16-multimodal-validation/operational/multimodal_research/phase_only_anchor.py",
+      "sha256": "d6c3016dc7c08b0bdb37964c1eff9cd046c88d52d1bb4b1a281dad0412496514"
+    }
+  },
+  "objective": {
+    "source": {
+      "path": "e-jepa-ttc-v16-multimodal-validation/src/e_jepa_ttc/rgb_port/fusion.py",
+      "sha256": "3aafc191fad82d389f199cfb9a36905fba966ef9230ec6b5570af5e4cb6f4085"
+    },
+    "function": "fusion_loss",
+    "phase_scale": 0.03,
+    "quantile_weight": 0.1,
+    "mass": "Preserve original group-balanced training mass: 1/(number_of_TRAIN_groups * queries_in_group). Recompute across H+V; do not concatenate separately normalized mass vectors. Evaluation band weights 0.5/0.3/0.1/0.1 are not training weights.",
+    "mass_source": {
+      "path": "e-jepa-ttc-v16-multimodal-validation/operational/rgb_port/prepare.py",
+      "sha256": "b21a6c6716aa739064a70245d70ad15bf3e1f1e9073325724a193d73a24b7c9a"
+    }
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "lr": 0.0003,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.001,
+    "foreach": false,
+    "clip_norm": 1.0
+  },
+  "sampling": {
+    "name": "uniform_with_replacement",
+    "batch_size": 128,
+    "population": 34854,
+    "updates": 4730,
+    "baseline_updates": 2500,
+    "baseline_population": 18422,
+    "rule": "ceil(2500 * new_population / original_H_population)",
+    "expected_draws_per_query": 17.370746542721065
+  },
+  "scheduler": {
+    "warmup_updates": 190,
+    "warmup": "lr_max * update / warmup_updates",
+    "after_warmup": "lr_min+(lr_max-lr_min)*(1+cos(pi*(update-warmup)/(total-warmup)))/2",
+    "lr_max": 0.0003,
+    "lr_min": 3e-05,
+    "step_unit": "committed_optimizer_update"
+  },
+  "budget_proposed_only": {
+    "scientific_updates": 4730,
+    "technical_updates": 0,
+    "recovery_update_cap": 250,
+    "physical_update_cap": 4980,
+    "GPU_seconds": 0,
+    "CPU_wall_seconds": 7200,
+    "RAM_bytes": 4000000000,
+    "device": "cpu_FP32_one_thread",
+    "source": "New authorization only; no V18 remainder"
+  },
+  "checkpoint": {
+    "every_updates": 100,
+    "endpoint": "fixed final update; no early stopping on H/V/test",
+    "contents": [
+      "model",
+      "optimizer",
+      "scheduler",
+      "RNG",
+      "sampler",
+      "committed_and_pending_journal",
+      "plan_hash",
+      "input_hashes",
+      "source_commit",
+      "environment"
+    ],
+    "resume": "Exact identity only; count replayed updates; refuse existing historical destinations"
+  },
+  "export": {
+    "format": "TorchScript head plus metadata and five fixed TRAIN examples",
+    "output_root": "artifacts/post_v18_refit/PHASE_ONLY_HV_S7",
+    "full_sensor_pipeline": false,
+    "test12_predictions": "Not authorized by this plan",
+    "parity": "CPU FP32 same examples, max absolute TTC error <=1e-5 s; disclose any exception before proceeding"
+  },
+  "stages": [
+    {
+      "id": "authorize",
+      "depends_on": [],
+      "operation": "Bind explicit new authorization, plan SHA256 and CPU/update budget"
+    },
+    {
+      "id": "verify_parents",
+      "depends_on": [
+        "authorize"
+      ],
+      "operation": "Verify full frozen genealogy and no changed producer/normalizer; never replace a failed binding"
+    },
+    {
+      "id": "build_HV_inputs",
+      "depends_on": [
+        "verify_parents"
+      ],
+      "operation": "Verify both caches; join by frozen IDs; disjoint groups; recompute TRAIN masses; seal union"
+    },
+    {
+      "id": "initialize_new_head",
+      "depends_on": [
+        "build_HV_inputs"
+      ],
+      "operation": "Fresh PhaseOnlyAnchor EVENT seed7 with frozen input semantics"
+    },
+    {
+      "id": "fit_fixed_endpoint",
+      "depends_on": [
+        "initialize_new_head"
+      ],
+      "operation": "Apply declared sampler, optimizer, scaled schedule and durable checkpoints"
+    },
+    {
+      "id": "export_train_examples",
+      "depends_on": [
+        "fit_fixed_endpoint"
+      ],
+      "operation": "Export head and verify fixed TRAIN examples; no benchmark inference or submission"
+    }
+  ],
+  "commands_available_now": [
+    [
+      "python",
+      "-B",
+      "scripts/post_v18_review.py",
+      "validate"
+    ],
+    [
+      "python",
+      "-B",
+      "scripts/run_post_v18_refit.py",
+      "dry-run"
+    ]
+  ],
+  "training_adapter": {
+    "status": "IMPLEMENTED_NOT_TRAINED",
+    "source": {
+      "path": "scripts/run_post_v18_refit.py",
+      "sha256": "309c0b5f47d93495ac9ead04fbc99e24120f65af4ad795e942800aa0ef87797d"
+    },
+    "runtime_sources": {
+      "e-jepa-ttc-v16-multimodal-validation/src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+      "e-jepa-ttc-v16-multimodal-validation/operational/rgb_port/train_producers.py": "0fad9b57fd529489b55e9313fbe938fd0b84481cd3877cf5dab7f9b918544757"
+    },
+    "authorization": "Separate post_v18_refit_authorization_v1 receipt with authorized=true, exact plan_sha256, user_instruction_reference and budget equal to budget_proposed_only. None created by this review.",
+    "future_command": [
+      "python",
+      "-B",
+      "scripts/run_post_v18_refit.py",
+      "train",
+      "--authorization",
+      "<explicit-receipt.json>"
+    ],
+    "resume": "Same command plus --resume. Exact plan, source, environment and authorization identity. A stale RUNNING.lock requires manual inspection; no automatic restart.",
+    "resource_guards": "CPU only, one thread, RSS checked before each batch. Wall time reserved conservatively in durable 60-second slices, including resumes. Cooperative guards, not OS-enforced hard limits; an operation can overshoot a slice.",
+    "validation_limit": "Actual caches and hashes checked; synthetic checkpoint/resume/export tests use zero optimizer steps. End-to-end optimization has not been executed."
+  }
+}

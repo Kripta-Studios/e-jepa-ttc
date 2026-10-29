@@ -1,0 +1,15 @@
+{
+  "source_files": {
+    "operational\\simplex_t_post_campaign\\contracts.py": "fee9c7e72c83975ee818e20c72052bd8a64177dc3bce08d83eaf2b3c49bb41ee",
+    "operational\\simplex_t_post_campaign\\deliver.py": "84534ce94ef9d8912832664fa0d0b1a9fe8df0e063dfbe21113e2e6c406386c0",
+    "operational\\simplex_t_post_campaign\\regenerate.py": "40420b0f4ce417d58e6a970834ac5c8c7975fa3f72175979010f15b7f79db9cb",
+    "operational\\simplex_t_post_campaign\\route_policy.py": "fcc7e6f75da09f906494ba3fefc5c7ce2c011974afb0dd3043086f8ffaa9725c",
+    "operational\\simplex_t_post_campaign\\run.py": "e767176cde22f1a7a11964f9beaea6dab43907edb8a6d59617fe490b4bb4f567",
+    "operational\\simplex_t_post_campaign\\test_contracts.py": "ac624311ee776d9a4c190c9cf834cba1c004ce3566c6c7394ab752ccd9e37060",
+    "operational\\simplex_t_post_campaign\\test_route_policy.py": "eeac17884743c6c56b80bfb392cfccf4bfd326f401a9a5c61e8665b9787752cc",
+    "operational\\simplex_t_post_campaign\\__init__.py": "497339f275f4b2baaad656aaeb8aabcb71b814d1e1e78c073fe048a1d6a6aeb2"
+  },
+  "zero_optimizer_updates": true,
+  "measured_protocol_sha256": "6f1313b4a6a2a1587f36b3220ddfe99457251bb2fc221e192d59b7ba110a229a",
+  "original_measurement_source_pins_preserved": true
+}

@@ -1,0 +1,1128 @@
+{
+  "schema": "science_accounting_audit_20261004_08_v1",
+  "observed_utc": "2026-10-08T16:51:16.982334+00:00",
+  "scope": "Read-only audit of original E0-E3 and later authorized TRAIN40; subsequent R1/EvTTC execution is audited separately.",
+  "base_commit": "fd16d8102914537653622d3abf298b753120ea43",
+  "historical_release_reuse": {
+    "release": "simplex-t-local-results-20261004-complete",
+    "historical_measurements_not_repeated": 1728,
+    "units": "Historical latency measurements, not optimizer updates; do not add to update accounting.",
+    "reused_artifacts": "T6, historical H16 replicas, 24 overnight heads, OLD_DEV predictions/bootstrap masses",
+    "historical_reexecuted_updates": 0
+  },
+  "initial_limits": {
+    "new_scientific_updates_max": 237500,
+    "technical_synthetic_updates_max": 200,
+    "recovery_updates_max": 2300,
+    "physical_updates_max": 240000,
+    "garl_producer_updates_total_max": 200000,
+    "garl_temporal_head_fits_max": 6,
+    "garl_head_updates_each": 2500
+  },
+  "original_campaign": {
+    "accounting": {
+      "wide_saved": 22500,
+      "garl_producer_saved": 17948,
+      "garl_head_saved": 0,
+      "scientific_saved_updates": 40448,
+      "recovery_uncertain_upper": 300,
+      "recovery_confirmed_lower": 50,
+      "unresolved_execution_upper": 0,
+      "physical_execution_upper": 40748,
+      "unsaved_updates_confirmed_by_progress": 0,
+      "physical_execution_lower": 40498,
+      "technical_synthetic_updates": 0,
+      "physical_cap": 240000,
+      "historical_reexecuted_updates": 0
+    },
+    "E0": {
+      "status": "COMPLETE",
+      "optimizer_updates": 0,
+      "candidate_score": 155.44217565885657,
+      "reference_score": 121.64633225755645,
+      "point_delta": 33.79584340130009,
+      "hierarchical_ci95": [
+        17.090426468060453,
+        51.04156646799293
+      ],
+      "sequence_wins": 0,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "confirmation": false
+    },
+    "E0_interpretation": "Analytical EWMA worse on reused adaptive OLD_DEV; not independent confirmation and not a blocked result.",
+    "E1_historical_snapshot": "R0 raw/ROI exact preprocessing parity and 768 new R2 TRAIN head requests complete. R1 was not implemented at old FINAL_REPORT; later Oct8 R1 receipt supersedes that timing snapshot. R0 shared I/O and R2 head-only timing do not establish full-system speedup.",
+    "E2": {
+      "status": "COMPLETE",
+      "scientific_updates": 22500,
+      "fits": 9,
+      "updates_per_fit": 2500,
+      "per_seed": {
+        "7": {
+          "status": "COMPLETE",
+          "seed": 7,
+          "comparisons": {
+            "H8": {
+              "candidate_score": 118.45168736644493,
+              "reference_score": 121.64633225755645,
+              "point_delta": -3.1946448911115324,
+              "weighted_sign_error_delta": -0.0007552411342562773,
+              "crucial_bucket_mid_delta": -6.205502489260156,
+              "candidate_finite_fraction": 1.0,
+              "reference_finite_fraction": 1.0,
+              "sequence_deltas": {
+                "2cyv0Oedzg": -6.678908823761071,
+                "5ilM1PX2vz": -0.996338055995179,
+                "6h5yRW2LGc": -4.11348093945942,
+                "OBneIVg4Cw": 5.0245506843810235,
+                "OYgB6RGWcq": -1.194297066864238,
+                "WbCh1DRerJ": -5.2285357971443975,
+                "mHGFBekt7X": -0.6549833452296031,
+                "qGsgzl4Q8B": -6.714112327514313,
+                "t79dBxj1WS": -8.195698348416602
+              },
+              "sequence_wins": 8,
+              "sequence_count": 9,
+              "query_count": 8192,
+              "gate_authorized": false,
+              "hierarchical_ci95": [
+                -6.853208843467789,
+                0.27156351509198084
+              ],
+              "sequence_only": {
+                "point_delta": -3.1946448911115333,
+                "ci95": [
+                  -5.592470490053319,
+                  -0.5206624094710003
+                ],
+                "fraction_negative": 0.9896387591416208,
+                "sequence_wins": 8,
+                "sequence_count_vectors": 24310,
+                "omit_one_score_deltas": [
+                  -2.759111899530341,
+                  -3.4694332455010777,
+                  -3.0797903850680477,
+                  -4.222044338048103,
+                  -3.4446883691424453,
+                  -2.940408527857425,
+                  -3.5121025843467746,
+                  -2.754711461561186,
+                  -2.5695132089483996
+                ],
+                "signflip_p_two_sided_descriptive": 0.04296875,
+                "retraining_performed": false,
+                "confirmatory": false
+              },
+              "noninferiority_margin_mid": 2,
+              "noninferiority_supported": true
+            },
+            "H16": {
+              "candidate_score": 118.45168736644493,
+              "reference_score": 118.86573891024781,
+              "point_delta": -0.41405154380288006,
+              "weighted_sign_error_delta": 0.0016245811174359615,
+              "crucial_bucket_mid_delta": -2.1958470753397914,
+              "candidate_finite_fraction": 1.0,
+              "reference_finite_fraction": 1.0,
+              "sequence_deltas": {
+                "2cyv0Oedzg": -2.3832029471153406,
+                "5ilM1PX2vz": -0.92392795419709,
+                "6h5yRW2LGc": 1.175741114539384,
+                "OBneIVg4Cw": 0.22552889670247653,
+                "OYgB6RGWcq": 1.05639432216845,
+                "WbCh1DRerJ": -4.603817187371166,
+                "mHGFBekt7X": 2.6383741686405915,
+                "qGsgzl4Q8B": -1.3004823564314132,
+                "t79dBxj1WS": 0.3889280488381855
+              },
+              "sequence_wins": 4,
+              "sequence_count": 9,
+              "query_count": 8192,
+              "gate_authorized": false,
+              "hierarchical_ci95": [
+                -2.6229735272262245,
+                1.6444872812221834
+              ],
+              "sequence_only": {
+                "point_delta": -0.41405154380288034,
+                "ci95": [
+                  -1.809197981088154,
+                  0.8464425709992832
+                ],
+                "fraction_negative": 0.7197273890178792,
+                "sequence_wins": 4,
+                "sequence_count_vectors": 24310,
+                "omit_one_score_deltas": [
+                  -0.1679076183888228,
+                  -0.35031699250360415,
+                  -0.6127756260956634,
+                  -0.4939990988660499,
+                  -0.5978572770492966,
+                  0.10966916164315538,
+                  -0.7956047578583143,
+                  -0.3032476922243137,
+                  -0.5144239928830135
+                ],
+                "signflip_p_two_sided_descriptive": 0.609375,
+                "retraining_performed": false,
+                "confirmatory": false
+              },
+              "noninferiority_margin_mid": 2,
+              "noninferiority_supported": true
+            }
+          },
+          "replication_authorized": true,
+          "replication_rule": "prospective_all_five_conditions",
+          "bootstrap": {
+            "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+            "valid_draws": 8192,
+            "attempts": 8195,
+            "discarded": 3,
+            "validity_fraction": 0.999633923123856
+          },
+          "scientific_updates": 7500,
+          "encoder_replicas": false,
+          "head_replicas": true,
+          "confirmation": false,
+          "candidate_promoted": false
+        },
+        "13": {
+          "status": "COMPLETE",
+          "seed": 13,
+          "comparisons": {
+            "H8": {
+              "candidate_score": 119.3326508780037,
+              "reference_score": 121.8409520461135,
+              "point_delta": -2.5083011681097975,
+              "weighted_sign_error_delta": -0.0007520438010854701,
+              "crucial_bucket_mid_delta": -4.038367270005816,
+              "candidate_finite_fraction": 1.0,
+              "reference_finite_fraction": 1.0,
+              "sequence_deltas": {
+                "2cyv0Oedzg": -2.140950181950436,
+                "5ilM1PX2vz": -0.7353598047841762,
+                "6h5yRW2LGc": 1.6352267301238903,
+                "OBneIVg4Cw": 3.286161897547977,
+                "OYgB6RGWcq": -4.655416233967584,
+                "WbCh1DRerJ": -5.647922351476483,
+                "mHGFBekt7X": -0.8120808016886646,
+                "qGsgzl4Q8B": -6.37791126841686,
+                "t79dBxj1WS": -7.1264584983758406
+              },
+              "sequence_wins": 7,
+              "sequence_count": 9,
+              "query_count": 8192,
+              "gate_authorized": false,
+              "hierarchical_ci95": [
+                -5.941177209541652,
+                0.5541399167679866
+              ],
+              "sequence_only": {
+                "point_delta": -2.5083011681097975,
+                "ci95": [
+                  -4.719246422758178,
+                  -0.21365235781931435
+                ],
+                "fraction_negative": 0.9845955385183566,
+                "sequence_wins": 7,
+                "sequence_count_vectors": 24310,
+                "omit_one_score_deltas": [
+                  -2.5542200413797174,
+                  -2.7299188385254998,
+                  -3.026242155389008,
+                  -3.232609051317019,
+                  -2.239911784877574,
+                  -2.115848520188962,
+                  -2.720328713912439,
+                  -2.0245999055714146,
+                  -1.931031501826542
+                ],
+                "signflip_p_two_sided_descriptive": 0.08203125,
+                "retraining_performed": false,
+                "confirmatory": false
+              },
+              "noninferiority_margin_mid": 2,
+              "noninferiority_supported": true
+            },
+            "H16": {
+              "candidate_score": 119.3326508780037,
+              "reference_score": 119.69680178724647,
+              "point_delta": -0.36415090924279847,
+              "weighted_sign_error_delta": 0.0008979339287883786,
+              "crucial_bucket_mid_delta": -1.1564189958342326,
+              "candidate_finite_fraction": 1.0,
+              "reference_finite_fraction": 1.0,
+              "sequence_deltas": {
+                "2cyv0Oedzg": -0.40699447113701986,
+                "5ilM1PX2vz": -0.28922392090693816,
+                "6h5yRW2LGc": -2.1756744617231676,
+                "OBneIVg4Cw": 2.852558755975602,
+                "OYgB6RGWcq": 2.128098070739439,
+                "WbCh1DRerJ": -4.0485850796022875,
+                "mHGFBekt7X": 0.3970936506818588,
+                "qGsgzl4Q8B": -0.18019354214663058,
+                "t79dBxj1WS": -1.5544371850660468
+              },
+              "sequence_wins": 6,
+              "sequence_count": 9,
+              "query_count": 8192,
+              "gate_authorized": false,
+              "hierarchical_ci95": [
+                -2.4371215757454068,
+                1.654923200555605
+              ],
+              "sequence_only": {
+                "point_delta": -0.364150909242799,
+                "ci95": [
+                  -1.6747890741101428,
+                  0.9174572199228819
+                ],
+                "fraction_negative": 0.7075276186541595,
+                "sequence_wins": 6,
+                "sequence_count_vectors": 24310,
+                "omit_one_score_deltas": [
+                  -0.3587954640060214,
+                  -0.3735167827847816,
+                  -0.13771046518275293,
+                  -0.7662396173950992,
+                  -0.6756820317405787,
+                  0.09640336205213706,
+                  -0.45930647923338125,
+                  -0.38714558012982003,
+                  -0.21536512476489303
+                ],
+                "signflip_p_two_sided_descriptive": 0.6328125,
+                "retraining_performed": false,
+                "confirmatory": false
+              },
+              "noninferiority_margin_mid": 2,
+              "noninferiority_supported": true
+            }
+          },
+          "replication_authorized": false,
+          "replication_rule": "prospective_all_five_conditions",
+          "bootstrap": {
+            "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+            "valid_draws": 8192,
+            "attempts": 8195,
+            "discarded": 3,
+            "validity_fraction": 0.999633923123856
+          },
+          "scientific_updates": 7500,
+          "encoder_replicas": false,
+          "head_replicas": true,
+          "confirmation": false,
+          "candidate_promoted": false
+        },
+        "23": {
+          "status": "COMPLETE",
+          "seed": 23,
+          "comparisons": {
+            "H8": {
+              "candidate_score": 119.07785095385645,
+              "reference_score": 121.86478063534273,
+              "point_delta": -2.7869296814862325,
+              "weighted_sign_error_delta": -4.009533950809612e-05,
+              "crucial_bucket_mid_delta": -3.656792413989466,
+              "candidate_finite_fraction": 1.0,
+              "reference_finite_fraction": 1.0,
+              "sequence_deltas": {
+                "2cyv0Oedzg": -9.44367783694487,
+                "5ilM1PX2vz": -0.32503769701332347,
+                "6h5yRW2LGc": 2.6577222382808126,
+                "OBneIVg4Cw": 3.130191623676351,
+                "OYgB6RGWcq": -3.878382096836369,
+                "WbCh1DRerJ": -4.040265481088755,
+                "mHGFBekt7X": -2.435087325925611,
+                "qGsgzl4Q8B": -5.1729035575797795,
+                "t79dBxj1WS": -5.574926999944546
+              },
+              "sequence_wins": 7,
+              "sequence_count": 9,
+              "query_count": 8192,
+              "gate_authorized": false,
+              "hierarchical_ci95": [
+                -6.399732132291909,
+                0.46945377337474975
+              ],
+              "sequence_only": {
+                "point_delta": -2.786929681486232,
+                "ci95": [
+                  -5.250949223857137,
+                  -0.2787619542656181
+                ],
+                "fraction_negative": 0.9854089492928186,
+                "sequence_wins": 7,
+                "sequence_count_vectors": 24310,
+                "omit_one_score_deltas": [
+                  -1.9548361620539023,
+                  -3.094666179545346,
+                  -3.4675111714571125,
+                  -3.5265698446315548,
+                  -2.650498129567465,
+                  -2.6302627065359165,
+                  -2.8309099759313097,
+                  -2.4886829469745386,
+                  -2.438430016678943
+                ],
+                "signflip_p_two_sided_descriptive": 0.07421875,
+                "retraining_performed": false,
+                "confirmatory": false
+              },
+              "noninferiority_margin_mid": 2,
+              "noninferiority_supported": true
+            },
+            "H16": {
+              "candidate_score": 119.07785095385645,
+              "reference_score": 119.16152634210417,
+              "point_delta": -0.08367538824768445,
+              "weighted_sign_error_delta": 0.0021163334856215904,
+              "crucial_bucket_mid_delta": -1.0826528785655358,
+              "candidate_finite_fraction": 1.0,
+              "reference_finite_fraction": 1.0,
+              "sequence_deltas": {
+                "2cyv0Oedzg": -3.149114246478873,
+                "5ilM1PX2vz": -0.12053524251378726,
+                "6h5yRW2LGc": 3.644586952348726,
+                "OBneIVg4Cw": -0.1490591838711529,
+                "OYgB6RGWcq": 2.951489457630404,
+                "WbCh1DRerJ": -3.9412341696619553,
+                "mHGFBekt7X": 0.7012316287168529,
+                "qGsgzl4Q8B": -0.5124300861135349,
+                "t79dBxj1WS": -0.17801360428584154
+              },
+              "sequence_wins": 6,
+              "sequence_count": 9,
+              "query_count": 8192,
+              "gate_authorized": false,
+              "hierarchical_ci95": [
+                -2.2653915832013296,
+                2.101260133199566
+              ],
+              "sequence_only": {
+                "point_delta": -0.08367538824768465,
+                "ci95": [
+                  -1.6075585846340539,
+                  1.4242546021173992
+                ],
+                "fraction_negative": 0.5472161902103221,
+                "sequence_wins": 6,
+                "sequence_count_vectors": 24310,
+                "omit_one_score_deltas": [
+                  0.29950446903121386,
+                  -0.07906790646442183,
+                  -0.5497081808222359,
+                  -0.07550241379475112,
+                  -0.4630709939824457,
+                  0.39851945942909917,
+                  -0.18178876536825184,
+                  -0.030081051014453367,
+                  -0.07188311124291503
+                ],
+                "signflip_p_two_sided_descriptive": 0.84375,
+                "retraining_performed": false,
+                "confirmatory": false
+              },
+              "noninferiority_margin_mid": 2,
+              "noninferiority_supported": false
+            }
+          },
+          "replication_authorized": false,
+          "replication_rule": "prospective_all_five_conditions",
+          "bootstrap": {
+            "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+            "valid_draws": 8192,
+            "attempts": 8195,
+            "discarded": 3,
+            "validity_fraction": 0.999633923123856
+          },
+          "scientific_updates": 7500,
+          "encoder_replicas": false,
+          "head_replicas": true,
+          "confirmation": false,
+          "candidate_promoted": false
+        }
+      },
+      "replication": {
+        "status": "COMPLETE",
+        "results": {
+          "all_three_seeds": {
+            "seeds": [
+              7,
+              13,
+              23
+            ],
+            "scores": {
+              "H8": 121.78402164633759,
+              "H16": 119.24135567986625,
+              "WIDE": 118.95406306610161
+            },
+            "contrasts": {
+              "H8": {
+                "point_delta": -2.8299585802358544,
+                "hierarchical_ci95": [
+                  -6.069791314994117,
+                  0.14946493823193846
+                ],
+                "sequence_only": {
+                  "point_delta": -2.8299585802358536,
+                  "ci95": [
+                    -4.929479257917902,
+                    -0.5411824546186569
+                  ],
+                  "fraction_negative": 0.9920547129349166,
+                  "sequence_wins": 7,
+                  "sequence_count_vectors": 24310,
+                  "omit_one_score_deltas": [
+                    -2.422722700987986,
+                    -3.098006087857307,
+                    -3.1911812373047215,
+                    -3.6604077446655587,
+                    -2.7783660945291606,
+                    -2.562173251527434,
+                    -3.021113758063507,
+                    -2.4226647713690457,
+                    -2.312991575817961
+                  ],
+                  "signflip_p_two_sided_descriptive": 0.046875,
+                  "retraining_performed": false,
+                  "confirmatory": false
+                },
+                "sequence_wins": 7,
+                "noninferiority_margin_mid": 2,
+                "noninferiority_supported": true
+              },
+              "H16": {
+                "point_delta": -0.2872926137644546,
+                "hierarchical_ci95": [
+                  -2.060622385601424,
+                  1.4316635484844291
+                ],
+                "sequence_only": {
+                  "point_delta": -0.287292613764455,
+                  "ci95": [
+                    -1.5398724736465088,
+                    0.7946814743531977
+                  ],
+                  "fraction_negative": 0.668274452051502,
+                  "sequence_wins": 5,
+                  "sequence_count_vectors": 24310,
+                  "omit_one_score_deltas": [
+                    -0.07573287112121033,
+                    -0.26763389391760284,
+                    -0.4333980907002176,
+                    -0.44524704335196735,
+                    -0.5788701009241075,
+                    0.20153066104146372,
+                    -0.47890000081998285,
+                    -0.24015810778952928,
+                    -0.26722407629694084
+                  ],
+                  "signflip_p_two_sided_descriptive": 0.6953125,
+                  "retraining_performed": false,
+                  "confirmatory": false
+                },
+                "sequence_wins": 5,
+                "noninferiority_margin_mid": 2,
+                "noninferiority_supported": true
+              }
+            },
+            "bootstrap": {
+              "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+              "valid_draws": 8192,
+              "attempts": 8195,
+              "discarded": 3,
+              "validity_fraction": 0.999633923123856
+            }
+          },
+          "new_seeds_only": {
+            "seeds": [
+              13,
+              23
+            ],
+            "scores": {
+              "H8": 121.8528663407279,
+              "H16": 119.4291640646752,
+              "WIDE": 119.20525091593015
+            },
+            "contrasts": {
+              "H8": {
+                "point_delta": -2.6476154247980164,
+                "hierarchical_ci95": [
+                  -5.895916768971066,
+                  0.3264522462491849
+                ],
+                "sequence_only": {
+                  "point_delta": -2.647615424798015,
+                  "ci95": [
+                    -4.753614547725165,
+                    -0.3455967741426988
+                  ],
+                  "fraction_negative": 0.9874111149552547,
+                  "sequence_wins": 7,
+                  "sequence_count_vectors": 24310,
+                  "omit_one_score_deltas": [
+                    -2.2545281017168106,
+                    -2.9122925090354235,
+                    -3.2468766634230612,
+                    -3.3795894479742876,
+                    -2.44520495722252,
+                    -2.37305561336244,
+                    -2.775619344921875,
+                    -2.256641426272977,
+                    -2.1847307592527425
+                  ],
+                  "signflip_p_two_sided_descriptive": 0.05859375,
+                  "retraining_performed": false,
+                  "confirmatory": false
+                },
+                "sequence_wins": 7,
+                "noninferiority_margin_mid": 2,
+                "noninferiority_supported": true
+              },
+              "H16": {
+                "point_delta": -0.2239131487452427,
+                "hierarchical_ci95": [
+                  -2.052060665203226,
+                  1.5244990260863165
+                ],
+                "sequence_only": {
+                  "point_delta": -0.22391314874524193,
+                  "ci95": [
+                    -1.4476269341369628,
+                    0.8805753529061987
+                  ],
+                  "fraction_negative": 0.6340373030709794,
+                  "sequence_wins": 5,
+                  "sequence_count_vectors": 24310,
+                  "omit_one_score_deltas": [
+                    -0.029645497487403888,
+                    -0.2262923446246017,
+                    -0.34370932300249457,
+                    -0.42087101559492524,
+                    -0.5693765128615125,
+                    0.24746141074061795,
+                    -0.3205476223008167,
+                    -0.20861331557213672,
+                    -0.14362411800390407
+                  ],
+                  "signflip_p_two_sided_descriptive": 0.73828125,
+                  "retraining_performed": false,
+                  "confirmatory": false
+                },
+                "sequence_wins": 5,
+                "noninferiority_margin_mid": 2,
+                "noninferiority_supported": true
+              }
+            },
+            "bootstrap": {
+              "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+              "valid_draws": 8192,
+              "attempts": 8195,
+              "discarded": 3,
+              "validity_fraction": 0.999633923123856
+            }
+          }
+        },
+        "aggregation": "arithmetic mean of paired losses per query; no averaged TTC",
+        "sign_finite_and_crucial_metrics": "retain the three separate per-seed reports",
+        "candidate_promoted": false,
+        "confirmation": false,
+        "optimizer_updates": 0
+      },
+      "interpretation": "Conditional head replicas completed. WIDE has lower descriptive mean MiD; hierarchical CIs cross zero versus H8 and H16. No promotion or superiority claim. Existing H8/H16 predictions reused, not retrained."
+    },
+    "E3": {
+      "status": "PAUSED_USER_STRATEGY_NOT_NEGATIVE_RESULT",
+      "scientific_producer_updates_saved": 17948,
+      "garl_head_updates_saved": 0,
+      "current_instruction": "No Garl retraining or new Garl heads; use published weights. Proceed R1 plus completed TRAIN40 event-only comparison.",
+      "historical_comparator_contracts": {
+        "status": "BOUNDED_REVIEW_COMPLETE",
+        "comparisons": [
+          {
+            "id": "OFFICIAL_V7_C2F",
+            "evidence_paths": [
+              "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\manifest.json",
+              "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold0_seed7\\dev_predictions.csv",
+              "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold1_seed7\\dev_predictions.csv",
+              "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold2_seed7\\dev_predictions.csv"
+            ],
+            "evidence_sha256": [
+              "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304",
+              "e2fd196abc998fa7260250f64dc3193d2af075267127af9e2e3aa94f500f90b1",
+              "9fbc43e6cc00e05f3b357098bd462fc33ea7140c15b44aabe7fb30e18f9be628",
+              "5db0625ca2c857d257024bfb21db33e06a8ffa6678b05f08cf9ba02039ef6734"
+            ],
+            "queries": 8192,
+            "published_MiD": 158.57314044954794,
+            "classification": "INSUFFICIENT_CONTRACT_EVIDENCE",
+            "scientific_commit": "not_resolved_from_bound_baseline_manifest",
+            "source_manifest_type": "scientific_recovery_v7_baseline_reevaluation_v1",
+            "context": "not established",
+            "ROI": "not established",
+            "training_groups": "not fully bound",
+            "missing": [
+              "frozen producer source commit",
+              "complete TRAIN genealogy and checkpoint selection",
+              "ROI/modality/availability contract"
+            ],
+            "no_automatic_comparator_admission": true,
+            "columns": [
+              "sample_token",
+              "sequence_id",
+              "track_id",
+              "target_ttc_s",
+              "prediction_ttc_s",
+              "point_prediction_ttc_s",
+              "auxiliary_prediction_ttc_s",
+              "known_mask",
+              "guard_margin",
+              "ttc_log_variance",
+              "ttc_variance",
+              "event_count_log1p",
+              "event_rate_log1p",
+              "transport_flow_magnitude",
+              "fold",
+              "seed",
+              "cache_manifest_sha256",
+              "config_sha256"
+            ],
+            "identical_query_tokens": true,
+            "identical_sequence_id": true,
+            "identical_track_id": true,
+            "identical_outer_fold": true,
+            "identical_target_ttc": false,
+            "alias_mapping": {
+              "fold": "outer_fold",
+              "target_ttc_s": "target_ttc"
+            },
+            "max_target_difference": 1.7763568394002505e-15,
+            "identical_macro_mass": true,
+            "target_difference_interpretation": "CSV last-bit serialization differences; not evidence of different scientific population.",
+            "queries_and_folds_match_after_alias_resolution": true,
+            "current_verification": [
+              {
+                "path": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\manifest.json",
+                "expected_sha256": "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304",
+                "exists": true,
+                "verified": true
+              },
+              {
+                "path": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold0_seed7\\dev_predictions.csv",
+                "expected_sha256": "e2fd196abc998fa7260250f64dc3193d2af075267127af9e2e3aa94f500f90b1",
+                "exists": true,
+                "verified": true
+              },
+              {
+                "path": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold1_seed7\\dev_predictions.csv",
+                "expected_sha256": "9fbc43e6cc00e05f3b357098bd462fc33ea7140c15b44aabe7fb30e18f9be628",
+                "exists": true,
+                "verified": true
+              },
+              {
+                "path": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v7_c2f_fold2_seed7\\dev_predictions.csv",
+                "expected_sha256": "5db0625ca2c857d257024bfb21db33e06a8ffa6678b05f08cf9ba02039ef6734",
+                "exists": true,
+                "verified": true
+              }
+            ]
+          },
+          {
+            "id": "GARL_LOCAL_FROZEN",
+            "evidence_paths": [
+              "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\manifest.json",
+              "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\garl_oof_predictions.csv"
+            ],
+            "evidence_sha256": [
+              "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304",
+              "9b7ff010c0ae5ac2bc3c5e91c323ee238d4434f3b2194ec1beb26d660926f0bd"
+            ],
+            "queries": 8192,
+            "published_MiD": 144.35302716563487,
+            "classification": "INSUFFICIENT_CONTRACT_EVIDENCE",
+            "scientific_commit": "not_resolved_from_bound_baseline_manifest",
+            "source_manifest_type": "scientific_recovery_v7_baseline_reevaluation_v1",
+            "context": "not established",
+            "ROI": "not established",
+            "training_groups": "not fully bound",
+            "missing": [
+              "frozen producer source commit",
+              "complete TRAIN genealogy and checkpoint selection",
+              "ROI/modality/availability contract"
+            ],
+            "no_automatic_comparator_admission": true,
+            "columns": [
+              "sample_token",
+              "track_id",
+              "sequence_id",
+              "target_ttc_s",
+              "prediction_ttc_s",
+              "point_prediction_ttc_s",
+              "auxiliary_prediction_ttc_s",
+              "known_mask",
+              "guard_margin",
+              "ttc_log_variance",
+              "ttc_variance",
+              "event_count_log1p",
+              "event_rate_log1p",
+              "transport_flow_magnitude",
+              "fold",
+              "seed"
+            ],
+            "identical_query_tokens": true,
+            "identical_sequence_id": true,
+            "identical_track_id": true,
+            "identical_outer_fold": true,
+            "identical_target_ttc": false,
+            "alias_mapping": {
+              "fold": "outer_fold",
+              "target_ttc_s": "target_ttc"
+            },
+            "max_target_difference": 8.881784197001252e-16,
+            "identical_macro_mass": true,
+            "target_difference_interpretation": "CSV last-bit serialization differences; not evidence of different scientific population.",
+            "queries_and_folds_match_after_alias_resolution": true,
+            "current_verification": [
+              {
+                "path": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\manifest.json",
+                "expected_sha256": "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304",
+                "exists": true,
+                "verified": true
+              },
+              {
+                "path": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_v7\\baselines\\garl_oof_predictions.csv",
+                "expected_sha256": "9b7ff010c0ae5ac2bc3c5e91c323ee238d4434f3b2194ec1beb26d660926f0bd",
+                "exists": true,
+                "verified": true
+              }
+            ]
+          }
+        ],
+        "model_selection": false,
+        "additional_archeology": false,
+        "supersedes_unmapped_column_flags": "COMPARATOR_REVIEW.json",
+        "classification_unchanged": "Producer genealogy/ROI/information contract remains insufficient; float rounding alone is not a scientific mismatch."
+      },
+      "published_checkpoint_admission_caveat": "Public TRAIN40 does not certify per-checkpoint training genealogy and overlaps original internal folds; published weights cannot be silently admitted as fold-excluded original E3 producers."
+    }
+  },
+  "scope_transition": {
+    "authorization": {
+      "schema": "train40_full_system_user_authorization_v1",
+      "recorded_utc": "2026-10-05T21:23:38.935965+00:00",
+      "user_instruction": "te ordeno entrenar encoders y cabeazs y prodcutores sobre40 secuencias",
+      "authorized_work": "Full training of existing learned encoders/producers and H8 temporal head using public TRAIN40, then preparation of comparison to released Garl checkpoints. No architecture/window/hyperparameter search.",
+      "supersedes_original_Garl_scratch_execution_strategy": true,
+      "old_campaign_root": "${REPO}\\artifacts\\efficient_context_20261004",
+      "old_campaign_scientific_protocol_sha256": "38d4948553fb5259fc334d5caa0d59a1573fd091764ca65bf839ad85f7b81ba4",
+      "preserved_pause_receipt_sha256": "294e8f5e1b44f0c86b7d7f6c053901f6f53bd0f0d1378b90dc51f96a989484fb",
+      "public_TRAIN40_split_sha256": "ab2a68609d535379b1d6ed3617b3487cf61dce38dcb13c53246d5ac74c0b3251",
+      "published_Garl_checkpoint_actual_training40_claim_verified": false,
+      "original_physical_updates_cap_retained": 240000,
+      "previous_physical_execution_upper": 40748,
+      "remaining_physical_upper_budget": 199252,
+      "deadline_utc": "2026-10-09T18:31:35.932257+00:00",
+      "sealed_holdout_access_authorized": false,
+      "push_or_submission_authorized": false,
+      "historical_roots_read_only": true,
+      "new_raw_destination": "E:/eAP_dataset/data/train",
+      "new_annotation_destination": "E:/GarlTTC_dataset",
+      "new_outputs_root": "${REPO}\\artifacts\\train40_system_20261005"
+    },
+    "chronology": "TRAIN40 encoder/producer/head training was explicitly authorized Oct5, superseding original no-new-arm scope for this named protocol; joint 240000 cap retained. Later exploratory EvTTC development authorization and push authorization are separate subsequent user instructions.",
+    "stale_receipt_warning": "Original NEXT_DECISION TRAIN40 authorization false, initial push false, TECHNICAL_ACCOUNTING combined 40783 and queue comparison_remaining true are historical snapshots; do not use them to deny later recorded actions or describe current completeness.",
+    "original_next_decision_preserved": {
+      "historical_candidate": "TPR-D1-H8-C160",
+      "H16_retained": true,
+      "WIDE_promoted": false,
+      "EWMA_control": "NEGATIVE_LOCAL_DEVELOPMENT",
+      "E2": "COMPLETE",
+      "E3": "PAUSED_USER_STRATEGY",
+      "E1": "COMPLETE",
+      "new_WIDE_OLD_DEV_evaluation_performed": true,
+      "scientific_negative_for_missing_comparators": false,
+      "remaining_seed7_WIDE_updates": 0,
+      "replication_rule": "unchanged five prospective guardrails after all3 endpoints freeze",
+      "native_resume_recipe": "12 fixed50-epoch native producers, then6 INNER-OOF GRU160 heads",
+      "missing_paths": {
+        "observed_utc": "2026-10-05T21:19:46.075891+00:00",
+        "wide_missing": [],
+        "E1_missing": [],
+        "garl_missing": [],
+        "garl_raw_missing": [],
+        "TRAIN_metadata_sha256": "03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6",
+        "TRAIN_labels_sha256": "64e9a81232643ecce1d2f66e906c7cff6ea1e9e6958f81588b95e112693b11ad",
+        "global_environment_changed": false
+      },
+      "resume_command": "$env:PYTHONUTF8='1'; & '../e-jepa-ttc/.venv/Scripts/python.exe' -m operational.efficient_context.queue all --protocol configs/campaign/efficient_context_v1.json --resume",
+      "resume_script": "RESUME.ps1",
+      "holdouts_opened": false,
+      "confirmation_requires_future_authorization": true,
+      "original_queue_reactivation_requires_user_decision": true,
+      "TRAIN40_pilot": {
+        "status": "COMPLETE",
+        "freeze_sha256": "742dbdf627fc943d180e8b0e7a8c2a27f129f214c4462bfbea04239d617c7b51",
+        "modes": {
+          "serial": {
+            "queries": 88,
+            "wall_seconds_including_model_load_startup_and_fragment_writes": 98.4510040999885,
+            "queries_per_second": 0.8938456321951346,
+            "naive_88744_query_hours": 27.578711830332633,
+            "timings": {
+              "preparation_ms": {
+                "mean_ms": 856.6100750011339,
+                "p50_ms": 732.4052000039956,
+                "p95_ms": 1823.171380002168
+              },
+              "wait_ms": {
+                "mean_ms": 856.6100750011339,
+                "p50_ms": 732.4052000039956,
+                "p95_ms": 1823.171380002168
+              },
+              "producer_ms": {
+                "mean_ms": 115.40916250041019,
+                "p50_ms": 73.78305000747787,
+                "p95_ms": 253.67129999867754
+              },
+              "head_ms": {
+                "mean_ms": 2.0271011360984463,
+                "p50_ms": 1.799199999368284,
+                "p95_ms": 2.3354949997155923
+              }
+            }
+          },
+          "four_workers": {
+            "queries": 88,
+            "wall_seconds_including_model_load_startup_and_fragment_writes": 59.98853170000075,
+            "queries_per_second": 1.4669470564821125,
+            "naive_88744_query_hours": 16.80436318555829,
+            "timings": {
+              "preparation_ms": {
+                "mean_ms": 1515.5661181809344,
+                "p50_ms": 1242.3652999932528,
+                "p95_ms": 4246.2926150001285
+              },
+              "wait_ms": {
+                "mean_ms": 408.096697726664,
+                "p50_ms": 0.01405000512022525,
+                "p95_ms": 2590.9400650001708
+              },
+              "producer_ms": {
+                "mean_ms": 146.90895454540706,
+                "p50_ms": 140.32420000148704,
+                "p95_ms": 268.2430150045546
+              },
+              "head_ms": {
+                "mean_ms": 4.175250001274187,
+                "p50_ms": 3.1569499988108873,
+                "p95_ms": 8.392895002179982
+              }
+            }
+          }
+        },
+        "input_output_parity": "EXACT",
+        "optimizer_updates": 0,
+        "external_comparison_completed": false,
+        "projections_are_not_validated_full40_ETA": true,
+        "mode_order_confounds_causal_speedup": true
+      },
+      "TRAIN40_encoder_training_authorized": false,
+      "next_protocol_dependencies": [
+        "public checkpoint training provenance: TRAIN40 vs code TRAIN46",
+        "independent evaluation contract and external ROI/TTC adapter",
+        "full-system producer training budget and recipe, not head-only timing"
+      ]
+    }
+  },
+  "train40": {
+    "training_queue": {
+      "status": "COMPLETE",
+      "ended_utc": "2026-10-07T22:44:13.372569+00:00",
+      "all_fixed_scientific_endpoints_complete": true,
+      "comparison_and_delivery_remaining": true
+    },
+    "fit_updates": {
+      "a5_seed7": 49932,
+      "c2f_seed7": 49932,
+      "pair_seed7": 6840,
+      "h8_seed7": 2500,
+      "h8_seed13": 2500,
+      "h8_seed23": 2500
+    },
+    "scientific_updates": 114204,
+    "metrics": {
+      "H8_seed7": {
+        "population": 88744,
+        "finite_coverage": 1.0,
+        "MAE_seconds_finite": 1.898258812496795,
+        "RMSE_seconds_finite": 6.0442463404386215,
+        "weighted_MiD_phase_valid": 73.02665106353282
+      },
+      "H8_seed13": {
+        "population": 88744,
+        "finite_coverage": 1.0,
+        "MAE_seconds_finite": 1.815894810111825,
+        "RMSE_seconds_finite": 5.7798026308989945,
+        "weighted_MiD_phase_valid": 72.54463213230568
+      },
+      "H8_seed23": {
+        "population": 88744,
+        "finite_coverage": 1.0,
+        "MAE_seconds_finite": 1.7629846569253127,
+        "RMSE_seconds_finite": 5.674460991611966,
+        "weighted_MiD_phase_valid": 72.70009331346665
+      },
+      "public_Garl_event_lhr": {
+        "population": 88744,
+        "finite_coverage": 1.0,
+        "MAE_seconds_finite": 3.5768555437929774,
+        "RMSE_seconds_finite": 123.23548115710415,
+        "weighted_MiD_phase_valid": 93.68238334143504
+      }
+    },
+    "population": 88744,
+    "sequences": 40,
+    "scientific_role": "TRAIN_FIT_DIAGNOSTIC_NOT_GENERALIZATION",
+    "replication_unit": "One independently trained encoder/system seed7, three H8 head seeds7/13/23; not three full system replicas.",
+    "target_contract": "Original signed TTC/phase; no relabeling to physical contact, no posthoc clipping or outlier removal.",
+    "comparability_caveat": "Own inverse phase has pre-existing fixed support +/-60s. Published event-only LHR uses unbounded 0.1/(1-h0/h1), with near-singular height ratios. Thus the large raw-RMSE gap is sensitive to output support; not a clean model-quality ratio.",
+    "published_comparator": {
+      "name": "paper_event_only_lhr.pth",
+      "path": "paper_event_only_lhr.pth",
+      "config": "configs/ablation/event_lhr.yaml",
+      "bytes": 99018365,
+      "sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef"
+    },
+    "published_comparator_is_primary_full_RGB_event_model": false,
+    "checkpoint_training_manifest_certified": false,
+    "native_parity_scope": "Eight TRAIN queries: CPU/GPU height outputs within rtol/atol1e-4, max abs3.0517578125e-05. Not all-query TTC parity near singularities or paper replication.",
+    "comparison_qa": {
+      "status": "PASSED",
+      "population": 88744,
+      "per_sequence_rows": 160,
+      "deterministic_regeneration": true,
+      "exact_original_metric_dictionaries": true,
+      "sequence_weighted_mae_rmse_matches": true,
+      "fixed_H8_support_confirmed": true,
+      "all_source_output_hashes_checked": true,
+      "garl_top20_native_ttc_reproduced_exactly": true,
+      "ruff": "PASSED",
+      "pyright": "0 errors, 0 warnings",
+      "optimizer_updates": 0,
+      "inference_runs": 0,
+      "SHA256_manifest": "4671361d305e8a96e9b7c4503b9479e5de22c6faeca8e17b07187d6c48462b4b"
+    }
+  },
+  "joint_accounting": {
+    "original_scientific": 40448,
+    "train40_scientific": 114204,
+    "total_scientific": 154652,
+    "original_recovery_upper": 300,
+    "train40_recovery_upper": 91,
+    "total_recovery_upper": 391,
+    "synthetic_technical": 35,
+    "physical_upper": 155078,
+    "physical_cap": 240000,
+    "unused_upper_budget_not_new_authorization": 84922,
+    "equation": "40448 + 114204 + 300 + 91 + 35 = 155078; equivalently 40748 + 114204 + 91 + 35",
+    "bound_not_exact_count": true,
+    "avoid_double_counting": "WIDE PHYSICAL_WORK upper22600 is nested inside original40748. Historical1728 are latency measurements. R1/external inference/analysis add zero optimizer updates."
+  },
+  "checks": {
+    "original_scientific_components_match": true,
+    "wide_subset_matches": true,
+    "train_fits_match_scientific_total": true,
+    "joint_physical_upper_matches": true,
+    "cap_matches_original_and_train40": true,
+    "no_new_pending_updates": true,
+    "original_garl_heads_zero": true,
+    "historical_reexecuted_updates_zero": true,
+    "all_train_endpoints_complete": true,
+    "train_metric_dictionaries_reproduced": true
+  },
+  "source_sha256": {
+    "docs/efficient_context_handoff_20261004/execution_policy.json": {
+      "sha256": "20e41b22735bf991071d36ec527a6e45b17e972c025a71f0046ec5454d30cb1b",
+      "bytes": 1154
+    },
+    "artifacts/efficient_context_20261004/ACCOUNTING.json": {
+      "sha256": "70045a05b8d7a92ec3ec86dab95da7c891479709f101915c64222c17be1225f4",
+      "bytes": 443
+    },
+    "artifacts/efficient_context_20261004/PHYSICAL_WORK.json": {
+      "sha256": "468e7b8bc84522f4f719270f48c4a32889cb3d8159dc1074525ce8cf37395e73",
+      "bytes": 80692
+    },
+    "artifacts/efficient_context_20261004/NEXT_DECISION.json": {
+      "sha256": "3f90dadc0536e5b21fe6ccbfaa12854d03714cf6f473d6b139f0932801f973f0",
+      "bytes": 3862
+    },
+    "artifacts/efficient_context_20261004/FINAL_REPORT.md": {
+      "sha256": "05b564e05a405e0349a8054fd7e4b1d5a5cc46d5771be47fb522ccf24a08aeab",
+      "bytes": 19280
+    },
+    "artifacts/efficient_context_20261004/EWMA_TRANSPORT_CV_RESULTS.json": {
+      "sha256": "47cca03ccda6f0542014f48f1dbe71d99bcbcd86ae4739dc17e79e72160015e5",
+      "bytes": 2759
+    },
+    "artifacts/efficient_context_20261004/WIDE_REPLICATION_RESULTS.json": {
+      "sha256": "c15e32a8dea0eece9ab99aced7dc183f6946acee29d84c824a2ef4ac231c79b5",
+      "bytes": 5782
+    },
+    "artifacts/efficient_context_20261004/H8_WIDE_RESULTS.json": {
+      "sha256": "ab4af7c6b708d9cdd4288312468ad0a2f5bfe16ad6b176344420831c113aed77",
+      "bytes": 4059
+    },
+    "artifacts/efficient_context_20261004/H8_WIDE_RESULTS_seed13.json": {
+      "sha256": "a3a67b2a863309709ae7addd0208983213c37bb516e762821d5e033422f69ac0",
+      "bytes": 4066
+    },
+    "artifacts/efficient_context_20261004/H8_WIDE_RESULTS_seed23.json": {
+      "sha256": "179592e448b4a3b998ed2d5f4f920fead299c59f87ca7a8f4206c90d5a4514d7",
+      "bytes": 4072
+    },
+    "artifacts/efficient_context_20261004/COMPARATOR_CONTRACTS.json": {
+      "sha256": "5f0989f8962d9cdbef59e49f0cae9629d8f331f6ff764e95e877ba730c7a9d85",
+      "bytes": 7586
+    },
+    "artifacts/train40_system_20261005/ACCOUNTING_SNAPSHOT.json": {
+      "sha256": "e02013269c28a8fc897348a92f81952d60244eda899fedc59403ebef83e98188",
+      "bytes": 1241
+    },
+    "artifacts/train40_system_20261005/AUTHORIZATION.json": {
+      "sha256": "60bc2df59e951756d37c0dc79d93f7e63638768c47064d3d95c84eecc7461cac",
+      "bytes": 1695
+    },
+    "artifacts/train40_system_20261005/TRAINING_QUEUE_COMPLETION.json": {
+      "sha256": "a63aaade2997f90b9969c182d1dbcba7501b21d47af6cb180d402ed8df34bbaf",
+      "bytes": 174
+    },
+    "artifacts/train40_system_20261005/TECHNICAL_ACCOUNTING.json": {
+      "sha256": "a7dc371316abf5d1667fa77b97256630587ee141d420a3eb9b6747ae0f64a088",
+      "bytes": 457
+    },
+    "artifacts/train40_system_20261005/REPORT.md": {
+      "sha256": "7bb43582a6a3d174c715464dcbcfca1ae653202cb590a2d8b9c02dbbb42fa8e6",
+      "bytes": 1259
+    },
+    "artifacts/efficient_context_20261004/resumption_20261008/comparison/COMPARISON_DIAGNOSTICS.json": {
+      "sha256": "b0737c5a107725232a91ee0dd2d8dd26603fa68d0bd4a89f5b9c7300e7805ed8",
+      "bytes": 61550
+    },
+    "artifacts/efficient_context_20261004/resumption_20261008/comparison/QA.json": {
+      "sha256": "b4c842eacd1740b2194c15a8aa326ddbdf855c0df28d1040e3ecd21cd54fcd04",
+      "bytes": 551
+    },
+    "artifacts/efficient_context_20261004/resumption_20261008/evaluation/DEPENDENCY_STATUS.json": {
+      "sha256": "24c455c1574c2bc7d7579ca3177dea1e1d1ddb99dc3354e022ac9c59d50a76cc",
+      "bytes": 2232
+    }
+  },
+  "side_effects": {
+    "run_mutations": 0,
+    "training_updates": 0,
+    "gpu_work": false,
+    "push": false
+  }
+}

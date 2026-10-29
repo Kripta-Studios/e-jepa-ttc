@@ -1,0 +1,26 @@
+test_absent_bands_training_only (test_range_transfer.MassTests.test_absent_bands_training_only) ... ok
+test_benchmark_masses (test_range_transfer.MassTests.test_benchmark_masses) ... ok
+test_native_unchanged (test_range_transfer.MassTests.test_native_unchanged) ... ok
+test_preserves_group_totals (test_range_transfer.MassTests.test_preserves_group_totals) ... ok
+test_refuses_bad_mass (test_range_transfer.MassTests.test_refuses_bad_mass) ... ok
+test_refuses_outside_support (test_range_transfer.MassTests.test_refuses_outside_support) ... ok
+test_rejects_evaluation_roles (test_range_transfer.MassTests.test_rejects_evaluation_roles) ... ok
+test_row_permutation_equivariant (test_range_transfer.MassTests.test_row_permutation_equivariant) ... ok
+test_single_subrange (test_range_transfer.MassTests.test_single_subrange) ... ok
+test_subrange_cap (test_range_transfer.MassTests.test_subrange_cap) ... ok
+test_subrange_retains_outer_mass (test_range_transfer.MassTests.test_subrange_retains_outer_mass) ... ok
+test_accumulation_gradient_equivalence (test_range_transfer.ObjectiveTests.test_accumulation_gradient_equivalence) ... ok
+test_accumulation_value_equivalence (test_range_transfer.ObjectiveTests.test_accumulation_value_equivalence) ... ok
+test_added_term_finite_with_negative_targets (test_range_transfer.ObjectiveTests.test_added_term_finite_with_negative_targets) ... ok
+test_added_term_nonnegative (test_range_transfer.ObjectiveTests.test_added_term_nonnegative) ... ok
+test_batch_mass_not_normalized (test_range_transfer.ObjectiveTests.test_batch_mass_not_normalized) ... ok
+test_decoder_dead_zone_is_not_secretly_straight_through (test_range_transfer.ObjectiveTests.test_decoder_dead_zone_is_not_secretly_straight_through) ... ok
+test_exact_predictions_have_no_extra_penalty (test_range_transfer.ObjectiveTests.test_exact_predictions_have_no_extra_penalty) ... ok
+test_no_output_mutation (test_range_transfer.ObjectiveTests.test_no_output_mutation) ... ok
+test_nonfinite_coeff_rejected (test_range_transfer.ObjectiveTests.test_nonfinite_coeff_rejected) ... ok
+test_zero_is_exact_native_loss_and_gradient (test_range_transfer.ObjectiveTests.test_zero_is_exact_native_loss_and_gradient) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.027s
+
+OK

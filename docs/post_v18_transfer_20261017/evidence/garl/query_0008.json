@@ -1,0 +1,20 @@
+{
+  "query_id": "CCRs2-medium:10400287",
+  "registration_sha256": "46784d99adff5a2b80bc052d435e8fd8bdd3c9f62c15e6197d3365b648b73467",
+  "status": "PREDICTED",
+  "predictions": {
+    "Garl_full": 1.5398157835006714
+  },
+  "input_sha256": "118804b1be9bbc8d619401ef29e2914eed9b84ec7142685e42a7a05f59f764f4",
+  "heights": [
+    105.87608337402344,
+    113.22953033447266
+  ],
+  "seconds": {
+    "preprocess": 0.2558918000140693,
+    "model": 0.4436744999838993,
+    "total": 0.6995662999979686
+  },
+  "targets_read": false,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,36 @@
+{
+  "scope": "REAL_RAW_SUBPACKET_STATE_AND_REPRESENTATION_DIAGNOSTIC_FINAL_TTC_ONLY",
+  "status": "FAILED",
+  "records": [],
+  "start_time": "2026-10-28T11:34:29.631939+00:00",
+  "complete_update_admitted": false,
+  "target_50hz_demonstrated": false,
+  "latency_measured": false,
+  "three_quarters_latency_saving_claimed": false,
+  "objects": 1,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "error": "ValueError: RAW archive exceeds explicit 268435456 byte budget",
+  "end_time": "2026-10-28T11:34:30.959372+00:00",
+  "preservation": {
+    "passed": true,
+    "files": 626,
+    "changed": [],
+    "missing": []
+  },
+  "raw_stat_checks": [
+    {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\low-0\\overlap-0\\2024-08-08-10-49-53.hdf5",
+      "before": {
+        "size": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "after": {
+        "size": 7290398940,
+        "mtime_ns": 1785101252939617100
+      },
+      "passed": true
+    }
+  ],
+  "raw_stats_preserved": true
+}

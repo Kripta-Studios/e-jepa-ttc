@@ -1,0 +1,89 @@
+{
+  "all_saved_pairs_exact": true,
+  "attempt": 3,
+  "bundle_complete": false,
+  "checked_utc": "2026-10-08T17:54:12.069755+00:00",
+  "counts": [
+    {
+      "arm": "H1",
+      "block": "application_cold",
+      "pairs": 64
+    },
+    {
+      "arm": "H16",
+      "block": "application_cold",
+      "pairs": 64
+    },
+    {
+      "arm": "H8",
+      "block": "application_cold",
+      "pairs": 64
+    },
+    {
+      "arm": "WIDE",
+      "block": "application_cold",
+      "pairs": 64
+    },
+    {
+      "arm": "H1",
+      "block": "warm_block1",
+      "pairs": 64
+    },
+    {
+      "arm": "H16",
+      "block": "warm_block1",
+      "pairs": 64
+    },
+    {
+      "arm": "H8",
+      "block": "warm_block1",
+      "pairs": 64
+    },
+    {
+      "arm": "WIDE",
+      "block": "warm_block1",
+      "pairs": 38
+    }
+  ],
+  "cpu_system_s": 976.78125,
+  "cpu_user_s": 1820.875,
+  "current_effective_pairs_per_hour": 0,
+  "gpu_sharing": "Do not overlap new GPU inference with R1 timed requests; pause R1 first or await completion. Resume currently re-ingests saved prefix, costly.",
+  "io_read_bytes": 241271570343,
+  "last_productive_hour_pairs_per_hour": 68.21427155348506,
+  "last_saved_pair_age_minutes": 149.81246771017712,
+  "last_saved_pair_local": "2026-10-08T17:24:18.157621+02:00",
+  "measurement_create_time": 1791478390.8307185,
+  "measurement_pid": 23884,
+  "new_pairs_last_wall_hour": 0,
+  "optimizer_updates": 0,
+  "pairs_remaining": 282,
+  "pairs_saved": 486,
+  "pairs_total": 768,
+  "phase": "measurement",
+  "read_only": true,
+  "resume_analysis": {
+    "arm": "WIDE",
+    "chronological_position": 38,
+    "fix": "Skip fully completed (block,arm,sequence) groups before any advance; next unfinished group starts at a new sequence here, requiring no prefix resident state. For general mid-sequence resume reconstruct only tail needed at prior cutoff and record recovery separately. Preserve original receipts.",
+    "next_missing_block": "warm_block1",
+    "original_query": 28,
+    "possible_within_1h": false,
+    "recovery_remaining_hours_rough": 5.028653368936594,
+    "remaining_new_requests_hours_from_same_queries": 3.753835768944425,
+    "resident_state_needed_from_prefix": false,
+    "sample_token": "WbCh1DRerJ_000643_9495200000",
+    "saved_prefix_ingestion_hours_measured": 6.087097952749944,
+    "sequence_first_query": true,
+    "sequence_id": "WbCh1DRerJ",
+    "total_remaining_hours_rough": 8.782489137881019
+  },
+  "resume_diagnosis": "Active attempt replays sensor ingestion for every saved prefix receipt before new pairs; last2 attempts ended due STOP_REQUEST. Not a resource/parity failure.",
+  "source_freeze_matches": true,
+  "status": "RUNNING",
+  "supervisor_identity_valid": true,
+  "supervisor_lease": {
+    "create_time": 1791450044.5194364,
+    "pid": 44552
+  }
+}

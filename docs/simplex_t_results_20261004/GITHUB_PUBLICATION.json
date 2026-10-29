@@ -1,0 +1,103 @@
+{
+  "status": "PUBLISHED_AND_REMOTE_ASSETS_VERIFIED",
+  "url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/simplex-t-local-results-20261004",
+  "release_id": 402959804,
+  "tag": "simplex-t-local-results-20261004",
+  "source_commit": "11209ba3fc6b2cefb4fc25e45a43a01fc616f799",
+  "prerelease": true,
+  "published_at": "2026-10-04T10:15:59Z",
+  "assets": [
+    {
+      "name": "E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_215768633b2d.zip",
+      "bytes": 366470745,
+      "sha256": "84e2506584a4847a6fa55d3d02e881689285eee1cfa7278ff218526abd4d7e8a",
+      "verification": "GitHub asset digest",
+      "asset_id": 609601593,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_215768633b2d.zip"
+    },
+    {
+      "name": "E_JEPA_TTC_H16_REPLICATION_20261003.zip",
+      "bytes": 80619961,
+      "sha256": "08ee2aae60d56006a73fdb8b249a6467cee0704b0a258bb9ad5659f863b3e348",
+      "verification": "GitHub asset digest",
+      "asset_id": 609602307,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/E_JEPA_TTC_H16_REPLICATION_20261003.zip"
+    },
+    {
+      "name": "E_JEPA_TTC_SIMPLEX_T_NOCTURNO_60000_bbabc02921d2.zip",
+      "bytes": 319980492,
+      "sha256": "f7d915b3d203453696d7006b08dbde0c731c3d1f92e652d616edfad60e0e2ff1",
+      "verification": "GitHub asset digest",
+      "asset_id": 609602608,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/E_JEPA_TTC_SIMPLEX_T_NOCTURNO_60000_bbabc02921d2.zip"
+    },
+    {
+      "name": "E_JEPA_TTC_POST_CAMPANA_24ff19a567c6.zip",
+      "bytes": 30933226,
+      "sha256": "83c0599944a275a08568259aed69b72eed7ab56f15c7a8972a89abbff081b476",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603267,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/E_JEPA_TTC_POST_CAMPANA_24ff19a567c6.zip"
+    },
+    {
+      "name": "E_JEPA_TTC_SHARED_GPU_ROUTE_PARTIAL_1114_20261004.zip",
+      "bytes": 23344674,
+      "sha256": "081620d8d10a2709283ddaca582685103e16427945a674ebde16f074e872ef6b",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603405,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/E_JEPA_TTC_SHARED_GPU_ROUTE_PARTIAL_1114_20261004.zip"
+    },
+    {
+      "name": "E_JEPA_TTC_P3_READINESS_20261004.zip",
+      "bytes": 16884,
+      "sha256": "c208373ed4fc24eb04c5342213ca4de12fdbacea8eaa6d08eca2d3b8c82c0127",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603542,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/E_JEPA_TTC_P3_READINESS_20261004.zip"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 677,
+      "sha256": "c23f6a1920c7687998baf20549d80acd8c009b686e3bf2f5dec2bd0e60cb7ff2",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603618,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/SHA256SUMS.txt"
+    },
+    {
+      "name": "README.md",
+      "bytes": 7154,
+      "sha256": "28dffaeebbdc691aa8e09c0a2c2c07b8b3420b42e25f613d795dcb6c4da50070",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603717,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/README.md"
+    },
+    {
+      "name": "RESULTS_SUMMARY.json",
+      "bytes": 34174,
+      "sha256": "d74875065c8d82f35298ea01775dbfb10699a3c754ff754d15f031f586467df8",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603822,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/RESULTS_SUMMARY.json"
+    },
+    {
+      "name": "RELEASE_ASSETS.json",
+      "bytes": 2419,
+      "sha256": "8cd0bd027b69f6c81a5bfcbb7327d31cad8f1815bdd0ce8a5803fea54844e986",
+      "verification": "GitHub asset digest",
+      "asset_id": 609603882,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/RELEASE_ASSETS.json"
+    },
+    {
+      "name": "REVIEW_VERIFICATION.json",
+      "bytes": 764,
+      "sha256": "4dfc7e9dadf89474e41580cf8995512a67734d562ef672c68b104344388127fb",
+      "verification": "GitHub asset digest",
+      "asset_id": 609604002,
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/untagged-a76b8e76b7374c5750fa/REVIEW_VERIFICATION.json"
+    }
+  ],
+  "artifact_bytes": 821411170,
+  "optimizer_updates": 0,
+  "scientific_candidate_unchanged": "TPR-D1-H8-C160",
+  "incomplete_route_measurements": 614
+}

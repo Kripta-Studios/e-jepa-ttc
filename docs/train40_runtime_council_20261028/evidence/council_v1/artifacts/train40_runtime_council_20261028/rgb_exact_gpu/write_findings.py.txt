@@ -1,0 +1,118 @@
+"""Regenerate the narrow RGB GPU findings from the preserved index-553 receipt."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--source", type=Path,
+        default=Path("artifacts/train40_runtime_council_20261028/rgb_exact_gpu/idx553_v2/summary.json"),
+    )
+    parser.add_argument(
+        "--output", type=Path,
+        default=Path("docs/train40_runtime_council_20261028/RGB_GPU_FINDINGS.md"),
+    )
+    args = parser.parse_args()
+    summary = json.loads(args.source.read_text(encoding="utf-8"))
+    records = summary["records"]
+    assert summary["status"] == "COMPLETE" and summary["all_exact"]
+    assert {(row["objects"], row["index"]) for row in records} == {(1, 553)}
+    metrics = [
+        ("Reloj completo del microbenchmark", lambda r: r["wall_ms"]),
+        ("Sellado CPU incluido", lambda r: r["sealing_seconds_included"] * 1000),
+        ("Ring: despacho host", lambda r: r["prepare_receipt"]["ring"]["bind_enqueue_host_seconds"] * 1000),
+        ("Coeficientes + metadata host, diferencia de marcas", lambda r: (r["prepare_receipt"]["coefficient_and_ring_host_seconds"] - r["prepare_receipt"]["ring"]["bind_enqueue_host_seconds"]) * 1000),
+        ("Despacho de kernels y tablas host", lambda r: r["prepare_receipt"]["kernel_enqueue_host_seconds"] * 1000),
+        ("Cola final de sincronización + wrapper", lambda r: r["wall_ms"] - (r["sealing_seconds_included"] + r["prepare_receipt"]["prepare_host_seconds"]) * 1000),
+    ]
+    modes = ("full_history_miss", "causal_prefix_rebuilt")
+    table = ["| Tramo, ms | MISS completo | Prefijo causal reconstruido |", "|---|---:|---:|"]
+    for name, metric in metrics:
+        values = [[metric(row) for row in records if row["mode"] == mode] for mode in modes]
+        table.append("| " + name + " | " + " | ".join(f"{min(items):.3f}–{max(items):.3f}" for items in values) + " |")
+    cold = summary["cold_records"][0]["wall_ms"]
+    bucket = records[0]["prepare_receipt"]["shape_buckets"][0]
+    chunk1_bound = bucket[3]
+    text = f"""# RGB exacto GPU: un caso, un objeto
+
+Documento generado por `artifacts/train40_runtime_council_20261028/rgb_exact_gpu/write_findings.py`.
+Fuente: [recibo completo idx553_v2](../../{args.source.as_posix()}).
+
+Las {summary['coverage']['measured']} preparaciones del índice 553 pasan píxeles,
+normalización FP32 y deltas exactos. Se conservaron {summary['preservation']['files']}
+archivos, con {summary['warmed_recompilations']} recompilaciones durante las muestras
+templadas. El primer prepare real tardó {cold:.3f} ms e incluyó compilación.
+Hubo primación sintética explícita del perfil declarado; no cubre ROI arbitrarias.
+
+El reloj va de RAW disponible en CPU a representaciones RGB listas en GPU.
+Incluye sellado nuevo, copia pinned, H2D, coeficientes, recorte y sincronización.
+Excluye disco, reconstrucción del prefijo, modelos, TTC y paridad posterior.
+Son tres repeticiones por modo, no un stream ni una estimación fiable de colas.
+El MISS sella siete frames; el prefijo sella el frame nuevo 404 y conserva seis.
+
+{chr(10).join(table)}
+
+Las diferencias se calculan dentro de cada actualización. Los tramos host no
+son tiempos GPU exclusivos y los extremos de sus rangos no deben sumarse.
+El sellado domina el MISS completo. En el prefijo, el sellado sigue siendo
+material y el resto está repartido entre preparación CPU y despacho.
+
+## Transferencias y coeficientes
+
+`ResidentRGBFrameRing` ya usa memoria pinned y copias `non_blocking=True`.
+Las esperas al uso anterior son del orden de microsegundos en este recibo.
+No hay evidencia de que habilitar otra opción async acelere esta ruta.
+Un stream de copia separado necesitaría nuevos fences/leases y admisión; este
+microbenchmark no mide solapamiento con productores E/R.
+
+Una caché acotada de tablas exactas por `(input_size, output_size=128)` puede
+reutilizar coeficientes cuando cambian offsets pero se conserva el tamaño
+efectivo del crop. Cada MISS debe calcularse dentro del reloj; offsets, mapping,
+metadata y deltas siguen siendo actuales. También sería causal precomputar
+todas las longitudes de la resolución conocida durante startup, registrando
+tiempo y memoria, pues no utiliza pixels ni ROI futuros. Ninguna opción elimina
+el sellado, el despacho ni los MISS de compilación. La fila coeficientes+metadata
+es una cota del tramo potencialmente afectado, no una mejora medida.
+
+## Tokens ya sellados: integración propuesta, sin implementar
+
+El driver standalone comienza con arrays RAW y llama a `seal_frames` dentro de
+cada reloj. `ring.bind` no rehashea: valida tokens y copia payload nuevo a pinned.
+En cambio, `PreloadedRawSource._release_frames` y el reader immutable ya sellan
+cada frame causalmente en `acquire_raw`; su payload contiene `FrozenRGBFrame`
+auténticos. Esos tokens son directamente compatibles con el ring GPU.
+
+El adapter debe construir `rgb_pil_exact.FrozenRGBHistory` desde
+`payload.rgb.tokens`, conservando query/triplets/reason; no debe volver a llamar
+a `freeze_rgb_frame`. Los dos tipos `FrozenRGBHistory` pertenecen a módulos
+distintos. Hay que pasar `PreparedRGBBatch(metadata, pixels, delta)` al servicio,
+retener el lease durante productores/contexto y liberarlo tras el join, también
+en excepciones. La caché de features puede evitar crop en HIT y el ring conserva
+RAW entre MISS. El sellado único sigue dentro del deadline del feeder: desplazar
+el tramo a adquisición no autoriza restarlo del tiempo completo.
+
+## Corrección del límite de chunks y prioridad
+
+El bucket observado tras clipping es `{bucket[:3]}`. El bound temporal conservador
+de chunk1 es {chunk1_bound:,} bytes; chunk2 sería {2 * chunk1_bound:,} bytes,
+por debajo de 256 MiB para este caso. La estimación previa de 342.835.200 bytes
+para chunk2 correspondía al peor bucket horizontal 31, no al crop efectivo
+medido. El driver conserva chunk1; chunk2 no se ha medido en GPU.
+
+No se ha demostrado ventaja frente al servicio PIL en un contraste completo
+pareado. La prioridad actual sigue siendo la reutilización exacta de tripletas
+RGB y el transporte reverso, con paridad TTC. La caché de coeficientes queda
+como mejora acotada posterior. Antes de dos objetos, cualquier integración GPU
+debe pasar TTC y reloj completo con uno; este recibo no admite 20 ms ni 50 Hz.
+"""
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(text, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,76 @@
+{
+  "artifact_sha256": "e15a48adab34512d7cf0268c5dc9b9c24da6172d469855da3b12a7fe46db56e1",
+  "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+  "benchmark10_opened": false,
+  "candidate_label": "eap_ttc",
+  "comparisons": {
+    "sequence_macro_mae_s": {
+      "candidate_pair_wins": 0,
+      "candidate_relative_improvement_pct": -24.95050130961269,
+      "candidate_transfer_mean": 1.3384930523378507,
+      "control_mean": 1.0712186332259859,
+      "control_pair_wins": 2,
+      "pair_count": 2
+    },
+    "sequence_macro_mean_relative_error": {
+      "candidate_pair_wins": 0,
+      "candidate_relative_improvement_pct": -21.448240336448738,
+      "candidate_transfer_mean": 0.360304673152267,
+      "control_mean": 0.29667344059832645,
+      "control_pair_wins": 2,
+      "pair_count": 2
+    },
+    "sequence_macro_selection_score": {
+      "candidate_pair_wins": 0,
+      "candidate_relative_improvement_pct": -19.91463218328695,
+      "candidate_transfer_mean": 0.6932539806109161,
+      "control_mean": 0.5781229262758295,
+      "control_pair_wins": 2,
+      "pair_count": 2
+    }
+  },
+  "control_aggregate": "artifacts/runs/evttc32_eap_random_control_analysis_v1/core/aggregate.json",
+  "control_aggregate_sha256": "8121cb5194498ef5092744d46b5a0179b57c8ff31dffe1efe12e3b6303ceeddd",
+  "fold_seed_pairs": [
+    {
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "matched_control_audit_passed": true,
+  "paired_oof_sequence_bootstrap_by_seed": [
+    {
+      "candidate_minus_control_mae_s": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 0.26753778345882884,
+        "iterations": 2000,
+        "lower": 0.11965950803202766,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.4253169751461641
+      },
+      "candidate_minus_control_mean_abs_relative_error": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 0.06521584754301346,
+        "iterations": 2000,
+        "lower": 0.02324769396035802,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.12613630262947262
+      },
+      "sample_count": 160,
+      "seed": 7,
+      "sequence_count": 14
+    }
+  ],
+  "test_used_for_selection": false,
+  "transfer_aggregate": "artifacts/runs/evttc32_eap_ttc_transfer_analysis_v1/core/aggregate.json",
+  "transfer_aggregate_sha256": "02415cc0b22a28e74427634c903f0f732cca1811814d01d43d72d968c66fcf06",
+  "variant": "A0_MATCHED_GLOBAL"
+}

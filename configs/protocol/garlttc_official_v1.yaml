@@ -1,0 +1,12 @@
+protocol_id: garlttc_official_v1
+seeds: [7, 13, 23]
+official_release_commit: 256661242b8a7f5e56aa3c1c02348b30f6e89de6
+input_size: [128, 128]
+endpoint_delta_s: 0.1
+event_planes_per_endpoint: 20
+ttc_range: [-10.0, 10.0]
+fy: 1694.1323524131867
+selection_metric: paper_mid_overall_with_fr_guard
+test_labels_available: false
+zero_shot_selection_uses_evttc: false
+codabench_submission_budget: 3

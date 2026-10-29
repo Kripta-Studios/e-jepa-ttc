@@ -1,0 +1,187 @@
+{
+  "status": "COMPLETE",
+  "results": {
+    "all_three_seeds": {
+      "seeds": [
+        7,
+        13,
+        23
+      ],
+      "scores": {
+        "H8": 121.78402164633759,
+        "H16": 119.24135567986625,
+        "WIDE": 118.95406306610161
+      },
+      "contrasts": {
+        "H8": {
+          "point_delta": -2.8299585802358544,
+          "hierarchical_ci95": [
+            -6.069791314994117,
+            0.14946493823193846
+          ],
+          "sequence_only": {
+            "point_delta": -2.8299585802358536,
+            "ci95": [
+              -4.929479257917902,
+              -0.5411824546186569
+            ],
+            "fraction_negative": 0.9920547129349166,
+            "sequence_wins": 7,
+            "sequence_count_vectors": 24310,
+            "omit_one_score_deltas": [
+              -2.422722700987986,
+              -3.098006087857307,
+              -3.1911812373047215,
+              -3.6604077446655587,
+              -2.7783660945291606,
+              -2.562173251527434,
+              -3.021113758063507,
+              -2.4226647713690457,
+              -2.312991575817961
+            ],
+            "signflip_p_two_sided_descriptive": 0.046875,
+            "retraining_performed": false,
+            "confirmatory": false
+          },
+          "sequence_wins": 7,
+          "noninferiority_margin_mid": 2,
+          "noninferiority_supported": true
+        },
+        "H16": {
+          "point_delta": -0.2872926137644546,
+          "hierarchical_ci95": [
+            -2.060622385601424,
+            1.4316635484844291
+          ],
+          "sequence_only": {
+            "point_delta": -0.287292613764455,
+            "ci95": [
+              -1.5398724736465088,
+              0.7946814743531977
+            ],
+            "fraction_negative": 0.668274452051502,
+            "sequence_wins": 5,
+            "sequence_count_vectors": 24310,
+            "omit_one_score_deltas": [
+              -0.07573287112121033,
+              -0.26763389391760284,
+              -0.4333980907002176,
+              -0.44524704335196735,
+              -0.5788701009241075,
+              0.20153066104146372,
+              -0.47890000081998285,
+              -0.24015810778952928,
+              -0.26722407629694084
+            ],
+            "signflip_p_two_sided_descriptive": 0.6953125,
+            "retraining_performed": false,
+            "confirmatory": false
+          },
+          "sequence_wins": 5,
+          "noninferiority_margin_mid": 2,
+          "noninferiority_supported": true
+        }
+      },
+      "bootstrap": {
+        "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+        "valid_draws": 8192,
+        "attempts": 8195,
+        "discarded": 3,
+        "validity_fraction": 0.999633923123856
+      }
+    },
+    "new_seeds_only": {
+      "seeds": [
+        13,
+        23
+      ],
+      "scores": {
+        "H8": 121.8528663407279,
+        "H16": 119.4291640646752,
+        "WIDE": 119.20525091593015
+      },
+      "contrasts": {
+        "H8": {
+          "point_delta": -2.6476154247980164,
+          "hierarchical_ci95": [
+            -5.895916768971066,
+            0.3264522462491849
+          ],
+          "sequence_only": {
+            "point_delta": -2.647615424798015,
+            "ci95": [
+              -4.753614547725165,
+              -0.3455967741426988
+            ],
+            "fraction_negative": 0.9874111149552547,
+            "sequence_wins": 7,
+            "sequence_count_vectors": 24310,
+            "omit_one_score_deltas": [
+              -2.2545281017168106,
+              -2.9122925090354235,
+              -3.2468766634230612,
+              -3.3795894479742876,
+              -2.44520495722252,
+              -2.37305561336244,
+              -2.775619344921875,
+              -2.256641426272977,
+              -2.1847307592527425
+            ],
+            "signflip_p_two_sided_descriptive": 0.05859375,
+            "retraining_performed": false,
+            "confirmatory": false
+          },
+          "sequence_wins": 7,
+          "noninferiority_margin_mid": 2,
+          "noninferiority_supported": true
+        },
+        "H16": {
+          "point_delta": -0.2239131487452427,
+          "hierarchical_ci95": [
+            -2.052060665203226,
+            1.5244990260863165
+          ],
+          "sequence_only": {
+            "point_delta": -0.22391314874524193,
+            "ci95": [
+              -1.4476269341369628,
+              0.8805753529061987
+            ],
+            "fraction_negative": 0.6340373030709794,
+            "sequence_wins": 5,
+            "sequence_count_vectors": 24310,
+            "omit_one_score_deltas": [
+              -0.029645497487403888,
+              -0.2262923446246017,
+              -0.34370932300249457,
+              -0.42087101559492524,
+              -0.5693765128615125,
+              0.24746141074061795,
+              -0.3205476223008167,
+              -0.20861331557213672,
+              -0.14362411800390407
+            ],
+            "signflip_p_two_sided_descriptive": 0.73828125,
+            "retraining_performed": false,
+            "confirmatory": false
+          },
+          "sequence_wins": 5,
+          "noninferiority_margin_mid": 2,
+          "noninferiority_supported": true
+        }
+      },
+      "bootstrap": {
+        "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+        "valid_draws": 8192,
+        "attempts": 8195,
+        "discarded": 3,
+        "validity_fraction": 0.999633923123856
+      }
+    }
+  },
+  "aggregation": "arithmetic mean of paired losses per query; no averaged TTC",
+  "sign_finite_and_crucial_metrics": "retain the three separate per-seed reports",
+  "candidate_promoted": false,
+  "confirmation": false,
+  "optimizer_updates": 0
+}

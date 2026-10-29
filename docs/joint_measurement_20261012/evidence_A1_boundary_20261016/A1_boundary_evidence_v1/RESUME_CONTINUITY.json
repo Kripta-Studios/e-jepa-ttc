@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "adam_counter": true,
+    "curve_prefix": true,
+    "identity": true,
+    "no_recovery": true,
+    "origin_sha256": true,
+    "positive_progress": true,
+    "sample_order": true,
+    "sampler": true,
+    "scheduler_counter": true,
+    "timing_prefix": true
+  },
+  "completed_updates": 1600,
+  "origin_updates": 1425,
+  "scope": "CPU read-only continuation evidence; not a second training run",
+  "status": "PASS"
+}

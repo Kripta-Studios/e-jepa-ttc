@@ -1,0 +1,12 @@
+{
+  "artifact_type": "ordered_spawn_prefetch_backend_v1",
+  "consumer_order": "frozen_manifest_order",
+  "manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "max_ahead": 2,
+  "min_available_bytes": 2147483648,
+  "optimizer_updates": 0,
+  "scientific_binding_changed": false,
+  "source_sha256": "3333f4aa07aeade3743083169057e8ecedddb9e21a1b43296555cdc644927200",
+  "worker_torch_threads": 2,
+  "workers": 2
+}

@@ -1,0 +1,87 @@
+\section{Experimental chronology}
+\label{sec:history}
+
+Development began in June 2026 with the E-JEPA-TTC hypothesis: predictive latent
+learning might improve event-based TTC estimation. The research then moved
+through geometry and cross-time transport to temporal context and RGB--event
+fusion. Several evaluation corrections changed which results could support a
+claim.
+
+\subsection{June--July: predictive learning and evaluation corrections}
+
+The first experiments established indexed EvTTC access, voxel representations,
+a TinyCNN, and geometric/event-rate baselines. JEPA pretraining with
+latent-variance regularization led to multihorizon prediction, frozen-encoder
+probes, and low-label comparisons. Token transformers, tubelets, deep token
+supervision, navigation conditioning, and rollout probes tested other forms of
+temporal information.
+
+Centered derivatives gave the geometric baseline access to future observations.
+We replaced them with past-only derivatives and reported this annotation-assisted
+baseline on its supported queries, separate from models with different inputs or
+coverage.
+
+On 13 July, we reclassified the inspected CPLA-high results as reused-test
+diagnostics (\texttt{26480260}). Their three fine-tuning seeds shared one SSL
+initialization, so the spread reflects downstream optimization conditional on
+that parent. We removed the runs from final-test claims and added checkpoint,
+cache-version, nested-subset, and matched-scratch checks. No repartition of the
+inspected sequences could recreate a blind holdout.
+
+An eAP smoke-validation defect wrote success markers without running the matrix
+(\texttt{1f9e2f99}). We replaced the faulty path with the matrix invocation and
+added a regression test; the old markers were discarded as evidence.
+
+\subsection{August: geometry, transport and fold-local parents}
+
+August introduced physics-constrained FlowMimic, dense LevelDynamics,
+object-centric representations, and matched Garl comparisons. The A-series
+varied foreground geometry and decoder capacity, then added SAM supervision and
+DINOv3 relational distillation. A4 used an RGB teacher; A5 learned local
+cross-time transport on disjoint training rows. These stages no longer tested
+the original label-free JEPA objective alone.
+
+On 13 August, we found that several grouped runs inherited an A4 parent trained
+on their held-out outer groups (\texttt{de3349fd}). Those summaries remain
+parent-exposed diagnostics. The corrected study trained A4 inside each outer
+fold, keeping the held-out group out of both representation learning and
+downstream fitting.
+
+V6 and V7 produced no promoted model. A post-hoc A5/C2F routing result from V7
+became a prospective V8 hypothesis. V8 then tested temporal mechanisms and
+nested routing after correcting ROI quantization, timestamp bins, and bounded
+HDF5 reads. Unsupported predictions stayed in the evaluation as named failures.
+
+\subsection{September--October: context and multimodal measurement}
+
+X0/X1 and Stages 61--76 tested phase dynamics, raw timing, routing, risk, and
+context under fixed optimization budgets. Nested producers excluded held-out
+groups from training, and incomplete runs were not promoted to completed
+evaluations.
+
+SIMPLEX-T completed 24 head fits and 60,000 updates. Its H8/H16 comparisons
+retrained heads while sharing upstream producers. Efficient-context work then
+addressed TRAIN40 inputs and execution cost; the RGB port added native sensor
+clocks and transfer studies. The record also retains failed geometry, clipping,
+and nonlinear-readout controls from the range and representation studies.
+
+The multimodal V16 phase-correction family supplied the final-refit recipe.
+V18 tested joint measurement, correspondence, geometric readout, predictor
+capacity, and encoder adaptation. Some arms improved individual bands, but none
+passed every promotion criterion; V18 closed as \texttt{NO\_CANDIDATE}. V19
+then tested negative-loss weighting and fixed expert selection.
+
+\subsection{October: final refit and causal runtime}
+
+The final TRAIN40 refit used group-separated auxiliary producers for
+out-of-fold inputs and full-TRAIN40 producers for deployment. It followed the
+V16 recipe but trained a new model lineage. The submission preserved query-token
+identity and complete prediction coverage, and its official score placed
+PHASE-TTC first on the public GarlTTC Test leaderboard on 28 October 2026
+(Section~\ref{sec:official}).
+
+Runtime experiments covered persistent histories, exact normalization, graph
+execution, crop reuse, and multiobject replay. Timing reports separated startup
+from measured arrivals and counted valid TTC outputs separately from failed acknowledgements.
+The 5\,ms ingestion experiment kept 20\,ms output queries and established
+numerical parity for that setting; it did not measure throughput.

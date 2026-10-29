@@ -1,0 +1,19 @@
+{
+  "scope": "SYNTHETIC_PREPARED_VOXEL_NORMALIZATION_WITH_RESET_COPY_NO_SENSOR_NO_MODELS",
+  "torch": "2.11.0+cu128",
+  "python": "3.11.15",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "seed": 7,
+  "precision": "FLOAT64_NORMALIZATION_FLOAT32_OUTPUT_TF32_DISABLED",
+  "cuda_graphs": false,
+  "ordering": "alternate sort/topk order each paired repetition",
+  "warmup": 5,
+  "sources": {
+    "scripts\\benchmark_train40_normalization.py": "458b0b44d662a6e234abc95ebe413440e18ab2fc45de3d927ea05e3d676ce993",
+    "operational\\train40_runtime\\normalization.py": "2c7dc863d525338fb703085d221cd8d1d0b1e7432bee39bdb34ce9c7de1fa816"
+  },
+  "commit": "bc386dd002cad7090f5ae39e0ae8e6e86152eb0a",
+  "candidate_loaded": false,
+  "full_pipeline_claim": false
+}

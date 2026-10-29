@@ -1,0 +1,47 @@
+model:
+  correlation_dim: 48
+  log_scale_min: -0.22
+  log_scale_max: 0.22
+  scale_bins: 45
+  correlation_temperature: 0.06
+  foreground_floor: 0.05
+  epsilon: 1.0e-6
+
+loss:
+  lhr_weight: 4.0
+  expansion_weight: 1.0
+  correlation_weight: 1.0
+  sign_weight: 1.0
+  entropy_weight: 0.02
+  smooth_l1_beta: 0.004
+  sign_temperature: 0.015
+  max_abs_expansion: 0.25
+  epsilon: 1.0e-6
+
+train:
+  fold_count: 3
+  seeds: [7, 13, 23]
+  epochs: 8
+  final_epochs: 10
+  batch_size: 8
+  geometry_tail_tensors: 8
+  projection_learning_rate: 1.0e-4
+  geometry_learning_rate: 1.0e-5
+  weight_decay: 1.0e-4
+  geometry_anchor_weight: 0.01
+  max_grad_norm: 1.0
+  seed: 2727
+
+selection:
+  minimum_oof_pearson: 0.65
+  minimum_oof_negative_accuracy: 0.65
+  minimum_oof_balanced_sign: 0.78
+  minimum_oof_log_eta_pearson: 0.60
+  minimum_oof_negative_track_macro_accuracy: 0.70
+
+final_decision:
+  minimum_pearson_gain_over_v410: 0.005
+  minimum_negative_accuracy_gain_over_v410: 0.02
+  minimum_balanced_sign_gain_over_v410: 0.01
+  minimum_log_eta_pearson: 0.45
+  minimum_negative_track_macro_gain_over_v410: 0.02

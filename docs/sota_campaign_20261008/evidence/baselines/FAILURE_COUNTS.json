@@ -1,0 +1,38 @@
+{
+  "artifact_sha256": "6c62cf29f0bb003c593da848541dfa4bbcc25147e2f6b7eba57807e049b48779",
+  "failure_counts": {
+    "cmax": {
+      "RuntimeError:cmax_invalid:non_approaching_best_warp": 32
+    },
+    "strttc": {
+      "RuntimeError:Fewer than 12 valid STRTTC normal-flow measurements.": 14,
+      "RuntimeError:insufficient_roi_events:1375": 1,
+      "RuntimeError:insufficient_roi_events:1583": 1,
+      "RuntimeError:insufficient_roi_events:1977": 1,
+      "RuntimeError:non_positive_or_non_finite_endpoint_inverse_ttc": 4,
+      "SUCCESS": 11
+    }
+  },
+  "interpretation": "Coverage diagnostic only. No GT was opened and no paper metric or successful-subset accuracy is claimed.",
+  "prediction_ranges_not_metrics": {
+    "cmax": {
+      "count": 0,
+      "maximum_ttc_s": null,
+      "minimum_ttc_s": null
+    },
+    "strttc": {
+      "count": 11,
+      "maximum_ttc_s": 26.82596823742262,
+      "minimum_ttc_s": 0.31144660905584876
+    }
+  },
+  "query_count": 32,
+  "query_selection": "first_per_sequence_before_target_access",
+  "schema": "sota_baseline_dev32_failure_inventory_v1",
+  "scientific_optimizer_updates": 0,
+  "status": "COMPLETE",
+  "success_only_metrics_computed": false,
+  "summary_path": "artifacts/sota_campaign_20261008/baselines/dev32_first/SUMMARY.json",
+  "summary_physical_sha256": "8d34753f6761ae0a460ddc5eca17ab4501913763f7193866186fa849fd8d871b",
+  "target_fields_opened": []
+}

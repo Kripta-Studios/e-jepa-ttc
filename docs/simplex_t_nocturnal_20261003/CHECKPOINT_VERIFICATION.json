@@ -1,0 +1,175 @@
+{
+  "status": "EXTRACTED_COMPLETE_STATE_CHECKPOINTS_VERIFIED",
+  "checkpoints": [
+    {
+      "id": "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold0/seed13",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "9419dbccbcf558597ef58d51e94509688f92fbb4682d73fc916bc66f06cbb55b",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold1/seed13",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "c52f4c13bec032971d0da4980f03163165c32345a8aff1e72b531701fef15391",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold2/seed13",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "8561db9c39ce71e0e24fc0131b77b8d07cd83cd09b07192ce3d44779313a0fbd",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold0/seed23",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "28830f02b3c74b8974f52b728613c70b1c8b43a63153a80a0437bb8c8bb14c19",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold1/seed23",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "7c4cd9a1eb7bdc3f1bb70e93aa316a6b33611a12cddec96bc84808934c97eef6",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold2/seed23",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "e21ee1b1e8e08b80580c9e8e5126fcec078a0a328a3a0bc9f7eceba019c9700d",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/FULL_C0/fold0/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "7fe61ef51290a79de66eeef2874f9c1325ffda8e97a8e51c408bfc67e40877ce",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/FULL_C0/fold1/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "53b8d40d9fca6a4be3ad369436cc4984beb665a449f6f815460123d7525e3079",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/FULL_C0/fold2/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "d65cf92914f25a627755de47e3225cada711564a100e566866cbd06dffe4f0a6",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/A5_ONLY_C0/fold0/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "d193ed3b16806ce5ea153bc7971265770cc488b7b78a81feefe1a40f57ccb683",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/A5_ONLY_C0/fold1/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "fa242ce4d349cbb71bd30d715393a147dfd96d2c1d80f8e22f9b1c9126f19061",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/A5_ONLY_C0/fold2/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "445f3b9fa22ad7547081b07ef21359044d15c422c935dd32d1d89713e8f61570",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/C2F_ONLY_C0/fold0/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "4ef789316e3b8ce738388f8bf890d001820338e9e92f8e6d2607e8265065fae9",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/C2F_ONLY_C0/fold1/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "027ddc4f85e6887cd90d81eddc590383ba4e50b7f8df20d343c151589d14cc5e",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/C2F_ONLY_C0/fold2/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "7271e79ab23d683224a60b058c522ac29f951f79c8fa61bb655ca6136f98f545",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/A5_PAIR_C0/fold0/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "0e2c0b15c17fac8e3586b01a99f11ac9b5d0bfa9568b90b34ff7c21c5535bcd8",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/A5_PAIR_C0/fold1/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "581290a26b32174d3181271f575cb36e55813eeb2df73a8dde250cb649cf374a",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/A5_PAIR_C0/fold2/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "5dd0d311f66f23e8d14c205917244ea727f0d3645a83268c2493fad7f3bf5a5d",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/SET_AGE_C0/fold0/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "c5316b3e43bac82478ec92b8257503f81b50e081d0fbe391578af9a85ba348fb",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/SET_AGE_C0/fold1/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "2185b63b6a7b80918dc0bca73b5d136ebe87cb1f47d1491cc487473af7fd2020",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/SET_AGE_C0/fold2/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "682774ebc9931109731839ac233565cb3cf3b378d981df1295ede431ae8658c8",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/SET_NOTIME_C0/fold0/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "7e69a66e079f0fde08877a67e363a8f74671114ada306c3b6dbf845288e12d8b",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/SET_NOTIME_C0/fold1/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "987f12df45847a489a2e0f31d81421f37a8c0e2e3943d1780e274ebf33e3358c",
+      "full_state_integrity_verified": true
+    },
+    {
+      "id": "COST_CONTEXT_20261003/SET_NOTIME_C0/fold2/seed7",
+      "saved_updates": 2500,
+      "status": "COMPLETED",
+      "sha256": "92e608a729990ab4c821d6e5f1e6f5d2e196b46d2aeced53de13a2caabda24a6",
+      "full_state_integrity_verified": true
+    }
+  ],
+  "optimizer_updates": 0,
+  "raw_reconstruction": false
+}

@@ -1,0 +1,32 @@
+{
+  "event_objective_changed": false,
+  "files": {
+    "operational\\rgb_port_continuity\\__init__.py": "8133165d1905f1ace103ce822383311a4caa76a0269f78ba8f2e8b7796f5f4e4",
+    "operational\\rgb_port_continuity\\checkpoint.py": "22228be27ac111e2190f13ac66cb7eeef5158d5698275cf2d78984a5fb4191be",
+    "operational\\rgb_port_continuity\\contracts.py": "9538a1599fe92259ceff2dcf2f840adf35a2b47dc8bcca3609d78ccc11ca9dc5",
+    "operational\\rgb_port_continuity\\producer.py": "58123a897d7d82d3ed7e913ab1049c27cedc3671bb21185cce6178d1e6a33053",
+    "operational\\rgb_port_continuity\\queue.py": "1bb92f889a2f0a0ee05a839d8bd96bcc7523273982e20b89e021202984743173",
+    "operational\\rgb_port_streaming\\__init__.py": "5ccf102ae351de15a0aa7fb6389372965baf1d02f6afb4c91e6294ae6c21b7d6",
+    "operational\\rgb_port_streaming\\contracts.py": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c",
+    "operational\\rgb_port_streaming\\distill.py": "3336f840c6e27060d13064431fa69acbf68995b116761f2126513e546ff5a9a3",
+    "operational\\rgb_port_streaming\\endpoints.py": "c8fb9452cd1010a3bb5230488c564376153114ea1d4cfb0d40391b56a6914778",
+    "operational\\rgb_port_streaming\\infer.py": "e697d7bf1478942fef11514a7c7152fbaf6002cfc6ee38a482fa6bd07dcd6d77",
+    "operational\\rgb_port_streaming\\inputs.py": "04897e15cab204a3c68db215cee8efee559b1ab50140a1811266c33e47653bcc",
+    "operational\\rgb_port_streaming\\probe.py": "5c897f29ef997aa649f4d310781381b9276d6d53b29e6439b0e9cf99d9d828df",
+    "operational\\rgb_port_streaming\\runtime.py": "34be6482a4e9e875c6c352b85f5db842ea8c8054cf82a69d8394e9bf810680f4",
+    "operational\\rgb_port_streaming\\transport.py": "122cbc7734cfc74be36d80db7bebc410053da2ce9982c14498d7b0d26879387f",
+    "tests\\test_rgb_port_continuity.py": "c6421470d337bbac276fc1d44bde43d766e5b443ba74fbacedfa388327dd7b9a",
+    "tests\\test_rgb_port_streaming.py": "31d0a9cd9312be613c073151bf3de264793ed2bf58102697975dc934bb99e79e"
+  },
+  "geometry_precision": "bf16_unchanged",
+  "identity_sha256": "73f70070c5920f22ea3b0e7b18ba45212915520f1b3700ebd6044a518514c0c6",
+  "qa": {
+    "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\continuity_20261010\\QA_RECEIPT.json",
+    "sha256": "2d63c3110a3e5d0724a6c791f3e2460644fe91d6c5764175a568747e26904269"
+  },
+  "schema": "rgb_port_continuity_freeze_v1",
+  "upstream": {
+    "AUDIT_CODE_MIGRATION.json": "c1b142ca926741e35f230c6625f7adde8d10f255370b7b9f0be1fbb9d1917800",
+    "IO_RECOVERY_FREEZE.json": "ca8f122b9e66ae84ee243dc0974e9ac060878f183e20c35392cefc9737fe16ec"
+  }
+}

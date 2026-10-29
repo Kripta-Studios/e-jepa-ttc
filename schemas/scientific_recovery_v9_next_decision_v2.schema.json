@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "historical_decision_preserved", "raw_physical_status", "training_readiness", "status_by_stage", "authorized_branches_executed", "training_commit", "analysis_commit", "source_hashes", "seeds_and_replication_scope", "gate_details", "sealed_access_status", "abort_or_stop_reason", "automatic_next_action", "recommended_next_protocol"],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_next_decision_v2"}, "schema_version": {"const": "1.0"}, "evidence_type": {"const": "campaign_next_decision"},
+    "code_commit": {"type": "string"}, "protocol_version": {"type": "string"}, "protocol_sha256": {"type": "string"}, "created_at": {"type": "string"}, "artifact_sha256": {"type": "string"},
+    "historical_decision_preserved": {"const": "STAGE61_AND_X2_NEGATIVE_X3_BLOCKED"}, "raw_physical_status": {}, "training_readiness": {"type": "boolean"}, "status_by_stage": {"type": "object"}, "authorized_branches_executed": {"type": "object"}, "training_commit": {"type": ["string", "null"]}, "analysis_commit": {"type": "string"}, "source_hashes": {"type": "object"}, "seeds_and_replication_scope": {"type": "object"}, "gate_details": {"type": "object"}, "sealed_access_status": {"type": "object"}, "abort_or_stop_reason": {"type": "string"}, "automatic_next_action": {"const": "none"}, "recommended_next_protocol": {"type": "string"}
+  }, "additionalProperties": false
+}

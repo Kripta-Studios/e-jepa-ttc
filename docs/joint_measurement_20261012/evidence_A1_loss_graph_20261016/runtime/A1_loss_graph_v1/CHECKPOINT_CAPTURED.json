@@ -1,0 +1,42 @@
+{
+  "action_source_sha256": "8f03ec995c552e307fb67ea01c23ad2ad16d4edeafd842ed79af87b514922364",
+  "checkpoint_sha256": "57ead3ddf5a73a6698d2dece9bc552a3f9023f023643ce0a9394898b93544a57",
+  "completed_updates": 6400,
+  "journal": {
+    "completed_updates": 6400,
+    "durable_updates": 6400,
+    "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "pending_updates": 0,
+  "pointer": {
+    "checkpoint_sha256": "57ead3ddf5a73a6698d2dece9bc552a3f9023f023643ce0a9394898b93544a57",
+    "completed_updates": 6400,
+    "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+    "schema": "rgb_port_checkpoint_pointer_v1",
+    "version": "checkpoint_006400.pt"
+  },
+  "processes": {
+    "16080": 1792171996.036665,
+    "23684": 1792171960.0495126,
+    "38716": 1792172056.7220757
+  },
+  "receipt": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\adaptive\\A1_adaptation_depth\\fits\\A1-LAST-BLOCK-S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "57ead3ddf5a73a6698d2dece9bc552a3f9023f023643ce0a9394898b93544a57",
+    "complete_state": true,
+    "completed_updates": 6400,
+    "fit_id": "A1-LAST-BLOCK-S7",
+    "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": false,
+    "status": "RUNNING"
+  },
+  "scope_accounting": "Retain unclosed scope reservation conservatively",
+  "updates_lost": 0,
+  "utc": "2026-10-16T18:44:02.316101+00:00"
+}

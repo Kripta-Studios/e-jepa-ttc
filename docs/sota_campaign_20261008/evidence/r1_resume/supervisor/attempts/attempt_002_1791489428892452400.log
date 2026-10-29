@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\sota_eval\r1_resume.py", line 284, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\sota_eval\r1_resume.py", line 279, in main
+    execute(output, artifacts, plan_data)
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\sota_eval\r1_resume.py", line 246, in execute
+    code = r1_gib_measure.main()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\efficient_context\r1_gib_measure.py", line 42, in main
+    return r1_measure.main()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\efficient_context\r1_measure.py", line 68, in main
+    r1_profile.run(
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\efficient_context\r1_gib_measure.py", line 36, in run_gib
+    original(args)
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\efficient_context\r1_profile.py", line 194, in run
+    scoped.require_resources()
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v12-efficient-context\operational\efficient_context\r1_profile.py", line 41, in require_resources
+    raise InterruptedError("R1 stop requested; completed paired receipts preserved")
+InterruptedError: R1 stop requested; completed paired receipts preserved

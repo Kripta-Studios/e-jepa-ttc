@@ -179,6 +179,14 @@ def assert_split_claim_allowed(path: str | Path, *, claim_level: str) -> dict[st
     if claim not in {"development", "diagnostic", "official", "final"}:
         msg = f"Unknown claim level {claim_level!r}."
         raise ValueError(msg)
+
+    if claim == "final":
+        from e_jepa_ttc.experiments.test_lock import check_final_test_lock
+
+        if not check_final_test_lock(claim):
+            msg = "Final test lock is active and no valid unlock file was found."
+            raise ValueError(msg)
+
     protocol = read_split_protocol(path)
     allowed = set(protocol["allowed_claim_levels"])
     if claim not in allowed:
@@ -189,8 +197,7 @@ def assert_split_claim_allowed(path: str | Path, *, claim_level: str) -> dict[st
         )
         raise ValueError(msg)
     if claim in FINAL_CLAIM_LEVELS and (
-        protocol["status"] == REUSED_TEST_STATUS
-        or protocol["test_was_previously_inspected"]
+        protocol["status"] == REUSED_TEST_STATUS or protocol["test_was_previously_inspected"]
     ):
         msg = f"Reused/inspected test split {path} cannot produce {claim!r} results."
         raise ValueError(msg)

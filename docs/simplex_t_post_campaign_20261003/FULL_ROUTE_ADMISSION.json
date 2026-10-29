@@ -1,0 +1,33 @@
+{
+  "status": "BLOCKED_NO_EXCLUSIVE_GPU_HEAVY_IO_LEASE",
+  "acknowledged_slot": null,
+  "raw_payloads_read": false,
+  "system_latency_measured": false,
+  "missing_dependency": "Explicit exclusive GPU/heavy-I/O lease from Stage70–76 resource owner; then validate TRAIN raw sources and frozen producer bindings.",
+  "observed_utc": "2026-10-03T20:27:34.900116+00:00",
+  "ack_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\E_JEPA_SHARED_COORDINATION\\SIMPLEX_T_STAGE70_ACK.json",
+  "ack_sha256": "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318",
+  "current_owner_metadata": [
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-stage70-architecture\\artifacts\\stage70_76_architecture\\expansion_raw_bindings\\ACTIVE_OWNER.json",
+      "exists": false
+    }
+  ],
+  "historical_worker_pid_checks": [
+    {
+      "pid": 36040,
+      "historical_created_unix": 1788698726.5737956,
+      "same_process_alive": false
+    },
+    {
+      "pid": 38464,
+      "historical_created_unix": 1788698726.5809727,
+      "same_process_alive": false
+    }
+  ],
+  "eap_root_exists": true,
+  "no_stage_changes": true,
+  "cpu_admission": "no verified historical expansion worker or owner alive; own CPU/resource contract applies",
+  "final_ack_sha256": "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318",
+  "final_slot": null
+}

@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_config_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type", "arm_id", "execution_authorized", "scientific_role",
+    "feature_source", "motion_feature_mode", "loss_reduction", "seed",
+    "upstream_roi_is_box_conditioned",
+    "explicit_foreground_height_interface_bypassed", "folds", "sealed_evaluation"
+  ],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_eclock_config_v1"},
+    "arm_id": {"enum": ["X0-A5-REPLAY", "X0-PAIR-U", "X0-BASE-U", "X0-DYN-U", "X0-DYN-W"]},
+    "execution_authorized": {"type": "boolean"},
+    "scientific_role": {"type": "string", "minLength": 1},
+    "feature_source": {"enum": ["a5_pair", "raw_endpoint"]},
+    "motion_feature_mode": {"enum": ["embedded_a5", "global_uniform_zeroed_control", "global_uniform"]},
+    "loss_reduction": {"enum": ["historical_a5", "mean_smooth_l1_benchmark_phase_error", "normalized_weighted_absolute_phase_error"]},
+    "seed": {"const": 7},
+    "upstream_roi_is_box_conditioned": {"const": true},
+    "explicit_foreground_height_interface_bypassed": {"type": "boolean"},
+    "source_a5_checkpoint": {"type": "string", "minLength": 1},
+    "source_a5_checkpoint_sha256": {"type": "string", "minLength": 1},
+    "model": {"$ref": "#/$defs/model"},
+    "training": {"$ref": "#/$defs/training"},
+    "official_sample_weights_source": {"const": "verified_v8_signed_universe"},
+    "weight_clipping": {"const": false},
+    "bucket_recomputation": {"const": false},
+    "outer_dev_weight_selection": {"const": false},
+    "target_or_error_resampling": {"const": false},
+    "execution_status": {"const": "config_schema_loss_unit_tested_not_executed"},
+    "folds": {"const": [0, 1, 2]},
+    "checkpoint_policy": {"const": "last_epoch_fixed_budget"},
+    "sealed_evaluation": {"const": "closed"}
+  },
+  "$defs": {
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "in_channels", "encoder_hidden_dim", "encoder_token_dim", "residual_depth",
+        "dropout", "clock_hidden_dim", "metric_delta_t_s",
+        "minimum_abs_prediction_ttc_s", "ttc_clip_seconds", "min_sensor_support",
+        "risk_thresholds_s", "transport_radius", "transport_temperature",
+        "phase_weighting", "learn_phase_variance"
+      ],
+      "properties": {
+        "in_channels": {"const": 12},
+        "encoder_hidden_dim": {"const": 64},
+        "encoder_token_dim": {"const": 128},
+        "residual_depth": {"const": 2},
+        "dropout": {"const": 0.05},
+        "clock_hidden_dim": {"const": 128},
+        "metric_delta_t_s": {"const": 0.1},
+        "minimum_abs_prediction_ttc_s": {"const": 0.1},
+        "ttc_clip_seconds": {"const": 60.0},
+        "min_sensor_support": {"const": 0.0001},
+        "risk_thresholds_s": {"const": [0.5, 1.0, 2.0, 4.0]},
+        "transport_radius": {"const": 1},
+        "transport_temperature": {"const": 0.02},
+        "phase_weighting": {"enum": ["uniform", "official_macro_mid"]},
+        "learn_phase_variance": {"const": false}
+      }
+    },
+    "training": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["epochs", "batch_size", "learning_rate", "weight_decay", "precision_mode", "checkpoint_policy"],
+      "properties": {
+        "epochs": {"const": 40},
+        "batch_size": {"const": 32},
+        "learning_rate": {"const": 0.0003},
+        "weight_decay": {"const": 0.0001},
+        "scheduler": {"const": "constant"},
+        "sampler": {"const": "deterministic_sequence_grouped"},
+        "precision_mode": {"const": "float32"},
+        "checkpoint_policy": {"const": "last_epoch_fixed_budget"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"arm_id": {"const": "X0-DYN-W"}}},
+      "then": {
+        "properties": {
+          "execution_authorized": {"const": false},
+          "loss_reduction": {"const": "normalized_weighted_absolute_phase_error"}
+        },
+        "required": [
+          "model", "training", "official_sample_weights_source", "weight_clipping",
+          "bucket_recomputation", "outer_dev_weight_selection", "target_or_error_resampling",
+          "execution_status"
+        ]
+      }
+    },
+    {
+      "if": {"properties": {"arm_id": {"enum": ["X0-BASE-U", "X0-DYN-U"]}}},
+      "then": {"required": ["model", "training"]}
+    },
+    {
+      "if": {"properties": {"arm_id": {"enum": ["X0-A5-REPLAY", "X0-PAIR-U"]}}},
+      "then": {"required": ["source_a5_checkpoint", "source_a5_checkpoint_sha256"]}
+    }
+  ]
+}

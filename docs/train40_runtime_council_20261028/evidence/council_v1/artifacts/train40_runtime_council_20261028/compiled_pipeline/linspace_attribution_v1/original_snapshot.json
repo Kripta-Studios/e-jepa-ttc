@@ -1,0 +1,206 @@
+{
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\original_snapshot.json": {
+    "sha256": "a19dbacfb2273a46796e985fcba77c57477ff28fe61a985a6a3dc7c612a7417c",
+    "size_bytes": 186908
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_E_A5_MATCHED_fine_inputs.pt": {
+    "sha256": "0f896935535955520a82e33b7d71c3d841e1924a0e439d2fb510a226b4b82487",
+    "size_bytes": 4262625
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_E_A5_MATCHED_fine_outputs.pt": {
+    "sha256": "4f0aaed58e3e8a2f03f52d7b433c19bf42cc0e439f21da550a0c1d4c44fbbec8",
+    "size_bytes": 8647
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_E_C2F_MATCHED_coarse_inputs.pt": {
+    "sha256": "e11aba24d199b107b9699d792815ff90de32d7b07b84496138d71e69a71634c8",
+    "size_bytes": 1067775
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_E_C2F_MATCHED_coarse_outputs.pt": {
+    "sha256": "593a282afb314d8a1580706faf21d87fa951ee9e30f2c55c4d31df20337406e1",
+    "size_bytes": 8689
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_E_C2F_MATCHED_fine_inputs.pt": {
+    "sha256": "74db44c85ccebe97b713970377909715dbc1b3c693ac62969fb9e270bbfefbbe",
+    "size_bytes": 4262635
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_E_C2F_MATCHED_fine_outputs.pt": {
+    "sha256": "a09c9fcf29e40f39dd869d76f6a5634fb2b7e72ab2971c0ce7a81ec07d61ce6e",
+    "size_bytes": 8661
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_R_A5_fine_inputs.pt": {
+    "sha256": "9be689c09f8d7e7665c9437b6442fb9d5dfba679224b70edf53f8ccb37baacb0",
+    "size_bytes": 5327505
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_R_A5_fine_outputs.pt": {
+    "sha256": "7571d0c606022d94b5ba169cfb0b9abdf05d93f0c969a4eec4367b2f301332c9",
+    "size_bytes": 9559
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_R_C2F_coarse_inputs.pt": {
+    "sha256": "0f0f89beb5890ed4c8d68f5c04b00d34db58936cc716485b92d85f6221e681ed",
+    "size_bytes": 1333935
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_R_C2F_coarse_outputs.pt": {
+    "sha256": "8ba789c7ed62f75f25f2f64d608c85a04a12a43a96dea4969c870f43120e9aa9",
+    "size_bytes": 9601
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_R_C2F_fine_inputs.pt": {
+    "sha256": "7b1ac26ae3556c48ddc276e7576a9e9a8b61dad047a3c23b6907f4e2389c0321",
+    "size_bytes": 5327515
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query488_R_C2F_fine_outputs.pt": {
+    "sha256": "508a7de93df50af558637d5b0c9a14935cea0d67b26f6df897c4f6e2bee8f026",
+    "size_bytes": 9573
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_E_A5_MATCHED_fine_inputs.pt": {
+    "sha256": "716f7b11c535a860da3050c72f9b733ab9d2c22e9597b9abf8e893d7b213e8ff",
+    "size_bytes": 4262625
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_E_A5_MATCHED_fine_outputs.pt": {
+    "sha256": "e2b9c8148695e879544d43e42a3bf03bfa64910137fbb9c9f19a4c23092eba60",
+    "size_bytes": 8647
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_E_C2F_MATCHED_coarse_inputs.pt": {
+    "sha256": "a3dabbd0deb62cfb660cec8dc73300037e22d1a51bbf8c694b702fd39af176a8",
+    "size_bytes": 1067775
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_E_C2F_MATCHED_coarse_outputs.pt": {
+    "sha256": "744ca1fb79b8d4fded5eea1afd86ffbcb91c8de0b7ff7fa4639b58b279632a4a",
+    "size_bytes": 8689
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_E_C2F_MATCHED_fine_inputs.pt": {
+    "sha256": "0da2dfc8932ce7a39b72b99cf2501b1230dce3c710782df8d2c35ed8a7c6f752",
+    "size_bytes": 4262635
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_E_C2F_MATCHED_fine_outputs.pt": {
+    "sha256": "86c4a49793419c70cfe9d5686f22380904bc959654c458c643549e2ccf6d85c0",
+    "size_bytes": 8661
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_R_A5_fine_inputs.pt": {
+    "sha256": "2eca53279e747513b1a8b9448377c9289814af190e1e1c1e58523162398a75b4",
+    "size_bytes": 5327505
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_R_A5_fine_outputs.pt": {
+    "sha256": "2eab39fdb91304b6e881fe4464ccd1687d40589b0d2fad8bed8a2ef9d82a1a67",
+    "size_bytes": 9559
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_R_C2F_coarse_inputs.pt": {
+    "sha256": "a028179cd0c59312f131029f802fba10523925195fdf5ddd5dbb536421e9ccfa",
+    "size_bytes": 1333935
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_R_C2F_coarse_outputs.pt": {
+    "sha256": "4987637b56327e0c40cb1042dbc76b4264c3f93d7016928afb8075a5bb3a4f3d",
+    "size_bytes": 9601
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_R_C2F_fine_inputs.pt": {
+    "sha256": "9565dfdc4e5c4b358d7b912563cadb614bc8a21411d6081ae6281b37088f910b",
+    "size_bytes": 5327515
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\query505_R_C2F_fine_outputs.pt": {
+    "sha256": "b21b196545693ae0cc74d47248e59c65c1cc5851e2ed862cd281837a8e9e6135",
+    "size_bytes": 9573
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\summary_attribution_v1\\summary.json": {
+    "sha256": "ebbfe1c6cf7f878c61b9b4b7e987207334d9fe2bf7ddebba1d11a6887564e728",
+    "size_bytes": 4724326
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\original_snapshot.json": {
+    "sha256": "d2d24395253251e47c4e4955cb2cf260dc200cf1eec4b54885fd3dab9fa72b80",
+    "size_bytes": 12448
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query488_E_A5_MATCHED_fine_outputs.pt": {
+    "sha256": "4ce3b788206a85f163d6dbb74e112b37d9e7d518f2421351fffabf99412d13b4",
+    "size_bytes": 6873
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query488_E_C2F_MATCHED_coarse_outputs.pt": {
+    "sha256": "105190f9916d2fd8e4422ebd6729dcd27d565d7ff3925cb49509f3d390ca9941",
+    "size_bytes": 6909
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query488_E_C2F_MATCHED_fine_outputs.pt": {
+    "sha256": "84be6ddd266bc639ef391412601acafe7e6eb05ed2ef3aea85a6afc6e8fc8392",
+    "size_bytes": 6885
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query488_R_A5_fine_outputs.pt": {
+    "sha256": "c2691f47326a06bc44383ba25ce3e39a2e9f04bea14a6d94118026e1c5051aeb",
+    "size_bytes": 7545
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query488_R_C2F_coarse_outputs.pt": {
+    "sha256": "a4f839d727d5892260272717fe27d8519700e615521ea7e51a80ed238c81b637",
+    "size_bytes": 7581
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query488_R_C2F_fine_outputs.pt": {
+    "sha256": "ccdecf9d08a370c5a41189308f9c3cedf8112001af2316806511325c58ce51bd",
+    "size_bytes": 7557
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query505_E_A5_MATCHED_fine_outputs.pt": {
+    "sha256": "5e1ee33fd1fd25a40100e69b2a15e151659cfb8aa63adce488205e96d1a4a02c",
+    "size_bytes": 6873
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query505_E_C2F_MATCHED_coarse_outputs.pt": {
+    "sha256": "553062a850b224bbac0cc8606a377226f549033841fcc889aedf195f2b0c1ee9",
+    "size_bytes": 6909
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query505_E_C2F_MATCHED_fine_outputs.pt": {
+    "sha256": "5dbe75ce4095cd7f429083e42bf03035f438fd3327e87d92c4a8fc982d3faf8b",
+    "size_bytes": 6885
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query505_R_A5_fine_outputs.pt": {
+    "sha256": "d4d56758f527ab180593d9dfa701601e12bbbb0fea09a62e4b736a30f2e4c1db",
+    "size_bytes": 7545
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query505_R_C2F_coarse_outputs.pt": {
+    "sha256": "fa18593f5c4b2f1a8f78381f82462f2c6e2a3abbdcbd3ee61536b710506b7a37",
+    "size_bytes": 7581
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\query505_R_C2F_fine_outputs.pt": {
+    "sha256": "113ac6bb21907b2ba6a98c73fb7b19201fafd7304d2e8f76b5fa5fbfd2f41ba4",
+    "size_bytes": 7557
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\train40_runtime_council_20261028\\compiled_pipeline\\weighted_mean_attribution_v1\\summary.json": {
+    "sha256": "6807aa262890ef94651cda1123ff9a7e9a7e823e6d1efd13155239fd8f8827f3",
+    "size_bytes": 4955408
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\train40_runtime\\compiled_pipeline.py": {
+    "sha256": "80cb83349a83eaa62708d9366bc62b99209f7d7828526b0583f7b5bff79076ca",
+    "size_bytes": 18406
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\train40_runtime\\compiled_transport.py": {
+    "sha256": "0ff211ab33df33b1a5a9e8ccb27c8391ed03b73eac0828673415275b4a14d3c9",
+    "size_bytes": 10381
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\operational\\train40_runtime\\measurement.py": {
+    "sha256": "448cd81437f165f5c3b399f790f8be2867c75113ef11ec2fc123ea56fbf5bb42",
+    "size_bytes": 21570
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\benchmark_train40_compiled_pipeline.py": {
+    "sha256": "1488173ebf470e9a7cd54cfa828dfd29ca1784965dfe0755f88b55d6d3d2b97a",
+    "size_bytes": 35166
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\benchmark_train40_encoder.py": {
+    "sha256": "424100ae161ff84e3bbec69467933bbad9d34506bf21307e16b679a94c95c5f5",
+    "size_bytes": 16618
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\benchmark_train40_producer_variants.py": {
+    "sha256": "94658e5bc23553fd6961199158296e308f11c12db67b171ebe2dc5f7f34695ce",
+    "size_bytes": 27245
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\diagnose_train40_linspace.py": {
+    "sha256": "1ca5fa9ee4b642af33a26c902a1abb5f95e9f80951fd9403dcdfc429ac2c0274",
+    "size_bytes": 26605
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\diagnose_train40_transport_summaries.py": {
+    "sha256": "d9f6f0252b6199dd4b9f7bb21583910594921849a02f1b4dd91ade61df6f33a9",
+    "size_bytes": 30386
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\diagnose_train40_weighted_mean.py": {
+    "sha256": "96e6513f9edaef5496c4b909e38c018c000e0fe5316b16973a12e3249d284e4e",
+    "size_bytes": 24809
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py": {
+    "sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+    "size_bytes": 58202
+  },
+  "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\src\\e_jepa_ttc\\models\\local_transport.py": {
+    "sha256": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d",
+    "size_bytes": 14258
+  }
+}

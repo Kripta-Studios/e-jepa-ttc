@@ -1,0 +1,18 @@
+{
+  "artifact_type": "full_garl_ordered_spawn_prefetch_backend_v1",
+  "consumer_order": "frozen_manifest_order",
+  "manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "max_ahead": 2,
+  "min_available_bytes": 2147483648,
+  "optimizer_updates": 0,
+  "scientific_binding_changed": false,
+  "sources": {
+    "operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "operational\\evttc_rgb_transfer\\model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+    "operational\\evttc_rgb_transfer\\run.py": "f9bb29a949134b18181146f1b25bbd97b6eccf008ea78874a91aa542e0d4a2c5",
+    "operational\\sota_eval\\full_prefetch.py": "164bb6e1ef0f33a6f838a964d33cb8b461a92cad175d4d269c1f320a7dc65127",
+    "operational\\sota_eval\\prefetch.py": "3333f4aa07aeade3743083169057e8ecedddb9e21a1b43296555cdc644927200"
+  },
+  "worker_torch_threads": 2,
+  "workers": 2
+}

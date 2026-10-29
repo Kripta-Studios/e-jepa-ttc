@@ -31,6 +31,11 @@ def _write_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -50,6 +55,11 @@ def _write_tubelet_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -72,6 +82,11 @@ def _write_navigation_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -94,11 +109,14 @@ def _write_multival_cache(path: Path) -> None:
     split = np.array(
         ["train"] * 8 + ["validation_car"] * 4 + ["validation_pedestrian"] * 2 + ["test"] * 2
     )
-    sequence_id = np.array(
-        ["seq-train"] * 8 + ["seq-car"] * 4 + ["seq-ped"] * 2 + ["seq-test"] * 2
-    )
+    sequence_id = np.array(["seq-train"] * 8 + ["seq-car"] * 4 + ["seq-ped"] * 2 + ["seq-test"] * 2)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -128,6 +146,13 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert pretrain_summary["best_epoch"] == 1
     assert pretrain_summary["pretrain_seed"] == 5
     assert pretrain_summary["checkpoint_selection"]["recommended_role"] == "best"
+    assert len(pretrain_summary["cache_sha256"]) == 64
+    assert len(pretrain_summary["run_fingerprint"]) == 64
+    assert (
+        pretrain_summary["run_fingerprint_payload"]["cache_sha256"]
+        == (pretrain_summary["cache_sha256"])
+    )
+    assert pretrain_summary["git_commit"]
     assert pretrain_summary["objective"] == "dense_temporal_token_motion_multihorizon"
     assert pretrain_summary["dense_tokens"] is True
     assert pretrain_summary["motion_conditioning"] is True
@@ -139,6 +164,8 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     checkpoint_payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
     assert checkpoint_payload["checkpoint_role"] == "best"
     assert checkpoint_payload["checkpoint_selected_by"] == "validation_loss"
+    assert checkpoint_payload["cache_sha256"] == pretrain_summary["cache_sha256"]
+    assert checkpoint_payload["run_fingerprint"] == pretrain_summary["run_fingerprint"]
 
     train_summary = train_tiny_cnn(
         cache_path=cache_path,
@@ -154,10 +181,27 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert train_summary["pretrained_encoder"]["source_model"] == "tiny_cnn_jepa"
     assert train_summary["pretrained_encoder"]["source_seed"] == 5
     assert train_summary["pretrained_encoder"]["checkpoint_role"] == "best"
+    assert len(train_summary["pretrained_encoder"]["checkpoint_sha256"]) == 64
+    assert (
+        train_summary["run_fingerprint_payload"]["pretraining_checkpoint_sha256"]
+        == (train_summary["pretrained_encoder"]["checkpoint_sha256"])
+    )
     assert train_summary["pretrain_seed"] == 5
     assert train_summary["downstream_seed"] == 5
     assert train_summary["freeze_encoder"] is True
     assert train_summary["effective_train_count"] == 3
+    scratch_fingerprint = train_tiny_cnn(
+        cache_path=cache_path,
+        output_dir=tmp_path / "scratch_fingerprint",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        freeze_encoder=True,
+        train_fraction=0.5,
+        dry_run_fingerprint=True,
+    )
+    assert scratch_fingerprint != train_summary["run_fingerprint"]
 
 
 def test_supervised_training_can_skip_test_evaluation(tmp_path: Path) -> None:
@@ -267,6 +311,7 @@ def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> No
         batch_size=3,
         device_name="cpu",
         evaluation_splits=("test",),
+        allow_final_test_evaluation=True,
     )
 
     assert eval_summary["evaluation_splits"] == ["test"]
@@ -274,8 +319,23 @@ def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> No
     assert eval_summary["checkpoint_epoch"] == train_summary["best_epoch"]
     assert sorted(eval_summary["splits"]) == ["test"]
     assert eval_summary["splits"]["test"]["count"] == 3
+    assert eval_summary["splits"]["test"]["sequence_count"] == 1
+    assert (
+        eval_summary["splits"]["test"]["mae_sequence_bootstrap_95"]["status"]
+        == "degenerate_single_sequence"
+    )
     predictions = np.load(tmp_path / "test_eval.predictions.npz")
-    assert sorted(predictions.files) == ["test_pred", "test_true"]
+    assert sorted(predictions.files) == [
+        "test_context_end_us",
+        "test_context_start_us",
+        "test_global_index",
+        "test_pred",
+        "test_sequence_id",
+        "test_timestamp_us",
+        "test_true",
+    ]
+    assert predictions["test_sequence_id"].astype(str).tolist() == ["fixture"] * 3
+    assert predictions["test_global_index"].tolist() == [9, 10, 11]
 
 
 def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
@@ -319,9 +379,7 @@ def test_dense_transformer_jepa_predictor(tmp_path: Path) -> None:
         dense_predictor="transformer",
     )
 
-    assert pretrain_summary["objective"] == (
-        "transformer_dense_temporal_token_motion_multihorizon"
-    )
+    assert pretrain_summary["objective"] == ("transformer_dense_temporal_token_motion_multihorizon")
     assert pretrain_summary["dense_predictor"] == "transformer"
     assert pretrain_summary["dense_tokens"] is True
     assert (tmp_path / "transformer_predictor_jepa" / "jepa_encoder_best.pt").exists()
@@ -352,10 +410,7 @@ def test_dense_alltoken_jepa_context_loss(tmp_path: Path) -> None:
     assert pretrain_summary["context_token_weight"] == 0.25
     assert pretrain_summary["last"]["train"]["context_token_loss"] > 0.0
     assert pretrain_summary["last"]["train"]["context_token_target_count"] > 0.0
-    assert (
-        pretrain_summary["leakage_audit"]["context_token_loss_uses_current_context_only"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["context_token_loss_uses_current_context_only"] is True
 
 
 def test_visreg_jepa_regularizer(tmp_path: Path) -> None:
@@ -394,10 +449,7 @@ def test_visreg_jepa_regularizer(tmp_path: Path) -> None:
     assert pretrain_summary["last"]["train"]["temporal_straightening_loss"] >= 0.0
     assert pretrain_summary["leakage_audit"]["visreg_uses_batch_embeddings_only"] is True
     assert pretrain_summary["leakage_audit"]["visreg_uses_ttc_labels"] is False
-    assert (
-        pretrain_summary["leakage_audit"]["temporal_straightening_uses_predictions_only"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["temporal_straightening_uses_predictions_only"] is True
 
 
 def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
@@ -442,9 +494,7 @@ def test_event_tubelet_rope_jepa_pretraining_smoke(tmp_path: Path) -> None:
     )
 
     assert pretrain_summary["model_name"] == "event-tubelet-rope-transformer"
-    assert pretrain_summary["objective"] == (
-        "transformer_dense_temporal_token_motion_multihorizon"
-    )
+    assert pretrain_summary["objective"] == ("transformer_dense_temporal_token_motion_multihorizon")
     assert pretrain_summary["dense_predictor"] == "transformer"
     assert (tmp_path / "tubelet_rope_jepa" / "jepa_encoder_best.pt").exists()
 
@@ -485,10 +535,7 @@ def test_event_tubelet_jepa_tubelet_mask_smoke(tmp_path: Path) -> None:
         pretrain_summary["leakage_audit"]["tubelet_masking_uses_context_event_channels_only"]
         is True
     )
-    assert (
-        pretrain_summary["leakage_audit"]["tubelet_masking_preserves_auxiliary_channels"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["tubelet_masking_preserves_auxiliary_channels"] is True
     assert (tmp_path / "tubelet_mask_jepa" / "jepa_encoder_best.pt").exists()
 
 
@@ -522,15 +569,10 @@ def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None
     assert pretrain_summary["navigation_feature_names"] == list(NAVIGATION_FEATURE_NAMES)
     assert pretrain_summary["action_feature_names"][-1] == "ego_navigation_valid"
     assert pretrain_summary["leakage_audit"]["action_conditioning_uses_context_only"] is True
-    assert (
-        pretrain_summary["leakage_audit"]["action_feature_normalization_uses_train_only"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["action_feature_normalization_uses_train_only"] is True
     assert pretrain_summary["leakage_audit"]["uses_future_navigation"] is False
     assert (
-        pretrain_summary["leakage_audit"][
-            "future_navigation_channels_zeroed_before_target_encoder"
-        ]
+        pretrain_summary["leakage_audit"]["future_navigation_channels_zeroed_before_target_encoder"]
         is True
     )
     assert pretrain_summary["leakage_audit"]["target_windows_are_disjoint"] is True

@@ -1,0 +1,11 @@
+{
+  "files": {
+    "PER_SEQUENCE.csv": "63b730568df0c74933706026f40a0dac56f6b90062f20cd3f46a632a2a4e591b",
+    "REPORT.md": "308033dd069eb21c00bba78d441eaf106b65230df081979b41516fef10093983",
+    "RESULT.json": "7c247c7369e2b614340b5281490e5c6a6b96dfc49190d37ded11fcc37692f3e1",
+    "SCORED_PREDICTIONS.csv": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8"
+  },
+  "optimizer_updates": 0,
+  "prediction_seal_sha256": "577953a3f5f87343f6e6c1d980455b316492a46478b0ff173da2f4fee93e37ac",
+  "status": "COMPLETE"
+}

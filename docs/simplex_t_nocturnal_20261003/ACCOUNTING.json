@@ -1,0 +1,99 @@
+{
+  "endpoints": 24,
+  "scientific_saved_updates": 60000,
+  "scientific_physical_updates_upper": 60100,
+  "total_physical_updates_upper": 60180,
+  "technical": {
+    "schema": "cost_context_technical_work_v1",
+    "protocol_sha256": "876a2c2ff8d0d2f3c9796352d9cb009a3d4346a949d5cd3f45c5e015d2053eb2",
+    "synthetic_only": true,
+    "reserved_updates": 80,
+    "cap": 200,
+    "confirmed_updates": 80,
+    "physical_lower": 80,
+    "physical_upper": 80,
+    "scientific_updates": 0,
+    "segments": {
+      "FULL_C0/continuous": {
+        "key": "FULL_C0/continuous",
+        "arm": "FULL_C0",
+        "mode": "continuous",
+        "start": 0,
+        "stop": 20,
+        "authorized_updates": 20,
+        "status": "CONFIRMED",
+        "confirmed_updates": 20,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\FULL_C0\\continuous\\checkpoint_last.pt",
+        "checkpoint_sha256": "edad345b18a3f1c9d7589b78e582b9a6b350ffc62226ea07970e2da7168d4d57"
+      },
+      "FULL_C0/partial": {
+        "key": "FULL_C0/partial",
+        "arm": "FULL_C0",
+        "mode": "partial",
+        "start": 0,
+        "stop": 10,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\FULL_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "cd31bf0b64e2c90a403b3c545ddb6916c31f72c5fe809a05a35d3addf0ec91bf"
+      },
+      "FULL_C0/resume": {
+        "key": "FULL_C0/resume",
+        "arm": "FULL_C0",
+        "mode": "resume",
+        "start": 10,
+        "stop": 20,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\FULL_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "edad345b18a3f1c9d7589b78e582b9a6b350ffc62226ea07970e2da7168d4d57"
+      },
+      "SET_AGE_C0/continuous": {
+        "key": "SET_AGE_C0/continuous",
+        "arm": "SET_AGE_C0",
+        "mode": "continuous",
+        "start": 0,
+        "stop": 20,
+        "authorized_updates": 20,
+        "status": "CONFIRMED",
+        "confirmed_updates": 20,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\SET_AGE_C0\\continuous\\checkpoint_last.pt",
+        "checkpoint_sha256": "ee0c34ace75a370b9cd4e9d8da6378e92efb4f5bfef7d4e975b0af485e5cc142"
+      },
+      "SET_AGE_C0/partial": {
+        "key": "SET_AGE_C0/partial",
+        "arm": "SET_AGE_C0",
+        "mode": "partial",
+        "start": 0,
+        "stop": 10,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\SET_AGE_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "b045182802f753e55b5e1b6b0289866f25fbdfb3266865478d7e5637b722e0d5"
+      },
+      "SET_AGE_C0/resume": {
+        "key": "SET_AGE_C0/resume",
+        "arm": "SET_AGE_C0",
+        "mode": "resume",
+        "start": 10,
+        "stop": 20,
+        "authorized_updates": 10,
+        "status": "CONFIRMED",
+        "confirmed_updates": 10,
+        "possible_unconfirmed_upper": 0,
+        "checkpoint": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\nocturnal_20261003\\verification\\technical\\SET_AGE_C0\\interrupted\\checkpoint_last.pt",
+        "checkpoint_sha256": "ee0c34ace75a370b9cd4e9d8da6378e92efb4f5bfef7d4e975b0af485e5cc142"
+      }
+    }
+  },
+  "repeated_or_uncertain_upper": 100,
+  "future_optimizer_updates_authorized": 0
+}

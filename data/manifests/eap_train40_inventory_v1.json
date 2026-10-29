@@ -1,0 +1,1195 @@
+{
+  "artifact_sha256": "193c53580ff4ddb906af87aa79b112697bf6b71a08fc18e4afcdc73b50cf15ba",
+  "artifact_type": "eap_public_train40_inventory_v1",
+  "benchmark10_opened": false,
+  "dataset": "NAIL-HNU/eAP-dataset",
+  "event_file_bytes_total": 448999857897,
+  "evttc_used_for_selection": false,
+  "media_table_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "official_ttc_labels_available": false,
+  "rgb_opened": false,
+  "rows": [
+    {
+      "category_counts": {
+        "bicycle": 98,
+        "bus": 247,
+        "car": 11673,
+        "motorcycle": 6615,
+        "other_vehicle": 10,
+        "pedestrian": 2947,
+        "tricycle": 101,
+        "truck": 4002
+      },
+      "event_count": 5121658607,
+      "event_duration_ms": 586073,
+      "event_file_bytes": 10281831426,
+      "event_file_gib": 9.575701715424657,
+      "label_count": 25760,
+      "labels_sha256": "b30bfbc394440006993a6afdb5bcc2a0334dbcbb04c3281a6e3c97a9aacf3c45",
+      "media_sample_count": 2995,
+      "object_window_count": 15602,
+      "projected_state_count": 25693,
+      "sequence_id": "2JkLL5W891",
+      "track_count": 901,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 720,
+        "approaching_2_4s": 3691,
+        "approaching_4_8s": 6652,
+        "approaching_8_20s": 5037,
+        "nonfinite_or_outside_20s": 7465,
+        "receding_0p1_20s": 2128
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 264,
+        "car": 15196,
+        "motorcycle": 163,
+        "pedestrian": 33,
+        "truck": 5272
+      },
+      "event_count": 5318331667,
+      "event_duration_ms": 556950,
+      "event_file_bytes": 11157935518,
+      "event_file_gib": 10.391637234017253,
+      "label_count": 20948,
+      "labels_sha256": "06a1fc3d3e9ddfd2ffe514b09819e9636f0b3d4b3fd035ed94f4d013015b3c4d",
+      "media_sample_count": 2995,
+      "object_window_count": 12153,
+      "projected_state_count": 20928,
+      "sequence_id": "2Y46OkK3ff",
+      "track_count": 328,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 614,
+        "approaching_2_4s": 1662,
+        "approaching_4_8s": 2854,
+        "approaching_8_20s": 3952,
+        "nonfinite_or_outside_20s": 7892,
+        "receding_0p1_20s": 3954
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 171,
+        "car": 12305,
+        "motorcycle": 189,
+        "pedestrian": 16,
+        "tricycle": 10,
+        "truck": 4902
+      },
+      "event_count": 1598268331,
+      "event_duration_ms": 521014,
+      "event_file_bytes": 4073639368,
+      "event_file_gib": 3.7938723042607307,
+      "label_count": 17611,
+      "labels_sha256": "e1fc19e222d4a5b98cfdeea98b5e27c621758766c7b269514229a9a2e21ab08d",
+      "media_sample_count": 2995,
+      "object_window_count": 9622,
+      "projected_state_count": 17593,
+      "sequence_id": "2cyv0Oedzg",
+      "track_count": 303,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 575,
+        "approaching_2_4s": 1287,
+        "approaching_4_8s": 2362,
+        "approaching_8_20s": 3182,
+        "nonfinite_or_outside_20s": 7092,
+        "receding_0p1_20s": 3095
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 97,
+        "bus": 82,
+        "car": 13480,
+        "motorcycle": 219,
+        "pedestrian": 235,
+        "truck": 2175
+      },
+      "event_count": 5070151998,
+      "event_duration_ms": 941157,
+      "event_file_bytes": 10446478776,
+      "event_file_gib": 9.729041509330273,
+      "label_count": 16292,
+      "labels_sha256": "76b40d6a848322acd10606c85d5ae4173b4df024bca7729a6c1dd812ee2f7c84",
+      "media_sample_count": 2993,
+      "object_window_count": 7044,
+      "projected_state_count": 16288,
+      "sequence_id": "34K84TaN11",
+      "track_count": 266,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 139,
+        "approaching_2_4s": 189,
+        "approaching_4_8s": 1080,
+        "approaching_8_20s": 2250,
+        "nonfinite_or_outside_20s": 8736,
+        "receding_0p1_20s": 3894
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 27,
+        "car": 9512,
+        "motorcycle": 370,
+        "other_vehicle": 35,
+        "pedestrian": 99,
+        "tricycle": 519,
+        "truck": 3662
+      },
+      "event_count": 5593111752,
+      "event_duration_ms": 794233,
+      "event_file_bytes": 11530276951,
+      "event_file_gib": 10.73840721603483,
+      "label_count": 14232,
+      "labels_sha256": "67abaaf4948bb7a815d69847659889d7b84687edcc7f1ec9b31fb4f21e68ee74",
+      "media_sample_count": 2996,
+      "object_window_count": 8663,
+      "projected_state_count": 14224,
+      "sequence_id": "5ilM1PX2vz",
+      "track_count": 284,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 345,
+        "approaching_2_4s": 1114,
+        "approaching_4_8s": 1553,
+        "approaching_8_20s": 1581,
+        "nonfinite_or_outside_20s": 4774,
+        "receding_0p1_20s": 4857
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 124,
+        "bus": 286,
+        "car": 15630,
+        "motorcycle": 2166,
+        "pedestrian": 1429,
+        "tricycle": 227,
+        "truck": 687
+      },
+      "event_count": 3335248681,
+      "event_duration_ms": 577649,
+      "event_file_bytes": 7588541226,
+      "event_file_gib": 7.06737975217402,
+      "label_count": 20596,
+      "labels_sha256": "6a588547774a2eb0005fb152886d2604f2825cf7e050abe822f00d9ff8698a5a",
+      "media_sample_count": 2996,
+      "object_window_count": 12075,
+      "projected_state_count": 20549,
+      "sequence_id": "6WCDpro5rE",
+      "track_count": 544,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 558,
+        "approaching_2_4s": 2176,
+        "approaching_4_8s": 4038,
+        "approaching_8_20s": 3171,
+        "nonfinite_or_outside_20s": 6889,
+        "receding_0p1_20s": 3717
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 201,
+        "bus": 737,
+        "car": 12240,
+        "motorcycle": 4113,
+        "pedestrian": 1473,
+        "tricycle": 202,
+        "truck": 3304
+      },
+      "event_count": 3863933906,
+      "event_duration_ms": 1186178,
+      "event_file_bytes": 8319570806,
+      "event_file_gib": 7.748204102739692,
+      "label_count": 22363,
+      "labels_sha256": "641a41b7c8c1ee5164ca248d1dcc4cfbd0d6fbb090e9b94cd93265566c16e54e",
+      "media_sample_count": 2994,
+      "object_window_count": 15620,
+      "projected_state_count": 22270,
+      "sequence_id": "6h5yRW2LGc",
+      "track_count": 761,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 662,
+        "approaching_2_4s": 3008,
+        "approaching_4_8s": 6542,
+        "approaching_8_20s": 5565,
+        "nonfinite_or_outside_20s": 4248,
+        "receding_0p1_20s": 2245
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 56,
+        "bus": 519,
+        "car": 13938,
+        "motorcycle": 2137,
+        "other_vehicle": 20,
+        "pedestrian": 1002,
+        "tricycle": 70,
+        "truck": 6919
+      },
+      "event_count": 4117343564,
+      "event_duration_ms": 816154,
+      "event_file_bytes": 9063055821,
+      "event_file_gib": 8.44062848109752,
+      "label_count": 24715,
+      "labels_sha256": "2bf43a9a5fe3170ec2dd5c96a59d97f50d0a1b4e8140d5279b2492dba1f734bc",
+      "media_sample_count": 2995,
+      "object_window_count": 14260,
+      "projected_state_count": 24661,
+      "sequence_id": "8SdieOgbva",
+      "track_count": 694,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 1002,
+        "approaching_2_4s": 2418,
+        "approaching_4_8s": 4027,
+        "approaching_8_20s": 4916,
+        "nonfinite_or_outside_20s": 8550,
+        "receding_0p1_20s": 3748
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 1,
+        "bus": 171,
+        "car": 10471,
+        "motorcycle": 2662,
+        "other_vehicle": 11,
+        "pedestrian": 378,
+        "tricycle": 70,
+        "truck": 5151
+      },
+      "event_count": 3963047819,
+      "event_duration_ms": 562344,
+      "event_file_bytes": 8789042602,
+      "event_file_gib": 8.185433784499764,
+      "label_count": 18971,
+      "labels_sha256": "859dfd94cc0aa0b1ab23abc4d7306e0cf2dd10a384804f6ba117a8b04785a59d",
+      "media_sample_count": 2995,
+      "object_window_count": 10698,
+      "projected_state_count": 18915,
+      "sequence_id": "8mNnrXjpVB",
+      "track_count": 510,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 414,
+        "approaching_2_4s": 1651,
+        "approaching_4_8s": 2714,
+        "approaching_8_20s": 2468,
+        "nonfinite_or_outside_20s": 6942,
+        "receding_0p1_20s": 4726
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 8,
+        "bus": 234,
+        "car": 24924,
+        "motorcycle": 414,
+        "other_vehicle": 13,
+        "pedestrian": 116,
+        "truck": 6402
+      },
+      "event_count": 4473052065,
+      "event_duration_ms": 475300,
+      "event_file_bytes": 9550255242,
+      "event_file_gib": 8.89436830021441,
+      "label_count": 32131,
+      "labels_sha256": "4e7da8f7b8f348b534a4e40c10d0ac84bf6f1ece7950d6ca3f0d816b9af0ccad",
+      "media_sample_count": 2996,
+      "object_window_count": 18351,
+      "projected_state_count": 32111,
+      "sequence_id": "9ITOs4twfk",
+      "track_count": 590,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 842,
+        "approaching_2_4s": 3026,
+        "approaching_4_8s": 4527,
+        "approaching_8_20s": 5546,
+        "nonfinite_or_outside_20s": 12266,
+        "receding_0p1_20s": 5904
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 9,
+        "car": 9998,
+        "other_vehicle": 13,
+        "pedestrian": 11,
+        "truck": 3855
+      },
+      "event_count": 5751766074,
+      "event_duration_ms": 641297,
+      "event_file_bytes": 11698048311,
+      "event_file_gib": 10.89465647097677,
+      "label_count": 13896,
+      "labels_sha256": "4d8848844bad6945fa67ed30c229f0c143040f975f5e6dc4d8b7739d79a2eb93",
+      "media_sample_count": 2996,
+      "object_window_count": 7891,
+      "projected_state_count": 13886,
+      "sequence_id": "A1Nhv0KtmL",
+      "track_count": 196,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 556,
+        "approaching_2_4s": 769,
+        "approaching_4_8s": 1396,
+        "approaching_8_20s": 2335,
+        "nonfinite_or_outside_20s": 5536,
+        "receding_0p1_20s": 3294
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 26,
+        "car": 13229,
+        "motorcycle": 100,
+        "truck": 6687
+      },
+      "event_count": 4382254549,
+      "event_duration_ms": 761908,
+      "event_file_bytes": 9823716253,
+      "event_file_gib": 9.149048713035882,
+      "label_count": 20060,
+      "labels_sha256": "f55e8e35e5a8d08f72abc2045378d3d12c06133d443a9a7157dbbf6694ee5bac",
+      "media_sample_count": 2995,
+      "object_window_count": 9553,
+      "projected_state_count": 20042,
+      "sequence_id": "ClXqVoZOFu",
+      "track_count": 261,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 297,
+        "approaching_2_4s": 832,
+        "approaching_4_8s": 2150,
+        "approaching_8_20s": 4091,
+        "nonfinite_or_outside_20s": 9947,
+        "receding_0p1_20s": 2725
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 19,
+        "car": 12545,
+        "motorcycle": 265,
+        "other_vehicle": 7,
+        "pedestrian": 15,
+        "truck": 4245
+      },
+      "event_count": 4831733185,
+      "event_duration_ms": 457040,
+      "event_file_bytes": 10239222750,
+      "event_file_gib": 9.53601929359138,
+      "label_count": 17109,
+      "labels_sha256": "b29b965b6eb89ede48907f4c761414b3b68037becb568608c682f04d2b3fec91",
+      "media_sample_count": 2995,
+      "object_window_count": 8561,
+      "projected_state_count": 17096,
+      "sequence_id": "CzyQ8HKP6X",
+      "track_count": 312,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 683,
+        "approaching_2_4s": 929,
+        "approaching_4_8s": 1600,
+        "approaching_8_20s": 2979,
+        "nonfinite_or_outside_20s": 7826,
+        "receding_0p1_20s": 3079
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 125,
+        "car": 2750,
+        "motorcycle": 1090,
+        "pedestrian": 39,
+        "tricycle": 130,
+        "truck": 447
+      },
+      "event_count": 1446782781,
+      "event_duration_ms": 1116798,
+      "event_file_bytes": 3563162410,
+      "event_file_gib": 3.3184535894542933,
+      "label_count": 4581,
+      "labels_sha256": "908244488914a000b5448c9ffd69f0a49b869c2815fc398badb3a60b0908846f",
+      "media_sample_count": 2372,
+      "object_window_count": 2557,
+      "projected_state_count": 4581,
+      "sequence_id": "DGqicHUGWb",
+      "track_count": 36,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 199,
+        "approaching_2_4s": 332,
+        "approaching_4_8s": 669,
+        "approaching_8_20s": 1297,
+        "nonfinite_or_outside_20s": 1936,
+        "receding_0p1_20s": 148
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 179,
+        "bus": 750,
+        "car": 11056,
+        "motorcycle": 7968,
+        "other_vehicle": 42,
+        "pedestrian": 2758,
+        "tricycle": 490,
+        "truck": 3541
+      },
+      "event_count": 4598167431,
+      "event_duration_ms": 588665,
+      "event_file_bytes": 9804404526,
+      "event_file_gib": 9.13106326572597,
+      "label_count": 26870,
+      "labels_sha256": "77cd121f3f9b2bb8df0105c4f35050b169919949f33e491a2c4f55e41255a28b",
+      "media_sample_count": 2995,
+      "object_window_count": 16768,
+      "projected_state_count": 26784,
+      "sequence_id": "EllUE6bwVp",
+      "track_count": 897,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 1397,
+        "approaching_2_4s": 3437,
+        "approaching_4_8s": 5991,
+        "approaching_8_20s": 5375,
+        "nonfinite_or_outside_20s": 7249,
+        "receding_0p1_20s": 3335
+      }
+    },
+    {
+      "category_counts": {
+        "car": 10799,
+        "motorcycle": 35,
+        "other_vehicle": 6,
+        "pedestrian": 36,
+        "truck": 4432
+      },
+      "event_count": 6301365389,
+      "event_duration_ms": 1109120,
+      "event_file_bytes": 12204105878,
+      "event_file_gib": 11.365959307178855,
+      "label_count": 15316,
+      "labels_sha256": "0692f65cd790505b658e2e92329804c4dcd9e062363836bf578dedff6a70a268",
+      "media_sample_count": 2994,
+      "object_window_count": 7455,
+      "projected_state_count": 15308,
+      "sequence_id": "EuFGqTcqIz",
+      "track_count": 234,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 472,
+        "approaching_2_4s": 854,
+        "approaching_4_8s": 1179,
+        "approaching_8_20s": 2435,
+        "nonfinite_or_outside_20s": 7336,
+        "receding_0p1_20s": 3032
+      }
+    },
+    {
+      "category_counts": {
+        "car": 12279,
+        "motorcycle": 483,
+        "truck": 2475
+      },
+      "event_count": 4486627982,
+      "event_duration_ms": 461903,
+      "event_file_bytes": 10022792136,
+      "event_file_gib": 9.334452576935291,
+      "label_count": 15244,
+      "labels_sha256": "d1da779468834eb3ce723f80bf3e41b2e88ce73738817cbe852d8b15b4296f98",
+      "media_sample_count": 2995,
+      "object_window_count": 6904,
+      "projected_state_count": 15237,
+      "sequence_id": "GjMYZjmSQb",
+      "track_count": 158,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 209,
+        "approaching_2_4s": 381,
+        "approaching_4_8s": 1344,
+        "approaching_8_20s": 2757,
+        "nonfinite_or_outside_20s": 8092,
+        "receding_0p1_20s": 2454
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 4,
+        "car": 12000,
+        "motorcycle": 374,
+        "other_vehicle": 7,
+        "pedestrian": 7,
+        "truck": 11482
+      },
+      "event_count": 4231251191,
+      "event_duration_ms": 1061913,
+      "event_file_bytes": 9450129842,
+      "event_file_gib": 8.801119254902005,
+      "label_count": 23908,
+      "labels_sha256": "967873b148f5259d86838aba862bdcd3aa91b61c562afba4869e0ea4ad708cd4",
+      "media_sample_count": 2993,
+      "object_window_count": 11607,
+      "projected_state_count": 23874,
+      "sequence_id": "JaGC4Q9pgU",
+      "track_count": 391,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 972,
+        "approaching_2_4s": 1555,
+        "approaching_4_8s": 2244,
+        "approaching_8_20s": 4665,
+        "nonfinite_or_outside_20s": 11326,
+        "receding_0p1_20s": 3112
+      }
+    },
+    {
+      "category_counts": {
+        "car": 8257,
+        "motorcycle": 79,
+        "pedestrian": 82,
+        "truck": 7897
+      },
+      "event_count": 5611537032,
+      "event_duration_ms": 1057048,
+      "event_file_bytes": 11441160618,
+      "event_file_gib": 10.65541116334498,
+      "label_count": 16322,
+      "labels_sha256": "3e48675ad8d15887f8e40241412aab66c50a884084087c8b1061848080af91e6",
+      "media_sample_count": 2994,
+      "object_window_count": 6967,
+      "projected_state_count": 16315,
+      "sequence_id": "L36QTEoVkB",
+      "track_count": 180,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 363,
+        "approaching_2_4s": 726,
+        "approaching_4_8s": 1721,
+        "approaching_8_20s": 2662,
+        "nonfinite_or_outside_20s": 8990,
+        "receding_0p1_20s": 1853
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 1014,
+        "car": 13504,
+        "motorcycle": 151,
+        "tricycle": 121,
+        "truck": 9450
+      },
+      "event_count": 4015053932,
+      "event_duration_ms": 586182,
+      "event_file_bytes": 8971653898,
+      "event_file_gib": 8.355503806844354,
+      "label_count": 24250,
+      "labels_sha256": "c3035d5eb7b549b73d5e53f4861889c288a8a35eb5e39093f63a71e96defe9eb",
+      "media_sample_count": 2995,
+      "object_window_count": 12400,
+      "projected_state_count": 24240,
+      "sequence_id": "LMHPShQkaU",
+      "track_count": 263,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 667,
+        "approaching_2_4s": 1618,
+        "approaching_4_8s": 2351,
+        "approaching_8_20s": 3571,
+        "nonfinite_or_outside_20s": 11178,
+        "receding_0p1_20s": 4855
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 287,
+        "bus": 406,
+        "car": 11408,
+        "motorcycle": 10105,
+        "other_vehicle": 17,
+        "pedestrian": 5571,
+        "tricycle": 736,
+        "truck": 1856
+      },
+      "event_count": 2719032259,
+      "event_duration_ms": 1151002,
+      "event_file_bytes": 6762496438,
+      "event_file_gib": 6.298065593466163,
+      "label_count": 30475,
+      "labels_sha256": "22ed3e2a69a30da992db9d93b3c1adf6476ca061ab48631c4950d5ae87f716fa",
+      "media_sample_count": 2994,
+      "object_window_count": 20248,
+      "projected_state_count": 30386,
+      "sequence_id": "OBneIVg4Cw",
+      "track_count": 1104,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 2387,
+        "approaching_2_4s": 5694,
+        "approaching_4_8s": 8292,
+        "approaching_8_20s": 5667,
+        "nonfinite_or_outside_20s": 6518,
+        "receding_0p1_20s": 1828
+      }
+    },
+    {
+      "category_counts": {
+        "car": 9717,
+        "motorcycle": 22,
+        "truck": 5462
+      },
+      "event_count": 5577668576,
+      "event_duration_ms": 941302,
+      "event_file_bytes": 11578349977,
+      "event_file_gib": 10.783178710378706,
+      "label_count": 15209,
+      "labels_sha256": "53bab51c8a1ff99fbfb9586f6df1430865f76a7ed2e36e6fe57e082d0e634c89",
+      "media_sample_count": 2995,
+      "object_window_count": 8723,
+      "projected_state_count": 15201,
+      "sequence_id": "OYgB6RGWcq",
+      "track_count": 174,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 112,
+        "approaching_2_4s": 422,
+        "approaching_4_8s": 936,
+        "approaching_8_20s": 1937,
+        "nonfinite_or_outside_20s": 6103,
+        "receding_0p1_20s": 5691
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 215,
+        "bus": 134,
+        "car": 9336,
+        "motorcycle": 1733,
+        "other_vehicle": 26,
+        "pedestrian": 1099,
+        "tricycle": 250,
+        "truck": 3970
+      },
+      "event_count": 5553960095,
+      "event_duration_ms": 886829,
+      "event_file_bytes": 11311159846,
+      "event_file_gib": 10.53433850966394,
+      "label_count": 16812,
+      "labels_sha256": "72861dfb52c6d3bec01666514a6244aa0faeceb7fceb62ab4d1f7d7ccafc9f06",
+      "media_sample_count": 2996,
+      "object_window_count": 9928,
+      "projected_state_count": 16763,
+      "sequence_id": "Po6ePjWYAz",
+      "track_count": 489,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 590,
+        "approaching_2_4s": 2159,
+        "approaching_4_8s": 2858,
+        "approaching_8_20s": 2353,
+        "nonfinite_or_outside_20s": 5531,
+        "receding_0p1_20s": 3272
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 5,
+        "bus": 142,
+        "car": 9205,
+        "motorcycle": 612,
+        "pedestrian": 244,
+        "tricycle": 10,
+        "truck": 2782
+      },
+      "event_count": 5642935609,
+      "event_duration_ms": 346155,
+      "event_file_bytes": 11344487770,
+      "event_file_gib": 10.565377557650208,
+      "label_count": 13021,
+      "labels_sha256": "9997309b9205116b1a9f66878e9c8d393dae96b2e2268523bd61da030a1429f1",
+      "media_sample_count": 2996,
+      "object_window_count": 8441,
+      "projected_state_count": 13000,
+      "sequence_id": "VLA3oBKFyX",
+      "track_count": 326,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 953,
+        "approaching_2_4s": 1564,
+        "approaching_4_8s": 2209,
+        "approaching_8_20s": 2180,
+        "nonfinite_or_outside_20s": 3644,
+        "receding_0p1_20s": 2450
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 171,
+        "bus": 187,
+        "car": 9244,
+        "motorcycle": 3187,
+        "other_vehicle": 75,
+        "pedestrian": 1300,
+        "tricycle": 545,
+        "truck": 6466
+      },
+      "event_count": 5753615691,
+      "event_duration_ms": 494229,
+      "event_file_bytes": 11461788191,
+      "event_file_gib": 10.674622087739408,
+      "label_count": 21254,
+      "labels_sha256": "2a7896a010edebeb6f5c455ec6f78ba04bd2480e179277e5efa67e789e0b2ba3",
+      "media_sample_count": 2996,
+      "object_window_count": 12765,
+      "projected_state_count": 21175,
+      "sequence_id": "WbCh1DRerJ",
+      "track_count": 713,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 784,
+        "approaching_2_4s": 2421,
+        "approaching_4_8s": 4249,
+        "approaching_8_20s": 4044,
+        "nonfinite_or_outside_20s": 6612,
+        "receding_0p1_20s": 3065
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 46,
+        "car": 12084,
+        "motorcycle": 527,
+        "other_vehicle": 3,
+        "tricycle": 109,
+        "truck": 1591
+      },
+      "event_count": 6381737651,
+      "event_duration_ms": 580869,
+      "event_file_bytes": 12581074665,
+      "event_file_gib": 11.717038848437369,
+      "label_count": 14364,
+      "labels_sha256": "13d516e30dd29ac7d37e5c9149b70e9ee066d1a91f8612357f27718c7aa66705",
+      "media_sample_count": 2996,
+      "object_window_count": 8028,
+      "projected_state_count": 14360,
+      "sequence_id": "Z30i8WuL2N",
+      "track_count": 189,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 345,
+        "approaching_2_4s": 1092,
+        "approaching_4_8s": 1828,
+        "approaching_8_20s": 2663,
+        "nonfinite_or_outside_20s": 5854,
+        "receding_0p1_20s": 2578
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 4,
+        "bus": 7,
+        "car": 13754,
+        "motorcycle": 492,
+        "pedestrian": 5,
+        "tricycle": 4,
+        "truck": 3628
+      },
+      "event_count": 6558069623,
+      "event_duration_ms": 888670,
+      "event_file_bytes": 11970874958,
+      "event_file_gib": 11.148746086284518,
+      "label_count": 17930,
+      "labels_sha256": "97564157856a379ec6adddd1d16404c45cefd4f3cca2558dba0eebdf3e1b3142",
+      "media_sample_count": 2995,
+      "object_window_count": 9577,
+      "projected_state_count": 17894,
+      "sequence_id": "eX8t2nGd6O",
+      "track_count": 281,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 526,
+        "approaching_2_4s": 1203,
+        "approaching_4_8s": 2067,
+        "approaching_8_20s": 3269,
+        "nonfinite_or_outside_20s": 7741,
+        "receding_0p1_20s": 3088
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 356,
+        "car": 27597,
+        "motorcycle": 1456,
+        "pedestrian": 32,
+        "truck": 7021
+      },
+      "event_count": 2102806094,
+      "event_duration_ms": 775304,
+      "event_file_bytes": 5695591438,
+      "event_file_gib": 5.304432881996036,
+      "label_count": 36484,
+      "labels_sha256": "1892b201c114990bd8a9f77acf188d0cfff20a105fb4720a926c223536412686",
+      "media_sample_count": 2996,
+      "object_window_count": 17343,
+      "projected_state_count": 36462,
+      "sequence_id": "mHGFBekt7X",
+      "track_count": 544,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 151,
+        "approaching_2_4s": 1293,
+        "approaching_4_8s": 2725,
+        "approaching_8_20s": 4688,
+        "nonfinite_or_outside_20s": 17910,
+        "receding_0p1_20s": 9695
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 53,
+        "bus": 521,
+        "car": 14435,
+        "motorcycle": 3502,
+        "other_vehicle": 70,
+        "pedestrian": 1350,
+        "tricycle": 485,
+        "truck": 4795
+      },
+      "event_count": 4562252245,
+      "event_duration_ms": 789337,
+      "event_file_bytes": 9484266848,
+      "event_file_gib": 8.83291181921959,
+      "label_count": 25353,
+      "labels_sha256": "b8d14b5f4f3aaa892b679883212f12447c6418c8c5df605d413b91a3355b5f10",
+      "media_sample_count": 2995,
+      "object_window_count": 16388,
+      "projected_state_count": 25211,
+      "sequence_id": "nRcwUlHyAd",
+      "track_count": 989,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 2013,
+        "approaching_2_4s": 4239,
+        "approaching_4_8s": 6862,
+        "approaching_8_20s": 4341,
+        "nonfinite_or_outside_20s": 5973,
+        "receding_0p1_20s": 1783
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 150,
+        "bus": 1691,
+        "car": 9275,
+        "motorcycle": 17162,
+        "other_vehicle": 4,
+        "pedestrian": 4685,
+        "tricycle": 886,
+        "truck": 2130
+      },
+      "event_count": 3458083673,
+      "event_duration_ms": 800157,
+      "event_file_bytes": 7507265140,
+      "event_file_gib": 6.991685498505831,
+      "label_count": 36131,
+      "labels_sha256": "799d0cf88fd4aebb7b4f2e81a14f3f65ed3e3b7d3c5de2aed9e48a353c754f54",
+      "media_sample_count": 2995,
+      "object_window_count": 20940,
+      "projected_state_count": 35983,
+      "sequence_id": "pBqGOb2vYq",
+      "track_count": 1302,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 1774,
+        "approaching_2_4s": 5134,
+        "approaching_4_8s": 7421,
+        "approaching_8_20s": 7862,
+        "nonfinite_or_outside_20s": 10570,
+        "receding_0p1_20s": 3222
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 30,
+        "bus": 23,
+        "car": 13491,
+        "motorcycle": 2851,
+        "pedestrian": 724,
+        "tricycle": 112,
+        "truck": 9185
+      },
+      "event_count": 3444268240,
+      "event_duration_ms": 826975,
+      "event_file_bytes": 7323438241,
+      "event_file_gib": 6.820483357645571,
+      "label_count": 26483,
+      "labels_sha256": "78a4d5b02c828b6028de536c3031ce92fb40716b8646ff6b18ee5f69766b5b98",
+      "media_sample_count": 2995,
+      "object_window_count": 15700,
+      "projected_state_count": 26416,
+      "sequence_id": "pakWgyPNTL",
+      "track_count": 625,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 893,
+        "approaching_2_4s": 3192,
+        "approaching_4_8s": 5365,
+        "approaching_8_20s": 6138,
+        "nonfinite_or_outside_20s": 8743,
+        "receding_0p1_20s": 2085
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 16,
+        "car": 11469,
+        "motorcycle": 652,
+        "pedestrian": 125,
+        "tricycle": 13,
+        "truck": 1961
+      },
+      "event_count": 4708569632,
+      "event_duration_ms": 1193483,
+      "event_file_bytes": 10316906120,
+      "event_file_gib": 9.608367569744587,
+      "label_count": 14274,
+      "labels_sha256": "0c80ddccb4d99b4b25f38a6df6c1a34e39d984fab1dfbc32a7a5565c7c58d690",
+      "media_sample_count": 2994,
+      "object_window_count": 7596,
+      "projected_state_count": 14236,
+      "sequence_id": "pzJcg1OCfc",
+      "track_count": 352,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 544,
+        "approaching_2_4s": 988,
+        "approaching_4_8s": 1889,
+        "approaching_8_20s": 1784,
+        "nonfinite_or_outside_20s": 5781,
+        "receding_0p1_20s": 3250
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 2,
+        "bus": 135,
+        "car": 5038,
+        "motorcycle": 89,
+        "other_vehicle": 31,
+        "pedestrian": 48,
+        "tricycle": 114,
+        "truck": 2168
+      },
+      "event_count": 3181320335,
+      "event_duration_ms": 696402,
+      "event_file_bytes": 41362740059,
+      "event_file_gib": 38.52205356489867,
+      "label_count": 7634,
+      "labels_sha256": "2dc66c48829d1275faac1c3ccfed3233738b992edc82907e14ce5904042056a5",
+      "media_sample_count": 2018,
+      "object_window_count": 4312,
+      "projected_state_count": 7625,
+      "sequence_id": "q2k6O0X6JY",
+      "track_count": 158,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 217,
+        "approaching_2_4s": 566,
+        "approaching_4_8s": 884,
+        "approaching_8_20s": 1623,
+        "nonfinite_or_outside_20s": 2979,
+        "receding_0p1_20s": 1356
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 131,
+        "car": 9167,
+        "motorcycle": 242,
+        "other_vehicle": 7,
+        "pedestrian": 173,
+        "truck": 1605
+      },
+      "event_count": 4991621260,
+      "event_duration_ms": 1186834,
+      "event_file_bytes": 10201847567,
+      "event_file_gib": 9.501210941933095,
+      "label_count": 11332,
+      "labels_sha256": "ed4989281b7e398c276e1b966ee0d4db9dbb1e7b3374e7a41c3838a8a23b37e2",
+      "media_sample_count": 2995,
+      "object_window_count": 6652,
+      "projected_state_count": 11325,
+      "sequence_id": "qGsgzl4Q8B",
+      "track_count": 179,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 215,
+        "approaching_2_4s": 820,
+        "approaching_4_8s": 1643,
+        "approaching_8_20s": 2183,
+        "nonfinite_or_outside_20s": 4205,
+        "receding_0p1_20s": 2259
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 122,
+        "bus": 84,
+        "car": 11536,
+        "motorcycle": 2286,
+        "pedestrian": 536,
+        "tricycle": 202,
+        "truck": 8933
+      },
+      "event_count": 2464127808,
+      "event_duration_ms": 930482,
+      "event_file_bytes": 5498737189,
+      "event_file_gib": 5.121098075993359,
+      "label_count": 23728,
+      "labels_sha256": "a512a2f2228afe433bd34e63bc00ea1d656ba2591fde19f42b6bc0ecbe85295a",
+      "media_sample_count": 2995,
+      "object_window_count": 11745,
+      "projected_state_count": 23699,
+      "sequence_id": "qoohcdtLDH",
+      "track_count": 515,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 546,
+        "approaching_2_4s": 2094,
+        "approaching_4_8s": 3644,
+        "approaching_8_20s": 3765,
+        "nonfinite_or_outside_20s": 10420,
+        "receding_0p1_20s": 3230
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 110,
+        "bus": 368,
+        "car": 20996,
+        "motorcycle": 1245,
+        "other_vehicle": 152,
+        "pedestrian": 1343,
+        "tricycle": 19,
+        "truck": 2591
+      },
+      "event_count": 3367893976,
+      "event_duration_ms": 1204201,
+      "event_file_bytes": 43792259784,
+      "event_file_gib": 40.78472013026476,
+      "label_count": 26861,
+      "labels_sha256": "92e05b2c3abc3946817da32066515cbc71f0710454267f6c901b0b6556df2761",
+      "media_sample_count": 3042,
+      "object_window_count": 13669,
+      "projected_state_count": 26824,
+      "sequence_id": "rhYxPcU29n",
+      "track_count": 695,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 438,
+        "approaching_2_4s": 1658,
+        "approaching_4_8s": 2761,
+        "approaching_8_20s": 4112,
+        "nonfinite_or_outside_20s": 11453,
+        "receding_0p1_20s": 6402
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 1071,
+        "car": 8437,
+        "motorcycle": 676,
+        "other_vehicle": 12,
+        "pedestrian": 169,
+        "tricycle": 40,
+        "truck": 2700
+      },
+      "event_count": 6044566781,
+      "event_duration_ms": 646159,
+      "event_file_bytes": 12114506274,
+      "event_file_gib": 11.282513173297048,
+      "label_count": 13126,
+      "labels_sha256": "0c41ede5398ff9182c2b64a72aaa5be4ea4ac421d08daccc5d2cba352eafbd73",
+      "media_sample_count": 2996,
+      "object_window_count": 7741,
+      "projected_state_count": 13105,
+      "sequence_id": "t79dBxj1WS",
+      "track_count": 282,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 301,
+        "approaching_2_4s": 1018,
+        "approaching_4_8s": 1964,
+        "approaching_8_20s": 2848,
+        "nonfinite_or_outside_20s": 4634,
+        "receding_0p1_20s": 2340
+      }
+    },
+    {
+      "category_counts": {
+        "bus": 13,
+        "car": 9858,
+        "motorcycle": 247,
+        "pedestrian": 27,
+        "tricycle": 3,
+        "truck": 3615
+      },
+      "event_count": 6837397275,
+      "event_duration_ms": 1177658,
+      "event_file_bytes": 12814473044,
+      "event_file_gib": 11.934408027678728,
+      "label_count": 13774,
+      "labels_sha256": "e125cd53f56e9ea45922cd175fd2e6b8c34807cf6dcd2a4eadc64da374780ce7",
+      "media_sample_count": 2995,
+      "object_window_count": 7510,
+      "projected_state_count": 13763,
+      "sequence_id": "vWp9XNYQ9V",
+      "track_count": 234,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 413,
+        "approaching_2_4s": 1181,
+        "approaching_4_8s": 1541,
+        "approaching_8_20s": 1575,
+        "nonfinite_or_outside_20s": 5681,
+        "receding_0p1_20s": 3372
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 8,
+        "bus": 253,
+        "car": 18152,
+        "motorcycle": 817,
+        "pedestrian": 175,
+        "tricycle": 12,
+        "truck": 4032
+      },
+      "event_count": 4230296601,
+      "event_duration_ms": 641152,
+      "event_file_bytes": 9496268969,
+      "event_file_gib": 8.844089665450156,
+      "label_count": 23468,
+      "labels_sha256": "c9afcbdac7e27e06f8f2cfc73c00cf68e03c00d6555ae1e6e652afe31311d6ab",
+      "media_sample_count": 2995,
+      "object_window_count": 10525,
+      "projected_state_count": 23449,
+      "sequence_id": "wE9MZUmiJP",
+      "track_count": 466,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 508,
+        "approaching_2_4s": 1872,
+        "approaching_4_8s": 2909,
+        "approaching_8_20s": 3135,
+        "nonfinite_or_outside_20s": 11841,
+        "receding_0p1_20s": 3184
+      }
+    },
+    {
+      "category_counts": {
+        "bicycle": 13,
+        "bus": 51,
+        "car": 15381,
+        "motorcycle": 3283,
+        "other_vehicle": 10,
+        "pedestrian": 1051,
+        "tricycle": 66,
+        "truck": 5740
+      },
+      "event_count": 3758932643,
+      "event_duration_ms": 1151533,
+      "event_file_bytes": 8362301021,
+      "event_file_gib": 7.787999716587365,
+      "label_count": 25622,
+      "labels_sha256": "8a1106b3eab269525475e70b3b261cf5293dae88e7cf9b72a77a51718460e38e",
+      "media_sample_count": 2994,
+      "object_window_count": 12856,
+      "projected_state_count": 25595,
+      "sequence_id": "xkiVthsGwf",
+      "track_count": 610,
+      "ttc_proxy_counts": {
+        "approaching_0p1_2s": 801,
+        "approaching_2_4s": 2296,
+        "approaching_4_8s": 2896,
+        "approaching_8_20s": 3088,
+        "nonfinite_or_outside_20s": 11098,
+        "receding_0p1_20s": 5416
+      }
+    }
+  ],
+  "sequence_count": 40,
+  "source_root_recording": "external_local_root_not_embedded",
+  "ttc_proxy_definition": "negative_nearest_depth_over_local_depth_derivative"
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "PRE_FREEZE_TECHNICAL_SOURCE_LOADER_REPAIR",
+  "authority": "User requested continuation and resume of the existing SIMPLEX-T campaign on 2026-09-15",
+  "retained_failure": "artifacts/simplex_t/full_pipeline/preparation_logs/source_identity_preparation_fed032ee56ce4b5e8f2903dcba6b471f.run.log",
+  "failure": "D1 source loader compared eAP input-only eligibility metadata SHA256 with the distinct Garl TRAIN timestamp-reference metadata SHA256",
+  "eap_eligibility_sha256": "e8514492952a3abd86e45e3b00c07e398d2e6def5b73062eb5b5f8f13a932064",
+  "garl_train_metadata_sha256": "03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6",
+  "old_loader_sha256": "ae71e1f6c7c09aa849b53ae853045d632b586cd97232752e2516bb63d50ec63d",
+  "new_loader_sha256": "0da5f7ed188214d05786a57e7821e04192f8d5da2f435462970c47099e30a676",
+  "change": "Keep the pool SHA256 and its eligibility digest structurally valid; independently verify the Garl metadata SHA256 and align TRAIN timestamps/targets. The Stage70 supplementary authority already verifies the eAP eligibility source before this loader is called.",
+  "unchanged": ["source configuration", "input-only query selection", "D0/D1/DENSE cache bytes", "compiled folds", "original expert weights", "FP32 replay", "roles", "loss", "optimizer", "fit graph", "holdout closure"],
+  "scientific_fits_before_repair": 0,
+  "scientific_freeze_before_repair": false,
+  "optimizer_updates_for_repair": 0,
+  "qa": "tests/unit/test_simplex_t_expansion_sources.py passed with new regression; Ruff check and format passed. Real source QA and current full static/types QA still required before freeze.",
+  "not_a_result": true
+}

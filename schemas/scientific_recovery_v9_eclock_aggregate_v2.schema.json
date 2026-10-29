@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "arm_id",
+    "evidence_class",
+    "scientific_result",
+    "reference_family",
+    "reference_identity",
+    "config_sha256",
+    "protocol_sha256",
+    "reference_sha256",
+    "checkpoint_sha256_by_fold",
+    "metrics",
+    "reference_metrics",
+    "delta_mid_vs_official_a5_oof",
+    "clipping_diagnostics",
+    "bootstrap",
+    "gate_decision",
+    "integrity_chain_complete",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_aggregate_v2"
+    },
+    "arm_id": {
+      "enum": [
+        "X0-A5-REPLAY",
+        "X0-PAIR-U",
+        "X0-BASE-U",
+        "X0-DYN-U"
+      ]
+    },
+    "evidence_class": {
+      "const": "scientific_oof"
+    },
+    "scientific_result": {
+      "const": true
+    },
+    "reference_family": {
+      "const": "official_a5_oof"
+    },
+    "reference_identity": {
+      "type": "object"
+    },
+    "config_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "protocol_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reference_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "checkpoint_sha256_by_fold": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "object"
+    },
+    "reference_metrics": {
+      "type": "object"
+    },
+    "delta_mid_vs_official_a5_oof": {
+      "type": "number"
+    },
+    "clipping_diagnostics": {
+      "type": "object"
+    },
+    "bootstrap": {
+      "type": "object"
+    },
+    "gate_decision": {
+      "type": "object"
+    },
+    "integrity_chain_complete": {
+      "const": true
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_aggregate_v2.schema.json"
+}

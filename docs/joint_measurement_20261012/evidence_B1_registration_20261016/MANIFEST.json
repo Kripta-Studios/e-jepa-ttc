@@ -1,0 +1,25 @@
+{
+  "D1_result_used": false,
+  "created_utc": "2026-10-16T04:30:58.952205+00:00",
+  "cuda_qa": "PENDING",
+  "files": {
+    "CPU_PROTOTYPE.json": {
+      "bytes": 3489,
+      "sha256": "dd86b4f6a8d5de9d00680a3a77a8419208b4fa4e399123dfc5dc5c7a0339063a",
+      "source": "adaptive/B1_correspondence/prototype/CPU.json"
+    },
+    "EVALUATION_REGISTRATION.json": {
+      "bytes": 2461,
+      "sha256": "c810939dde355d708563d77a31147de058167da0beb649d4a466d79796cf9954",
+      "source": "adaptive/B1_correspondence/evaluation/REGISTRATION.json"
+    },
+    "REGISTRATION.json": {
+      "bytes": 7223,
+      "sha256": "200909db729a0f2747e7f6cb3c11e8bed5a160336a5d5145899faf9dccc40395",
+      "source": "adaptive/B1_correspondence/REGISTRATION.json"
+    }
+  },
+  "scientific_updates": 0,
+  "status": "REGISTERED_BEFORE_B1_UPDATES",
+  "technical_optimizer_updates": 0
+}

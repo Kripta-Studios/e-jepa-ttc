@@ -1,0 +1,862 @@
+{
+  "cache": {
+    "cache_counter_scope": "Unique rows; byte bound includes8192 header allowance per row",
+    "decoder_workers": 8,
+    "duplicate_draws": 24,
+    "hits": 8721,
+    "misses": 94199,
+    "open_packs": 211,
+    "peak_bytes": 8589280724,
+    "retained_bytes": 8388626860,
+    "verified_packs": 211
+  },
+  "captures_this_process": 1,
+  "completed_updates": 4300,
+  "model_parameter_ids": [
+    2003812056704,
+    2003812056384,
+    2003812056864,
+    2003812056544,
+    2003812055904,
+    2003812056064,
+    2003812054784,
+    2003812054624,
+    2003812054944,
+    2003812054144,
+    2003812054304,
+    2003812053984,
+    2003812053664,
+    2003812054464,
+    2003812053824,
+    2003812053184,
+    2003812053344,
+    2003812053024,
+    2003791209136,
+    2003801300960,
+    2003812057024,
+    2003812055744,
+    2003812055584,
+    2003812055104,
+    2003812055424,
+    2003812055264,
+    2003812052704,
+    2003812053504,
+    2003812052544,
+    2003812052224,
+    2003812052064,
+    2003812051904,
+    2003812051584,
+    2003812051424,
+    2003812051264,
+    2003812051104,
+    2003812050944,
+    2003810778432,
+    2003812050144,
+    2003812051744,
+    2003812050304
+  ],
+  "recent_updates": [
+    {
+      "forward_backward_sync_s": 0.5987757999973837,
+      "input_wait_s": 0.0014814000169280916,
+      "optimizer_journal_s": 0.07685510002193041,
+      "total_s": 0.7907663000223693,
+      "transfer_submit_s": 0.11365399998612702,
+      "update": 4201
+    },
+    {
+      "forward_backward_sync_s": 0.5430651999777183,
+      "input_wait_s": 0.0008765999809838831,
+      "optimizer_journal_s": 0.07734670001082122,
+      "total_s": 0.8035276999871712,
+      "transfer_submit_s": 0.18223920001764782,
+      "update": 4202
+    },
+    {
+      "forward_backward_sync_s": 0.6145605999918189,
+      "input_wait_s": 0.001323700009379536,
+      "optimizer_journal_s": 0.08277800001087599,
+      "total_s": 0.8047196000115946,
+      "transfer_submit_s": 0.10605729999952018,
+      "update": 4203
+    },
+    {
+      "forward_backward_sync_s": 0.6654389000032097,
+      "input_wait_s": 0.0013922000071033835,
+      "optimizer_journal_s": 0.09146049999981187,
+      "total_s": 0.8723451000114437,
+      "transfer_submit_s": 0.11405350000131875,
+      "update": 4204
+    },
+    {
+      "forward_backward_sync_s": 0.6397156000020914,
+      "input_wait_s": 0.0012948000221513212,
+      "optimizer_journal_s": 0.08223520001047291,
+      "total_s": 0.8402479000214953,
+      "transfer_submit_s": 0.11700229998677969,
+      "update": 4205
+    },
+    {
+      "forward_backward_sync_s": 0.5207141000137199,
+      "input_wait_s": 0.0011118999973405153,
+      "optimizer_journal_s": 0.0942125000001397,
+      "total_s": 0.7909357000025921,
+      "transfer_submit_s": 0.17489719999139197,
+      "update": 4206
+    },
+    {
+      "forward_backward_sync_s": 0.6446158000035211,
+      "input_wait_s": 0.0011310999980196357,
+      "optimizer_journal_s": 0.08437460000277497,
+      "total_s": 0.7727879000012763,
+      "transfer_submit_s": 0.042666399996960536,
+      "update": 4207
+    },
+    {
+      "forward_backward_sync_s": 0.728335000021616,
+      "input_wait_s": 0.0011768999975174665,
+      "optimizer_journal_s": 0.1312284999876283,
+      "total_s": 0.8983589999843389,
+      "transfer_submit_s": 0.037618599977577105,
+      "update": 4208
+    },
+    {
+      "forward_backward_sync_s": 0.5915967999899294,
+      "input_wait_s": 0.0014805000100750476,
+      "optimizer_journal_s": 0.08838080000714399,
+      "total_s": 0.8954844000109006,
+      "transfer_submit_s": 0.2140263000037521,
+      "update": 4209
+    },
+    {
+      "forward_backward_sync_s": 0.6716642999963369,
+      "input_wait_s": 0.0013484999944921583,
+      "optimizer_journal_s": 0.0906807999999728,
+      "total_s": 0.8522694999992382,
+      "transfer_submit_s": 0.08857590000843629,
+      "update": 4210
+    },
+    {
+      "forward_backward_sync_s": 0.6128739999840036,
+      "input_wait_s": 0.001264300022739917,
+      "optimizer_journal_s": 0.08347919999505393,
+      "total_s": 0.8124422999972012,
+      "transfer_submit_s": 0.11482479999540374,
+      "update": 4211
+    },
+    {
+      "forward_backward_sync_s": 0.6008648999850266,
+      "input_wait_s": 0.001173900003777817,
+      "optimizer_journal_s": 0.0932510000129696,
+      "total_s": 0.8023820000234991,
+      "transfer_submit_s": 0.10709220002172515,
+      "update": 4212
+    },
+    {
+      "forward_backward_sync_s": 0.6559906000038609,
+      "input_wait_s": 0.0020583999867085367,
+      "optimizer_journal_s": 0.07278560000122525,
+      "total_s": 0.8385740999947302,
+      "transfer_submit_s": 0.10773950000293553,
+      "update": 4213
+    },
+    {
+      "forward_backward_sync_s": 0.6039049999963026,
+      "input_wait_s": 0.0013946999970357865,
+      "optimizer_journal_s": 0.07665609999094158,
+      "total_s": 0.7951745000027586,
+      "transfer_submit_s": 0.11321870001847856,
+      "update": 4214
+    },
+    {
+      "forward_backward_sync_s": 0.5127994999929797,
+      "input_wait_s": 0.0012430999777279794,
+      "optimizer_journal_s": 0.0849754000082612,
+      "total_s": 0.7840222999802791,
+      "transfer_submit_s": 0.18500430000131018,
+      "update": 4215
+    },
+    {
+      "forward_backward_sync_s": 0.5933936999936122,
+      "input_wait_s": 0.0011574999953154474,
+      "optimizer_journal_s": 0.0803934000141453,
+      "total_s": 0.7882442999980412,
+      "transfer_submit_s": 0.11329969999496825,
+      "update": 4216
+    },
+    {
+      "forward_backward_sync_s": 0.5946875000081491,
+      "input_wait_s": 0.0015770000172778964,
+      "optimizer_journal_s": 0.07885729998815805,
+      "total_s": 0.7845733000140171,
+      "transfer_submit_s": 0.10945150000043213,
+      "update": 4217
+    },
+    {
+      "forward_backward_sync_s": 0.5524922000186052,
+      "input_wait_s": 0.0013535000034607947,
+      "optimizer_journal_s": 0.07900189998326823,
+      "total_s": 0.7592832999944221,
+      "transfer_submit_s": 0.12643569998908788,
+      "update": 4218
+    },
+    {
+      "forward_backward_sync_s": 0.557955199998105,
+      "input_wait_s": 0.0019677999953273684,
+      "optimizer_journal_s": 0.08401409999351017,
+      "total_s": 0.752841699984856,
+      "transfer_submit_s": 0.10890459999791346,
+      "update": 4219
+    },
+    {
+      "forward_backward_sync_s": 0.5979958999960218,
+      "input_wait_s": 0.0009873000090010464,
+      "optimizer_journal_s": 0.08082140001351945,
+      "total_s": 0.791856399999233,
+      "transfer_submit_s": 0.1120517999806907,
+      "update": 4220
+    },
+    {
+      "forward_backward_sync_s": 0.5849295000080019,
+      "input_wait_s": 0.0013270000054035336,
+      "optimizer_journal_s": 0.07942460000049323,
+      "total_s": 0.7854148000187706,
+      "transfer_submit_s": 0.11973370000487193,
+      "update": 4221
+    },
+    {
+      "forward_backward_sync_s": 0.5986075999971945,
+      "input_wait_s": 0.001145699992775917,
+      "optimizer_journal_s": 0.07270399999106303,
+      "total_s": 0.7741023999988101,
+      "transfer_submit_s": 0.10164510001777671,
+      "update": 4222
+    },
+    {
+      "forward_backward_sync_s": 0.6201215999899432,
+      "input_wait_s": 0.0012793999921996146,
+      "optimizer_journal_s": 0.07710230001248419,
+      "total_s": 0.7334185999934562,
+      "transfer_submit_s": 0.03491529999882914,
+      "update": 4223
+    },
+    {
+      "forward_backward_sync_s": 0.6400833000079729,
+      "input_wait_s": 0.0016564999823458493,
+      "optimizer_journal_s": 0.0980975000129547,
+      "total_s": 0.8467729999974836,
+      "transfer_submit_s": 0.10693569999421015,
+      "update": 4224
+    },
+    {
+      "forward_backward_sync_s": 0.5853779000171926,
+      "input_wait_s": 0.0013273000076878816,
+      "optimizer_journal_s": 0.08980280000832863,
+      "total_s": 0.7862086000095587,
+      "transfer_submit_s": 0.10970059997634962,
+      "update": 4225
+    },
+    {
+      "forward_backward_sync_s": 0.6134792000229936,
+      "input_wait_s": 0.0012561999901663512,
+      "optimizer_journal_s": 0.08767869998700917,
+      "total_s": 0.8223485999915283,
+      "transfer_submit_s": 0.11993449999135919,
+      "update": 4226
+    },
+    {
+      "forward_backward_sync_s": 0.6711859000206459,
+      "input_wait_s": 0.0012956999999005347,
+      "optimizer_journal_s": 0.08315439999569207,
+      "total_s": 0.8725419999973383,
+      "transfer_submit_s": 0.11690599998109974,
+      "update": 4227
+    },
+    {
+      "forward_backward_sync_s": 0.5772619000053965,
+      "input_wait_s": 0.0015818000247236341,
+      "optimizer_journal_s": 0.07375499999034218,
+      "total_s": 0.7573370000172872,
+      "transfer_submit_s": 0.10473829999682494,
+      "update": 4228
+    },
+    {
+      "forward_backward_sync_s": 0.6499410000105854,
+      "input_wait_s": 0.0013408999948296696,
+      "optimizer_journal_s": 0.07475209998665377,
+      "total_s": 0.7691756999993231,
+      "transfer_submit_s": 0.04314170000725426,
+      "update": 4229
+    },
+    {
+      "forward_backward_sync_s": 0.5246872999996413,
+      "input_wait_s": 0.001402800000505522,
+      "optimizer_journal_s": 0.08576929999981076,
+      "total_s": 0.7210294000105932,
+      "transfer_submit_s": 0.1091700000106357,
+      "update": 4230
+    },
+    {
+      "forward_backward_sync_s": 0.5858754999935627,
+      "input_wait_s": 0.0018034999957308173,
+      "optimizer_journal_s": 0.0818015000259038,
+      "total_s": 0.7791659000213258,
+      "transfer_submit_s": 0.10968540000612848,
+      "update": 4231
+    },
+    {
+      "forward_backward_sync_s": 0.582218900002772,
+      "input_wait_s": 0.0014358999906107783,
+      "optimizer_journal_s": 0.08693330001551658,
+      "total_s": 0.7755248000030406,
+      "transfer_submit_s": 0.10493669999414124,
+      "update": 4232
+    },
+    {
+      "forward_backward_sync_s": 0.5893248000065796,
+      "input_wait_s": 0.0016238999960478395,
+      "optimizer_journal_s": 0.08243049998418428,
+      "total_s": 0.7831483999907505,
+      "transfer_submit_s": 0.10976920000393875,
+      "update": 4233
+    },
+    {
+      "forward_backward_sync_s": 0.6116148000000976,
+      "input_wait_s": 0.001516099990112707,
+      "optimizer_journal_s": 0.08058619999792427,
+      "total_s": 0.8173956999962684,
+      "transfer_submit_s": 0.1236786000081338,
+      "update": 4234
+    },
+    {
+      "forward_backward_sync_s": 0.644529400015017,
+      "input_wait_s": 0.0018387000018265098,
+      "optimizer_journal_s": 0.09165629997733049,
+      "total_s": 0.8497501999954693,
+      "transfer_submit_s": 0.11172580000129528,
+      "update": 4235
+    },
+    {
+      "forward_backward_sync_s": 0.613348999992013,
+      "input_wait_s": 0.0011464999988675117,
+      "optimizer_journal_s": 0.08768950001103804,
+      "total_s": 0.8136403000098653,
+      "transfer_submit_s": 0.11145530000794679,
+      "update": 4236
+    },
+    {
+      "forward_backward_sync_s": 0.576741700002458,
+      "input_wait_s": 0.0013473999861162156,
+      "optimizer_journal_s": 0.08933519999845885,
+      "total_s": 0.7710266999783926,
+      "transfer_submit_s": 0.10360239999135956,
+      "update": 4237
+    },
+    {
+      "forward_backward_sync_s": 0.5882342999975663,
+      "input_wait_s": 0.0019672999915201217,
+      "optimizer_journal_s": 0.09250769999925978,
+      "total_s": 0.7910641999915242,
+      "transfer_submit_s": 0.10835490000317805,
+      "update": 4238
+    },
+    {
+      "forward_backward_sync_s": 0.6293768000032287,
+      "input_wait_s": 0.001214599993545562,
+      "optimizer_journal_s": 0.08913360000588,
+      "total_s": 0.8389532000001054,
+      "transfer_submit_s": 0.11922819999745116,
+      "update": 4239
+    },
+    {
+      "forward_backward_sync_s": 0.6050232000125106,
+      "input_wait_s": 0.0013430999824777246,
+      "optimizer_journal_s": 0.08209909999277443,
+      "total_s": 0.7961597999965306,
+      "transfer_submit_s": 0.10769440000876784,
+      "update": 4240
+    },
+    {
+      "forward_backward_sync_s": 0.621765099989716,
+      "input_wait_s": 0.0014254999987315387,
+      "optimizer_journal_s": 0.0855351000209339,
+      "total_s": 0.8313287000055425,
+      "transfer_submit_s": 0.12260299999616109,
+      "update": 4241
+    },
+    {
+      "forward_backward_sync_s": 0.6228900999994949,
+      "input_wait_s": 0.0014090999902691692,
+      "optimizer_journal_s": 0.07491890000528656,
+      "total_s": 0.8052584000106435,
+      "transfer_submit_s": 0.10604030001559295,
+      "update": 4242
+    },
+    {
+      "forward_backward_sync_s": 0.6362665999913588,
+      "input_wait_s": 0.0012359000102151185,
+      "optimizer_journal_s": 0.0967510000045877,
+      "total_s": 0.773718500015093,
+      "transfer_submit_s": 0.039465000008931383,
+      "update": 4243
+    },
+    {
+      "forward_backward_sync_s": 0.5613381000002846,
+      "input_wait_s": 0.0011031999893020838,
+      "optimizer_journal_s": 0.08668449998367578,
+      "total_s": 0.8244355999922846,
+      "transfer_submit_s": 0.17530980001902208,
+      "update": 4244
+    },
+    {
+      "forward_backward_sync_s": 0.628086999990046,
+      "input_wait_s": 0.001191400020616129,
+      "optimizer_journal_s": 0.08156890000100248,
+      "total_s": 0.8243654000107199,
+      "transfer_submit_s": 0.11351809999905527,
+      "update": 4245
+    },
+    {
+      "forward_backward_sync_s": 0.5328277999942657,
+      "input_wait_s": 0.001647099998081103,
+      "optimizer_journal_s": 0.07981890000519343,
+      "total_s": 0.8053765999793541,
+      "transfer_submit_s": 0.19108279998181388,
+      "update": 4246
+    },
+    {
+      "forward_backward_sync_s": 0.7167075999896042,
+      "input_wait_s": 0.0012743999832309783,
+      "optimizer_journal_s": 0.09936140000354499,
+      "total_s": 0.8583786999806762,
+      "transfer_submit_s": 0.041035300004296005,
+      "update": 4247
+    },
+    {
+      "forward_backward_sync_s": 0.6319936999934725,
+      "input_wait_s": 0.001266200008103624,
+      "optimizer_journal_s": 0.07931520001147874,
+      "total_s": 0.8243346000090241,
+      "transfer_submit_s": 0.11175949999596924,
+      "update": 4248
+    },
+    {
+      "forward_backward_sync_s": 0.593041300016921,
+      "input_wait_s": 0.0012531999964267015,
+      "optimizer_journal_s": 0.08536559998174198,
+      "total_s": 0.787011899985373,
+      "transfer_submit_s": 0.10735179999028333,
+      "update": 4249
+    },
+    {
+      "forward_backward_sync_s": 0.6265885999891907,
+      "input_wait_s": 0.0011517000093590468,
+      "optimizer_journal_s": 0.08208280001417734,
+      "total_s": 0.8243012000166345,
+      "transfer_submit_s": 0.11447810000390746,
+      "update": 4250
+    },
+    {
+      "forward_backward_sync_s": 0.6122659000102431,
+      "input_wait_s": 0.001591499982168898,
+      "optimizer_journal_s": 0.07804199997917749,
+      "total_s": 0.8088777999801096,
+      "transfer_submit_s": 0.11697840000852011,
+      "update": 4251
+    },
+    {
+      "forward_backward_sync_s": 0.6107270999928005,
+      "input_wait_s": 0.0011864000116474926,
+      "optimizer_journal_s": 0.08489600001485087,
+      "total_s": 0.800000600022031,
+      "transfer_submit_s": 0.10319110000273213,
+      "update": 4252
+    },
+    {
+      "forward_backward_sync_s": 0.6189755999948829,
+      "input_wait_s": 0.0012392000062391162,
+      "optimizer_journal_s": 0.09719219998805784,
+      "total_s": 0.8251299999828916,
+      "transfer_submit_s": 0.10772299999371171,
+      "update": 4253
+    },
+    {
+      "forward_backward_sync_s": 1.2461337000131607,
+      "input_wait_s": 0.001115499995648861,
+      "optimizer_journal_s": 0.07358759999624453,
+      "total_s": 1.3696620999835432,
+      "transfer_submit_s": 0.048825299978489056,
+      "update": 4254
+    },
+    {
+      "forward_backward_sync_s": 0.6046250000072177,
+      "input_wait_s": 0.0012017999833915383,
+      "optimizer_journal_s": 0.08189739999943413,
+      "total_s": 0.7969403000024613,
+      "transfer_submit_s": 0.10921610001241788,
+      "update": 4255
+    },
+    {
+      "forward_backward_sync_s": 0.653643400000874,
+      "input_wait_s": 0.001145999995060265,
+      "optimizer_journal_s": 0.09157389999018051,
+      "total_s": 0.7951990999863483,
+      "transfer_submit_s": 0.048835800000233576,
+      "update": 4256
+    },
+    {
+      "forward_backward_sync_s": 0.5504826999967918,
+      "input_wait_s": 0.0014441999956034124,
+      "optimizer_journal_s": 0.08802560000913218,
+      "total_s": 0.7500576000020374,
+      "transfer_submit_s": 0.11010510000050999,
+      "update": 4257
+    },
+    {
+      "forward_backward_sync_s": 0.5797881000034977,
+      "input_wait_s": 0.0011860000086016953,
+      "optimizer_journal_s": 0.07753360000788234,
+      "total_s": 0.7741864000272471,
+      "transfer_submit_s": 0.11567870000726543,
+      "update": 4258
+    },
+    {
+      "forward_backward_sync_s": 0.6728079000022262,
+      "input_wait_s": 0.0011795000173151493,
+      "optimizer_journal_s": 0.0936412000155542,
+      "total_s": 0.808030600019265,
+      "transfer_submit_s": 0.04040199998416938,
+      "update": 4259
+    },
+    {
+      "forward_backward_sync_s": 0.5874219999823254,
+      "input_wait_s": 0.0013304000021889806,
+      "optimizer_journal_s": 0.07856510000419803,
+      "total_s": 0.7799333000148181,
+      "transfer_submit_s": 0.11261580002610572,
+      "update": 4260
+    },
+    {
+      "forward_backward_sync_s": 0.6655274000077043,
+      "input_wait_s": 0.0013026999949943274,
+      "optimizer_journal_s": 0.07207609998295084,
+      "total_s": 0.7774739000014961,
+      "transfer_submit_s": 0.03856770001584664,
+      "update": 4261
+    },
+    {
+      "forward_backward_sync_s": 0.6306930999853648,
+      "input_wait_s": 0.0013248999894130975,
+      "optimizer_journal_s": 0.08033610001439229,
+      "total_s": 0.7512231000000611,
+      "transfer_submit_s": 0.038869000010890886,
+      "update": 4262
+    },
+    {
+      "forward_backward_sync_s": 0.6145607999933418,
+      "input_wait_s": 0.001365000003715977,
+      "optimizer_journal_s": 0.08260470000095665,
+      "total_s": 0.8087547000031918,
+      "transfer_submit_s": 0.11022420000517741,
+      "update": 4263
+    },
+    {
+      "forward_backward_sync_s": 0.6145968000055291,
+      "input_wait_s": 0.0012969000090379268,
+      "optimizer_journal_s": 0.08076599999913014,
+      "total_s": 0.8075444000132848,
+      "transfer_submit_s": 0.11088469999958761,
+      "update": 4264
+    },
+    {
+      "forward_backward_sync_s": 0.5955386999994516,
+      "input_wait_s": 0.0012797000235877931,
+      "optimizer_journal_s": 0.08630189998075366,
+      "total_s": 0.7980530000058934,
+      "transfer_submit_s": 0.11493270000210032,
+      "update": 4265
+    },
+    {
+      "forward_backward_sync_s": 0.6476638999884017,
+      "input_wait_s": 0.0013313999806996435,
+      "optimizer_journal_s": 0.09469550001085736,
+      "total_s": 0.8710390999913216,
+      "transfer_submit_s": 0.12734830001136288,
+      "update": 4266
+    },
+    {
+      "forward_backward_sync_s": 0.6393095999956131,
+      "input_wait_s": 0.0013142000243533403,
+      "optimizer_journal_s": 0.0963966999843251,
+      "total_s": 0.8545180000073742,
+      "transfer_submit_s": 0.11749750000308268,
+      "update": 4267
+    },
+    {
+      "forward_backward_sync_s": 0.5785952000005636,
+      "input_wait_s": 0.0014801000070292503,
+      "optimizer_journal_s": 0.07860680000158027,
+      "total_s": 0.7735503000149038,
+      "transfer_submit_s": 0.11486820000573061,
+      "update": 4268
+    },
+    {
+      "forward_backward_sync_s": 0.6203431999892928,
+      "input_wait_s": 0.0011540999985300004,
+      "optimizer_journal_s": 0.08033419999992475,
+      "total_s": 0.818923899991205,
+      "transfer_submit_s": 0.11709240000345744,
+      "update": 4269
+    },
+    {
+      "forward_backward_sync_s": 0.6026540999882855,
+      "input_wait_s": 0.0011833999888040125,
+      "optimizer_journal_s": 0.08915210000122897,
+      "total_s": 0.8033513999835122,
+      "transfer_submit_s": 0.1103618000051938,
+      "update": 4270
+    },
+    {
+      "forward_backward_sync_s": 0.6263902999926358,
+      "input_wait_s": 0.0017731999978423119,
+      "optimizer_journal_s": 0.07755059999180958,
+      "total_s": 0.8359684999741148,
+      "transfer_submit_s": 0.13025439999182709,
+      "update": 4271
+    },
+    {
+      "forward_backward_sync_s": 0.6301061999984086,
+      "input_wait_s": 0.0009950000094249845,
+      "optimizer_journal_s": 0.08191520001855679,
+      "total_s": 0.8385545000201091,
+      "transfer_submit_s": 0.1255380999937188,
+      "update": 4272
+    },
+    {
+      "forward_backward_sync_s": 0.5840856000140775,
+      "input_wait_s": 0.0014389000134542584,
+      "optimizer_journal_s": 0.0810592999914661,
+      "total_s": 0.7823603000142612,
+      "transfer_submit_s": 0.1157764999952633,
+      "update": 4273
+    },
+    {
+      "forward_backward_sync_s": 0.6087168999947608,
+      "input_wait_s": 0.0009735000203363597,
+      "optimizer_journal_s": 0.08385289998841472,
+      "total_s": 0.8116982000065036,
+      "transfer_submit_s": 0.11815490000299178,
+      "update": 4274
+    },
+    {
+      "forward_backward_sync_s": 0.6028910000168253,
+      "input_wait_s": 0.0012311000027693808,
+      "optimizer_journal_s": 0.07516010000836104,
+      "total_s": 0.792267200013157,
+      "transfer_submit_s": 0.11298499998520128,
+      "update": 4275
+    },
+    {
+      "forward_backward_sync_s": 0.6150634000077844,
+      "input_wait_s": 0.0014202000165823847,
+      "optimizer_journal_s": 0.0976412000018172,
+      "total_s": 0.8218982000253163,
+      "transfer_submit_s": 0.10777339999913238,
+      "update": 4276
+    },
+    {
+      "forward_backward_sync_s": 0.6421337999927346,
+      "input_wait_s": 0.0012565999932121485,
+      "optimizer_journal_s": 0.09322930002235807,
+      "total_s": 0.8554858000134118,
+      "transfer_submit_s": 0.118866100005107,
+      "update": 4277
+    },
+    {
+      "forward_backward_sync_s": 0.6146649000002071,
+      "input_wait_s": 0.0015368000022135675,
+      "optimizer_journal_s": 0.09036430000560358,
+      "total_s": 0.8377409999957308,
+      "transfer_submit_s": 0.13117499998770654,
+      "update": 4278
+    },
+    {
+      "forward_backward_sync_s": 0.6036037000012584,
+      "input_wait_s": 0.0013806000060867518,
+      "optimizer_journal_s": 0.08584829999017529,
+      "total_s": 0.7973389999824576,
+      "transfer_submit_s": 0.10650639998493716,
+      "update": 4279
+    },
+    {
+      "forward_backward_sync_s": 0.6886849000002258,
+      "input_wait_s": 0.0013194999773986638,
+      "optimizer_journal_s": 0.11121390000334941,
+      "total_s": 0.8432404999912251,
+      "transfer_submit_s": 0.042022200010251254,
+      "update": 4280
+    },
+    {
+      "forward_backward_sync_s": 0.6579046999977436,
+      "input_wait_s": 0.0013592999894171953,
+      "optimizer_journal_s": 0.0790870999917388,
+      "total_s": 0.8496171999722719,
+      "transfer_submit_s": 0.11126609999337234,
+      "update": 4281
+    },
+    {
+      "forward_backward_sync_s": 0.5909288999973796,
+      "input_wait_s": 0.0017389999993611127,
+      "optimizer_journal_s": 0.07634850000613369,
+      "total_s": 0.7744285000080708,
+      "transfer_submit_s": 0.10541210000519641,
+      "update": 4282
+    },
+    {
+      "forward_backward_sync_s": 0.6728402000153437,
+      "input_wait_s": 0.0012134999851696193,
+      "optimizer_journal_s": 0.07877349999034777,
+      "total_s": 0.7879681999911554,
+      "transfer_submit_s": 0.0351410000002943,
+      "update": 4283
+    },
+    {
+      "forward_backward_sync_s": 0.6695783000031952,
+      "input_wait_s": 0.0012876999971922487,
+      "optimizer_journal_s": 0.0859348000085447,
+      "total_s": 0.8714882000058424,
+      "transfer_submit_s": 0.11468739999691024,
+      "update": 4284
+    },
+    {
+      "forward_backward_sync_s": 0.6687960999843199,
+      "input_wait_s": 0.0014909000019542873,
+      "optimizer_journal_s": 0.07979210000485182,
+      "total_s": 0.853671699995175,
+      "transfer_submit_s": 0.10359260000404902,
+      "update": 4285
+    },
+    {
+      "forward_backward_sync_s": 0.5620677999977488,
+      "input_wait_s": 0.0012180999910924584,
+      "optimizer_journal_s": 0.08754829998360947,
+      "total_s": 0.851040199981071,
+      "transfer_submit_s": 0.20020600000862032,
+      "update": 4286
+    },
+    {
+      "forward_backward_sync_s": 0.6229335999814793,
+      "input_wait_s": 0.0011531999916769564,
+      "optimizer_journal_s": 0.09339520000503398,
+      "total_s": 0.8248703999852296,
+      "transfer_submit_s": 0.10738840000703931,
+      "update": 4287
+    },
+    {
+      "forward_backward_sync_s": 0.5405438999878243,
+      "input_wait_s": 0.0011400000075809658,
+      "optimizer_journal_s": 0.07907810001051985,
+      "total_s": 0.7318766000098549,
+      "transfer_submit_s": 0.11111460000392981,
+      "update": 4288
+    },
+    {
+      "forward_backward_sync_s": 0.6043911000015214,
+      "input_wait_s": 0.0014258000010158867,
+      "optimizer_journal_s": 0.08335349999833852,
+      "total_s": 0.8176658999873325,
+      "transfer_submit_s": 0.1284954999864567,
+      "update": 4289
+    },
+    {
+      "forward_backward_sync_s": 0.549496799998451,
+      "input_wait_s": 0.0012753000191878527,
+      "optimizer_journal_s": 0.09570579999126494,
+      "total_s": 0.8287492000090424,
+      "transfer_submit_s": 0.18227130000013858,
+      "update": 4290
+    },
+    {
+      "forward_backward_sync_s": 0.6136400999967009,
+      "input_wait_s": 0.0009665999969001859,
+      "optimizer_journal_s": 0.08758309998665936,
+      "total_s": 0.8094800999970175,
+      "transfer_submit_s": 0.1072903000167571,
+      "update": 4291
+    },
+    {
+      "forward_backward_sync_s": 0.5393754999968223,
+      "input_wait_s": 0.0009830000053625554,
+      "optimizer_journal_s": 0.0918396000051871,
+      "total_s": 0.8242787000199314,
+      "transfer_submit_s": 0.19208060001255944,
+      "update": 4292
+    },
+    {
+      "forward_backward_sync_s": 0.64024090001476,
+      "input_wait_s": 0.0013288999907672405,
+      "optimizer_journal_s": 0.0847148000029847,
+      "total_s": 0.8528868000139482,
+      "transfer_submit_s": 0.12660220000543632,
+      "update": 4293
+    },
+    {
+      "forward_backward_sync_s": 0.5921690999821294,
+      "input_wait_s": 0.0021795999782625586,
+      "optimizer_journal_s": 0.17399250000016764,
+      "total_s": 0.8829174999846146,
+      "transfer_submit_s": 0.11457630002405494,
+      "update": 4294
+    },
+    {
+      "forward_backward_sync_s": 0.6057303000125103,
+      "input_wait_s": 0.0011829999857582152,
+      "optimizer_journal_s": 0.08177140000043437,
+      "total_s": 0.7967370999976993,
+      "transfer_submit_s": 0.1080523999989964,
+      "update": 4295
+    },
+    {
+      "forward_backward_sync_s": 0.6603753000090364,
+      "input_wait_s": 0.0012407000176608562,
+      "optimizer_journal_s": 0.11242209997726604,
+      "total_s": 0.8228913999919314,
+      "transfer_submit_s": 0.04885329998796806,
+      "update": 4296
+    },
+    {
+      "forward_backward_sync_s": 0.6087316999910399,
+      "input_wait_s": 0.0012551999825518578,
+      "optimizer_journal_s": 0.08083580000675283,
+      "total_s": 0.7913284999958705,
+      "transfer_submit_s": 0.10050580001552589,
+      "update": 4297
+    },
+    {
+      "forward_backward_sync_s": 0.6030156000051647,
+      "input_wait_s": 0.001219899975694716,
+      "optimizer_journal_s": 0.08173299999907613,
+      "total_s": 0.8017323999956716,
+      "transfer_submit_s": 0.115763900015736,
+      "update": 4298
+    },
+    {
+      "forward_backward_sync_s": 0.5167799000046216,
+      "input_wait_s": 0.0012295999913476408,
+      "optimizer_journal_s": 0.07554819999495521,
+      "total_s": 0.784165099990787,
+      "transfer_submit_s": 0.19060739999986254,
+      "update": 4299
+    },
+    {
+      "forward_backward_sync_s": 0.6342734999780077,
+      "input_wait_s": 0.0014190999791026115,
+      "optimizer_journal_s": 0.07890770002268255,
+      "total_s": 0.8315808000043035,
+      "transfer_submit_s": 0.11698050002451055,
+      "update": 4300
+    }
+  ],
+  "scopes_this_process": 3,
+  "timing_scope": "Host intervals; transfers may overlap. No CUDA event synchronizations inserted."
+}

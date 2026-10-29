@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering\small
+\caption{Frozen TRAIN40 transfer on \texttt{extended\_new}: 468 GT-valid queries, 32 sequences, positive TTC only, annotated ROI. Pooled metrics; lower is better. Source \evidence{L01}.}
+\label{tab:late-transfer}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Model} & \textbf{MAE (s)} & \textbf{RTE (\%)} & \textbf{Median AE (s)} & \textbf{P95 AE (s)} \\
+\midrule
+Event context & 1.451 & 65.70 & 0.857 & 4.397 \\
+Garl reproduced & 3.258 & 140.07 & 0.674 & 5.252 \\
+Phase correction & 1.023 & 41.23 & 0.464 & 3.243 \\
+RGB context & 1.015 & 38.56 & 0.408 & 3.799 \\
+\bottomrule
+\end{tabular}
+\end{table}

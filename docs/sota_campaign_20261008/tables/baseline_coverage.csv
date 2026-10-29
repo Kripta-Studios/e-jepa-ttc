@@ -1,0 +1,3 @@
+variant,equation,requested,successful,failed_retained,success_fraction,interpretation
+initial_local_cmax,exponential scale referenced to latest event,32,0,32,0.0,Incorrect exponential/latest-event warp in the initial local adapter; not a failure of the published CMax method
+affine_corrected_cmax_reference,x_ref=c_ref+(1-q*(t-t_ref))*(x(t)-c(t)),32,15,17,0.46875,"Corrected affine reference-time local adaptation; diagnostic, not a paper-result reproduction"

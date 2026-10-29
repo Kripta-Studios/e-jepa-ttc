@@ -1,0 +1,31 @@
+{
+  "version": "3.0",
+  "current_stage": "B",
+  "phases": {
+    "P0": true,
+    "P1": true,
+    "P2": false,
+    "P3": false
+  },
+  "integrity_note": "f96bc35 prepares the real Master Smoke orchestrator. It is not evidence that the Master Smoke passed.",
+  "features_status": {
+    "onnx_export": "implemented_pending_real_smoke",
+    "streaming_inference": "implemented_pending_real_smoke",
+    "robustness": "placeholder"
+  },
+  "completed_tasks": [
+    "P0.4.2",
+    "P0.5",
+    "P0.6",
+    "P1.8",
+    "P1.9",
+    "P1.10",
+    "P1.11",
+    "P1.12",
+    "P2.13",
+    "P2.14",
+    "P2.15",
+    "P3.18",
+    "P3.19"
+  ]
+}

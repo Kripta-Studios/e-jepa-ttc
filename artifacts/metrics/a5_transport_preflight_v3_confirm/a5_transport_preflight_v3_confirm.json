@@ -1,0 +1,322 @@
+{
+  "artifact_sha256": "9fcf557ba47a8814846be0031c85fb84f83fa237cf98164dd9c5602017661aab",
+  "artifact_type": "a5_transport_preflight_train_only_v3_confirmation",
+  "created_at": "2026-08-10T21:25:28.343466+00:00",
+  "decision": {
+    "a4_soft_epe_advantage_over_random": 0.08428824701407774,
+    "a4_soft_physical_epe_improvement_over_zero": 0.10076943663257519,
+    "a5_corr_authorized": true,
+    "candidate_radius": 1,
+    "candidate_temperature": 0.02,
+    "checks": {
+      "boundary_not_degenerate": true,
+      "local_physical_coverage": true,
+      "student_confidence_margin": true,
+      "student_sequence_temporal_specificity": true,
+      "student_soft_physics": true,
+      "student_soft_physics_over_random": true,
+      "student_spatial_null_specificity": true,
+      "student_temporal_specificity": true,
+      "teacher_real_vs_shuffled_absolute_post_match": true,
+      "teacher_real_vs_spatial_null_absolute_post_match": true,
+      "teacher_sequence_specificity": true,
+      "vertical_scale_signal": true
+    },
+    "failed_checks": [],
+    "next_action": "AUTHORIZE_A5_CORR_R1_T002",
+    "random_soft_physical_epe_improvement_over_zero": 0.01648118961849746,
+    "selected_radius": 1,
+    "selected_temperature": 0.02,
+    "student_sequence_temporal_specificity_fraction": 1.0,
+    "teacher_sequence_specificity_fraction": 1.0
+  },
+  "discovery_contract": {
+    "candidate_radius": 1,
+    "candidate_selection_rule": "minimum A4 soft physical EPE over the preregistered V2 r x tau grid",
+    "candidate_temperature": 0.02,
+    "discovery_best_soft_epe_improvement_over_zero": 0.1150906722650178,
+    "discovery_best_soft_physical_epe": 1.045570407062769,
+    "no_candidate_reselection_in_v3": true
+  },
+  "files": {
+    "sequence_csv": "a5_preflight_v3_sequences.csv",
+    "sequence_csv_sha256": "1082e477e523f0ca54833465eb9c9f6ffd60147842994ccbe47cd786b340c77e",
+    "student_csv": "a5_preflight_v3_students.csv",
+    "student_csv_sha256": "c6973e1b60bffdda69c8799a33d54f17ff0f900d0be3209197759fe13bcb4998",
+    "teacher_csv": "a5_preflight_v3_teacher.csv",
+    "teacher_csv_sha256": "cd3649bc686f1d7779027cb8cea0e92ab2b57c8f74426704c1ff41a7f111f0c9",
+    "temperature_csv": "a5_preflight_v3_temperature.csv",
+    "temperature_csv_sha256": "95bc03a7d067ac0479f481bf6b50cc4098faa46578812f3f84201fcc638c97c1"
+  },
+  "interpretation_contract": {
+    "bbox_is_diagnostic_only_and_never_a_model_input": true,
+    "no_radius_or_temperature_search_in_v3": true,
+    "no_training_or_optimizer_steps": true,
+    "soft_flow_is_the_model_relevant_quantity": true,
+    "teacher_null_gate_uses_absolute_post_match_error_not_relative_reduction": true,
+    "ttc_labels_are_not_used": true,
+    "v2_rejection_is_preserved_and_not_overwritten": true,
+    "v3_candidate_was_selected_from_v2_train_only_discovery": true,
+    "v3_confirmation_indices_are_disjoint_from_v2_indices": true
+  },
+  "scope": {
+    "dataset_rows": 2048,
+    "null_different_track_fraction": 1.0,
+    "optimizer_steps": 0,
+    "public_train_only": true,
+    "same_sequence_null_fraction": 1.0,
+    "sequence_count": 9,
+    "v2_discovery_rows": 512,
+    "v2_v3_index_overlap": 0,
+    "v3_confirmation_rows": 1536,
+    "validation_or_test_opened": false
+  },
+  "sequence_confirmation": {
+    "student_A4": {
+      "2cyv0Oedzg": {
+        "passed": true,
+        "real_top1_cosine": 0.9540048297385724,
+        "shuffled_top1_cosine": 0.9222755327559354,
+        "spatial_null_top1_cosine": 0.8430193781155592
+      },
+      "5ilM1PX2vz": {
+        "passed": true,
+        "real_top1_cosine": 0.9421160820631953,
+        "shuffled_top1_cosine": 0.9066201078961467,
+        "spatial_null_top1_cosine": 0.8356290477061132
+      },
+      "6h5yRW2LGc": {
+        "passed": true,
+        "real_top1_cosine": 0.957623867612136,
+        "shuffled_top1_cosine": 0.9172459798946715,
+        "spatial_null_top1_cosine": 0.8529027547055518
+      },
+      "OBneIVg4Cw": {
+        "passed": true,
+        "real_top1_cosine": 0.9463908515478435,
+        "shuffled_top1_cosine": 0.9148340162477995,
+        "spatial_null_top1_cosine": 0.8476631550760995
+      },
+      "OYgB6RGWcq": {
+        "passed": true,
+        "real_top1_cosine": 0.9471227666090803,
+        "shuffled_top1_cosine": 0.9056140090289869,
+        "spatial_null_top1_cosine": 0.8353947345276325
+      },
+      "WbCh1DRerJ": {
+        "passed": true,
+        "real_top1_cosine": 0.9427706581807276,
+        "shuffled_top1_cosine": 0.910199823435287,
+        "spatial_null_top1_cosine": 0.84342810912439
+      },
+      "mHGFBekt7X": {
+        "passed": true,
+        "real_top1_cosine": 0.9480207394151127,
+        "shuffled_top1_cosine": 0.9063751178629258,
+        "spatial_null_top1_cosine": 0.8386044793269214
+      },
+      "qGsgzl4Q8B": {
+        "passed": true,
+        "real_top1_cosine": 0.9479895903783686,
+        "shuffled_top1_cosine": 0.912510368753882,
+        "spatial_null_top1_cosine": 0.83810956232688
+      },
+      "t79dBxj1WS": {
+        "passed": true,
+        "real_top1_cosine": 0.9476223279448116,
+        "shuffled_top1_cosine": 0.9133492676650776,
+        "spatial_null_top1_cosine": 0.839649943744435
+      }
+    },
+    "teacher": {
+      "2cyv0Oedzg": {
+        "passed": true,
+        "real_best_error": 0.026474940116729653,
+        "real_vs_shuffled_improvement": 0.5606592004117632,
+        "real_vs_spatial_null_improvement": 0.6454261931387234,
+        "shuffled_best_error": 0.060260599838537085,
+        "spatial_null_best_error": 0.07466693705067648
+      },
+      "5ilM1PX2vz": {
+        "passed": true,
+        "real_best_error": 0.026881858396033447,
+        "real_vs_shuffled_improvement": 0.5195133144876024,
+        "real_vs_spatial_null_improvement": 0.6189087309847303,
+        "shuffled_best_error": 0.05594714527285238,
+        "spatial_null_best_error": 0.07053916104007185
+      },
+      "6h5yRW2LGc": {
+        "passed": true,
+        "real_best_error": 0.024156526319290463,
+        "real_vs_shuffled_improvement": 0.523543897420196,
+        "real_vs_spatial_null_improvement": 0.5515027897344434,
+        "shuffled_best_error": 0.05070042379244029,
+        "spatial_null_best_error": 0.053861040306108734
+      },
+      "OBneIVg4Cw": {
+        "passed": true,
+        "real_best_error": 0.02467697181831501,
+        "real_vs_shuffled_improvement": 0.5748968788832965,
+        "real_vs_spatial_null_improvement": 0.5282015842135072,
+        "shuffled_best_error": 0.058049378121456906,
+        "spatial_null_best_error": 0.05230405824313387
+      },
+      "OYgB6RGWcq": {
+        "passed": true,
+        "real_best_error": 0.024790274442244343,
+        "real_vs_shuffled_improvement": 0.6465870457212918,
+        "real_vs_spatial_null_improvement": 0.6467190842140995,
+        "shuffled_best_error": 0.07014534736803749,
+        "spatial_null_best_error": 0.07017156414208356
+      },
+      "WbCh1DRerJ": {
+        "passed": true,
+        "real_best_error": 0.026300577341976484,
+        "real_vs_shuffled_improvement": 0.5737952757250253,
+        "real_vs_spatial_null_improvement": 0.5527557704224284,
+        "shuffled_best_error": 0.06170878886130818,
+        "spatial_null_best_error": 0.058805850590443055
+      },
+      "mHGFBekt7X": {
+        "passed": true,
+        "real_best_error": 0.02597076921888134,
+        "real_vs_shuffled_improvement": 0.597852415036324,
+        "real_vs_spatial_null_improvement": 0.6525128172810709,
+        "shuffled_best_error": 0.06458019441103234,
+        "spatial_null_best_error": 0.07473878321402214
+      },
+      "qGsgzl4Q8B": {
+        "passed": true,
+        "real_best_error": 0.023781318622915184,
+        "real_vs_shuffled_improvement": 0.5542485033050032,
+        "real_vs_spatial_null_improvement": 0.6578420189290789,
+        "shuffled_best_error": 0.05335106847479063,
+        "spatial_null_best_error": 0.0695039132171694
+      },
+      "t79dBxj1WS": {
+        "passed": true,
+        "real_best_error": 0.026211779268787188,
+        "real_vs_shuffled_improvement": 0.5346641905576879,
+        "real_vs_spatial_null_improvement": 0.6191682706186653,
+        "shuffled_best_error": 0.056328738809508436,
+        "spatial_null_best_error": 0.0688277190332027
+      }
+    }
+  },
+  "source": {
+    "a4_checkpoint": "artifacts\\runs\\causal_scale_eap_screen_a4_dinov3_relational_rgb_v2_seed7\\model_best.pt",
+    "a4_checkpoint_sha256": "db4cf4a112df66c5ef8f291f83c05c76fe263e3fb11c0665d649acf91a193c35",
+    "protocol": "configs\\experiment\\e_jepa_garl_event_causal_scale_a5_preflight_v3_confirm.yaml",
+    "protocol_sha256": "a0fdae87c74bbebc1eb4ef07eb99639965ad62a2812a21928a847bea33a742bd",
+    "source_config": "configs\\experiment\\e_jepa_garl_event_causal_scale_eap_screen_a4d_dinov3_temporal_delta_v1.yaml",
+    "source_config_sha256": "9c497d51e6e4a591c3ac4acd03f5e7696995a2e848abfa694958aab2be662038",
+    "teacher_manifest": "artifacts\\cache\\dinov3_convnext_large_relational_a4_rgb_v2\\manifest.json",
+    "teacher_manifest_sha256": "e885a2ea2f2df370a3d4a8270c082a095a735c13db0248521ce2f553b314cf86",
+    "v2_artifact": "artifacts\\metrics\\a5_transport_preflight_v2\\a5_transport_preflight_v2.json",
+    "v2_artifact_sha256": "c811a27da175bb5ceed380337fb3b150ee9ebc3ac53283e03c8140f27df31c68",
+    "v2_file_sha256": "1325b6f7155daa155a176de9e63884c5474b7caec33134f9b84193180ff40710",
+    "v2_temperature_csv_sha256": "bb84b71d5f48422618e5b32ae5fbb644d541c6613f9b3f95dc7ce1fc12c6ad3a"
+  },
+  "students": {
+    "A4": {
+      "divergence_x_vs_log_width_pearson": -0.02079155710854727,
+      "divergence_y_vs_log_height_pearson": 0.25293670120287837,
+      "hard_boundary_fraction": 0.5928719838460287,
+      "hard_cycle_error_cells": 0.49252691290651757,
+      "physical_epe": 1.1867888889585931,
+      "physical_epe_improvement_over_zero": -0.03024671235447166,
+      "real_margin": 0.019436718541934777,
+      "real_minus_shuffled_top1_cosine": 0.03606875582287709,
+      "real_minus_spatial_null_top1_cosine": 0.10657961573451757,
+      "real_top1_cosine": 0.9481852346410354,
+      "real_zscore": 1.5323652991404135,
+      "shuffled_margin": 0.013725408415969772,
+      "shuffled_top1_cosine": 0.9121164788181583,
+      "shuffled_zscore": 1.4740333948284388,
+      "spatial_null_top1_cosine": 0.8416056189065179,
+      "translation_x_pearson": 0.382318579170089,
+      "translation_y_pearson": 0.6321941566917421,
+      "zero_flow_epe": 1.1758572139466803,
+      "zero_offset_rank": 2.6852086385091147
+    },
+    "RANDOM": {
+      "divergence_x_vs_log_width_pearson": 0.0037522199094680527,
+      "divergence_y_vs_log_height_pearson": 0.19310642285369942,
+      "hard_boundary_fraction": 0.7020034790039062,
+      "hard_cycle_error_cells": 0.8911179847394427,
+      "physical_epe": 1.4306829487904906,
+      "physical_epe_improvement_over_zero": -0.264093450349479,
+      "real_margin": 0.003680209643789567,
+      "real_minus_shuffled_top1_cosine": 0.0034283585846424103,
+      "real_minus_spatial_null_top1_cosine": 0.07113460078835487,
+      "real_top1_cosine": 0.9919606316834688,
+      "real_zscore": 1.2110346648842096,
+      "shuffled_margin": 0.003159640459974374,
+      "shuffled_top1_cosine": 0.9885322730988264,
+      "shuffled_zscore": 1.2084386839220922,
+      "spatial_null_top1_cosine": 0.920826030895114,
+      "translation_x_pearson": 0.3347109826202962,
+      "translation_y_pearson": 0.41684268538635505,
+      "zero_flow_epe": 1.1758572139466803,
+      "zero_offset_rank": 3.0902226765950522
+    }
+  },
+  "teacher": {
+    "bbox_physical_coverage": 0.6124860328466942,
+    "divergence_x_vs_log_width_pearson": -0.0117852237340758,
+    "divergence_y_vs_log_height_pearson": 0.20517055987183866,
+    "excess_error_reduction": 0.009994240279521012,
+    "excess_error_reduction_vs_spatial_null": 0.02971403673979232,
+    "foreground_excess_error_reduction": 0.012834832482884454,
+    "hard_boundary_fraction": 0.7379363377888998,
+    "margin": 0.009172471089793058,
+    "physical_epe": 1.3110496355220675,
+    "physical_epe_improvement_over_zero": -0.14833613279256322,
+    "real_best_error": 0.025471962221975748,
+    "real_error_reduction": 0.39962856525905205,
+    "real_fg_error_reduction": 0.40071350132362044,
+    "real_fixed_error": 0.04253138227310652,
+    "real_vs_shuffled_best_error_improvement": 0.564640993667121,
+    "real_vs_spatial_null_best_error_improvement": 0.6105475428090205,
+    "shuffled_best_error": 0.059009764556928225,
+    "shuffled_error_reduction": 0.38963432497953104,
+    "shuffled_fg_error_reduction": 0.387878668840736,
+    "shuffled_fixed_error": 0.09650696107807259,
+    "spatial_null_best_error": 0.0658822488039732,
+    "spatial_null_error_reduction": 0.3699145285192597,
+    "spatial_null_fixed_error": 0.10450218769256026,
+    "translation_x_pearson": 0.396619952511232,
+    "translation_y_pearson": 0.6350269884607312,
+    "zero_flow_epe": 1.1758572139466803
+  },
+  "temperature": {
+    "A4": {
+      "effective_candidates": 3.824187715848287,
+      "effective_fraction": 0.4420139016583562,
+      "entropy": 0.5744932141775886,
+      "model": "A4",
+      "radius": 1,
+      "shuffled_entropy": 0.6686321068555117,
+      "soft_physical_epe": 1.0568981856728594,
+      "soft_physical_epe_improvement_over_zero": 0.10076943663257519,
+      "soft_zero_flow_epe": 1.1758572139466803,
+      "temperature": 0.02,
+      "top1_probability": 0.5104292149965962,
+      "top5_probability_mass": 0.9504059993972381
+    },
+    "RANDOM": {
+      "effective_candidates": 6.790866352617741,
+      "effective_fraction": 0.7733077375839154,
+      "entropy": 0.8361121285706758,
+      "model": "RANDOM",
+      "radius": 1,
+      "shuffled_entropy": 0.8403607709333301,
+      "soft_physical_epe": 1.156140234010915,
+      "soft_physical_epe_improvement_over_zero": 0.01648118961849746,
+      "soft_zero_flow_epe": 1.1758572139466803,
+      "temperature": 0.02,
+      "top1_probability": 0.23552424600347877,
+      "top5_probability_mass": 0.7632170965274175
+    }
+  }
+}

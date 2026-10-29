@@ -1,0 +1,46 @@
+{
+  "acceleration_freeze_file_sha256": "cf875a6ab1a53acf10922f111ad5ac3882a6e14096a99ec011ba765833604940",
+  "acceleration_freeze_sha256": "e3112249fad5fd736515a0122efddaaf18d8c323d17c8c8a3ab51647ec96cd1f",
+  "admission_sha256": "453e202ee0d57cadcd124484b549a5bde4e9e7dfa093b3b30fd79f78f231283b",
+  "backend": "cudagraphs",
+  "checkpoint_sha256": "ffddb3a1a7b9f08f5c9bc5723baa79f2bf47250a1929b41c4b285436c6211f41",
+  "completed_updates": 26338,
+  "counters": {
+    "compiled_calls": 20,
+    "component_cpu_transfers": 17,
+    "eager_calls": 0,
+    "warmup_backward_passes": 3
+  },
+  "fit_id": "E_A5_MATCHED",
+  "last_checkpoint_sha256": "ffddb3a1a7b9f08f5c9bc5723baa79f2bf47250a1929b41c4b285436c6211f41",
+  "last_saved_update": 26338,
+  "mode": "graph_and_batched_metrics",
+  "optimizer_updates": 0,
+  "post_warm_exact": {
+    "cpu_rng": true,
+    "cuda_rng": true,
+    "cursor": true,
+    "numpy_rng": true,
+    "optimizer": true,
+    "parameter_identities": true,
+    "protected_files": true,
+    "python_rng": true,
+    "sampler": true,
+    "scheduler": true,
+    "state_keys": true
+  },
+  "schema": "rgb_port_acceleration_runtime_v1",
+  "shape": {
+    "batch_size": 32,
+    "frames": 3
+  },
+  "source_sha256": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\operational\\rgb_port\\train_producers.py": "875d1186c3e5db198924e8d470b365fe188c6539efc83c3b5753a0a45960f01c",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\operational\\rgb_port_acceleration\\producer.py": "1c41715a30db39257d643b5e66e3274b5ebd76a32bdaa552174a6d3cbdfbcb6c"
+  },
+  "status": "ACTIVE",
+  "torch_backend_source_sha256": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Lib\\site-packages\\torch\\_dynamo\\backends\\cudagraphs.py": "ff244309b5b4952ab4414ab4b46660c03e9dffbab594b669088b7ed06edac98c",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Lib\\site-packages\\torch\\cuda\\graphs.py": "a398e73d86b1035d5d8ed1d68413ab63da18128bb9e7e992dd9e77d6dc8e0eac"
+  }
+}

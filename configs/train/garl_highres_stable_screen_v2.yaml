@@ -1,0 +1,42 @@
+objective: garl_signed_supervised_stable_screen_v2
+
+epochs: 24
+batch_size: 2
+gradient_accumulation_steps: 8
+num_workers: 2
+
+learning_rate: 0.0001
+weight_decay: 0.01
+
+backbone_learning_rate: 0.00001
+pooling_learning_rate: 0.0001
+head_learning_rate: 0.0003
+
+warmup_pooling_learning_rate: 0.0003
+warmup_head_learning_rate: 0.001
+
+backbone_weight_decay: 0.01
+readout_weight_decay: 0.0
+
+# With 256 rows, batch 2 and accumulation 8, there are 16 optimizer
+# updates per epoch. Thirty-two steps therefore warm up pooling/head for
+# exactly two epochs before unfreezing the backbone.
+readout_warmup_optimizer_steps: 32
+
+precision: fp32
+max_grad_norm: 1.0
+
+minimum_epochs: 10
+early_stopping_patience: 5
+
+temporal_steps: 5
+width: 320
+height: 192
+max_samples_per_split: 256
+
+min_prediction_std_ratio: 0.01
+collapse_patience: 3
+
+seed: 7
+run_scope: bounded_screen
+require_clean_git: false

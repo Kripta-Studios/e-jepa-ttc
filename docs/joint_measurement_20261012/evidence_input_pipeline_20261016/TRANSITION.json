@@ -1,0 +1,25 @@
+{
+  "accounting": {
+    "pending_upper": 0,
+    "physical_upper": 160223,
+    "recovery_upper": 273,
+    "scientific": 159200,
+    "technical": 750
+  },
+  "all_preserved_hashes_match": true,
+  "driver": {
+    "created": 1792164970.598706,
+    "module": "operational.joint_measurement.correspondence_prefetch",
+    "pid": 18228
+  },
+  "next_observation_local": "2026-10-16T18:00:00+02:00",
+  "preserved_chunks": 203,
+  "preserved_rows": 51968,
+  "proof_sha256": "94553542177c35582f1dc9d75dead362fa1fc96212dcb11e34e93807c4ebf721",
+  "registration_sha256": "bf8ad4e806bf5e2a1934ac2b746c447e2e5f9b095ef4660cc264b146c5dfaf50",
+  "resume_command": "pwsh -NoProfile -File scripts/Resume-JointMeasurement.ps1 -Stage B1Evaluation",
+  "scope": "Evaluation runtime only; full research objective remains active",
+  "status": "RESUMED_ADMITTED_PREFETCH_GRAPH",
+  "utc": "2026-10-16T15:38:20.493021+00:00",
+  "weights_and_updates_preserved": true
+}

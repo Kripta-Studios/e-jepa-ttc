@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "status",
+    "arm_id",
+    "outer_fold",
+    "seed",
+    "checkpoint_policy",
+    "checkpoint_path",
+    "checkpoint_file_sha256",
+    "checkpoint_manifest_sha256",
+    "external_official_a5",
+    "oof_path",
+    "oof_file_sha256",
+    "oof_bytes",
+    "row_count",
+    "outer_train_token_sha256",
+    "outer_dev_token_sha256",
+    "outer_dev_evaluations",
+    "outer_dev_used_during_training",
+    "outer_dev_used_for_selection",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_fold_summary_v2"
+    },
+    "status": {
+      "const": "completed_after_frozen_checkpoint"
+    },
+    "arm_id": {
+      "enum": [
+        "X0-A5-REPLAY",
+        "X0-PAIR-U",
+        "X0-BASE-U",
+        "X0-DYN-U"
+      ]
+    },
+    "outer_fold": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "seed": {
+      "const": 7
+    },
+    "checkpoint_policy": {
+      "const": "last_update_fixed_budget"
+    },
+    "checkpoint_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checkpoint_file_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "checkpoint_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "external_official_a5": {
+      "type": "boolean"
+    },
+    "oof_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "oof_file_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "oof_bytes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "row_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "outer_train_token_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "outer_dev_token_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "outer_dev_evaluations": {
+      "const": 1
+    },
+    "outer_dev_used_during_training": {
+      "const": false
+    },
+    "outer_dev_used_for_selection": {
+      "const": false
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_fold_summary_v2.schema.json"
+}

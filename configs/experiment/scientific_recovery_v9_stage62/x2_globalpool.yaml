@@ -1,0 +1,9 @@
+artifact_type: scientific_recovery_v9_stage62_config_v1
+arm_id: X2-GLOBALPOOL
+field: global_broadcast_coordinates_zero
+batch_size: 256
+update_budget: 2000
+learning_rate: 0.0003
+weight_decay: 0.0001
+precision: float32
+checkpoint_policy: last_update_fixed_budget

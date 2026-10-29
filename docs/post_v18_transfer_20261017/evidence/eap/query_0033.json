@@ -1,0 +1,12 @@
+{
+  "sample_token": "Z30i8WuL2N_000189_10535000000",
+  "group_id": "Z30i8WuL2N",
+  "registration_sha256": "c02a97db3647db7783d0154808d83a4e84eb61de745d144dfe70a7029d45d458",
+  "Garl_full": 4.513340950012207,
+  "sensor_sha256": "1e956a81183070735d9d8dc3769b0851bb57d7933cdeb44c4c8636d71abf3a97",
+  "upstream_bit_exact": null,
+  "seconds_model": 0.34279769999557175,
+  "seconds_preprocess_including_parity": 0.5449443999968935,
+  "targets_read": false,
+  "optimizer_updates": 0
+}

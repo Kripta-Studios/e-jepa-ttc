@@ -1,0 +1,246 @@
+{
+  "records": [
+    {
+      "index": 0,
+      "event_diff": [
+        {
+          "exact": false,
+          "max": 4.76837158203125e-05
+        },
+        {
+          "exact": false,
+          "max": 9.685754776000977e-08
+        }
+      ],
+      "rgb_single_diff": [
+        {
+          "exact": true,
+          "max": 0.0
+        },
+        {
+          "exact": true,
+          "max": 0.0
+        }
+      ],
+      "rgb_batch_diff": [
+        {
+          "exact": false,
+          "max": 2.09808349609375e-05
+        },
+        {
+          "exact": false,
+          "max": 6.146728992462158e-08
+        }
+      ],
+      "times": {
+        "event": [
+          0.00733690001652576,
+          0.006728900014422834,
+          0.006614199985051528,
+          0.006624900008318946,
+          0.006974899995839223
+        ],
+        "rgb_loop": [
+          0.0360627000045497,
+          0.03603129999828525,
+          0.035647999990032986,
+          0.03555990001768805,
+          0.035579799994593486
+        ],
+        "rgb_batch": [
+          0.008173599984729663,
+          0.007583700004033744,
+          0.007668999984161928,
+          0.007634000008692965,
+          0.007866600004490465
+        ]
+      }
+    },
+    {
+      "index": 200,
+      "event_diff": [
+        {
+          "exact": false,
+          "max": 4.38690185546875e-05
+        },
+        {
+          "exact": false,
+          "max": 8.940696716308594e-08
+        }
+      ],
+      "rgb_single_diff": [
+        {
+          "exact": true,
+          "max": 0.0
+        },
+        {
+          "exact": true,
+          "max": 0.0
+        }
+      ],
+      "rgb_batch_diff": [
+        {
+          "exact": false,
+          "max": 9.5367431640625e-06
+        },
+        {
+          "exact": false,
+          "max": 6.332993507385254e-08
+        }
+      ],
+      "times": {
+        "event": [
+          0.006516800000099465,
+          0.006574899976840243,
+          0.0064870000060182065,
+          0.0069598999980371445,
+          0.006577500025741756
+        ],
+        "rgb_loop": [
+          0.03611399998771958,
+          0.0363031999731902,
+          0.03595140000106767,
+          0.036439299990888685,
+          0.035922300012316555
+        ],
+        "rgb_batch": [
+          0.007541200000559911,
+          0.007546899985754862,
+          0.007593899994390085,
+          0.007568700006231666,
+          0.008252400002675131
+        ]
+      }
+    },
+    {
+      "index": 553,
+      "event_diff": [
+        {
+          "exact": false,
+          "max": 2.288818359375e-05
+        },
+        {
+          "exact": false,
+          "max": 5.960464477539063e-08
+        }
+      ],
+      "rgb_single_diff": [
+        {
+          "exact": true,
+          "max": 0.0
+        },
+        {
+          "exact": true,
+          "max": 0.0
+        }
+      ],
+      "rgb_batch_diff": [
+        {
+          "exact": false,
+          "max": 1.1444091796875e-05
+        },
+        {
+          "exact": false,
+          "max": 6.705522537231445e-08
+        }
+      ],
+      "times": {
+        "event": [
+          0.007002300000749528,
+          0.0067199000041000545,
+          0.006660999992163852,
+          0.0066949000174645334,
+          0.0068558000202756375
+        ],
+        "rgb_loop": [
+          0.03604779997840524,
+          0.036565300018992275,
+          0.03606359998229891,
+          0.03739470001892187,
+          0.03634180000517517
+        ],
+        "rgb_batch": [
+          0.007889700005762279,
+          0.007998399989446625,
+          0.00805979999131523,
+          0.0076188000093679875,
+          0.007686299999477342
+        ]
+      }
+    }
+  ],
+  "graphs": [
+    {
+      "producer": "E_EXPERT_BLOCK_REUSE",
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "setup_seconds": 1.178480500006117,
+      "replays": 18,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "initial_exact_parity": true,
+      "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+      "jit_optimized_execution": false,
+      "endpoint_reuse": true,
+      "endpoint_reuse_fallback_calls": 90,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_EXPERT_BLOCK",
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 1.499867800011998,
+      "replays": 90,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "initial_exact_parity": true,
+      "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+      "jit_optimized_execution": false,
+      "endpoint_reuse": false,
+      "endpoint_reuse_fallback_calls": 90,
+      "precision": "FP32_TF32_DISABLED"
+    },
+    {
+      "producer": "R_EXPERT_BLOCK_REUSE",
+      "shape": [
+        5,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 1.3908723999920767,
+      "replays": 18,
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "initial_exact_parity": true,
+      "initial_parity_reference": "GPU_FLOAT64_BLOCK_CORE_REQUIRES_FINAL_PARITY_GATE",
+      "jit_optimized_execution": false,
+      "endpoint_reuse": true,
+      "endpoint_reuse_fallback_calls": 90,
+      "precision": "FP32_TF32_DISABLED"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+"""Copy only source bytes matching the already-executed benchmark identities."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from datetime import UTC, datetime
+from pathlib import Path
+
+EVIDENCE = Path(__file__).resolve().parent
+REPOSITORY = EVIDENCE.parents[2]
+NAMES = ("cpu_matrix_v1", "cpu_roi_first_v1", "cpu_1200x1920_roi_first_v1")
+
+
+def main() -> None:
+    receipt_path = EVIDENCE / "source_snapshot_receipt.json"
+    if receipt_path.exists():
+        raise FileExistsError("Source snapshot evidence already exists; do not overwrite it")
+    rows = []
+    for name in NAMES:
+        result = json.loads((EVIDENCE / name / "summary.json").read_text(encoding="utf-8"))
+        for relative, expected in result["sources_after"].items():
+            source = REPOSITORY / relative
+            row = {"run": name, "source": relative, "executed_sha256": expected}
+            if not source.is_file():
+                rows.append({**row, "status": "MISSING_NOW", "snapshot": None})
+                continue
+            contents = source.read_bytes()
+            actual = hashlib.sha256(contents).hexdigest()
+            if actual != expected:
+                rows.append(
+                    {
+                        **row,
+                        "status": "CURRENT_SOURCE_DOES_NOT_MATCH_EXECUTED_SHA",
+                        "observed_sha256": actual,
+                        "snapshot": None,
+                    }
+                )
+                continue
+            target = EVIDENCE / "source_snapshots" / expected / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if target.exists():
+                if target.read_bytes() != contents:
+                    raise RuntimeError("An existing content-addressed snapshot differs")
+            else:
+                target.write_bytes(contents)
+            if hashlib.sha256(target.read_bytes()).hexdigest() != expected:
+                raise RuntimeError("Snapshot verification failed")
+            rows.append(
+                {
+                    **row,
+                    "status": "EXECUTED_BYTES_COPIED_AND_VERIFIED",
+                    "observed_sha256": actual,
+                    "snapshot": target.relative_to(EVIDENCE).as_posix(),
+                }
+            )
+    receipt = {
+        "created_utc": datetime.now(UTC).isoformat(),
+        "scope": "SOURCE_BYTES_ONLY_NO_NEW_BENCHMARK_EXECUTION",
+        "rows": rows,
+    }
+    receipt_path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    for row in rows:
+        print(f"{row['run']} {row['status']} {row['source']}")
+
+
+if __name__ == "__main__":
+    main()

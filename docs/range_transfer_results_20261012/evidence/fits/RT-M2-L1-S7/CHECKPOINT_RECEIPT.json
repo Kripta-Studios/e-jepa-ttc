@@ -1,0 +1,13 @@
+{
+  "accumulation_index": 0,
+  "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\fits\\RT-M2-L1-S7\\checkpoint_last.pt",
+  "checkpoint_sha256": "f32ed81eddbf526e30fea234fb905ec5b8755e3f92a25dea5bccb2907caea1c9",
+  "complete_state": true,
+  "completed_updates": 2500,
+  "fit_id": "RT-M2-L1-S7",
+  "identity_sha256": "5ff2fd71353110213aca8ab341a2164917f3b1c9531d73cde0ae86351bcaf9b8",
+  "recovery_upper": 0,
+  "schema": "rgb_port_checkpoint_receipt_v1",
+  "scientific_endpoint": true,
+  "status": "COMPLETE"
+}

@@ -1,0 +1,13 @@
+{
+  "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+  "external_submission": false,
+  "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+  "population": 6762,
+  "prediction_receipt_sha256": "e07405d43903aaf85442f0c673c79f088abd7dc293f422d505f75aa5fa158b20",
+  "private_targets_read": false,
+  "receipt_sha256": "2950818ff97ccc6f83ca6448701934e97844894cea7d2ba3e3bd3c07cf1d3079",
+  "schema": "scientific_oof_test12_package_v1",
+  "status": "PACKAGED_NOT_SUBMITTED",
+  "zip_path": "/workspace/ejepa_final_runs/final/test12/PHASE_ONLY_S7_TRAIN40_SCIENTIFIC_OOF.zip",
+  "zip_sha256": "5eb69749de7aff682eea640d843ee635379702337d929c86f50472264f1d88bc"
+}

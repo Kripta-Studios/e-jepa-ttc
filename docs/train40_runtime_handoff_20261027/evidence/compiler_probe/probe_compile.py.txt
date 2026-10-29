@@ -1,0 +1,141 @@
+"""Isolated FP32 Inductor probe; no scientific module or environment mutation."""
+from __future__ import annotations
+
+import argparse
+import ctypes
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import time
+import traceback
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+# Triton's C getenv assumes UTF-8 while Windows uses the active ANSI codepage.
+# Existing 8.3 names avoid the accented user directory without moving any data.
+_short_buffer = ctypes.create_unicode_buffer(32768)
+_short_length = ctypes.windll.kernel32.GetShortPathNameW(str(HERE), _short_buffer, len(_short_buffer))
+if not _short_length:
+    raise OSError("Windows could not resolve an ASCII short path for the isolated probe")
+SHORT_HERE = Path(_short_buffer.value)
+sys.path[:0] = [str(SHORT_HERE / "deps"), str(ROOT / "src"), str(ROOT)]
+os.environ["TRITON_CACHE_DIR"] = str(SHORT_HERE / "triton_cache")
+os.environ["TORCHINDUCTOR_CACHE_DIR"] = str(SHORT_HERE / "inductor_cache")
+# Installed process-wide PATH resolves CUDA12.4, which predates sm120. Use
+# the isolated Triton wheel's matched CUDA12.8 toolchain instead.
+prior_cuda_path = os.environ.get("CUDA_PATH")
+os.environ["CUDA_PATH"] = str(SHORT_HERE / "deps/triton/backends/nvidia")
+os.environ["CC"] = str(SHORT_HERE / "deps/triton/runtime/tcc/tcc.exe")
+
+import numpy as np
+import torch
+import triton
+from torch import Tensor, nn
+
+from e_jepa_ttc.models.local_transport import local_correlation_match
+
+
+class CorrelationCore(nn.Module):
+    def __init__(self, radius: int) -> None:
+        super().__init__()
+        self.radius = radius
+
+    def forward(self, previous: Tensor, current: Tensor) -> tuple[Tensor, ...]:
+        result = local_correlation_match(
+            previous, current, radius=self.radius, temperature=0.10,
+            return_probability=False,
+        )
+        return result.dx, result.dy, result.confidence_margin, result.entropy, result.valid
+
+
+def parity(actual: tuple[Tensor, ...], expected: tuple[Tensor, ...]) -> dict:
+    results=[]
+    for name,a,b in zip(("dx","dy","margin","entropy","valid"),actual,expected,strict=True):
+        same=torch.equal(a,b)
+        difference=(a.float()-b.float()).abs()
+        results.append({"name":name,"exact":same,"max_abs":float(difference.max()),
+                        "passed_1e5":bool(torch.allclose(a,b,rtol=1e-5,atol=1e-5))})
+    return {"outputs":results,"passed_1e5":all(x["passed_1e5"] for x in results),
+            "exact":all(x["exact"] for x in results)}
+
+
+def measure(call, previous, current, repeats: int) -> dict:
+    for _ in range(5):call(previous,current)
+    torch.cuda.synchronize()
+    values=[]
+    for _ in range(repeats):
+        start=time.perf_counter()
+        call(previous,current)
+        torch.cuda.synchronize()
+        values.append((time.perf_counter()-start)*1000)
+    return {"wall_ms":values,"median_ms":float(np.median(values)),
+            "p95_ms":float(np.quantile(values,.95)),"mean_ms":float(np.mean(values))}
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--batches",type=int,nargs="+",default=[8])
+    parser.add_argument("--radii",type=int,nargs="+",default=[1])
+    parser.add_argument("--repeats",type=int,default=20)
+    parser.add_argument("--output",type=Path,default=HERE/"compile_result.json")
+    args=parser.parse_args()
+    if args.output.exists():raise ValueError("Refusing to replace a prior probe result")
+    records=[]
+    report={"scope":"LOCAL_CORRELATION_ONLY_SYNTHETIC_FEATURES_NO_MODEL_TTC",
+            "torch":torch.__version__,"triton":triton.__version__,"records":records,
+            "previous_cuda_path_ignored":prior_cuda_path,
+            "source_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            "failed_install_attempt":"uv --target initially selected Python3.13; retried with explicit sibling Python3.11 without changing environments"}
+    try:
+        torch.set_num_threads(2)
+        torch.backends.cuda.matmul.allow_tf32=False
+        torch.backends.cudnn.allow_tf32=False
+        torch.backends.cudnn.benchmark=False
+        torch.manual_seed(7)
+        options={"use_fast_math":False,"force_same_precision":True,"triton.cudagraphs":False}
+        report.update(device=torch.cuda.get_device_name(),options=options)
+        with torch.inference_mode():
+            for radius in args.radii:
+                for batch in args.batches:
+                    record={"batch":batch,"radius":radius,"shape":[batch,64,32,32]}
+                    records.append(record)
+                    previous=torch.randn(batch,64,32,32).cuda()
+                    current=torch.randn_like(previous)
+                    core=CorrelationCore(radius).eval()
+                    eager=tuple(v.clone() for v in core(previous,current))
+                    compiled=torch.compile(core,backend="inductor",fullgraph=True,dynamic=False,options=options)
+                    begin=time.perf_counter()
+                    result=compiled(previous,current)
+                    torch.cuda.synchronize()
+                    record["compile_seconds"]=time.perf_counter()-begin
+                    record["parity"]=parity(result,eager)
+                    # Validate changed values and border-dominated uniform features.
+                    record["changed_cases"]=[]
+                    for a,b in ((previous*.7,current*.4),(torch.zeros_like(previous),torch.zeros_like(current))):
+                        record["changed_cases"].append(parity(compiled(a,b),core(a,b)))
+                    record["eager"]=measure(core,previous,current,args.repeats)
+                    record["compiled"]=measure(compiled,previous,current,args.repeats)
+                    stream=torch.cuda.Stream()
+                    stream.wait_stream(torch.cuda.current_stream())
+                    with torch.cuda.stream(stream):
+                        for _ in range(3):core(previous,current)
+                    torch.cuda.current_stream().wait_stream(stream)
+                    graph=torch.cuda.CUDAGraph()
+                    with torch.cuda.graph(graph):out=core(previous,current)
+                    graph.replay()
+                    record["eager_graph"]=measure(lambda a,b:graph.replay(),previous,current,args.repeats)
+                    record["graph_parity"]=parity(out,eager)
+                    record["allocated_cuda_bytes"]=torch.cuda.max_memory_allocated()
+                    print(json.dumps(record),flush=True)
+        report["status"]="PROBE_COMPLETE_NOT_MODEL_ADMISSION"
+    except BaseException as exc:
+        report.update(status="FAILED",error=f"{type(exc).__name__}: {exc}",traceback=traceback.format_exc())
+        print(report["traceback"],flush=True)
+        raise
+    finally:
+        args.output.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
+
+
+if __name__=="__main__":main()

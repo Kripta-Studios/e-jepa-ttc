@@ -1,0 +1,188 @@
+{
+  "event_exact_legacy_100ms_slots": true,
+  "event_shape": [
+    4,
+    3,
+    12,
+    128,
+    128
+  ],
+  "optimizer_updates": 0,
+  "query_id": "CCRm-low-0-overlap-0:00",
+  "rgb_frame_counts": [
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3
+  ],
+  "rgb_metadata": [
+    {
+      "anchor_us": 14050371,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.05,
+        0.050008
+      ],
+      "first_sensor_ts_us": 13950363,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        13950363,
+        14000363,
+        14050371
+      ]
+    },
+    {
+      "anchor_us": 14100370,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.050008,
+        0.049999
+      ],
+      "first_sensor_ts_us": 14000363,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14000363,
+        14050371,
+        14100370
+      ]
+    },
+    {
+      "anchor_us": 14150369,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.049999,
+        0.049999
+      ],
+      "first_sensor_ts_us": 14050371,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14050371,
+        14100370,
+        14150369
+      ]
+    },
+    {
+      "anchor_us": 14200368,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.049999,
+        0.049999
+      ],
+      "first_sensor_ts_us": 14100370,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14100370,
+        14150369,
+        14200368
+      ]
+    },
+    {
+      "anchor_us": 14250376,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.049999,
+        0.050008
+      ],
+      "first_sensor_ts_us": 14150369,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14150369,
+        14200368,
+        14250376
+      ]
+    },
+    {
+      "anchor_us": 14300375,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.050008,
+        0.049999
+      ],
+      "first_sensor_ts_us": 14200368,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14200368,
+        14250376,
+        14300375
+      ]
+    },
+    {
+      "anchor_us": 14350374,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.049999,
+        0.049999
+      ],
+      "first_sensor_ts_us": 14250376,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14250376,
+        14300375,
+        14350374
+      ]
+    },
+    {
+      "anchor_us": 14400373,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.049999,
+        0.049999
+      ],
+      "first_sensor_ts_us": 14300375,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14300375,
+        14350374,
+        14400373
+      ]
+    }
+  ],
+  "rgb_observations": 8,
+  "rgb_unavailable_reason": "",
+  "seconds": 8.34724550001556,
+  "status": "SUPERSEDED_CADENCE_MISMATCH_DETECTED_AND_CORRECTED"
+}

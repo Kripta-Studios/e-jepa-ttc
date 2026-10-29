@@ -1,0 +1,16 @@
+fusion:
+  base_blend: 0.20
+  override_blend: 0.51
+  negative_override_probability: 0.985
+
+gates:
+  pearson_floor: 0.66
+  pearson_max_drop: 0.005
+  mae_tolerance: 0.00075
+  balanced_sign_gate: 0.765
+  negative_accuracy_gate: 0.68
+  minimum_sequence_negative_accuracy_gate: 0.35
+  positive_accuracy_max_drop: 0.06
+  maximum_override_rate: 0.08
+  zero_event_pearson_drop_gate: 0.55
+  shuffled_event_pearson_drop_gate: 0.55

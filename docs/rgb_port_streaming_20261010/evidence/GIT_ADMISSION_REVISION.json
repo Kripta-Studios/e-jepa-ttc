@@ -1,0 +1,8 @@
+{
+  "archived_before": "before_git_admission",
+  "current_freeze_sha256": "7f5a56d3d378e9de3aa5ce4e7aae4be886388b72ec832d09561d74ed99c10795",
+  "optimizer_updates": 0,
+  "previous_freeze_sha256": "8de6e2e12ebc43b0f65a0970394180e7104de1cd043ab9c31da0a14b9db3e7e7",
+  "reason": "preflight required original pre-publication Git HEAD; admit explicit descendant and preserve scientific freeze",
+  "training_launched_before_revision": false
+}

@@ -1,0 +1,114 @@
+{
+  "checks": [
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true
+    },
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true
+    },
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true
+    },
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true
+    }
+  ],
+  "ids": [
+    3601,
+    22336,
+    46741,
+    48147,
+    24469,
+    33193,
+    48611,
+    37402,
+    17163,
+    47107,
+    5865,
+    50886,
+    29418,
+    10532,
+    53089,
+    37660,
+    53617,
+    41087,
+    38710,
+    35096,
+    12116,
+    16110,
+    24113,
+    52386,
+    35117,
+    35193,
+    46814,
+    36096,
+    25219,
+    3869,
+    3173,
+    6028
+  ],
+  "median_warm_ratio": 0.9420777435546934,
+  "optimizer_updates": 0,
+  "origin_updates": 1086,
+  "registration_sha256": "5f6e5c7d21dc32b1116c596e1cb4dab5821a36410c609b48299924fa47c5fc12",
+  "scope": "Prepared real P B32 forward/backward; not end-to-end production throughput",
+  "status": "PASS",
+  "timings": [
+    {
+      "iteration": 0,
+      "order": [
+        "original",
+        "candidate"
+      ],
+      "seconds": {
+        "candidate": 1.801747699995758,
+        "original": 8.490273900009925
+      }
+    },
+    {
+      "iteration": 1,
+      "order": [
+        "candidate",
+        "original"
+      ],
+      "seconds": {
+        "candidate": 0.33612570000695996,
+        "original": 0.3176979999989271
+      }
+    },
+    {
+      "iteration": 2,
+      "order": [
+        "original",
+        "candidate"
+      ],
+      "seconds": {
+        "candidate": 0.3142797000182327,
+        "original": 0.3636977999994997
+      }
+    },
+    {
+      "iteration": 3,
+      "order": [
+        "candidate",
+        "original"
+      ],
+      "seconds": {
+        "candidate": 0.29589880001731217,
+        "original": 0.3140917000127956
+      }
+    }
+  ]
+}

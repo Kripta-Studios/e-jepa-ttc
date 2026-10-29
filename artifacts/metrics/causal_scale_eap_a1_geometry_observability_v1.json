@@ -1,0 +1,311 @@
+{
+  "artifact_sha256": "737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d",
+  "artifact_type": "causal_scale_eap_a1_geometry_observability_v1",
+  "created_at_utc": "2026-08-10T03:07:49.123033+00:00",
+  "endpoint_geometry": {
+    "t1": {
+      "activity_centroid_x_vs_bbox": {
+        "count": 2048,
+        "mae": 0.02137721420149319,
+        "observed_mean": 0.5007776183920214,
+        "observed_std": 0.002315662347625437,
+        "pearson": -0.16125855416535415,
+        "reference_mean": 0.5004927054833388,
+        "reference_std": 0.030237104190797105,
+        "slope": -0.01234973957019611
+      },
+      "activity_centroid_y_vs_bbox": {
+        "count": 2048,
+        "mae": 0.009034714457811788,
+        "observed_mean": 0.4992975596396718,
+        "observed_std": 0.002835767941581526,
+        "pearson": -0.018622562189245122,
+        "reference_mean": 0.4987604964117054,
+        "reference_std": 0.012851381908112946,
+        "slope": -0.0041092285035146245
+      },
+      "activity_height_vs_bbox_height": {
+        "count": 2048,
+        "mae": 0.4543699755158741,
+        "observed_mean": 0.9965567914769053,
+        "observed_std": 0.0033495292869500652,
+        "pearson": 0.138337011227922,
+        "reference_mean": 0.5421868159610312,
+        "reference_std": 0.12138076892791497,
+        "slope": 0.003817440560557358
+      },
+      "activity_width_vs_bbox_width": {
+        "count": 2048,
+        "mae": 0.4295090459054336,
+        "observed_mean": 0.9985414153488819,
+        "observed_std": 0.003142832776004859,
+        "pearson": 0.04963978696626769,
+        "reference_mean": 0.5690323694434483,
+        "reference_std": 0.09615933489113936,
+        "slope": 0.0016224067028760346
+      },
+      "bbox_width_vs_bbox_height": {
+        "count": 2048,
+        "mae": 0.16246709320694208,
+        "observed_mean": 0.5690323694434483,
+        "observed_std": 0.09615933489113936,
+        "pearson": -0.47408736378901223,
+        "reference_mean": 0.5421868159610312,
+        "reference_std": 0.12138076892791497,
+        "slope": -0.3755778282251497
+      },
+      "predicted_centroid_x_vs_bbox": {
+        "count": 2048,
+        "mae": 0.045547397501650266,
+        "observed_mean": 0.504970328649506,
+        "observed_std": 0.0481967078761246,
+        "pearson": 0.08504275514679376,
+        "reference_mean": 0.5004927054833388,
+        "reference_std": 0.030237104190797105,
+        "slope": 0.13555467484344283
+      },
+      "predicted_centroid_y_vs_bbox": {
+        "count": 2048,
+        "mae": 0.0379800038645044,
+        "observed_mean": 0.4879925954446662,
+        "observed_std": 0.04402389885414356,
+        "pearson": 0.018143698513618495,
+        "reference_mean": 0.4987604964117054,
+        "reference_std": 0.012851381908112946,
+        "slope": 0.06215334303460195
+      },
+      "predicted_height_vs_bbox_height": {
+        "count": 2048,
+        "mae": 0.12814745047944598,
+        "observed_mean": 0.6673278737580404,
+        "observed_std": 0.05455034117915704,
+        "pearson": 0.4782509081674042,
+        "reference_mean": 0.5421868159610312,
+        "reference_std": 0.12138076892791497,
+        "slope": 0.2149331433652975
+      },
+      "predicted_width_vs_bbox_width": {
+        "count": 2048,
+        "mae": 0.12692913771024905,
+        "observed_mean": 0.6880659789894708,
+        "observed_std": 0.05985969843791763,
+        "pearson": 0.04840708964800128,
+        "reference_mean": 0.5690323694434483,
+        "reference_std": 0.09615933489113936,
+        "slope": 0.030133671284924883
+      }
+    },
+    "t2": {
+      "activity_centroid_x_vs_bbox": {
+        "count": 2048,
+        "mae": 0.0153853778319899,
+        "observed_mean": 0.5006564703944605,
+        "observed_std": 0.002207774167108572,
+        "pearson": 0.17578064975782567,
+        "reference_mean": 0.4993649824464228,
+        "reference_std": 0.0242385761320137,
+        "slope": 0.016011005576367705
+      },
+      "activity_centroid_y_vs_bbox": {
+        "count": 2048,
+        "mae": 0.005853854003362358,
+        "observed_mean": 0.499360452638939,
+        "observed_std": 0.002783502519531522,
+        "pearson": 0.0676098238496594,
+        "reference_mean": 0.5007361552270595,
+        "reference_std": 0.00932662303284555,
+        "slope": 0.02017794804913346
+      },
+      "activity_height_vs_bbox_height": {
+        "count": 2048,
+        "mae": 0.4436520950839622,
+        "observed_mean": 0.9965020653326064,
+        "observed_std": 0.003359118974547414,
+        "pearson": 0.13855917583170294,
+        "reference_mean": 0.5528499702486442,
+        "reference_std": 0.1233465067781443,
+        "slope": 0.003773408496043393
+      },
+      "activity_width_vs_bbox_width": {
+        "count": 2048,
+        "mae": 0.4184986580075929,
+        "observed_mean": 0.9983948674052954,
+        "observed_std": 0.0031689559719817926,
+        "pearson": 0.07923837215820619,
+        "reference_mean": 0.5798962093977025,
+        "reference_std": 0.09483297329274326,
+        "slope": 0.002647843929618494
+      },
+      "bbox_width_vs_bbox_height": {
+        "count": 2048,
+        "mae": 0.16456120819202624,
+        "observed_mean": 0.5798962093977025,
+        "observed_std": 0.09483297329274326,
+        "pearson": -0.5055896449026124,
+        "reference_mean": 0.5528499702486442,
+        "reference_std": 0.1233465067781443,
+        "slope": -0.38871444797683263
+      },
+      "predicted_centroid_x_vs_bbox": {
+        "count": 2048,
+        "mae": 0.04284794727573171,
+        "observed_mean": 0.5025632135511842,
+        "observed_std": 0.04787717097309314,
+        "pearson": 0.03632663776094179,
+        "reference_mean": 0.4993649824464228,
+        "reference_std": 0.0242385761320137,
+        "slope": 0.07175407653839518
+      },
+      "predicted_centroid_y_vs_bbox": {
+        "count": 2048,
+        "mae": 0.03687034054019023,
+        "observed_mean": 0.4888351140980376,
+        "observed_std": 0.0433182640093591,
+        "pearson": 0.0504082924543797,
+        "reference_mean": 0.5007361552270595,
+        "reference_std": 0.00932662303284555,
+        "slope": 0.23412543994861093
+      },
+      "predicted_height_vs_bbox_height": {
+        "count": 2048,
+        "mae": 0.12165467037993949,
+        "observed_mean": 0.6700428502517752,
+        "observed_std": 0.05335939359157081,
+        "pearson": 0.4930941627483537,
+        "reference_mean": 0.5528499702486442,
+        "reference_std": 0.1233465067781443,
+        "slope": 0.21331131456458524
+      },
+      "predicted_width_vs_bbox_width": {
+        "count": 2048,
+        "mae": 0.11715543513128068,
+        "observed_mean": 0.687395660992479,
+        "observed_std": 0.0592447937460108,
+        "pearson": 0.10545715832040935,
+        "reference_mean": 0.5798962093977025,
+        "reference_std": 0.09483297329274326,
+        "slope": 0.06588201737012443
+      }
+    }
+  },
+  "inputs": {
+    "cache_manifest": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\cache\\garl_object_event_common_roi_screen_v4\\manifest.json",
+      "sha256": "bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72"
+    },
+    "checkpoint": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_geometry_v1_seed7\\model_best.pt",
+      "sha256": "29ed410b39372e67cac87e5fb0e4be2b659f1a923ea1ebfff3f49e364e139e43"
+    },
+    "summary": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_geometry_v1_seed7\\summary.json",
+      "sha256": "1f2ff8ce26b1fff8fdd468eac413e5bf96cb9301dd55ee313e5d0f9480026bb6"
+    }
+  },
+  "interpretation": {
+    "a1_improves_height_but_not_complete_geometry": true,
+    "a1_r_authorized_next": false,
+    "activity_moment_is_diagnostic_only": true,
+    "activity_moment_uses_only_model_input_events": true,
+    "bbox_used_as_model_input": false,
+    "next_hypothesis_class": "dense_event_native_representation",
+    "promotion_authorized": false,
+    "raw_activity_is_spatially_diffuse_in_common_roi": true,
+    "sota_claim_authorized": false,
+    "weak_box_noise_is_not_a_sufficient_failure_explanation": true
+  },
+  "runtime": {
+    "batch_size": 64,
+    "device": "cuda:0",
+    "elapsed_seconds": 12.677799999999479,
+    "peak_vram_mb": 934.62158203125,
+    "precision": "bf16",
+    "samples_per_second": 161.54222341416366
+  },
+  "scope": {
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false,
+    "sample_count": 2048,
+    "sequence_count": 3,
+    "sequence_ids": [
+      "DGqicHUGWb",
+      "pBqGOb2vYq",
+      "qoohcdtLDH"
+    ],
+    "track_count": 108
+  },
+  "status": "completed_public_validation_only",
+  "temporal_geometry": {
+    "activity_delta_height_vs_bbox": {
+      "count": 2048,
+      "mae": 0.026579377300854107,
+      "observed_mean": -5.495044999043571e-05,
+      "observed_std": 0.001074632581817583,
+      "pearson": -0.052055513649682375,
+      "reference_mean": 0.019668723703653836,
+      "reference_std": 0.02783975007768262,
+      "slope": -0.002009376911613967
+    },
+    "activity_delta_width_vs_bbox": {
+      "count": 2048,
+      "mae": 0.03701275700011769,
+      "observed_mean": -0.00014685812623880775,
+      "observed_std": 0.001242138525141081,
+      "pearson": -0.0776725467242456,
+      "reference_mean": 0.01985062855927338,
+      "reference_std": 0.044655505573190694,
+      "slope": -0.0021605412679490234
+    },
+    "bbox_delta_width_vs_bbox_delta_height": {
+      "count": 2048,
+      "mae": 0.02749567802664061,
+      "observed_mean": 0.01985062855927338,
+      "observed_std": 0.044655505573190694,
+      "pearson": 0.43933370790183035,
+      "reference_mean": 0.019668723703653836,
+      "reference_std": 0.02783975007768262,
+      "slope": 0.7046998908739406
+    },
+    "predicted_delta_height_vs_bbox": {
+      "count": 2048,
+      "mae": 0.028480629322911163,
+      "observed_mean": 0.00422292379211601,
+      "observed_std": 0.019547337247781696,
+      "pearson": 0.059132705264576924,
+      "reference_mean": 0.019668723703653836,
+      "reference_std": 0.02783975007768262,
+      "slope": 0.041519299884339236
+    },
+    "predicted_delta_height_vs_physical": {
+      "count": 2048,
+      "mae": 0.026817203208465073,
+      "observed_mean": 0.00422292379211601,
+      "observed_std": 0.019547337247781696,
+      "pearson": 0.10479959744581353,
+      "reference_mean": 0.020711520353415835,
+      "reference_std": 0.024532129264532593,
+      "slope": 0.08350490300353912
+    },
+    "predicted_delta_width_vs_bbox": {
+      "count": 2048,
+      "mae": 0.054455130508504104,
+      "observed_mean": -0.0009367484308577429,
+      "observed_std": 0.05238901270769612,
+      "pearson": -0.04385262660064795,
+      "reference_mean": 0.01985062855927338,
+      "reference_std": 0.044655505573190694,
+      "slope": -0.05144708995583417
+    },
+    "predicted_delta_width_vs_physical": {
+      "count": 2048,
+      "mae": 0.04602313499502875,
+      "observed_mean": -0.0009367484308577429,
+      "observed_std": 0.05238901270769612,
+      "pearson": -0.03996684825187864,
+      "reference_mean": 0.020711520353415835,
+      "reference_std": 0.024532129264532593,
+      "slope": -0.08535026447872936
+    }
+  }
+}

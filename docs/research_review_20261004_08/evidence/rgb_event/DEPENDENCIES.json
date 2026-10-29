@@ -1,0 +1,9 @@
+{
+  "event_only_bundle_sha256": "68afaa9a8e5b30603d93c524e15be73c9eea6528b480412e9ecd2c613e6721b9",
+  "full_checkpoint_local": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth",
+  "full_checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+  "HF_repo": "NAIL-HNU/GarlTTC-model",
+  "HF_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+  "weights_retained_locally_not_duplicated_in_essential_zip": true,
+  "TRAIN40_essential_bundle_sha256": "6cb350449c7f27076159086ac021033fa5f9f031c134a6e373c308449c405292"
+}
