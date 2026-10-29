@@ -146,6 +146,7 @@ def _live_windows_processes() -> list[dict[str, object]]:
     if executable is None:
         raise RuntimeError("PowerShell is required for live command ownership verification")
     command = (
+        "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); "
         "Get-CimInstance Win32_Process | "
         "Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress"
     )
@@ -154,6 +155,8 @@ def _live_windows_processes() -> list[dict[str, object]]:
         check=True,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="strict",
         timeout=30,
     )
     value = json.loads(result.stdout)
@@ -163,20 +166,56 @@ def _live_windows_processes() -> list[dict[str, object]]:
     return cast(list[dict[str, object]], rows)
 
 
+def _windows_command_line_to_argv(command_line: str) -> list[str]:
+    """Parse one Windows command line with the same API used by native programs."""
+    if os.name != "nt":
+        raise RuntimeError("Windows command-line parsing requires Windows")
+    if not command_line:
+        raise ValueError("Process command line is empty")
+    import ctypes
+    from ctypes import wintypes
+
+    shell32 = ctypes.WinDLL("shell32", use_last_error=True)
+    parse = shell32.CommandLineToArgvW
+    parse.argtypes = (wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_int))
+    parse.restype = ctypes.POINTER(wintypes.LPWSTR)
+    count = ctypes.c_int()
+    pointer = parse(command_line, ctypes.byref(count))
+    if not pointer or count.value < 1:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        return [pointer[index] for index in range(count.value)]
+    finally:
+        local_free = ctypes.WinDLL("kernel32", use_last_error=True).LocalFree
+        local_free.argtypes = (ctypes.c_void_p,)
+        local_free.restype = ctypes.c_void_p
+        local_free(ctypes.cast(pointer, ctypes.c_void_p))
+
+
+def _resolved_argument(value: str) -> Path:
+    return Path(value).resolve()
+
+
 def _verify_no_live_segment_owner(command: Sequence[str], output: Path) -> None:
-    producer = str(command[1] if len(command) > 1 else command[0]).casefold()
-    producer_name = Path(producer).name
-    output_text = str(output.resolve()).casefold()
-    output_name = output.resolve().name.casefold()
+    producer = _resolved_argument(str(command[1] if len(command) > 1 else command[0]))
+    expected_output = output.resolve()
     for row in _live_windows_processes():
         command_line = row.get("CommandLine")
-        if isinstance(command_line, str):
-            folded = command_line.casefold()
-            same_producer = producer in folded or producer_name in folded
-            same_output = output_text in folded or output_name in folded
-        else:
-            same_producer = same_output = False
-        if same_producer and same_output:
+        if command_line is None:
+            continue
+        if not isinstance(command_line, str):
+            raise RuntimeError("Cannot prove ownership from malformed process inventory")
+        try:
+            argv = _windows_command_line_to_argv(command_line)
+        except (OSError, ValueError) as error:
+            raise RuntimeError("Cannot prove ownership from malformed command line") from error
+        if len(argv) < 2 or _resolved_argument(argv[1]) != producer:
+            continue
+        output_indices = [index for index, value in enumerate(argv) if value == "--output"]
+        if len(output_indices) != 1 or output_indices[0] + 1 >= len(argv):
+            raise RuntimeError("Cannot prove ownership: producer --output is malformed")
+        observed_output = _resolved_argument(argv[output_indices[0] + 1])
+        if observed_output == expected_output:
             raise RuntimeError("A producer still owns the completed segment output")
 
 
@@ -767,6 +806,7 @@ def verify_evaluation_boundary(
     evaluation_updates: Sequence[int],
     full_selection_updates: Sequence[int],
     selection_metric: str,
+    evaluation_root_by_update: Mapping[int, Path] | None = None,
 ) -> dict[str, object]:
     """Require every scheduled evaluation through the durable checkpoint update."""
     validate_checkpoint_envelope(checkpoint)
@@ -778,14 +818,31 @@ def verify_evaluation_boundary(
     best_value: float | None = None
     best_update: int | None = None
     protocol_sha256 = checkpoint["protocol_sha256"]
+    roots = (
+        {scheduled: old_run for scheduled in required}
+        if evaluation_root_by_update is None
+        else dict(evaluation_root_by_update)
+    )
+    if set(roots) != set(required):
+        raise ValueError("Evaluation-root assignment differs from required updates")
+    known_roots = {path.resolve(strict=True) for path in roots.values()}
     for scheduled in required:
         panels = ["selection", "pilot_parity"]
         if scheduled in full_selection_updates:
             panels.append("full_selection")
         for panel in panels:
-            path = old_run / "evaluation" / f"{panel}_update_{scheduled:06d}.json"
-            if not path.is_file():
-                raise ValueError(f"Required completed evaluation is missing: {path.name}")
+            name = f"{panel}_update_{scheduled:06d}.json"
+            expected_root = roots[scheduled].resolve(strict=True)
+            path = expected_root / "evaluation" / name
+            present = [
+                root / "evaluation" / name
+                for root in known_roots
+                if (root / "evaluation" / name).is_file()
+            ]
+            if len(present) != 1 or present[0] != path:
+                raise ValueError(
+                    f"Required evaluation ownership is missing or duplicated: {name}"
+                )
             payload = _load_json(path)
             metrics = payload.get("metrics_v2")
             if not isinstance(metrics, Mapping):
@@ -801,6 +858,7 @@ def verify_evaluation_boundary(
             files[path.name] = {
                 "sha256": sha256_file(path),
                 "sample_count": metrics["sample_count"],
+                "root": str(expected_root),
             }
             if panel == "selection":
                 value = metrics.get(selection_metric)

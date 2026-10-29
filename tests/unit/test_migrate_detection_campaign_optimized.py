@@ -247,6 +247,13 @@ def test_unfinished_preregistration_preserves_real_nonempty_parent_shape(
     )
     assert result["start_update"] == 1024
     assert result["parent_run_chain"] == [entry]
+    roots = module._evaluation_roots_for_resumed_boundary(
+        old_run=old_run,
+        scheduled_updates=[1024, 2048, 3072, 4096],
+        checkpoint_update=3072,
+        unfinished_chain=result,
+    )
+    assert roots == {1024: ancestor, 2048: old_run, 3072: old_run}
     selected_path.write_bytes(b"tampered")
     with pytest.raises(ValueError, match="selected checkpoint bytes"):
         module._verified_unfinished_parent_chain(

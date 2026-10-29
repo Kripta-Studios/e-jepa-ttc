@@ -118,6 +118,53 @@ def _verified_unfinished_parent_chain(
     }
 
 
+def _evaluation_roots_for_resumed_boundary(
+    *,
+    old_run: Path,
+    scheduled_updates: list[int],
+    checkpoint_update: int,
+    unfinished_chain: Mapping[str, object] | None,
+) -> dict[int, Path]:
+    """Assign every due evaluation to exactly one verified campaign segment."""
+    required = [update for update in scheduled_updates if update <= checkpoint_update]
+    if unfinished_chain is None:
+        return {update: old_run for update in required}
+    start_update = unfinished_chain.get("start_update")
+    raw_chain = unfinished_chain.get("parent_run_chain")
+    if not isinstance(start_update, int) or isinstance(start_update, bool) or not isinstance(
+        raw_chain, list
+    ):
+        raise ValueError("Unfinished inherited-chain boundary is malformed")
+    segments: list[tuple[int, Path]] = []
+    previous = 0
+    for raw_entry in raw_chain:
+        if not isinstance(raw_entry, Mapping):
+            raise ValueError("Inherited evaluation segment is malformed")
+        final_update = raw_entry.get("final_update")
+        summary_path = raw_entry.get("summary_path")
+        if (
+            isinstance(final_update, bool)
+            or not isinstance(final_update, int)
+            or final_update <= previous
+            or not isinstance(summary_path, str)
+        ):
+            raise ValueError("Inherited evaluation segment order/path differs")
+        segments.append((final_update, Path(summary_path).resolve(strict=True).parent))
+        previous = final_update
+    if previous != start_update:
+        raise ValueError("Inherited evaluation segments do not end at start_update")
+    result: dict[int, Path] = {}
+    for update in required:
+        if update > start_update:
+            result[update] = old_run
+            continue
+        matches = [root for final, root in segments if update <= final]
+        if not matches:
+            raise ValueError(f"No inherited evaluation segment owns update {update}")
+        result[update] = matches[0]
+    return result
+
+
 def _migration_parent_summary(
     *,
     old_run: Path,
@@ -370,6 +417,12 @@ def build_migration_bundle(
                 cast(list[int], evaluation["full_selection_updates"])
             ),
             selection_metric=str(evaluation["selection_metric"]),
+            evaluation_root_by_update=_evaluation_roots_for_resumed_boundary(
+                old_run=old_run,
+                scheduled_updates=cast(list[int], evaluation["updates"]),
+                checkpoint_update=cast(int, last["update"]),
+                unfinished_chain=unfinished_chain,
+            ),
         )
         del last
 

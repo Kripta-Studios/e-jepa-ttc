@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 import threading
+import time
 from collections import OrderedDict
 from pathlib import Path
 
@@ -255,6 +256,55 @@ def test_evaluation_gate_uses_first_strict_max_for_selected(tmp_path: Path) -> N
         selection_metric="dev_AP101_supported_classes",
     )
     assert receipt["selected_update"] == 1024
+
+
+def test_resumed_evaluation_boundary_unions_ancestor_and_current_without_duplicates(
+    tmp_path: Path,
+) -> None:
+    provenance = {"runtime_preregistration_sha256": "1" * 64}
+    last = checkpoint(provenance, update=3072, best=0.6)
+    selected = checkpoint_selection_identity(
+        checkpoint(provenance, update=3072, best=0.6)
+    )
+    ancestor = tmp_path / "r0_1024"
+    current = tmp_path / "r0_8192"
+    for panel in ("selection", "pilot_parity"):
+        write_json(
+            ancestor / f"evaluation/{panel}_update_001024.json",
+            metric_payload("b" * 64, 0.4),
+        )
+        for update, value in ((2048, 0.5), (3072, 0.6)):
+            write_json(
+                current / f"evaluation/{panel}_update_{update:06d}.json",
+                metric_payload("b" * 64, value),
+            )
+    receipt = verify_evaluation_boundary(
+        current,
+        checkpoint=last,
+        selected=selected,
+        evaluation_updates=(1024, 2048, 3072, 4096),
+        full_selection_updates=(),
+        selection_metric="dev_AP101_supported_classes",
+        evaluation_root_by_update={1024: ancestor, 2048: current, 3072: current},
+    )
+    assert receipt["selected_update"] == 3072
+    assert receipt["files"]["selection_update_001024.json"]["root"] == str(
+        ancestor.resolve()
+    )
+    write_json(
+        current / "evaluation/selection_update_001024.json",
+        metric_payload("b" * 64, 0.4),
+    )
+    with pytest.raises(ValueError, match="missing or duplicated"):
+        verify_evaluation_boundary(
+            current,
+            checkpoint=last,
+            selected=selected,
+            evaluation_updates=(1024, 2048, 3072),
+            full_selection_updates=(),
+            selection_metric="dev_AP101_supported_classes",
+            evaluation_root_by_update={1024: ancestor, 2048: current, 3072: current},
+        )
 
 
 def preregistrations() -> tuple[dict[str, object], dict[str, object]]:
@@ -545,12 +595,40 @@ def test_completed_segment_binds_queue_summary_and_no_live_owner(
     monkeypatch.setattr(migration, "_live_windows_processes", lambda: [])
     result = verify_source_state_receipt(receipt, source_run=source_run)
     assert result["status"] == "PASS_COMPLETED_SEGMENT_NO_LIVE_OWNER"
+    active_output = tmp_path / "r0_8192"
+    active_command = [
+        "python",
+        "train_detection_campaign.py",
+        "--output",
+        str(active_output),
+        "--resume",
+        str(source_run / "checkpoints/last.pt"),
+    ]
     monkeypatch.setattr(
         migration,
         "_live_windows_processes",
-        lambda: [{"ProcessId": 22, "CommandLine": " ".join(command)}],
+        lambda: [
+            {"ProcessId": 21, "CommandLine": subprocess.list2cmdline(active_command)}
+        ],
+    )
+    assert (
+        verify_source_state_receipt(receipt, source_run=source_run)["status"]
+        == "PASS_COMPLETED_SEGMENT_NO_LIVE_OWNER"
+    )
+    monkeypatch.setattr(
+        migration,
+        "_live_windows_processes",
+        lambda: [{"ProcessId": 22, "CommandLine": subprocess.list2cmdline(command)}],
     )
     with pytest.raises(RuntimeError, match="still owns"):
+        verify_source_state_receipt(receipt, source_run=source_run)
+    duplicate = [*command, "--output", str(active_output)]
+    monkeypatch.setattr(
+        migration,
+        "_live_windows_processes",
+        lambda: [{"ProcessId": 23, "CommandLine": subprocess.list2cmdline(duplicate)}],
+    )
+    with pytest.raises(RuntimeError, match="--output is malformed"):
         verify_source_state_receipt(receipt, source_run=source_run)
     monkeypatch.setattr(migration, "_live_windows_processes", lambda: [])
     write_json(summary, {"status": "BUDGET_STOPPED", "final_update": 2048})
@@ -565,6 +643,8 @@ def test_completed_segment_binds_queue_summary_and_no_live_owner(
 def test_stopped_receipt_rejects_wrong_pid_while_real_owner_is_alive(
     tmp_path: Path,
 ) -> None:
+    import e_jepa_ttc.detection.campaign_checkpoint_migration as migration
+
     receipt, source_run, command = stopped_receipt_fixture(
         tmp_path,
         status="INTENTIONALLY_STOPPED_FOR_PERFORMANCE_ADMISSION",
@@ -577,6 +657,24 @@ def test_stopped_receipt_rejects_wrong_pid_while_real_owner_is_alive(
     child_command = [sys.executable, *command[1:]]
     child = subprocess.Popen(child_command)
     try:
+        time.sleep(0.5)
+        candidates = [
+            migration._windows_command_line_to_argv(str(row["CommandLine"]))
+            for row in migration._live_windows_processes()
+            if isinstance(row.get("CommandLine"), str)
+            and producer.name in str(row["CommandLine"])
+        ]
+        assert candidates, "sleeping producer is absent from process inventory"
+        assert any(
+            len(argv) > 1 and Path(argv[1]).resolve() == producer.resolve()
+            for argv in candidates
+        ), candidates
+        assert any(
+            "--output" in argv
+            and Path(argv[argv.index("--output") + 1]).resolve()
+            == source_run.resolve()
+            for argv in candidates
+        ), candidates
         with pytest.raises(RuntimeError, match="still owns"):
             verify_source_state_receipt(receipt, source_run=source_run)
     finally:
