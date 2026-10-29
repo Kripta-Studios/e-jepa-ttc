@@ -21,6 +21,11 @@ class History:
     def __init__(self) -> None:
         self.ingests: list[tuple[int, int]] = []
         self.queries: list[list[tuple[float, float, float, float]]] = []
+        self.initializations: list[tuple[int, int]] = []
+
+    def initialize(self, raw: Any, start: int, end: int) -> None:
+        self.initializations.append((start, end))
+        self.ingests = [(start, end)]
 
     def ingest(self, raw: Any, start: int, end: int) -> None:
         if self.ingests and self.ingests[-1][1] != start:
@@ -130,6 +135,42 @@ def test_actual_train40_surface_used_by_chunk_adapter_is_present() -> None:
         "_event_ticket",
     ]
     assert hasattr(MultiObjectTrain40Service, "_pack_rgb")
+
+
+def test_public_history_rebase_supports_successive_irregular_query_endpoints() -> None:
+    backend = Backend(capacity=4)
+    runtime = ChunkedTrain40Runtime(backend, max_objects=4, chunk_size=4)
+    runtime.rebase_history({}, 80_000, 680_000)
+    first = runtime.update({}, 680_000, 700_000, regions(1), rgb(700_000))
+    runtime.rebase_history({}, 180_000, 780_000)
+    second = runtime.update({}, 780_000, 800_000, regions(1), rgb(800_000))
+    assert backend.history.initializations == [(80_000, 680_000), (180_000, 780_000)]
+    assert first["history_rebase_count"] == 1
+    assert second["history_rebase_count"] == 2
+
+
+@pytest.mark.parametrize(("start", "end"), [(False, 600_000), (0, True)])
+def test_history_rebase_rejects_boolean_timestamps(start: object, end: object) -> None:
+    runtime = ChunkedTrain40Runtime(Backend(capacity=4), max_objects=4, chunk_size=4)
+    with pytest.raises(ValueError, match="exactly 600000"):
+        runtime.rebase_history({}, start, end)  # type: ignore[arg-type]
+
+
+def test_failed_history_initialization_permanently_fails_closed() -> None:
+    backend = Backend(capacity=4)
+
+    def fail_after_possible_mutation(raw: Any, start: int, end: int) -> None:
+        backend.history.initializations.append((start, end))
+        raise RuntimeError("initialization failed")
+
+    backend.history.initialize = fail_after_possible_mutation  # type: ignore[method-assign]
+    runtime = ChunkedTrain40Runtime(backend, max_objects=4, chunk_size=4)
+    with pytest.raises(RuntimeError, match="initialization failed"):
+        runtime.rebase_history({}, 0, 600_000)
+    with pytest.raises(RuntimeError, match="failed"):
+        runtime.rebase_history({}, 0, 600_000)
+    with pytest.raises(RuntimeError, match="failed after packet ingestion"):
+        runtime.update({}, 600_000, 620_000, regions(1), rgb(620_000))
 
 
 def test_detection_service_processes_more_than_twenty_without_capacity_loss() -> None:

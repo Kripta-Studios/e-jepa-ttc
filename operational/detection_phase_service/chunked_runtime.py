@@ -95,6 +95,43 @@ class ChunkedTrain40Runtime:
         self._last_end_us: int | None = None
         self._closed = False
         self._failed = False
+        self._history_rebase_count = 0
+
+    def rebase_history(
+        self,
+        raw_history: Mapping[str, np.ndarray],
+        start_us: int,
+        end_us: int,
+    ) -> None:
+        """Explicitly materialize one independent sealed 600 ms query history.
+
+        RGB exposure endpoints are not aligned to the fixed 20 ms event clock.
+        An evaluator that has already consumed each source interval exactly once
+        may therefore re-materialize the bounded causal history before a new
+        independent query.  This is a public reset boundary, never a retry of a
+        failed or partially ingested packet.
+        """
+        if self._closed or self.backend._closed:
+            raise RuntimeError("Chunked TRAIN40 runtime is closed")
+        if self._failed:
+            raise RuntimeError("Cannot rebase a failed chunked runtime")
+        if (
+            isinstance(start_us, bool)
+            or isinstance(end_us, bool)
+            or not isinstance(start_us, int)
+            or not isinstance(end_us, int)
+            or end_us - start_us != 600_000
+        ):
+            raise ValueError("History rebase requires exactly 600000 microseconds")
+        try:
+            self.history.initialize(raw_history, start_us, end_us)
+        except BaseException:
+            # Initialization may already have mutated the sealed ring. Never
+            # permit a retry or another rebase after ambiguous ownership.
+            self._failed = True
+            raise
+        self._last_end_us = end_us
+        self._history_rebase_count += 1
 
     def close(self) -> None:
         """Close the sealed backend exactly once."""
@@ -173,6 +210,7 @@ class ChunkedTrain40Runtime:
             "chunk_count": chunks,
             "chunk_size": self.chunk_size,
             "packet_ingested_count": 1,
+            "history_rebase_count": self._history_rebase_count,
             "started_ns": started_ns,
             "completed_ns": completed_ns,
             "complete_wall_ms": (completed_ns - started_ns) / 1e6,

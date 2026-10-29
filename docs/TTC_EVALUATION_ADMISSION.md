@@ -158,6 +158,75 @@ Las búsquedas de historia y del frame anterior completamente disponible se
 restringen a `sequence_id`. Las claves exactas `(sequence_id, rgb_member_path)`
 y la unión Garl de cinco campos rechazan duplicados en lugar de sobrescribirlos.
 
+## Arnés de cuatro condiciones
+
+`scripts/evaluate_detected_phase_panel.py` separa tres operaciones:
+
+1. `prepare` valida el panel v3, la procedencia label-free y el SHA del
+   checkpoint detector; materializa entradas R3 sin TTC, ROI GT ni ID GT, y
+   guarda las entradas oracle R0/R1/R2 en un namespace separado.
+2. `run` exige cobertura detectora exacta de todos los prefijos y crea un
+   runtime, servicio, tracker, generación e historial nuevos para cada par
+   consulta–condición. El arnés construye el `DetectionPhaseService`: R0/R1/R2
+   usan un `OracleReferenceTracker` diagnóstico, mientras R3 recibe una vista
+   redactada y usa `CausalMultiObjectTracker`. En R2 el Hungarian selecciona la
+   ROI detectada antes de asignar el ID de referencia; R3 nunca recibe esa rama.
+   Cada paquete, incluso con cero detecciones, se ingiere una sola vez.
+3. `score` sella primero el SHA del archivo de predicciones y solo entonces abre
+   las cinco claves de anotación. Conserva el target TTC del inicio de exposición
+   sin desplazarlo al final de disponibilidad y reporta MAE, mediana, p95, error
+   de signo, cobertura, misses, detecciones no emparejadas con la referencia del
+   panel y abstenciones por historia.
+
+El panel contiene un único track target por consulta, no GT exhaustivo de toda
+la escena ni reglas completas de objetos ignorados. Por ello una detección no
+emparejada se contabiliza como `unmatched_to_panel_reference_count`, pero la
+tasa o el recuento real de falsos positivos de escena queda explícitamente
+`null`/no disponible. Todas las predicciones se conservan.
+
+Los `q10/q90` nativos permanecen límites de fase; no se convierten en un
+intervalo TTC continuo cuando cruzan cero. Todas las condiciones conservan el
+denominador fijo de cinco consultas y la etiqueta
+`TRAIN40_EXPOSED_DIAGNOSTIC_ONLY`.
+
+La preparación CPU actual está en
+`output/s5_replay/detected_phase_panel_prepare_v8.json`. Declara 15 tokens de
+prefijo únicos, siete predicciones aún ausentes y cero tokens extra. Por tanto,
+el estado es `BLOCKED_PREDICTION_COVERAGE`: no se lanzó PHASE ni se inventaron
+ROIs o predicciones faltantes.
+
+### Adaptador operativo incorporado
+
+`run` usa por defecto el adaptador concreto
+`operational/detection_phase_service/ttc_panel_adapter.py`; ya no exige que el
+operador escriba una factoría. Su configuración JSON es estricta e incluye
+`candidate_root`, `eap_root`, `device: "cuda"`, `max_objects`,
+`logical_max_objects`, `rgb_workers`, `rgb_object_chunk_size`, `phase_bounds`
+y `max_frame_cache_bytes`, `event_stream_sha256` (ruta relativa → SHA-256), además del schema
+`detected_phase_panel_adapter_config_v1`. No existen rutas personales por
+defecto.
+
+La validación de configuración, sello del candidato, manifest y hashes de las
+fuentes ocurre en CPU. Los modelos CUDA se construyen únicamente dentro de
+`run`. Cada consulta–condición posee runtime, historial y caché de medios
+nuevos y se cierra antes de la siguiente. Los eventos se leen en intervalos
+half-open únicos, contiguos y causales; se conservan solo los 620 ms necesarios
+para materializar los 600 ms sellados y el paquete final de 20 ms. Un intervalo
+vacío sigue registrado como paquete ingerido. RGB queda limitado al prefijo:
+todos sus hashes de miembro son obligatorios y se verifican antes de construir
+CUDA, además de volver a comprobarse al leer cada frame.
+
+```text
+python scripts/evaluate_detected_phase_panel.py run \
+  --prepared output/s5_replay/detected_phase_panel_prepare.json \
+  --predictions output/detection_predictions.json \
+  --adapter-config output/s5_replay/ttc_panel_adapter.json \
+  --output output/s5_replay/detected_phase_panel_predictions.json
+```
+
+`--runtime-adapter module:function` se conserva para inyección explícita de
+tests o adaptadores propios y es incompatible con `--adapter-config`.
+
 ## Evidencia
 
 - Auditor reproducible: `scripts/audit_ttc_evaluation_admission.py`.
