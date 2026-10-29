@@ -64,8 +64,12 @@ resultados de selección.
    resuelve ranking.
 
 La comparación principal reejecuta el evaluador v2 completo tras reordenar. No reutiliza
-flags TP/FP previos. Reportará AP/PR por clase, macro con soporte, recall idéntico, soporte y
-grupos/secuencias. La mejora debe persistir entre semillas/grupos para superar S2.
+flags TP/FP previos. Reportará AP/PR por clase, macro con soporte, recall v2, soporte y
+grupos/secuencias. El recall class-agnostic v2 también recorre propuestas por score: una
+reordenación puede cambiar legítimamente su asignación greedy y su cardinalidad aunque la
+geometría sea idéntica. Por ello se añaden dos invariantes separados: hash de clase/geometría
+del pool y recall máximo bipartito, independiente del score, en cada umbral. La mejora debe
+persistir entre semillas/grupos para superar S2.
 
 ## Contrato y comandos futuros
 
@@ -80,6 +84,8 @@ python scripts/train_detection_ranker.py fit `
   --predictions <r0_train_predictions.json> `
   --sidecar <r0_train_sidecar.json> `
   --ground-truth <r0_train_ground_truth_v2.json> `
+  --panel-recipe <ranking_panel_recipe.json> `
+  --ground-truth-receipt <r0_train_ground_truth_receipt.json> `
   --split-manifest <split_v2.json> `
   --dataset-role train `
   --output <ranker_bundle.json>
@@ -105,7 +111,8 @@ hash autocontenido. La box2D y el prior geométrico interno siguen sin reconstru
 
 ## Criterio de decisión
 
-Se conserva el ranker únicamente si mejora AP/PR sobre R0 con pool, denominadores y recall
-idénticos, sin concentrar la ganancia en un solo grupo o degradar clases comunes de forma
-oculta. Si no lo hace, se registra el negativo y continúa el baseline R0 hacia temporalidad;
+Se conserva el ranker únicamente si mejora AP/PR sobre R0 con denominadores, hash geométrico
+y recall máximo del pool idénticos, sin concentrar la ganancia en un solo grupo o degradar
+clases comunes de forma oculta. El recall greedy v2 se reporta, pero no se exige idéntico. Si
+la intervención falla, se registra el negativo y continúa el baseline R0 hacia temporalidad;
 no se añaden más módulos para forzar un resultado positivo.

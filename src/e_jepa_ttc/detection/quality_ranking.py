@@ -68,6 +68,8 @@ class TrainingProvenance:
 
     dataset_role: str
     split_manifest_sha256: str
+    panel_recipe_sha256: str
+    ground_truth_receipt_sha256: str
     predictions_sha256: str
     sidecar_sha256: str
     ground_truth_sha256: str
@@ -194,9 +196,19 @@ def _sidecar_query_features(
     frames = sidecar.get("frames")
     if not isinstance(frames, list):
         raise ValueError("Detector sidecar frames are missing")
-    if set(predictions) != {
+    raw_frame_tokens = [
         frame.get("sample_token") for frame in frames if isinstance(frame, Mapping)
-    }:
+    ]
+    if len(raw_frame_tokens) != len(frames) or any(
+        not isinstance(token, str) or not token for token in raw_frame_tokens
+    ):
+        raise ValueError("Prediction and sidecar token populations differ")
+    frame_tokens = [token for token in raw_frame_tokens if isinstance(token, str)]
+    if (
+        len(frame_tokens) != len(set(frame_tokens))
+        or len(frame_tokens) != len(predictions)
+        or set(predictions) != set(frame_tokens)
+    ):
         raise ValueError("Prediction and sidecar token populations differ")
     result: dict[tuple[str, int], tuple[float, ...]] = {}
     for frame in frames:
@@ -690,3 +702,122 @@ def apply_score_control(
             output[token].append(row)
     return output
 
+
+def proposal_geometry_sha256(
+    predictions: Mapping[str, Sequence[Mapping[str, object]]],
+    *,
+    protocol: EvaluationProtocol,
+) -> str:
+    """Hash ordered proposal geometry/class while deliberately excluding every score."""
+    geometry: dict[str, list[dict[str, object]]] = {}
+    for token in sorted(predictions):
+        if len(predictions[token]) > protocol.max_predictions_per_frame:
+            raise ValueError("Proposal pool exceeds the frozen per-frame cap")
+        geometry[token] = []
+        for index, row in enumerate(predictions[token]):
+            box, _ = parse_box(
+                row, source_index=index, classes=protocol.classes, prediction=True
+            )
+            value: dict[str, object] = {
+                "class_name": box.class_name,
+                "translation_m": list(box.translation_m),
+                "size_lwh_m": list(box.size_lwh_m),
+                "yaw_rad": box.yaw_rad,
+            }
+            if "velocity_mps" in row:
+                value["velocity_mps"] = list(
+                    _vector(row["velocity_mps"], 2, "velocity_mps")
+                )
+            geometry[token].append(value)
+    return _canonical_sha256(geometry)
+
+
+def score_independent_pool_recall(
+    predictions: Mapping[str, Sequence[Mapping[str, object]]],
+    ground_truth: Mapping[str, EvaluationGroundTruth],
+    *,
+    protocol: EvaluationProtocol,
+) -> dict[str, object]:
+    """Maximum-cardinality class-agnostic recall of fixed in-domain geometry.
+
+    Unlike the v2 diagnostic recall, this invariant never iterates proposals by
+    detection score. It is therefore suitable for proving that a ranker retained
+    the same geometric proposal capacity even when greedy v2 recall changes.
+    """
+    if not ground_truth or set(predictions) != set(ground_truth):
+        raise ValueError("Pool recall requires identical nonempty token populations")
+    if any(frame.protocol_sha256 != protocol.sha256 for frame in ground_truth.values()):
+        raise ValueError("Pool recall ground truth uses another protocol")
+    parsed_by_token: dict[str, list[tuple[float, float]]] = {}
+    for token in sorted(predictions):
+        if len(predictions[token]) > protocol.max_predictions_per_frame:
+            raise ValueError("Proposal pool exceeds the frozen per-frame cap")
+        parsed_by_token[token] = []
+        frame = ground_truth[token]
+        for index, row in enumerate(predictions[token]):
+            box, _ = parse_box(
+                row, source_index=index, classes=protocol.classes, prediction=True
+            )
+            reason = domain_reason(
+                box,
+                intrinsic=np.asarray(frame.intrinsic),
+                event_from_ego=np.asarray(frame.event_from_ego),
+                image_wh=frame.image_wh,
+                protocol=protocol,
+            )
+            if reason is None:
+                parsed_by_token[token].append(
+                    (box.translation_m[0], box.translation_m[1])
+                )
+
+    def maximum_matches(token: str, threshold: float) -> int:
+        targets = ground_truth[token].eligible
+        edges: list[list[int]] = []
+        for x, y in parsed_by_token[token]:
+            candidates = [
+                (
+                    math.hypot(x - target.translation_m[0], y - target.translation_m[1]),
+                    target.source_index,
+                    target_index,
+                )
+                for target_index, target in enumerate(targets)
+                if math.hypot(
+                    x - target.translation_m[0], y - target.translation_m[1]
+                )
+                < threshold
+            ]
+            edges.append([row[2] for row in sorted(candidates)])
+        matched_prediction_by_target: dict[int, int] = {}
+
+        def augment(prediction_index: int, seen: set[int]) -> bool:
+            for target_index in edges[prediction_index]:
+                if target_index in seen:
+                    continue
+                seen.add(target_index)
+                previous = matched_prediction_by_target.get(target_index)
+                if previous is None or augment(previous, seen):
+                    matched_prediction_by_target[target_index] = prediction_index
+                    return True
+            return False
+
+        for prediction_index in range(len(edges)):
+            augment(prediction_index, set())
+        return len(matched_prediction_by_target)
+
+    eligible_count = sum(len(frame.eligible) for frame in ground_truth.values())
+    thresholds: dict[str, object] = {}
+    for threshold in protocol.distance_thresholds_m:
+        matched = sum(maximum_matches(token, threshold) for token in sorted(predictions))
+        thresholds[str(threshold)] = {
+            "TP_maximum_cardinality": matched,
+            "FN": eligible_count - matched,
+            "recall": matched / eligible_count if eligible_count else None,
+        }
+    return {
+        "schema": "phase_ttc_score_independent_pool_recall_v1",
+        "proposal_geometry_sha256": proposal_geometry_sha256(
+            predictions, protocol=protocol
+        ),
+        "eligible_ground_truth_count": eligible_count,
+        "thresholds": thresholds,
+    }

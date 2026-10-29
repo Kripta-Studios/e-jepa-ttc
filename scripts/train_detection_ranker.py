@@ -41,6 +41,13 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def canonical_sha256(value: object) -> str:
+    encoded = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -171,19 +178,137 @@ def load_predictions_and_sidecar(
     return document, predictions, cast(dict[str, object], sidecar)
 
 
+def verify_fit_evidence(
+    *,
+    recipe_path: Path,
+    receipt_path: Path,
+    predictions_path: Path,
+    sidecar_path: Path,
+    ground_truth_path: Path,
+    split_path: Path,
+    predictions_document: Mapping[str, object],
+    predictions: Mapping[str, object],
+    sidecar: Mapping[str, object],
+    sequence_id_by_token: Mapping[str, object],
+    protocol: EvaluationProtocol,
+) -> tuple[str, str, str]:
+    """Verify the post-inference panel proof before admitting any fit labels."""
+    recipe = read_json(recipe_path)
+    receipt = read_json(receipt_path)
+    split = read_json(split_path)
+    if not isinstance(recipe, dict) or recipe.get("schema") != (
+        "phase_ttc_detection_ranking_panel_recipe_v1"
+    ):
+        raise ValueError("Unexpected ranking-panel recipe schema")
+    unhashed = dict(recipe)
+    expected_recipe_hash = unhashed.pop("recipe_sha256", None)
+    if expected_recipe_hash != canonical_sha256(unhashed):
+        raise ValueError("Ranking-panel recipe self-hash differs")
+    if not isinstance(receipt, dict) or receipt.get("schema") != (
+        "phase_ttc_detection_ranking_gt_receipt_v1"
+    ):
+        raise ValueError("Unexpected ranking GT receipt schema")
+    recipe_sha256 = sha256_file(recipe_path)
+    receipt_sha256 = sha256_file(receipt_path)
+    if receipt.get("panel_recipe_sha256") != recipe_sha256:
+        raise ValueError("GT receipt is not bound to the ranking-panel recipe")
+    if receipt.get("panel") != "train4096" or receipt.get("role") != "train":
+        raise ValueError("Ranker fitting requires the train4096 GT receipt")
+    if (
+        receipt.get("label_free_predictions_verified_before_labels") is not True
+        or receipt.get("labels_read") is not True
+        or receipt.get("test_labels_read") is not False
+    ):
+        raise ValueError("GT receipt does not prove label-free separation")
+    expected_hashes = {
+        "prediction_sha256": sha256_file(predictions_path),
+        "sidecar_sha256": sha256_file(sidecar_path),
+        "ground_truth_sha256": sha256_file(ground_truth_path),
+        "protocol_sha256": protocol.sha256,
+    }
+    if any(receipt.get(name) != value for name, value in expected_hashes.items()):
+        raise ValueError("GT receipt content hashes differ from fit inputs")
+    if recipe.get("candidate_split_sha256") != sha256_file(split_path):
+        raise ValueError("Fit split differs from the ranking-panel recipe")
+    panels = recipe.get("panels")
+    panel = panels.get("train4096") if isinstance(panels, Mapping) else None
+    if not isinstance(panel, Mapping) or panel.get("role") != "train":
+        raise ValueError("Ranking-panel recipe lacks train4096")
+    tokens = sorted(predictions)
+    if len(tokens) != panel.get("token_count") or token_population_sha256(tokens) != panel.get(
+        "token_population_sha256"
+    ):
+        raise ValueError("Fit prediction population differs from train4096")
+    if (
+        predictions_document.get("schema") != "eap_detection_campaign_inference_v1"
+        or predictions_document.get("targets_argument") is not None
+        or predictions_document.get("annotations_returned") != 0
+    ):
+        raise ValueError("Fit prediction artifact is not proven label-free")
+    checkpoint_sha256 = recipe.get("checkpoint_sha256")
+    if (
+        predictions_document.get("checkpoint_sha256") != checkpoint_sha256
+        or sidecar.get("checkpoint_sha256") != checkpoint_sha256
+    ):
+        raise ValueError("Fit artifacts differ from the recipe checkpoint")
+    if sidecar.get("prediction_output_sha256") != sha256_file(predictions_path):
+        raise ValueError("Fit sidecar is not bound to prediction bytes")
+    if sidecar.get("claims") != {
+        "changes_predictions": False,
+        "ground_truth_access": False,
+        "internal_unexposed_values_reconstructed": False,
+    }:
+        raise ValueError("Fit sidecar does not prove external label-free observation")
+    frames = sidecar.get("frames")
+    if not isinstance(frames, list):
+        raise ValueError("Fit sidecar must contain exactly one frame per train4096 token")
+    raw_frame_tokens = [
+        frame.get("sample_token") for frame in frames if isinstance(frame, Mapping)
+    ]
+    if len(raw_frame_tokens) != len(frames) or any(
+        not isinstance(token, str) or not token for token in raw_frame_tokens
+    ):
+        raise ValueError("Fit sidecar must contain exactly one frame per train4096 token")
+    frame_tokens = cast(list[str], raw_frame_tokens)
+    if len(frame_tokens) != len(set(frame_tokens)) or sorted(frame_tokens) != tokens:
+        raise ValueError("Fit sidecar must contain exactly one frame per train4096 token")
+    if not isinstance(split, dict):
+        raise ValueError("Fit split must be a JSON object")
+    ownership_sha256 = verify_train_token_ownership(
+        tokens, split, sequence_id_by_token
+    )
+    if receipt.get("train_ownership_sha256") != ownership_sha256:
+        raise ValueError("GT receipt TRAIN ownership differs from recomputation")
+    return recipe_sha256, receipt_sha256, ownership_sha256
+
+
 def fit(args: argparse.Namespace) -> None:
     protocol = EvaluationProtocol.default()
-    _, predictions, sidecar = load_predictions_and_sidecar(args.predictions, args.sidecar)
+    document, predictions, sidecar = load_predictions_and_sidecar(
+        args.predictions, args.sidecar
+    )
     ground_truth, sequence_id_by_token = restore_ground_truth(args.ground_truth, protocol)
     split_manifest = read_json(args.split_manifest)
     if not isinstance(split_manifest, dict):
         raise ValueError("Split manifest must be a JSON object")
-    ownership_sha256 = verify_train_token_ownership(
-        sorted(predictions), split_manifest, sequence_id_by_token
+    recipe_sha256, receipt_sha256, ownership_sha256 = verify_fit_evidence(
+        recipe_path=args.panel_recipe,
+        receipt_path=args.ground_truth_receipt,
+        predictions_path=args.predictions,
+        sidecar_path=args.sidecar,
+        ground_truth_path=args.ground_truth,
+        split_path=args.split_manifest,
+        predictions_document=document,
+        predictions=predictions,
+        sidecar=sidecar,
+        sequence_id_by_token=sequence_id_by_token,
+        protocol=protocol,
     )
     provenance = TrainingProvenance(
         dataset_role=args.dataset_role,
         split_manifest_sha256=sha256_file(args.split_manifest),
+        panel_recipe_sha256=recipe_sha256,
+        ground_truth_receipt_sha256=receipt_sha256,
         predictions_sha256=sha256_file(args.predictions),
         sidecar_sha256=sha256_file(args.sidecar),
         ground_truth_sha256=sha256_file(args.ground_truth),
@@ -249,6 +374,8 @@ def main() -> int:
     fit_parser.add_argument("--predictions", type=Path, required=True)
     fit_parser.add_argument("--sidecar", type=Path, required=True)
     fit_parser.add_argument("--ground-truth", type=Path, required=True)
+    fit_parser.add_argument("--panel-recipe", type=Path, required=True)
+    fit_parser.add_argument("--ground-truth-receipt", type=Path, required=True)
     fit_parser.add_argument("--split-manifest", type=Path, required=True)
     fit_parser.add_argument("--dataset-role", choices=("train",), required=True)
     fit_parser.add_argument("--output", type=Path, required=True)

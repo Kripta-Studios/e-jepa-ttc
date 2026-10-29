@@ -24,6 +24,8 @@ from e_jepa_ttc.detection.quality_ranking import (
     build_training_rows,
     fit_quality_ranker,
     monotonic_temperature_score,
+    proposal_geometry_sha256,
+    score_independent_pool_recall,
     token_population_sha256,
     uncertainty_control_score,
     verify_train_token_ownership,
@@ -117,6 +119,8 @@ def _provenance(role: str = "train") -> TrainingProvenance:
     return TrainingProvenance(
         dataset_role=role,
         split_manifest_sha256="1" * 64,
+        panel_recipe_sha256="6" * 64,
+        ground_truth_receipt_sha256="7" * 64,
         predictions_sha256="2" * 64,
         sidecar_sha256="3" * 64,
         ground_truth_sha256="4" * 64,
@@ -331,6 +335,16 @@ def test_query_binding_supports_nonprefix_and_rejects_ambiguous_ties() -> None:
             predictions, ambiguous, _ground_truth(), protocol=EvaluationProtocol.default()
         )
 
+    duplicate_frame = copy.deepcopy(sidecar)
+    duplicate_frame["frames"].append(copy.deepcopy(duplicate_frame["frames"][0]))  # type: ignore[union-attr,index]
+    with pytest.raises(ValueError, match="token populations differ"):
+        build_training_rows(
+            predictions,
+            duplicate_frame,
+            _ground_truth(),
+            protocol=EvaluationProtocol.default(),
+        )
+
 
 def test_tampered_bundle_is_rejected() -> None:
     predictions, sidecar = _inputs()
@@ -396,3 +410,40 @@ def test_apply_rejects_over_cap_and_revalidates_train_provenance() -> None:
             invalid_role,
             protocol=EvaluationProtocol.default(),
         )
+
+
+def test_greedy_v2_recall_can_change_but_pool_capacity_and_geometry_do_not() -> None:
+    protocol = EvaluationProtocol.default()
+    original = _ground_truth()["seq:frame"]
+    ground_truth = {
+        "seq:frame": replace(
+            original,
+            eligible=(_box(0.0, 10), _box(1.5, 11)),
+            ignored=(),
+            raw_count=2,
+            ignored_by_reason=(),
+        )
+    }
+    flexible_first = {
+        "seq:frame": [_prediction(0.75, 0.9), _prediction(-1.0, 0.8)]
+    }
+    constrained_first = {
+        "seq:frame": [_prediction(0.75, 0.8), _prediction(-1.0, 0.9)]
+    }
+    first_v2 = evaluate_detections_v2(flexible_first, ground_truth, protocol=protocol)
+    second_v2 = evaluate_detections_v2(constrained_first, ground_truth, protocol=protocol)
+    first_greedy = first_v2["class_agnostic_recall"]["thresholds"]["2.0"]["TP"]  # type: ignore[index]
+    second_greedy = second_v2["class_agnostic_recall"]["thresholds"]["2.0"]["TP"]  # type: ignore[index]
+    assert (first_greedy, second_greedy) == (1, 2)
+
+    first_pool = score_independent_pool_recall(
+        flexible_first, ground_truth, protocol=protocol
+    )
+    second_pool = score_independent_pool_recall(
+        constrained_first, ground_truth, protocol=protocol
+    )
+    assert first_pool["thresholds"]["2.0"]["TP_maximum_cardinality"] == 2  # type: ignore[index]
+    assert first_pool == second_pool
+    assert proposal_geometry_sha256(
+        flexible_first, protocol=protocol
+    ) == proposal_geometry_sha256(constrained_first, protocol=protocol)
