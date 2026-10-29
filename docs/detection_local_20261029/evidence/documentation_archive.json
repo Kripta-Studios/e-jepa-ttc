@@ -1,0 +1,36 @@
+{
+  "schema": "documentation_archive_v1",
+  "purpose": "Exact public token metadata and scalar training logs; no images, labels or checkpoint tensors",
+  "files": [
+    {
+      "source_local": "output/eap_rgb_pilot/manifest.json",
+      "archived": "pilot_manifest.json",
+      "bytes": 23563,
+      "sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159"
+    },
+    {
+      "source_local": "output/eap_rgb_pilot/temporal7_tokens.json",
+      "archived": "pilot_temporal7_tokens.json",
+      "bytes": 581,
+      "sha256": "dbeaf0cc8082199196102433b9a400cf1a980b19766c27454a8b8f2455cb548f"
+    },
+    {
+      "source_local": "output/portable_experiments/overfit16_seed7_v1/training.jsonl",
+      "archived": "training_curves/overfit16_seed7_v1.jsonl",
+      "bytes": 72901,
+      "sha256": "f7528d3c17aec920edc603f1819ac47ea340f5d4b4ffb1e041f8902449398153"
+    },
+    {
+      "source_local": "output/portable_experiments/overfit16_seed7_v2_resume/training.jsonl",
+      "archived": "training_curves/overfit16_seed7_v2_resume.jsonl",
+      "bytes": 105595,
+      "sha256": "4615035aa1ce5dd15e9d95bbaff80feb31c46859b0da5db1ab79a98d8fb3715b"
+    },
+    {
+      "source_local": "output/portable_experiments/pilot256_seed7_velocity_v1/training.jsonl",
+      "archived": "training_curves/pilot256_seed7_velocity_v1.jsonl",
+      "bytes": 197810,
+      "sha256": "33ba0a4949f524cf2c798bfdd60c1b19a2e94e3404c6b1dd1aaace31c765a8f6"
+    }
+  ]
+}

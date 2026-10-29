@@ -1,0 +1,16 @@
+{
+  "schema": "eap_temporal_input_tokens_v1",
+  "source_split": "train",
+  "source_media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "sequence_id": "qGsgzl4Q8B",
+  "purpose": "Seven consecutive RGB inputs for predicted-ROI history; no annotation input",
+  "sample_tokens": [
+    "qGsgzl4Q8B:000000929_000131746",
+    "qGsgzl4Q8B:000000929_000231747",
+    "qGsgzl4Q8B:000000929_000331749",
+    "qGsgzl4Q8B:000000929_000431750",
+    "qGsgzl4Q8B:000000929_000531752",
+    "qGsgzl4Q8B:000000929_000631754",
+    "qGsgzl4Q8B:000000929_000731755"
+  ]
+}

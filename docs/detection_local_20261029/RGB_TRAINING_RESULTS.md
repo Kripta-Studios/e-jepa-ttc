@@ -2,6 +2,11 @@
 
 Fecha: 2026-10-29. Rama: `dev/eap-detection-local-20261029`.
 
+Documentación ampliada: [implementación](IMPLEMENTATION_REPORT.md),
+[experimentos y hallazgos](EXPERIMENTS_AND_FINDINGS.md),
+[reproducción y continuación](REPRODUCTION_AND_HANDOFF.md).
+El [índice de documentación](README.md) reúne los informes por componente.
+
 La viabilidad de ingeniería ya está demostrada: el detector completo aprende
 sobre imágenes eAP reales en la GPU local, guarda y recupera sus pesos y produce
 cajas 3D sin recibir ROIs ni etiquetas como entrada. Existe además un replay

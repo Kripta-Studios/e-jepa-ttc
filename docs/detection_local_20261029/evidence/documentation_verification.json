@@ -1,0 +1,57 @@
+{
+  "schema": "documentation_verification_v1",
+  "implementation_base": "5c9fc73062f109f808be732a4a10d6f26a91afee",
+  "status": "PASS",
+  "scope": "Documentation and exact archival of existing public token metadata/scalar logs; no new model execution or claim of rerun tests",
+  "new_markdown": [
+    {
+      "path": "docs\\detection_local_20261029\\README.md",
+      "words": 380,
+      "sha256": "9ff334bf559d3dcd8c67866309b80535740053c1aa90801a82bf383a90c6778c"
+    },
+    {
+      "path": "docs\\detection_local_20261029\\IMPLEMENTATION_REPORT.md",
+      "words": 1832,
+      "sha256": "08ecc82ac3ba888af4d2efeb701fa6168dc06569b8e259918df8fffcbb91ab99"
+    },
+    {
+      "path": "docs\\detection_local_20261029\\EXPERIMENTS_AND_FINDINGS.md",
+      "words": 1631,
+      "sha256": "9130f3676eb558603a0d30444e7055ccb46a37c5a6b3c479942d2141d0f90b8e"
+    },
+    {
+      "path": "docs\\detection_local_20261029\\REPRODUCTION_AND_HANDOFF.md",
+      "words": 1338,
+      "sha256": "67d06c81b2450d9a8081d8fe5c484c07ed94fb603c094be979f0c92dfac68c88"
+    }
+  ],
+  "relative_links_checked": 58,
+  "broken_links": [],
+  "archive_files_exact": 5,
+  "curve_checks": {
+    "overfit16_seed7_v1": {
+      "updates": 344,
+      "image_exposures": 344,
+      "unique_tokens": 16,
+      "min_exposures_per_token": 21,
+      "max_exposures_per_token": 22
+    },
+    "overfit16_seed7_v2_resume": {
+      "updates": 456,
+      "image_exposures": 456,
+      "unique_tokens": 16,
+      "min_exposures_per_token": 28,
+      "max_exposures_per_token": 29
+    },
+    "pilot256_seed7_velocity_v1": {
+      "updates": 512,
+      "image_exposures": 2048,
+      "unique_tokens": 256,
+      "min_exposures_per_token": 8,
+      "max_exposures_per_token": 8
+    }
+  },
+  "training_tables_regeneration": "BYTE_IDENTICAL",
+  "read_only_review": "docs_results verified implementation/reproduction documents against code, receipts and CLI; no material findings",
+  "source_code_changed": false
+}
