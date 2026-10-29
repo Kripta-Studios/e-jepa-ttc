@@ -256,6 +256,7 @@ def run(args: argparse.Namespace, report: dict) -> None:
             "portable_attention.py",
             "monodgp_eap_adapter.py",
             "development_metrics.py",
+            "evaluation_ap_fast.py",
             "eap_rgb_data.py",
             "geometry_contract.py",
             "velocity_extension.py",

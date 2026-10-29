@@ -9,6 +9,7 @@ predictions and timings, never ground truth or official benchmark scores.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import importlib.util
 import inspect
@@ -74,6 +75,10 @@ RUNTIME_MODULES = (
     ("e_jepa_ttc.detection.monodgp_eap_adapter", "src/e_jepa_ttc/detection/monodgp_eap_adapter.py"),
     ("smoke_monodgp_portable", "scripts/smoke_monodgp_portable.py"),
 )
+AP_RUNTIME_MODULE = (
+    ("e_jepa_ttc.detection.evaluation_ap_fast", "src/e_jepa_ttc/detection/evaluation_ap_fast.py"),
+)
+AP_RUNTIME_RELATIVE = AP_RUNTIME_MODULE[0][1]
 OPTIONAL_RUNTIME_MODULES = tuple(
     (f"e_jepa_ttc.detection.{name}", f"src/e_jepa_ttc/detection/{name}.py")
     for name in (
@@ -83,7 +88,25 @@ OPTIONAL_RUNTIME_MODULES = tuple(
         "backbone_initialization",
     )
 )
-RUNTIME_DEPENDENCY_ORDER = RUNTIME_MODULES[:3] + OPTIONAL_RUNTIME_MODULES + RUNTIME_MODULES[3:]
+RUNTIME_DEPENDENCY_ORDER = (
+    AP_RUNTIME_MODULE + RUNTIME_MODULES[:3] + OPTIONAL_RUNTIME_MODULES + RUNTIME_MODULES[3:]
+)
+
+
+def _imports_ap_runtime(path: Path) -> bool:
+    """Detect the exact helper dependency from already hash-verified source bytes."""
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    module = "e_jepa_ttc.detection.evaluation_ap_fast"
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            if node.module in {module, "evaluation_ap_fast"} or (
+                node.module in {"e_jepa_ttc.detection", None}
+                and any(alias.name == "evaluation_ap_fast" for alias in node.names)
+            ):
+                return True
+        if isinstance(node, ast.Import) and any(alias.name == module for alias in node.names):
+            return True
+    return False
 
 
 def select_runtime_sources(
@@ -106,6 +129,22 @@ def select_runtime_sources(
     missing = required - set(recorded)
     if missing:
         raise ValueError(f"Missing registered runtime hashes: {sorted(missing)}")
+    development_relative = RUNTIME_MODULES[0][1]
+    development_frozen = checkpoint_dir / "code" / development_relative
+    development_path = (
+        development_frozen
+        if development_frozen.is_file()
+        else current_root / development_relative
+    )
+    if (
+        not development_path.is_file()
+        or sha256(development_path) != recorded[development_relative]
+    ):
+        raise ValueError(
+            f"Runtime source does not match preregistration: {development_path}"
+        )
+    if _imports_ap_runtime(development_path) and AP_RUNTIME_RELATIVE not in recorded:
+        raise ValueError(f"Missing registered runtime hashes: ['{AP_RUNTIME_RELATIVE}']")
     result = []
     for name, relative in RUNTIME_DEPENDENCY_ORDER:
         if relative not in recorded:

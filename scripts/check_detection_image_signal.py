@@ -18,8 +18,15 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from e_jepa_ttc.detection import development_metrics  # noqa: E402
-from e_jepa_ttc.detection.development_metrics import CLASSES, PROFILE, evaluate_detections  # noqa: E402
+from e_jepa_ttc.detection import (  # noqa: E402
+    development_metrics,
+    evaluation_ap_fast,
+)
+from e_jepa_ttc.detection.development_metrics import (  # noqa: E402
+    CLASSES,
+    PROFILE,
+    evaluate_detections,
+)
 
 METHOD = "train_constant_prior_and_seed7_frame_derangement_v1"
 DECLARED_AT_UTC = "2026-10-29T13:22:15+00:00"
@@ -37,6 +44,17 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def receipt_source_sha256(train_results: Path, selection_results: Path) -> dict[str, str]:
+    """Bind the control receipt to every local scoring dependency."""
+    return {
+        "train_results": sha256_file(train_results),
+        "selection_results": sha256_file(selection_results),
+        "script": sha256_file(Path(__file__)),
+        "development_metrics": sha256_file(Path(development_metrics.__file__)),
+        "evaluation_ap_fast": sha256_file(Path(evaluation_ap_fast.__file__)),
+    }
 
 
 def canonical_hash(value: object) -> str:
@@ -162,7 +180,7 @@ def derange_predictions(
             mapping = dict(zip(tokens, source_tokens, strict=True))
             return (
                 {
-                    target: copy.deepcopy(list(predictions[source]))
+                    target: copy.deepcopy([dict(row) for row in predictions[source]])
                     for target, source in mapping.items()
                 },
                 mapping,
@@ -250,12 +268,9 @@ def main() -> int:
     if args.output.exists():
         raise FileExistsError(f"Refusing to overwrite control receipt: {args.output}")
     report = analyze_results(load_results(args.train_results), load_results(args.selection_results))
-    report["source_sha256"] = {
-        "train_results": sha256_file(args.train_results),
-        "selection_results": sha256_file(args.selection_results),
-        "script": sha256_file(Path(__file__)),
-        "development_metrics": sha256_file(Path(development_metrics.__file__)),
-    }
+    report["source_sha256"] = receipt_source_sha256(
+        args.train_results, args.selection_results
+    )
     report["input_paths"] = {
         "train_results": str(args.train_results),
         "selection_results": str(args.selection_results),

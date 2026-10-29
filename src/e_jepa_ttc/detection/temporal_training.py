@@ -49,6 +49,7 @@ TRAINING_CODE_PATHS = (
     "src/e_jepa_ttc/detection/campaign_training.py",
     "src/e_jepa_ttc/detection/development_metrics.py",
     "src/e_jepa_ttc/detection/eap_rgb_data.py",
+    "src/e_jepa_ttc/detection/evaluation_ap_fast.py",
     "src/e_jepa_ttc/detection/evaluation_ground_truth.py",
     "src/e_jepa_ttc/detection/evaluation_protocol.py",
     "src/e_jepa_ttc/detection/evaluation_v2.py",

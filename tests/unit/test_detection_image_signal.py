@@ -5,15 +5,19 @@ from __future__ import annotations
 import copy
 import json
 import math
+from pathlib import Path
 
 import pytest
 
+from e_jepa_ttc.detection import evaluation_ap_fast
 from e_jepa_ttc.detection.development_metrics import evaluate_detections
 from scripts.check_detection_image_signal import (
     analyze_results,
     derange_predictions,
     fit_constant_prior,
     load_results,
+    receipt_source_sha256,
+    sha256_file,
 )
 
 
@@ -156,3 +160,12 @@ def test_duplicate_json_keys_are_rejected(tmp_path):
         load_results(path)
     path.write_text(json.dumps(results({"t": []}, {"t": []})), encoding="utf-8")
     assert load_results(path)["ground_truth"] == {"t": []}
+
+
+def test_receipt_hashes_exact_ap_helper_dependency(tmp_path):
+    train = tmp_path / "train.json"
+    selection = tmp_path / "selection.json"
+    train.write_text("{}", encoding="utf-8")
+    selection.write_text("{}", encoding="utf-8")
+    hashes = receipt_source_sha256(train, selection)
+    assert hashes["evaluation_ap_fast"] == sha256_file(Path(evaluation_ap_fast.__file__))

@@ -12,6 +12,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from numbers import Real
 
+from e_jepa_ttc.detection.evaluation_ap_fast import ap101_value
+
 CLASSES = (
     "car",
     "bicycle",
@@ -113,20 +115,7 @@ def _match(
 
 
 def _ap101(true_positives: Sequence[int], count: int) -> float | None:
-    if count == 0:
-        return None
-    correct = 0
-    points = []
-    for index, flag in enumerate(true_positives):
-        correct += flag
-        points.append((correct / count, correct / (index + 1)))
-    return (
-        sum(
-            max((precision for recall, precision in points if recall >= step / 100), default=0.0)
-            for step in range(101)
-        )
-        / 101
-    )
+    return ap101_value(true_positives, count)
 
 
 def evaluate_detections(

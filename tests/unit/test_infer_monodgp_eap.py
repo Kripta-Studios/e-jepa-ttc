@@ -14,6 +14,7 @@ import pytest
 from PIL import Image
 
 from scripts.infer_monodgp_eap import (
+    AP_RUNTIME_MODULE,
     OPTIONAL_RUNTIME_MODULES,
     RUNTIME_MODULES,
     EAPRGBInputs,
@@ -172,11 +173,46 @@ def test_runtime_sources_require_all_hashes_and_fail_on_corrupt_snapshot(tmp_pat
     registered = runtime_fixture(tmp_path)
     plan = select_runtime_sources(registered, tmp_path, tmp_path / "unavailable_current")
     assert all(item["source"] == "checkpoint_snapshot" for item in plan)
+    assert AP_RUNTIME_MODULE[0][0] not in {item["module"] for item in plan}
     Path(plan[-1]["path"]).write_text("changed", encoding="utf-8")
     with pytest.raises(ValueError, match="does not match"):
         select_runtime_sources(registered, tmp_path)
     with pytest.raises(ValueError, match="Missing registered"):
         select_runtime_sources({}, tmp_path)
+
+
+def test_new_development_snapshot_requires_registered_ap_helper(tmp_path):
+    registered = runtime_fixture(tmp_path)
+    relative = RUNTIME_MODULES[0][1]
+    development = tmp_path / "code" / relative
+    development.write_text(
+        "from e_jepa_ttc.detection.evaluation_ap_fast import ap101_value\nORDER = [0]\n",
+        encoding="utf-8",
+    )
+    registered[relative.replace("/", "\\")] = sha256(development)
+    with pytest.raises(ValueError, match="evaluation_ap_fast"):
+        select_runtime_sources(registered, tmp_path, tmp_path / "unavailable_current")
+
+
+def test_new_development_snapshot_loads_hash_bound_ap_helper_first(tmp_path):
+    registered = runtime_fixture(tmp_path)
+    development_relative = RUNTIME_MODULES[0][1]
+    development = tmp_path / "code" / development_relative
+    development.write_text(
+        "from e_jepa_ttc.detection.evaluation_ap_fast import ap101_value\nORDER = [0]\n",
+        encoding="utf-8",
+    )
+    registered[development_relative.replace("/", "\\")] = sha256(development)
+    _, helper_relative = AP_RUNTIME_MODULE[0]
+    helper = tmp_path / "code" / helper_relative
+    helper.parent.mkdir(parents=True, exist_ok=True)
+    helper.write_text("def ap101_value(flags, count):\n    return None\n", encoding="utf-8")
+    registered[helper_relative.replace("/", "\\")] = sha256(helper)
+
+    plan = select_runtime_sources(registered, tmp_path, tmp_path / "unavailable_current")
+    assert plan[0]["module"] == AP_RUNTIME_MODULE[0][0]
+    assert plan[0]["sha256"] == sha256(helper)
+    assert plan[0]["source"] == "checkpoint_snapshot"
 
 
 def test_velocity_runtime_requires_registered_extension_and_resolves_other_dependencies(tmp_path):

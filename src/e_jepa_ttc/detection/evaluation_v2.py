@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from e_jepa_ttc.detection.evaluation_ap_fast import ap101_with_curve
 from e_jepa_ttc.detection.evaluation_ground_truth import (
     EvaluationBox,
     EvaluationGroundTruth,
@@ -46,26 +47,7 @@ def _errors(prediction: EvaluationBox, target: EvaluationBox) -> dict[str, objec
 
 
 def _ap101(flags: Sequence[int], count: int) -> tuple[float | None, list[dict[str, float | int]]]:
-    correct = 0
-    curve = []
-    for rank, flag in enumerate(flags, 1):
-        correct += flag
-        curve.append(
-            {"rank": rank, "recall": correct / count if count else 0.0, "precision": correct / rank}
-        )
-    if count == 0:
-        return None, curve
-    ap = (
-        sum(
-            max(
-                (float(point["precision"]) for point in curve if point["recall"] >= step / 100),
-                default=0.0,
-            )
-            for step in range(101)
-        )
-        / 101
-    )
-    return ap, curve
+    return ap101_with_curve(flags, count)
 
 
 def _match_class(

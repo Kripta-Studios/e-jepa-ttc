@@ -309,6 +309,9 @@ def run(args: argparse.Namespace) -> None:
             "src/e_jepa_ttc/detection/evaluation_ground_truth.py": sha256(
                 ROOT / "src/e_jepa_ttc/detection/evaluation_ground_truth.py"
             ),
+            "src/e_jepa_ttc/detection/evaluation_ap_fast.py": sha256(
+                ROOT / "src/e_jepa_ttc/detection/evaluation_ap_fast.py"
+            ),
             "src/e_jepa_ttc/detection/evaluation_protocol.py": sha256(
                 ROOT / "src/e_jepa_ttc/detection/evaluation_protocol.py"
             ),

@@ -477,6 +477,7 @@ def run(
         ROOT / "src/e_jepa_ttc/detection/development_metrics.py",
         ROOT / "src/e_jepa_ttc/detection/diagnostic_export.py",
         ROOT / "src/e_jepa_ttc/detection/eap_rgb_data.py",
+        ROOT / "src/e_jepa_ttc/detection/evaluation_ap_fast.py",
         ROOT / "src/e_jepa_ttc/detection/evaluation_protocol.py",
         ROOT / "src/e_jepa_ttc/detection/evaluation_ground_truth.py",
         ROOT / "src/e_jepa_ttc/detection/evaluation_v2.py",
