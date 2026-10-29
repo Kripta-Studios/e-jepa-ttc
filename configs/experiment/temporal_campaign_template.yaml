@@ -1,0 +1,29 @@
+# TEMPLATE ONLY: not preregistered, approved, launched, or a winning recipe.
+schema: eap_detection_temporal_training_config_v1
+baseline_config: REPLACE_EXACT_SELECTED_PARENT_CAMPAIGN_CONFIG.yaml
+temporal:
+  schema: eap_detection_temporal_campaign_v1
+  variant: correct_past_2  # create a separate immutable config for every control
+  producer_version: REPLACE_SELECTED_PARENT_AND_SOURCE_VERSION
+  maximum_history_age_us: 500000
+  width: 640
+  height: 384
+  include_velocity: true
+  generation: 0
+  media_failure_policy: fail
+parent:
+  path: REPLACE_SELECTED_BASELINE_CHECKPOINT.pt
+  sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  update: 0
+  runtime_provenance_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+runtime:
+  portable_root: REPLACE_MATERIALIZED_PROJECTED_SOURCE_ROOT
+  source_manifest: REPLACE_MATERIALIZED_SOURCE_MANIFEST.json
+  source_manifest_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  expected_output_tree_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  parity_report: REPLACE_PARENT_SPECIFIC_GPU_PARITY_REPORT.json
+  parity_report_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  temporal_media_admission: output/campaign_data/temporal_d4096_v5_admission_v2/temporal_media_admission.json
+  temporal_media_admission_sha256: 1e00d240adba04011063341a3d8d6cea6c0afd3bce310a18d4a8710701e43d38
+  history_media_receipt: output/campaign_data/temporal_d4096_v5_admission_v2/history_media_receipt.json
+  history_media_receipt_sha256: 0804d352451fbf5296dc95aa4f61c4c7335bf3b53a0d71181196ec7a9f4fb9c5
