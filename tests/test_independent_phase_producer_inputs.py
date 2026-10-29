@@ -296,4 +296,3 @@ def test_real_teacher_role_equals_history_valid_plus_exact_invalid_mask() -> Non
     assert len(invalid_tokens) == 68
     assert not valid_tokens & invalid_tokens
     assert nominal_tokens == valid_tokens | invalid_tokens
-

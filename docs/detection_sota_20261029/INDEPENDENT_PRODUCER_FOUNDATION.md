@@ -128,4 +128,3 @@ receipt. Remaining launch authority is limited to explicit GPU allocation and
 the root run controller. E_A5 has passed its source and CPU engineering gates
 on the immutable integrated E/R snapshot; R_A5 remains closed at its metadata
 gate.
-
