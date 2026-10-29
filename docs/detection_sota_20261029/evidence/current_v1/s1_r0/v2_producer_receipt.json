@@ -1,0 +1,31 @@
+{
+  "schema": "detection_campaign_producer_freeze_v1",
+  "git_commit": "fcad2299979766f6d175e45b8016ea3b7a11a594",
+  "source_sha256": {
+    "scripts/train_detection_campaign.py": "168b1041de16e1d6adce10f00cdce6b2e7c02ecbdee2ef08e0a4f6a9c00bc8da",
+    "data/manifests/eap_detection_public_files_v1.json": "2e65cd7f2600eea55f37f59e9a22d55b5ba0aa50445756fd7aaf01332c2b3ff1",
+    "scripts/infer_detection_campaign.py": "1ca8799517464a14c306378b40aa3e4fbb05f1f7f90a48e0d7535b2e9842edf5",
+    "scripts/smoke_monodgp_portable.py": "8c924120daf70ea32901aeef2198bf219f05b38d0143fc667f39bf5d3c7c7bda",
+    "src/e_jepa_ttc/__init__.py": "e81a3ae9800ccf3bb4d86323d509d682a0fed530a278ae4eb5f753ac88340a83",
+    "src/e_jepa_ttc/detection/__init__.py": "d438c13788118f469d350a51cfbb8e481b9ed2d30dc2d1772da2135cdb51a074",
+    "src/e_jepa_ttc/detection/campaign_training.py": "12bc84a83941ae07de600945c87588c9fa48bf4892ce675ee6a91f34f0fd3664",
+    "src/e_jepa_ttc/detection/backbone_initialization.py": "51bf50bdd7723b253f5fdc6a6f83d0d26b79e22c473c38a2342cc64515e83e55",
+    "src/e_jepa_ttc/detection/development_metrics.py": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6",
+    "src/e_jepa_ttc/detection/diagnostic_export.py": "4945d54fbbdf7539f27bd8b248cc47c461270146fdf0d86ee72bae03873552b8",
+    "src/e_jepa_ttc/detection/eap_rgb_data.py": "fa670aa09f021465e2b47de5d7a2d787098be592b664822babf95ecae1a6cb55",
+    "src/e_jepa_ttc/detection/evaluation_protocol.py": "44710d70540f2f114c6b9fccd7b7317fe50328630c01f9a07d0a3c56dca8c9b6",
+    "src/e_jepa_ttc/detection/evaluation_ground_truth.py": "a9bf21c873f962293e630938d8ae1aae123b822cc48ed2d352f9fab778d5cbb2",
+    "src/e_jepa_ttc/detection/evaluation_v2.py": "0264fb73f46ad887cd1048ea2c8cc1e417d52ff7ed369203f6c0d143a61783bc",
+    "src/e_jepa_ttc/detection/geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f",
+    "src/e_jepa_ttc/detection/monodgp_eap_adapter.py": "9492aef2af662b232c2397b6775685135dddda48ff73879b9ad474e29399e71d",
+    "src/e_jepa_ttc/detection/portable_attention.py": "e3a5ca88ca989e7bd10fe1f8381f7da32b83eea3063ac89b67113511b045f7fa",
+    "src/e_jepa_ttc/detection/velocity_extension.py": "08881d0ec2ea90b98cb1e8b17e2635b4b05cc648d6705610c856e9373f850c90"
+  },
+  "config_file_sha256": "1e77981a0fe3ff211433fadaa74cfda42b8dece41278ce14d0edcc6d817cb259",
+  "planned_segments": [
+    1024,
+    8192
+  ],
+  "nominal_updates": 8192,
+  "reason_for_segmentation": "Inspect first scheduled monitor/resource receipt then resume identical nominal campaign."
+}

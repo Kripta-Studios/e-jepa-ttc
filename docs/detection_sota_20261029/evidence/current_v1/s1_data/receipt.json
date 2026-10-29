@@ -1,0 +1,25 @@
+{
+  "frame_population": {
+    "file_sha256": "46110db969f98093aac73a997ef7347da91a734e8c0bdf0ac87095fe332c96ab",
+    "purpose": "deterministic resampling without repeating the full geometry audit",
+    "rows": 118247
+  },
+  "outputs": {
+    "d4096_coverage.json": {
+      "canonical_json_sha256": "f6b69466dc4099add63388e04b844d16ff86f5bb1b44cd42bccdf15f6d4638de",
+      "file_sha256": "3af54c8f9c7164d274649ad3e758b8c66bdb911191ff510540172935d8f6942a"
+    },
+    "d4096_manifest.json": {
+      "canonical_json_sha256": "34adf75a1bfc04e298053b63ddd769718418804a37dffab86fff7773dceae346",
+      "file_sha256": "4af615689bab28016d28881a9339be6c58fe0f35f5d234c0db090eafeff9fb45"
+    },
+    "population_audit.json": {
+      "canonical_json_sha256": "dd708283a56da63d1177144927a9a5d0c3430716b7cf27a494f6ec5fe84d627f",
+      "file_sha256": "b8d5d5fec171e2af73a360fd13e8466757baf801b15c571728e31cb107d42673"
+    }
+  },
+  "schema": "eap_detection_campaign_build_receipt_v1",
+  "selection_frames": 1024,
+  "test_labels_read": false,
+  "train_frames": 4096
+}

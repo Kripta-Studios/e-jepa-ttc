@@ -1,7 +1,7 @@
 * text=auto eol=lf
 
-# Received SOTA plan/audit package is byte-bound by SHA256SUMS.txt.
-docs/detection_sota_20261029/evidence/intake/** -text -whitespace
+# SOTA intake and executed evidence are bound by byte-level SHA-256.
+docs/detection_sota_20261029/evidence/** -text -whitespace
 
 # TRAIN40 runtime receipts and source snapshots are bound by byte-level SHA-256.
 docs/train40_runtime_handoff_20261027/evidence/** -text -whitespace

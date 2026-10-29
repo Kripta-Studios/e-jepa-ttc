@@ -1,0 +1,36 @@
+{
+  "schema": "phase_ttc_detection_evaluation_protocol_v2",
+  "profile": "eap_local_dev_xy_ap101_population_v2",
+  "dataset_release": "NAIL-HNU/eAP-dataset@a814a946e60d37f7242358af5f344542177e50c5",
+  "classes": [
+    "car",
+    "bicycle",
+    "truck",
+    "pedestrian",
+    "motorcycle",
+    "bus",
+    "tricycle",
+    "other_vehicle"
+  ],
+  "coordinate_frame": "ego: X forward, Y left, Z up",
+  "center_units": "metres",
+  "size_order": "length,width,height",
+  "center_depth_range_m": [
+    0.1,
+    60.0
+  ],
+  "visibility_rule": "provisional pinhole: camera-center depth is within center_depth_range_m and the near-plane-clipped cuboid projection rectangle intersects the image; projected center and minimum pixel size are not eligibility filters",
+  "prediction_domain_rule": "retain top-K by score/index per frame, then apply the same pinhole depth and image-intersection rule as ground truth",
+  "matching_rule": "confidence-ranked one-to-one strict ego-XY center distance",
+  "distance_thresholds_m": [
+    0.5,
+    1.0,
+    2.0,
+    4.0
+  ],
+  "diagnostic_threshold_m": 2.0,
+  "ap_interpolation": "101-point precision envelope without recall/precision clipping",
+  "unsupported_class_policy": "AP is null; supported macro excludes it; all-eight macro uses zero",
+  "max_predictions_per_frame": 50,
+  "official_eap_score": false
+}

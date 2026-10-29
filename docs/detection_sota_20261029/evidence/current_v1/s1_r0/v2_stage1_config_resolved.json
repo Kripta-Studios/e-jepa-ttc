@@ -1,0 +1,79 @@
+{
+  "schema": "eap_detection_campaign_config_v1",
+  "experiment_id": "rgb-r0-d4096-seed7",
+  "seed": 7,
+  "data": {
+    "root": "E:/eAP_dataset",
+    "manifest": "output/campaign_data/d4096_v4_final/d4096_manifest.json",
+    "split": "data/splits/eap_detection_candidate_v1.json",
+    "train_role": "train",
+    "selection_role": "selection",
+    "expected_dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+    "expected_manifest_sha256": "4af615689bab28016d28881a9339be6c58fe0f35f5d234c0db090eafeff9fb45",
+    "expected_split_sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+    "full_selection_tokens": "output/campaign_data/full_selection_v1/full_selection_tokens.json",
+    "expected_full_selection_sha256": "e4303685e39f635a47b76921b9c5f38821e8715f3aa5f202c73a2c32dae1a497",
+    "cache_capacity": 8,
+    "label_cache_sequences": 24
+  },
+  "model": {
+    "backbone": "resnet50",
+    "num_classes": 8,
+    "queries": 50,
+    "group_num": 11,
+    "predict_velocity": true,
+    "velocity_loss_coef": 0.1,
+    "width": 640,
+    "height": 384,
+    "backbone_weights": "../phase-ttc-detection-local/output/external_weights/resnet50-0676ba61.pth",
+    "backbone_weights_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+    "source_root": "../phase-ttc-detection-local/output/detector_sources/MonoDGP",
+    "portable_root": "output/detection_campaign/portable_monodgp_velocity"
+  },
+  "optimization": {
+    "updates": 8192,
+    "checkpoint_interval": 256,
+    "batch_size": 4,
+    "precision": "fp32",
+    "matmul_precision": "highest",
+    "learning_rate": 0.0002,
+    "backbone_lr_multiplier": 1.0,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 1.0,
+    "scheduler": "constant",
+    "warmup_fraction": 0.0,
+    "minimum_lr_ratio": 1.0
+  },
+  "augmentation": {
+    "brightness": 0.0,
+    "contrast": 0.0,
+    "saturation": 0.0
+  },
+  "evaluation": {
+    "protocol": "default",
+    "updates": [
+      1024,
+      2048,
+      3072,
+      4096,
+      5120,
+      6144,
+      7168,
+      8192
+    ],
+    "full_selection_updates": [
+      4096,
+      8192
+    ],
+    "selection_metric": "dev_AP101_supported_classes",
+    "selection_mode": "max",
+    "legacy_metrics": true
+  },
+  "resources": {
+    "maximum_seconds": 86400.0,
+    "num_cpu_threads": 4,
+    "minimum_available_ram_gb": 8.0,
+    "minimum_available_vram_gb": 8.0
+  },
+  "sha256": "160d302104418979d67bb5da322acfb4fdada3d545c6adbc8ec4ad8591234475"
+}

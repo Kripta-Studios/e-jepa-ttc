@@ -1,0 +1,340 @@
+{
+  "code_revisions": {
+    "r0_training_producer": "fcad2299979766f6d175e45b8016ea3b7a11a594",
+    "s2_code_head": "88d607ba"
+  },
+  "exclusions": [
+    "datasets and raw RGB/event media",
+    "all checkpoints and optimizer states",
+    "live R0 metrics while the run is incomplete",
+    "52 MB frame_population row ledger (derived audit and exact selected manifest retained)",
+    "large observer predictions/sidecar (their hashes and exact parity receipt are retained in S0 provenance)"
+  ],
+  "gates": {
+    "S0": "PARTIAL: local v2 diagnostics and controls closed; official scorer, broader independent population, and rare-class support remain open",
+    "S1": "RUNNING: D4096/data/smoke gates passed; R0 seed 7 v2 has no scientific result in this bundle",
+    "S2": "NOT_EVALUATED: code revision recorded; no frozen comparable result in current_v1",
+    "S3": "NOT_STARTED: causal RGB history experiment absent",
+    "S4": "NOT_STARTED: event contribution matrix absent",
+    "S5": "PARTIAL_ENGINEERING: real label-free detection-to-PHASE replay executed; no TTC accuracy/generalization claim",
+    "S6": "NOT_STARTED: multi-seed confirmation, calibration, and final independent comparison absent"
+  },
+  "s0": {
+    "class_agnostic_recall": {
+      "eligible_ground_truth_count": 1035,
+      "thresholds": {
+        "0.5": {
+          "FN": 894,
+          "TP": 141,
+          "recall": 0.13623188405797101
+        },
+        "1.0": {
+          "FN": 779,
+          "TP": 256,
+          "recall": 0.24734299516908212
+        },
+        "2.0": {
+          "FN": 588,
+          "TP": 447,
+          "recall": 0.4318840579710145
+        },
+        "4.0": {
+          "FN": 269,
+          "TP": 766,
+          "recall": 0.740096618357488
+        }
+      }
+    },
+    "controls": {
+      "bootstrap": {
+        "num_replicates": 100,
+        "observed_minus_control": {
+          "constant_prior": {
+            "ci95": [
+              0.01598233216473712,
+              0.02087538046330463
+            ],
+            "median": 0.020248878259559355,
+            "unsupported_replicates": 0,
+            "valid_replicates": 100
+          },
+          "frame_derangement": {
+            "ci95": [
+              0.016166969341084515,
+              0.021077573610685837
+            ],
+            "median": 0.019701849655445147,
+            "unsupported_replicates": 0,
+            "valid_replicates": 100
+          }
+        },
+        "seed": 7,
+        "sequence_count": 2,
+        "unit": "sequence cluster"
+      },
+      "constant_prior": 0.003839390946110635,
+      "frame_derangement": 0.003654753769763242,
+      "observed": 0.019821723110847754,
+      "observed_minus_constant_prior": 0.015982332164737118,
+      "observed_minus_frame_derangement": 0.01616696934108451,
+      "proposal_budget_per_frame": 50
+    },
+    "dev_AP101_all_eight_absent_zero": 0.012388576944279847,
+    "dev_AP101_supported_classes": 0.019821723110847754,
+    "observer_prediction_parity": {
+      "absolute_tolerance": 0.0001,
+      "maximum_absolute_error": 0.0,
+      "mismatches": [],
+      "scope": "Predictions only; reference ground_truth is not accessed",
+      "status": "PASS"
+    },
+    "official_eap_score": false,
+    "population": {
+      "eligible_ground_truth_count": 1035,
+      "identity_check": true,
+      "ignored_by_reason": {
+        "camera_center_depth_outside_protocol": 901
+      },
+      "ignored_ground_truth_count": 901,
+      "raw_ground_truth_count": 1936
+    },
+    "predictions": {
+      "capped_before_domain_filter": 0,
+      "identity_check": true,
+      "input_count": 12800,
+      "outside_domain_count": 1120,
+      "scored_count": 11680
+    },
+    "protocol_sha256": "10da30cf8f08247d48d975f3650cb02f1b43375fe0e841a5389dfb3b5d7b4a5e",
+    "sample_count": 256,
+    "supported_class_count": 5
+  },
+  "s1_data": {
+    "dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+    "manifest_content_sha256": "34adf75a1bfc04e298053b63ddd769718418804a37dffab86fff7773dceae346",
+    "read_profile": {
+      "max_open_shards": 2,
+      "parity": {
+        "same_aggregate_checksum": true,
+        "same_counts": true,
+        "same_per_frame_checksums": true,
+        "same_trace": true,
+        "same_trace_sha256": true
+      },
+      "seed": 7,
+      "trace_count": 128,
+      "workers_by_label_cache_sequences": {
+        "2": {
+          "checksums_sha256": "9d009e0bdbf3f602feee50d59a25fb8d0ffbc93b36f1b9a9dfd71060e5021bce",
+          "cold_seconds": 22.755469100025948,
+          "counts": {
+            "raw_annotations": 881,
+            "valid_velocity_targets": 441
+          },
+          "peak_working_set_bytes": 973922304,
+          "trace_count": 128,
+          "trace_sha256": "4fadf1cc62d5e3c45d27346a0ee5f484abaa2610e89a12fcc6d2ea8fbdfbc82c",
+          "warm_repeat_seconds": 23.562320999975782
+        },
+        "24": {
+          "checksums_sha256": "9d009e0bdbf3f602feee50d59a25fb8d0ffbc93b36f1b9a9dfd71060e5021bce",
+          "cold_seconds": 12.37769480003044,
+          "counts": {
+            "raw_annotations": 881,
+            "valid_velocity_targets": 441
+          },
+          "peak_working_set_bytes": 883400704,
+          "trace_count": 128,
+          "trace_sha256": "4fadf1cc62d5e3c45d27346a0ee5f484abaa2610e89a12fcc6d2ea8fbdfbc82c",
+          "warm_repeat_seconds": 9.997942599991802
+        }
+      }
+    },
+    "selection": {
+      "evaluable_annotations_v2": {
+        "bicycle": 26,
+        "bus": 85,
+        "car": 2524,
+        "motorcycle": 963,
+        "other_vehicle": 4,
+        "pedestrian": 338,
+        "tricycle": 80,
+        "truck": 619
+      },
+      "frame_count": 1024,
+      "raw_annotations": {
+        "bicycle": 30,
+        "bus": 143,
+        "car": 3885,
+        "motorcycle": 1719,
+        "other_vehicle": 7,
+        "pedestrian": 623,
+        "tricycle": 117,
+        "truck": 1686
+      },
+      "raw_negative_frames": 0,
+      "trainable_annotations_legacy_profile": {
+        "bicycle": 25,
+        "bus": 50,
+        "car": 2352,
+        "motorcycle": 906,
+        "other_vehicle": 4,
+        "pedestrian": 320,
+        "tricycle": 80,
+        "truck": 538
+      },
+      "trainable_identity_count": {
+        "bicycle": 23,
+        "bus": 18,
+        "car": 483,
+        "motorcycle": 584,
+        "other_vehicle": 3,
+        "pedestrian": 241,
+        "tricycle": 43,
+        "truck": 131
+      },
+      "trainer_overflow_frames": 0
+    },
+    "source_media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+    "split_policy": "reviewed 24/8/8 retained; acquisition linkage remains unverified",
+    "train": {
+      "evaluable_annotations_v2": {
+        "bicycle": 173,
+        "bus": 130,
+        "car": 11191,
+        "motorcycle": 749,
+        "other_vehicle": 8,
+        "pedestrian": 252,
+        "tricycle": 105,
+        "truck": 2219
+      },
+      "frame_count": 4096,
+      "raw_annotations": {
+        "bicycle": 181,
+        "bus": 305,
+        "car": 17429,
+        "motorcycle": 1409,
+        "other_vehicle": 20,
+        "pedestrian": 469,
+        "tricycle": 160,
+        "truck": 6250
+      },
+      "raw_negative_frames": 55,
+      "trainable_annotations_legacy_profile": {
+        "bicycle": 162,
+        "bus": 110,
+        "car": 10452,
+        "motorcycle": 693,
+        "other_vehicle": 7,
+        "pedestrian": 245,
+        "tricycle": 97,
+        "truck": 1994
+      },
+      "trainable_identity_count": {
+        "bicycle": 69,
+        "bus": 24,
+        "car": 1548,
+        "motorcycle": 362,
+        "other_vehicle": 6,
+        "pedestrian": 130,
+        "tricycle": 51,
+        "truck": 388
+      },
+      "trainer_overflow_frames": 0
+    }
+  },
+  "s1_r0": {
+    "checkpoints_excluded": true,
+    "live_metrics_excluded": true,
+    "nominal_updates": 8192,
+    "planned_segments": [
+      1024,
+      8192
+    ],
+    "producer_git_commit": "fcad2299979766f6d175e45b8016ea3b7a11a594",
+    "v1_preflight": {
+      "optimizer_updates": 0,
+      "reason": "Frozen producer omitted pinned inventory dependency; audit failed closed. Superseded by v2 with inventory in snapshot.",
+      "status": "FAILED_BEFORE_RUN"
+    },
+    "v2_status_at_bundle_cut": "RUNNING_NO_SCIENTIFIC_RESULT_INCLUDED"
+  },
+  "s1_smoke": {
+    "gpu_profile": {
+      "batch_size": 4,
+      "checkpoint_load": "PASS_STRICT",
+      "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "measured_steps": 4,
+      "median_phase_seconds": {
+        "backward": 0.18303409998770803,
+        "clip_grad": 0.007912050030427054,
+        "criterion": 0.08113479998428375,
+        "forward": 0.1531939500127919,
+        "loss_finiteness": 0.0075613999797496945,
+        "optimizer": 0.012248799990629777,
+        "output_finiteness": 0.006430100009310991,
+        "transfer": 0.0046834500099066645,
+        "weighted_loss_sum": 0.002147449995391071,
+        "zero_grad": 0.0013880000042263418
+      },
+      "optimizer_load": "PASS_CHECKPOINT_STATE",
+      "preprocess_batch_seconds": 0.856880099978298,
+      "scope": "synchronized stage wall times on exact velocity checkpoint variant",
+      "warmup_steps": 2
+    },
+    "image_exposures": 32,
+    "independent_inference": {
+      "absolute_tolerance": 0.0,
+      "maximum_absolute_error": 0.0,
+      "mismatches": [],
+      "scope": "Predictions only; reference ground_truth is not accessed",
+      "status": "PASS"
+    },
+    "resume_boundary_update": 4,
+    "sampler_continuation_exact": true,
+    "scope": "Engineering only; no scientific model improvement claim",
+    "stage1": {
+      "final_update": 4,
+      "peak_allocated_bytes": 4528120832,
+      "peak_reserved_bytes": 4760535040,
+      "stage_image_exposures": 16,
+      "stage_training_seconds": 29.822333300020546,
+      "status": "BUDGET_STOPPED"
+    },
+    "stage2": {
+      "cumulative_image_exposures": 32,
+      "cumulative_training_seconds": 64.35039939999115,
+      "final_update": 8,
+      "peak_allocated_bytes": 4534159360,
+      "peak_reserved_bytes": 4997513216,
+      "start_update": 4,
+      "status": "COMPLETED"
+    },
+    "status": "PASS",
+    "updates": 8
+  },
+  "s5": {
+    "cuda_resources": {
+      "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "device_total_bytes": 12820480000,
+      "execution_wall_seconds_including_model_load_and_media_read": 1.5532352000009269,
+      "max_objects": 2,
+      "peak_torch_allocated_bytes": 3526439936,
+      "peak_torch_reserved_bytes": 3590324224,
+      "rgb_object_chunk_size": 1
+    },
+    "event_packet_count": 119005,
+    "final_detection_count": 17,
+    "frame_count": 8,
+    "mature_unambiguous_track_count": 7,
+    "optimizer_updates": 0,
+    "phase_bounds": "native_phase_bounds_preserved",
+    "phase_bounds_semantics": "native phase q10/q90 or explicit null; never TTC interval",
+    "scope": "development_exposed_label_free_integration_no_accuracy_claim",
+    "sequence_id": "qGsgzl4Q8B",
+    "status": "EXECUTED_DEVELOPMENT_EXPOSED",
+    "targets_read": false
+  },
+  "schema": "phase_ttc_detection_sota_evidence_results_v1",
+  "scope": "local development evidence; no official eAP or SOTA claim"
+}

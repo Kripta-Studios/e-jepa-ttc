@@ -1,0 +1,28 @@
+{
+  "schema": "detection_campaign_smoke_resume_admission_v1",
+  "status": "PASS",
+  "scope": "Engineering only; no scientific model improvement claim",
+  "updates": 8,
+  "image_exposures": 32,
+  "resume_boundary_update": 4,
+  "sampler_continuation_exact": true,
+  "independent_inference": {
+    "status": "PASS",
+    "absolute_tolerance": 0.0,
+    "maximum_absolute_error": 0.0,
+    "mismatches": [],
+    "scope": "Predictions only; reference ground_truth is not accessed"
+  },
+  "independent_inference_frames": 16,
+  "input_labels_in_inference": false,
+  "stage1_selected_exists": true,
+  "stage2_selected_exists": true,
+  "artifacts": {
+    "config.yaml": "861b9906814ec6dc8236f54d1430393dcac4db302c0a12e3edc463cff9bf3a25",
+    "manifest.json": "f70faf2133d49bc2a24bf4370c4b2409c2e16b540176c39f2891fe8c86333330",
+    "producer\\source_hashes.json": "6067a85103f9517708601d8a1589bd4ba61d53d40087f976da8e878b65c8f2c6",
+    "stage1\\summary.json": "952828925dffe38f91b611a0d297a4ce31ffed8d599f5760a2eff8f68af553b2",
+    "stage2\\summary.json": "32e329363196c0434c927324cf98cd26584714073a6daad2fede73022e5debef",
+    "stage2_inference.json": "2ef63326e75659dc28e749995fb2b0e805729cab3e0fb4b848206615123739aa"
+  }
+}

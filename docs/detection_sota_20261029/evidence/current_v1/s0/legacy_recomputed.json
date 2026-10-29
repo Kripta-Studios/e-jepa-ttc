@@ -1,0 +1,299 @@
+{
+  "profile": "eap_development_xy_ap101_envelope_v1",
+  "official_eap_score": false,
+  "sample_count": 256,
+  "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+  "score_ties": "token lexicographic, then original prediction index",
+  "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+  "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+  "velocity_evaluated": false,
+  "tp_threshold_m": 2.0,
+  "supported_class_count": 5,
+  "dev_AP101_supported_classes": 0.02064070955899264,
+  "dev_AP101_all_eight_absent_zero": 0.0129004434743704,
+  "dev_ATE_m": 1.2214770325896167,
+  "dev_ASE": 0.5296896236047282,
+  "dev_AOE_rad": 0.1794217772493456,
+  "per_class": {
+    "car": {
+      "ground_truth_count": 721,
+      "prediction_count": 6317,
+      "AP101_mean_thresholds": 0.08338670219978991,
+      "thresholds": {
+        "0.5": {
+          "AP101": 0.00742666769119659,
+          "TP": 122,
+          "FP": 6195,
+          "FN": 599
+        },
+        "1.0": {
+          "AP101": 0.022780904859030428,
+          "TP": 208,
+          "FP": 6109,
+          "FN": 513
+        },
+        "2.0": {
+          "AP101": 0.07595589145019015,
+          "TP": 342,
+          "FP": 5975,
+          "FN": 379
+        },
+        "4.0": {
+          "AP101": 0.2273833447987425,
+          "TP": 560,
+          "FP": 5757,
+          "FN": 161
+        }
+      },
+      "TP_at_error_threshold": 342,
+      "ATE_m": 1.1707738326410821,
+      "ASE": 0.16515060139434065,
+      "AOE_rad": 0.10145251911895807
+    },
+    "bicycle": {
+      "ground_truth_count": 0,
+      "prediction_count": 0,
+      "AP101_mean_thresholds": null,
+      "thresholds": {
+        "0.5": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "1.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "2.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "4.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        }
+      },
+      "TP_at_error_threshold": 0,
+      "ATE_m": null,
+      "ASE": null,
+      "AOE_rad": null
+    },
+    "truck": {
+      "ground_truth_count": 205,
+      "prediction_count": 1966,
+      "AP101_mean_thresholds": 0.019732439652909457,
+      "thresholds": {
+        "0.5": {
+          "AP101": 0.0016094726881595042,
+          "TP": 10,
+          "FP": 1956,
+          "FN": 195
+        },
+        "1.0": {
+          "AP101": 0.005870900140406168,
+          "TP": 29,
+          "FP": 1937,
+          "FN": 176
+        },
+        "2.0": {
+          "AP101": 0.018736179747146964,
+          "TP": 58,
+          "FP": 1908,
+          "FN": 147
+        },
+        "4.0": {
+          "AP101": 0.05271320603592519,
+          "TP": 96,
+          "FP": 1870,
+          "FN": 109
+        }
+      },
+      "TP_at_error_threshold": 58,
+      "ATE_m": 1.1836386103612018,
+      "ASE": 0.7410337615916756,
+      "AOE_rad": 0.18841216918217302
+    },
+    "pedestrian": {
+      "ground_truth_count": 2,
+      "prediction_count": 1605,
+      "AP101_mean_thresholds": 0.0,
+      "thresholds": {
+        "0.5": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 1605,
+          "FN": 2
+        },
+        "1.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 1605,
+          "FN": 2
+        },
+        "2.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 1605,
+          "FN": 2
+        },
+        "4.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 1605,
+          "FN": 2
+        }
+      },
+      "TP_at_error_threshold": 0,
+      "ATE_m": null,
+      "ASE": null,
+      "AOE_rad": null
+    },
+    "motorcycle": {
+      "ground_truth_count": 6,
+      "prediction_count": 2816,
+      "AP101_mean_thresholds": 8.440594226382746e-05,
+      "thresholds": {
+        "0.5": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 2816,
+          "FN": 6
+        },
+        "1.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 2816,
+          "FN": 6
+        },
+        "2.0": {
+          "AP101": 7.193026995007196e-05,
+          "TP": 1,
+          "FP": 2815,
+          "FN": 5
+        },
+        "4.0": {
+          "AP101": 0.0002656934991052379,
+          "TP": 2,
+          "FP": 2814,
+          "FN": 4
+        }
+      },
+      "TP_at_error_threshold": 1,
+      "ATE_m": 1.3100186547665664,
+      "ASE": 0.6828845078281682,
+      "AOE_rad": 0.2484006434469057
+    },
+    "bus": {
+      "ground_truth_count": 4,
+      "prediction_count": 84,
+      "AP101_mean_thresholds": 0.0,
+      "thresholds": {
+        "0.5": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 84,
+          "FN": 4
+        },
+        "1.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 84,
+          "FN": 4
+        },
+        "2.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 84,
+          "FN": 4
+        },
+        "4.0": {
+          "AP101": 0.0,
+          "TP": 0,
+          "FP": 84,
+          "FN": 4
+        }
+      },
+      "TP_at_error_threshold": 0,
+      "ATE_m": null,
+      "ASE": null,
+      "AOE_rad": null
+    },
+    "tricycle": {
+      "ground_truth_count": 0,
+      "prediction_count": 12,
+      "AP101_mean_thresholds": null,
+      "thresholds": {
+        "0.5": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 12,
+          "FN": 0
+        },
+        "1.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 12,
+          "FN": 0
+        },
+        "2.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 12,
+          "FN": 0
+        },
+        "4.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 12,
+          "FN": 0
+        }
+      },
+      "TP_at_error_threshold": 0,
+      "ATE_m": null,
+      "ASE": null,
+      "AOE_rad": null
+    },
+    "other_vehicle": {
+      "ground_truth_count": 0,
+      "prediction_count": 0,
+      "AP101_mean_thresholds": null,
+      "thresholds": {
+        "0.5": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "1.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "2.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "4.0": {
+          "AP101": null,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0
+        }
+      },
+      "TP_at_error_threshold": 0,
+      "ATE_m": null,
+      "ASE": null,
+      "AOE_rad": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "phase_ttc_detection_controls_preregistration_v1",
+  "created_at_utc": "2026-10-29T15:38:36.421186+00:00",
+  "method": "train constant prior, first seed derangement, paired sequence bootstrap",
+  "num_replicates": 100,
+  "seed": 7,
+  "bootstrap_unit": "complete sequence",
+  "inputs_sha256": {
+    "train_results": "0876c950bb63187a562e35db0f2e2c39fe7f97dd3ad6f5d08204ad00c755768f",
+    "selection_predictions": "25cc2f8069a93e9f9be86e5664af04b786fd97cdab0763ab9c65d48fc83b6ff2",
+    "selection_ground_truth": "f8a41c6272b47f7c55898e1fd94f49e3b080006061f2b3e345d803a60ec06272",
+    "protocol": "b9ee25c2024ae96263a055fbb91100e21a657098a62a62de849436a9d389bd51"
+  },
+  "official_eap_score": false
+}

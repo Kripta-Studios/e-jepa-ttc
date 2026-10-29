@@ -1,0 +1,130 @@
+{
+  "manifest_sha256": "34adf75a1bfc04e298053b63ddd769718418804a37dffab86fff7773dceae346",
+  "schema": "eap_detection_campaign_coverage_v1",
+  "selection": {
+    "evaluable_annotations_v2": {
+      "bicycle": 26,
+      "bus": 85,
+      "car": 2524,
+      "motorcycle": 963,
+      "other_vehicle": 4,
+      "pedestrian": 338,
+      "tricycle": 80,
+      "truck": 619
+    },
+    "frame_count": 1024,
+    "raw_annotations": {
+      "bicycle": 30,
+      "bus": 143,
+      "car": 3885,
+      "motorcycle": 1719,
+      "other_vehicle": 7,
+      "pedestrian": 623,
+      "tricycle": 117,
+      "truck": 1686
+    },
+    "raw_negative_frames": 0,
+    "trainable_annotations_legacy_profile": {
+      "bicycle": 25,
+      "bus": 50,
+      "car": 2352,
+      "motorcycle": 906,
+      "other_vehicle": 4,
+      "pedestrian": 320,
+      "tricycle": 80,
+      "truck": 538
+    },
+    "trainable_identity_count": {
+      "bicycle": 23,
+      "bus": 18,
+      "car": 483,
+      "motorcycle": 584,
+      "other_vehicle": 3,
+      "pedestrian": 241,
+      "tricycle": 43,
+      "truck": 131
+    },
+    "trainer_overflow_frames": 0
+  },
+  "selection_sequence_frames": {
+    "2Y46OkK3ff": 128,
+    "CzyQ8HKP6X": 128,
+    "EllUE6bwVp": 128,
+    "JaGC4Q9pgU": 128,
+    "OBneIVg4Cw": 128,
+    "WbCh1DRerJ": 128,
+    "pBqGOb2vYq": 128,
+    "vWp9XNYQ9V": 128
+  },
+  "train": {
+    "evaluable_annotations_v2": {
+      "bicycle": 173,
+      "bus": 130,
+      "car": 11191,
+      "motorcycle": 749,
+      "other_vehicle": 8,
+      "pedestrian": 252,
+      "tricycle": 105,
+      "truck": 2219
+    },
+    "frame_count": 4096,
+    "raw_annotations": {
+      "bicycle": 181,
+      "bus": 305,
+      "car": 17429,
+      "motorcycle": 1409,
+      "other_vehicle": 20,
+      "pedestrian": 469,
+      "tricycle": 160,
+      "truck": 6250
+    },
+    "raw_negative_frames": 55,
+    "trainable_annotations_legacy_profile": {
+      "bicycle": 162,
+      "bus": 110,
+      "car": 10452,
+      "motorcycle": 693,
+      "other_vehicle": 7,
+      "pedestrian": 245,
+      "tricycle": 97,
+      "truck": 1994
+    },
+    "trainable_identity_count": {
+      "bicycle": 69,
+      "bus": 24,
+      "car": 1548,
+      "motorcycle": 362,
+      "other_vehicle": 6,
+      "pedestrian": 130,
+      "tricycle": 51,
+      "truck": 388
+    },
+    "trainer_overflow_frames": 0
+  },
+  "train_sequence_frames": {
+    "2cyv0Oedzg": 171,
+    "34K84TaN11": 171,
+    "5ilM1PX2vz": 171,
+    "6WCDpro5rE": 171,
+    "8SdieOgbva": 171,
+    "9ITOs4twfk": 171,
+    "A1Nhv0KtmL": 171,
+    "ClXqVoZOFu": 171,
+    "DGqicHUGWb": 171,
+    "GjMYZjmSQb": 171,
+    "L36QTEoVkB": 171,
+    "LMHPShQkaU": 171,
+    "OYgB6RGWcq": 171,
+    "Po6ePjWYAz": 171,
+    "eX8t2nGd6O": 171,
+    "mHGFBekt7X": 171,
+    "nRcwUlHyAd": 170,
+    "pzJcg1OCfc": 170,
+    "q2k6O0X6JY": 170,
+    "qGsgzl4Q8B": 170,
+    "qoohcdtLDH": 170,
+    "t79dBxj1WS": 170,
+    "wE9MZUmiJP": 170,
+    "xkiVthsGwf": 170
+  }
+}

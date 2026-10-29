@@ -1,0 +1,5 @@
+{
+  "status": "FAILED_BEFORE_RUN",
+  "optimizer_updates": 0,
+  "reason": "Frozen producer omitted pinned inventory dependency; audit failed closed. Superseded by v2 with inventory in snapshot."
+}

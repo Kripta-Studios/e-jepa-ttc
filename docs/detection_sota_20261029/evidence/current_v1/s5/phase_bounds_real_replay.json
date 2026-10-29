@@ -1,0 +1,3233 @@
+{
+  "candidate_binding": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+    },
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3"
+  },
+  "candidate_root": "<LOCAL_PATH>/FINAL_CANDIDATE",
+  "created_at_utc": "2026-10-29T15:48:19.576131+00:00",
+  "cuda_resources": {
+    "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "device_total_bytes": 12820480000,
+    "execution_wall_seconds_including_model_load_and_media_read": 1.5532352000009269,
+    "max_objects": 2,
+    "peak_torch_allocated_bytes": 3526439936,
+    "peak_torch_reserved_bytes": 3590324224,
+    "rgb_object_chunk_size": 1
+  },
+  "event_initialization_count": 3824678,
+  "event_packet_count": 119005,
+  "event_source": {
+    "path": "<LOCAL_PATH>/events.h5",
+    "size_bytes": 10201847567
+  },
+  "final_cutoff_us": 929733441,
+  "final_detection_count": 17,
+  "final_filter_accounting": {
+    "below_score": 14,
+    "class_aware_nms_suppressed": 19,
+    "projection_or_minimum_size_rejected": 0,
+    "raw_predictions": 50,
+    "retained": 17
+  },
+  "final_sample_token": "qGsgzl4Q8B:000000929_000731755",
+  "frame_count": 8,
+  "frame_filter_accounting": {
+    "qGsgzl4Q8B:000000929_000031744": {
+      "below_score": 21,
+      "class_aware_nms_suppressed": 14,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 15
+    },
+    "qGsgzl4Q8B:000000929_000131746": {
+      "below_score": 27,
+      "class_aware_nms_suppressed": 12,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 11
+    },
+    "qGsgzl4Q8B:000000929_000231747": {
+      "below_score": 24,
+      "class_aware_nms_suppressed": 13,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 13
+    },
+    "qGsgzl4Q8B:000000929_000331749": {
+      "below_score": 28,
+      "class_aware_nms_suppressed": 10,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 12
+    },
+    "qGsgzl4Q8B:000000929_000431750": {
+      "below_score": 25,
+      "class_aware_nms_suppressed": 11,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 14
+    },
+    "qGsgzl4Q8B:000000929_000531752": {
+      "below_score": 14,
+      "class_aware_nms_suppressed": 18,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 18
+    },
+    "qGsgzl4Q8B:000000929_000631754": {
+      "below_score": 16,
+      "class_aware_nms_suppressed": 17,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 17
+    },
+    "qGsgzl4Q8B:000000929_000731755": {
+      "below_score": 14,
+      "class_aware_nms_suppressed": 19,
+      "projection_or_minimum_size_rejected": 0,
+      "raw_predictions": 50,
+      "retained": 17
+    }
+  },
+  "gpu_execution_requested": true,
+  "mature_object_ids": [
+    "track_000005:g5",
+    "track_000002:g2",
+    "track_000001:g1",
+    "track_000003:g3",
+    "track_000012:g12",
+    "track_000009:g9",
+    "track_000008:g8"
+  ],
+  "mature_unambiguous_track_count": 7,
+  "media_manifest_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "optimizer_updates": 0,
+  "phase_bounds": "native_phase_bounds_preserved",
+  "phase_bounds_semantics": "native phase q10/q90 or explicit null; never TTC interval",
+  "phase_context": {
+    "enabled": true,
+    "graphs": false,
+    "source_sha256": "9e263435d364395325c849a7f97819c72cc42cdea02bd11da47756ed0f4f22f2",
+    "version": "batched_native_phase_context_v1"
+  },
+  "predictions_sha256": "01dd3773828af971c1f1dad6d1e780893220fd912957af6e83b90ba19672e5a8",
+  "replay_script_sha256": "4d042dc64fca6139160cfb8ddf923a0905f580c8edcefdb4b6ba3fd97d0a1161",
+  "result": {
+    "detections": [
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          29.097065305938475,
+          3.836908360357287,
+          0.24896709169849285
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:0",
+        "detection_score": 0.36398184299468994,
+        "event_square": [
+          145.38991089274342,
+          517.9325135029131,
+          310.9940639854146,
+          645.0208694953697
+        ],
+        "generation": 5,
+        "phase_bounds_semantics": "native_phase_quantile_bounds_not_continuous_ttc_interval",
+        "phase_q10": -0.02885178104043007,
+        "phase_q90": 0.009875989519059658,
+        "point_phase": -0.00826063472777605,
+        "rgb_square": [
+          145.38991089274342,
+          517.9325135029131,
+          310.9940639854146,
+          645.0208694953697
+        ],
+        "roi_source": "measured",
+        "runtime_output": {
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "input_receipt": {
+            "event_square": [
+              145.38991089274342,
+              517.9325135029131,
+              310.9940639854146,
+              645.0208694953697
+            ],
+            "event_windows_us": [
+              [
+                [
+                  929133441,
+                  929233441
+                ],
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ]
+              ],
+              [
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ]
+              ],
+              [
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ]
+              ],
+              [
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ],
+                [
+                  929633441,
+                  929733441
+                ]
+              ]
+            ],
+            "query_us": 929733441,
+            "rgb_observations": [
+              {
+                "anchor_us": 929333462,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929133459,
+                "frame_indices": [
+                  1,
+                  2,
+                  3
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929133459,
+                  929233469,
+                  929333462
+                ]
+              },
+              {
+                "anchor_us": 929433472,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.10001
+                ],
+                "first_sensor_ts_us": 929233469,
+                "frame_indices": [
+                  2,
+                  3,
+                  4
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929233469,
+                  929333462,
+                  929433472
+                ]
+              },
+              {
+                "anchor_us": 929533456,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099984
+                ],
+                "first_sensor_ts_us": 929333462,
+                "frame_indices": [
+                  3,
+                  4,
+                  5
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929333462,
+                  929433472,
+                  929533456
+                ]
+              },
+              {
+                "anchor_us": 929633449,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099984,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929433472,
+                "frame_indices": [
+                  4,
+                  5,
+                  6
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929433472,
+                  929533456,
+                  929633449
+                ]
+              },
+              {
+                "anchor_us": 929733441,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.099992
+                ],
+                "first_sensor_ts_us": 929533456,
+                "frame_indices": [
+                  5,
+                  6,
+                  7
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929533456,
+                  929633449,
+                  929733441
+                ]
+              }
+            ],
+            "rgb_square": [
+              145.38991089274342,
+              517.9325135029131,
+              310.9940639854146,
+              645.0208694953697
+            ]
+          },
+          "object_id": "track_000005:g5",
+          "phase": {
+            "point_phase": -0.00826063472777605,
+            "q10": -0.02885178104043007,
+            "q90": 0.009875989519059658
+          },
+          "phase_unavailable_reason": "",
+          "predictions": {
+            "E_CTX_TRAIN40": 38.0570068359375,
+            "PHASE_ONLY_TRAIN40_S7": -12.055676460266113,
+            "R_CTX_TRAIN40": -12.125365257263184
+          },
+          "rgb_available": true,
+          "rgb_unavailable_reason": ""
+        },
+        "size_lwh_m": [
+          4.706995010375977,
+          1.8282244205474854,
+          1.7362303733825684
+        ],
+        "track_id": "track_000005",
+        "track_state": "confirmed",
+        "ttc_reason": "",
+        "ttc_signed_s": -12.055676460266113,
+        "ttc_status": "available",
+        "velocity": [
+          2.100983142852783,
+          -0.008294383063912392
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.5681608558931792
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          46.238135423153466,
+          -0.31829641364103506,
+          0.16111161192752
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:4",
+        "detection_score": 0.28926602005958557,
+        "event_square": [
+          454.9255678900212,
+          515.3263312643114,
+          532.601637654071,
+          590.2228278528065
+        ],
+        "generation": 2,
+        "phase_bounds_semantics": "native_phase_quantile_bounds_not_continuous_ttc_interval",
+        "phase_q10": -0.020899366587400436,
+        "phase_q90": -0.0019528865814208984,
+        "point_phase": -0.010578317567706108,
+        "rgb_square": [
+          454.9255678900212,
+          515.3263312643114,
+          532.601637654071,
+          590.2228278528065
+        ],
+        "roi_source": "measured",
+        "runtime_output": {
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "input_receipt": {
+            "event_square": [
+              454.9255678900212,
+              515.3263312643114,
+              532.601637654071,
+              590.2228278528065
+            ],
+            "event_windows_us": [
+              [
+                [
+                  929133441,
+                  929233441
+                ],
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ]
+              ],
+              [
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ]
+              ],
+              [
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ]
+              ],
+              [
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ],
+                [
+                  929633441,
+                  929733441
+                ]
+              ]
+            ],
+            "query_us": 929733441,
+            "rgb_observations": [
+              {
+                "anchor_us": 929333462,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929133459,
+                "frame_indices": [
+                  1,
+                  2,
+                  3
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929133459,
+                  929233469,
+                  929333462
+                ]
+              },
+              {
+                "anchor_us": 929433472,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.10001
+                ],
+                "first_sensor_ts_us": 929233469,
+                "frame_indices": [
+                  2,
+                  3,
+                  4
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929233469,
+                  929333462,
+                  929433472
+                ]
+              },
+              {
+                "anchor_us": 929533456,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099984
+                ],
+                "first_sensor_ts_us": 929333462,
+                "frame_indices": [
+                  3,
+                  4,
+                  5
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929333462,
+                  929433472,
+                  929533456
+                ]
+              },
+              {
+                "anchor_us": 929633449,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099984,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929433472,
+                "frame_indices": [
+                  4,
+                  5,
+                  6
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929433472,
+                  929533456,
+                  929633449
+                ]
+              },
+              {
+                "anchor_us": 929733441,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.099992
+                ],
+                "first_sensor_ts_us": 929533456,
+                "frame_indices": [
+                  5,
+                  6,
+                  7
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929533456,
+                  929633449,
+                  929733441
+                ]
+              }
+            ],
+            "rgb_square": [
+              454.9255678900212,
+              515.3263312643114,
+              532.601637654071,
+              590.2228278528065
+            ]
+          },
+          "object_id": "track_000002:g2",
+          "phase": {
+            "point_phase": -0.010578317567706108,
+            "q10": -0.020899366587400436,
+            "q90": -0.0019528865814208984
+          },
+          "phase_unavailable_reason": "",
+          "predictions": {
+            "E_CTX_TRAIN40": 5.543218612670898,
+            "PHASE_ONLY_TRAIN40_S7": -9.403387069702148,
+            "R_CTX_TRAIN40": -8.19788932800293
+          },
+          "rgb_available": true,
+          "rgb_unavailable_reason": ""
+        },
+        "size_lwh_m": [
+          4.652616500854492,
+          1.857311725616455,
+          1.765350103378296
+        ],
+        "track_id": "track_000002",
+        "track_state": "confirmed",
+        "ttc_reason": "",
+        "ttc_signed_s": -9.403387069702148,
+        "ttc_status": "available",
+        "velocity": [
+          2.0442869663238525,
+          -0.02310923859477043
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.542421766183425
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          18.246730610698734,
+          2.0705396841022443,
+          0.24994467069377324
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:9",
+        "detection_score": 0.22404161095619202,
+        "event_square": [
+          86.89413036737845,
+          506.2348164888316,
+          376.62309650675076,
+          719.0
+        ],
+        "generation": 1,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          86.89413036737845,
+          506.2348164888316,
+          376.62309650675076,
+          719.0
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          4.810874938964844,
+          1.8781527280807495,
+          1.8188351392745972
+        ],
+        "track_id": "track_000001",
+        "track_state": "confirmed",
+        "ttc_reason": "runtime_object_capacity",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          1.5097126960754395,
+          -0.000505451112985611
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.551767780084441
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          71.12676265985915,
+          -4.447161850964318,
+          -0.1588023666248901
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:10",
+        "detection_score": 0.2118116021156311,
+        "event_square": [
+          572.2625032012811,
+          522.118179766588,
+          619.0654138071712,
+          565.754597722053
+        ],
+        "generation": 3,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          572.2625032012811,
+          522.118179766588,
+          619.0654138071712,
+          565.754597722053
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          4.401484966278076,
+          1.7877734899520874,
+          1.631760597229004
+        ],
+        "track_id": "track_000003",
+        "track_state": "confirmed",
+        "ttc_reason": "runtime_object_capacity",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          1.3406486511230469,
+          -0.04095134511590004
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.5267510207346628
+      },
+      {
+        "association_status": "new",
+        "center_3d_m": [
+          41.07986481639869,
+          5.899353606697343,
+          0.026305595098315426
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:11",
+        "detection_score": 0.18544992804527283,
+        "event_square": [
+          163.08786554827375,
+          530.2975381308968,
+          274.6397729365435,
+          616.798613137291
+        ],
+        "generation": 32,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          163.08786554827375,
+          530.2975381308968,
+          274.6397729365435,
+          616.798613137291
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          4.801415920257568,
+          1.8295761346817017,
+          1.719767689704895
+        ],
+        "track_id": "track_000032",
+        "track_state": "tentative",
+        "ttc_reason": "track_not_confirmed",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          1.8175885677337646,
+          -0.030735701322555542
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.5943510621648158
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          38.78426375921688,
+          -11.228898346548378,
+          0.3408935558664091
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:12",
+        "detection_score": 0.15383490920066833,
+        "event_square": [
+          941.1091579246754,
+          500.7119925890981,
+          1035.446613822669,
+          564.1496583701982
+        ],
+        "generation": 12,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          941.1091579246754,
+          500.7119925890981,
+          1035.446613822669,
+          564.1496583701982
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.810804843902588,
+          0.8583899140357971,
+          1.3202530145645142
+        ],
+        "track_id": "track_000012",
+        "track_state": "confirmed",
+        "ttc_reason": "runtime_object_capacity",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.0861113965511322,
+          0.0038951151072978973
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": 3.097661039056053
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          27.286215826458953,
+          -11.334023010094713,
+          0.47290612798844733
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:14",
+        "detection_score": 0.15175877511501312,
+        "event_square": [
+          1138.1696058404884,
+          482.83331872581596,
+          1279.0,
+          577.5122448457075
+        ],
+        "generation": 26,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          1138.1696058404884,
+          482.83331872581596,
+          1279.0,
+          577.5122448457075
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.920702576637268,
+          0.8924221992492676,
+          1.3645721673965454
+        ],
+        "track_id": "track_000026",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.08385354280471802,
+          -0.0026033222675323486
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -3.090140434220673
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          29.7036412221084,
+          -11.510861383254781,
+          0.4099645841912276
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:20",
+        "detection_score": 0.1460036039352417,
+        "event_square": [
+          1096.1908675893676,
+          488.84177382658913,
+          1228.1898813424482,
+          576.239250569615
+        ],
+        "generation": 31,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          1096.1908675893676,
+          488.84177382658913,
+          1228.1898813424482,
+          576.239250569615
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.8639291524887085,
+          0.8895345330238342,
+          1.3796883821487427
+        ],
+        "track_id": "track_000031",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.06656982004642487,
+          -0.0027284622192382812
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -3.109013553266658
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          38.133964357266976,
+          -10.100488433363537,
+          0.40496322819507824
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:21",
+        "detection_score": 0.1444436013698578,
+        "event_square": [
+          901.8474754611192,
+          499.00701220391875,
+          990.894107830856,
+          563.8931567018967
+        ],
+        "generation": 9,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          901.8474754611192,
+          499.00701220391875,
+          990.894107830856,
+          563.8931567018967
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.670665979385376,
+          0.8471725583076477,
+          1.3288003206253052
+        ],
+        "track_id": "track_000009",
+        "track_state": "confirmed",
+        "ttc_reason": "runtime_object_capacity",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.0831260234117508,
+          0.004583597183227539
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": 3.0981431226426874
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          28.08540172305077,
+          -10.127448034713243,
+          0.4222558337777168
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:22",
+        "detection_score": 0.13841788470745087,
+        "event_square": [
+          1043.7036078759068,
+          486.0995586629,
+          1193.046670028089,
+          585.40072738311
+        ],
+        "generation": 29,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          1043.7036078759068,
+          486.0995586629,
+          1193.046670028089,
+          585.40072738311
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.998795747756958,
+          0.939967930316925,
+          1.4679644107818604
+        ],
+        "track_id": "track_000029",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.069791778922081,
+          -0.014870785176753998
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": 3.1214313146066917
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          22.547588674721517,
+          -7.210255686743948,
+          0.4807739613124784
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:24",
+        "detection_score": 0.1376928687095642,
+        "event_square": [
+          963.4342518520242,
+          480.1182965023551,
+          1148.6873488619444,
+          607.9000497187627
+        ],
+        "generation": 21,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          963.4342518520242,
+          480.1182965023551,
+          1148.6873488619444,
+          607.9000497187627
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.974841833114624,
+          0.9147263765335083,
+          1.4770400524139404
+        ],
+        "track_id": "track_000021",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.10255543887615204,
+          -0.007816992700099945
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": 3.1052398560999506
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          33.1326803479321,
+          -10.896252893990884,
+          0.41905349952315063
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:27",
+        "detection_score": 0.13604815304279327,
+        "event_square": [
+          997.5721454135955,
+          490.42226170820777,
+          1120.0258318261156,
+          572.7005996436807
+        ],
+        "generation": 17,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          997.5721454135955,
+          490.42226170820777,
+          1120.0258318261156,
+          572.7005996436807
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.9724981784820557,
+          0.9227334260940552,
+          1.451783537864685
+        ],
+        "track_id": "track_000017",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.12101858854293823,
+          0.002825222909450531
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": 3.0997505476668183
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          43.5137452869414,
+          -15.321580091251732,
+          1.1866180969893585
+        ],
+        "class_name": "truck",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:31",
+        "detection_score": 0.12107289582490921,
+        "event_square": [
+          1028.082039371449,
+          427.8815541746748,
+          1154.0175488971188,
+          553.7532257091272
+        ],
+        "generation": 24,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          1028.082039371449,
+          427.8815541746748,
+          1154.0175488971188,
+          553.7532257091272
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          2.608686923980713,
+          2.0513551235198975,
+          3.000849723815918
+        ],
+        "track_id": "track_000024",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.0449170246720314,
+          0.021279610693454742
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.6278276811104508
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          47.22485166391697,
+          -3.0603417164400204,
+          0.28288567465702785
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:32",
+        "detection_score": 0.1155712679028511,
+        "event_square": [
+          562.4939393236499,
+          505.4192551356009,
+          631.1078826020279,
+          581.1034230384316
+        ],
+        "generation": 8,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          562.4939393236499,
+          505.4192551356009,
+          631.1078826020279,
+          581.1034230384316
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          3.9818673133850098,
+          1.704432487487793,
+          1.8620431423187256
+        ],
+        "track_id": "track_000008",
+        "track_state": "confirmed",
+        "ttc_reason": "runtime_object_capacity",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.8968669176101685,
+          -0.04692773520946503
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.4901307881416443
+      },
+      {
+        "association_status": "new",
+        "center_3d_m": [
+          60.724109841528765,
+          5.700116532128877,
+          -0.24454115371787477
+        ],
+        "class_name": "car",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:33",
+        "detection_score": 0.1154431626200676,
+        "event_square": [
+          287.3326975755796,
+          533.5778492778204,
+          347.897948991074,
+          589.3956048117652
+        ],
+        "generation": 33,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          287.3326975755796,
+          533.5778492778204,
+          347.897948991074,
+          589.3956048117652
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          3.8747613430023193,
+          1.6358757019042969,
+          1.732887864112854
+        ],
+        "track_id": "track_000033",
+        "track_state": "tentative",
+        "ttc_reason": "track_not_confirmed",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.7113520503044128,
+          -0.020950667560100555
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.5700735117026887
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          33.791355000156784,
+          -8.058283233109444,
+          0.6148420747495548
+        ],
+        "class_name": "motorcycle",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:34",
+        "detection_score": 0.11440901458263397,
+        "event_square": [
+          858.0636082762893,
+          486.3624829067231,
+          946.9845540571807,
+          565.2120383554537
+        ],
+        "generation": 20,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          858.0636082762893,
+          486.3624829067231,
+          946.9845540571807,
+          565.2120383554537
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          1.4412496089935303,
+          0.843325674533844,
+          1.4288445711135864
+        ],
+        "track_id": "track_000020",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.05790737643837929,
+          -0.0015811584889888763
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": 3.099352028690652
+      },
+      {
+        "association_status": "matched",
+        "center_3d_m": [
+          41.043820670325275,
+          -11.399448020196033,
+          3.2209168804882453
+        ],
+        "class_name": "truck",
+        "detection_id": "qGsgzl4Q8B:000000929_000731755:35",
+        "detection_score": 0.10237913578748703,
+        "event_square": [
+          907.430634454872,
+          335.06874986618874,
+          1018.4214598628773,
+          477.16389714173584
+        ],
+        "generation": 25,
+        "phase_bounds_semantics": "native_phase_bounds_absent",
+        "phase_q10": null,
+        "phase_q90": null,
+        "point_phase": null,
+        "rgb_square": [
+          907.430634454872,
+          335.06874986618874,
+          1018.4214598628773,
+          477.16389714173584
+        ],
+        "roi_source": "measured",
+        "runtime_output": null,
+        "size_lwh_m": [
+          2.7719976902008057,
+          2.27022385597229,
+          3.110873222351074
+        ],
+        "track_id": "track_000025",
+        "track_state": "confirmed",
+        "ttc_reason": "insufficient_track_history",
+        "ttc_signed_s": null,
+        "ttc_status": "unavailable",
+        "velocity": [
+          0.16830448806285858,
+          0.009692739695310593
+        ],
+        "velocity_frame": "released_native_components",
+        "velocity_semantics": "published_first_components_not_derived_ttc",
+        "yaw_rad": -1.3558058682825955
+      }
+    ],
+    "generalization_claim": false,
+    "optimizer_updates": 0,
+    "packet_ingested_count": 1,
+    "runtime": {
+      "complete_wall_ms": 726.2433,
+      "completed_ns": 412620318075700,
+      "event_dispatch_host_ms": 134.1774,
+      "event_enqueue_host_ms": 135.2909,
+      "event_producer_launched_before_rgb_join": false,
+      "input_boundary": "last_required_raw_CPU_packet_and_RGB_frames_available",
+      "object_count": 2,
+      "objects": [
+        {
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "input_receipt": {
+            "event_square": [
+              145.38991089274342,
+              517.9325135029131,
+              310.9940639854146,
+              645.0208694953697
+            ],
+            "event_windows_us": [
+              [
+                [
+                  929133441,
+                  929233441
+                ],
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ]
+              ],
+              [
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ]
+              ],
+              [
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ]
+              ],
+              [
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ],
+                [
+                  929633441,
+                  929733441
+                ]
+              ]
+            ],
+            "query_us": 929733441,
+            "rgb_observations": [
+              {
+                "anchor_us": 929333462,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929133459,
+                "frame_indices": [
+                  1,
+                  2,
+                  3
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929133459,
+                  929233469,
+                  929333462
+                ]
+              },
+              {
+                "anchor_us": 929433472,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.10001
+                ],
+                "first_sensor_ts_us": 929233469,
+                "frame_indices": [
+                  2,
+                  3,
+                  4
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929233469,
+                  929333462,
+                  929433472
+                ]
+              },
+              {
+                "anchor_us": 929533456,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099984
+                ],
+                "first_sensor_ts_us": 929333462,
+                "frame_indices": [
+                  3,
+                  4,
+                  5
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929333462,
+                  929433472,
+                  929533456
+                ]
+              },
+              {
+                "anchor_us": 929633449,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099984,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929433472,
+                "frame_indices": [
+                  4,
+                  5,
+                  6
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929433472,
+                  929533456,
+                  929633449
+                ]
+              },
+              {
+                "anchor_us": 929733441,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.099992
+                ],
+                "first_sensor_ts_us": 929533456,
+                "frame_indices": [
+                  5,
+                  6,
+                  7
+                ],
+                "square_xyxy": [
+                  145.38991089274342,
+                  517.9325135029131,
+                  310.9940639854146,
+                  645.0208694953697
+                ],
+                "timestamps_us": [
+                  929533456,
+                  929633449,
+                  929733441
+                ]
+              }
+            ],
+            "rgb_square": [
+              145.38991089274342,
+              517.9325135029131,
+              310.9940639854146,
+              645.0208694953697
+            ]
+          },
+          "object_id": "track_000005:g5",
+          "phase": {
+            "point_phase": -0.00826063472777605,
+            "q10": -0.02885178104043007,
+            "q90": 0.009875989519059658
+          },
+          "phase_unavailable_reason": "",
+          "predictions": {
+            "E_CTX_TRAIN40": 38.0570068359375,
+            "PHASE_ONLY_TRAIN40_S7": -12.055676460266113,
+            "R_CTX_TRAIN40": -12.125365257263184
+          },
+          "rgb_available": true,
+          "rgb_unavailable_reason": ""
+        },
+        {
+          "history_lengths": {
+            "event": 4,
+            "rgb": 5
+          },
+          "input_receipt": {
+            "event_square": [
+              454.9255678900212,
+              515.3263312643114,
+              532.601637654071,
+              590.2228278528065
+            ],
+            "event_windows_us": [
+              [
+                [
+                  929133441,
+                  929233441
+                ],
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ]
+              ],
+              [
+                [
+                  929233441,
+                  929333441
+                ],
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ]
+              ],
+              [
+                [
+                  929333441,
+                  929433441
+                ],
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ]
+              ],
+              [
+                [
+                  929433441,
+                  929533441
+                ],
+                [
+                  929533441,
+                  929633441
+                ],
+                [
+                  929633441,
+                  929733441
+                ]
+              ]
+            ],
+            "query_us": 929733441,
+            "rgb_observations": [
+              {
+                "anchor_us": 929333462,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929133459,
+                "frame_indices": [
+                  1,
+                  2,
+                  3
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929133459,
+                  929233469,
+                  929333462
+                ]
+              },
+              {
+                "anchor_us": 929433472,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.10001
+                ],
+                "first_sensor_ts_us": 929233469,
+                "frame_indices": [
+                  2,
+                  3,
+                  4
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929233469,
+                  929333462,
+                  929433472
+                ]
+              },
+              {
+                "anchor_us": 929533456,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.10001,
+                  0.099984
+                ],
+                "first_sensor_ts_us": 929333462,
+                "frame_indices": [
+                  3,
+                  4,
+                  5
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929333462,
+                  929433472,
+                  929533456
+                ]
+              },
+              {
+                "anchor_us": 929633449,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099984,
+                  0.099993
+                ],
+                "first_sensor_ts_us": 929433472,
+                "frame_indices": [
+                  4,
+                  5,
+                  6
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929433472,
+                  929533456,
+                  929633449
+                ]
+              },
+              {
+                "anchor_us": 929733441,
+                "available_us": 929733441,
+                "delta_t_s": [
+                  0.099993,
+                  0.099992
+                ],
+                "first_sensor_ts_us": 929533456,
+                "frame_indices": [
+                  5,
+                  6,
+                  7
+                ],
+                "square_xyxy": [
+                  454.9255678900212,
+                  515.3263312643114,
+                  532.601637654071,
+                  590.2228278528065
+                ],
+                "timestamps_us": [
+                  929533456,
+                  929633449,
+                  929733441
+                ]
+              }
+            ],
+            "rgb_square": [
+              454.9255678900212,
+              515.3263312643114,
+              532.601637654071,
+              590.2228278528065
+            ]
+          },
+          "object_id": "track_000002:g2",
+          "phase": {
+            "point_phase": -0.010578317567706108,
+            "q10": -0.020899366587400436,
+            "q90": -0.0019528865814208984
+          },
+          "phase_unavailable_reason": "",
+          "predictions": {
+            "E_CTX_TRAIN40": 5.543218612670898,
+            "PHASE_ONLY_TRAIN40_S7": -9.403387069702148,
+            "R_CTX_TRAIN40": -8.19788932800293
+          },
+          "rgb_available": true,
+          "rgb_unavailable_reason": ""
+        }
+      ],
+      "optimizer_updates": 0,
+      "output_boundary": "all_object_TTC_values_available_on_host",
+      "parallel_preprocessing": true,
+      "preprocessing_ready_host_ms": 135.306,
+      "rgb_crop_cache": null,
+      "rgb_diagnostic_lease_retained": false,
+      "rgb_feature_cache": null,
+      "rgb_preprocess": {
+        "completed_ns": 412619601447500,
+        "crop_cache_bypassed_frames": 0,
+        "crop_cache_hits": 0,
+        "crop_cache_misses": 0,
+        "crop_cache_stored_crops": 0,
+        "crop_seconds": 0.006604700000025332,
+        "pil_image_creation_seconds": 1.160003012046218e-05,
+        "pil_images_created": 0,
+        "roi_frame_tasks": 14,
+        "stack_seconds": 0.0019305999740026891,
+        "started_ns": 412619592898200,
+        "total_seconds": 0.00854740000795573
+      },
+      "rgb_uint8": false,
+      "started_ns": 412619591832400,
+      "targets_read": false,
+      "transport_reuse": "reverse-summaries"
+    },
+    "schema": "detection_phase_multiobject_v1",
+    "targets_read": false,
+    "timestamp_us": 929733441,
+    "tracks": [
+      {
+        "class_name": "car",
+        "event_square": [
+          86.89413036737845,
+          506.2348164888316,
+          376.62309650675076,
+          719.0
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 1,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          86.89413036737845,
+          506.2348164888316,
+          376.62309650675076,
+          719.0
+        ],
+        "state": "confirmed",
+        "track_id": "track_000001"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          454.9255678900212,
+          515.3263312643114,
+          532.601637654071,
+          590.2228278528065
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 2,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          454.9255678900212,
+          515.3263312643114,
+          532.601637654071,
+          590.2228278528065
+        ],
+        "state": "confirmed",
+        "track_id": "track_000002"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          572.2625032012811,
+          522.118179766588,
+          619.0654138071712,
+          565.754597722053
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 3,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          572.2625032012811,
+          522.118179766588,
+          619.0654138071712,
+          565.754597722053
+        ],
+        "state": "confirmed",
+        "track_id": "track_000003"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          146.19716935595406,
+          527.6951784146726,
+          270.0159400174986,
+          618.9240530082639
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 4,
+        "hits": 4,
+        "last_timestamp_us": 929333462,
+        "missed": 3,
+        "rgb_square": [
+          146.19716935595406,
+          527.6951784146726,
+          270.0159400174986,
+          618.9240530082639
+        ],
+        "state": "closed",
+        "track_id": "track_000004"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          145.38991089274342,
+          517.9325135029131,
+          310.9940639854146,
+          645.0208694953697
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 5,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          145.38991089274342,
+          517.9325135029131,
+          310.9940639854146,
+          645.0208694953697
+        ],
+        "state": "confirmed",
+        "track_id": "track_000005"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1177.1313552420158,
+          480.8946219761609,
+          1279.0,
+          556.4619656389131
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 6,
+        "hits": 3,
+        "last_timestamp_us": 929233469,
+        "missed": 3,
+        "rgb_square": [
+          1177.1313552420158,
+          480.8946219761609,
+          1279.0,
+          556.4619656389131
+        ],
+        "state": "closed",
+        "track_id": "track_000006"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          844.7503402814262,
+          492.46349824488914,
+          914.8424181468268,
+          557.8421497911662
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 7,
+        "hits": 3,
+        "last_timestamp_us": 929233469,
+        "missed": 3,
+        "rgb_square": [
+          844.7503402814262,
+          492.46349824488914,
+          914.8424181468268,
+          557.8421497911662
+        ],
+        "state": "closed",
+        "track_id": "track_000007"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          562.4939393236499,
+          505.4192551356009,
+          631.1078826020279,
+          581.1034230384316
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 8,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          562.4939393236499,
+          505.4192551356009,
+          631.1078826020279,
+          581.1034230384316
+        ],
+        "state": "confirmed",
+        "track_id": "track_000008"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          901.8474754611192,
+          499.00701220391875,
+          990.894107830856,
+          563.8931567018967
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 9,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          901.8474754611192,
+          499.00701220391875,
+          990.894107830856,
+          563.8931567018967
+        ],
+        "state": "confirmed",
+        "track_id": "track_000009"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          819.9624796804227,
+          497.12788060600496,
+          899.1032895926444,
+          561.3854188026013
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 10,
+        "hits": 1,
+        "last_timestamp_us": 929033466,
+        "missed": 3,
+        "rgb_square": [
+          819.9624796804227,
+          497.12788060600496,
+          899.1032895926444,
+          561.3854188026013
+        ],
+        "state": "closed",
+        "track_id": "track_000010"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          62.63962301420467,
+          523.2379026765892,
+          161.14373219322,
+          593.8202891103396
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 11,
+        "hits": 1,
+        "last_timestamp_us": 929033466,
+        "missed": 3,
+        "rgb_square": [
+          62.63962301420467,
+          523.2379026765892,
+          161.14373219322,
+          593.8202891103396
+        ],
+        "state": "closed",
+        "track_id": "track_000011"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          941.1091579246754,
+          500.7119925890981,
+          1035.446613822669,
+          564.1496583701982
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 12,
+        "hits": 8,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          941.1091579246754,
+          500.7119925890981,
+          1035.446613822669,
+          564.1496583701982
+        ],
+        "state": "confirmed",
+        "track_id": "track_000012"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1152.2957024377001,
+          457.2131738953472,
+          1279.0,
+          607.1531551642693
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 13,
+        "hits": 1,
+        "last_timestamp_us": 929033466,
+        "missed": 3,
+        "rgb_square": [
+          1152.2957024377001,
+          457.2131738953472,
+          1279.0,
+          607.1531551642693
+        ],
+        "state": "closed",
+        "track_id": "track_000013"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1106.1914111698438,
+          480.8327029390104,
+          1235.5401193990958,
+          577.9372400164933
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 14,
+        "hits": 1,
+        "last_timestamp_us": 929033466,
+        "missed": 3,
+        "rgb_square": [
+          1106.1914111698438,
+          480.8327029390104,
+          1235.5401193990958,
+          577.9372400164933
+        ],
+        "state": "closed",
+        "track_id": "track_000014"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          755.8465785009602,
+          487.4805520511677,
+          836.5757748133968,
+          564.3098440278108
+        ],
+        "first_timestamp_us": 929033466,
+        "generation": 15,
+        "hits": 1,
+        "last_timestamp_us": 929033466,
+        "missed": 3,
+        "rgb_square": [
+          755.8465785009602,
+          487.4805520511677,
+          836.5757748133968,
+          564.3098440278108
+        ],
+        "state": "closed",
+        "track_id": "track_000015"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1135.628635429389,
+          476.3944422159792,
+          1266.0917263766116,
+          581.4165681771166
+        ],
+        "first_timestamp_us": 929133459,
+        "generation": 16,
+        "hits": 1,
+        "last_timestamp_us": 929133459,
+        "missed": 3,
+        "rgb_square": [
+          1135.628635429389,
+          476.3944422159792,
+          1266.0917263766116,
+          581.4165681771166
+        ],
+        "state": "closed",
+        "track_id": "track_000016"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          997.5721454135955,
+          490.42226170820777,
+          1120.0258318261156,
+          572.7005996436807
+        ],
+        "first_timestamp_us": 929233469,
+        "generation": 17,
+        "hits": 6,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          997.5721454135955,
+          490.42226170820777,
+          1120.0258318261156,
+          572.7005996436807
+        ],
+        "state": "confirmed",
+        "track_id": "track_000017"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1164.9821900401785,
+          458.88722475111814,
+          1279.0,
+          611.0491185170971
+        ],
+        "first_timestamp_us": 929233469,
+        "generation": 18,
+        "hits": 1,
+        "last_timestamp_us": 929233469,
+        "missed": 3,
+        "rgb_square": [
+          1164.9821900401785,
+          458.88722475111814,
+          1279.0,
+          611.0491185170971
+        ],
+        "state": "closed",
+        "track_id": "track_000018"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1098.6821833345139,
+          478.22965937586116,
+          1234.446650671748,
+          584.3313766133576
+        ],
+        "first_timestamp_us": 929233469,
+        "generation": 19,
+        "hits": 1,
+        "last_timestamp_us": 929233469,
+        "missed": 3,
+        "rgb_square": [
+          1098.6821833345139,
+          478.22965937586116,
+          1234.446650671748,
+          584.3313766133576
+        ],
+        "state": "closed",
+        "track_id": "track_000019"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          858.0636082762893,
+          486.3624829067231,
+          946.9845540571807,
+          565.2120383554537
+        ],
+        "first_timestamp_us": 929333462,
+        "generation": 20,
+        "hits": 5,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          858.0636082762893,
+          486.3624829067231,
+          946.9845540571807,
+          565.2120383554537
+        ],
+        "state": "confirmed",
+        "track_id": "track_000020"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          963.4342518520242,
+          480.1182965023551,
+          1148.6873488619444,
+          607.9000497187627
+        ],
+        "first_timestamp_us": 929333462,
+        "generation": 21,
+        "hits": 5,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          963.4342518520242,
+          480.1182965023551,
+          1148.6873488619444,
+          607.9000497187627
+        ],
+        "state": "confirmed",
+        "track_id": "track_000021"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1063.9889659534892,
+          487.7330389138104,
+          1158.2362639712928,
+          555.9730559301277
+        ],
+        "first_timestamp_us": 929333462,
+        "generation": 22,
+        "hits": 1,
+        "last_timestamp_us": 929333462,
+        "missed": 3,
+        "rgb_square": [
+          1063.9889659534892,
+          487.7330389138104,
+          1158.2362639712928,
+          555.9730559301277
+        ],
+        "state": "closed",
+        "track_id": "track_000022"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          843.5575953661724,
+          492.5627655320716,
+          912.6704530283042,
+          556.9729905290606
+        ],
+        "first_timestamp_us": 929433472,
+        "generation": 23,
+        "hits": 3,
+        "last_timestamp_us": 929633449,
+        "missed": 1,
+        "rgb_square": [
+          843.5575953661724,
+          492.5627655320716,
+          912.6704530283042,
+          556.9729905290606
+        ],
+        "state": "lost",
+        "track_id": "track_000023"
+      },
+      {
+        "class_name": "truck",
+        "event_square": [
+          1028.082039371449,
+          427.8815541746748,
+          1154.0175488971188,
+          553.7532257091272
+        ],
+        "first_timestamp_us": 929433472,
+        "generation": 24,
+        "hits": 4,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          1028.082039371449,
+          427.8815541746748,
+          1154.0175488971188,
+          553.7532257091272
+        ],
+        "state": "confirmed",
+        "track_id": "track_000024"
+      },
+      {
+        "class_name": "truck",
+        "event_square": [
+          907.430634454872,
+          335.06874986618874,
+          1018.4214598628773,
+          477.16389714173584
+        ],
+        "first_timestamp_us": 929433472,
+        "generation": 25,
+        "hits": 4,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          907.430634454872,
+          335.06874986618874,
+          1018.4214598628773,
+          477.16389714173584
+        ],
+        "state": "confirmed",
+        "track_id": "track_000025"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1138.1696058404884,
+          482.83331872581596,
+          1279.0,
+          577.5122448457075
+        ],
+        "first_timestamp_us": 929433472,
+        "generation": 26,
+        "hits": 4,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          1138.1696058404884,
+          482.83331872581596,
+          1279.0,
+          577.5122448457075
+        ],
+        "state": "confirmed",
+        "track_id": "track_000026"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          200.31696451836905,
+          540.9113069932198,
+          318.6117370621561,
+          622.2568376207404
+        ],
+        "first_timestamp_us": 929533456,
+        "generation": 27,
+        "hits": 1,
+        "last_timestamp_us": 929533456,
+        "missed": 2,
+        "rgb_square": [
+          200.31696451836905,
+          540.9113069932198,
+          318.6117370621561,
+          622.2568376207404
+        ],
+        "state": "lost",
+        "track_id": "track_000027"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1127.7573646823614,
+          480.0134808069381,
+          1279.0,
+          581.3881264700593
+        ],
+        "first_timestamp_us": 929533456,
+        "generation": 28,
+        "hits": 1,
+        "last_timestamp_us": 929533456,
+        "missed": 2,
+        "rgb_square": [
+          1127.7573646823614,
+          480.0134808069381,
+          1279.0,
+          581.3881264700593
+        ],
+        "state": "lost",
+        "track_id": "track_000028"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1043.7036078759068,
+          486.0995586629,
+          1193.046670028089,
+          585.40072738311
+        ],
+        "first_timestamp_us": 929533456,
+        "generation": 29,
+        "hits": 3,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          1043.7036078759068,
+          486.0995586629,
+          1193.046670028089,
+          585.40072738311
+        ],
+        "state": "confirmed",
+        "track_id": "track_000029"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1060.256867369068,
+          497.65617072908634,
+          1159.2982556622899,
+          563.7174321623696
+        ],
+        "first_timestamp_us": 929533456,
+        "generation": 30,
+        "hits": 2,
+        "last_timestamp_us": 929633449,
+        "missed": 1,
+        "rgb_square": [
+          1060.256867369068,
+          497.65617072908634,
+          1159.2982556622899,
+          563.7174321623696
+        ],
+        "state": "lost",
+        "track_id": "track_000030"
+      },
+      {
+        "class_name": "motorcycle",
+        "event_square": [
+          1096.1908675893676,
+          488.84177382658913,
+          1228.1898813424482,
+          576.239250569615
+        ],
+        "first_timestamp_us": 929633449,
+        "generation": 31,
+        "hits": 2,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          1096.1908675893676,
+          488.84177382658913,
+          1228.1898813424482,
+          576.239250569615
+        ],
+        "state": "confirmed",
+        "track_id": "track_000031"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          163.08786554827375,
+          530.2975381308968,
+          274.6397729365435,
+          616.798613137291
+        ],
+        "first_timestamp_us": 929733441,
+        "generation": 32,
+        "hits": 1,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          163.08786554827375,
+          530.2975381308968,
+          274.6397729365435,
+          616.798613137291
+        ],
+        "state": "tentative",
+        "track_id": "track_000032"
+      },
+      {
+        "class_name": "car",
+        "event_square": [
+          287.3326975755796,
+          533.5778492778204,
+          347.897948991074,
+          589.3956048117652
+        ],
+        "first_timestamp_us": 929733441,
+        "generation": 33,
+        "hits": 1,
+        "last_timestamp_us": 929733441,
+        "missed": 0,
+        "rgb_square": [
+          287.3326975755796,
+          533.5778492778204,
+          347.897948991074,
+          589.3956048117652
+        ],
+        "state": "tentative",
+        "track_id": "track_000033"
+      }
+    ]
+  },
+  "schema": "detection_phase_service_replay_phase_bounds_v1",
+  "scope": "development_exposed_label_free_integration_no_accuracy_claim",
+  "sensor_span_us": 699975,
+  "sequence_id": "qGsgzl4Q8B",
+  "status": "EXECUTED_DEVELOPMENT_EXPOSED",
+  "targets_read": false,
+  "tracker_prefix": [
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:0",
+          "object_id": "track_000001:g1",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:3",
+          "object_id": "track_000002:g2",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:7",
+          "object_id": "track_000003:g3",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:8",
+          "object_id": "track_000004:g4",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:9",
+          "object_id": "track_000005:g5",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:10",
+          "object_id": "track_000006:g6",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:12",
+          "object_id": "track_000007:g7",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:15",
+          "object_id": "track_000008:g8",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:16",
+          "object_id": "track_000009:g9",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:18",
+          "object_id": "track_000010:g10",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:21",
+          "object_id": "track_000011:g11",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:22",
+          "object_id": "track_000012:g12",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:23",
+          "object_id": "track_000013:g13",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:26",
+          "object_id": "track_000014:g14",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000031744:27",
+          "object_id": "track_000015:g15",
+          "state": "tentative",
+          "status": "new"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000031744",
+      "timestamp_us": 929033466
+    },
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:0",
+          "object_id": "track_000005:g5",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:3",
+          "object_id": "track_000002:g2",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:7",
+          "object_id": "track_000003:g3",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:8",
+          "object_id": "track_000004:g4",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:10",
+          "object_id": "track_000006:g6",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:12",
+          "object_id": "track_000001:g1",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:13",
+          "object_id": "track_000008:g8",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:14",
+          "object_id": "track_000009:g9",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:16",
+          "object_id": "track_000012:g12",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:17",
+          "object_id": "track_000016:g16",
+          "state": "tentative",
+          "status": "ambiguous"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000131746:21",
+          "object_id": "track_000007:g7",
+          "state": "confirmed",
+          "status": "matched"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "timestamp_us": 929133459
+    },
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:0",
+          "object_id": "track_000005:g5",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:4",
+          "object_id": "track_000002:g2",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:8",
+          "object_id": "track_000003:g3",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:9",
+          "object_id": "track_000004:g4",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:10",
+          "object_id": "track_000001:g1",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:11",
+          "object_id": "track_000006:g6",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:13",
+          "object_id": "track_000008:g8",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:15",
+          "object_id": "track_000009:g9",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:16",
+          "object_id": "track_000012:g12",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:21",
+          "object_id": "track_000017:g17",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:22",
+          "object_id": "track_000018:g18",
+          "state": "tentative",
+          "status": "ambiguous"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:24",
+          "object_id": "track_000019:g19",
+          "state": "tentative",
+          "status": "ambiguous"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000231747:25",
+          "object_id": "track_000007:g7",
+          "state": "confirmed",
+          "status": "matched"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "timestamp_us": 929233469
+    },
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:0",
+          "object_id": "track_000005:g5",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:4",
+          "object_id": "track_000002:g2",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:8",
+          "object_id": "track_000003:g3",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:9",
+          "object_id": "track_000001:g1",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:10",
+          "object_id": "track_000004:g4",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:11",
+          "object_id": "track_000012:g12",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:13",
+          "object_id": "track_000008:g8",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:16",
+          "object_id": "track_000009:g9",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:17",
+          "object_id": "track_000017:g17",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:19",
+          "object_id": "track_000020:g20",
+          "state": "tentative",
+          "status": "ambiguous"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:20",
+          "object_id": "track_000021:g21",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000331749:21",
+          "object_id": "track_000022:g22",
+          "state": "tentative",
+          "status": "new"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "timestamp_us": 929333462
+    },
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:0",
+          "object_id": "track_000005:g5",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:4",
+          "object_id": "track_000002:g2",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:8",
+          "object_id": "track_000003:g3",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:9",
+          "object_id": "track_000001:g1",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:11",
+          "object_id": "track_000012:g12",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:14",
+          "object_id": "track_000009:g9",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:16",
+          "object_id": "track_000020:g20",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:17",
+          "object_id": "track_000008:g8",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:18",
+          "object_id": "track_000017:g17",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:19",
+          "object_id": "track_000021:g21",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:21",
+          "object_id": "track_000023:g23",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:22",
+          "object_id": "track_000024:g24",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:23",
+          "object_id": "track_000025:g25",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000431750:24",
+          "object_id": "track_000026:g26",
+          "state": "tentative",
+          "status": "new"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "timestamp_us": 929433472
+    },
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:0",
+          "object_id": "track_000005:g5",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:4",
+          "object_id": "track_000002:g2",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:8",
+          "object_id": "track_000027:g27",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:9",
+          "object_id": "track_000001:g1",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:10",
+          "object_id": "track_000003:g3",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:12",
+          "object_id": "track_000012:g12",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:16",
+          "object_id": "track_000009:g9",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:17",
+          "object_id": "track_000026:g26",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:18",
+          "object_id": "track_000017:g17",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:21",
+          "object_id": "track_000021:g21",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:22",
+          "object_id": "track_000020:g20",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:23",
+          "object_id": "track_000028:g28",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:24",
+          "object_id": "track_000029:g29",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:25",
+          "object_id": "track_000008:g8",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:27",
+          "object_id": "track_000030:g30",
+          "state": "tentative",
+          "status": "new"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:30",
+          "object_id": "track_000023:g23",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:31",
+          "object_id": "track_000024:g24",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000531752:35",
+          "object_id": "track_000025:g25",
+          "state": "confirmed",
+          "status": "matched"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "timestamp_us": 929533456
+    },
+    {
+      "assignments": [
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:0",
+          "object_id": "track_000005:g5",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:4",
+          "object_id": "track_000002:g2",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:9",
+          "object_id": "track_000001:g1",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:10",
+          "object_id": "track_000003:g3",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:12",
+          "object_id": "track_000012:g12",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:16",
+          "object_id": "track_000017:g17",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:18",
+          "object_id": "track_000009:g9",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:19",
+          "object_id": "track_000021:g21",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:20",
+          "object_id": "track_000030:g30",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:22",
+          "object_id": "track_000029:g29",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:24",
+          "object_id": "track_000020:g20",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:26",
+          "object_id": "track_000024:g24",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:27",
+          "object_id": "track_000031:g31",
+          "state": "tentative",
+          "status": "ambiguous"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:28",
+          "object_id": "track_000008:g8",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:30",
+          "object_id": "track_000026:g26",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:32",
+          "object_id": "track_000025:g25",
+          "state": "confirmed",
+          "status": "matched"
+        },
+        {
+          "detection_id": "qGsgzl4Q8B:000000929_000631754:33",
+          "object_id": "track_000023:g23",
+          "state": "confirmed",
+          "status": "matched"
+        }
+      ],
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "timestamp_us": 929633449
+    }
+  ]
+}

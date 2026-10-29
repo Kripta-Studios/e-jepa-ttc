@@ -1,0 +1,358 @@
+--- a/lib/models/monodgp/ops/functions/ms_deform_attn_func.py
++++ b/lib/models/monodgp/ops/functions/ms_deform_attn_func.py
+@@ -15,27 +15,9 @@
+ from torch.autograd import Function
+ from torch.autograd.function import once_differentiable
+ 
+-import MultiScaleDeformableAttention as MSDA
+-
+-
+-class MSDeformAttnFunction(Function):
+-    @staticmethod
+-    def forward(ctx, value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights, im2col_step):
+-        ctx.im2col_step = im2col_step
+-        output = MSDA.ms_deform_attn_forward(
+-            value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights, ctx.im2col_step)
+-        ctx.save_for_backward(value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights)
+-        return output
+-
+-    @staticmethod
+-    @once_differentiable
+-    def backward(ctx, grad_output):
+-        value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights = ctx.saved_tensors
+-        grad_value, grad_sampling_loc, grad_attn_weight = \
+-            MSDA.ms_deform_attn_backward(
+-                value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights, grad_output, ctx.im2col_step)
+-
+-        return grad_value, None, None, grad_sampling_loc, grad_attn_weight, None
++from e_jepa_ttc.detection.portable_attention import (
++    PortableMSDeformAttnFunction as MSDeformAttnFunction,
++)
+ 
+ 
+ def ms_deform_attn_core_pytorch(value, value_spatial_shapes, sampling_locations, attention_weights):
+--- a/lib/models/monodgp/ops/modules/ms_deform_attn.py
++++ b/lib/models/monodgp/ops/modules/ms_deform_attn.py
+@@ -31,10 +31,7 @@
+ 
+ import torch
+ from torch import Tensor
+-if float(torch.__version__.split('.')[0]) == 0 or (float(torch.__version__.split('.')[0]) == 1 and float(torch.__version__.split('.')[1])) < 9:
+-    from torch.nn.modules.linear import _LinearWithBias
+-else:
+-    from torch.nn.modules.linear import NonDynamicallyQuantizableLinear as _LinearWithBias
++from torch.nn.modules.linear import NonDynamicallyQuantizableLinear as _LinearWithBias
+ from torch.nn.init import xavier_uniform_
+ from torch.nn.init import constant_
+ from torch.nn.init import xavier_normal_
+--- a/lib/models/monodgp/ops/modules/ms_deform_attn.py
++++ b/lib/models/monodgp/ops/modules/ms_deform_attn.py
+@@ -49,10 +49,7 @@
+ from torch.nn import grad
+ from torch import _VF
+ from torch._jit_internal import boolean_dispatch, List, Optional, _overload, Tuple
+-if float(torch.__version__.split('.')[0]) == 0 or (float(torch.__version__.split('.')[0]) == 1 and float(torch.__version__.split('.')[1])) < 7:
+-    from torch._overrides import has_torch_function, handle_torch_function
+-else:
+-    from torch.overrides import has_torch_function, handle_torch_function
++from torch.overrides import has_torch_function, handle_torch_function
+ Tensor = torch.Tensor
+ 
+ from torch.nn.functional import linear, pad, softmax, dropout
+--- a/lib/models/monodgp/backbone.py
++++ b/lib/models/monodgp/backbone.py
+@@ -99,7 +99,7 @@
+         norm_layer = FrozenBatchNorm2d
+         backbone = getattr(torchvision.models, name)(
+             replace_stride_with_dilation=[False, False, dilation],
+-            pretrained=is_main_process(), norm_layer=norm_layer)
++            weights=None, norm_layer=norm_layer)
+         assert name not in ('resnet18', 'resnet34'), "number of channels are hard coded"
+         super().__init__(backbone, train_backbone, return_interm_layers)
+         if dilation:
+--- a/lib/models/monodgp/det2d_transformer.py
++++ b/lib/models/monodgp/det2d_transformer.py
+@@ -389,4 +389,4 @@
+         return_intermediate_dec=cfg['return_intermediate_dec'],
+         num_feature_levels=cfg['num_feature_levels'],
+         dec_n_points=cfg['dec_n_points'],
+-        enc_n_points=cfg['enc_n_points'])
++        enc_n_points=cfg['enc_n_points'], group_num=cfg['group_num'])
+--- a/lib/models/monodgp/det3d_transformer.py
++++ b/lib/models/monodgp/det3d_transformer.py
+@@ -301,4 +301,4 @@
+         num_decoder_layers=cfg['dec_layers'],
+         return_intermediate_dec=cfg['return_intermediate_dec'],
+         num_feature_levels=cfg['num_feature_levels'],
+-        dec_n_points=cfg['dec_n_points'])
++        dec_n_points=cfg['dec_n_points'], group_num=cfg['group_num'])
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -456,7 +456,7 @@
+ 
+         # regression loss
+         heading_input_res = heading_input[:, 12:24]
+-        cls_onehot = torch.zeros(heading_target_cls.shape[0], 12).cuda().scatter_(dim=1, index=heading_target_cls.view(-1, 1), value=1)
++        cls_onehot = torch.zeros(heading_target_cls.shape[0], 12, device=heading_target_cls.device).scatter_(dim=1, index=heading_target_cls.view(-1, 1), value=1)
+         heading_input_res = torch.sum(heading_input_res * cls_onehot, 1)
+         reg_loss = F.l1_loss(heading_input_res, heading_target_res, reduction='none')
+         
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -469,7 +469,7 @@
+         depth_map_logits = outputs['pred_depth_map_logits']
+ 
+         num_gt_per_img = [len(t['boxes']) for t in targets]
+-        gt_boxes2d = torch.cat([t['boxes'] for t in targets], dim=0) * torch.tensor([80, 24, 80, 24], device='cuda')
++        gt_boxes2d = torch.cat([t['boxes'] for t in targets], dim=0) * depth_map_logits.new_tensor([depth_map_logits.shape[-1], depth_map_logits.shape[-2], depth_map_logits.shape[-1], depth_map_logits.shape[-2]])
+         gt_boxes2d = box_ops.box_cxcywh_to_xyxy(gt_boxes2d)
+         gt_center_depth = torch.cat([t['depth'] for t in targets], dim=0).squeeze(dim=1)
+         
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -246,7 +246,7 @@
+             # depth_geo
+             box2d_height_norm = outputs_coord[:, :, 4] + outputs_coord[:, :, 5]
+             box2d_height = torch.clamp(box2d_height_norm * img_sizes[:, 1: 2], min=1.0)
+-            depth_geo = size3d[:, :, 0]/ box2d_height * calibs[:, 0, 0].unsqueeze(1)
++            depth_geo = size3d[:, :, 0]/ box2d_height * calibs[:, 1, 1].unsqueeze(1)
+             
+             # depth_map
+             # outputs_center3d = ((outputs_coord[..., :2] - 0.5) * 2).unsqueeze(2)   #.detach()
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -427,6 +427,8 @@
+ 
+         idx = self._get_src_permutation_idx(indices)
+         src_dims = outputs['pred_3d_dim'][idx]
++        if src_dims.numel() == 0:
++            return {'loss_dim': src_dims.sum() * 0.0}
+         target_dims = torch.cat([t['size_3d'][i] for t, (_, i) in zip(targets, indices)], dim=0)
+ 
+         dimension = target_dims.clone().detach()
+--- a/lib/models/monodgp/matcher.py
++++ b/lib/models/monodgp/matcher.py
+@@ -175,7 +175,8 @@
+         # Final cost matrix
+         C = self.cost_bbox * cost_bbox + self.cost_3dcenter * cost_3dcenter + self.cost_class * cost_class + self.cost_giou * cost_giou
+         C = C.view(bs, num_queries, -1).cpu()
+-        C = torch.nan_to_num(C, nan=0.0, posinf=0.0, neginf=0.0)
++        if not torch.isfinite(C).all():
++            raise ValueError('Nonfinite matching costs before assignment')
+         sizes = [len(v["boxes"]) for v in targets]
+         #indices = [linear_sum_assignment(c[i]) for i, c in enumerate(C.split(sizes, -1))]
+         indices = []
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -19,6 +19,7 @@
+ from .depth_predictor.ddn_loss import DDNLoss
+ from lib.losses.focal_loss import sigmoid_focal_loss
+ from .position_encoding import PositionEmbeddingCamRay
++from e_jepa_ttc.detection.velocity_extension import matched_velocity_l1
+ 
+ 
+ def _get_clones(module, N):
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -30,7 +30,8 @@
+     """ This is the MonoDGP module that performs monocualr 3D object detection """
+     def __init__(self, backbone, depth_predictor, det2d_transformer, det3d_transformer,
+                   num_classes, num_queries, num_feature_levels, 
+-                  aux_loss=True, with_box_refine=False, init_box=False, group_num=11):
++                  aux_loss=True, with_box_refine=False, init_box=False, group_num=11,
++                  predict_velocity=False):
+         """ Initializes the model.
+         Parameters:
+             backbone: torch module of the backbone to be used. See backbone.py
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -66,6 +66,9 @@
+         self.dim_embed_3d = MLP(hidden_dim, hidden_dim, 3, 2)
+         self.angle_embed = MLP(hidden_dim, hidden_dim, 24, 2)
+         self.depth_embed = MLP(hidden_dim, hidden_dim, 2, 2)  # depth and deviation
++        self.predict_velocity = bool(predict_velocity)
++        if self.predict_velocity:
++            self.velocity_embed = MLP(hidden_dim, hidden_dim, 2, 2)
+ 
+         if init_box == True:
+             nn.init.constant_(self.bbox_embed.layers[-1].weight.data, 0)
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -108,6 +108,7 @@
+             nn.init.xavier_uniform_(proj[0].weight, gain=1)
+             nn.init.constant_(proj[0].bias, 0)
+         num_pred = det3d_transformer.decoder.num_layers + 1
++        velocity_num_pred = det3d_transformer.decoder.num_layers
+         if with_box_refine:
+             self.class_embed = _get_clones(self.class_embed, num_pred)
+             self.bbox_embed = _get_clones(self.bbox_embed, num_pred)
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -129,6 +129,11 @@
+             self.depth_embed = nn.ModuleList([self.depth_embed for _ in range(num_pred)])
+             self.depthaware_transformer.decoder.bbox_embed = None
+ 
++        if self.predict_velocity:
++            self.velocity_embed = _get_clones(
++                self.velocity_embed, velocity_num_pred
++            )
++
+ 
+     def forward(self, images, calibs, targets, img_sizes, dn_args=None):
+         """ The forward expects a NestedTensor, which consists of:
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -224,6 +224,7 @@
+         outputs_3d_dims = []       
+         outputs_depths = []
+         outputs_angles = []
++        outputs_velocities = [] if self.predict_velocity else None
+ 
+         for lvl in range(hs.shape[0]):
+             if lvl == 0:
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -280,6 +280,9 @@
+             outputs_angle = self.angle_embed[lvl](hs[lvl])
+             outputs_angles.append(outputs_angle)
+ 
++            if outputs_velocities is not None:
++                outputs_velocities.append(self.velocity_embed[lvl](hs[lvl]))
++
+         outputs_coord = torch.stack(outputs_coords)
+         outputs_class = torch.stack(outputs_classes)
+         outputs_3d_dim = torch.stack(outputs_3d_dims)
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -288,6 +288,9 @@
+         outputs_3d_dim = torch.stack(outputs_3d_dims)
+         outputs_depth = torch.stack(outputs_depths) 
+         outputs_angle = torch.stack(outputs_angles)
++        outputs_velocity = (
++            torch.stack(outputs_velocities) if outputs_velocities is not None else None
++        )
+   
+         out = dict()
+         out['pred_logits'] = outputs_class[-1]
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -298,6 +298,8 @@
+         out['pred_3d_dim'] = outputs_3d_dim[-1]
+         out['pred_depth'] = outputs_depth[-1]
+         out['pred_angle'] = outputs_angle[-1]
++        if outputs_velocity is not None:
++            out['pred_velocity'] = outputs_velocity[-1]
+         out['pred_depth_map_logits'] = pred_depth_map_logits
+         out['pred_region_prob'] = region_probs
+ 
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -307,7 +307,9 @@
+         
+         if self.aux_loss:
+             out['aux_outputs'] = self._set_aux_loss(
+-                outputs_class, outputs_coord, outputs_3d_dim, outputs_angle, outputs_depth) 
++                outputs_class, outputs_coord, outputs_3d_dim, outputs_angle,
++                outputs_depth,
++                outputs_velocity) 
+         
+         return out
+ 
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -314,14 +314,21 @@
+         return out
+ 
+     @torch.jit.unused
+-    def _set_aux_loss(self, outputs_class, outputs_coord, outputs_3d_dim, outputs_angle, outputs_depth):
++    def _set_aux_loss(self, outputs_class, outputs_coord, outputs_3d_dim, outputs_angle,
++                      outputs_depth, outputs_velocity):
+         # this is a workaround to make torchscript happy, as torchscript
+-        # doesn't support dictionary with non-homogeneous values, such
+-        # as a dict having both a Tensor and a list.
+-        return [{'pred_logits': a, 'pred_boxes': b, 
+-                 'pred_3d_dim': c, 'pred_angle': d, 'pred_depth': e}
+-                for a, b, c, d, e in zip(outputs_class[:-1], outputs_coord[:-1],
+-                                         outputs_3d_dim[:-1], outputs_angle[:-1], outputs_depth[:-1])]
++        # doesn't support dictionary with non-homogeneous values.
++        auxiliary = [
++            {'pred_logits': a, 'pred_boxes': b, 'pred_3d_dim': c,
++             'pred_angle': d, 'pred_depth': e}
++            for a, b, c, d, e in zip(outputs_class[:-1], outputs_coord[:-1],
++                                     outputs_3d_dim[:-1], outputs_angle[:-1],
++                                     outputs_depth[:-1])
++        ]
++        if outputs_velocity is not None:
++            for item, velocity in zip(auxiliary, outputs_velocity[:-1]):
++                item['pred_velocity'] = velocity
++        return auxiliary
+     
+     @torch.jit.unused
+     def _set_inter_loss(self, outputs_class, outputs_coord):
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -452,6 +452,20 @@
+         losses['loss_depth'] = depth_loss.sum() / num_boxes 
+         return losses  
+     
++    def loss_velocities(self, outputs, targets, indices, num_boxes):
++        del num_boxes
++        idx = self._get_src_permutation_idx(indices)
++        prediction = outputs['pred_velocity'][idx]
++        target = torch.cat([
++            item['velocity'][target_index]
++            for item, (_, target_index) in zip(targets, indices)
++        ], dim=0)
++        valid = torch.cat([
++            item['velocity_valid'][target_index]
++            for item, (_, target_index) in zip(targets, indices)
++        ], dim=0)
++        return {'loss_velocity': matched_velocity_l1(prediction, target, valid)}
++
+     def loss_dims(self, outputs, targets, indices, num_boxes):  
+ 
+         idx = self._get_src_permutation_idx(indices)
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -564,6 +564,7 @@
+             'cardinality': self.loss_cardinality,
+             'boxes': self.loss_boxes,
+             'depths': self.loss_depths,
++            'velocities': self.loss_velocities,
+             'dims': self.loss_dims,
+             'angles': self.loss_angles,
+             'center': self.loss_3dcenter,
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -658,7 +658,8 @@
+         num_feature_levels=cfg['num_feature_levels'],
+         with_box_refine=cfg['with_box_refine'],
+         init_box=cfg['init_box'],
+-        group_num=cfg['group_num'])
++        group_num=cfg['group_num'],
++        predict_velocity=cfg.get('predict_velocity', False))
+ 
+     # matcher
+     matcher = build_matcher(cfg)
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -673,6 +673,8 @@
+     weight_dict['loss_center'] = cfg['3dcenter_loss_coef']
+     weight_dict['loss_depth_map'] = cfg['depth_map_loss_coef']
+     weight_dict['loss_region'] = cfg['region_loss_coef']
++    if cfg.get('predict_velocity', False):
++        weight_dict['loss_velocity'] = cfg.get('velocity_loss_coef', 1.0)
+     
+     if cfg['aux_loss']:
+         aux_weight_dict = {}
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -692,6 +692,8 @@
+         
+     inter_losses = ['labels', 'boxes', 'center']
+     losses = ['labels', 'boxes', 'cardinality', 'depths', 'dims', 'angles', 'center', 'depth_map', 'region']
++    if cfg.get('predict_velocity', False):
++        losses.append('velocities')
+ 
+     criterion = SetCriterion(
+         cfg['num_classes'],

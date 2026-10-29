@@ -1,0 +1,32 @@
+{
+  "schema": "eap_detection_campaign_execution_provenance_v1",
+  "source_snapshot": {
+    "path": "output/campaign_data/source_snapshot_f446055be4fb9de3",
+    "aggregate_sha256": "f446055be4fb9de36db75d43cc1064469e8b45b90f08effdd6309e2b71473554",
+    "sha256sums_file_sha256": "9912a8578fd25856c5c4a627d47631d82c09469e66b963f71379eb96e3d473e7",
+    "files": {
+      "scripts/prepare_detection_campaign.py": "0ef30e9c027b97e953ce531368b5b3cce279b6189ff99470d29c48b14178be19",
+      "src/e_jepa_ttc/detection/__init__.py": "d438c13788118f469d350a51cfbb8e481b9ed2d30dc2d1772da2135cdb51a074",
+      "src/e_jepa_ttc/detection/campaign_data.py": "7dbb0455286cc51abb7e6a424535c7b74f02216e23a24b449dcfbe1f36cffaf2",
+      "src/e_jepa_ttc/detection/development_metrics.py": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6",
+      "src/e_jepa_ttc/detection/evaluation_ground_truth.py": "a9bf21c873f962293e630938d8ae1aae123b822cc48ed2d352f9fab778d5cbb2",
+      "src/e_jepa_ttc/detection/evaluation_protocol.py": "44710d70540f2f114c6b9fccd7b7317fe50328630c01f9a07d0a3c56dca8c9b6",
+      "src/e_jepa_ttc/detection/geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f"
+    }
+  },
+  "outputs": {
+    "receipt.json": "efe1072258dfb8bbfc4ea720ee71439372ac21c86855a5e531ae30596ef080bb",
+    "population_audit.json": "b8d5d5fec171e2af73a360fd13e8466757baf801b15c571728e31cb107d42673",
+    "d4096_manifest.json": "4af615689bab28016d28881a9339be6c58fe0f35f5d234c0db090eafeff9fb45",
+    "d4096_coverage.json": "3af54c8f9c7164d274649ad3e758b8c66bdb911191ff510540172935d8f6942a",
+    "frame_population.jsonl": "46110db969f98093aac73a997ef7347da91a734e8c0bdf0ac87095fe332c96ab"
+  },
+  "execution": {
+    "python": "../phase-ttc-detection-local/.venv-detector/Scripts/python.exe",
+    "pythonpath": "output/campaign_data/source_snapshot_f446055be4fb9de3/src",
+    "entrypoint": "output/campaign_data/source_snapshot_f446055be4fb9de3/scripts/prepare_detection_campaign.py",
+    "data_root": "E:/eAP_dataset",
+    "test_labels_read": false
+  },
+  "note": "This additive receipt binds the frozen executed source; it does not rewrite the original run receipt."
+}
