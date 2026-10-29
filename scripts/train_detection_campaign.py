@@ -449,6 +449,7 @@ def run(
     sampler = ResumablePermutationSampler(len(train_tokens), config.seed)
     owned_paths = [
         Path(__file__),
+        ROOT / "data/manifests/eap_detection_public_files_v1.json",
         ROOT / "scripts/infer_detection_campaign.py",
         ROOT / "scripts/smoke_monodgp_portable.py",
         ROOT / "src/e_jepa_ttc/__init__.py",
