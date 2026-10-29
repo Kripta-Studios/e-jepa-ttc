@@ -93,4 +93,3 @@ unknown identity, changed source hash or selection-derived mapping is rejected.
    replace selection.
 6. Preserve negative results. A gain on repeated rare identities is evidence for
    this bounded intervention, not evidence of eight-class robustness.
-

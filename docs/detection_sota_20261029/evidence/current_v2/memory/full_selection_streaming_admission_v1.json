@@ -1,0 +1,72 @@
+{
+  "executed_profiler_sha256": "6c98dc6c501c45044b226f620b322357a8fa67005acdbb1ff718717883fcb676",
+  "independent_reviewer": "<LOCAL_PATH_REDACTED_STRING>",
+  "limitations": [
+    "The 23,958-frame figures are conservative projections, not observations.",
+    "The resource population repeats the 256-frame pilot structures and does not claim scientific metrics.",
+    "Global AP must remain global; chunk AP values must never be averaged.",
+    "Admission applies only to incremental JSON serialization. The old dumps/write route is not admitted at 23,958 frames."
+  ],
+  "observed_4096": {
+    "exact_payload_and_metrics_parity": true,
+    "frame_count": 4096,
+    "ground_truth_raw_count": 15008,
+    "legacy_dumps_write_control": {
+      "minimum_physical_available_bytes": 8215842816,
+      "owned_tree_peak_rss_bytes": 1770307584,
+      "payload_sha256": "5520656625962a8769aede91282d422faa5e3aa702b64f3f77b30e7ed00065d0",
+      "prestart_physical_available_bytes": 10464067584,
+      "serialized_bytes": 234328274,
+      "serializer_peak_rss_bytes": 1751973888,
+      "watchdog_receipt_sha256": "c869cd9c7d80322fac1763f0f51af2bedc70296fd68123e571913fb165ef6c66",
+      "worker_peak_rss_bytes": 1751973888,
+      "worker_receipt_sha256": "ba960a32a01126d4005c43eb5ab8a9061dfda8698634d8cbbb7ba7ec5f0b59ee"
+    },
+    "prediction_count": 204800,
+    "streaming": {
+      "minimum_physical_available_bytes": 8724439040,
+      "owned_tree_peak_rss_bytes": 492060672,
+      "payload_sha256": "5520656625962a8769aede91282d422faa5e3aa702b64f3f77b30e7ed00065d0",
+      "prestart_physical_available_bytes": 11419246592,
+      "serialized_bytes": 234328274,
+      "serializer_peak_rss_bytes": 485859328,
+      "watchdog_receipt_sha256": "5318ae5e415e9c589f7df544580efd33e935e22a3a9dfe9c5fdbed8b7a7d41d3",
+      "worker_peak_rss_bytes": 487043072,
+      "worker_receipt_sha256": "62343f3e885b53561b02807b03e5e30d0447dbe3c7ad85ee4c208e98dc7d562c"
+    }
+  },
+  "physical_ram_gates": {
+    "cold_start_headroom_after_safety_bytes": 1359068517,
+    "cold_start_required_total_plus_safety_bytes": 9104999067,
+    "decision": "Both observed scope-specific gates passed independent review. Migration remains a separate, hash-pinned operation.",
+    "observed_prestart_available_bytes": 10464067584,
+    "observed_runtime_minimum_available_bytes": 8215842816,
+    "required_prestart_available_when_trainer_already_resident_bytes": 5883773595,
+    "required_prestart_formula": "projected_evaluator_rss_bytes + 1.5 GiB host floor",
+    "runtime_host_available_floor_bytes": 1610612736,
+    "scope": "psutil virtual_memory.available / Windows physical available RAM only",
+    "trainer_resident_required_evaluator_plus_safety_bytes": 5883773595,
+    "trainer_resident_runtime_headroom_after_safety_bytes": 2332069221
+  },
+  "projection_23958": {
+    "fixed_trainer_model_cache": {
+      "allowance_above_observed_peak_bytes": 270934016,
+      "conservative_allowance_bytes": 3221225472,
+      "note": "The rounded 3 GiB allowance also covers the bounded eight-sample/eight-label caches. Windows private/pagefile bytes are not treated as physical RAM.",
+      "scope": "separate resident trainer/model/cache allowance, not included in evaluator worker RSS",
+      "windows_peak_working_set_bytes": 2950291456
+    },
+    "formula": "ceil(487043072 * 23958 / 4096 * 1.5)",
+    "projected_evaluator_rss_bytes": 4273160859,
+    "projected_serialized_bytes_without_memory_duplication": 1370614451,
+    "projected_total_cold_start_rss_bytes": 7494386331,
+    "scope": "resource evaluator process including its observed base, multiplied by frame ratio and a 1.5 safety factor; not an observed full-population run"
+  },
+  "recipe_sha256": "9ae4e3a0ec6c0eae07063b3a4bdc116a23c3a6dbe456a810d98db8d360936444",
+  "resource_only": true,
+  "review_status": "PASS",
+  "schema": "phase_ttc_full_selection_streaming_memory_admission_v1",
+  "scientific_metric_claims": false,
+  "source_selection_sha256": "7a547a22222d4425cdd4faeaaf871f69210925adde94f69c629b48e94aceb896",
+  "status": "PASS"
+}

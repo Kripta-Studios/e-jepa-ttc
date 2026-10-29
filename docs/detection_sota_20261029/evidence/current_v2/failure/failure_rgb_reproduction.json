@@ -1,0 +1,60 @@
+{
+  "frames": [
+    {
+      "image_wh": [
+        1280,
+        720
+      ],
+      "member_sha256": "3318e8f474052ffb8d48179c2fec477186a83006677eb870cb654c92008a72f8",
+      "member_size": 1083537,
+      "read_bytes": 1083537,
+      "rgb_member_path": "rgb/000000419_000158904.png",
+      "rgb_shard_path": "data/train/t79dBxj1WS/rgb_shards/rgb-00000.tar",
+      "sample_token": "t79dBxj1WS:000000419_000158904",
+      "sequence_id": "t79dBxj1WS",
+      "status": "PASS"
+    },
+    {
+      "image_wh": [
+        1280,
+        720
+      ],
+      "member_sha256": "6ef7cb4ed9706a69f5cf9cb62f34ce8aaaafad6d68ea087b7879b3e00764796b",
+      "member_size": 1105028,
+      "read_bytes": 1105028,
+      "rgb_member_path": "rgb/000000745_000981554.png",
+      "rgb_shard_path": "data/train/qoohcdtLDH/rgb_shards/rgb-00001.tar",
+      "sample_token": "qoohcdtLDH:000000745_000981554",
+      "sequence_id": "qoohcdtLDH",
+      "status": "PASS"
+    },
+    {
+      "error": "image file is truncated",
+      "error_type": "OSError",
+      "member_sha256": "d2063506ffa1db3b3dc9d57326f9d107996916dc376a457e0085cca540d42ce3",
+      "member_size": 393216,
+      "read_bytes": 393216,
+      "rgb_member_path": "rgb/000000661_000000160.png",
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "sample_token": "OYgB6RGWcq:000000661_000000160",
+      "sequence_id": "OYgB6RGWcq",
+      "status": "FAILED"
+    },
+    {
+      "image_wh": [
+        1280,
+        720
+      ],
+      "member_sha256": "8cf1bdc836c4146fc7286027bf8aa6c59da09a881cb4a288de29f2c5862cbf38",
+      "member_size": 970673,
+      "read_bytes": 970673,
+      "rgb_member_path": "rgb/000000731_000501102.png",
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "sample_token": "OYgB6RGWcq:000000731_000501102",
+      "sequence_id": "OYgB6RGWcq",
+      "status": "PASS"
+    }
+  ],
+  "schema": "rgb_failure_reproduction_v1",
+  "strict_decode": true
+}

@@ -120,3 +120,25 @@ bytes y métricas exactamente en 1.024/4.096 frames. Su perfil revisado queda en
 `a892e08d6048332a0f2928a43131ee7d7b3f3375d8d81e52f8562fff1f7f31d4`.
 La proyección a 23.958 frames es una estimación conservadora, no una medición a ese
 tamaño. No se ha ejecutado ninguna migración de checkpoints.
+
+## Reinicio RGB con cohorte v5
+
+El 29-10-2026 a las 17:40:26 UTC arrancó R0 en frío, en
+`output/detection_campaign/rgb_screen_v5_seed7_v1/automatic_runs_v1/r0_1024`.
+Su productor contiene 18 archivos congelados y agrega el recibo de admisión
+multimedia al snapshot de cada ejecución. La revisión de código correspondiente
+es `2332b76b`; el manifiesto de hashes del productor es
+`b21ca93d7482d35a0d8efc67a898d44d539221ac91cd824a3ad3c25a7efa90e0`.
+
+La cola local fija R0 hasta 1.024 updates, continuación exacta hasta 8.192 y R1
+frío hasta 8.192. Comprueba antes y después los hashes de fuentes, configuración
+y datos; verifica checkpoints, resume, población y evaluaciones completas antes
+de pasar al siguiente candidato. R1 cambia solo warmup y scheduler. Usa un único
+proceso GPU, se detiene ante cualquier fallo y no reintenta automáticamente.
+El plan congelado tiene SHA-256
+`cf999cf5939fef2c82110424c299c619debfc2203f67c5a2b4c2252470864863`.
+
+Este registro de arranque no contiene una nueva AP ni acredita haber completado
+R0/R1. Los recibos vivos quedan en `automatic_queue_execution_v1`; el paquete
+[current_v2](evidence/current_v2/README.md) acredita la admisión previa de datos y
+RAM, conservando por separado el fallo histórico y la sustitución única.

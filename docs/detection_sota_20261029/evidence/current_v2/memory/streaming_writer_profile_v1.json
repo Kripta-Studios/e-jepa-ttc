@@ -1,0 +1,88 @@
+{
+  "admission_mode": "migration_before_model_load_total",
+  "contract_note": "Independent review recomputed the projection hash and both explicit physical-RAM gates. Migration remains a separate operation.",
+  "evaluator_measurement_excludes_trainer_model": true,
+  "evidence": {
+    "admission_receipt": {
+      "path": "full_selection_streaming_admission_v1.json",
+      "sha256": "5bed6af572b134df4f27e8dda6ff7a0cc755b5896478db51258b43d900ba345a"
+    },
+    "legacy_watchdog_4096": {
+      "path": "watchdog_4096.json",
+      "sha256": "c869cd9c7d80322fac1763f0f51af2bedc70296fd68123e571913fb165ef6c66"
+    },
+    "legacy_worker_4096": {
+      "path": "worker_4096.json",
+      "sha256": "ba960a32a01126d4005c43eb5ab8a9061dfda8698634d8cbbb7ba7ec5f0b59ee"
+    },
+    "metric_parity_receipt": {
+      "path": "metric_parity_receipt_v1.json",
+      "sha256": "9003c989312254a1da48c99269bb57e41d01e955c3a4a9869f902bdb4825a853"
+    },
+    "serialization_1024": {
+      "path": "serialization_comparison_1024_v1.json",
+      "sha256": "b721a1a13801df71eafe06ab5c89800c39865a988dfedd07fdbb38e94cefc0de"
+    },
+    "stream_watchdog_4096": {
+      "path": "watchdog_4096_stream.json",
+      "sha256": "5318ae5e415e9c589f7df544580efd33e935e22a3a9dfe9c5fdbed8b7a7d41d3"
+    },
+    "stream_worker_4096": {
+      "path": "worker_4096_stream.json",
+      "sha256": "62343f3e885b53561b02807b03e5e30d0447dbe3c7ad85ee4c208e98dc7d562c"
+    }
+  },
+  "fixed_trainer_model_cache_rss_bytes": 3221225472,
+  "full_population_observed": false,
+  "full_population_sample_count": 23958,
+  "independent_review_status": "PASS",
+  "independent_reviewer": "<LOCAL_PATH_REDACTED_STRING>",
+  "measured_evaluator_peak_rss_bytes": 487043072,
+  "memory_basis": "physical_ram_not_commit_or_pagefile",
+  "metric_parity": true,
+  "metrics_sha256_by_sample_count": {
+    "1024": {
+      "new": "be074ad362e2c5fb92825beee87f0f9f44081c3d01fce501c721bb0218402912",
+      "old": "be074ad362e2c5fb92825beee87f0f9f44081c3d01fce501c721bb0218402912"
+    },
+    "4096": {
+      "new": "bad91cfe0e3ebd510a083eb256ecc09b352b9b45c87f3cb8b5df6a41cc4a597f",
+      "old": "bad91cfe0e3ebd510a083eb256ecc09b352b9b45c87f3cb8b5df6a41cc4a597f"
+    }
+  },
+  "new_writer_sha256": "425c080dddc4ee2ab326af8f939d56ce15b0603981bca96c139b83b8711d6f25",
+  "observed_parity_sample_counts": [
+    1024,
+    4096
+  ],
+  "observed_prestart_physical_free_ram_bytes": 10464067584,
+  "observed_runtime_min_physical_free_ram_bytes": 8215842816,
+  "old_writer_sha256": "d6193c5bfb099d29f56d24ee5616e1bd6a1f196a472d5a5a438b10d4bd5f5729",
+  "peak_memory_admission": true,
+  "physical_safety_margin_bytes": 1610612736,
+  "profile_scope": "observed_1024_4096_projected_23958",
+  "profiler_sha256": "6c98dc6c501c45044b226f620b322357a8fa67005acdbb1ff718717883fcb676",
+  "projected_full_evaluator_peak_rss_bytes": 4273160859,
+  "projected_full_total_physical_ram_bytes": 7494386331,
+  "projection_is_measurement": false,
+  "projection_multiplier": 1.5,
+  "protocol_sha256": "10da30cf8f08247d48d975f3650cb02f1b43375fe0e841a5389dfb3b5d7b4a5e",
+  "required_physical_ram_before_migration_bytes": 9104999067,
+  "required_physical_ram_during_resident_evaluation_bytes": 5883773595,
+  "reviewed_projection_sha256": "907a44de6313c241c9eed9d4b58f900a4166790937224bfe5a737a81d8debd69",
+  "schema": "eap_detection_streaming_writer_profile_v1",
+  "serializer_byte_parity": true,
+  "serializer_sha256_by_sample_count": {
+    "1024": {
+      "new": "63578b3eb4f4de0cc9cf00fda7a5c188c2d204a30ebce68eacc4842531950c2a",
+      "old": "63578b3eb4f4de0cc9cf00fda7a5c188c2d204a30ebce68eacc4842531950c2a"
+    },
+    "4096": {
+      "new": "5520656625962a8769aede91282d422faa5e3aa702b64f3f77b30e7ed00065d0",
+      "old": "5520656625962a8769aede91282d422faa5e3aa702b64f3f77b30e7ed00065d0"
+    }
+  },
+  "source_selection_sha256": "7a547a22222d4425cdd4faeaaf871f69210925adde94f69c629b48e94aceb896",
+  "status": "PASS",
+  "streaming_rss_observed_sample_count": 4096
+}

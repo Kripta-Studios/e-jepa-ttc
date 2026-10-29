@@ -1,0 +1,85 @@
+{
+  "data_admission": {
+    "full_selection_frames": 23958,
+    "manifest_sha256": "9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1",
+    "media_admission_sha256": "c625eec068727b5df15f527483b9bf343f6b566fc19eba20449066de2390eae8",
+    "media_hash_records": 28054,
+    "rare_trainable_identities": {
+      "bicycle": 69,
+      "other_vehicle": 6
+    },
+    "replacement": {
+      "index": 2063,
+      "new": "OYgB6RGWcq:000000660_000900159",
+      "old": "OYgB6RGWcq:000000661_000000160"
+    },
+    "selection_frames": 1024,
+    "status": "PASS",
+    "substitution_count": 1,
+    "train_evaluable_v2": {
+      "bicycle": 173,
+      "bus": 130,
+      "car": 11194,
+      "motorcycle": 749,
+      "other_vehicle": 8,
+      "pedestrian": 252,
+      "tricycle": 105,
+      "truck": 2219
+    },
+    "train_frames": 4096,
+    "trainable_legacy": {
+      "bicycle": 162,
+      "bus": 110,
+      "car": 10455,
+      "motorcycle": 693,
+      "other_vehicle": 7,
+      "pedestrian": 245,
+      "tricycle": 97,
+      "truck": 1994
+    }
+  },
+  "limitations": [
+    "The 23,958-frame memory result is a conservative projection, not an observed run.",
+    "The memory population is resource-only and makes no scientific metric claim.",
+    "The v5 data admission changes exactly one unreadable train token.",
+    "No raw media, events, checkpoints, optimizer state, or synthetic payload is packaged."
+  ],
+  "memory_admission": {
+    "full_population_frames": 23958,
+    "full_population_observed": false,
+    "measured_evaluator_peak_rss_bytes": 487043072,
+    "metric_parity": true,
+    "observed_frames": 4096,
+    "profile_scope": "observed_1024_4096_projected_23958",
+    "projected_full_evaluator_peak_rss_bytes": 4273160859,
+    "projected_full_total_physical_ram_bytes": 7494386331,
+    "reference_receipt_count": 7,
+    "required_physical_ram_before_migration_bytes": 9104999067,
+    "serializer_byte_parity": true,
+    "status": "PASS"
+  },
+  "original_preflight": {
+    "native_bad_member_count": 1,
+    "native_tar_matches_pin": true,
+    "shard_records": 107,
+    "shard_status_counts": {
+      "FAIL": 1,
+      "PASS": 106
+    },
+    "status": "FAIL",
+    "strict_decode": true,
+    "tar_file_hash_matches": 107,
+    "token_records": 28054,
+    "token_status_counts": {
+      "FAIL": 1,
+      "PASS": 28053
+    }
+  },
+  "schema": "phase_ttc_detection_admission_results_v2",
+  "source_script_sha256": {
+    "scripts/migrate_detection_campaign_writer.py": "8708d769fab9aa7342b6ab152698dee2d6b5a04760a1825fc45578f9ff18de1a",
+    "scripts/preflight_detection_rgb_assets.py": "38dafa09b69b0de4cdeda921e1462996781fa06d556e00e5ba702a4c85b46f22",
+    "scripts/profile_detection_evaluation_memory.py": "6c98dc6c501c45044b226f620b322357a8fa67005acdbb1ff718717883fcb676",
+    "scripts/revise_detection_campaign_media.py": "285bc8b431eb23ced325045e5c3bb9ca1b7af3274df64d85d0baf2fedb6a1ea0"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "bad_shards": [
+    {
+      "expected_sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+      "expected_size_bytes": 1075773440,
+      "finished_at_utc": "2026-10-29T17:10:45.166511+00:00",
+      "observed_sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+      "observed_size_bytes": 1075773440,
+      "requested_token_count": 74,
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "sha256_matches_pinned": true,
+      "shard_failure_count": 0,
+      "size_matches_pinned": true,
+      "stable_during_audit": true,
+      "started_at_utc": "2026-10-29T17:10:42.337255+00:00",
+      "status": "FAIL",
+      "token_failure_count": 1
+    }
+  ],
+  "bad_tokens": [
+    {
+      "checked_at_utc": "2026-10-29T17:10:44.123597+00:00",
+      "error": "image file is truncated",
+      "error_type": "OSError",
+      "rgb_member_path": "rgb/000000661_000000160.png",
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "OYgB6RGWcq:000000661_000000160",
+      "sequence_id": "OYgB6RGWcq",
+      "status": "FAIL"
+    }
+  ],
+  "created_at_utc": "2026-10-29T17:15:31.562892+00:00",
+  "limitations": [
+    "Member SHA-256 values are observed from local TAR bytes; no public per-member hash exists.",
+    "Full TAR SHA-256 is compared with the pinned public inventory.",
+    "No labels, annotations, test media, GPU, repair, overwrite, resampling or manifest mutation."
+  ],
+  "population": {
+    "full_selection_tokens": 23958,
+    "total_unique_tokens": 28054,
+    "train_tokens": 4096,
+    "used_shards": 107
+  },
+  "progress_files": {
+    "run_manifest": "<LOCAL_PATH>/run_manifest.json",
+    "shard_status_jsonl": "<LOCAL_PATH>/shard_status.jsonl",
+    "shard_status_sha256": "e825d256933b63ef34fa6aec163f3a3ffd95eb7acf16c700d7227947c5981724",
+    "token_status_jsonl": "<LOCAL_PATH>/token_status.jsonl",
+    "token_status_sha256": "3cbdfa10f77a8ed3701f67584cf0caffed8a8662916b49e422cf147b44cce51d"
+  },
+  "schema": "eap_rgb_full_preflight_v1",
+  "shard_status_counts": {
+    "FAIL": 1,
+    "PASS": 106
+  },
+  "source_receipt_sha256": "d6af917dbabb9ccd83af507ed5a4d36d8ec03f90f9e2beb21fe4e682a70e9ae8",
+  "status": "FAIL",
+  "token_status_counts": {
+    "FAIL": 1,
+    "PASS": 28053
+  }
+}

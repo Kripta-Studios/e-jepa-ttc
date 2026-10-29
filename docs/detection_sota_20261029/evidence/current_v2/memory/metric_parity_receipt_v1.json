@@ -1,0 +1,31 @@
+{
+  "hash_method": "sha256(canonical JSON of metrics_v2 using sort_keys and compact separators)",
+  "metrics_sha256_by_sample_count": {
+    "1024": {
+      "new": "be074ad362e2c5fb92825beee87f0f9f44081c3d01fce501c721bb0218402912",
+      "old": "be074ad362e2c5fb92825beee87f0f9f44081c3d01fce501c721bb0218402912"
+    },
+    "4096": {
+      "new": "bad91cfe0e3ebd510a083eb256ecc09b352b9b45c87f3cb8b5df6a41cc4a597f",
+      "old": "bad91cfe0e3ebd510a083eb256ecc09b352b9b45c87f3cb8b5df6a41cc4a597f"
+    }
+  },
+  "note": "Old and streaming payloads are byte-identical at both observed sample counts; metric hashes were recomputed from the retained payloads.",
+  "profiler_sha256": "6c98dc6c501c45044b226f620b322357a8fa67005acdbb1ff718717883fcb676",
+  "protocol_sha256": "10da30cf8f08247d48d975f3650cb02f1b43375fe0e841a5389dfb3b5d7b4a5e",
+  "resource_only": true,
+  "schema": "phase_ttc_detection_evaluation_metric_parity_v1",
+  "scientific_metric_claims": false,
+  "serializer_sha256_by_sample_count": {
+    "1024": {
+      "new": "63578b3eb4f4de0cc9cf00fda7a5c188c2d204a30ebce68eacc4842531950c2a",
+      "old": "63578b3eb4f4de0cc9cf00fda7a5c188c2d204a30ebce68eacc4842531950c2a"
+    },
+    "4096": {
+      "new": "5520656625962a8769aede91282d422faa5e3aa702b64f3f77b30e7ed00065d0",
+      "old": "5520656625962a8769aede91282d422faa5e3aa702b64f3f77b30e7ed00065d0"
+    }
+  },
+  "source_selection_sha256": "7a547a22222d4425cdd4faeaaf871f69210925adde94f69c629b48e94aceb896",
+  "status": "PASS"
+}

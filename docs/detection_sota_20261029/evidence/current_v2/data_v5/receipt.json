@@ -1,0 +1,21 @@
+{
+  "coverage_sha256": "9084776b9a8f1412630fbae8a414f4f749185aef16b888da840511741503d42c",
+  "full_selection_frames": 23958,
+  "full_selection_sha256": "e4303685e39f635a47b76921b9c5f38821e8715f3aa5f202c73a2c32dae1a497",
+  "media_admission_sha256": "c625eec068727b5df15f527483b9bf343f6b566fc19eba20449066de2390eae8",
+  "new_manifest_canonical_sha256": "9acaf17cc98db2f8c8dd34bd2857663f92192f2dc4ec1772a8a5803023aa01ce",
+  "new_manifest_sha256": "9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1",
+  "old_coverage_sha256": "3af54c8f9c7164d274649ad3e758b8c66bdb911191ff510540172935d8f6942a",
+  "old_manifest_sha256": "4af615689bab28016d28881a9339be6c58fe0f35f5d234c0db090eafeff9fb45",
+  "population_audit_byte_exact": true,
+  "population_audit_sha256": "b8d5d5fec171e2af73a360fd13e8466757baf801b15c571728e31cb107d42673",
+  "replacement": {
+    "index": 2063,
+    "new": "OYgB6RGWcq:000000660_000900159",
+    "old": "OYgB6RGWcq:000000661_000000160"
+  },
+  "schema": "eap_detection_readable_campaign_revision_v1",
+  "selection_frames": 1024,
+  "status": "PASS",
+  "train_frames": 4096
+}

@@ -1,0 +1,12 @@
+{
+  "full_selection_sha256": "e4303685e39f635a47b76921b9c5f38821e8715f3aa5f202c73a2c32dae1a497",
+  "implementation_sha256": "38dafa09b69b0de4cdeda921e1462996781fa06d556e00e5ba702a4c85b46f22",
+  "maximum_simultaneous_tar_readers": 1,
+  "media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "pil_load_truncated_images": false,
+  "pinned_inventory_sha256": "2e65cd7f2600eea55f37f59e9a22d55b5ba0aa50445756fd7aaf01332c2b3ff1",
+  "root": "<LOCAL_PATH>/eAP_dataset",
+  "schema": "eap_rgb_full_preflight_inputs_v1",
+  "train_manifest_sha256": "4af615689bab28016d28881a9339be6c58fe0f35f5d234c0db090eafeff9fb45",
+  "workers": 1
+}

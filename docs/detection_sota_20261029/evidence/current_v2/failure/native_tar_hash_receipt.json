@@ -1,0 +1,12 @@
+{
+  "elapsed_seconds": 1.3286103999707848,
+  "expected": {
+    "git_blob": "b6236dfb3c288134d39582bbfbb562dd62f94a50",
+    "sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+    "size_bytes": 1075773440
+  },
+  "matches_pinned_sha256": true,
+  "relative": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+  "sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+  "size": 1075773440
+}

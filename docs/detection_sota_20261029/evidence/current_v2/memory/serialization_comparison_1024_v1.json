@@ -1,0 +1,40 @@
+{
+  "byte_exact_match": true,
+  "current_dumps_write": {
+    "process_peak_rss_bytes": 479641600,
+    "receipt": "worker_1024.json",
+    "receipt_sha256": "efe8a5c0d27af1752204c93f5df564065abc0a602758260edef2057f72fca1c9",
+    "serialization_seconds": 17.591750900028273
+  },
+  "executed_script_sha256": {
+    "current_dumps_write": "d463425fd031f40e46acc6ddbab285e7e2f6ec5899a4261e101e818cc8e57348",
+    "stream_dump": "fcb6a2501479f1ef0868616dbd82f5de9e158ec11af1a6fa77e4b4407cac63a6"
+  },
+  "frame_count": 1024,
+  "payload_bytes": 58486303,
+  "payload_sha256_both_modes": "63578b3eb4f4de0cc9cf00fda7a5c188c2d204a30ebce68eacc4842531950c2a",
+  "peak_rss_reduction_bytes": 317710336,
+  "peak_rss_reduction_fraction": 0.6623911187019641,
+  "resource_only": true,
+  "schema": "phase_ttc_detection_evaluation_serialization_comparison_v1",
+  "scientific_metric_claims": false,
+  "scorer_only_projection": {
+    "marginal_linear_1_5x_bytes": 3908848176,
+    "marginal_linear_bytes": 2605898784,
+    "max_marginal_bytes_per_frame": 106544.0,
+    "observed_peak_rss_bytes": {
+      "1024": 162418688,
+      "256": 80637952,
+      "512": 107913216
+    },
+    "target_frames": 23958,
+    "warning": "Excludes the loaded detector, dataset/cache, inference tensors and allocator effects."
+  },
+  "status": "PASS",
+  "stream_dump": {
+    "process_peak_rss_bytes": 161931264,
+    "receipt": "worker_1024_stream.json",
+    "receipt_sha256": "50f2f6c8d66749be702bc99895faa790b9459f6669f2fd8f47cb428739fd9977",
+    "serialization_seconds": 25.762681299995165
+  }
+}
