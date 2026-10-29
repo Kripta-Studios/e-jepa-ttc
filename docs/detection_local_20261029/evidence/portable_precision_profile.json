@@ -1,0 +1,582 @@
+{
+  "scope": "single_real_train_frame_precision_feasibility_not_accuracy_comparison",
+  "sample_token": "qGsgzl4Q8B:000000887_000231056",
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "script_sha256": "b3158708fc2afb2d8217ab5a9b4672a80b6d2700bdfdeb8b2922b0e97d45355d",
+  "torch": "2.11.0+cu128",
+  "profiles": [
+    {
+      "name": "fp32_highest",
+      "matmul_precision": "highest",
+      "autocast_bf16": false,
+      "status": "PASS",
+      "eval_output_max_abs_difference_from_fp32_highest": {
+        "pred_logits": 0.0,
+        "pred_boxes": 0.0,
+        "pred_3d_dim": 0.0,
+        "pred_depth": 0.0,
+        "pred_angle": 0.0,
+        "pred_depth_map_logits": 0.0
+      },
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 5.693869600014295,
+          "loss": 228.48275756835938,
+          "gradient_norm": 4164.63671875,
+          "cuda_stream_span_ms": 5693.134765625,
+          "memory": {
+            "host_available_physical_bytes": 436641792,
+            "host_available_commit_bytes": 610680832,
+            "process_working_set_bytes": 2087399424,
+            "process_private_bytes": 6755508224
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 1.7125317999743856,
+          "loss": 85.47167205810547,
+          "gradient_norm": 568.6943969726562,
+          "cuda_stream_span_ms": 1712.1044921875,
+          "memory": {
+            "host_available_physical_bytes": 686526464,
+            "host_available_commit_bytes": 1178140672,
+            "process_working_set_bytes": 2088816640,
+            "process_private_bytes": 6972801024
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 2.4685497999889776,
+          "loss": 116.50676727294922,
+          "gradient_norm": 712.9024047851562,
+          "cuda_stream_span_ms": 2468.17041015625,
+          "memory": {
+            "host_available_physical_bytes": 915116032,
+            "host_available_commit_bytes": 2019291136,
+            "process_working_set_bytes": 2089111552,
+            "process_private_bytes": 6991990784
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 3.429865800018888,
+          "loss": 79.3193359375,
+          "gradient_norm": 321.6191101074219,
+          "cuda_stream_span_ms": 3429.11767578125,
+          "memory": {
+            "host_available_physical_bytes": 784838656,
+            "host_available_commit_bytes": 1766981632,
+            "process_working_set_bytes": 2089132032,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 3.954874999995809,
+          "loss": 77.19993591308594,
+          "gradient_norm": 210.89865112304688,
+          "cuda_stream_span_ms": 3953.482421875,
+          "memory": {
+            "host_available_physical_bytes": 829599744,
+            "host_available_commit_bytes": 2321612800,
+            "process_working_set_bytes": 2089140224,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 2.3648887000163086,
+          "loss": 72.7602310180664,
+          "gradient_norm": 176.6948699951172,
+          "cuda_stream_span_ms": 2364.163330078125,
+          "memory": {
+            "host_available_physical_bytes": 837468160,
+            "host_available_commit_bytes": 2456842240,
+            "process_working_set_bytes": 2089140224,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 2.0252638999954797,
+          "loss": 66.80915069580078,
+          "gradient_norm": 102.39818572998047,
+          "cuda_stream_span_ms": 2024.6865234375,
+          "memory": {
+            "host_available_physical_bytes": 865665024,
+            "host_available_commit_bytes": 2506608640,
+            "process_working_set_bytes": 2089144320,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 2.8100025999592617,
+          "loss": 66.10413360595703,
+          "gradient_norm": 139.15170288085938,
+          "cuda_stream_span_ms": 2809.266357421875,
+          "memory": {
+            "host_available_physical_bytes": 766672896,
+            "host_available_commit_bytes": 2359541760,
+            "process_working_set_bytes": 2089144320,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 8,
+          "seconds": 3.043426999996882,
+          "loss": 62.768150329589844,
+          "gradient_norm": 124.28334045410156,
+          "cuda_stream_span_ms": 3041.973388671875,
+          "memory": {
+            "host_available_physical_bytes": 644739072,
+            "host_available_commit_bytes": 2120724480,
+            "process_working_set_bytes": 2089144320,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 9,
+          "seconds": 4.200444200017955,
+          "loss": 61.95493698120117,
+          "gradient_norm": 118.11487579345703,
+          "cuda_stream_span_ms": 4199.73876953125,
+          "memory": {
+            "host_available_physical_bytes": 492535808,
+            "host_available_commit_bytes": 2060840960,
+            "process_working_set_bytes": 2089144320,
+            "process_private_bytes": 7010902016
+          }
+        },
+        {
+          "step": 10,
+          "seconds": 2.8934452999965288,
+          "loss": 58.8554801940918,
+          "gradient_norm": 111.66547393798828,
+          "cuda_stream_span_ms": 2892.885498046875,
+          "memory": {
+            "host_available_physical_bytes": 708349952,
+            "host_available_commit_bytes": 2547130368,
+            "process_working_set_bytes": 2089136128,
+            "process_private_bytes": 7010787328
+          }
+        },
+        {
+          "step": 11,
+          "seconds": 2.3579366000485606,
+          "loss": 60.606895446777344,
+          "gradient_norm": 145.07009887695312,
+          "cuda_stream_span_ms": 2357.465087890625,
+          "memory": {
+            "host_available_physical_bytes": 807194624,
+            "host_available_commit_bytes": 2592731136,
+            "process_working_set_bytes": 2089140224,
+            "process_private_bytes": 7010787328
+          }
+        },
+        {
+          "step": 12,
+          "seconds": 2.3742066000122577,
+          "loss": 57.63615798950195,
+          "gradient_norm": 169.45176696777344,
+          "cuda_stream_span_ms": 2373.674072265625,
+          "memory": {
+            "host_available_physical_bytes": 749998080,
+            "host_available_commit_bytes": 2534944768,
+            "process_working_set_bytes": 2089144320,
+            "process_private_bytes": 7010787328
+          }
+        }
+      ],
+      "median_measured_seconds": 2.8517239499778952,
+      "peak_allocated_bytes": 1520271872,
+      "peak_reserved_bytes": 1637875712
+    },
+    {
+      "name": "fp32_high",
+      "matmul_precision": "high",
+      "autocast_bf16": false,
+      "status": "PASS",
+      "eval_output_max_abs_difference_from_fp32_highest": {
+        "pred_logits": 0.0013179779052734375,
+        "pred_boxes": 0.0002308487892150879,
+        "pred_3d_dim": 0.00044755637645721436,
+        "pred_depth": 0.020580291748046875,
+        "pred_angle": 0.0005453899502754211,
+        "pred_depth_map_logits": 0.0
+      },
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 4.037403800000902,
+          "loss": 228.48130798339844,
+          "gradient_norm": 4163.8740234375,
+          "cuda_stream_span_ms": 4036.71484375,
+          "memory": {
+            "host_available_physical_bytes": 808599552,
+            "host_available_commit_bytes": 3099975680,
+            "process_working_set_bytes": 2072735744,
+            "process_private_bytes": 6790877184
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 2.1788979999837466,
+          "loss": 85.20402526855469,
+          "gradient_norm": 564.663330078125,
+          "cuda_stream_span_ms": 2178.234130859375,
+          "memory": {
+            "host_available_physical_bytes": 789094400,
+            "host_available_commit_bytes": 2920103936,
+            "process_working_set_bytes": 2072870912,
+            "process_private_bytes": 7006539776
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 2.0656776999821886,
+          "loss": 117.33869934082031,
+          "gradient_norm": 720.5969848632812,
+          "cuda_stream_span_ms": 2065.044921875,
+          "memory": {
+            "host_available_physical_bytes": 761823232,
+            "host_available_commit_bytes": 2888957952,
+            "process_working_set_bytes": 2072870912,
+            "process_private_bytes": 7025451008
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 2.798846899997443,
+          "loss": 79.81101989746094,
+          "gradient_norm": 320.5148010253906,
+          "cuda_stream_span_ms": 2797.90478515625,
+          "memory": {
+            "host_available_physical_bytes": 550285312,
+            "host_available_commit_bytes": 2859237376,
+            "process_working_set_bytes": 2072875008,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 3.2910760000231676,
+          "loss": 77.0948715209961,
+          "gradient_norm": 203.77597045898438,
+          "cuda_stream_span_ms": 3290.30712890625,
+          "memory": {
+            "host_available_physical_bytes": 619769856,
+            "host_available_commit_bytes": 3240001536,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 3.6012200999539346,
+          "loss": 72.20577239990234,
+          "gradient_norm": 140.6097412109375,
+          "cuda_stream_span_ms": 3600.4306640625,
+          "memory": {
+            "host_available_physical_bytes": 969957376,
+            "host_available_commit_bytes": 3580645376,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 2.8129819000023417,
+          "loss": 66.7903823852539,
+          "gradient_norm": 103.64505004882812,
+          "cuda_stream_span_ms": 2812.31591796875,
+          "memory": {
+            "host_available_physical_bytes": 987717632,
+            "host_available_commit_bytes": 3745488896,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 2.8453046000213362,
+          "loss": 64.04399108886719,
+          "gradient_norm": 111.42310333251953,
+          "cuda_stream_span_ms": 2844.625244140625,
+          "memory": {
+            "host_available_physical_bytes": 901275648,
+            "host_available_commit_bytes": 3722227712,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 8,
+          "seconds": 2.5565480000223033,
+          "loss": 63.06310272216797,
+          "gradient_norm": 131.06398010253906,
+          "cuda_stream_span_ms": 2556.066162109375,
+          "memory": {
+            "host_available_physical_bytes": 868466688,
+            "host_available_commit_bytes": 3114381312,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 9,
+          "seconds": 2.354833299992606,
+          "loss": 62.162437438964844,
+          "gradient_norm": 143.79635620117188,
+          "cuda_stream_span_ms": 2354.160400390625,
+          "memory": {
+            "host_available_physical_bytes": 772923392,
+            "host_available_commit_bytes": 2943291392,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 10,
+          "seconds": 3.4920135000138544,
+          "loss": 60.01661682128906,
+          "gradient_norm": 125.78356170654297,
+          "cuda_stream_span_ms": 3491.38818359375,
+          "memory": {
+            "host_available_physical_bytes": 715128832,
+            "host_available_commit_bytes": 3016216576,
+            "process_working_set_bytes": 2072883200,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 11,
+          "seconds": 2.6966677000164054,
+          "loss": 59.40129470825195,
+          "gradient_norm": 165.15516662597656,
+          "cuda_stream_span_ms": 2695.73046875,
+          "memory": {
+            "host_available_physical_bytes": 749969408,
+            "host_available_commit_bytes": 3128791040,
+            "process_working_set_bytes": 2072887296,
+            "process_private_bytes": 7044362240
+          }
+        },
+        {
+          "step": 12,
+          "seconds": 2.233811300015077,
+          "loss": 55.897361755371094,
+          "gradient_norm": 162.564208984375,
+          "cuda_stream_span_ms": 2233.103515625,
+          "memory": {
+            "host_available_physical_bytes": 748630016,
+            "host_available_commit_bytes": 3131826176,
+            "process_working_set_bytes": 2072887296,
+            "process_private_bytes": 7044362240
+          }
+        }
+      ],
+      "median_measured_seconds": 2.8059143999998923,
+      "peak_allocated_bytes": 1522680320,
+      "peak_reserved_bytes": 1642070016
+    },
+    {
+      "name": "bf16_high",
+      "matmul_precision": "high",
+      "autocast_bf16": true,
+      "status": "PASS",
+      "eval_output_max_abs_difference_from_fp32_highest": {
+        "pred_logits": 0.027620792388916016,
+        "pred_boxes": 0.006304442882537842,
+        "pred_3d_dim": 0.006330013275146484,
+        "pred_depth": 0.20741653442382812,
+        "pred_angle": 0.012204699218273163,
+        "pred_depth_map_logits": 0.044073283672332764
+      },
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 13.496412400039844,
+          "loss": 227.51107788085938,
+          "gradient_norm": 3798.198974609375,
+          "cuda_stream_span_ms": 13495.11328125,
+          "memory": {
+            "host_available_physical_bytes": 731738112,
+            "host_available_commit_bytes": 3734519808,
+            "process_working_set_bytes": 2524360704,
+            "process_private_bytes": 7259488256
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 3.218896300008055,
+          "loss": 86.48927307128906,
+          "gradient_norm": 579.68701171875,
+          "cuda_stream_span_ms": 3218.200927734375,
+          "memory": {
+            "host_available_physical_bytes": 646873088,
+            "host_available_commit_bytes": 3319586816,
+            "process_working_set_bytes": 2524360704,
+            "process_private_bytes": 7465959424
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 3.506877899984829,
+          "loss": 105.14478302001953,
+          "gradient_norm": 595.2888793945312,
+          "cuda_stream_span_ms": 3506.263671875,
+          "memory": {
+            "host_available_physical_bytes": 716722176,
+            "host_available_commit_bytes": 3520081920,
+            "process_working_set_bytes": 2524368896,
+            "process_private_bytes": 7484870656
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 2.7663720999844372,
+          "loss": 86.50617218017578,
+          "gradient_norm": 281.2154541015625,
+          "cuda_stream_span_ms": 2765.70556640625,
+          "memory": {
+            "host_available_physical_bytes": 720269312,
+            "host_available_commit_bytes": 3692294144,
+            "process_working_set_bytes": 2524368896,
+            "process_private_bytes": 7503781888
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 3.2800844999728724,
+          "loss": 74.11870574951172,
+          "gradient_norm": 173.44607543945312,
+          "cuda_stream_span_ms": 3279.303466796875,
+          "memory": {
+            "host_available_physical_bytes": 863105024,
+            "host_available_commit_bytes": 3803467776,
+            "process_working_set_bytes": 2524889088,
+            "process_private_bytes": 7503749120
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 2.473288700042758,
+          "loss": 70.52122497558594,
+          "gradient_norm": 141.9454803466797,
+          "cuda_stream_span_ms": 2472.717041015625,
+          "memory": {
+            "host_available_physical_bytes": 889774080,
+            "host_available_commit_bytes": 3814670336,
+            "process_working_set_bytes": 2524893184,
+            "process_private_bytes": 7503749120
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 2.54285060003167,
+          "loss": 68.41600036621094,
+          "gradient_norm": 140.23269653320312,
+          "cuda_stream_span_ms": 2542.307861328125,
+          "memory": {
+            "host_available_physical_bytes": 918024192,
+            "host_available_commit_bytes": 3724783616,
+            "process_working_set_bytes": 2524893184,
+            "process_private_bytes": 7503749120
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 4.687158299959265,
+          "loss": 64.0871810913086,
+          "gradient_norm": 91.72088623046875,
+          "cuda_stream_span_ms": 4686.39453125,
+          "memory": {
+            "host_available_physical_bytes": 1148395520,
+            "host_available_commit_bytes": 4477140992,
+            "process_working_set_bytes": 2524897280,
+            "process_private_bytes": 7505850368
+          }
+        },
+        {
+          "step": 8,
+          "seconds": 2.853979600011371,
+          "loss": 62.109249114990234,
+          "gradient_norm": 84.97769165039062,
+          "cuda_stream_span_ms": 2853.346923828125,
+          "memory": {
+            "host_available_physical_bytes": 1295753216,
+            "host_available_commit_bytes": 5058822144,
+            "process_working_set_bytes": 2524897280,
+            "process_private_bytes": 7505850368
+          }
+        },
+        {
+          "step": 9,
+          "seconds": 3.3100878999684937,
+          "loss": 59.57693862915039,
+          "gradient_norm": 98.09728240966797,
+          "cuda_stream_span_ms": 3309.307861328125,
+          "memory": {
+            "host_available_physical_bytes": 1267806208,
+            "host_available_commit_bytes": 5117767680,
+            "process_working_set_bytes": 2524897280,
+            "process_private_bytes": 7505850368
+          }
+        },
+        {
+          "step": 10,
+          "seconds": 3.1962491000304,
+          "loss": 58.01883316040039,
+          "gradient_norm": 103.51058959960938,
+          "cuda_stream_span_ms": 3195.58544921875,
+          "memory": {
+            "host_available_physical_bytes": 1289211904,
+            "host_available_commit_bytes": 5161234432,
+            "process_working_set_bytes": 2524938240,
+            "process_private_bytes": 7505883136
+          }
+        },
+        {
+          "step": 11,
+          "seconds": 4.149075499968603,
+          "loss": 57.157588958740234,
+          "gradient_norm": 136.28390502929688,
+          "cuda_stream_span_ms": 4148.07958984375,
+          "memory": {
+            "host_available_physical_bytes": 1204867072,
+            "host_available_commit_bytes": 5029953536,
+            "process_working_set_bytes": 2524938240,
+            "process_private_bytes": 7505883136
+          }
+        },
+        {
+          "step": 12,
+          "seconds": 2.8106856999802403,
+          "loss": 57.66111755371094,
+          "gradient_norm": 117.90283203125,
+          "cuda_stream_span_ms": 2809.7685546875,
+          "memory": {
+            "host_available_physical_bytes": 1608957952,
+            "host_available_commit_bytes": 6503256064,
+            "process_working_set_bytes": 2524938240,
+            "process_private_bytes": 7505883136
+          }
+        }
+      ],
+      "median_measured_seconds": 3.0251143500208855,
+      "peak_allocated_bytes": 1573100544,
+      "peak_reserved_bytes": 1669332992
+    }
+  ],
+  "warmup_steps": 3,
+  "measured_steps": 10,
+  "seed": 7,
+  "batch_size": 1,
+  "image_hw": [
+    384,
+    640
+  ],
+  "group_num": 11
+}

@@ -1,0 +1,228 @@
+{
+  "schema": "eap_original_hf_real_geometry_v1",
+  "created_at_utc": "2026-10-29T12:15:07.040756+00:00",
+  "status": "PASS_ORIGINAL_HF_TRAIN_GEOMETRY",
+  "script_sha256": "4be07041c09b65573c520c64979f8d8bf6179fd3d00862e8101ba242df892a22",
+  "sequence_id": "2cyv0Oedzg",
+  "sources": {
+    "original_annotations": {
+      "path": "output\\local_geometry_sources\\2cyv0Oedzg_original_annotations.pkl",
+      "sha256": "b81c6c2585284ed891520dd25120b5c24f3005a998083a2a319771d7f46d832e"
+    },
+    "hf_labels": {
+      "path": "E:\\eAP_dataset\\data\\train\\2cyv0Oedzg\\labels.parquet",
+      "sha256": "e1fc19e222d4a5b98cfdeea98b5e27c621758766c7b269514229a9a2e21ab08d"
+    },
+    "hf_train_manifest": {
+      "path": "E:\\eAP_dataset\\data\\train.parquet",
+      "sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314"
+    },
+    "official_visualizer": {
+      "commit": "2c5f3a74ba5b693b746820a0a355684e3597dc2d",
+      "sha256": "e975941c5866af465dcf3897efcdae36d71306808a38a63b580311a35f5ed5a7",
+      "url": "https://github.com/NAIL-HNU/eAP_dataset/blob/2c5f3a74ba5b693b746820a0a355684e3597dc2d/release_visualizer/visualize_release_sequence.py"
+    }
+  },
+  "pair_checks": {
+    "original_annotation_rows": 17611,
+    "hf_annotation_rows": 17611,
+    "field_mismatches": {
+      "population": 0,
+      "box": 0,
+      "category": 0,
+      "velocity": 0,
+      "calibration": 0,
+      "exposure": 0,
+      "size": 0
+    },
+    "all_pairs_exact": true
+  },
+  "frame_selection": "evenly spaced sorted train tokens; no outcome filtering",
+  "frames": [
+    {
+      "sample_token": "2cyv0Oedzg:000000221_000512214",
+      "rgb_member_path": "rgb/000000221_000512214.png",
+      "rgb_sha256": "7bf4eaaecfcbaf84b5b20d1735f3b581b00f0db5aabc77fd7a916f121719293f",
+      "image_size": [
+        1280,
+        720
+      ],
+      "overlay_path": "output\\local_geometry_sources\\real_overlays\\2cyv0Oedzg_000000221_000512214.jpg",
+      "overlay_sha256": "c34761f1ec0de374faf551c4caee073d2734dcebe440a93e7dcb2ed5791eb9a8",
+      "objects": [
+        {
+          "instance_id": "2cyv0Oedzg_000005",
+          "official_corner_max_abs_error_m": 4.1633964542597823e-07,
+          "clipped_bbox_residual_vs_original_px": 0.8205664701036994,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_000003",
+          "official_corner_max_abs_error_m": 7.856038770626128e-07,
+          "clipped_bbox_residual_vs_original_px": 0.7856577139401111,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_000008",
+          "official_corner_max_abs_error_m": 1.314436438804023e-06,
+          "clipped_bbox_residual_vs_original_px": 0.4875018020529751,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_000007",
+          "official_corner_max_abs_error_m": 8.819273986659937e-07,
+          "clipped_bbox_residual_vs_original_px": 0.5461081573519095,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_000006",
+          "official_corner_max_abs_error_m": 2.902333562815329e-06,
+          "clipped_bbox_residual_vs_original_px": 0.9566460587745951,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_000001",
+          "official_corner_max_abs_error_m": 3.2195487875696926e-06,
+          "clipped_bbox_residual_vs_original_px": 0.8869128585300814,
+          "status": "PROJECTED"
+        }
+      ]
+    },
+    {
+      "sample_token": "2cyv0Oedzg:000000371_000214375",
+      "rgb_member_path": "rgb/000000371_000214375.png",
+      "rgb_sha256": "66bf66b9c21fa48e2c2c5a77fcf503e70d8f1778cc38eedcab6d93b367051471",
+      "image_size": [
+        1280,
+        720
+      ],
+      "overlay_path": "output\\local_geometry_sources\\real_overlays\\2cyv0Oedzg_000000371_000214375.jpg",
+      "overlay_sha256": "c291a6da828c2b2060dfe0bf2fabb27df8bad376879068b9e5f4bdde34579ef7",
+      "objects": [
+        {
+          "instance_id": "2cyv0Oedzg_000655",
+          "official_corner_max_abs_error_m": 3.1785512710769126e-07,
+          "clipped_bbox_residual_vs_original_px": 0.9575132037690537,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_000997",
+          "official_corner_max_abs_error_m": 7.15562912034784e-07,
+          "clipped_bbox_residual_vs_original_px": 0.9300636481148103,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001013",
+          "official_corner_max_abs_error_m": 5.959488298401538e-07,
+          "clipped_bbox_residual_vs_original_px": 0.9479290309556063,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001014",
+          "official_corner_max_abs_error_m": 4.598786134124566e-07,
+          "clipped_bbox_residual_vs_original_px": 0.6947253396804172,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001027",
+          "official_corner_max_abs_error_m": 9.259163000763238e-07,
+          "clipped_bbox_residual_vs_original_px": 0.9239815070591249,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001247",
+          "official_corner_max_abs_error_m": 4.938062545534194e-07,
+          "clipped_bbox_residual_vs_original_px": 0.8167235248150178,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001421",
+          "official_corner_max_abs_error_m": 1.9654575851291156e-06,
+          "clipped_bbox_residual_vs_original_px": 0.9262318616969196,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001427",
+          "official_corner_max_abs_error_m": 1.6986515447570127e-06,
+          "clipped_bbox_residual_vs_original_px": 0.7752724260683408,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_001447",
+          "official_corner_max_abs_error_m": 7.720498018670696e-07,
+          "clipped_bbox_residual_vs_original_px": 0.8119898833883781,
+          "status": "PROJECTED"
+        }
+      ]
+    },
+    {
+      "sample_token": "2cyv0Oedzg:000000520_000916457",
+      "rgb_member_path": "rgb/000000520_000916457.png",
+      "rgb_sha256": "c0dc517dd5769ee573da761034009a862e1106d12da3f397495c03efe539f543",
+      "image_size": [
+        1280,
+        720
+      ],
+      "overlay_path": "output\\local_geometry_sources\\real_overlays\\2cyv0Oedzg_000000520_000916457.jpg",
+      "overlay_sha256": "77462f66dc1033ee77ebd68967a24cd82b4fe1ebd5ed5fc47822636d0317d32c",
+      "objects": [
+        {
+          "instance_id": "2cyv0Oedzg_001013",
+          "official_corner_max_abs_error_m": 4.192934675018023e-07,
+          "clipped_bbox_residual_vs_original_px": 0.5471560006263303,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_004138",
+          "official_corner_max_abs_error_m": 1.842936008245033e-06,
+          "clipped_bbox_residual_vs_original_px": 0.1352046046953319,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_004331",
+          "official_corner_max_abs_error_m": 8.882793167686032e-07,
+          "clipped_bbox_residual_vs_original_px": 0.8777478056815653,
+          "status": "PROJECTED"
+        },
+        {
+          "instance_id": "2cyv0Oedzg_004404",
+          "official_corner_max_abs_error_m": 3.7208847771807996e-06,
+          "clipped_bbox_residual_vs_original_px": 0.3948712726953545,
+          "status": "PROJECTED"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "frames_read": 3,
+    "boxes_projected": 19,
+    "projection_residual_max_px": 0.9575132037690537,
+    "official_corner_max_abs_error_m": 3.7208847771807996e-06
+  },
+  "contract": {
+    "bbox_3d_ego": "x,y,z,length,height,width,yaw",
+    "center": "geometric center, ego frame",
+    "ego_axes": "front X, left Y, up Z",
+    "local_axes": "width X, length Y, height Z",
+    "rotation": "Rz(-yaw)",
+    "camera_transform": "T_event_ego applied directly",
+    "semantic_size_lwh_indices": [
+      3,
+      5,
+      4
+    ],
+    "hf_size_indices": [
+      5,
+      3,
+      4
+    ]
+  },
+  "limits": [
+    "Exact original/HF identity verified for one train sequence; not every sequence",
+    "Pinhole projection follows official visualizer; paper describes distorted event plane",
+    "Actual overlay inspection is qualitative, not pixel-level calibration certification",
+    "No official native scorer obtained; submission yaw compatibility remains unverified",
+    "Velocity is an unchanged released target, not a certified physical TTC input",
+    "Garl object IDs are outside this detector-only contract; full G0 remains open"
+  ]
+}

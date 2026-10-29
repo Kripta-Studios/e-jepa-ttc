@@ -1,0 +1,428 @@
+{
+  "scope": "target_admission_only_not_model_predictions",
+  "status": "PASS",
+  "frames": 16,
+  "admitted_class_counts": {
+    "car": 32,
+    "truck": 6,
+    "motorcycle": 5,
+    "tricycle": 1,
+    "pedestrian": 1,
+    "bus": 2
+  },
+  "ignored": {
+    "center_depth_outside_profile": 29,
+    "projected_center_outside_image": 4
+  },
+  "records": [
+    {
+      "sample_token": "qGsgzl4Q8B:000000887_000231056",
+      "original_annotations": 3,
+      "admitted_annotations": 1,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 2
+      },
+      "class_counts": {
+        "car": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "original_annotations": 5,
+      "admitted_annotations": 2,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 3
+      },
+      "class_counts": {
+        "car": 2
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000972_000132457",
+      "original_annotations": 4,
+      "admitted_annotations": 3,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 1
+      },
+      "class_counts": {
+        "car": 2,
+        "truck": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000001014_000633163",
+      "original_annotations": 2,
+      "admitted_annotations": 1,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 1
+      },
+      "class_counts": {
+        "truck": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000001057_000033869",
+      "original_annotations": 5,
+      "admitted_annotations": 3,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 2
+      },
+      "class_counts": {
+        "car": 2,
+        "truck": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000001099_000434576",
+      "original_annotations": 3,
+      "admitted_annotations": 3,
+      "ignored_by_reason": {},
+      "class_counts": {
+        "car": 3
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000001141_000935280",
+      "original_annotations": 4,
+      "admitted_annotations": 3,
+      "ignored_by_reason": {
+        "projected_center_outside_image": 1
+      },
+      "class_counts": {
+        "truck": 1,
+        "car": 2
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000001186_000736014",
+      "original_annotations": 8,
+      "admitted_annotations": 4,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 4
+      },
+      "class_counts": {
+        "car": 4
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000489_000835720",
+      "original_annotations": 2,
+      "admitted_annotations": 2,
+      "ignored_by_reason": {},
+      "class_counts": {
+        "car": 1,
+        "motorcycle": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000532_000236368",
+      "original_annotations": 4,
+      "admitted_annotations": 2,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 2
+      },
+      "class_counts": {
+        "car": 1,
+        "motorcycle": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000574_000636987",
+      "original_annotations": 13,
+      "admitted_annotations": 7,
+      "ignored_by_reason": {
+        "projected_center_outside_image": 2,
+        "center_depth_outside_profile": 4
+      },
+      "class_counts": {
+        "tricycle": 1,
+        "car": 2,
+        "truck": 1,
+        "motorcycle": 3
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000617_000137590",
+      "original_annotations": 5,
+      "admitted_annotations": 4,
+      "ignored_by_reason": {
+        "projected_center_outside_image": 1
+      },
+      "class_counts": {
+        "car": 4
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000659_000538179",
+      "original_annotations": 9,
+      "admitted_annotations": 3,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 6
+      },
+      "class_counts": {
+        "car": 2,
+        "pedestrian": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000701_000938768",
+      "original_annotations": 4,
+      "admitted_annotations": 2,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 2
+      },
+      "class_counts": {
+        "truck": 1,
+        "bus": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000744_000439357",
+      "original_annotations": 6,
+      "admitted_annotations": 4,
+      "ignored_by_reason": {
+        "center_depth_outside_profile": 2
+      },
+      "class_counts": {
+        "car": 4
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    },
+    {
+      "sample_token": "nRcwUlHyAd:000000789_000239962",
+      "original_annotations": 3,
+      "admitted_annotations": 3,
+      "ignored_by_reason": {},
+      "class_counts": {
+        "car": 2,
+        "bus": 1
+      },
+      "image_wh": [
+        640,
+        384
+      ],
+      "original_image_wh": [
+        1280,
+        720
+      ],
+      "min_depth_m": 0.1,
+      "max_depth_m_exclusive": 60.0,
+      "velocity_head": "ABSENT",
+      "geometry": "official_original_pinhole_approximation",
+      "heading_reference": "camera alpha relative to projected 3D center ray",
+      "dimension_target": "absolute h,w,l; zero class mean"
+    }
+  ],
+  "elapsed_seconds": 9.316841099993326,
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "adapter_sha256": "2c750a5c219ca8b2518bcb465ef5df24318c661cfcd330bc61592d5dbf3a6355"
+}

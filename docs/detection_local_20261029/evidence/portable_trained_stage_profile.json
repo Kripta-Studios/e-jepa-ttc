@@ -1,0 +1,224 @@
+{
+  "scope": "synchronized_phase_wall_times_not_pure_kernel_time",
+  "rows": [
+    {
+      "step": 0,
+      "warmup": true,
+      "phases_seconds": {
+        "transfer": 0.002458500035572797,
+        "zero_grad": 0.000875400030054152,
+        "forward": 1.1724759999779053,
+        "output_finiteness": 0.0038840000052005053,
+        "criterion": 0.17889520002063364,
+        "loss_finiteness": 0.008542800031136721,
+        "weighted_loss_sum": 0.0024173000128939748,
+        "backward": 0.6339678000076674,
+        "clip_grad": 0.055549100041389465,
+        "optimizer": 0.07193320000078529
+      },
+      "total_seconds": 2.1309993001632392,
+      "gradient_norm": 162.92684936523438,
+      "loss": 20.290328979492188,
+      "memory": {
+        "host_available_physical_bytes": 2940903424,
+        "host_available_commit_bytes": 6353379328,
+        "process_working_set_bytes": 3165884416,
+        "process_private_bytes": 7530958848
+      }
+    },
+    {
+      "step": 1,
+      "warmup": true,
+      "phases_seconds": {
+        "transfer": 0.0009953000117093325,
+        "zero_grad": 0.0010390999959781766,
+        "forward": 0.10088079998968169,
+        "output_finiteness": 0.006100900005549192,
+        "criterion": 0.09633829997619614,
+        "loss_finiteness": 0.006441000034101307,
+        "weighted_loss_sum": 0.0015991000109352171,
+        "backward": 0.14752080000471324,
+        "clip_grad": 0.008107499976176769,
+        "optimizer": 0.0122618000023067
+      },
+      "total_seconds": 0.38128460000734776,
+      "gradient_norm": 138.8060302734375,
+      "loss": 20.687471389770508,
+      "memory": {
+        "host_available_physical_bytes": 2869891072,
+        "host_available_commit_bytes": 6284795904,
+        "process_working_set_bytes": 3214188544,
+        "process_private_bytes": 7582310400
+      }
+    },
+    {
+      "step": 2,
+      "warmup": true,
+      "phases_seconds": {
+        "transfer": 0.0014053999911993742,
+        "zero_grad": 0.0008818000205792487,
+        "forward": 0.10741850000340492,
+        "output_finiteness": 0.005319299991242588,
+        "criterion": 0.06492590002017096,
+        "loss_finiteness": 0.007654900022316724,
+        "weighted_loss_sum": 0.0018296999623999,
+        "backward": 0.09812999999849126,
+        "clip_grad": 0.004078399972058833,
+        "optimizer": 0.008335799968335778
+      },
+      "total_seconds": 0.2999796999501996,
+      "gradient_norm": 61.283660888671875,
+      "loss": 27.276247024536133,
+      "memory": {
+        "host_available_physical_bytes": 2972573696,
+        "host_available_commit_bytes": 6408839168,
+        "process_working_set_bytes": 3214336000,
+        "process_private_bytes": 7582515200
+      }
+    },
+    {
+      "step": 3,
+      "warmup": false,
+      "phases_seconds": {
+        "transfer": 0.000783099967520684,
+        "zero_grad": 0.0005556999822147191,
+        "forward": 0.05462699994677678,
+        "output_finiteness": 0.00318100000731647,
+        "criterion": 0.036148999992292374,
+        "loss_finiteness": 0.005549199995584786,
+        "weighted_loss_sum": 0.0012337000225670636,
+        "backward": 0.08343620004598051,
+        "clip_grad": 0.0034420000156387687,
+        "optimizer": 0.00794740003766492
+      },
+      "total_seconds": 0.19690430001355708,
+      "gradient_norm": 181.33419799804688,
+      "loss": 21.054166793823242,
+      "memory": {
+        "host_available_physical_bytes": 2973552640,
+        "host_available_commit_bytes": 6408380416,
+        "process_working_set_bytes": 3214340096,
+        "process_private_bytes": 7582515200
+      }
+    },
+    {
+      "step": 4,
+      "warmup": false,
+      "phases_seconds": {
+        "transfer": 0.000734600005671382,
+        "zero_grad": 0.00048619997687637806,
+        "forward": 0.05665330000920221,
+        "output_finiteness": 0.0035539999953471124,
+        "criterion": 0.04389260004973039,
+        "loss_finiteness": 0.007345299993176013,
+        "weighted_loss_sum": 0.0019246999872848392,
+        "backward": 0.5270025000208989,
+        "clip_grad": 0.009357000002637506,
+        "optimizer": 0.016741400002501905
+      },
+      "total_seconds": 0.6676916000433266,
+      "gradient_norm": 94.14273071289062,
+      "loss": 19.09366226196289,
+      "memory": {
+        "host_available_physical_bytes": 3135062016,
+        "host_available_commit_bytes": 6418186240,
+        "process_working_set_bytes": 3213451264,
+        "process_private_bytes": 7581503488
+      }
+    },
+    {
+      "step": 5,
+      "warmup": false,
+      "phases_seconds": {
+        "transfer": 0.0016416999860666692,
+        "zero_grad": 0.001899499970022589,
+        "forward": 0.1324832999962382,
+        "output_finiteness": 0.0056930999853648245,
+        "criterion": 0.07354340003803372,
+        "loss_finiteness": 0.008359900035429746,
+        "weighted_loss_sum": 0.0025458000018261373,
+        "backward": 0.15161650005029514,
+        "clip_grad": 0.006191899999976158,
+        "optimizer": 0.009365500009153038
+      },
+      "total_seconds": 0.39334060007240623,
+      "gradient_norm": 54.8989143371582,
+      "loss": 25.645191192626953,
+      "memory": {
+        "host_available_physical_bytes": 3128152064,
+        "host_available_commit_bytes": 6416830464,
+        "process_working_set_bytes": 3213492224,
+        "process_private_bytes": 7581540352
+      }
+    }
+  ],
+  "checkpoint_sha256": "c308e9567e670326b0b46530f2c585d85fd442fa1a5541aa4db8155ada5c4b22",
+  "script_sha256": "154bf2cc31cdc270a6983d1af68ec0dfdd38f3e374edc82a9eee82cbf2dcf6bf",
+  "source_receipt_sha256": "54d9e23c3a4726b7ed28a84c8486c040028d6e3539bbb05ee52555dcdddd028c",
+  "fresh_optimizer": false,
+  "threads": 4,
+  "sample_tokens": [
+    "qGsgzl4Q8B:000000887_000231056",
+    "qGsgzl4Q8B:000001186_000736014",
+    "nRcwUlHyAd:000000574_000636987"
+  ],
+  "config": {
+    "num_classes": 8,
+    "return_intermediate_dec": true,
+    "device": "cuda",
+    "backbone": "resnet50",
+    "train_backbone": true,
+    "num_feature_levels": 4,
+    "dilation": false,
+    "position_embedding": "sine",
+    "masks": false,
+    "mode": "LID",
+    "num_depth_bins": 80,
+    "depth_min": "1e-3",
+    "depth_max": 60.0,
+    "with_box_refine": true,
+    "use_dn": false,
+    "init_box": false,
+    "enc_layers": 3,
+    "dec_layers": 3,
+    "hidden_dim": 256,
+    "dim_feedforward": 256,
+    "dropout": 0.1,
+    "nheads": 8,
+    "num_queries": 50,
+    "group_num": 11,
+    "enc_n_points": 4,
+    "dec_n_points": 4,
+    "scalar": 5,
+    "label_noise_scale": 0.2,
+    "box_noise_scale": 0.4,
+    "num_patterns": 0,
+    "aux_loss": true,
+    "cls_loss_coef": 2,
+    "focal_alpha": 0.25,
+    "bbox_loss_coef": 5,
+    "giou_loss_coef": 2,
+    "3dcenter_loss_coef": 10,
+    "dim_loss_coef": 1,
+    "angle_loss_coef": 1,
+    "depth_loss_coef": 1,
+    "depth_map_loss_coef": 1,
+    "region_loss_coef": 1,
+    "set_cost_class": 2,
+    "set_cost_bbox": 5,
+    "set_cost_giou": 2,
+    "set_cost_3dcenter": 10
+  },
+  "median_measured_phase_seconds": {
+    "transfer": 0.000783099967520684,
+    "zero_grad": 0.0005556999822147191,
+    "forward": 0.05665330000920221,
+    "output_finiteness": 0.0035539999953471124,
+    "criterion": 0.04389260004973039,
+    "loss_finiteness": 0.007345299993176013,
+    "weighted_loss_sum": 0.0019246999872848392,
+    "backward": 0.15161650005029514,
+    "clip_grad": 0.006191899999976158,
+    "optimizer": 0.009365500009153038
+  }
+}

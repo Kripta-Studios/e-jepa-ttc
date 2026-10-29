@@ -1,0 +1,34 @@
+--- a/src/e_jepa_ttc/detection/eap_rgb_data.py
++++ b/src/e_jepa_ttc/detection/eap_rgb_data.py
+@@ -100,7 +100,13 @@
+         self.sample_tokens = tuple(sample_tokens)
+         if len(set(self.sample_tokens)) != len(self.sample_tokens):
+             raise ValueError("Requested sample tokens must be unique")
+-        table = pd.read_parquet(safe_dataset_path(self.root, media_path))
++        # Filter in Arrow before pandas materializes per-row calibration arrays.
++        # Full-release structure is audited separately; this runtime validates
++        # the complete requested population, not unrelated manifest rows.
++        table = pd.read_parquet(
++            safe_dataset_path(self.root, media_path),
++            filters=[("sample_token", "in", list(self.sample_tokens))],
++        )
+         if table.sample_token.isna().any() or table.sample_token.duplicated().any():
+             raise ValueError("Media manifest contains missing or duplicate sample tokens")
+         selected = table[table.sample_token.isin(self.sample_tokens)]
+@@ -137,7 +143,15 @@
+     def _frame_labels(self, row: Mapping[str, Any]) -> list[dict[str, Any]]:
+         relative = str(row["labels_path"])
+         if relative not in self._labels:
+-            table = pd.read_parquet(safe_dataset_path(self.root, relative))
++            requested = [
++                token
++                for token, media in self.rows.items()
++                if media["sequence_id"] == row["sequence_id"]
++            ]
++            table = pd.read_parquet(
++                safe_dataset_path(self.root, relative),
++                filters=[("sample_token", "in", requested)],
++            )
+             if not table.split.eq("train").all():
+                 raise ValueError("Label file contains non-train rows")
+             if not table.sequence_id.eq(row["sequence_id"]).all():

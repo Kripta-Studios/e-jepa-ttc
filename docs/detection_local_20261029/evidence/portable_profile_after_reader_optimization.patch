@@ -1,0 +1,144 @@
+--- a/lib/models/monodgp/ops/functions/ms_deform_attn_func.py
++++ b/lib/models/monodgp/ops/functions/ms_deform_attn_func.py
+@@ -15,27 +15,9 @@
+ from torch.autograd import Function
+ from torch.autograd.function import once_differentiable
+ 
+-import MultiScaleDeformableAttention as MSDA
+-
+-
+-class MSDeformAttnFunction(Function):
+-    @staticmethod
+-    def forward(ctx, value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights, im2col_step):
+-        ctx.im2col_step = im2col_step
+-        output = MSDA.ms_deform_attn_forward(
+-            value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights, ctx.im2col_step)
+-        ctx.save_for_backward(value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights)
+-        return output
+-
+-    @staticmethod
+-    @once_differentiable
+-    def backward(ctx, grad_output):
+-        value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights = ctx.saved_tensors
+-        grad_value, grad_sampling_loc, grad_attn_weight = \
+-            MSDA.ms_deform_attn_backward(
+-                value, value_spatial_shapes, value_level_start_index, sampling_locations, attention_weights, grad_output, ctx.im2col_step)
+-
+-        return grad_value, None, None, grad_sampling_loc, grad_attn_weight, None
++from e_jepa_ttc.detection.portable_attention import (
++    PortableMSDeformAttnFunction as MSDeformAttnFunction,
++)
+ 
+ 
+ def ms_deform_attn_core_pytorch(value, value_spatial_shapes, sampling_locations, attention_weights):
+--- a/lib/models/monodgp/ops/modules/ms_deform_attn.py
++++ b/lib/models/monodgp/ops/modules/ms_deform_attn.py
+@@ -31,10 +31,7 @@
+ 
+ import torch
+ from torch import Tensor
+-if float(torch.__version__.split('.')[0]) == 0 or (float(torch.__version__.split('.')[0]) == 1 and float(torch.__version__.split('.')[1])) < 9:
+-    from torch.nn.modules.linear import _LinearWithBias
+-else:
+-    from torch.nn.modules.linear import NonDynamicallyQuantizableLinear as _LinearWithBias
++from torch.nn.modules.linear import NonDynamicallyQuantizableLinear as _LinearWithBias
+ from torch.nn.init import xavier_uniform_
+ from torch.nn.init import constant_
+ from torch.nn.init import xavier_normal_
+--- a/lib/models/monodgp/ops/modules/ms_deform_attn.py
++++ b/lib/models/monodgp/ops/modules/ms_deform_attn.py
+@@ -49,10 +49,7 @@
+ from torch.nn import grad
+ from torch import _VF
+ from torch._jit_internal import boolean_dispatch, List, Optional, _overload, Tuple
+-if float(torch.__version__.split('.')[0]) == 0 or (float(torch.__version__.split('.')[0]) == 1 and float(torch.__version__.split('.')[1])) < 7:
+-    from torch._overrides import has_torch_function, handle_torch_function
+-else:
+-    from torch.overrides import has_torch_function, handle_torch_function
++from torch.overrides import has_torch_function, handle_torch_function
+ Tensor = torch.Tensor
+ 
+ from torch.nn.functional import linear, pad, softmax, dropout
+--- a/lib/models/monodgp/backbone.py
++++ b/lib/models/monodgp/backbone.py
+@@ -99,7 +99,7 @@
+         norm_layer = FrozenBatchNorm2d
+         backbone = getattr(torchvision.models, name)(
+             replace_stride_with_dilation=[False, False, dilation],
+-            pretrained=is_main_process(), norm_layer=norm_layer)
++            weights=None, norm_layer=norm_layer)
+         assert name not in ('resnet18', 'resnet34'), "number of channels are hard coded"
+         super().__init__(backbone, train_backbone, return_interm_layers)
+         if dilation:
+--- a/lib/models/monodgp/det2d_transformer.py
++++ b/lib/models/monodgp/det2d_transformer.py
+@@ -389,4 +389,4 @@
+         return_intermediate_dec=cfg['return_intermediate_dec'],
+         num_feature_levels=cfg['num_feature_levels'],
+         dec_n_points=cfg['dec_n_points'],
+-        enc_n_points=cfg['enc_n_points'])
++        enc_n_points=cfg['enc_n_points'], group_num=cfg['group_num'])
+--- a/lib/models/monodgp/det3d_transformer.py
++++ b/lib/models/monodgp/det3d_transformer.py
+@@ -301,4 +301,4 @@
+         num_decoder_layers=cfg['dec_layers'],
+         return_intermediate_dec=cfg['return_intermediate_dec'],
+         num_feature_levels=cfg['num_feature_levels'],
+-        dec_n_points=cfg['dec_n_points'])
++        dec_n_points=cfg['dec_n_points'], group_num=cfg['group_num'])
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -456,7 +456,7 @@
+ 
+         # regression loss
+         heading_input_res = heading_input[:, 12:24]
+-        cls_onehot = torch.zeros(heading_target_cls.shape[0], 12).cuda().scatter_(dim=1, index=heading_target_cls.view(-1, 1), value=1)
++        cls_onehot = torch.zeros(heading_target_cls.shape[0], 12, device=heading_target_cls.device).scatter_(dim=1, index=heading_target_cls.view(-1, 1), value=1)
+         heading_input_res = torch.sum(heading_input_res * cls_onehot, 1)
+         reg_loss = F.l1_loss(heading_input_res, heading_target_res, reduction='none')
+         
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -469,7 +469,7 @@
+         depth_map_logits = outputs['pred_depth_map_logits']
+ 
+         num_gt_per_img = [len(t['boxes']) for t in targets]
+-        gt_boxes2d = torch.cat([t['boxes'] for t in targets], dim=0) * torch.tensor([80, 24, 80, 24], device='cuda')
++        gt_boxes2d = torch.cat([t['boxes'] for t in targets], dim=0) * depth_map_logits.new_tensor([depth_map_logits.shape[-1], depth_map_logits.shape[-2], depth_map_logits.shape[-1], depth_map_logits.shape[-2]])
+         gt_boxes2d = box_ops.box_cxcywh_to_xyxy(gt_boxes2d)
+         gt_center_depth = torch.cat([t['depth'] for t in targets], dim=0).squeeze(dim=1)
+         
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -246,7 +246,7 @@
+             # depth_geo
+             box2d_height_norm = outputs_coord[:, :, 4] + outputs_coord[:, :, 5]
+             box2d_height = torch.clamp(box2d_height_norm * img_sizes[:, 1: 2], min=1.0)
+-            depth_geo = size3d[:, :, 0]/ box2d_height * calibs[:, 0, 0].unsqueeze(1)
++            depth_geo = size3d[:, :, 0]/ box2d_height * calibs[:, 1, 1].unsqueeze(1)
+             
+             # depth_map
+             # outputs_center3d = ((outputs_coord[..., :2] - 0.5) * 2).unsqueeze(2)   #.detach()
+--- a/lib/models/monodgp/monodgp.py
++++ b/lib/models/monodgp/monodgp.py
+@@ -427,6 +427,8 @@
+ 
+         idx = self._get_src_permutation_idx(indices)
+         src_dims = outputs['pred_3d_dim'][idx]
++        if src_dims.numel() == 0:
++            return {'loss_dim': src_dims.sum() * 0.0}
+         target_dims = torch.cat([t['size_3d'][i] for t, (_, i) in zip(targets, indices)], dim=0)
+ 
+         dimension = target_dims.clone().detach()
+--- a/lib/models/monodgp/matcher.py
++++ b/lib/models/monodgp/matcher.py
+@@ -175,7 +175,8 @@
+         # Final cost matrix
+         C = self.cost_bbox * cost_bbox + self.cost_3dcenter * cost_3dcenter + self.cost_class * cost_class + self.cost_giou * cost_giou
+         C = C.view(bs, num_queries, -1).cpu()
+-        C = torch.nan_to_num(C, nan=0.0, posinf=0.0, neginf=0.0)
++        if not torch.isfinite(C).all():
++            raise ValueError('Nonfinite matching costs before assignment')
+         sizes = [len(v["boxes"]) for v in targets]
+         #indices = [linear_sum_assignment(c[i]) for i, c in enumerate(C.split(sizes, -1))]
+         indices = []

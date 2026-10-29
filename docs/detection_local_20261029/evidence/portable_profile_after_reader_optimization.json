@@ -1,0 +1,231 @@
+{
+  "scope": "single_real_train_frame_precision_feasibility_not_accuracy_comparison",
+  "sample_token": "qGsgzl4Q8B:000000887_000231056",
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "script_sha256": "e9df9198b7d8e110af9dd0a04b12906226fd242abc4063db67471a76210d71a9",
+  "torch": "2.11.0+cu128",
+  "profiles": [
+    {
+      "name": "fp32_highest",
+      "matmul_precision": "highest",
+      "autocast_bf16": false,
+      "status": "PASS",
+      "eval_output_max_abs_difference_from_fp32_highest": {
+        "pred_logits": 0.0,
+        "pred_boxes": 0.0,
+        "pred_3d_dim": 0.0,
+        "pred_depth": 0.0,
+        "pred_angle": 0.0,
+        "pred_depth_map_logits": 0.0
+      },
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 1.1898105000145733,
+          "loss": 228.48275756835938,
+          "gradient_norm": 4164.62109375,
+          "cuda_stream_span_ms": 1189.3238525390625,
+          "memory": {
+            "host_available_physical_bytes": 4937375744,
+            "host_available_commit_bytes": 7937400832,
+            "process_working_set_bytes": 2705481728,
+            "process_private_bytes": 6754430976
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 0.216775199980475,
+          "loss": 85.47293853759766,
+          "gradient_norm": 568.6598510742188,
+          "cuda_stream_span_ms": 216.6461181640625,
+          "memory": {
+            "host_available_physical_bytes": 4943634432,
+            "host_available_commit_bytes": 7741399040,
+            "process_working_set_bytes": 2706522112,
+            "process_private_bytes": 6972309504
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 0.484804300009273,
+          "loss": 116.49334716796875,
+          "gradient_norm": 712.9730224609375,
+          "cuda_stream_span_ms": 484.6708679199219,
+          "memory": {
+            "host_available_physical_bytes": 4964020224,
+            "host_available_commit_bytes": 7745695744,
+            "process_working_set_bytes": 2706591744,
+            "process_private_bytes": 6991294464
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 0.22413919999962673,
+          "loss": 79.3366928100586,
+          "gradient_norm": 321.82012939453125,
+          "cuda_stream_span_ms": 224.0421142578125,
+          "memory": {
+            "host_available_physical_bytes": 5006905344,
+            "host_available_commit_bytes": 7770267648,
+            "process_working_set_bytes": 2706595840,
+            "process_private_bytes": 7010205696
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 0.33155330002773553,
+          "loss": 77.18226623535156,
+          "gradient_norm": 210.670654296875,
+          "cuda_stream_span_ms": 331.4531555175781,
+          "memory": {
+            "host_available_physical_bytes": 5014171648,
+            "host_available_commit_bytes": 7776182272,
+            "process_working_set_bytes": 2706599936,
+            "process_private_bytes": 7010205696
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 0.28496260003885254,
+          "loss": 72.74850463867188,
+          "gradient_norm": 176.86024475097656,
+          "cuda_stream_span_ms": 284.80596923828125,
+          "memory": {
+            "host_available_physical_bytes": 5014163456,
+            "host_available_commit_bytes": 7776702464,
+            "process_working_set_bytes": 2706604032,
+            "process_private_bytes": 7006142464
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 0.19137469999259338,
+          "loss": 66.6942367553711,
+          "gradient_norm": 102.28524780273438,
+          "cuda_stream_span_ms": 191.2827911376953,
+          "memory": {
+            "host_available_physical_bytes": 5009428480,
+            "host_available_commit_bytes": 7780560896,
+            "process_working_set_bytes": 2706604032,
+            "process_private_bytes": 7006142464
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 0.37058829999295995,
+          "loss": 66.13766479492188,
+          "gradient_norm": 139.80799865722656,
+          "cuda_stream_span_ms": 370.4678039550781,
+          "memory": {
+            "host_available_physical_bytes": 5011062784,
+            "host_available_commit_bytes": 7786233856,
+            "process_working_set_bytes": 2706612224,
+            "process_private_bytes": 7006142464
+          }
+        }
+      ],
+      "median_measured_seconds": 0.28496260003885254,
+      "peak_allocated_bytes": 1520271872,
+      "peak_reserved_bytes": 1637875712
+    }
+  ],
+  "warmup_steps": 3,
+  "measured_steps": 5,
+  "seed": 7,
+  "batch_size": 1,
+  "image_hw": [
+    384,
+    640
+  ],
+  "group_num": 11,
+  "memory_before_cuda_profile": {
+    "host_available_physical_bytes": 6863740928,
+    "host_available_commit_bytes": 12452417536,
+    "process_working_set_bytes": 874868736,
+    "process_private_bytes": 2417106944
+  },
+  "source": {
+    "upstream_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+    "variant": "monodgp_pytorch_grid_sample_v1",
+    "patch_sha256": "5b4e63ddff88c744ffe950154f3e965f5117f9802e1caaa86b9bea3d3eb3c39b",
+    "patched_file_sha256": {
+      "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+      "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+      "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+      "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+      "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+      "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+      "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7"
+    },
+    "complete_source_file_sha256": {
+      "LICENSE": "8e31470748ac395e7413b1142a74a97585755b8f757df71365e23ae2a5d7a099",
+      "configs/monodgp.yaml": "b736cc2d692b6aa9ae762e57298708fd96f86cfd3deb8e7ca3beffcebcfcf317",
+      "lib/datasets/kitti/kitti_dataset.py": "bda5071f4b7a786c3f68d41a6d1d3bb40bc3654b5d6bbe19d9d377bef792341b",
+      "lib/datasets/kitti/kitti_eval_python/LICENSE": "83e4dd21429a91fb7cea67a476032a9641425e5355df2e0f589a738b6ec9fd2c",
+      "lib/datasets/kitti/kitti_eval_python/README.md": "54db883f1952835aca7f75d5ae54ab2b7c40edb6e09ceddbf033a58e3588d624",
+      "lib/datasets/kitti/kitti_eval_python/eval.py": "c96ea8cdc8daadc5a0d7b06c50110035dc8f1aa2b972a55d93a9a155bc50efda",
+      "lib/datasets/kitti/kitti_eval_python/evaluate.py": "4f0f083a033c6bbb72db1ca1dda173228e81088efed4057fccf6e6415e8871ec",
+      "lib/datasets/kitti/kitti_eval_python/kitti_common.py": "38255af58ff703ceb7ad78ddc687e115a754287dbb02e0de9780f1ddf5d950a8",
+      "lib/datasets/kitti/kitti_eval_python/rotate_iou.py": "d9b2820b5be5d15ee7233147643134c5d73eff129c773aef4b59ce73a8ecd7f4",
+      "lib/datasets/kitti/kitti_utils.py": "96d7154928e2d11c595c9307e14346c3eadeda596d952ac493c531530723ad64",
+      "lib/datasets/kitti/pd.py": "ee5b0a07e70403ce595e5691c6dd94847a8b2759f6d972fbbbb4fa8b637411b1",
+      "lib/datasets/utils.py": "022b1564a6d84d4b700d72ed478fe7b943db7c867a7a42fcbf9100446ed8fbf8",
+      "lib/helpers/dataloader_helper.py": "4f1f3532e99d63b10a2b599d4c015ab715fe8b5dd2e80a287ed6cbbcb908653e",
+      "lib/helpers/decode_helper.py": "70ab57ff293f563c14c72121732a327d524b036fc5de6724fd844d61d4c09c7a",
+      "lib/helpers/model_helper.py": "20b910a692491cf54862b5034151607e2e1db1b2f1e76fcf4127400e8d6e0215",
+      "lib/helpers/optimizer_helper.py": "a5da952eaea50d334ba9b2b03faa659e1a91c1bbf4ebb5e356373d63d999aec2",
+      "lib/helpers/save_helper.py": "3f35882ed3d3a9267c0101fc370b06e54ed12afe01a64ba2f0749bc1d305ad0f",
+      "lib/helpers/scheduler_helper.py": "8066169cbb905f8a2339e8adcb43a4fd62d5143905a893d1411a75ea39424203",
+      "lib/helpers/tester_helper.py": "c83cec9527237550897ba8e9b89bc45d9865f4d4cec9814fd4b9a21a35b46dab",
+      "lib/helpers/trainer_helper.py": "fa1d656e1cdc1718a2be9d62f7d26c08e990b5af94acbea670785af7e67c8d36",
+      "lib/helpers/utils_helper.py": "c52ba2ac1907f2b214802dbd0ec060c4b28204ecc835f0bff86e4071da00832e",
+      "lib/losses/dim_aware_loss.py": "41c8e2df9b857505888f017542c2a34104adb28d93dca5ce17e923420deaa69f",
+      "lib/losses/focal_loss.py": "ee2b387e772aa8e8fcb37334912b643ca58bd8bceb6d4a87393769eb2a441659",
+      "lib/losses/uncertainty_loss.py": "4d360a7a55c6370fa1d9e74d3c318a2485a6c8471a15760ffd2bfb5e86eee540",
+      "lib/models/monodgp/__init__.py": "e96ae7a2754576f6a787424c33d85f87c116c195a7a459171d2986ea126ba600",
+      "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+      "lib/models/monodgp/depth_predictor/__init__.py": "be9b137295f541c87ebde8e3453eebdd53c068a2dc3c1ef068ce11e40f07af60",
+      "lib/models/monodgp/depth_predictor/ddn_loss/__init__.py": "721b492c190ade3cdd95aa07bb845b3b6352bbed60ea494c3816a6b937cb960c",
+      "lib/models/monodgp/depth_predictor/ddn_loss/balancer.py": "4110b7720bc1f6ca13a3676104f3dcaabe6e6102934ad35ac93ffde1bade859b",
+      "lib/models/monodgp/depth_predictor/ddn_loss/ddn_loss.py": "f641a264ae8c0c44810749e254bc50c5016658925c22d64934668faffb06a551",
+      "lib/models/monodgp/depth_predictor/ddn_loss/focalloss.py": "647eea4c53b87d3dacc7d084a19a086113a76e73fabf11bc8a43408e2a30ceaf",
+      "lib/models/monodgp/depth_predictor/depth_predictor.py": "a014c8202ffecea0b8f9ad8392ede30d7c3153d67eab08ff48a838309f3974a6",
+      "lib/models/monodgp/depth_predictor/transformer.py": "faf4e7351081139daf477e82b9bd1358a5e19bcec6d2df33d87656e4d8732edb",
+      "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+      "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+      "lib/models/monodgp/dn_components.py": "0d1e2880c6474a836f3b939c1da0ba60e2052c4c08666f1c401605910cc11771",
+      "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7",
+      "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+      "lib/models/monodgp/ops/functions/__init__.py": "e1a39c1cf23562b11d696d81f95cf8bef368c48149b681d1eadc7f6d188edd3a",
+      "lib/models/monodgp/ops/functions/__pycache__/__init__.cpython-38.pyc": "4981223bf5f268c77981f5d44cddaf8bf7a7324c82b7be03473d173d88c5402d",
+      "lib/models/monodgp/ops/functions/__pycache__/ms_deform_attn_func.cpython-38.pyc": "9fbcecf77042bd110418132b5554d4d76e18f641046589eb6a78c43bf52c1a56",
+      "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+      "lib/models/monodgp/ops/make.sh": "37a07393d06bc9114f634fbc216119ff709283a1718816aff8bd6eab6e26788b",
+      "lib/models/monodgp/ops/modules/__init__.py": "5ee74e878252076bc3709f52fc705730e9473e02fef6aefb099eaac2edb1c3bb",
+      "lib/models/monodgp/ops/modules/__pycache__/__init__.cpython-38.pyc": "7b0ad4ef091f3488721e9138171c3241cafa0cbae82a1c9821485e516ab610df",
+      "lib/models/monodgp/ops/modules/__pycache__/ms_deform_attn.cpython-38.pyc": "83c20a57d5e4a0a99f3bda79dd7ee9909841b31517f9222d5b454bbc05297113",
+      "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+      "lib/models/monodgp/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+      "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.cpp": "d7f7c3d2df2484f3905005e13c8dc12dd943fd4451a59a059bda367eefa4dccd",
+      "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.h": "b9114ab52ea7610184b3eb9672731c3d1a7ce92e69bfdec6cf661ae988416aef",
+      "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+      "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.h": "c9cd9345e0881dfeebbfa5e98b6e6990a3d415a430bcbaaba3706ce5a2379401",
+      "lib/models/monodgp/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+      "lib/models/monodgp/ops/src/ms_deform_attn.h": "2fdc244f99e3e3b9af8dae02e09139de3f546eef83748495c3f175f48278cf41",
+      "lib/models/monodgp/ops/src/vision.cpp": "8dec032236873cee3ae86921dabbbb02c62ffd95ddbb83aef0b1b856771e8a61",
+      "lib/models/monodgp/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+      "lib/models/monodgp/position_encoding.py": "f32948c98bae719686f7c87a97d7bcd87a9aa5b6e113a00e9bbf82be361432ff",
+      "lib/models/monodgp/region_seg_head.py": "daf58907b8f3093ff686717d3e38a6d60b1e6df3e661223dab219e4a62fd7735",
+      "utils/__init__.py": "a101de83cee507766e0ad18e63b9a5dfe707971b6e634166e2c646dc5a44b6fd",
+      "utils/box_ops.py": "24fbfc914bbbad278b5fdf3078b103d67f771fac24ccec22276fb5392afd9e40",
+      "utils/dino_utils.py": "e3a84229d6d1496df5a2ea5b7880658294abcf2994cdee362032ca56d530cc5e",
+      "utils/misc.py": "f835599a9402895811769e3eec19da12691686c859d23c55e90f4b05674ccea8"
+    },
+    "external_extension_used": false,
+    "automatic_pretrained_download": false
+  },
+  "operator_sha256": "e3a5ca88ca989e7bd10fe1f8381f7da32b83eea3063ac89b67113511b045f7fa",
+  "reader_sha256": "4193159d40b91b397a2b1ab769028cf92b6129e06c3ab93c0638ce24d38d005b",
+  "adapter_sha256": "2c750a5c219ca8b2518bcb465ef5df24318c661cfcd330bc61592d5dbf3a6355",
+  "geometry_sha256": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f"
+}

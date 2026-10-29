@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="5.881" timestamp="2026-10-29T14:33:19.654037+01:00" hostname="DESKTOP-2N393IP"><testcase classname="" name="tests.unit.test_eap_rgb_data" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\phase-ttc-detection-local\tests\unit\test_eap_rgb_data.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\unit\test_eap_rgb_data.py:9: in &lt;module&gt;
+    import h5py
+E   ModuleNotFoundError: No module named 'h5py'</error></testcase></testsuite></testsuites>

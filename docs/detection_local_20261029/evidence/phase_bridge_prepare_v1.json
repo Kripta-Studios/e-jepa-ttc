@@ -1,0 +1,1860 @@
+{
+  "schema": "predicted_eap_roi_phase_bridge_v1",
+  "created_at_utc": "2026-10-29T12:46:26.447282+00:00",
+  "status": "PREPARED_NOT_INFERRED",
+  "sample_token": "qGsgzl4Q8B:000000929_000731755",
+  "sensor_anchor_us": 929731755,
+  "decision_sensor_cutoff_us": 929733441,
+  "physical_arrival_timestamps_measured": false,
+  "prediction_file_sha256": "5d81784ee88c4bb6800675abaea54316bc452b7cf06be8b34d8813e9e198567e",
+  "script_sha256": "0ed624e423c3b5ff05742c4de56e4913f9e5a083c9a4c3485f19a1f06a8e01ad",
+  "media_manifest_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "detector_metadata": {
+    "checkpoint_sha256": "52ec97774d06c2a7bc0d9320db616f2a50a3ac4dce50c7709fbdf4883fc4907f",
+    "preregistration_sha256": "25a39908faf7efb11952db785d00963249c88db0409affccf4f8548cab53fef9",
+    "inference_source_sha256": "80f16d74273ae0c2d9cf5b457d699661188295d1f8227b0e18ecf69900c28601"
+  },
+  "association_policy": {
+    "class_aware_nms_iou": 0.5,
+    "minimum_score": 0.1,
+    "greedy_class_iou_minimum": 0.3,
+    "minimum_iou_margin": 0.1,
+    "max_gap_us": 150000,
+    "current_selection": "highest confidence; no easier-object fallback"
+  },
+  "association": [
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0003",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0004",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0011",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 13,
+      "track_id": "detected_roi_0012",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0014",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0015",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0016",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0017",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0018",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0020",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0021",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0022",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 25,
+      "track_id": "detected_roi_0023",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0024",
+      "reason": "new_or_unmatched",
+      "best_iou": 0.0,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "matched",
+      "best_iou": 0.9942531958932138,
+      "second_iou": 0.27217282035601525,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "matched",
+      "best_iou": 0.9953762939418587,
+      "second_iou": 0.2700588821590506,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0003",
+      "reason": "matched",
+      "best_iou": 0.9987135470190762,
+      "second_iou": 0.18504138031544395,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0004",
+      "reason": "matched",
+      "best_iou": 0.9880639309827406,
+      "second_iou": 0.29255797979145526,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "matched",
+      "best_iou": 0.9952606997553266,
+      "second_iou": 0.4397775514312215,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "matched",
+      "best_iou": 0.9883912606485487,
+      "second_iou": 0.37032033422479044,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "matched",
+      "best_iou": 0.999001347328228,
+      "second_iou": 0.4386571637705797,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "matched",
+      "best_iou": 0.9977707681251456,
+      "second_iou": 0.474234511705957,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "matched",
+      "best_iou": 0.9985642580894536,
+      "second_iou": 0.23990669398180095,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "matched",
+      "best_iou": 0.995867371643002,
+      "second_iou": 0.23321715856861594,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0011",
+      "reason": "matched",
+      "best_iou": 0.9991305819019392,
+      "second_iou": 0.2341075069423051,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 13,
+      "track_id": "detected_roi_0012",
+      "reason": "matched",
+      "best_iou": 0.9980468343414887,
+      "second_iou": 0.47434647517385453,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "matched",
+      "best_iou": 0.9969684573625589,
+      "second_iou": 0.46405608900246303,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0014",
+      "reason": "matched",
+      "best_iou": 0.9927755859173834,
+      "second_iou": 0.14308254011250734,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0015",
+      "reason": "matched",
+      "best_iou": 0.9848434189411663,
+      "second_iou": 0.13498382127380149,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0016",
+      "reason": "matched",
+      "best_iou": 0.996483877530259,
+      "second_iou": 0.1431702390701549,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0017",
+      "reason": "matched",
+      "best_iou": 0.9984029471169663,
+      "second_iou": 0.46023883635964297,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0018",
+      "reason": "matched",
+      "best_iou": 0.9892762969067285,
+      "second_iou": 0.468168918895971,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "matched",
+      "best_iou": 0.9953790332178197,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0020",
+      "reason": "matched",
+      "best_iou": 0.9976442485331607,
+      "second_iou": 0.1330229756284765,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0021",
+      "reason": "matched",
+      "best_iou": 0.9848096190770005,
+      "second_iou": 0.4627395351705282,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0022",
+      "reason": "matched",
+      "best_iou": 0.9914943184851356,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 25,
+      "track_id": "detected_roi_0023",
+      "reason": "matched",
+      "best_iou": 0.9880703804020574,
+      "second_iou": 0.4618762277454697,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0024",
+      "reason": "matched",
+      "best_iou": 0.9993349059298741,
+      "second_iou": 0.4591870558988144,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "matched",
+      "best_iou": 0.9753115411042846,
+      "second_iou": 0.2692326517378585,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "matched",
+      "best_iou": 0.9645692967734003,
+      "second_iou": 0.2798616880340304,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0004",
+      "reason": "matched",
+      "best_iou": 0.9441953150522988,
+      "second_iou": 0.29306579369530705,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0003",
+      "reason": "matched",
+      "best_iou": 0.9762468194142634,
+      "second_iou": 0.18397783246732738,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "matched",
+      "best_iou": 0.9855684618714785,
+      "second_iou": 0.44580682623206064,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "matched",
+      "best_iou": 0.9576665513119891,
+      "second_iou": 0.35903201734878765,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "matched",
+      "best_iou": 0.9913547130999698,
+      "second_iou": 0.4364766906602355,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "matched",
+      "best_iou": 0.9877798962930538,
+      "second_iou": 0.4799422959697028,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "matched",
+      "best_iou": 0.9971063679835285,
+      "second_iou": 0.24027148299507428,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "matched",
+      "best_iou": 0.99858723309241,
+      "second_iou": 0.23369015693598405,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0012",
+      "reason": "matched",
+      "best_iou": 0.9897742871391088,
+      "second_iou": 0.46992413929908594,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 13,
+      "track_id": "detected_roi_0011",
+      "reason": "matched",
+      "best_iou": 0.9958862553630972,
+      "second_iou": 0.2325808837465484,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "matched",
+      "best_iou": 0.986370213958615,
+      "second_iou": 0.4728026018595992,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0014",
+      "reason": "matched",
+      "best_iou": 0.9948785726123288,
+      "second_iou": 0.14254879526236922,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0015",
+      "reason": "matched",
+      "best_iou": 0.9874177012005037,
+      "second_iou": 0.13307424769726658,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0017",
+      "reason": "matched",
+      "best_iou": 0.995236863291538,
+      "second_iou": 0.46234420647460645,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0016",
+      "reason": "matched",
+      "best_iou": 0.9899918826311427,
+      "second_iou": 0.14257827530406225,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0018",
+      "reason": "matched",
+      "best_iou": 0.9807539873529815,
+      "second_iou": 0.4731336192306153,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "matched",
+      "best_iou": 0.9859800626127326,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0020",
+      "reason": "matched",
+      "best_iou": 0.9816375093266317,
+      "second_iou": 0.13306013480327197,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0021",
+      "reason": "matched",
+      "best_iou": 0.988102051501106,
+      "second_iou": 0.4576599759596641,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0022",
+      "reason": "matched",
+      "best_iou": 0.9863085442451867,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 25,
+      "track_id": "detected_roi_0023",
+      "reason": "matched",
+      "best_iou": 0.9856218517186615,
+      "second_iou": 0.4585165181836647,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0024",
+      "reason": "matched",
+      "best_iou": 0.9972359178113713,
+      "second_iou": 0.4587210694538489,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "prediction_index": 28,
+      "track_id": "detected_roi_0025",
+      "reason": "ambiguous",
+      "best_iou": 0.4182070017114869,
+      "second_iou": 0.3570213624831988,
+      "ambiguous": true
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "matched",
+      "best_iou": 0.9824407228874814,
+      "second_iou": 0.2761644885128325,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "matched",
+      "best_iou": 0.9813792739715843,
+      "second_iou": 0.28146594197823604,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0004",
+      "reason": "matched",
+      "best_iou": 0.9775406154352301,
+      "second_iou": 0.2944549131090915,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0003",
+      "reason": "matched",
+      "best_iou": 0.9915366849678395,
+      "second_iou": 0.18620726845190227,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "matched",
+      "best_iou": 0.9902538580293673,
+      "second_iou": 0.4458662430827539,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "matched",
+      "best_iou": 0.9780909582076879,
+      "second_iou": 0.3516717732592657,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "matched",
+      "best_iou": 0.9967060235687594,
+      "second_iou": 0.4409847293569526,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "matched",
+      "best_iou": 0.9965262029576241,
+      "second_iou": 0.47669193873595045,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "matched",
+      "best_iou": 0.9982393151584671,
+      "second_iou": 0.24031507214115908,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "matched",
+      "best_iou": 0.9974270955974669,
+      "second_iou": 0.2324740962059552,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0012",
+      "reason": "matched",
+      "best_iou": 0.9968854408163595,
+      "second_iou": 0.4735564799287373,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 14,
+      "track_id": "detected_roi_0011",
+      "reason": "matched",
+      "best_iou": 0.9979825912576311,
+      "second_iou": 0.23271580780824364,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "matched",
+      "best_iou": 0.9926688681624841,
+      "second_iou": 0.4788168217227893,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0014",
+      "reason": "matched",
+      "best_iou": 0.9958545201674931,
+      "second_iou": 0.14186957149588975,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0017",
+      "reason": "matched",
+      "best_iou": 0.9975300038451848,
+      "second_iou": 0.4623422696911118,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0018",
+      "reason": "matched",
+      "best_iou": 0.9849257083336723,
+      "second_iou": 0.48202297139612094,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0015",
+      "reason": "matched",
+      "best_iou": 0.9906679146524292,
+      "second_iou": 0.13384550346729523,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0016",
+      "reason": "matched",
+      "best_iou": 0.9952869576140111,
+      "second_iou": 0.14186665956495123,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "matched",
+      "best_iou": 0.9928165894346305,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0021",
+      "reason": "matched",
+      "best_iou": 0.984536520944204,
+      "second_iou": 0.4529314533568528,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0020",
+      "reason": "matched",
+      "best_iou": 0.9908487375124868,
+      "second_iou": 0.13401892001738983,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0022",
+      "reason": "matched",
+      "best_iou": 0.9867850302624525,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 25,
+      "track_id": "detected_roi_0023",
+      "reason": "matched",
+      "best_iou": 0.9835283739306367,
+      "second_iou": 0.45239692208369975,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0024",
+      "reason": "matched",
+      "best_iou": 0.9984016428524645,
+      "second_iou": 0.4603936446741713,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "prediction_index": 28,
+      "track_id": "detected_roi_0025",
+      "reason": "matched",
+      "best_iou": 0.99703871923435,
+      "second_iou": 0.42658151536672034,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "matched",
+      "best_iou": 0.9876607974869838,
+      "second_iou": 0.2834450951707711,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "matched",
+      "best_iou": 0.9940013253412296,
+      "second_iou": 0.27833040761875943,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0004",
+      "reason": "matched",
+      "best_iou": 0.9890304172560134,
+      "second_iou": 0.29667736263321576,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0003",
+      "reason": "matched",
+      "best_iou": 0.9939180892073142,
+      "second_iou": 0.18681625000098154,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "matched",
+      "best_iou": 0.9945793294448061,
+      "second_iou": 0.4442970248340114,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "matched",
+      "best_iou": 0.9924020338221958,
+      "second_iou": 0.3532358890469034,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "matched",
+      "best_iou": 0.9970537105743774,
+      "second_iou": 0.44537731253012136,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "matched",
+      "best_iou": 0.9937458157927473,
+      "second_iou": 0.47621148113822154,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "matched",
+      "best_iou": 0.9986360075066294,
+      "second_iou": 0.24049406917125232,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "matched",
+      "best_iou": 0.9986626564959113,
+      "second_iou": 0.23223490226260113,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0012",
+      "reason": "matched",
+      "best_iou": 0.996934104393351,
+      "second_iou": 0.4752358881153216,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 14,
+      "track_id": "detected_roi_0011",
+      "reason": "matched",
+      "best_iou": 0.9983885485413047,
+      "second_iou": 0.23231328253336053,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "matched",
+      "best_iou": 0.9981585831250086,
+      "second_iou": 0.4829080384412051,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0018",
+      "reason": "matched",
+      "best_iou": 0.9915273207717614,
+      "second_iou": 0.4876726369022587,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0014",
+      "reason": "matched",
+      "best_iou": 0.9976707475346035,
+      "second_iou": 0.14142052155045426,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0017",
+      "reason": "matched",
+      "best_iou": 0.9978962521799921,
+      "second_iou": 0.4614457380220567,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0015",
+      "reason": "matched",
+      "best_iou": 0.9959594025472169,
+      "second_iou": 0.1350131457698596,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0016",
+      "reason": "matched",
+      "best_iou": 0.9918759470021902,
+      "second_iou": 0.14175993366112608,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "matched",
+      "best_iou": 0.9985730005990345,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0021",
+      "reason": "matched",
+      "best_iou": 0.9656408049005673,
+      "second_iou": 0.45503266055066227,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0020",
+      "reason": "matched",
+      "best_iou": 0.9987807774441051,
+      "second_iou": 0.13419928114341034,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0022",
+      "reason": "matched",
+      "best_iou": 0.9967407240672871,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 26,
+      "track_id": "detected_roi_0023",
+      "reason": "matched",
+      "best_iou": 0.9920572843272638,
+      "second_iou": 0.4509096405920107,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0024",
+      "reason": "matched",
+      "best_iou": 0.999476756354829,
+      "second_iou": 0.4618287773159781,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "prediction_index": 28,
+      "track_id": "detected_roi_0025",
+      "reason": "matched",
+      "best_iou": 0.9933619835707976,
+      "second_iou": 0.4317747717684219,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "matched",
+      "best_iou": 0.9920483229283454,
+      "second_iou": 0.2829851934810299,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "matched",
+      "best_iou": 0.9913796995532752,
+      "second_iou": 0.28020318820806595,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0004",
+      "reason": "matched",
+      "best_iou": 0.9853920531575722,
+      "second_iou": 0.29521408561298385,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0003",
+      "reason": "matched",
+      "best_iou": 0.9955605485419844,
+      "second_iou": 0.18647088827491903,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "matched",
+      "best_iou": 0.9941566645431746,
+      "second_iou": 0.44788382782263897,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "matched",
+      "best_iou": 0.987036047402784,
+      "second_iou": 0.3505646769655304,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "matched",
+      "best_iou": 0.996477121363641,
+      "second_iou": 0.4433639972047735,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "matched",
+      "best_iou": 0.9934431706762351,
+      "second_iou": 0.47938341149486324,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "matched",
+      "best_iou": 0.997954273448541,
+      "second_iou": 0.24098397380187972,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "matched",
+      "best_iou": 0.999376924924628,
+      "second_iou": 0.23232380888535709,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0012",
+      "reason": "matched",
+      "best_iou": 0.9944110887829696,
+      "second_iou": 0.4735785122218071,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 14,
+      "track_id": "detected_roi_0011",
+      "reason": "matched",
+      "best_iou": 0.9981536363075151,
+      "second_iou": 0.23214446501272348,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "matched",
+      "best_iou": 0.9935257918334077,
+      "second_iou": 0.4886016603870365,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0018",
+      "reason": "matched",
+      "best_iou": 0.9925899000096361,
+      "second_iou": 0.4881034799823509,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0014",
+      "reason": "matched",
+      "best_iou": 0.9953369394633208,
+      "second_iou": 0.14172412052354644,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0017",
+      "reason": "matched",
+      "best_iou": 0.9973841253442047,
+      "second_iou": 0.46286939496446167,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0015",
+      "reason": "matched",
+      "best_iou": 0.992959894221308,
+      "second_iou": 0.13330970353963284,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0016",
+      "reason": "matched",
+      "best_iou": 0.9979081177245698,
+      "second_iou": 0.14124263049206434,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "matched",
+      "best_iou": 0.9902490738688438,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0021",
+      "reason": "matched",
+      "best_iou": 0.9841105030820355,
+      "second_iou": 0.45359251845462756,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0020",
+      "reason": "matched",
+      "best_iou": 0.9910248471791013,
+      "second_iou": 0.13413631486861918,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0022",
+      "reason": "matched",
+      "best_iou": 0.9921816199549968,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 26,
+      "track_id": "detected_roi_0023",
+      "reason": "matched",
+      "best_iou": 0.9840321002274997,
+      "second_iou": 0.45178504516096585,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0024",
+      "reason": "matched",
+      "best_iou": 0.9985694927455575,
+      "second_iou": 0.46102949934489446,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "prediction_index": 28,
+      "track_id": "detected_roi_0025",
+      "reason": "matched",
+      "best_iou": 0.9971829883932792,
+      "second_iou": 0.4327219650963116,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 0,
+      "track_id": "detected_roi_0001",
+      "reason": "matched",
+      "best_iou": 0.9941700716210654,
+      "second_iou": 0.28336736635372783,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 1,
+      "track_id": "detected_roi_0002",
+      "reason": "matched",
+      "best_iou": 0.9904468354362118,
+      "second_iou": 0.2785623829057734,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 2,
+      "track_id": "detected_roi_0004",
+      "reason": "matched",
+      "best_iou": 0.9925111048123805,
+      "second_iou": 0.2971128794178797,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 3,
+      "track_id": "detected_roi_0003",
+      "reason": "matched",
+      "best_iou": 0.9979287792929907,
+      "second_iou": 0.18618863758978127,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 5,
+      "track_id": "detected_roi_0005",
+      "reason": "matched",
+      "best_iou": 0.9978522471449648,
+      "second_iou": 0.4474128717047888,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 6,
+      "track_id": "detected_roi_0006",
+      "reason": "matched",
+      "best_iou": 0.9948557308336646,
+      "second_iou": 0.3481238596970042,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 7,
+      "track_id": "detected_roi_0007",
+      "reason": "matched",
+      "best_iou": 0.997430958715378,
+      "second_iou": 0.4454873245701181,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 8,
+      "track_id": "detected_roi_0008",
+      "reason": "matched",
+      "best_iou": 0.9919730640750382,
+      "second_iou": 0.4805285174198016,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 9,
+      "track_id": "detected_roi_0009",
+      "reason": "matched",
+      "best_iou": 0.9981748258775485,
+      "second_iou": 0.24123546612594599,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 10,
+      "track_id": "detected_roi_0010",
+      "reason": "matched",
+      "best_iou": 0.9993143535406445,
+      "second_iou": 0.23217658766750632,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 12,
+      "track_id": "detected_roi_0012",
+      "reason": "matched",
+      "best_iou": 0.9942215811612989,
+      "second_iou": 0.4739495837539247,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 14,
+      "track_id": "detected_roi_0011",
+      "reason": "matched",
+      "best_iou": 0.9984848705933922,
+      "second_iou": 0.23166490176869306,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 15,
+      "track_id": "detected_roi_0013",
+      "reason": "matched",
+      "best_iou": 0.991160832476789,
+      "second_iou": 0.4913901602985883,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 16,
+      "track_id": "detected_roi_0018",
+      "reason": "matched",
+      "best_iou": 0.9889027305095346,
+      "second_iou": 0.4937634695954588,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 17,
+      "track_id": "detected_roi_0014",
+      "reason": "matched",
+      "best_iou": 0.9987376622232896,
+      "second_iou": 0.14153611028851326,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 18,
+      "track_id": "detected_roi_0017",
+      "reason": "matched",
+      "best_iou": 0.9980661714730883,
+      "second_iou": 0.46293793677398193,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 19,
+      "track_id": "detected_roi_0015",
+      "reason": "matched",
+      "best_iou": 0.9940441923922284,
+      "second_iou": 0.13334522964449688,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 20,
+      "track_id": "detected_roi_0016",
+      "reason": "matched",
+      "best_iou": 0.9979713265821791,
+      "second_iou": 0.14137677743105326,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 21,
+      "track_id": "detected_roi_0019",
+      "reason": "matched",
+      "best_iou": 0.9941437816125985,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 22,
+      "track_id": "detected_roi_0021",
+      "reason": "matched",
+      "best_iou": 0.9663007070423454,
+      "second_iou": 0.452527787581534,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 23,
+      "track_id": "detected_roi_0022",
+      "reason": "matched",
+      "best_iou": 0.9917237188998516,
+      "second_iou": 0.0,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 24,
+      "track_id": "detected_roi_0020",
+      "reason": "matched",
+      "best_iou": 0.9942094263245459,
+      "second_iou": 0.13447955985144577,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 26,
+      "track_id": "detected_roi_0023",
+      "reason": "matched",
+      "best_iou": 0.9823863172111511,
+      "second_iou": 0.44844227856284286,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 27,
+      "track_id": "detected_roi_0026",
+      "reason": "ambiguous",
+      "best_iou": 0.0506931186639832,
+      "second_iou": 0.028439961240860366,
+      "ambiguous": true
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 28,
+      "track_id": "detected_roi_0024",
+      "reason": "matched",
+      "best_iou": 0.9994809250233111,
+      "second_iou": 0.4619820698679234,
+      "ambiguous": false
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "prediction_index": 29,
+      "track_id": "detected_roi_0025",
+      "reason": "matched",
+      "best_iou": 0.9950867967602585,
+      "second_iou": 0.43795075375446335,
+      "ambiguous": false
+    }
+  ],
+  "rejected_rois": [],
+  "outputs": {
+    "ttc": null,
+    "point_phase": null,
+    "q10": null,
+    "q90": null
+  },
+  "output_space": {
+    "ttc": "signed seconds",
+    "point_phase": "phase",
+    "q10": "phase",
+    "q90": "phase"
+  },
+  "phase_boundaries_are_calibrated_intervals": false,
+  "ground_truth_read": false,
+  "garl_ids_used": false,
+  "optimizer_updates": 0,
+  "scope": "development_exposed interface demo; no TTC accuracy or official metric",
+  "track_id": "detected_roi_0001",
+  "class_name": "car",
+  "detection_score": 0.3509746491909027,
+  "detected_history": [
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000131746",
+      "timestamp_us": 929131746,
+      "roi_xyxy": [
+        497.21029939236996,
+        491.5396700356066,
+        597.2829789600305,
+        581.1977036447646
+      ],
+      "prediction_index": 0
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000231747",
+      "timestamp_us": 929231747,
+      "roi_xyxy": [
+        497.1519324873268,
+        491.5713010019022,
+        597.4842388252735,
+        581.4509330357872
+      ],
+      "prediction_index": 0
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000331749",
+      "timestamp_us": 929331749,
+      "roi_xyxy": [
+        495.95543245577505,
+        491.6916439730657,
+        597.0814645403196,
+        582.1572519110209
+      ],
+      "prediction_index": 0
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000431750",
+      "timestamp_us": 929431750,
+      "roi_xyxy": [
+        495.0926217266916,
+        491.7724775909583,
+        596.817947097254,
+        582.6778873725887
+      ],
+      "prediction_index": 0
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000531752",
+      "timestamp_us": 929531752,
+      "roi_xyxy": [
+        495.6371366837473,
+        491.674747633129,
+        597.3441074354924,
+        582.6029014047546
+      ],
+      "prediction_index": 0
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000631754",
+      "timestamp_us": 929631754,
+      "roi_xyxy": [
+        495.3692501672496,
+        491.6695704466439,
+        597.5054222219225,
+        582.9413857645661
+      ],
+      "prediction_index": 0
+    },
+    {
+      "sample_token": "qGsgzl4Q8B:000000929_000731755",
+      "timestamp_us": 929731755,
+      "roi_xyxy": [
+        495.45000510724685,
+        491.6847191078092,
+        597.7807398423902,
+        583.1424268271653
+      ],
+      "prediction_index": 0
+    }
+  ],
+  "common_roi_xyxy": [
+    469,
+    460,
+    623,
+    614
+  ],
+  "requested_common_roi_xyxy": [
+    469.42059219776695,
+    460.32495984461207,
+    623.4527693713147,
+    614.3571370181598
+  ],
+  "roi_policy": "same clipped union ROI for every real RGB/event observation",
+  "event_x_offset_pixels": 5.0,
+  "observations": [
+    {
+      "frame_tokens": [
+        "qGsgzl4Q8B:000000929_000131746",
+        "qGsgzl4Q8B:000000929_000231747",
+        "qGsgzl4Q8B:000000929_000331749"
+      ],
+      "sensor_endpoints_us": [
+        929131746,
+        929231747,
+        929331749
+      ],
+      "available_at_sensor_cutoff_us": 929733441,
+      "delta_t_s": [
+        0.100001,
+        0.100002
+      ]
+    },
+    {
+      "frame_tokens": [
+        "qGsgzl4Q8B:000000929_000231747",
+        "qGsgzl4Q8B:000000929_000331749",
+        "qGsgzl4Q8B:000000929_000431750"
+      ],
+      "sensor_endpoints_us": [
+        929231747,
+        929331749,
+        929431750
+      ],
+      "available_at_sensor_cutoff_us": 929733441,
+      "delta_t_s": [
+        0.100002,
+        0.100001
+      ]
+    },
+    {
+      "frame_tokens": [
+        "qGsgzl4Q8B:000000929_000331749",
+        "qGsgzl4Q8B:000000929_000431750",
+        "qGsgzl4Q8B:000000929_000531752"
+      ],
+      "sensor_endpoints_us": [
+        929331749,
+        929431750,
+        929531752
+      ],
+      "available_at_sensor_cutoff_us": 929733441,
+      "delta_t_s": [
+        0.100001,
+        0.100002
+      ]
+    },
+    {
+      "frame_tokens": [
+        "qGsgzl4Q8B:000000929_000431750",
+        "qGsgzl4Q8B:000000929_000531752",
+        "qGsgzl4Q8B:000000929_000631754"
+      ],
+      "sensor_endpoints_us": [
+        929431750,
+        929531752,
+        929631754
+      ],
+      "available_at_sensor_cutoff_us": 929733441,
+      "delta_t_s": [
+        0.100002,
+        0.100002
+      ]
+    },
+    {
+      "frame_tokens": [
+        "qGsgzl4Q8B:000000929_000531752",
+        "qGsgzl4Q8B:000000929_000631754",
+        "qGsgzl4Q8B:000000929_000731755"
+      ],
+      "sensor_endpoints_us": [
+        929531752,
+        929631754,
+        929731755
+      ],
+      "available_at_sensor_cutoff_us": 929733441,
+      "delta_t_s": [
+        0.100002,
+        0.100001
+      ]
+    }
+  ],
+  "event_windows_us": [
+    [
+      [
+        929131745,
+        929231747
+      ],
+      [
+        929231747,
+        929331749
+      ],
+      [
+        929331749,
+        929431750
+      ]
+    ],
+    [
+      [
+        929231748,
+        929331749
+      ],
+      [
+        929331749,
+        929431750
+      ],
+      [
+        929431750,
+        929531752
+      ]
+    ],
+    [
+      [
+        929331748,
+        929431750
+      ],
+      [
+        929431750,
+        929531752
+      ],
+      [
+        929531752,
+        929631754
+      ]
+    ],
+    [
+      [
+        929431750,
+        929531752
+      ],
+      [
+        929531752,
+        929631754
+      ],
+      [
+        929631754,
+        929731755
+      ]
+    ]
+  ],
+  "event_roi_count": 60730,
+  "event_retained_bytes": 1032410,
+  "event_window_boundary": "half-open [start,end); exact media/event clock",
+  "event_source": {
+    "relative_path": "data/train/qGsgzl4Q8B/events.h5",
+    "size_bytes": 10201847567
+  },
+  "reason": "prepare_only"
+}

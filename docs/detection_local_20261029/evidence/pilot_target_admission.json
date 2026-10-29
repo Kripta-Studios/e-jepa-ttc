@@ -1,0 +1,63 @@
+{
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "scope": "pretraining_admission_counts_only",
+  "roles": {
+    "train": {
+      "frames": 256,
+      "admitted_classes": {
+        "car": 589,
+        "truck": 86,
+        "motorcycle": 108,
+        "pedestrian": 15,
+        "bus": 18,
+        "tricycle": 12,
+        "bicycle": 1
+      },
+      "raw_classes": {
+        "car": 996,
+        "truck": 276,
+        "motorcycle": 171,
+        "pedestrian": 66,
+        "bus": 28,
+        "tricycle": 22,
+        "other_vehicle": 3,
+        "bicycle": 3
+      },
+      "velocity_valid_objects": 829,
+      "empty_frames": 7,
+      "numeric_reports": {
+        "original_annotations": 1565,
+        "admitted_annotations": 829,
+        "velocity_valid_targets": 829,
+        "velocity_invalid_or_missing_targets": 0
+      },
+      "seconds": 7.634186999988742
+    },
+    "selection": {
+      "frames": 256,
+      "admitted_classes": {
+        "truck": 205,
+        "car": 721,
+        "motorcycle": 6,
+        "bus": 4,
+        "pedestrian": 2
+      },
+      "raw_classes": {
+        "truck": 729,
+        "car": 1169,
+        "motorcycle": 23,
+        "bus": 13,
+        "pedestrian": 2
+      },
+      "velocity_valid_objects": 938,
+      "empty_frames": 1,
+      "numeric_reports": {
+        "original_annotations": 1936,
+        "admitted_annotations": 938,
+        "velocity_valid_targets": 938,
+        "velocity_invalid_or_missing_targets": 0
+      },
+      "seconds": 7.394930300011765
+    }
+  }
+}

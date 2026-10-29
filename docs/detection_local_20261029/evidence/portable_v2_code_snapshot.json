@@ -1,0 +1,18 @@
+{
+  "scope": "code_only_reconstruction_no_images_labels_or_weights",
+  "run": "overfit16_seed7_v2_resume",
+  "base_git_commit": "79efcbed4dc09f23dccabfdf678b727b584d0912",
+  "preregistration_sha256": "cbf3474656bf583a93dc4bb982f47e0877b26da5211b0db0bfb4e17a017ea4cf",
+  "files": {
+    "code/scripts/train_monodgp_portable.py": "9bd339c101925a77926d8de4c925efea41761de6141da70d9a53e353024f1d38",
+    "code/scripts/smoke_monodgp_portable.py": "2e615f3b57b79710fbe6681fb98894e14810a14a46db0f4c6977f749c2e67c1f",
+    "code/src/e_jepa_ttc/detection/portable_attention.py": "e3a5ca88ca989e7bd10fe1f8381f7da32b83eea3063ac89b67113511b045f7fa",
+    "code/src/e_jepa_ttc/detection/monodgp_eap_adapter.py": "2c750a5c219ca8b2518bcb465ef5df24318c661cfcd330bc61592d5dbf3a6355",
+    "code/src/e_jepa_ttc/detection/development_metrics.py": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6",
+    "code/src/e_jepa_ttc/detection/eap_rgb_data.py": "4193159d40b91b397a2b1ab769028cf92b6129e06c3ab93c0638ce24d38d005b",
+    "code/src/e_jepa_ttc/detection/geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f",
+    "upstream.patch": "5b4e63ddff88c744ffe950154f3e965f5117f9802e1caaa86b9bea3d3eb3c39b"
+  },
+  "archive_sha256": "50712967ea110e024ba38e12ed2e9a5774535622919ef12d12ff9e9380e9ff4e",
+  "archive_bytes": 31146
+}

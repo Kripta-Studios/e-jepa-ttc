@@ -1,0 +1,571 @@
+{
+  "variant": "monodgp_pytorch_grid_sample_velocity_v1",
+  "scope": "real_four_train_frame_throughput_not_accuracy",
+  "image_hw": [
+    384,
+    640
+  ],
+  "group_num": 11,
+  "precision": "fp32_highest",
+  "image_layout": "contiguous_NCHW",
+  "sample_tokens": [
+    "qGsgzl4Q8B:000000887_000231056",
+    "qGsgzl4Q8B:000000929_000731755",
+    "qGsgzl4Q8B:000000972_000132457",
+    "qGsgzl4Q8B:000001014_000633163"
+  ],
+  "seed": 7,
+  "warmup_steps": 3,
+  "measured_steps": 5,
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "script_sha256": "cd4cbce55c39300554284e5a243ae00f8348d70c5443aba90df87c537b72dd79",
+  "source_receipt_sha256": "8f5fdbd7ce017daadeb513c0c1d992eced11548322264ad8b68aa8d69ed2338b",
+  "profiles": [
+    {
+      "batch_size": 1,
+      "status": "PASS",
+      "median_step_seconds": 0.19635049998760223,
+      "images_per_second": 5.092933300720604,
+      "estimated_compute_seconds_for_2048_image_exposures": 402.1258239746094,
+      "peak_allocated_bytes": 1528975872,
+      "peak_reserved_bytes": 1631584256,
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 1.0648632000084035,
+          "loss": 178.86036682128906,
+          "gradient_norm": 2305.762451171875,
+          "memory": {
+            "host_available_physical_bytes": 3642490880,
+            "host_available_commit_bytes": 5171122176,
+            "process_working_set_bytes": 2737639424,
+            "process_private_bytes": 6820327424
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 0.25142029998824,
+          "loss": 108.34708404541016,
+          "gradient_norm": 634.2476196289062,
+          "memory": {
+            "host_available_physical_bytes": 3632148480,
+            "host_available_commit_bytes": 4953403392,
+            "process_working_set_bytes": 2744012800,
+            "process_private_bytes": 7039938560
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 0.21023279998917133,
+          "loss": 97.45795440673828,
+          "gradient_norm": 399.67987060546875,
+          "memory": {
+            "host_available_physical_bytes": 3632222208,
+            "host_available_commit_bytes": 4934254592,
+            "process_working_set_bytes": 2743656448,
+            "process_private_bytes": 7058599936
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 0.18296880001435056,
+          "loss": 93.05975341796875,
+          "gradient_norm": 250.64480590820312,
+          "memory": {
+            "host_available_physical_bytes": 3631382528,
+            "host_available_commit_bytes": 4925452288,
+            "process_working_set_bytes": 2745430016,
+            "process_private_bytes": 7061745664
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 0.23109760001534596,
+          "loss": 85.18397521972656,
+          "gradient_norm": 218.87014770507812,
+          "memory": {
+            "host_available_physical_bytes": 3771588608,
+            "host_available_commit_bytes": 4928364544,
+            "process_working_set_bytes": 2745450496,
+            "process_private_bytes": 7061815296
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 0.1819270999985747,
+          "loss": 82.0168685913086,
+          "gradient_norm": 165.40689086914062,
+          "memory": {
+            "host_available_physical_bytes": 3773079552,
+            "host_available_commit_bytes": 4929966080,
+            "process_working_set_bytes": 2745454592,
+            "process_private_bytes": 7061815296
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 0.20061410003108904,
+          "loss": 75.35755157470703,
+          "gradient_norm": 89.19778442382812,
+          "memory": {
+            "host_available_physical_bytes": 3772510208,
+            "host_available_commit_bytes": 4922093568,
+            "process_working_set_bytes": 2745454592,
+            "process_private_bytes": 7061815296
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 0.19635049998760223,
+          "loss": 90.45213317871094,
+          "gradient_norm": 114.2427978515625,
+          "memory": {
+            "host_available_physical_bytes": 3776860160,
+            "host_available_commit_bytes": 4948459520,
+            "process_working_set_bytes": 2745454592,
+            "process_private_bytes": 7061815296
+          }
+        }
+      ],
+      "config": {
+        "num_classes": 8,
+        "return_intermediate_dec": true,
+        "device": "cuda",
+        "backbone": "resnet50",
+        "train_backbone": true,
+        "num_feature_levels": 4,
+        "dilation": false,
+        "position_embedding": "sine",
+        "masks": false,
+        "mode": "LID",
+        "num_depth_bins": 80,
+        "depth_min": "1e-3",
+        "depth_max": 60.0,
+        "with_box_refine": true,
+        "use_dn": false,
+        "init_box": false,
+        "enc_layers": 3,
+        "dec_layers": 3,
+        "hidden_dim": 256,
+        "dim_feedforward": 256,
+        "dropout": 0.1,
+        "nheads": 8,
+        "num_queries": 50,
+        "group_num": 11,
+        "enc_n_points": 4,
+        "dec_n_points": 4,
+        "scalar": 5,
+        "label_noise_scale": 0.2,
+        "box_noise_scale": 0.4,
+        "num_patterns": 0,
+        "aux_loss": true,
+        "cls_loss_coef": 2,
+        "focal_alpha": 0.25,
+        "bbox_loss_coef": 5,
+        "giou_loss_coef": 2,
+        "3dcenter_loss_coef": 10,
+        "dim_loss_coef": 1,
+        "angle_loss_coef": 1,
+        "depth_loss_coef": 1,
+        "depth_map_loss_coef": 1,
+        "region_loss_coef": 1,
+        "set_cost_class": 2,
+        "set_cost_bbox": 5,
+        "set_cost_giou": 2,
+        "set_cost_3dcenter": 10,
+        "predict_velocity": true,
+        "velocity_loss_coef": 0.1
+      },
+      "backbone_initialization": {
+        "weights_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\external_weights\\resnet50-0676ba61.pth",
+        "loaded_filename": "resnet50-0676ba61.pth",
+        "official_filename": "resnet50-0676ba61.pth",
+        "source_url": "https://download.pytorch.org/models/resnet50-0676ba61.pth",
+        "weights_enum": "torchvision.models.ResNet50_Weights.IMAGENET1K_V1",
+        "weights_enum_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "expected_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "observed_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "file_bytes": 102530333,
+        "source_tensor_count": 267,
+        "loaded_backbone_tensor_count": 265,
+        "loaded_parameter_tensor_count": 53,
+        "loaded_buffer_tensor_count": 212,
+        "exact_match_tensor_count": 265,
+        "ignored_keys": [
+          "fc.bias",
+          "fc.weight"
+        ],
+        "batch_norm_counters_consumed_by_loader": 0,
+        "frozen_batch_norm_module_count": 53,
+        "frozen_batch_norm_running_stat_tensor_count": 106,
+        "strict_load": true,
+        "all_backbone_tensors_exact": true,
+        "implicit_download": false
+      }
+    },
+    {
+      "batch_size": 2,
+      "status": "PASS",
+      "median_step_seconds": 0.21566729998448864,
+      "images_per_second": 9.2735430922715,
+      "estimated_compute_seconds_for_2048_image_exposures": 220.84331518411636,
+      "peak_allocated_bytes": 2539824128,
+      "peak_reserved_bytes": 2682257408,
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 0.3900353999924846,
+          "loss": 177.0646514892578,
+          "gradient_norm": 2159.67041015625,
+          "memory": {
+            "host_available_physical_bytes": 3556220928,
+            "host_available_commit_bytes": 3679268864,
+            "process_working_set_bytes": 2847055872,
+            "process_private_bytes": 8107892736
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 0.28017679997719824,
+          "loss": 130.81466674804688,
+          "gradient_norm": 925.6280517578125,
+          "memory": {
+            "host_available_physical_bytes": 3634814976,
+            "host_available_commit_bytes": 3660599296,
+            "process_working_set_bytes": 2762149888,
+            "process_private_bytes": 8141176832
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 0.2158153000054881,
+          "loss": 104.13963317871094,
+          "gradient_norm": 483.61566162109375,
+          "memory": {
+            "host_available_physical_bytes": 3636514816,
+            "host_available_commit_bytes": 3656134656,
+            "process_working_set_bytes": 2767237120,
+            "process_private_bytes": 8146169856
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 0.20816009998088703,
+          "loss": 87.2185287475586,
+          "gradient_norm": 164.33193969726562,
+          "memory": {
+            "host_available_physical_bytes": 3635712000,
+            "host_available_commit_bytes": 3654991872,
+            "process_working_set_bytes": 2767241216,
+            "process_private_bytes": 8146169856
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 0.21998699998948723,
+          "loss": 76.09766387939453,
+          "gradient_norm": 99.49361419677734,
+          "memory": {
+            "host_available_physical_bytes": 3633672192,
+            "host_available_commit_bytes": 3653197824,
+            "process_working_set_bytes": 2767241216,
+            "process_private_bytes": 8146169856
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 0.21566729998448864,
+          "loss": 83.79696655273438,
+          "gradient_norm": 132.09190368652344,
+          "memory": {
+            "host_available_physical_bytes": 3626967040,
+            "host_available_commit_bytes": 3641925632,
+            "process_working_set_bytes": 2767241216,
+            "process_private_bytes": 8148271104
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 0.20946400001412258,
+          "loss": 71.66453552246094,
+          "gradient_norm": 109.91954803466797,
+          "memory": {
+            "host_available_physical_bytes": 3627692032,
+            "host_available_commit_bytes": 3649372160,
+            "process_working_set_bytes": 2767241216,
+            "process_private_bytes": 8148271104
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 0.21992569998838007,
+          "loss": 75.73958587646484,
+          "gradient_norm": 53.40500259399414,
+          "memory": {
+            "host_available_physical_bytes": 3629981696,
+            "host_available_commit_bytes": 3654688768,
+            "process_working_set_bytes": 2767249408,
+            "process_private_bytes": 8148271104
+          }
+        }
+      ],
+      "config": {
+        "num_classes": 8,
+        "return_intermediate_dec": true,
+        "device": "cuda",
+        "backbone": "resnet50",
+        "train_backbone": true,
+        "num_feature_levels": 4,
+        "dilation": false,
+        "position_embedding": "sine",
+        "masks": false,
+        "mode": "LID",
+        "num_depth_bins": 80,
+        "depth_min": "1e-3",
+        "depth_max": 60.0,
+        "with_box_refine": true,
+        "use_dn": false,
+        "init_box": false,
+        "enc_layers": 3,
+        "dec_layers": 3,
+        "hidden_dim": 256,
+        "dim_feedforward": 256,
+        "dropout": 0.1,
+        "nheads": 8,
+        "num_queries": 50,
+        "group_num": 11,
+        "enc_n_points": 4,
+        "dec_n_points": 4,
+        "scalar": 5,
+        "label_noise_scale": 0.2,
+        "box_noise_scale": 0.4,
+        "num_patterns": 0,
+        "aux_loss": true,
+        "cls_loss_coef": 2,
+        "focal_alpha": 0.25,
+        "bbox_loss_coef": 5,
+        "giou_loss_coef": 2,
+        "3dcenter_loss_coef": 10,
+        "dim_loss_coef": 1,
+        "angle_loss_coef": 1,
+        "depth_loss_coef": 1,
+        "depth_map_loss_coef": 1,
+        "region_loss_coef": 1,
+        "set_cost_class": 2,
+        "set_cost_bbox": 5,
+        "set_cost_giou": 2,
+        "set_cost_3dcenter": 10,
+        "predict_velocity": true,
+        "velocity_loss_coef": 0.1
+      },
+      "backbone_initialization": {
+        "weights_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\external_weights\\resnet50-0676ba61.pth",
+        "loaded_filename": "resnet50-0676ba61.pth",
+        "official_filename": "resnet50-0676ba61.pth",
+        "source_url": "https://download.pytorch.org/models/resnet50-0676ba61.pth",
+        "weights_enum": "torchvision.models.ResNet50_Weights.IMAGENET1K_V1",
+        "weights_enum_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "expected_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "observed_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "file_bytes": 102530333,
+        "source_tensor_count": 267,
+        "loaded_backbone_tensor_count": 265,
+        "loaded_parameter_tensor_count": 53,
+        "loaded_buffer_tensor_count": 212,
+        "exact_match_tensor_count": 265,
+        "ignored_keys": [
+          "fc.bias",
+          "fc.weight"
+        ],
+        "batch_norm_counters_consumed_by_loader": 0,
+        "frozen_batch_norm_module_count": 53,
+        "frozen_batch_norm_running_stat_tensor_count": 106,
+        "strict_load": true,
+        "all_backbone_tensors_exact": true,
+        "implicit_download": false
+      }
+    },
+    {
+      "batch_size": 4,
+      "status": "PASS",
+      "median_step_seconds": 0.2834148000110872,
+      "images_per_second": 14.113588986332116,
+      "estimated_compute_seconds_for_2048_image_exposures": 145.10837760567665,
+      "peak_allocated_bytes": 4529936896,
+      "peak_reserved_bytes": 4777312256,
+      "steps": [
+        {
+          "step": 0,
+          "seconds": 0.4277390000061132,
+          "loss": 174.85557556152344,
+          "gradient_norm": 2041.6309814453125,
+          "memory": {
+            "host_available_physical_bytes": 3591716864,
+            "host_available_commit_bytes": 1752735744,
+            "process_working_set_bytes": 2820096000,
+            "process_private_bytes": 10233896960
+          }
+        },
+        {
+          "step": 1,
+          "seconds": 0.2692776000476442,
+          "loss": 115.7166976928711,
+          "gradient_norm": 714.4439086914062,
+          "memory": {
+            "host_available_physical_bytes": 3587461120,
+            "host_available_commit_bytes": 1672216576,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        },
+        {
+          "step": 2,
+          "seconds": 0.27708070003427565,
+          "loss": 104.41036224365234,
+          "gradient_norm": 455.4650573730469,
+          "memory": {
+            "host_available_physical_bytes": 3591725056,
+            "host_available_commit_bytes": 1682116608,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        },
+        {
+          "step": 3,
+          "seconds": 0.27485109999543056,
+          "loss": 84.47303771972656,
+          "gradient_norm": 164.56243896484375,
+          "memory": {
+            "host_available_physical_bytes": 3589697536,
+            "host_available_commit_bytes": 1678180352,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        },
+        {
+          "step": 4,
+          "seconds": 0.2834148000110872,
+          "loss": 80.48967742919922,
+          "gradient_norm": 109.18712615966797,
+          "memory": {
+            "host_available_physical_bytes": 3577409536,
+            "host_available_commit_bytes": 1675268096,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        },
+        {
+          "step": 5,
+          "seconds": 0.3450823999592103,
+          "loss": 76.27043151855469,
+          "gradient_norm": 69.6980209350586,
+          "memory": {
+            "host_available_physical_bytes": 3610771456,
+            "host_available_commit_bytes": 1711214592,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        },
+        {
+          "step": 6,
+          "seconds": 0.298415900033433,
+          "loss": 72.4943618774414,
+          "gradient_norm": 63.2486572265625,
+          "memory": {
+            "host_available_physical_bytes": 3627397120,
+            "host_available_commit_bytes": 1724669952,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        },
+        {
+          "step": 7,
+          "seconds": 0.27792700001737103,
+          "loss": 69.82730102539062,
+          "gradient_norm": 72.55514526367188,
+          "memory": {
+            "host_available_physical_bytes": 3608391680,
+            "host_available_commit_bytes": 1708306432,
+            "process_working_set_bytes": 2820411392,
+            "process_private_bytes": 10311938048
+          }
+        }
+      ],
+      "config": {
+        "num_classes": 8,
+        "return_intermediate_dec": true,
+        "device": "cuda",
+        "backbone": "resnet50",
+        "train_backbone": true,
+        "num_feature_levels": 4,
+        "dilation": false,
+        "position_embedding": "sine",
+        "masks": false,
+        "mode": "LID",
+        "num_depth_bins": 80,
+        "depth_min": "1e-3",
+        "depth_max": 60.0,
+        "with_box_refine": true,
+        "use_dn": false,
+        "init_box": false,
+        "enc_layers": 3,
+        "dec_layers": 3,
+        "hidden_dim": 256,
+        "dim_feedforward": 256,
+        "dropout": 0.1,
+        "nheads": 8,
+        "num_queries": 50,
+        "group_num": 11,
+        "enc_n_points": 4,
+        "dec_n_points": 4,
+        "scalar": 5,
+        "label_noise_scale": 0.2,
+        "box_noise_scale": 0.4,
+        "num_patterns": 0,
+        "aux_loss": true,
+        "cls_loss_coef": 2,
+        "focal_alpha": 0.25,
+        "bbox_loss_coef": 5,
+        "giou_loss_coef": 2,
+        "3dcenter_loss_coef": 10,
+        "dim_loss_coef": 1,
+        "angle_loss_coef": 1,
+        "depth_loss_coef": 1,
+        "depth_map_loss_coef": 1,
+        "region_loss_coef": 1,
+        "set_cost_class": 2,
+        "set_cost_bbox": 5,
+        "set_cost_giou": 2,
+        "set_cost_3dcenter": 10,
+        "predict_velocity": true,
+        "velocity_loss_coef": 0.1
+      },
+      "backbone_initialization": {
+        "weights_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\external_weights\\resnet50-0676ba61.pth",
+        "loaded_filename": "resnet50-0676ba61.pth",
+        "official_filename": "resnet50-0676ba61.pth",
+        "source_url": "https://download.pytorch.org/models/resnet50-0676ba61.pth",
+        "weights_enum": "torchvision.models.ResNet50_Weights.IMAGENET1K_V1",
+        "weights_enum_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "expected_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "observed_sha256": "0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a",
+        "file_bytes": 102530333,
+        "source_tensor_count": 267,
+        "loaded_backbone_tensor_count": 265,
+        "loaded_parameter_tensor_count": 53,
+        "loaded_buffer_tensor_count": 212,
+        "exact_match_tensor_count": 265,
+        "ignored_keys": [
+          "fc.bias",
+          "fc.weight"
+        ],
+        "batch_norm_counters_consumed_by_loader": 0,
+        "frozen_batch_norm_module_count": 53,
+        "frozen_batch_norm_running_stat_tensor_count": 106,
+        "strict_load": true,
+        "all_backbone_tensors_exact": true,
+        "implicit_download": false
+      }
+    }
+  ]
+}
