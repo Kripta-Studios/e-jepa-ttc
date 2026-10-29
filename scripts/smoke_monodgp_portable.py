@@ -197,6 +197,24 @@ def prepare_source(
     return receipt
 
 
+def load_detector_config(
+    source: Path,
+    group_num: int = 11,
+    *,
+    predict_velocity: bool = False,
+    velocity_loss_coef: float = 0.1,
+) -> dict[str, Any]:
+    """Load and apply the exact portable MonoDGP configuration updates."""
+    raw = yaml.safe_load((source / "configs/monodgp.yaml").read_text(encoding="utf-8"))
+    if not isinstance(raw, dict) or not isinstance(raw.get("model"), dict):
+        raise ValueError("Portable MonoDGP YAML must contain one model mapping")
+    config = dict(raw["model"])
+    config.update(num_classes=8, group_num=group_num, device="cuda")
+    if predict_velocity:
+        config.update(predict_velocity=True, velocity_loss_coef=velocity_loss_coef)
+    return config
+
+
 def build_detector(
     source: Path,
     group_num: int = 11,
@@ -211,10 +229,12 @@ def build_detector(
     sys.path.insert(0, str(source.resolve()))
     from lib.models.monodgp import build
 
-    config = yaml.safe_load((source / "configs/monodgp.yaml").read_text(encoding="utf-8"))["model"]
-    config.update(num_classes=8, group_num=group_num, device="cuda")
-    if predict_velocity:
-        config.update(predict_velocity=True, velocity_loss_coef=velocity_loss_coef)
+    config = load_detector_config(
+        source,
+        group_num,
+        predict_velocity=predict_velocity,
+        velocity_loss_coef=velocity_loss_coef,
+    )
     model, criterion = build(config)
     return model.cuda(), criterion.cuda(), config
 

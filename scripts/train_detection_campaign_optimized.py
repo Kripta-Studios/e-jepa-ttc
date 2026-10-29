@@ -21,8 +21,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import train_detection_campaign as ordinary
 
+from e_jepa_ttc.detection.campaign_preregistration import (
+    base_runtime_relative_paths,
+    optimized_runtime_relative_paths,
+)
 from e_jepa_ttc.detection.campaign_training import (
     CampaignConfig,
+    canonical_sha256,
     load_campaign_config,
     sha256_file,
     validate_campaign_manifest,
@@ -44,9 +49,11 @@ def _load_json(path: Path) -> dict[str, Any]:
     return raw
 
 
-def _build_store(
+def _build_store_contract(
     config: CampaignConfig, performance: PerformanceConfig
-) -> tuple[IndexedRGBStore, dict[str, object]]:
+) -> tuple[
+    dict[str, tuple[str, str, str]], dict[str, str], dict[str, object]
+]:
     manifest = validate_campaign_manifest(config)
     metadata = validate_manifest_against_metadata(manifest, config)
     admitted = dict(metadata["media_admission"])
@@ -78,21 +85,28 @@ def _build_store(
     inventory = _load_json(inventory_path)["files"]
     shards = {value[0] for value in ownership.values()}
     shard_hashes = {path: str(inventory[path]["sha256"]) for path in shards}
+    return ownership, shard_hashes, {
+        "schema": "eap_detection_indexed_runtime_v1",
+        "performance_config_sha256": performance.sha256,
+        "indexed_reader_sha256": performance.expected_indexed_reader_sha256,
+        "indexed_store_sha256": performance.expected_indexed_store_sha256,
+        "union_count": len(union),
+        "union_sha256": canonical_sha256(list(union)),
+        "prefetch_batches": 0,
+    }
+
+
+def _build_store(
+    config: CampaignConfig, performance: PerformanceConfig
+) -> tuple[IndexedRGBStore, dict[str, object]]:
+    ownership, shard_hashes, extension = _build_store_contract(config, performance)
     store = IndexedRGBStore(
         config.data.root,
         ownership,
         shard_hashes,
         max_open_handles=performance.max_open_handles,
     )
-    return store, {
-        "schema": "eap_detection_indexed_runtime_v1",
-        "performance_config_sha256": performance.sha256,
-        "indexed_reader_sha256": performance.expected_indexed_reader_sha256,
-        "indexed_store_sha256": performance.expected_indexed_store_sha256,
-        "union_count": len(union),
-        "union_sha256": ordinary.canonical_sha256(list(union)),
-        "prefetch_batches": 0,
-    }
+    return store, extension
 
 
 def run(
@@ -106,7 +120,6 @@ def run(
     performance, performance_receipt = PerformanceConfig.load(performance_path)
     reader_path = ROOT / "src/e_jepa_ttc/detection/indexed_rgb_data.py"
     store_path = ROOT / "src/e_jepa_ttc/detection/indexed_rgb_store.py"
-    optimized_contract_path = ROOT / "src/e_jepa_ttc/detection/optimized_campaign.py"
     if sha256_file(reader_path) != performance.expected_indexed_reader_sha256:
         raise ValueError("Indexed reader source differs from performance sidecar")
     if sha256_file(store_path) != performance.expected_indexed_store_sha256:
@@ -128,6 +141,13 @@ def run(
         )
 
     try:
+        performance_relative = performance_path.resolve().relative_to(ROOT).as_posix()
+        base_count = len(base_runtime_relative_paths())
+        optimized_extra = tuple(
+            ROOT / relative
+            for relative in optimized_runtime_relative_paths(performance_relative)[base_count:]
+        )
+
         def performance_metrics() -> dict[str, object]:
             store_metrics = store.metrics()
             phases: dict[str, object] = dict(phase_metrics.to_dict())
@@ -149,13 +169,7 @@ def run(
             stop_after_update,
             dataset_factory=dataset_factory,
             runtime_extension=extension,
-            extra_owned_paths=(
-                Path(__file__),
-                reader_path,
-                store_path,
-                optimized_contract_path,
-                performance_path,
-            ),
+            extra_owned_paths=optimized_extra,
             performance_metrics=performance_metrics,
             performance_observer=phase_metrics.add,
             stop_commit_validator=transactional_stop_due,

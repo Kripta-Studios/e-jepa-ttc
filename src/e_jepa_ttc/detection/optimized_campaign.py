@@ -89,7 +89,6 @@ class PerformanceConfig:
             raise TypeError("Performance config must be a JSON object")
         result = cls.from_dict(raw)
         return result, {
-            "path": str(resolved),
             "file_sha256": sha256_file(resolved),
             "canonical_sha256": result.sha256,
         }

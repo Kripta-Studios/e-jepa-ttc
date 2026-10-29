@@ -33,14 +33,23 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import numpy as np
 import torch
-from smoke_monodgp_portable import build_detector, prepare_source, require_finite
+from smoke_monodgp_portable import (
+    build_detector,
+    load_detector_config,
+    prepare_source,
+    require_finite,
+)
 
 from e_jepa_ttc.detection.backbone_initialization import load_imagenet_resnet50_backbone
+from e_jepa_ttc.detection.campaign_preregistration import (
+    base_runtime_relative_paths,
+    build_runtime_preregistration,
+    build_runtime_provenance,
+)
 from e_jepa_ttc.detection.campaign_training import (
     CampaignConfig,
     ResumablePermutationSampler,
     UpdateLRScheduler,
-    canonical_sha256,
     dataset_cache_kwargs,
     inherit_selected_checkpoint,
     load_campaign_checkpoint,
@@ -317,6 +326,13 @@ def _snapshot(output: Path, paths: list[Path]) -> dict[str, str]:
     return receipt
 
 
+def campaign_owned_paths(extra_owned_paths: tuple[Path, ...] = ()) -> list[Path]:
+    """Return the exact ordered runtime source closure frozen into lineage."""
+    return [ROOT / relative for relative in base_runtime_relative_paths()] + list(
+        extra_owned_paths
+    )
+
+
 def snapshot_media_admission(output: Path, source: Path) -> dict[str, str]:
     """Freeze an external admission receipt at one location-independent code path."""
     if not source.is_file():
@@ -482,16 +498,13 @@ def run(
         predict_velocity=config.model.predict_velocity,
         velocity_loss_coef=config.model.velocity_loss_coef,
     )
-    expected_model_settings = {
-        "backbone": config.model.backbone,
-        "num_classes": config.model.num_classes,
-        "num_queries": config.model.queries,
-        "group_num": config.model.group_num,
-        "predict_velocity": config.model.predict_velocity,
-        "velocity_loss_coef": config.model.velocity_loss_coef,
-        "device": "cuda",
-    }
-    if any(effective_model.get(key) != value for key, value in expected_model_settings.items()):
+    expected_model_settings = load_detector_config(
+        Path(config.model.portable_root),
+        config.model.group_num,
+        predict_velocity=config.model.predict_velocity,
+        velocity_loss_coef=config.model.velocity_loss_coef,
+    )
+    if effective_model != expected_model_settings:
         raise ValueError("Effective MonoDGP settings differ from the declared campaign model")
     groups, ledger = optimizer_parameter_groups(model, config.optimization)
     optimizer = torch.optim.AdamW(groups)
@@ -506,60 +519,26 @@ def run(
     selection_tokens = manifest["roles"][config.data.selection_role]["sample_tokens"]
     pilot_tokens = manifest["historical_panels"]["pilot_selection256"]["sample_tokens"]
     sampler = ResumablePermutationSampler(len(train_tokens), config.seed)
-    owned_paths = [
-        Path(__file__),
-        ROOT / "data/manifests/eap_detection_public_files_v1.json",
-        ROOT / "scripts/infer_detection_campaign.py",
-        ROOT / "scripts/smoke_monodgp_portable.py",
-        ROOT / "src/e_jepa_ttc/__init__.py",
-        ROOT / "src/e_jepa_ttc/detection/__init__.py",
-        ROOT / "src/e_jepa_ttc/detection/campaign_training.py",
-        ROOT / "src/e_jepa_ttc/detection/backbone_initialization.py",
-        ROOT / "src/e_jepa_ttc/detection/development_metrics.py",
-        ROOT / "src/e_jepa_ttc/detection/diagnostic_export.py",
-        ROOT / "src/e_jepa_ttc/detection/eap_rgb_data.py",
-        ROOT / "src/e_jepa_ttc/detection/evaluation_ap_fast.py",
-        ROOT / "src/e_jepa_ttc/detection/evaluation_protocol.py",
-        ROOT / "src/e_jepa_ttc/detection/evaluation_ground_truth.py",
-        ROOT / "src/e_jepa_ttc/detection/evaluation_v2.py",
-        ROOT / "src/e_jepa_ttc/detection/geometry_contract.py",
-        ROOT / "src/e_jepa_ttc/detection/monodgp_eap_adapter.py",
-        ROOT / "src/e_jepa_ttc/detection/portable_attention.py",
-        ROOT / "src/e_jepa_ttc/detection/velocity_extension.py",
-    ] + list(extra_owned_paths)
+    owned_paths = campaign_owned_paths(extra_owned_paths)
     code_sha256 = _snapshot(output, owned_paths)
     code_sha256.update(snapshot_media_admission(output, Path(media_admission["receipt_path"])))
     portable_source_sha256 = _snapshot_portable_source(Path(config.model.portable_root), output)
-    runtime_preregistration = {
-        "schema": "eap_detection_campaign_runtime_preregistration_v1",
-        "config": asdict(config),
-        "config_sha256": config.sha256,
-        "protocol_sha256": protocol.sha256,
-        "source_receipt": source,
-        "source_receipt_sha256": canonical_sha256(source),
-        "effective_model": effective_model,
-        "effective_model_sha256": canonical_sha256(effective_model),
-        "code_sha256": code_sha256,
-        "code_sha256_manifest": canonical_sha256(code_sha256),
-        "portable_source_sha256": portable_source_sha256,
-        "portable_source_sha256_manifest": canonical_sha256(portable_source_sha256),
-        "dataset_media_sha256": manifest["source_media_sha256"],
-        "media_admission_receipt_sha256": media_admission["receipt_sha256"],
-        "media_admission_population_sha256": media_admission["train_token_population_sha256"],
-        "matmul_precision": config.optimization.matmul_precision,
-        "runtime_extension": dict(runtime_extension or {}),
-    }
+    runtime_preregistration = build_runtime_preregistration(
+        config=config,
+        protocol=protocol,
+        source_receipt=source,
+        effective_model=effective_model,
+        code_sha256=code_sha256,
+        portable_source_sha256=portable_source_sha256,
+        dataset_media_sha256=manifest["source_media_sha256"],
+        media_admission_receipt_sha256=media_admission["receipt_sha256"],
+        media_admission_population_sha256=media_admission["train_token_population_sha256"],
+        runtime_extension=runtime_extension,
+    )
     write_json(output / "runtime_preregistration.json", runtime_preregistration)
-    runtime_provenance = {
-        "runtime_preregistration_sha256": sha256_file(output / "runtime_preregistration.json"),
-        "source_receipt_sha256": runtime_preregistration["source_receipt_sha256"],
-        "effective_model_sha256": runtime_preregistration["effective_model_sha256"],
-        "code_sha256_manifest": runtime_preregistration["code_sha256_manifest"],
-        "portable_source_sha256_manifest": runtime_preregistration[
-            "portable_source_sha256_manifest"
-        ],
-        "matmul_precision": config.optimization.matmul_precision,
-    }
+    runtime_provenance = build_runtime_provenance(
+        sha256_file(output / "runtime_preregistration.json"), runtime_preregistration
+    )
     start_update, best_metric = 0, None
     data_member_sha256: dict[str, str] = dict(expected_member_sha256)
     ancestor_progress: dict[str, int | float] = {
