@@ -182,6 +182,40 @@ def test_training_dataset_constructor_applies_declared_label_cache(monkeypatch) 
     }
 
 
+def test_training_first_read_rejects_media_admission_hash_mismatch() -> None:
+    module = load_script("train_detection_campaign.py")
+    config_path = Path(__file__).parents[2] / "configs/detection_campaign/rgb_r0_d4096_seed7.yaml"
+    config = module.load_campaign_config(config_path)
+
+    class FakeDataset:
+        def __getitem__(self, index):
+            assert index == 0
+            return type("Raw", (), {"sample_token": "token", "member_sha256": "b" * 64})()
+
+    cache = module.PreparedCache(FakeDataset(), config, {"token": "a" * 64})
+    with pytest.raises(ValueError, match="RGB member bytes changed"):
+        cache.get(0)
+
+
+def test_external_media_admission_snapshot_is_location_independent(tmp_path: Path) -> None:
+    module = load_script("train_detection_campaign.py")
+    first_source = tmp_path / "outer-a/media_admission.json"
+    second_source = tmp_path / "outer-b/relocated.json"
+    first_source.parent.mkdir()
+    second_source.parent.mkdir()
+    payload = '{"schema":"eap_detection_media_admission_v1","status":"PASS"}\n'
+    first_source.write_text(payload, encoding="utf-8")
+    second_source.write_text(payload, encoding="utf-8")
+    first = module.snapshot_media_admission(tmp_path / "producer-a", first_source)
+    second = module.snapshot_media_admission(tmp_path / "producer-b", second_source)
+    assert first == second
+    assert module.canonical_sha256(first) == module.canonical_sha256(second)
+    assert set(first) == {"data/admission/media_admission.json"}
+    assert (tmp_path / "producer-a/code/data/admission/media_admission.json").read_text(
+        encoding="utf-8"
+    ) == payload
+
+
 def test_evaluation_model_input_is_invariant_to_annotation_order_and_overflow() -> None:
     module = load_script("train_detection_campaign.py")
     config_path = Path(__file__).parents[2] / "configs/detection_campaign/rgb_r0_d4096_seed7.yaml"

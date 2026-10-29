@@ -603,3 +603,34 @@ on the integration pull request; merging requires those checks to pass.
 
 No new training, model selection, benchmark submission, or scientific-result
 change is part of this integration.
+
+## 2026-10-29 — Detection continuation S0–S6
+
+The explicitly authorized continuation uses isolated branch
+`dev/eap-s0-evaluation-20261029`, based on pilot commit `24b8f36f`.
+The received plan and audit package remain byte-preserved. A detector-independent
+local evaluation protocol, ignored-object handling, error diagnostics, constant
+and permutation controls, and a label-free external observer are implemented and
+independently reviewed. The public evidence bundle regenerates without private
+`output/` files:
+
+```text
+python scripts/build_detection_sota_evidence.py --from-bundle --check
+```
+
+S1 added a diverse D4096 manifest, full training-state continuation, strict frozen
+inference and periodic validation. A real four-to-eight-update continuation and
+independent inference gave exact prediction parity. R0 subsequently stopped after
+725 completed updates because a PNG in the pinned public TAR is intrinsically
+truncated; the durable checkpoint is update 512. All failure evidence is retained.
+A complete media decode/hash preflight is underway before a revised fixed-cohort
+restart. This is not a completed RGB baseline or a new AP claim.
+
+Preparatory S2–S4 modules now cover train-only quality ranking, causal exposure
+history and exact chunked event accumulation. The multiobject PHASE service uses
+one packet ingestion and bounded object chunks while preserving native phase
+quantiles. These engineering checks do not demonstrate new TTC generalization.
+
+Detailed commands, scoped verification and remaining scientific gates are in
+[the execution ledger](detection_sota_20261029/EXECUTION.md). No cloud training,
+benchmark submission or external publication was performed in this continuation.

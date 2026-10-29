@@ -22,7 +22,7 @@ import numpy as np
 import torch
 import yaml
 
-from e_jepa_ttc.detection.eap_rgb_data import safe_dataset_path
+from e_jepa_ttc.detection.eap_rgb_data import safe_dataset_path, safe_relative_path
 from e_jepa_ttc.detection.evaluation_protocol import EvaluationProtocol
 
 CONFIG_SCHEMA = "eap_detection_campaign_config_v1"
@@ -482,23 +482,24 @@ def validate_campaign_manifest(config: CampaignConfig) -> dict[str, Any]:
         raise ValueError("Campaign manifest SHA-256 differs from the preregistered value")
     if sha256_file(split_path) != config.data.expected_split_sha256:
         raise ValueError("Campaign split SHA-256 differs from the preregistered value")
-    raw = _exact(
-        json.loads(path.read_text(encoding="utf-8")),
-        "manifest",
-        {
-            "schema",
-            "dataset_revision",
-            "source_split",
-            "source_media_sha256",
-            "candidate_split_sha256",
-            "population_audit_sha256",
-            "sampling_seed",
-            "roles",
-            "historical_panels",
-            "sampling",
-            "limitations",
-        },
-    )
+    manifest_keys = {
+        "schema",
+        "dataset_revision",
+        "source_split",
+        "source_media_sha256",
+        "candidate_split_sha256",
+        "population_audit_sha256",
+        "sampling_seed",
+        "roles",
+        "historical_panels",
+        "sampling",
+        "limitations",
+    }
+    raw = _mapping(json.loads(path.read_text(encoding="utf-8")), "manifest")
+    unknown = set(raw) - (manifest_keys | {"media_admission"})
+    missing = manifest_keys - set(raw)
+    if unknown or missing:
+        raise ValueError(f"manifest: unknown={sorted(unknown)}, missing={sorted(missing)}")
     if raw["schema"] != MANIFEST_SCHEMA or raw["source_split"] != "train":
         raise ValueError("Campaign manifest must use public train data and the v1 schema")
     if raw["dataset_revision"] != config.data.expected_dataset_revision:
@@ -589,7 +590,13 @@ def validate_manifest_against_metadata(
     media_path = Path(config.data.root) / "data/train.parquet"
     table = pd.read_parquet(
         media_path,
-        columns=["sample_token", "sequence_id", "split"],
+        columns=[
+            "sample_token",
+            "sequence_id",
+            "split",
+            "rgb_shard_path",
+            "rgb_member_path",
+        ],
         filters=[("sample_token", "in", tokens)],
     )
     if len(table) != len(tokens) or set(table.sample_token) != set(tokens):
@@ -599,6 +606,17 @@ def validate_manifest_against_metadata(
     if table.sample_token.duplicated().any() or not table.split.eq("train").all():
         raise ValueError("Campaign tokens must map uniquely to the public train split")
     owner = dict(zip(table.sample_token.astype(str), table.sequence_id.astype(str), strict=True))
+    token_media = dict(
+        zip(
+            table.sample_token.astype(str),
+            zip(
+                table.rgb_shard_path.astype(str),
+                table.rgb_member_path.astype(str),
+                strict=True,
+            ),
+            strict=True,
+        )
+    )
     for role in (config.data.train_role, config.data.selection_role):
         declared = set(manifest["roles"][role]["sequence_ids"])
         observed = {owner[token] for token in manifest["roles"][role]["sample_tokens"]}
@@ -621,6 +639,13 @@ def validate_manifest_against_metadata(
             raise ValueError(f"{role} contains sequences outside its fixed split assignment")
     if {owner[token] for token in pilot_tokens} - set(assignments[config.data.selection_role]):
         raise ValueError("Historical pilot panel leaves the frozen selection sequences")
+    media_admission = validate_media_admission(
+        manifest,
+        config,
+        full_selection_tokens=full_tokens,
+        token_owner=owner,
+        token_media=token_media,
+    )
     return {
         **audit_receipt,
         "canonical_media": str(media_path),
@@ -632,6 +657,137 @@ def validate_manifest_against_metadata(
         ),
         "token_ownership_sha256": canonical_sha256(sorted(owner.items())),
         "split_sha256": config.data.expected_split_sha256,
+        "media_admission": media_admission,
+    }
+
+
+def validate_media_admission(
+    manifest: Mapping[str, Any],
+    config: CampaignConfig,
+    *,
+    full_selection_tokens: Sequence[str],
+    token_owner: Mapping[str, str],
+    token_media: Mapping[str, tuple[str, str]],
+) -> dict[str, Any]:
+    """Verify the decoded-RGB admission and return hashes enforced on first read."""
+    declaration = _exact(
+        manifest.get("media_admission"),
+        "manifest.media_admission",
+        {
+            "receipt_path",
+            "receipt_sha256",
+            "source_manifest_sha256",
+            "train_token_population_sha256",
+        },
+    )
+    relative = safe_relative_path(
+        _string(declaration["receipt_path"], "media_admission.receipt_path")
+    )
+    manifest_parent = Path(config.data.manifest).parent.resolve()
+    receipt_path = manifest_parent.joinpath(*relative.parts).resolve()
+    if not receipt_path.is_relative_to(manifest_parent):
+        raise ValueError("Media-admission receipt escapes the manifest directory")
+    receipt_sha = _string(declaration["receipt_sha256"], "media_admission.receipt_sha256")
+    if not receipt_path.is_file() or sha256_file(receipt_path) != receipt_sha:
+        raise ValueError("Media-admission receipt is absent or differs from manifest")
+    receipt = _exact(
+        json.loads(receipt_path.read_text(encoding="utf-8")),
+        "media_admission_receipt",
+        {
+            "schema",
+            "status",
+            "source_manifest_sha256",
+            "source_manifest_canonical_sha256",
+            "source_full_preflight_summary_sha256",
+            "source_full_preflight_token_ledger_sha256",
+            "source_full_preflight_shard_ledger_sha256",
+            "source_frame_ledger_sha256",
+            "source_full_selection_sha256",
+            "source_media_sha256",
+            "source_pinned_inventory_sha256",
+            "implementation_sha256",
+            "excluded",
+            "replacement",
+            "rare_identity_retention",
+            "new_train_token_population_sha256",
+            "selection_1024_unchanged",
+            "full_selection_23958_unchanged",
+            "final_counts",
+            "final_media",
+        },
+    )
+    train_tokens = tuple(manifest["roles"][config.data.train_role]["sample_tokens"])
+    full_tokens = tuple(full_selection_tokens)
+    expected_tokens = set(train_tokens) | set(full_tokens)
+    train_population_sha = canonical_sha256(list(train_tokens))
+    inventory = Path(__file__).parents[3] / "data/manifests/eap_detection_public_files_v1.json"
+    bindings = {
+        "source_manifest_sha256": declaration["source_manifest_sha256"],
+        "new_train_token_population_sha256": declaration["train_token_population_sha256"],
+        "source_full_selection_sha256": config.data.expected_full_selection_sha256,
+        "source_media_sha256": manifest["source_media_sha256"],
+        "source_pinned_inventory_sha256": sha256_file(inventory),
+    }
+    if (
+        receipt["schema"] != "eap_detection_media_admission_v1"
+        or receipt["status"] != "PASS"
+        or declaration["train_token_population_sha256"] != train_population_sha
+        or any(receipt.get(key) != value for key, value in bindings.items())
+        or receipt["selection_1024_unchanged"] is not True
+        or receipt["full_selection_23958_unchanged"] is not True
+    ):
+        raise ValueError("Media-admission receipt differs from the frozen campaign population")
+    final_media = _mapping(receipt["final_media"], "media_admission_receipt.final_media")
+    if set(final_media) != expected_tokens:
+        raise ValueError("Media-admission ledger must cover exactly train and full selection")
+    counts = _exact(
+        receipt["final_counts"],
+        "media_admission_receipt.final_counts",
+        {"train", "full_selection", "total"},
+    )
+    if counts != {
+        "train": len(train_tokens),
+        "full_selection": len(full_tokens),
+        "total": len(expected_tokens),
+    }:
+        raise ValueError("Media-admission counts differ from its exact token population")
+    train_set = set(train_tokens)
+    expected_hashes: dict[str, str] = {}
+    for token in sorted(expected_tokens):
+        entry = _exact(
+            final_media[token],
+            f"media_admission.final_media[{token}]",
+            {
+                "role",
+                "sequence_id",
+                "rgb_shard_path",
+                "rgb_member_path",
+                "member_size_bytes",
+                "member_sha256",
+                "image_wh",
+                "source_owner",
+            },
+        )
+        member_hash = _string(entry["member_sha256"], f"final_media[{token}].member_sha256")
+        if (
+            entry["role"] != ("train" if token in train_set else "full_selection")
+            or entry["sequence_id"] != token_owner.get(token)
+            or token_media.get(token) != (entry["rgb_shard_path"], entry["rgb_member_path"])
+            or _integer(entry["member_size_bytes"], "member_size_bytes", minimum=1)
+            > 32 * 1024 * 1024
+            or not re.fullmatch(r"[0-9a-f]{64}", member_hash)
+            or entry["image_wh"] != [1280, 720]
+            or entry["source_owner"] not in {"rgb_full_preflight_v1", "replacement_probe_v1"}
+        ):
+            raise ValueError(f"Media-admission entry differs from metadata: {token}")
+        expected_hashes[token] = member_hash
+    return {
+        "schema": receipt["schema"],
+        "receipt_path": str(receipt_path),
+        "receipt_sha256": receipt_sha,
+        "train_token_population_sha256": train_population_sha,
+        "admitted_token_count": len(expected_hashes),
+        "data_member_sha256": expected_hashes,
     }
 
 

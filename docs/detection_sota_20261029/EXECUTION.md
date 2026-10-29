@@ -85,3 +85,38 @@ Los gates exactos S0–S6 y las limitaciones pendientes se extraen en el documen
 generado. En particular, `current_v1` no acredita scorer oficial, soporte raro
 suficiente, historia RGB causal, contribución de eventos, generalización TTC ni
 confirmación multisemilla/SOTA.
+
+## Incidencia posterior al corte: RGB incompleto en el release fijado
+
+R0 v2 terminó con `FAILED` el 2026-10-29 a las 16:57:47 UTC, después de 725
+updates completos. El checkpoint durable conserva 512 updates; no llegó a la
+primera selección programada en 1.024. No se presenta una AP nueva. Los logs,
+el checkpoint y `failure.json` permanecen en su directorio original.
+
+La reproducción estricta identificó el token
+`OYgB6RGWcq:000000661_000000160`: el PNG tiene 393.216 bytes y Pillow rechaza
+su carga completa. El TAR de 1.075.773.440 bytes coincide con el SHA-256 público
+`d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5`.
+Por tanto, una descarga idéntica del release no corrige el miembro incompleto.
+No se habilita `LOAD_TRUNCATED_IMAGES` ni se omiten ejemplos silenciosamente.
+
+La validación completa terminó: 23.958/23.958 frames de selección y 4.095/4.096 de
+train decodifican estrictamente; los 107 TAR coinciden en tamaño y SHA-256 con el
+inventario público fijado. La revisión v5 sustituye únicamente el PNG fallido por
+el candidato admisible más cercano de la misma secuencia, 100.001 µs anterior.
+Conserva ambas selecciones y todas las identidades entrenables por clase. El
+manifest v5 tiene SHA-256
+`9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1`.
+El recibo liga los 28.054 hashes de miembros antes de CUDA y los comprueba en
+primera lectura y resume. El reinicio científico será frío, común a R0/R1/R2;
+el run fallido se conserva sin migrar ni reinterpretar su checkpoint 512.
+Véanse [RGB_FULL_PREFLIGHT.md](RGB_FULL_PREFLIGHT.md) y
+[D4096_READABLE_REVISION.md](D4096_READABLE_REVISION.md).
+
+La evaluación completa también requería corregir su escritura: la versión anterior
+materializaba un JSON gigante en memoria. La escritura incremental probada conserva
+bytes y métricas exactamente en 1.024/4.096 frames. Su perfil revisado queda en
+`output/evaluation_memory/streaming_writer_profile_v1.json`, SHA-256
+`a892e08d6048332a0f2928a43131ee7d7b3f3375d8d81e52f8562fff1f7f31d4`.
+La proyección a 23.958 frames es una estimación conservadora, no una medición a ese
+tamaño. No se ha ejecutado ninguna migración de checkpoints.

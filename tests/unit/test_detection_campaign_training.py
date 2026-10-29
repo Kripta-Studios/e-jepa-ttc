@@ -33,9 +33,90 @@ from e_jepa_ttc.detection.campaign_training import (
     sha256_file,
     validate_campaign_manifest,
     validate_manifest_against_metadata,
+    validate_media_admission,
     validate_population_audit,
     validate_stop_after_update,
 )
+
+
+def media_admission_fixture(tmp_path: Path):
+    module_root = Path(__file__).parents[2]
+    cfg = replace(
+        config(),
+        data=replace(config().data, manifest=str(tmp_path / "manifest.json")),
+    )
+    train_tokens = ["train-token"]
+    full_tokens = ["selection-token"]
+    train_sha = canonical_sha256(train_tokens)
+    source_manifest_sha = "1" * 64
+    inventory = module_root / "data/manifests/eap_detection_public_files_v1.json"
+    receipt = {
+        "schema": "eap_detection_media_admission_v1",
+        "status": "PASS",
+        "source_manifest_sha256": source_manifest_sha,
+        "source_manifest_canonical_sha256": "2" * 64,
+        "source_full_preflight_summary_sha256": "3" * 64,
+        "source_full_preflight_token_ledger_sha256": "4" * 64,
+        "source_full_preflight_shard_ledger_sha256": "5" * 64,
+        "source_frame_ledger_sha256": "6" * 64,
+        "source_full_selection_sha256": cfg.data.expected_full_selection_sha256,
+        "source_media_sha256": "b" * 64,
+        "source_pinned_inventory_sha256": sha256_file(inventory),
+        "implementation_sha256": "7" * 64,
+        "excluded": [],
+        "replacement": {},
+        "rare_identity_retention": {},
+        "new_train_token_population_sha256": train_sha,
+        "selection_1024_unchanged": True,
+        "full_selection_23958_unchanged": True,
+        "final_counts": {"train": 1, "full_selection": 1, "total": 2},
+        "final_media": {
+            "train-token": {
+                "role": "train",
+                "sequence_id": "train-sequence",
+                "rgb_shard_path": "data/train/train-sequence/rgb.tar",
+                "rgb_member_path": "rgb/train.png",
+                "member_size_bytes": 10,
+                "member_sha256": "8" * 64,
+                "image_wh": [1280, 720],
+                "source_owner": "replacement_probe_v1",
+            },
+            "selection-token": {
+                "role": "full_selection",
+                "sequence_id": "selection-sequence",
+                "rgb_shard_path": "data/train/selection-sequence/rgb.tar",
+                "rgb_member_path": "rgb/selection.png",
+                "member_size_bytes": 11,
+                "member_sha256": "9" * 64,
+                "image_wh": [1280, 720],
+                "source_owner": "rgb_full_preflight_v1",
+            },
+        },
+    }
+    receipt_path = tmp_path / "media_admission.json"
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    manifest = {
+        "source_media_sha256": "b" * 64,
+        "roles": {"train": {"sample_tokens": train_tokens}},
+        "media_admission": {
+            "receipt_path": "media_admission.json",
+            "receipt_sha256": sha256_file(receipt_path),
+            "source_manifest_sha256": source_manifest_sha,
+            "train_token_population_sha256": train_sha,
+        },
+    }
+    owner = {
+        "train-token": "train-sequence",
+        "selection-token": "selection-sequence",
+    }
+    media = {
+        "train-token": ("data/train/train-sequence/rgb.tar", "rgb/train.png"),
+        "selection-token": (
+            "data/train/selection-sequence/rgb.tar",
+            "rgb/selection.png",
+        ),
+    }
+    return cfg, manifest, receipt, receipt_path, full_tokens, owner, media
 
 
 class TinyCampaignModel(torch.nn.Module):
@@ -270,6 +351,51 @@ def test_population_audit_rejects_tampered_label_bytes(tmp_path: Path) -> None:
         validate_population_audit(manifest, cfg)
 
 
+def test_media_admission_preloads_exact_population_hashes(tmp_path: Path) -> None:
+    cfg, manifest, _, _, full_tokens, owner, media = media_admission_fixture(tmp_path)
+    result = validate_media_admission(
+        manifest,
+        cfg,
+        full_selection_tokens=full_tokens,
+        token_owner=owner,
+        token_media=media,
+    )
+    assert result["data_member_sha256"] == {
+        "train-token": "8" * 64,
+        "selection-token": "9" * 64,
+    }
+
+
+def test_media_admission_rejects_tampered_receipt_and_wrong_population(
+    tmp_path: Path,
+) -> None:
+    cfg, manifest, receipt, receipt_path, full_tokens, owner, media = media_admission_fixture(
+        tmp_path
+    )
+    receipt_path.write_text(json.dumps(receipt) + " ", encoding="utf-8")
+    with pytest.raises(ValueError, match="absent or differs"):
+        validate_media_admission(
+            manifest,
+            cfg,
+            full_selection_tokens=full_tokens,
+            token_owner=owner,
+            token_media=media,
+        )
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    manifest["media_admission"]["receipt_sha256"] = sha256_file(receipt_path)
+    receipt["final_media"]["extra-token"] = receipt["final_media"]["train-token"]
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    manifest["media_admission"]["receipt_sha256"] = sha256_file(receipt_path)
+    with pytest.raises(ValueError, match="cover exactly"):
+        validate_media_admission(
+            manifest,
+            cfg,
+            full_selection_tokens=full_tokens,
+            token_owner=owner,
+            token_media=media,
+        )
+
+
 def test_full_selection_rejects_token_owned_by_other_sequence(tmp_path: Path) -> None:
     import pandas as pd
 
@@ -277,13 +403,27 @@ def test_full_selection_rejects_token_owned_by_other_sequence(tmp_path: Path) ->
     media_path = Path(cfg.data.root) / "data/train.parquet"
     pd.DataFrame(
         [
-            {"sample_token": "train-token", "sequence_id": "train-sequence", "split": "train"},
+            {
+                "sample_token": "train-token",
+                "sequence_id": "train-sequence",
+                "split": "train",
+                "rgb_shard_path": "train.tar",
+                "rgb_member_path": "train.png",
+            },
             {
                 "sample_token": "selection-token",
                 "sequence_id": "selection-sequence",
                 "split": "train",
+                "rgb_shard_path": "selection.tar",
+                "rgb_member_path": "selection.png",
             },
-            {"sample_token": "foreign-token", "sequence_id": "train-sequence", "split": "train"},
+            {
+                "sample_token": "foreign-token",
+                "sequence_id": "train-sequence",
+                "split": "train",
+                "rgb_shard_path": "train.tar",
+                "rgb_member_path": "foreign.png",
+            },
         ]
     ).to_parquet(media_path, index=False)
     media_sha = sha256_file(media_path)

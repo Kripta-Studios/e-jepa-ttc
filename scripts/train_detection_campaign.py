@@ -62,7 +62,9 @@ from e_jepa_ttc.detection.monodgp_eap_adapter import decode_eap, prepare_sample
 def write_json(path: Path, value: object) -> None:
     """Write one finite JSON artifact."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    with path.open("w", encoding="utf-8") as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write("\n")
 
 
 def load_protocol(value: str) -> EvaluationProtocol:
@@ -286,6 +288,19 @@ def _snapshot(output: Path, paths: list[Path]) -> dict[str, str]:
     return receipt
 
 
+def snapshot_media_admission(output: Path, source: Path) -> dict[str, str]:
+    """Freeze an external admission receipt at one location-independent code path."""
+    if not source.is_file():
+        raise FileNotFoundError(f"Media-admission receipt is missing: {source}")
+    relative = Path("data/admission/media_admission.json")
+    destination = output / "code" / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists():
+        raise FileExistsError(f"Snapshot destination already exists: {destination}")
+    shutil.copy2(source, destination)
+    return {relative.as_posix(): sha256_file(destination)}
+
+
 def _snapshot_portable_source(source: Path, output: Path) -> dict[str, str]:
     """Freeze and hash the complete patched third-party runtime."""
     destination = output / "code/portable_source"
@@ -354,6 +369,9 @@ def run(
     config = load_campaign_config(config_path)
     manifest = validate_campaign_manifest(config)
     metadata_receipt = validate_manifest_against_metadata(manifest, config)
+    media_admission = dict(metadata_receipt["media_admission"])
+    expected_member_sha256 = dict(media_admission.pop("data_member_sha256"))
+    metadata_receipt = {**metadata_receipt, "media_admission": media_admission}
     full_selection_path = Path(config.data.full_selection_tokens)
     if sha256_file(full_selection_path) != config.data.expected_full_selection_sha256:
         raise ValueError("Full selection token artifact differs from configured SHA-256")
@@ -468,6 +486,7 @@ def run(
         ROOT / "src/e_jepa_ttc/detection/velocity_extension.py",
     ]
     code_sha256 = _snapshot(output, owned_paths)
+    code_sha256.update(snapshot_media_admission(output, Path(media_admission["receipt_path"])))
     portable_source_sha256 = _snapshot_portable_source(Path(config.model.portable_root), output)
     runtime_preregistration = {
         "schema": "eap_detection_campaign_runtime_preregistration_v1",
@@ -483,6 +502,8 @@ def run(
         "portable_source_sha256": portable_source_sha256,
         "portable_source_sha256_manifest": canonical_sha256(portable_source_sha256),
         "dataset_media_sha256": manifest["source_media_sha256"],
+        "media_admission_receipt_sha256": media_admission["receipt_sha256"],
+        "media_admission_population_sha256": media_admission["train_token_population_sha256"],
         "matmul_precision": config.optimization.matmul_precision,
     }
     write_json(output / "runtime_preregistration.json", runtime_preregistration)
@@ -497,7 +518,7 @@ def run(
         "matmul_precision": config.optimization.matmul_precision,
     }
     start_update, best_metric = 0, None
-    data_member_sha256: dict[str, str] = {}
+    data_member_sha256: dict[str, str] = dict(expected_member_sha256)
     ancestor_progress: dict[str, int | float] = {
         "training_seconds": 0.0,
         "empty_target_exposures": 0,
@@ -509,16 +530,21 @@ def run(
             model, Path(config.model.backbone_weights), config.model.backbone_weights_sha256
         )
     else:
-        start_update, best_metric, ancestor_progress, data_member_sha256 = load_campaign_checkpoint(
-            resume,
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            sampler=sampler,
-            config=config,
-            protocol_sha256=protocol.sha256,
-            runtime_provenance=runtime_provenance,
+        start_update, best_metric, ancestor_progress, resumed_member_sha256 = (
+            load_campaign_checkpoint(
+                resume,
+                model=model,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                sampler=sampler,
+                config=config,
+                protocol_sha256=protocol.sha256,
+                runtime_provenance=runtime_provenance,
+            )
         )
+        if resumed_member_sha256 != expected_member_sha256:
+            raise ValueError("Resume RGB member ledger differs from media admission")
+        data_member_sha256 = resumed_member_sha256
     selected_lineage = (
         inherit_selected_checkpoint(
             resume,

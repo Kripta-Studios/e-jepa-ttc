@@ -3,12 +3,12 @@ experiment_id: rgb-r2-d4096-seed7
 seed: 7
 data:
   root: E:/eAP_dataset
-  manifest: output/campaign_data/d4096_v4_final/d4096_manifest.json
+  manifest: output/campaign_data/d4096_v5_readable/d4096_manifest.json
   split: data/splits/eap_detection_candidate_v1.json
   train_role: train
   selection_role: selection
   expected_dataset_revision: a814a946e60d37f7242358af5f344542177e50c5
-  expected_manifest_sha256: 4af615689bab28016d28881a9339be6c58fe0f35f5d234c0db090eafeff9fb45
+  expected_manifest_sha256: 9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1
   expected_split_sha256: 91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903
   full_selection_tokens: output/campaign_data/full_selection_v1/full_selection_tokens.json
   expected_full_selection_sha256: e4303685e39f635a47b76921b9c5f38821e8715f3aa5f202c73a2c32dae1a497
