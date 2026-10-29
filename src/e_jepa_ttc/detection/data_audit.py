@@ -180,8 +180,14 @@ def download_recovery_plan(plan: Mapping[str, Any], root: Path) -> list[dict[str
                     raise ValueError(f"Downloaded bytes do not match pinned metadata: {name}")
                 if destination.exists():
                     raise ValueError(f"Destination appeared during download: {name}")
-                os.link(temporary, destination)
-                temporary.unlink()
+                if os.name == "nt":
+                    # Windows rename rejects an existing destination, including races,
+                    # and works on exFAT, where hard links are unavailable.
+                    os.rename(temporary, destination)
+                else:
+                    # POSIX rename would replace an existing file; keep no-replace link.
+                    os.link(temporary, destination)
+                    temporary.unlink()
             except BaseException:
                 if created_temporary:
                     temporary.unlink(missing_ok=True)

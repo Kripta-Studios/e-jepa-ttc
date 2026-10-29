@@ -6,6 +6,7 @@ import copy
 import hashlib
 import io
 import json
+import os
 import zipfile
 from pathlib import Path
 
@@ -358,6 +359,40 @@ def test_recovery_verifies_hash_and_preserves_existing_data(tmp_path, monkeypatc
     with pytest.raises(ValueError, match="Existing file differs"):
         download_recovery_plan(plan, tmp_path)
     assert path.read_bytes() == b"bad"
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows rename no-replace semantics")
+def test_windows_recovery_does_not_require_hard_links(tmp_path, monkeypatch):
+    """An exFAT destination accepts verified downloads without hard-link support."""
+    plan = recovery_plan(pinned_manifest(), tmp_path)
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: io.BytesIO(b"abc"))
+
+    def unsupported_link(*args, **kwargs):
+        raise OSError("hard links unsupported by destination filesystem")
+
+    monkeypatch.setattr(os, "link", unsupported_link)
+    receipts = download_recovery_plan(plan, tmp_path)
+    assert receipts[0]["sha256"] == hashlib.sha256(b"abc").hexdigest()
+    assert (tmp_path / "data/train/seq1/labels.parquet").read_bytes() == b"abc"
+    assert not list(tmp_path.rglob("*.g0-part"))
+
+
+def test_recovery_never_overwrites_destination_created_at_publish(tmp_path, monkeypatch):
+    """The filesystem commit must reject a concurrent writer after the existence check."""
+    plan = recovery_plan(pinned_manifest(), tmp_path)
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: io.BytesIO(b"abc"))
+    operation_name = "rename" if os.name == "nt" else "link"
+    original = getattr(os, operation_name)
+
+    def concurrent_writer(source, destination):
+        Path(destination).write_bytes(b"other writer")
+        return original(source, destination)
+
+    monkeypatch.setattr(os, operation_name, concurrent_writer)
+    with pytest.raises(FileExistsError):
+        download_recovery_plan(plan, tmp_path)
+    assert (tmp_path / "data/train/seq1/labels.parquet").read_bytes() == b"other writer"
+    assert not list(tmp_path.rglob("*.g0-part"))
 
 
 def test_bad_download_does_not_leave_accepted_file(tmp_path, monkeypatch):
