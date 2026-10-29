@@ -1,0 +1,704 @@
+{
+  "schema": "pilot_population_readonly_diagnostic_v1",
+  "scope": "Public train labels and geometry metadata only; no pixels/events/test/model run",
+  "filter_assumption": "Documented original 1280x720 RGB; legacy pilot 640x384 pinhole formulas",
+  "identity_limit": "Distinct (sequence_id, track_id) annotations; not independent acquisitions",
+  "repository_commit": "24b8f36f6e4aa17c965f9526d8cf486b512a8046",
+  "dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+  "split_sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+  "source_sha256": {
+    "src/e_jepa_ttc/detection/monodgp_eap_adapter.py": "9492aef2af662b232c2397b6775685135dddda48ff73879b9ad474e29399e71d",
+    "src/e_jepa_ttc/detection/geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f",
+    "data/splits/eap_detection_candidate_v1.json": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+    "docs/detection_local_20261029/evidence/pilot_manifest.json": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+    "data/manifests/eap_detection_public_files_v1.json": "2e65cd7f2600eea55f37f59e9a22d55b5ba0aa50445756fd7aaf01332c2b3ff1"
+  },
+  "script_sha256": "4fddd256b7474166ca9586b9fe01f79deb380dacda76b66687a42032ac6db298",
+  "media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "labels_sha256": {
+    "data/train/2JkLL5W891/labels.parquet": "b30bfbc394440006993a6afdb5bcc2a0334dbcbb04c3281a6e3c97a9aacf3c45",
+    "data/train/2Y46OkK3ff/labels.parquet": "06a1fc3d3e9ddfd2ffe514b09819e9636f0b3d4b3fd035ed94f4d013015b3c4d",
+    "data/train/2cyv0Oedzg/labels.parquet": "e1fc19e222d4a5b98cfdeea98b5e27c621758766c7b269514229a9a2e21ab08d",
+    "data/train/34K84TaN11/labels.parquet": "76b40d6a848322acd10606c85d5ae4173b4df024bca7729a6c1dd812ee2f7c84",
+    "data/train/5ilM1PX2vz/labels.parquet": "67abaaf4948bb7a815d69847659889d7b84687edcc7f1ec9b31fb4f21e68ee74",
+    "data/train/6WCDpro5rE/labels.parquet": "6a588547774a2eb0005fb152886d2604f2825cf7e050abe822f00d9ff8698a5a",
+    "data/train/6h5yRW2LGc/labels.parquet": "641a41b7c8c1ee5164ca248d1dcc4cfbd0d6fbb090e9b94cd93265566c16e54e",
+    "data/train/8SdieOgbva/labels.parquet": "2bf43a9a5fe3170ec2dd5c96a59d97f50d0a1b4e8140d5279b2492dba1f734bc",
+    "data/train/8mNnrXjpVB/labels.parquet": "859dfd94cc0aa0b1ab23abc4d7306e0cf2dd10a384804f6ba117a8b04785a59d",
+    "data/train/9ITOs4twfk/labels.parquet": "4e7da8f7b8f348b534a4e40c10d0ac84bf6f1ece7950d6ca3f0d816b9af0ccad",
+    "data/train/A1Nhv0KtmL/labels.parquet": "4d8848844bad6945fa67ed30c229f0c143040f975f5e6dc4d8b7739d79a2eb93",
+    "data/train/ClXqVoZOFu/labels.parquet": "f55e8e35e5a8d08f72abc2045378d3d12c06133d443a9a7157dbbf6694ee5bac",
+    "data/train/CzyQ8HKP6X/labels.parquet": "b29b965b6eb89ede48907f4c761414b3b68037becb568608c682f04d2b3fec91",
+    "data/train/DGqicHUGWb/labels.parquet": "908244488914a000b5448c9ffd69f0a49b869c2815fc398badb3a60b0908846f",
+    "data/train/EllUE6bwVp/labels.parquet": "77cd121f3f9b2bb8df0105c4f35050b169919949f33e491a2c4f55e41255a28b",
+    "data/train/EuFGqTcqIz/labels.parquet": "0692f65cd790505b658e2e92329804c4dcd9e062363836bf578dedff6a70a268",
+    "data/train/GjMYZjmSQb/labels.parquet": "d1da779468834eb3ce723f80bf3e41b2e88ce73738817cbe852d8b15b4296f98",
+    "data/train/JaGC4Q9pgU/labels.parquet": "967873b148f5259d86838aba862bdcd3aa91b61c562afba4869e0ea4ad708cd4",
+    "data/train/L36QTEoVkB/labels.parquet": "3e48675ad8d15887f8e40241412aab66c50a884084087c8b1061848080af91e6",
+    "data/train/LMHPShQkaU/labels.parquet": "c3035d5eb7b549b73d5e53f4861889c288a8a35eb5e39093f63a71e96defe9eb",
+    "data/train/OBneIVg4Cw/labels.parquet": "22ed3e2a69a30da992db9d93b3c1adf6476ca061ab48631c4950d5ae87f716fa",
+    "data/train/OYgB6RGWcq/labels.parquet": "53bab51c8a1ff99fbfb9586f6df1430865f76a7ed2e36e6fe57e082d0e634c89",
+    "data/train/Po6ePjWYAz/labels.parquet": "72861dfb52c6d3bec01666514a6244aa0faeceb7fceb62ab4d1f7d7ccafc9f06",
+    "data/train/VLA3oBKFyX/labels.parquet": "9997309b9205116b1a9f66878e9c8d393dae96b2e2268523bd61da030a1429f1",
+    "data/train/WbCh1DRerJ/labels.parquet": "2a7896a010edebeb6f5c455ec6f78ba04bd2480e179277e5efa67e789e0b2ba3",
+    "data/train/Z30i8WuL2N/labels.parquet": "13d516e30dd29ac7d37e5c9149b70e9ee066d1a91f8612357f27718c7aa66705",
+    "data/train/eX8t2nGd6O/labels.parquet": "97564157856a379ec6adddd1d16404c45cefd4f3cca2558dba0eebdf3e1b3142",
+    "data/train/mHGFBekt7X/labels.parquet": "1892b201c114990bd8a9f77acf188d0cfff20a105fb4720a926c223536412686",
+    "data/train/nRcwUlHyAd/labels.parquet": "b8d14b5f4f3aaa892b679883212f12447c6418c8c5df605d413b91a3355b5f10",
+    "data/train/pBqGOb2vYq/labels.parquet": "799d0cf88fd4aebb7b4f2e81a14f3f65ed3e3b7d3c5de2aed9e48a353c754f54",
+    "data/train/pakWgyPNTL/labels.parquet": "78a4d5b02c828b6028de536c3031ce92fb40716b8646ff6b18ee5f69766b5b98",
+    "data/train/pzJcg1OCfc/labels.parquet": "0c80ddccb4d99b4b25f38a6df6c1a34e39d984fab1dfbc32a7a5565c7c58d690",
+    "data/train/q2k6O0X6JY/labels.parquet": "2dc66c48829d1275faac1c3ccfed3233738b992edc82907e14ce5904042056a5",
+    "data/train/qGsgzl4Q8B/labels.parquet": "ed4989281b7e398c276e1b966ee0d4db9dbb1e7b3374e7a41c3838a8a23b37e2",
+    "data/train/qoohcdtLDH/labels.parquet": "a512a2f2228afe433bd34e63bc00ea1d656ba2591fde19f42b6bc0ecbe85295a",
+    "data/train/rhYxPcU29n/labels.parquet": "92e05b2c3abc3946817da32066515cbc71f0710454267f6c901b0b6556df2761",
+    "data/train/t79dBxj1WS/labels.parquet": "0c41ede5398ff9182c2b64a72aaa5be4ea4ac421d08daccc5d2cba352eafbd73",
+    "data/train/vWp9XNYQ9V/labels.parquet": "e125cd53f56e9ea45922cd175fd2e6b8c34807cf6dcd2a4eadc64da374780ce7",
+    "data/train/wE9MZUmiJP/labels.parquet": "c9afcbdac7e27e06f8f2cfc73c00cf68e03c00d6555ae1e6e652afe31311d6ab",
+    "data/train/xkiVthsGwf/labels.parquet": "8a1106b3eab269525475e70b3b261cf5293dae88e7cf9b72a77a51718460e38e"
+  },
+  "versions": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "numpy": "2.5.4",
+    "pyarrow": "26.0.0"
+  },
+  "raw_labels_by_role": {
+    "calibration": {
+      "car": 101200,
+      "motorcycle": 18710,
+      "truck": 33085,
+      "bicycle": 446,
+      "pedestrian": 7154,
+      "other_vehicle": 183,
+      "tricycle": 623,
+      "bus": 1738
+    },
+    "selection": {
+      "car": 90884,
+      "truck": 38670,
+      "motorcycle": 39555,
+      "bus": 3335,
+      "pedestrian": 14415,
+      "other_vehicle": 153,
+      "tricycle": 2668,
+      "bicycle": 789
+    },
+    "train": {
+      "truck": 107686,
+      "car": 304200,
+      "motorcycle": 22732,
+      "pedestrian": 7808,
+      "tricycle": 2268,
+      "bus": 5137,
+      "bicycle": 834,
+      "other_vehicle": 237
+    }
+  },
+  "distinct_sequence_track_per_class": {
+    "calibration": {
+      "car": 2141,
+      "motorcycle": 927,
+      "truck": 698,
+      "bicycle": 36,
+      "pedestrian": 356,
+      "other_vehicle": 10,
+      "tricycle": 30,
+      "bus": 57
+    },
+    "selection": {
+      "car": 1793,
+      "truck": 730,
+      "motorcycle": 1850,
+      "bus": 58,
+      "pedestrian": 705,
+      "other_vehicle": 10,
+      "tricycle": 83,
+      "bicycle": 81
+    },
+    "train": {
+      "truck": 1974,
+      "car": 4622,
+      "motorcycle": 1453,
+      "pedestrian": 469,
+      "tricycle": 87,
+      "bus": 134,
+      "bicycle": 86,
+      "other_vehicle": 16
+    }
+  },
+  "raw_sequence_class_counts": {
+    "2JkLL5W891": {
+      "car": 11714,
+      "motorcycle": 6630,
+      "truck": 4007,
+      "bicycle": 98,
+      "pedestrian": 2953,
+      "other_vehicle": 10,
+      "tricycle": 101,
+      "bus": 247
+    },
+    "2Y46OkK3ff": {
+      "car": 15201,
+      "truck": 5284,
+      "motorcycle": 165,
+      "bus": 265,
+      "pedestrian": 33
+    },
+    "2cyv0Oedzg": {
+      "truck": 4908,
+      "car": 12314,
+      "motorcycle": 191,
+      "pedestrian": 16,
+      "tricycle": 10,
+      "bus": 172
+    },
+    "34K84TaN11": {
+      "car": 13481,
+      "truck": 2176,
+      "pedestrian": 235,
+      "bus": 82,
+      "motorcycle": 220,
+      "bicycle": 98
+    },
+    "5ilM1PX2vz": {
+      "truck": 3663,
+      "car": 9519,
+      "pedestrian": 99,
+      "tricycle": 519,
+      "motorcycle": 370,
+      "other_vehicle": 35,
+      "bus": 27
+    },
+    "6WCDpro5rE": {
+      "car": 15659,
+      "truck": 687,
+      "motorcycle": 2173,
+      "pedestrian": 1432,
+      "tricycle": 227,
+      "bicycle": 124,
+      "bus": 294
+    },
+    "6h5yRW2LGc": {
+      "car": 12305,
+      "bus": 737,
+      "motorcycle": 4128,
+      "pedestrian": 1475,
+      "bicycle": 201,
+      "tricycle": 202,
+      "truck": 3315
+    },
+    "8SdieOgbva": {
+      "car": 13973,
+      "truck": 6932,
+      "motorcycle": 2143,
+      "bus": 519,
+      "pedestrian": 1002,
+      "tricycle": 70,
+      "bicycle": 56,
+      "other_vehicle": 20
+    },
+    "8mNnrXjpVB": {
+      "car": 10512,
+      "truck": 5157,
+      "bus": 172,
+      "pedestrian": 378,
+      "motorcycle": 2670,
+      "tricycle": 70,
+      "other_vehicle": 11,
+      "bicycle": 1
+    },
+    "9ITOs4twfk": {
+      "car": 24939,
+      "truck": 6406,
+      "bus": 234,
+      "motorcycle": 414,
+      "pedestrian": 117,
+      "other_vehicle": 13,
+      "bicycle": 8
+    },
+    "A1Nhv0KtmL": {
+      "car": 10002,
+      "truck": 3860,
+      "bus": 9,
+      "motorcycle": 1,
+      "pedestrian": 11,
+      "other_vehicle": 13
+    },
+    "ClXqVoZOFu": {
+      "car": 13240,
+      "truck": 6692,
+      "motorcycle": 102,
+      "bus": 26
+    },
+    "CzyQ8HKP6X": {
+      "car": 12556,
+      "truck": 4245,
+      "motorcycle": 267,
+      "pedestrian": 15,
+      "other_vehicle": 7,
+      "bus": 19
+    },
+    "DGqicHUGWb": {
+      "truck": 447,
+      "motorcycle": 1090,
+      "car": 2750,
+      "bicycle": 125,
+      "pedestrian": 39,
+      "tricycle": 130
+    },
+    "EllUE6bwVp": {
+      "motorcycle": 7983,
+      "car": 11116,
+      "tricycle": 490,
+      "pedestrian": 2760,
+      "truck": 3549,
+      "bus": 750,
+      "bicycle": 180,
+      "other_vehicle": 42
+    },
+    "EuFGqTcqIz": {
+      "car": 10804,
+      "truck": 4434,
+      "other_vehicle": 7,
+      "motorcycle": 35,
+      "pedestrian": 36
+    },
+    "GjMYZjmSQb": {
+      "car": 12285,
+      "truck": 2475,
+      "motorcycle": 484
+    },
+    "JaGC4Q9pgU": {
+      "truck": 11501,
+      "car": 12014,
+      "bus": 4,
+      "motorcycle": 375,
+      "pedestrian": 7,
+      "other_vehicle": 7
+    },
+    "L36QTEoVkB": {
+      "car": 8262,
+      "truck": 7899,
+      "motorcycle": 79,
+      "pedestrian": 82
+    },
+    "LMHPShQkaU": {
+      "car": 13510,
+      "truck": 9454,
+      "motorcycle": 151,
+      "bus": 1014,
+      "tricycle": 121
+    },
+    "OBneIVg4Cw": {
+      "car": 11456,
+      "motorcycle": 10136,
+      "bicycle": 287,
+      "pedestrian": 5576,
+      "truck": 1860,
+      "bus": 406,
+      "tricycle": 737,
+      "other_vehicle": 17
+    },
+    "OYgB6RGWcq": {
+      "car": 9720,
+      "truck": 5467,
+      "motorcycle": 22
+    },
+    "Po6ePjWYAz": {
+      "car": 9368,
+      "truck": 3979,
+      "tricycle": 253,
+      "pedestrian": 1100,
+      "motorcycle": 1737,
+      "other_vehicle": 26,
+      "bicycle": 215,
+      "bus": 134
+    },
+    "VLA3oBKFyX": {
+      "car": 9222,
+      "truck": 2786,
+      "motorcycle": 612,
+      "pedestrian": 244,
+      "bicycle": 5,
+      "tricycle": 10,
+      "bus": 142
+    },
+    "WbCh1DRerJ": {
+      "car": 9303,
+      "motorcycle": 3193,
+      "other_vehicle": 76,
+      "truck": 6473,
+      "tricycle": 549,
+      "pedestrian": 1301,
+      "bicycle": 172,
+      "bus": 187
+    },
+    "Z30i8WuL2N": {
+      "car": 12087,
+      "truck": 1592,
+      "motorcycle": 527,
+      "tricycle": 109,
+      "bus": 46,
+      "other_vehicle": 3
+    },
+    "eX8t2nGd6O": {
+      "car": 13763,
+      "truck": 3651,
+      "motorcycle": 494,
+      "tricycle": 4,
+      "bus": 8,
+      "pedestrian": 6,
+      "bicycle": 4
+    },
+    "mHGFBekt7X": {
+      "car": 27606,
+      "truck": 7025,
+      "motorcycle": 1465,
+      "bus": 356,
+      "pedestrian": 32
+    },
+    "nRcwUlHyAd": {
+      "car": 14532,
+      "motorcycle": 3534,
+      "truck": 4800,
+      "tricycle": 485,
+      "pedestrian": 1354,
+      "other_vehicle": 70,
+      "bicycle": 57,
+      "bus": 521
+    },
+    "pBqGOb2vYq": {
+      "tricycle": 889,
+      "car": 9371,
+      "truck": 2141,
+      "bus": 1691,
+      "pedestrian": 4696,
+      "motorcycle": 17189,
+      "other_vehicle": 4,
+      "bicycle": 150
+    },
+    "pakWgyPNTL": {
+      "car": 13533,
+      "motorcycle": 2856,
+      "pedestrian": 724,
+      "truck": 9202,
+      "tricycle": 112,
+      "bus": 26,
+      "bicycle": 30
+    },
+    "pzJcg1OCfc": {
+      "car": 11499,
+      "truck": 1966,
+      "motorcycle": 654,
+      "bus": 16,
+      "pedestrian": 126,
+      "tricycle": 13
+    },
+    "q2k6O0X6JY": {
+      "car": 5044,
+      "truck": 2171,
+      "bus": 135,
+      "pedestrian": 48,
+      "motorcycle": 89,
+      "tricycle": 114,
+      "bicycle": 2,
+      "other_vehicle": 31
+    },
+    "qGsgzl4Q8B": {
+      "car": 9172,
+      "truck": 1606,
+      "motorcycle": 243,
+      "pedestrian": 173,
+      "other_vehicle": 7,
+      "bus": 131
+    },
+    "qoohcdtLDH": {
+      "car": 11553,
+      "truck": 8935,
+      "pedestrian": 536,
+      "bus": 84,
+      "motorcycle": 2293,
+      "bicycle": 124,
+      "tricycle": 203
+    },
+    "rhYxPcU29n": {
+      "car": 21023,
+      "motorcycle": 1252,
+      "truck": 2592,
+      "other_vehicle": 152,
+      "pedestrian": 1344,
+      "bicycle": 111,
+      "bus": 368,
+      "tricycle": 19
+    },
+    "t79dBxj1WS": {
+      "bus": 1071,
+      "car": 8453,
+      "truck": 2704,
+      "motorcycle": 676,
+      "tricycle": 40,
+      "pedestrian": 170,
+      "other_vehicle": 12
+    },
+    "vWp9XNYQ9V": {
+      "car": 9867,
+      "truck": 3617,
+      "bus": 13,
+      "motorcycle": 247,
+      "pedestrian": 27,
+      "tricycle": 3
+    },
+    "wE9MZUmiJP": {
+      "car": 18166,
+      "truck": 4036,
+      "bicycle": 8,
+      "motorcycle": 818,
+      "pedestrian": 175,
+      "bus": 253,
+      "tricycle": 12
+    },
+    "xkiVthsGwf": {
+      "motorcycle": 3289,
+      "car": 15390,
+      "truck": 5747,
+      "bus": 51,
+      "pedestrian": 1055,
+      "tricycle": 67,
+      "bicycle": 13,
+      "other_vehicle": 10
+    }
+  },
+  "pilot_filter_counts": {
+    "selection": {
+      "admitted": 938,
+      "projected_center_outside_image": 92,
+      "center_depth_outside_profile": 901,
+      "corner_behind_or_near_camera": 4,
+      "projected_center_outside_clipped_box": 1
+    },
+    "train": {
+      "admitted": 829,
+      "center_depth_outside_profile": 635,
+      "projected_center_outside_image": 98,
+      "projected_center_outside_clipped_box": 2,
+      "corner_behind_or_near_camera": 1
+    }
+  },
+  "pilot_filter_counts_per_class": {
+    "selection": {
+      "car": {
+        "admitted": 721,
+        "projected_center_outside_image": 57,
+        "center_depth_outside_profile": 391
+      },
+      "truck": {
+        "admitted": 205,
+        "center_depth_outside_profile": 488,
+        "projected_center_outside_image": 31,
+        "corner_behind_or_near_camera": 4,
+        "projected_center_outside_clipped_box": 1
+      },
+      "motorcycle": {
+        "center_depth_outside_profile": 17,
+        "admitted": 6
+      },
+      "bus": {
+        "center_depth_outside_profile": 5,
+        "projected_center_outside_image": 4,
+        "admitted": 4
+      },
+      "pedestrian": {
+        "admitted": 2
+      }
+    },
+    "train": {
+      "car": {
+        "admitted": 589,
+        "center_depth_outside_profile": 348,
+        "projected_center_outside_image": 58,
+        "projected_center_outside_clipped_box": 1
+      },
+      "motorcycle": {
+        "admitted": 108,
+        "center_depth_outside_profile": 46,
+        "projected_center_outside_image": 16,
+        "projected_center_outside_clipped_box": 1
+      },
+      "truck": {
+        "center_depth_outside_profile": 172,
+        "admitted": 86,
+        "projected_center_outside_image": 17,
+        "corner_behind_or_near_camera": 1
+      },
+      "tricycle": {
+        "admitted": 12,
+        "center_depth_outside_profile": 8,
+        "projected_center_outside_image": 2
+      },
+      "pedestrian": {
+        "admitted": 15,
+        "center_depth_outside_profile": 51
+      },
+      "other_vehicle": {
+        "center_depth_outside_profile": 3
+      },
+      "bus": {
+        "projected_center_outside_image": 3,
+        "center_depth_outside_profile": 7,
+        "admitted": 18
+      },
+      "bicycle": {
+        "admitted": 1,
+        "projected_center_outside_image": 2
+      }
+    }
+  },
+  "rare_classes_under_legacy_pinhole_640x384_profile": {
+    "calibration/bicycle": {
+      "raw": 446,
+      "admitted": 270,
+      "admitted_distinct_sequence_track": 26,
+      "admitted_sequences": [
+        "2JkLL5W891",
+        "6h5yRW2LGc",
+        "pakWgyPNTL",
+        "rhYxPcU29n"
+      ]
+    },
+    "calibration/other_vehicle": {
+      "raw": 183,
+      "admitted": 51,
+      "admitted_distinct_sequence_track": 4,
+      "admitted_sequences": [
+        "2JkLL5W891",
+        "rhYxPcU29n"
+      ]
+    },
+    "train/bicycle": {
+      "raw": 834,
+      "admitted": 655,
+      "admitted_distinct_sequence_track": 69,
+      "admitted_sequences": [
+        "34K84TaN11",
+        "6WCDpro5rE",
+        "8SdieOgbva",
+        "DGqicHUGWb",
+        "Po6ePjWYAz",
+        "eX8t2nGd6O",
+        "nRcwUlHyAd",
+        "q2k6O0X6JY",
+        "qoohcdtLDH",
+        "wE9MZUmiJP",
+        "xkiVthsGwf"
+      ]
+    },
+    "train/other_vehicle": {
+      "raw": 237,
+      "admitted": 53,
+      "admitted_distinct_sequence_track": 6,
+      "admitted_sequences": [
+        "8SdieOgbva",
+        "9ITOs4twfk",
+        "Po6ePjWYAz",
+        "nRcwUlHyAd",
+        "t79dBxj1WS"
+      ]
+    },
+    "selection/other_vehicle": {
+      "raw": 153,
+      "admitted": 60,
+      "admitted_distinct_sequence_track": 5,
+      "admitted_sequences": [
+        "CzyQ8HKP6X",
+        "EllUE6bwVp",
+        "WbCh1DRerJ"
+      ]
+    },
+    "selection/bicycle": {
+      "raw": 789,
+      "admitted": 596,
+      "admitted_distinct_sequence_track": 65,
+      "admitted_sequences": [
+        "EllUE6bwVp",
+        "OBneIVg4Cw",
+        "WbCh1DRerJ",
+        "pBqGOb2vYq"
+      ]
+    }
+  },
+  "rare_admitted_by_sequence": {
+    "2JkLL5W891": {
+      "bicycle": 62,
+      "other_vehicle": 3
+    },
+    "34K84TaN11": {
+      "bicycle": 88
+    },
+    "6WCDpro5rE": {
+      "bicycle": 84
+    },
+    "6h5yRW2LGc": {
+      "bicycle": 181
+    },
+    "8SdieOgbva": {
+      "other_vehicle": 12,
+      "bicycle": 46
+    },
+    "9ITOs4twfk": {
+      "other_vehicle": 4
+    },
+    "CzyQ8HKP6X": {
+      "other_vehicle": 7
+    },
+    "DGqicHUGWb": {
+      "bicycle": 77
+    },
+    "EllUE6bwVp": {
+      "bicycle": 125,
+      "other_vehicle": 11
+    },
+    "OBneIVg4Cw": {
+      "bicycle": 198
+    },
+    "Po6ePjWYAz": {
+      "other_vehicle": 19,
+      "bicycle": 187
+    },
+    "WbCh1DRerJ": {
+      "other_vehicle": 42,
+      "bicycle": 151
+    },
+    "eX8t2nGd6O": {
+      "bicycle": 4
+    },
+    "nRcwUlHyAd": {
+      "other_vehicle": 15,
+      "bicycle": 46
+    },
+    "pBqGOb2vYq": {
+      "bicycle": 122
+    },
+    "pakWgyPNTL": {
+      "bicycle": 26
+    },
+    "q2k6O0X6JY": {
+      "bicycle": 1
+    },
+    "qoohcdtLDH": {
+      "bicycle": 110
+    },
+    "rhYxPcU29n": {
+      "other_vehicle": 48,
+      "bicycle": 1
+    },
+    "t79dBxj1WS": {
+      "other_vehicle": 3
+    },
+    "wE9MZUmiJP": {
+      "bicycle": 2
+    },
+    "xkiVthsGwf": {
+      "bicycle": 10
+    }
+  }
+}

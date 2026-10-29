@@ -1,0 +1,79 @@
+{
+  "schema": "sota_intake_receipt_v1",
+  "created_at_utc": "2026-10-29T15:23:37.755672+00:00",
+  "base_commit": "24b8f36f6e4aa17c965f9526d8cf486b512a8046",
+  "zip_sha256": "8237f47f3bdd61e5f2d8a29d59353c231df5ec191c292bf721cff1626b956369",
+  "files": [
+    {
+      "file": "AUDIT_REPRODUCTION.md",
+      "sha256": "d0a6eecfe69ed00d90b7aa390259a11393e8af7afb0c5635e8e03ab34eb5117d",
+      "bytes": 4863
+    },
+    {
+      "file": "INDEPENDENT_PLAN_REVIEW.md",
+      "sha256": "df66eaba3e5031ce7cc6a7c82b9aab442376e918505def7acf674a9353b484cc",
+      "bytes": 3559
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "sha256": "21a13c5602842382e0d12f96dbf676fd0f165e56e5b28b643f1f9f223abcda04",
+      "bytes": 1134
+    },
+    {
+      "file": "SOTA_DEVELOPMENT_PLAN.md",
+      "sha256": "d63065f341594613554aecb48219b4bbc967aed2fd5628d3c6bd599cce7013b7",
+      "bytes": 73509
+    },
+    {
+      "file": "audit_pilot_population_readonly.py",
+      "sha256": "4fddd256b7474166ca9586b9fe01f79deb380dacda76b66687a42032ac6db298",
+      "bytes": 10931
+    },
+    {
+      "file": "class_support_raw.json",
+      "sha256": "32532067ae1ea1b13ca5830685074eb8b5d56b425728cf6bba4124e7a27795fb",
+      "bytes": 46042
+    },
+    {
+      "file": "independent_sota_code_review.md",
+      "sha256": "59a9a9a143adbdf9db6f1b6ed9325f95e4e0bb32c8f903c6d152d45942a74285",
+      "bytes": 10981
+    },
+    {
+      "file": "independent_sota_research_review.md",
+      "sha256": "f491b8fd1e3ecf77b53de9f7f5667a1d0fe63aa5da2ebbd907658a492a9a3216",
+      "bytes": 7756
+    },
+    {
+      "file": "independent_sota_science_review.md",
+      "sha256": "62bffc1906a3b217f5b44238cbe44ae0c70a29cee709885a5fabe5f53370e542",
+      "bytes": 11904
+    },
+    {
+      "file": "pilot_code_findings.md",
+      "sha256": "bbc8229d9ec552f32f1de50dc17e398d327ca8d817dd736f6ebf2e7813edad4b",
+      "bytes": 17585
+    },
+    {
+      "file": "pilot_population_diagnostic.json",
+      "sha256": "fa2b1fd3611ad9c8ffec89706d881b503cd3907969ef2ee7ebe07f27a25446a3",
+      "bytes": 19459
+    },
+    {
+      "file": "pilot_science_findings.md",
+      "sha256": "5af20bad8ea4a52b98e22d301ae90bf4f1024e9635b6ee7e36ff96cfcd2b03c7",
+      "bytes": 16610
+    },
+    {
+      "file": "sota_primary_findings.md",
+      "sha256": "84bf93dd013df7edd3e9a9701dbc4b376769cdd75ae52fffd08a13d4810ad171",
+      "bytes": 8197
+    }
+  ],
+  "manifest_entries_verified": 12,
+  "standalone_plan_matches_bundle": true,
+  "checkpoint_sha256_verified": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+  "checkpoint_bytes": 498531791,
+  "checkpoint_relative_to_pilot_worktree": "output/portable_experiments/pilot256_seed7_velocity_v1/checkpoint.pt",
+  "scope": "Integrity/intake; no new training or accuracy claimed"
+}
