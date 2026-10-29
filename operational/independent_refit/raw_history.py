@@ -438,9 +438,7 @@ def verify_raw_history_index(receipt_path: Path) -> dict[str, Any]:
     return {"status": "PASS", "queries": QUERY_COUNT, "groups": GROUP_COUNT, "roles": 12}
 
 
-def load_training_history(
-    receipt_path: Path, h5_admission_path: Path | None = None
-) -> pd.DataFrame:
+def load_training_history(receipt_path: Path) -> pd.DataFrame:
     """Fail closed until a separate physical H5 bounds/hash admission exists."""
     receipt = json.loads(receipt_path.resolve(strict=True).read_text(encoding="utf-8"))
     if (
@@ -451,22 +449,9 @@ def load_training_history(
         or receipt.get("stream_h5_hash_receipt") is not None
     ):
         raise RuntimeError("Raw history admission declaration is invalid")
-    if h5_admission_path is None:
-        raise RuntimeError(
-            "Raw history V4 is metadata-only; no verified stream-H5 bounds/hash admission exists"
-        )
-    from .h5_admission import verify_h5_admission
-
-    admitted = verify_h5_admission(h5_admission_path)
-    admission = json.loads(h5_admission_path.read_text(encoding="utf-8"))
-    if (
-        admitted.get("status") != "PASS"
-        or Path(admission["raw_history_receipt_path"]).resolve(strict=True)
-        != receipt_path.resolve(strict=True)
-        or admission["raw_history_receipt_sha256"] != file_sha256(receipt_path)
-    ):
-        raise RuntimeError("H5 admission is not bound to this exact raw-history V4 receipt")
-    return pd.read_parquet(receipt_path.parent / str(receipt["index_path"]))
+    raise RuntimeError(
+        "Raw history V4 is metadata-only; no verified stream-H5 bounds/hash admission exists"
+    )
 
 
 __all__ = [
