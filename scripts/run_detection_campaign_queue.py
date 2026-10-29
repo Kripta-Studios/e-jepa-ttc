@@ -22,9 +22,19 @@ from typing import Any
 
 import psutil
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT / "src") not in sys.path:
-    sys.path.insert(0, str(ROOT / "src"))
+SCRIPT_PATH = Path(__file__).resolve()
+FROZEN_SIBLING_PRODUCER = SCRIPT_PATH.parents[2] / "producer"
+PACKAGE_ROOT = (
+    FROZEN_SIBLING_PRODUCER
+    if (FROZEN_SIBLING_PRODUCER / "src/e_jepa_ttc/detection/campaign_training.py").is_file()
+    else SCRIPT_PATH.parents[1]
+)
+try:
+    ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / "pyproject.toml").is_file())
+except StopIteration as error:
+    raise RuntimeError("Could not locate the campaign workspace root") from error
+if str(PACKAGE_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(PACKAGE_ROOT / "src"))
 
 from e_jepa_ttc.detection.campaign_training import (  # noqa: E402
     CampaignConfig,
