@@ -21,6 +21,7 @@ import sys
 import time
 import traceback
 from collections import OrderedDict
+from collections.abc import Callable, Mapping
 from dataclasses import asdict, replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -277,6 +278,34 @@ def _metric(result: dict[str, object], name: str) -> float:
     return float(value)
 
 
+def commit_evaluation_artifacts(
+    *,
+    run_full_evaluation: Callable[[], None],
+    publish_selected: Callable[[], None] | None,
+    publish_last: Callable[[], None],
+) -> None:
+    """Publish no checkpoint until every due evaluation has completed."""
+    run_full_evaluation()
+    if publish_selected is not None:
+        publish_selected()
+    publish_last()
+
+
+def should_publish_periodic_checkpoint(
+    update: int,
+    *,
+    checkpoint_interval: int,
+    evaluation_updates: tuple[int, ...],
+    stop_after_update: int | None,
+) -> bool:
+    """Exclude evaluation and pending-stop updates from periodic publication."""
+    return (
+        update % checkpoint_interval == 0
+        and update not in evaluation_updates
+        and update != stop_after_update
+    )
+
+
 def _snapshot(output: Path, paths: list[Path]) -> dict[str, str]:
     receipt = {}
     for path in paths:
@@ -362,6 +391,18 @@ def run(
     output: Path,
     resume: Path | None,
     stop_after_update: int | None = None,
+    *,
+    dataset_factory: (
+        Callable[
+            [str | Path, list[str] | tuple[str, ...], CampaignConfig], EAPRGBDataset
+        ]
+        | None
+    ) = None,
+    runtime_extension: Mapping[str, object] | None = None,
+    extra_owned_paths: tuple[Path, ...] = (),
+    performance_metrics: Callable[[], Mapping[str, object]] | None = None,
+    performance_observer: Callable[[str, float], None] | None = None,
+    stop_commit_validator: Callable[..., bool] | None = None,
 ) -> dict[str, object]:
     """Preflight, train, evaluate and preserve a complete campaign receipt."""
     if output.exists():
@@ -485,7 +526,7 @@ def run(
         ROOT / "src/e_jepa_ttc/detection/monodgp_eap_adapter.py",
         ROOT / "src/e_jepa_ttc/detection/portable_attention.py",
         ROOT / "src/e_jepa_ttc/detection/velocity_extension.py",
-    ]
+    ] + list(extra_owned_paths)
     code_sha256 = _snapshot(output, owned_paths)
     code_sha256.update(snapshot_media_admission(output, Path(media_admission["receipt_path"])))
     portable_source_sha256 = _snapshot_portable_source(Path(config.model.portable_root), output)
@@ -506,6 +547,7 @@ def run(
         "media_admission_receipt_sha256": media_admission["receipt_sha256"],
         "media_admission_population_sha256": media_admission["train_token_population_sha256"],
         "matmul_precision": config.optimization.matmul_precision,
+        "runtime_extension": dict(runtime_extension or {}),
     }
     write_json(output / "runtime_preregistration.json", runtime_preregistration)
     runtime_provenance = {
@@ -610,9 +652,10 @@ def run(
         parent_run_chain=parent_run_chain,
     )
     write_json(output / "preregistration.json", report)
-    train_dataset = open_campaign_dataset(config.data.root, train_tokens, config)
-    selection_dataset = open_campaign_dataset(config.data.root, selection_tokens, config)
-    pilot_dataset = open_campaign_dataset(config.data.root, pilot_tokens, config)
+    make_dataset = dataset_factory or open_campaign_dataset
+    train_dataset = make_dataset(config.data.root, train_tokens, config)
+    selection_dataset = make_dataset(config.data.root, selection_tokens, config)
+    pilot_dataset = make_dataset(config.data.root, pilot_tokens, config)
     train_cache = PreparedCache(train_dataset, config, data_member_sha256)
     selection_cache = PreparedCache(
         selection_dataset, config, data_member_sha256, label_free_model_input=True
@@ -630,6 +673,7 @@ def run(
     ancestor_training_seconds = float(ancestor_progress["training_seconds"])
     ancestor_empty_target_exposures = empty_target_exposures
     ancestor_valid_velocity_object_exposures = valid_velocity_object_exposures
+    completed_evaluation_updates: set[int] = set()
     torch.cuda.reset_peak_memory_stats()
     with curve.open("w", encoding="utf-8") as stream:
         for update in range(start_update + 1, config.optimization.updates + 1):
@@ -643,7 +687,13 @@ def run(
             before_prepare = time.perf_counter()
             rows = [train_cache.get(index) for index in indices]
             preprocessing_times.append(time.perf_counter() - before_prepare)
+            if performance_observer:
+                performance_observer("prepare", preprocessing_times[-1])
+            before_h2d = time.perf_counter()
             images, calibrations, targets, sizes = batch_to_cuda(rows, config, training=True)
+            if performance_observer:
+                torch.cuda.synchronize()
+                performance_observer("h2d", time.perf_counter() - before_h2d)
             learning_rates = scheduler.apply(update)
             model.train()
             criterion.train()
@@ -674,6 +724,8 @@ def run(
             torch.cuda.synchronize()
             step_seconds = time.perf_counter() - before_step
             step_times.append(step_seconds)
+            if performance_observer:
+                performance_observer("compute", step_seconds)
             final_update = update
             batch_empty_targets = sum(len(target["labels"]) == 0 for target in targets)
             batch_valid_velocity = (
@@ -700,9 +752,11 @@ def run(
             stream.write(json.dumps(record, allow_nan=False) + "\n")
             stream.flush()
             del images, calibrations, targets, sizes, outputs, losses, loss
-            if (
-                update % config.optimization.checkpoint_interval == 0
-                and update not in config.evaluation.updates
+            if should_publish_periodic_checkpoint(
+                update,
+                checkpoint_interval=config.optimization.checkpoint_interval,
+                evaluation_updates=config.evaluation.updates,
+                stop_after_update=stop_after_update,
             ):
                 save_campaign_checkpoint(
                     output / "checkpoints/last.pt",
@@ -725,6 +779,7 @@ def run(
                     data_member_sha256=data_member_sha256,
                 )
             if update in config.evaluation.updates:
+                before_evaluation = time.perf_counter()
                 result = evaluate(
                     model,
                     selection_cache,
@@ -740,10 +795,19 @@ def run(
                     config,
                     output / f"evaluation/pilot_parity_update_{update:06d}.json",
                 )
-                if best_metric is None or value > best_metric:
-                    best_metric = value
+                improves = best_metric is None or value > best_metric
+                committed_metric = value if improves else best_metric
+
+                def publish_checkpoint(
+                    path: Path,
+                    *,
+                    transaction_update: int = update,
+                    transaction_metric: float | None = committed_metric,
+                    transaction_empty: int = empty_target_exposures,
+                    transaction_velocity: int = valid_velocity_object_exposures,
+                ) -> None:
                     save_campaign_checkpoint(
-                        output / "checkpoints/selected.pt",
+                        path,
                         model=model,
                         optimizer=optimizer,
                         scheduler=scheduler,
@@ -751,53 +815,50 @@ def run(
                         config=config,
                         protocol_sha256=protocol.sha256,
                         runtime_provenance=runtime_provenance,
-                        update=update,
-                        best_metric=best_metric,
+                        update=transaction_update,
+                        best_metric=transaction_metric,
                         progress={
                             "training_seconds": ancestor_training_seconds
                             + time.perf_counter()
                             - started,
-                            "empty_target_exposures": empty_target_exposures,
-                            "valid_velocity_object_exposures": valid_velocity_object_exposures,
+                            "empty_target_exposures": transaction_empty,
+                            "valid_velocity_object_exposures": transaction_velocity,
                         },
                         data_member_sha256=data_member_sha256,
                     )
-                if update in config.evaluation.full_selection_updates:
-                    with open_campaign_dataset(
-                        config.data.root, list(full_selection_tokens), config
-                    ) as full_selection_dataset:
-                        evaluate(
-                            model,
-                            PreparedCache(
-                                full_selection_dataset,
+
+                def run_full_evaluation(transaction_update: int = update) -> None:
+                    if transaction_update in config.evaluation.full_selection_updates:
+                        with make_dataset(
+                            config.data.root, list(full_selection_tokens), config
+                        ) as full_selection_dataset:
+                            evaluate(
+                                model,
+                                PreparedCache(
+                                    full_selection_dataset,
+                                    config,
+                                    data_member_sha256,
+                                    label_free_model_input=True,
+                                ),
+                                protocol,
                                 config,
-                                data_member_sha256,
-                                label_free_model_input=True,
-                            ),
-                            protocol,
-                            config,
-                            output / f"evaluation/full_selection_update_{update:06d}.json",
-                        )
-                save_campaign_checkpoint(
-                    output / "checkpoints/last.pt",
-                    model=model,
-                    optimizer=optimizer,
-                    scheduler=scheduler,
-                    sampler=sampler,
-                    config=config,
-                    protocol_sha256=protocol.sha256,
-                    runtime_provenance=runtime_provenance,
-                    update=update,
-                    best_metric=best_metric,
-                    progress={
-                        "training_seconds": ancestor_training_seconds
-                        + time.perf_counter()
-                        - started,
-                        "empty_target_exposures": empty_target_exposures,
-                        "valid_velocity_object_exposures": valid_velocity_object_exposures,
-                    },
-                    data_member_sha256=data_member_sha256,
+                                output
+                                / f"evaluation/full_selection_update_{transaction_update:06d}.json",
+                            )
+
+                commit_evaluation_artifacts(
+                    run_full_evaluation=run_full_evaluation,
+                    publish_selected=(
+                        (lambda: publish_checkpoint(output / "checkpoints/selected.pt"))
+                        if improves
+                        else None
+                    ),
+                    publish_last=lambda: publish_checkpoint(output / "checkpoints/last.pt"),
                 )
+                best_metric = committed_metric
+                if performance_observer:
+                    performance_observer("evaluation", time.perf_counter() - before_evaluation)
+                completed_evaluation_updates.add(update)
             if stop_after_update is not None and update == stop_after_update:
                 report["external_execution_stop_requested"] = stop_after_update
                 report["stop_reason"] = "external_execution_stop_after_completed_update"
@@ -815,6 +876,7 @@ def run(
             "selection_used": False,
             "reason": report.get("stop_reason", "unscheduled_completion"),
         }
+        completed_evaluation_updates.add(final_update)
     save_campaign_checkpoint(
         output / "checkpoints/last.pt",
         model=model,
@@ -833,6 +895,15 @@ def run(
         },
         data_member_sha256=data_member_sha256,
     )
+    if stop_after_update is not None and final_update == stop_after_update:
+        if stop_commit_validator is not None and not stop_commit_validator(
+            final_update,
+            stop_after_update,
+            required_evaluation_complete=(final_update in completed_evaluation_updates),
+            checkpoint_durable=(output / "checkpoints/last.pt").is_file(),
+        ):
+            raise AssertionError("External stop transaction was not committed")
+        report["external_execution_stop_transaction"] = "COMMITTED_AFTER_REQUIRED_EVALUATION"
     selected_path = output / "checkpoints/selected.pt"
     selected_checkpoint = (
         {
@@ -874,6 +945,7 @@ def run(
         checkpoint_path=str(output / "checkpoints/last.pt"),
         metrics_path=str(output / "summary.json"),
         ended_at_utc=datetime.now(UTC).isoformat(),
+        performance_metrics=(dict(performance_metrics()) if performance_metrics else None),
     )
     write_json(output / "summary.json", report)
     train_dataset.close()
