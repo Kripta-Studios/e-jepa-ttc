@@ -1,0 +1,148 @@
+{
+  "schema": "phase_detection_final_verification_v1",
+  "scope": "New audit/protocol tools and preservation; not full PHASE tests or a CUDA model run",
+  "initial_inspected_main": "e58d0106e1f114f00f796987f70cd622cc6d186e",
+  "final_inspected_main": "f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef",
+  "branch": "dev/eap-detection-g0-g1-20261029",
+  "targeted_tests": {
+    "passed": 63,
+    "failed": 0,
+    "skipped": 0,
+    "g0": 39,
+    "protocol": 13,
+    "g1": 11
+  },
+  "checks": [
+    {
+      "name": "targeted_tests",
+      "command": "PYTHONPATH=src ../.venv-g0/bin/python -m pytest tests/unit/test_eap_detection_audit.py tests/unit/test_detection_protocol.py tests/unit/test_detection_environment.py -ra --junitxml=docs/detection_g0_g2_20261029/evidence/final_tests.xml",
+      "exit_code": 0,
+      "stdout": "...............................................................          [100%]\n63 passed in 0.50s\n",
+      "log_file": "final_targeted_tests.txt"
+    },
+    {
+      "name": "ruff_check",
+      "command": "../.venv-g0/bin/python -m ruff check src/e_jepa_ttc/detection scripts/audit_eap_detection.py scripts/check_eap_geometry_reference.py scripts/prepare_detection_protocol.py scripts/probe_detection_environment.py scripts/check_deformable_operator.py tests/unit/test_eap_detection_audit.py tests/unit/test_detection_protocol.py tests/unit/test_detection_environment.py",
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "log_file": "final_ruff_check.txt"
+    },
+    {
+      "name": "ruff_format",
+      "command": "../.venv-g0/bin/python -m ruff format --check src/e_jepa_ttc/detection scripts/audit_eap_detection.py scripts/check_eap_geometry_reference.py scripts/prepare_detection_protocol.py scripts/probe_detection_environment.py scripts/check_deformable_operator.py tests/unit/test_eap_detection_audit.py tests/unit/test_detection_protocol.py tests/unit/test_detection_environment.py",
+      "exit_code": 0,
+      "stdout": "12 files already formatted\n",
+      "log_file": "final_ruff_format.txt"
+    },
+    {
+      "name": "paper_integrity",
+      "command": "python3 paper/scripts/verify_public_data.py",
+      "exit_code": 0,
+      "stdout": "{\"public_hashes_verified\": 13, \"transfer_recomputations\": 8, \"official_score_fields_verified\": 12, \"official_weighted_MiD\": 35.80145158082389, \"official_public_rank\": 1, \"query_overlap\": 0, \"shared_sequence_groups\": 3}\n",
+      "log_file": "final_paper_integrity.txt"
+    }
+  ],
+  "gates": {
+    "G0": "BLOCKED",
+    "G1": "BLOCKED",
+    "G2": "NOT_RUN"
+  },
+  "checked_at_utc": "2026-10-29T11:18:45.047828+00:00",
+  "legacy_tracked_files_modified_or_deleted": [],
+  "remote_main_at_final_fetch": "f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef",
+  "upstream_change_from_initial": [
+    "A\tdocs/phase_3d_ttc_20261029/council_review.md",
+    "A\tdocs/phase_3d_ttc_20261029/swarm_research.md"
+  ],
+  "g0": {
+    "status": "BLOCKED",
+    "git_commit": "f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef",
+    "blockers": [
+      "hf_to_bundle_equivalence",
+      "hf_to_submission",
+      "rgb_event_rectification",
+      "velocity_semantics",
+      "causal_sensor_audit",
+      "workstation_media_not_accessible",
+      "media_hash_or_member_audit_not_run"
+    ],
+    "report_sha256": "9a68ffd39bf57965a729070ebc239e09dfba45ba72f83573337bb0d5aeca7fe0",
+    "producer_hashes_match": {
+      "data_audit.py": true,
+      "geometry_contract.py": true
+    },
+    "last_observed_exit_code": 2
+  },
+  "g1_receipts": {
+    "g1_environment.json": {
+      "report_sha256": "a9735f8e97e33728313d77cd943b4b7140178783e535dc6191e842c2ad0297ef",
+      "producer_sha256_matches": true,
+      "gate": {
+        "status": "BLOCKED",
+        "blockers": [
+          "torch_import_unavailable",
+          "cuda_device_access_unverified",
+          "cuda_compiler_not_on_path",
+          "deformable_extension_not_imported",
+          "real_detector_forward_backward_decode_not_executed_by_this_probe"
+        ],
+        "detector_forward": "NOT_RUN",
+        "detector_loss_and_backward": "NOT_RUN",
+        "detector_decode": "NOT_RUN",
+        "operator_numerical_parity": "NOT_RUN",
+        "detector_peak_memory_bytes": null
+      }
+    },
+    "g1_monodgp_operator.json": {
+      "report_sha256": "a94edfedfe31e40e336a8d3d1b310f6e451d93ba0ba1c1efce2f53dd0293cdbd",
+      "producer_sha256_matches": true,
+      "gate": "BLOCKED"
+    },
+    "g1_monodetr_operator.json": {
+      "report_sha256": "78a96c2dd5b0a1ecb7411cf20c4c1b58c37579b8806087a1d9842762442f297b",
+      "producer_sha256_matches": true,
+      "gate": "BLOCKED"
+    }
+  },
+  "split": {
+    "report_sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+    "producer_hashes_match": true,
+    "status": "CANDIDATE_METADATA_ONLY",
+    "assignment_counts": {
+      "train": 24,
+      "selection": 8,
+      "calibration": 8
+    },
+    "original_code_commit_preserved": "e58d0106e1f114f00f796987f70cd622cc6d186e"
+  },
+  "python_sources_sha256": {
+    "src/e_jepa_ttc/detection/__init__.py": "d438c13788118f469d350a51cfbb8e481b9ed2d30dc2d1772da2135cdb51a074",
+    "src/e_jepa_ttc/detection/data_audit.py": "9c2000f4dea317e3f3bbb4ddf858546f35880978ca1895c51b621dc077c3068c",
+    "src/e_jepa_ttc/detection/geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f",
+    "src/e_jepa_ttc/detection/protocol.py": "3a514445b74edc6418efd6779218044e5bc39313712b0e560c677cc186f9c053",
+    "scripts/audit_eap_detection.py": "e8c6d4d43001c9e41ce915c85118d06d1beafa7c0f2c768e8ec7cfd3e339beee",
+    "scripts/check_eap_geometry_reference.py": "8e4816b6733a4eb2b7b50ab754a5b9d94600e7ce2194e630dd24c7575244f94f",
+    "scripts/prepare_detection_protocol.py": "86fd3442eb3b102119203a4bc7713f7c66b61fadc7666d6e565e1bb37e95127d",
+    "scripts/probe_detection_environment.py": "67abaca72327be6aae96162bcc1f523f2ca06c6495689123000fb481a814cf52",
+    "scripts/check_deformable_operator.py": "373454f70774e2e6960e0304d83a2edc27cf445c6c8ed618dfec8c12a34cceff",
+    "tests/unit/test_eap_detection_audit.py": "c246054da7cf68f8073d6656cd52ec8892e17a8d200323ac4f5de0886240dc0c",
+    "tests/unit/test_detection_protocol.py": "b559cd1ed21c84f5d742bcd72604022718c8a68b0d4ce274c967fca829b6baf0",
+    "tests/unit/test_detection_environment.py": "19c644b317791ebd27c564586edc7a57d68ba9a7ebf7e85954a3a336dc516d3d"
+  },
+  "paper_validation_scope": "Archived bytes/aggregates only; not a fresh official score, ranking, or 3D detection result",
+  "staged_patch_check": {
+    "exit_code": 0,
+    "all_changes_are_additions": true,
+    "new_file_count": 43,
+    "legacy_files_modified": 0
+  },
+  "markdown_local_links": {
+    "files_checked": 5,
+    "broken": []
+  },
+  "independent_review": {
+    "status": "COMPLETED_WITH_G0_G1_BLOCKED_G2_NOT_RUN",
+    "path": "docs/detection_g0_g2_20261029/INDEPENDENT_REVIEW.md",
+    "sha256": "8d663d0ea033f10b07a35b79b69bf42e13092c6f618331a3900c1bd5b0ab1a7d"
+  }
+}

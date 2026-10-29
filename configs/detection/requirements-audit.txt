@@ -1,0 +1,8 @@
+# Separate audit environment. These are the versions installed for this iteration.
+# No PyTorch, CUDA, or PHASE-TTC dependencies are installed by this file.
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+pygments==2.21.0
+pytest==9.1.1
+ruff==0.15.20

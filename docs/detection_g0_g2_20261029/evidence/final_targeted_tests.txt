@@ -1,0 +1,6 @@
+$ PYTHONPATH=src ../.venv-g0/bin/python -m pytest tests/unit/test_eap_detection_audit.py tests/unit/test_detection_protocol.py tests/unit/test_detection_environment.py -ra --junitxml=docs/detection_g0_g2_20261029/evidence/final_tests.xml
+
+exit_code: 0
+
+...............................................................          [100%]
+63 passed in 0.50s

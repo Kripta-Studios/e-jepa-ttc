@@ -1,0 +1,55 @@
+{
+  "schema": "phase_detection_inspection_v1",
+  "inspection_date": "2026-10-29",
+  "repository": "https://github.com/Kripta-Studios/phase-ttc",
+  "base_commit": "e58d0106e1f114f00f796987f70cd622cc6d186e",
+  "base_branch": "origin/main",
+  "work_branch": "dev/eap-detection-g0-g1-20261029",
+  "fresh_clone": true,
+  "preexisting_user_worktree": false,
+  "tracked_modifications_before_work": [],
+  "input_files": [
+    {
+      "name": "swarm_research.md",
+      "size_bytes": 45892,
+      "sha256": "4de15588ee651c3f5eed4fe39456d66a6c096c60886fb2b71270a7f14a38755d"
+    },
+    {
+      "name": "council_review.md",
+      "size_bytes": 18544,
+      "sha256": "1ff9b9e7d434c95e16be881eca0f4e80e3c36f6a07a462b6e927f3bcb99efe32"
+    },
+    {
+      "name": "sample_submission.zip",
+      "size_bytes": 183895,
+      "sha256": "598703c65a2919195c0063af8426d145c3d78f53b8ce2b7541185775238f2999"
+    }
+  ],
+  "paper_evidence_verification": {
+    "public_hashes_verified": 13,
+    "transfer_recomputations": 8,
+    "official_score_fields_verified": 12,
+    "official_weighted_MiD": 35.80145158082389,
+    "official_public_rank": 1,
+    "query_overlap": 0,
+    "shared_sequence_groups": 3
+  },
+  "limitations": [
+    "No locally mounted user datasets or checkpoints",
+    "No NVIDIA GPU exposed to this session",
+    "Archived scorer verification is not a rerun of official scoring"
+  ],
+  "initial_inspected_main_commit": "e58d0106e1f114f00f796987f70cd622cc6d186e",
+  "final_inspected_main_commit": "f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef",
+  "final_base_commit_date": "2026-10-29T11:56:49+01:00",
+  "upstream_change_during_inspection": {
+    "update_method": "git merge --ff-only origin/main",
+    "files_added": [
+      "docs/phase_3d_ttc_20261029/council_review.md",
+      "docs/phase_3d_ttc_20261029/swarm_research.md"
+    ],
+    "both_files_sha256_match_supplied_attachments": true,
+    "historical_runtime_paper_results_agents_manifests_changed": false,
+    "earlier_receipts_keep_their_original_code_commit": true
+  }
+}

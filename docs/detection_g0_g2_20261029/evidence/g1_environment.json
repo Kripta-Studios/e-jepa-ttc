@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "probe_source_sha256": "67abaca72327be6aae96162bcc1f523f2ca06c6495689123000fb481a814cf52",
+  "created_at_utc": "2026-10-29T11:03:37.006322+00:00",
+  "purpose": "prerequisite_inventory_not_detector_validation",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "python_executable": "/workspace/scratch/ecf6f756c581/venv-detection-audit/bin/python",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "linux_nvidia_device_nodes": [],
+  "isolated_environment": true,
+  "packages": {
+    "torch": null,
+    "torchvision": null,
+    "numpy": null,
+    "pytest": "9.1.1",
+    "ruff": "0.15.20"
+  },
+  "executables": {
+    "nvidia-smi": null,
+    "nvcc": null,
+    "c++": "/usr/bin/c++",
+    "git": "/usr/local/bin/git"
+  },
+  "nvidia_smi": {
+    "command": [
+      "nvidia-smi",
+      "--query-gpu=name,driver_version,memory.total",
+      "--format=csv,noheader"
+    ],
+    "returncode": null,
+    "error": "[Errno 2] No such file or directory: 'nvidia-smi'"
+  },
+  "nvcc": {
+    "command": [
+      "nvcc",
+      "--version"
+    ],
+    "returncode": null,
+    "error": "[Errno 2] No such file or directory: 'nvcc'"
+  },
+  "torch": {
+    "import": "FAIL",
+    "cuda_available": null,
+    "devices": [],
+    "primitive_status": "NOT_RUN",
+    "extension_import": "NOT_RUN",
+    "error": "ModuleNotFoundError: No module named 'torch'"
+  },
+  "torch_probe_process": {
+    "returncode": 0,
+    "stdout": "{\"import\": \"FAIL\", \"cuda_available\": null, \"devices\": [], \"primitive_status\": \"NOT_RUN\", \"extension_import\": \"NOT_RUN\", \"error\": \"ModuleNotFoundError: No module named 'torch'\"}",
+    "stderr": ""
+  },
+  "candidate_sources": {
+    "monodgp": {
+      "root": "/workspace/scratch/ecf6f756c581/external/MonoDGP",
+      "expected_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "observed_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "revision_matches": true,
+      "tracked_changes_present": false,
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files_sha256": {
+        "README.md": "61223dc87187329fd45f9205cb79852d25e28599bcd17f6a3181e7fe458f159c",
+        "requirements.txt": "083806e51e4aca41cbd5869d3550dad9d87aead9f9a7d328b5ce3d5444a14396",
+        "LICENSE": "8e31470748ac395e7413b1142a74a97585755b8f757df71365e23ae2a5d7a099",
+        "configs/monodgp.yaml": "b736cc2d692b6aa9ae762e57298708fd96f86cfd3deb8e7ca3beffcebcfcf317",
+        "lib/models/monodgp/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+        "lib/models/monodgp/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+        "lib/datasets/kitti/kitti_dataset.py": "bda5071f4b7a786c3f68d41a6d1d3bb40bc3654b5d6bbe19d9d377bef792341b",
+        "lib/helpers/decode_helper.py": "70ab57ff293f563c14c72121732a327d524b036fc5de6724fd844d61d4c09c7a"
+      }
+    },
+    "monodetr": {
+      "root": "/workspace/scratch/ecf6f756c581/external/MonoDETR",
+      "expected_revision": "6994b9f512400b258c6edb75f77423beb9c126f2",
+      "observed_revision": "6994b9f512400b258c6edb75f77423beb9c126f2",
+      "revision_matches": true,
+      "tracked_changes_present": false,
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files_sha256": {
+        "README.md": "2e85704f498b042edb990991f94051343fea216e2971e01fd44231c8d153c78f",
+        "requirements.txt": "2bbfe03285864f5cd246e92ef900bcef33d73172fff3ecd1ba08137823e89d73",
+        "LICENSE.txt": "5d8aab7da8b9b4972ec3f4793bf968904557061bfc003e0d78e32f36306cf84a",
+        "configs/monodetr.yaml": "ef41fa84bca4d529929616e85cc28b56083d2e9d109eae23a906b75474534243",
+        "lib/models/monodetr/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+        "lib/models/monodetr/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+        "lib/models/monodetr/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+        "lib/models/monodetr/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+        "lib/datasets/kitti/kitti_dataset.py": "e4d8ae357e7cdea2f9fa0e70edf41aa1f509ff01f7b724255723deeba5a55bad",
+        "lib/helpers/decode_helper.py": "f6415c5b7b053d90d3749bf12c0003cec3869d9d36c9b34a4c331f16eff14560"
+      }
+    }
+  },
+  "g1": {
+    "status": "BLOCKED",
+    "blockers": [
+      "torch_import_unavailable",
+      "cuda_device_access_unverified",
+      "cuda_compiler_not_on_path",
+      "deformable_extension_not_imported",
+      "real_detector_forward_backward_decode_not_executed_by_this_probe"
+    ],
+    "detector_forward": "NOT_RUN",
+    "detector_loss_and_backward": "NOT_RUN",
+    "detector_decode": "NOT_RUN",
+    "operator_numerical_parity": "NOT_RUN",
+    "detector_peak_memory_bytes": null
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "eap_geometry_contract_v1",
+  "dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+  "status": "BLOCKED",
+  "claims": {
+    "original_bundle": {
+      "status": "VERIFIED_SOURCE_AND_FIXTURE",
+      "dimensions": "l,h,w",
+      "local_axes": "X width, Y length, Z height",
+      "yaw": "clockwise in XY for positive radians",
+      "center": "geometric center",
+      "transform": "p_event = T_event_ego @ p_ego_homogeneous"
+    },
+    "hf_size_permutation": {
+      "status": "VERIFIED_NUMERIC_RELATION_ONLY",
+      "relation": "size == bbox_3d_ego[[5,3,4]]",
+      "checked_rows": 804510,
+      "checked_sequences": 40,
+      "semantic_conversion_verified": false
+    },
+    "hf_to_bundle_equivalence": {
+      "status": "BLOCKED",
+      "reason": "Official converter or matching original/HF pair not available"
+    },
+    "hf_to_submission": {
+      "status": "BLOCKED",
+      "reason": "Submission l,w,h is documented; exact label bridge, yaw and center not verified"
+    },
+    "rgb_event_rectification": {
+      "status": "BLOCKED",
+      "reason": "No RGB intrinsics, distortion, rectification map or exact released-image converter verified"
+    },
+    "velocity_semantics": {
+      "status": "BLOCKED",
+      "reason": "Author page describes ego-relative vectors; release transformation, differentiation and sign not established"
+    },
+    "causal_sensor_audit": {
+      "status": "BLOCKED",
+      "reason": "Exposure metadata checked; events/media and runtime availability not observed"
+    }
+  },
+  "training_geometry_approved": false
+}

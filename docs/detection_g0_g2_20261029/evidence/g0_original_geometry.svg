@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640">
+<rect width="1000" height="640" fill="#f6f8fa"/>
+<g font-family="sans-serif" fill="#142b44">
+<text x="36" y="35" font-size="23">eAP: independent original-bundle geometry fixture</text>
+<text x="36" y="62" font-size="14">Synthetic cuboid and camera. This is not a real sensor reprojection.</text>
+<rect x="35" y="86" width="455" height="225" rx="8" fill="white" stroke="#cbd5e1"/>
+<text x="51" y="113" font-size="16">yaw = 0.000000 rad</text>
+<line x1="282.273" y1="178.727" x2="275.000" y2="186.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="275.000" y1="186.000" x2="155.000" y2="186.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="155.000" y1="186.000" x2="118.636" y2="178.727" stroke="#0369a1" stroke-width="2"/>
+<line x1="118.636" y1="178.727" x2="282.273" y2="178.727" stroke="#0369a1" stroke-width="2"/>
+<line x1="282.273" y1="233.273" x2="275.000" y2="226.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="275.000" y1="226.000" x2="155.000" y2="226.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="155.000" y1="226.000" x2="118.636" y2="233.273" stroke="#0369a1" stroke-width="2"/>
+<line x1="118.636" y1="233.273" x2="282.273" y2="233.273" stroke="#0369a1" stroke-width="2"/>
+<line x1="282.273" y1="178.727" x2="282.273" y2="233.273" stroke="#0369a1" stroke-width="2"/>
+<line x1="275.000" y1="186.000" x2="275.000" y2="226.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="155.000" y1="186.000" x2="155.000" y2="226.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="118.636" y1="178.727" x2="118.636" y2="233.273" stroke="#0369a1" stroke-width="2"/>
+<text x="51" y="293" font-size="12">l=6 m; h=2 m; w=4 m; center=(10,3,2) m</text>
+<rect x="525" y="86" width="455" height="225" rx="8" fill="white" stroke="#cbd5e1"/>
+<text x="541" y="113" font-size="16">yaw = 1.570796 rad</text>
+<line x1="625.000" y1="176.000" x2="745.000" y2="176.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="745.000" y1="176.000" x2="745.000" y2="187.250" stroke="#0369a1" stroke-width="2"/>
+<line x1="745.000" y1="187.250" x2="670.000" y2="187.250" stroke="#0369a1" stroke-width="2"/>
+<line x1="670.000" y1="187.250" x2="625.000" y2="176.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="625.000" y1="236.000" x2="745.000" y2="236.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="745.000" y1="236.000" x2="745.000" y2="224.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="745.000" y1="224.750" x2="670.000" y2="224.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="670.000" y1="224.750" x2="625.000" y2="236.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="625.000" y1="176.000" x2="625.000" y2="236.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="745.000" y1="176.000" x2="745.000" y2="236.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="745.000" y1="187.250" x2="745.000" y2="224.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="670.000" y1="187.250" x2="670.000" y2="224.750" stroke="#0369a1" stroke-width="2"/>
+<text x="541" y="293" font-size="12">l=6 m; h=2 m; w=4 m; center=(10,3,2) m</text>
+<rect x="35" y="336" width="455" height="225" rx="8" fill="white" stroke="#cbd5e1"/>
+<text x="51" y="363" font-size="16">yaw = -1.570796 rad</text>
+<line x1="255.000" y1="437.250" x2="180.000" y2="437.250" stroke="#0369a1" stroke-width="2"/>
+<line x1="180.000" y1="437.250" x2="135.000" y2="426.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="135.000" y1="426.000" x2="255.000" y2="426.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="255.000" y1="426.000" x2="255.000" y2="437.250" stroke="#0369a1" stroke-width="2"/>
+<line x1="255.000" y1="474.750" x2="180.000" y2="474.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="180.000" y1="474.750" x2="135.000" y2="486.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="135.000" y1="486.000" x2="255.000" y2="486.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="255.000" y1="486.000" x2="255.000" y2="474.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="255.000" y1="437.250" x2="255.000" y2="474.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="180.000" y1="437.250" x2="180.000" y2="474.750" stroke="#0369a1" stroke-width="2"/>
+<line x1="135.000" y1="426.000" x2="135.000" y2="486.000" stroke="#0369a1" stroke-width="2"/>
+<line x1="255.000" y1="426.000" x2="255.000" y2="486.000" stroke="#0369a1" stroke-width="2"/>
+<text x="51" y="543" font-size="12">l=6 m; h=2 m; w=4 m; center=(10,3,2) m</text>
+<rect x="525" y="336" width="455" height="225" rx="8" fill="white" stroke="#cbd5e1"/>
+<text x="541" y="363" font-size="16">yaw = 0.370000 rad</text>
+<line x1="747.201" y1="426.151" x2="778.097" y2="434.229" stroke="#0369a1" stroke-width="2"/>
+<line x1="778.097" y1="434.229" x2="668.375" y2="437.191" stroke="#0369a1" stroke-width="2"/>
+<line x1="668.375" y1="437.191" x2="609.481" y2="431.450" stroke="#0369a1" stroke-width="2"/>
+<line x1="609.481" y1="431.450" x2="747.201" y2="426.151" stroke="#0369a1" stroke-width="2"/>
+<line x1="747.201" y1="485.849" x2="778.097" y2="477.771" stroke="#0369a1" stroke-width="2"/>
+<line x1="778.097" y1="477.771" x2="668.375" y2="474.809" stroke="#0369a1" stroke-width="2"/>
+<line x1="668.375" y1="474.809" x2="609.481" y2="480.550" stroke="#0369a1" stroke-width="2"/>
+<line x1="609.481" y1="480.550" x2="747.201" y2="485.849" stroke="#0369a1" stroke-width="2"/>
+<line x1="747.201" y1="426.151" x2="747.201" y2="485.849" stroke="#0369a1" stroke-width="2"/>
+<line x1="778.097" y1="434.229" x2="778.097" y2="477.771" stroke="#0369a1" stroke-width="2"/>
+<line x1="668.375" y1="437.191" x2="668.375" y2="474.809" stroke="#0369a1" stroke-width="2"/>
+<line x1="609.481" y1="431.450" x2="609.481" y2="480.550" stroke="#0369a1" stroke-width="2"/>
+<text x="541" y="543" font-size="12">l=6 m; h=2 m; w=4 m; center=(10,3,2) m</text>
+<text x="36" y="607" font-size="14">PASS: source corners and explicit ego-to-camera transform. BLOCKED: HF bridge and real RGB-event alignment.</text>
+</g></svg>

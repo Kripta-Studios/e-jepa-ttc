@@ -1,0 +1,239 @@
+{
+  "base_commit": "e58d0106e1f114f00f796987f70cd622cc6d186e",
+  "sources": [
+    {
+      "url": "https://huggingface.co/api/datasets/NAIL-HNU/eAP-dataset/revision/a814a946e60d37f7242358af5f344542177e50c5?blobs=true",
+      "sha256": "101380e2f25d392fe866dbed0690b1147e7ff59f116c774d02af61e3c41c0270",
+      "bytes": 69652
+    },
+    {
+      "url": "https://huggingface.co/datasets/NAIL-HNU/eAP-dataset/blob/a814a946e60d37f7242358af5f344542177e50c5/README.md",
+      "sha256": "bdc6b55f1ee7726763f4a4a60b95fda758f5c4febd7871e2d2ef9e681eae3e6d",
+      "bytes": 1847
+    },
+    {
+      "url": "https://nail-hnu.github.io/eAP_dataset/",
+      "sha256": "e8b1d9fcfa728df36e6fca493c8495c2af467a1610ac4172c97d81031d0e6516",
+      "bytes": 58163
+    },
+    {
+      "url": "https://github.com/NAIL-HNU/eAP_dataset/blob/2c5f3a74ba5b693b746820a0a355684e3597dc2d/README.md",
+      "sha256": "3d84dfff9259a67ab480a81f9c80e647126776c65226451dfb6785fa3f66d099",
+      "bytes": 6290
+    },
+    {
+      "url": "https://github.com/NAIL-HNU/eAP_dataset/blob/2c5f3a74ba5b693b746820a0a355684e3597dc2d/release_visualizer/visualize_release_sequence.py",
+      "sha256": "e975941c5866af465dcf3897efcdae36d71306808a38a63b580311a35f5ed5a7",
+      "bytes": 29571
+    }
+  ],
+  "sample_submission_git_blob": "49868f7af188dc3733459097430dfc77e2a8d8db",
+  "official_sample_git_blob": "49868f7af188dc3733459097430dfc77e2a8d8db",
+  "sample_exact_official_git_blob_match": true,
+  "downloaded_train_labels": {
+    "dataset": "NAIL-HNU/eAP-dataset",
+    "revision": "a814a946e60d37f7242358af5f344542177e50c5",
+    "files": [
+      {
+        "path": "data/train/2JkLL5W891/labels.parquet",
+        "size": 4092133,
+        "sha256": "b30bfbc394440006993a6afdb5bcc2a0334dbcbb04c3281a6e3c97a9aacf3c45"
+      },
+      {
+        "path": "data/train/2Y46OkK3ff/labels.parquet",
+        "size": 3347917,
+        "sha256": "06a1fc3d3e9ddfd2ffe514b09819e9636f0b3d4b3fd035ed94f4d013015b3c4d"
+      },
+      {
+        "path": "data/train/2cyv0Oedzg/labels.parquet",
+        "size": 2816863,
+        "sha256": "e1fc19e222d4a5b98cfdeea98b5e27c621758766c7b269514229a9a2e21ab08d"
+      },
+      {
+        "path": "data/train/34K84TaN11/labels.parquet",
+        "size": 2614273,
+        "sha256": "76b40d6a848322acd10606c85d5ae4173b4df024bca7729a6c1dd812ee2f7c84"
+      },
+      {
+        "path": "data/train/5ilM1PX2vz/labels.parquet",
+        "size": 2294853,
+        "sha256": "67abaaf4948bb7a815d69847659889d7b84687edcc7f1ec9b31fb4f21e68ee74"
+      },
+      {
+        "path": "data/train/6WCDpro5rE/labels.parquet",
+        "size": 3287564,
+        "sha256": "6a588547774a2eb0005fb152886d2604f2825cf7e050abe822f00d9ff8698a5a"
+      },
+      {
+        "path": "data/train/6h5yRW2LGc/labels.parquet",
+        "size": 3566713,
+        "sha256": "641a41b7c8c1ee5164ca248d1dcc4cfbd0d6fbb090e9b94cd93265566c16e54e"
+      },
+      {
+        "path": "data/train/8SdieOgbva/labels.parquet",
+        "size": 3969275,
+        "sha256": "2bf43a9a5fe3170ec2dd5c96a59d97f50d0a1b4e8140d5279b2492dba1f734bc"
+      },
+      {
+        "path": "data/train/8mNnrXjpVB/labels.parquet",
+        "size": 3051028,
+        "sha256": "859dfd94cc0aa0b1ab23abc4d7306e0cf2dd10a384804f6ba117a8b04785a59d"
+      },
+      {
+        "path": "data/train/9ITOs4twfk/labels.parquet",
+        "size": 5083893,
+        "sha256": "4e7da8f7b8f348b534a4e40c10d0ac84bf6f1ece7950d6ca3f0d816b9af0ccad"
+      },
+      {
+        "path": "data/train/A1Nhv0KtmL/labels.parquet",
+        "size": 2232239,
+        "sha256": "4d8848844bad6945fa67ed30c229f0c143040f975f5e6dc4d8b7739d79a2eb93"
+      },
+      {
+        "path": "data/train/ClXqVoZOFu/labels.parquet",
+        "size": 3193093,
+        "sha256": "f55e8e35e5a8d08f72abc2045378d3d12c06133d443a9a7157dbbf6694ee5bac"
+      },
+      {
+        "path": "data/train/CzyQ8HKP6X/labels.parquet",
+        "size": 2749962,
+        "sha256": "b29b965b6eb89ede48907f4c761414b3b68037becb568608c682f04d2b3fec91"
+      },
+      {
+        "path": "data/train/DGqicHUGWb/labels.parquet",
+        "size": 731444,
+        "sha256": "908244488914a000b5448c9ffd69f0a49b869c2815fc398badb3a60b0908846f"
+      },
+      {
+        "path": "data/train/EllUE6bwVp/labels.parquet",
+        "size": 4330230,
+        "sha256": "77cd121f3f9b2bb8df0105c4f35050b169919949f33e491a2c4f55e41255a28b"
+      },
+      {
+        "path": "data/train/EuFGqTcqIz/labels.parquet",
+        "size": 2452664,
+        "sha256": "0692f65cd790505b658e2e92329804c4dcd9e062363836bf578dedff6a70a268"
+      },
+      {
+        "path": "data/train/GjMYZjmSQb/labels.parquet",
+        "size": 2429044,
+        "sha256": "d1da779468834eb3ce723f80bf3e41b2e88ce73738817cbe852d8b15b4296f98"
+      },
+      {
+        "path": "data/train/JaGC4Q9pgU/labels.parquet",
+        "size": 3802027,
+        "sha256": "967873b148f5259d86838aba862bdcd3aa91b61c562afba4869e0ea4ad708cd4"
+      },
+      {
+        "path": "data/train/L36QTEoVkB/labels.parquet",
+        "size": 2602493,
+        "sha256": "3e48675ad8d15887f8e40241412aab66c50a884084087c8b1061848080af91e6"
+      },
+      {
+        "path": "data/train/LMHPShQkaU/labels.parquet",
+        "size": 3855823,
+        "sha256": "c3035d5eb7b549b73d5e53f4861889c288a8a35eb5e39093f63a71e96defe9eb"
+      },
+      {
+        "path": "data/train/OBneIVg4Cw/labels.parquet",
+        "size": 4856019,
+        "sha256": "22ed3e2a69a30da992db9d93b3c1adf6476ca061ab48631c4950d5ae87f716fa"
+      },
+      {
+        "path": "data/train/OYgB6RGWcq/labels.parquet",
+        "size": 2427805,
+        "sha256": "53bab51c8a1ff99fbfb9586f6df1430865f76a7ed2e36e6fe57e082d0e634c89"
+      },
+      {
+        "path": "data/train/Po6ePjWYAz/labels.parquet",
+        "size": 2724477,
+        "sha256": "72861dfb52c6d3bec01666514a6244aa0faeceb7fceb62ab4d1f7d7ccafc9f06"
+      },
+      {
+        "path": "data/train/VLA3oBKFyX/labels.parquet",
+        "size": 2110159,
+        "sha256": "9997309b9205116b1a9f66878e9c8d393dae96b2e2268523bd61da030a1429f1"
+      },
+      {
+        "path": "data/train/WbCh1DRerJ/labels.parquet",
+        "size": 3427365,
+        "sha256": "2a7896a010edebeb6f5c455ec6f78ba04bd2480e179277e5efa67e789e0b2ba3"
+      },
+      {
+        "path": "data/train/Z30i8WuL2N/labels.parquet",
+        "size": 2305744,
+        "sha256": "13d516e30dd29ac7d37e5c9149b70e9ee066d1a91f8612357f27718c7aa66705"
+      },
+      {
+        "path": "data/train/eX8t2nGd6O/labels.parquet",
+        "size": 2873013,
+        "sha256": "97564157856a379ec6adddd1d16404c45cefd4f3cca2558dba0eebdf3e1b3142"
+      },
+      {
+        "path": "data/train/mHGFBekt7X/labels.parquet",
+        "size": 5703661,
+        "sha256": "1892b201c114990bd8a9f77acf188d0cfff20a105fb4720a926c223536412686"
+      },
+      {
+        "path": "data/train/nRcwUlHyAd/labels.parquet",
+        "size": 4044669,
+        "sha256": "b8d14b5f4f3aaa892b679883212f12447c6418c8c5df605d413b91a3355b5f10"
+      },
+      {
+        "path": "data/train/pBqGOb2vYq/labels.parquet",
+        "size": 5712883,
+        "sha256": "799d0cf88fd4aebb7b4f2e81a14f3f65ed3e3b7d3c5de2aed9e48a353c754f54"
+      },
+      {
+        "path": "data/train/pakWgyPNTL/labels.parquet",
+        "size": 4191943,
+        "sha256": "78a4d5b02c828b6028de536c3031ce92fb40716b8646ff6b18ee5f69766b5b98"
+      },
+      {
+        "path": "data/train/pzJcg1OCfc/labels.parquet",
+        "size": 2317176,
+        "sha256": "0c80ddccb4d99b4b25f38a6df6c1a34e39d984fab1dfbc32a7a5565c7c58d690"
+      },
+      {
+        "path": "data/train/q2k6O0X6JY/labels.parquet",
+        "size": 1232259,
+        "sha256": "2dc66c48829d1275faac1c3ccfed3233738b992edc82907e14ce5904042056a5"
+      },
+      {
+        "path": "data/train/qGsgzl4Q8B/labels.parquet",
+        "size": 1815869,
+        "sha256": "ed4989281b7e398c276e1b966ee0d4db9dbb1e7b3374e7a41c3838a8a23b37e2"
+      },
+      {
+        "path": "data/train/qoohcdtLDH/labels.parquet",
+        "size": 3743725,
+        "sha256": "a512a2f2228afe433bd34e63bc00ea1d656ba2591fde19f42b6bc0ecbe85295a"
+      },
+      {
+        "path": "data/train/rhYxPcU29n/labels.parquet",
+        "size": 4278372,
+        "sha256": "92e05b2c3abc3946817da32066515cbc71f0710454267f6c901b0b6556df2761"
+      },
+      {
+        "path": "data/train/t79dBxj1WS/labels.parquet",
+        "size": 2124386,
+        "sha256": "0c41ede5398ff9182c2b64a72aaa5be4ea4ac421d08daccc5d2cba352eafbd73"
+      },
+      {
+        "path": "data/train/vWp9XNYQ9V/labels.parquet",
+        "size": 2219651,
+        "sha256": "e125cd53f56e9ea45922cd175fd2e6b8c34807cf6dcd2a4eadc64da374780ce7"
+      },
+      {
+        "path": "data/train/wE9MZUmiJP/labels.parquet",
+        "size": 3758089,
+        "sha256": "c9afcbdac7e27e06f8f2cfc73c00cf68e03c00d6555ae1e6e652afe31311d6ab"
+      },
+      {
+        "path": "data/train/xkiVthsGwf/labels.parquet",
+        "size": 4045448,
+        "sha256": "8a1106b3eab269525475e70b3b261cf5293dae88e7cf9b72a77a51718460e38e"
+      }
+    ]
+  }
+}

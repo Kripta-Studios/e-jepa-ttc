@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "monodgp": {
+      "url": "https://github.com/PuFanqi23/MonoDGP",
+      "revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "license_root": "MIT",
+      "inherited_operator_license_headers": "Apache-2.0; retain notices",
+      "files_sha256": {
+        "README.md": "61223dc87187329fd45f9205cb79852d25e28599bcd17f6a3181e7fe458f159c",
+        "requirements.txt": "083806e51e4aca41cbd5869d3550dad9d87aead9f9a7d328b5ce3d5444a14396",
+        "LICENSE": "8e31470748ac395e7413b1142a74a97585755b8f757df71365e23ae2a5d7a099",
+        "configs/monodgp.yaml": "b736cc2d692b6aa9ae762e57298708fd96f86cfd3deb8e7ca3beffcebcfcf317",
+        "lib/models/monodgp/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+        "lib/models/monodgp/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+        "lib/datasets/kitti/kitti_dataset.py": "bda5071f4b7a786c3f68d41a6d1d3bb40bc3654b5d6bbe19d9d377bef792341b",
+        "lib/helpers/decode_helper.py": "70ab57ff293f563c14c72121732a327d524b036fc5de6724fd844d61d4c09c7a"
+      },
+      "python_syntax_only": {
+        "files": 48,
+        "failures": [
+          {
+            "path": "lib/datasets/kitti/kitti_eval_python/evaluate.py",
+            "error": "invalid syntax (evaluate.py, line 4)"
+          }
+        ],
+        "does_not_establish_runtime_compatibility": true
+      },
+      "runtime_status": "NOT_EXECUTED"
+    },
+    "monodetr": {
+      "url": "https://github.com/ZrrSkywalker/MonoDETR",
+      "revision": "6994b9f512400b258c6edb75f77423beb9c126f2",
+      "license_root": "MIT",
+      "inherited_operator_license_headers": "Apache-2.0; retain notices",
+      "files_sha256": {
+        "README.md": "2e85704f498b042edb990991f94051343fea216e2971e01fd44231c8d153c78f",
+        "requirements.txt": "2bbfe03285864f5cd246e92ef900bcef33d73172fff3ecd1ba08137823e89d73",
+        "LICENSE.txt": "5d8aab7da8b9b4972ec3f4793bf968904557061bfc003e0d78e32f36306cf84a",
+        "configs/monodetr.yaml": "ef41fa84bca4d529929616e85cc28b56083d2e9d109eae23a906b75474534243",
+        "lib/models/monodetr/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+        "lib/models/monodetr/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+        "lib/models/monodetr/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+        "lib/models/monodetr/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+        "lib/datasets/kitti/kitti_dataset.py": "e4d8ae357e7cdea2f9fa0e70edf41aa1f509ff01f7b724255723deeba5a55bad",
+        "lib/helpers/decode_helper.py": "f6415c5b7b053d90d3749bf12c0003cec3869d9d36c9b34a4c331f16eff14560"
+      },
+      "python_syntax_only": {
+        "files": 44,
+        "failures": [
+          {
+            "path": "lib/datasets/kitti/kitti_eval_python/evaluate.py",
+            "error": "invalid syntax (evaluate.py, line 4)"
+          }
+        ],
+        "does_not_establish_runtime_compatibility": true
+      },
+      "runtime_status": "NOT_EXECUTED"
+    }
+  }
+}

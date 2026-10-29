@@ -1,0 +1,5 @@
+$ ../.venv-g0/bin/python -m ruff check src/e_jepa_ttc/detection scripts/audit_eap_detection.py scripts/check_eap_geometry_reference.py scripts/prepare_detection_protocol.py scripts/probe_detection_environment.py scripts/check_deformable_operator.py tests/unit/test_eap_detection_audit.py tests/unit/test_detection_protocol.py tests/unit/test_detection_environment.py
+
+exit_code: 0
+
+All checks passed!
