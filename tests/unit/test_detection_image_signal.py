@@ -130,6 +130,25 @@ def test_modified_stored_metrics_are_rejected():
         analyze_results(train, selection)
 
 
+def test_metric_recomputation_accepts_only_tiny_float_roundoff():
+    train = results({"t": []}, {"t": [box()]})
+    selection = results({"s1": [box()], "s2": []}, {"s1": [box()], "s2": []})
+    selection["metrics"]["per_class"]["car"]["thresholds"]["2.0"]["AP101"] += 1e-15
+    analyze_results(train, selection)
+    selection["metrics"]["per_class"]["car"]["thresholds"]["2.0"]["AP101"] += 1e-5
+    with pytest.raises(ValueError, match="Stored metric"):
+        analyze_results(train, selection)
+
+
+@pytest.mark.parametrize("count", [2, 1.0])
+def test_integer_metric_counts_remain_exact_and_typed(count):
+    train = results({"t": []}, {"t": [box()]})
+    selection = results({"s1": [box()], "s2": []}, {"s1": [box()], "s2": []})
+    selection["metrics"]["per_class"]["car"]["ground_truth_count"] = count
+    with pytest.raises(ValueError, match="Stored metric"):
+        analyze_results(train, selection)
+
+
 def test_duplicate_json_keys_are_rejected(tmp_path):
     path = tmp_path / "results.json"
     path.write_text('{"predictions": {}, "predictions": {}}', encoding="utf-8")

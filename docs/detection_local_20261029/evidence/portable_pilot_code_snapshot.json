@@ -1,0 +1,21 @@
+{
+  "scope": "code_only_reconstruction_no_images_labels_or_weights",
+  "run": "pilot256_seed7_velocity_v1",
+  "base_git_commit": "3ebac039e56e3e5af98e0e3302084f00923235a1",
+  "preregistration_sha256": "4de9b76caed8e6ecbb1db618a502f3ecb5ecaa133810e484d745c37231284bd2",
+  "files": {
+    "code/scripts/train_monodgp_portable.py": "f02050f41163dca818e859f25eeaf9158ad0f3cf822545925ef3370c96a039f2",
+    "code/scripts/smoke_monodgp_portable.py": "8c924120daf70ea32901aeef2198bf219f05b38d0143fc667f39bf5d3c7c7bda",
+    "code/src/e_jepa_ttc/detection/portable_attention.py": "e3a5ca88ca989e7bd10fe1f8381f7da32b83eea3063ac89b67113511b045f7fa",
+    "code/src/e_jepa_ttc/detection/monodgp_eap_adapter.py": "9492aef2af662b232c2397b6775685135dddda48ff73879b9ad474e29399e71d",
+    "code/src/e_jepa_ttc/detection/development_metrics.py": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6",
+    "code/src/e_jepa_ttc/detection/eap_rgb_data.py": "fa670aa09f021465e2b47de5d7a2d787098be592b664822babf95ecae1a6cb55",
+    "code/src/e_jepa_ttc/detection/geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f",
+    "code/src/e_jepa_ttc/detection/velocity_extension.py": "08881d0ec2ea90b98cb1e8b17e2635b4b05cc648d6705610c856e9373f850c90",
+    "code/src/e_jepa_ttc/detection/velocity_diagnostics.py": "a5330444c0d1a82e99ea90b0f2bf01d18b2ed865aade222303498c95c3347918",
+    "code/src/e_jepa_ttc/detection/backbone_initialization.py": "51bf50bdd7723b253f5fdc6a6f83d0d26b79e22c473c38a2342cc64515e83e55",
+    "upstream.patch": "a679536a6cf4e9683208a7bc45da5eac97b7f2bc654bb909b18d6a87d68cb8e2"
+  },
+  "archive_sha256": "1d9b760de840d72f02566ab62530dac4baeabd38d460a1bb58f70f9a6d86d7fb",
+  "archive_bytes": 42906
+}

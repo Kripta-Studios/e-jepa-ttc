@@ -1,14 +1,84 @@
-# Primera inferencia con detecciones eAP y PHASE
+# Inferencias con detecciones eAP y PHASE
 
 Fecha: 2026-10-29. Estado: **PREDICTED_DEVELOPMENT_EXPOSED**.
 
 Se ejecutó una consulta real de la cadena **detecciones 3D → asociación causal →
-recorte común → eventos/RGB → PHASE**, usando exclusivamente predicciones del
-checkpoint del overfit y medios públicos train. La demostración produjo TTC
-firmado y límites de fase sin cargar etiquetas de objeto/TTC ni IDs Garl. No es
-una medición de precisión o generalización conjunta.
+recorte común → eventos/RGB → PHASE**, primero con el checkpoint del overfit y
+después con el checkpoint del piloto de 256 frames y cabeza de velocidad.
+Ambas ejecuciones usaron exclusivamente predicciones y medios públicos train,
+sin cargar etiquetas de objeto/TTC ni IDs Garl durante la inferencia. Producen
+TTC firmado y límites de fase; no miden precisión o generalización conjunta.
 
-## Resultado conservado
+## Resultado actual: piloto con velocidad
+
+Se repitió la misma consulta `qGsgzl4Q8B:000000929_000731755` y las mismas reglas
+de asociación, umbrales, recorte, pesos PHASE y código del puente. El checkpoint
+del detector es `dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338`.
+La preparación y la inferencia terminaron con código 0; no hubo abstención.
+
+La [salida integrada](evidence/integrated_prediction_pilot_v1.json) enlaza la
+detección nativa exacta mediante `sample_token` y `prediction_index=0` con las
+salidas originales de PHASE:
+
+| Campo | Valor |
+|---|---:|
+| Clase | car |
+| Centro 3D, m | `[29.0970653059, 3.8369083604, 0.2489670917]` |
+| Dimensiones largo, ancho, alto, m | `[4.7069950104, 1.8282244205, 1.7362303734]` |
+| Yaw nativo, rad | −1,5681608559 |
+| Velocidad planar aprendida, m/s | `[2.1009831429, −0.0082943831]` |
+| Score de detección | 0,3639818430 |
+| `ttc`, segundos con signo | −5,2349028587 |
+| `point_phase` / `raw_location`, fase | −0,0189223886 |
+| `q10`, fase | −0,0224637017 |
+| `q90`, fase | −0,0155819701 |
+| Frames asociados | 7 |
+| Observaciones eventos / RGB aceptadas | 4 / 5 |
+| Eventos retenidos | 408.923 |
+| ROI común xyxy, píxeles | `[20,410,369,720]` |
+
+La cabeza de velocidad está presente: estos valores son predicciones aprendidas
+del target público HF, no un relleno con ceros. No se afirma que representen
+velocidad relativa con compensación de ego-motion. PHASE no obtiene su TTC de
+esa velocidad; se mantiene como rama independiente. Los límites de fase no
+cruzan cero en esta consulta y no se presentan como un intervalo TTC calibrado.
+
+La política fija de mayor score seleccionó una ROI distinta de la ejecución
+overfit conservada abajo. Aunque ambas generen el ID local `detected_roi_0001`,
+**ese ID no establece identidad entre checkpoints**. Por tanto, la diferencia
+entre ambos TTC no demuestra una mejora ni un cambio del TTC de un mismo objeto.
+La consulta está entre los frames de entrenamiento del piloto, y PHASE estuvo
+expuesto a TRAIN40. El ejemplo demuestra la interfaz; no es evaluación retenida.
+
+La ROI solicitada superaba el borde inferior de la imagen y se recortó una vez,
+de modo idéntico para todas las observaciones. Se conservaron los timestamps de
+v1: ancla `929731755` µs y corte sensorial `929733441` µs. El runtime PHASE sobre
+observaciones preparadas fue **0,71745 s en CPU, un hilo**, excluyendo detector,
+carga de pesos y preparación sensorial. No es latencia de extremo a extremo.
+
+Recibos nuevos, conservando intactos los anteriores:
+
+- [Preparación del piloto](evidence/phase_bridge_prepare_pilot_v1.json), SHA-256
+  `ad14ece111c710b4f87596b23073879fa137a1814ba3106123b7827804c35c9d`.
+- [Inferencia PHASE del piloto](evidence/phase_bridge_temporal7_pilot_v1.json), SHA-256
+  `d56916747531bcd53907dea8ef5964a23e8e8b0098eb6fee095a7274566495f5`.
+- [Predicción integrada](evidence/integrated_prediction_pilot_v1.json), SHA-256
+  `6396867306506c273ab5aa4823b28eae0625ec7c21c8c5e2e1787bfa8b8f3cd2`.
+
+El JSON temporal de entrada tiene SHA-256
+`b6b7d7399b1ba2b3543f10dabecec393070aa9b7f4aa81422be93e8a25390bbb`.
+La salida integrada copia la detección identificada por el último elemento de
+`detected_history` y las salidas nativas del recibo PHASE. Se verificaron hashes,
+token, índice, clase, score y presencia de velocidad; no se ejecutó ajuste nuevo.
+Estos tres recibos contienen predicciones y diagnósticos, sin GT ni bytes RGB/eventos.
+
+Reproducción de la inferencia actual, con un nombre de salida nuevo:
+
+```powershell
+../phase-ttc-main-integration/.venv/Scripts/python.exe -X utf8 scripts/infer_detected_roi_phase.py --eap-root E:/eAP_dataset --predictions output/portable_experiments/pilot256_seed7_velocity_v1/inference_temporal7.json --sample-token qGsgzl4Q8B:000000929_000731755 --candidate-root D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE --output output/portable_experiments/pilot256_seed7_velocity_v1/phase_bridge_reproduction.json --device cpu --cpu-threads 1
+```
+
+## Resultado anterior conservado: overfit16
 
 Consulta: `qGsgzl4Q8B:000000929_000731755`. Se había elegido antes de ejecutar
 PHASE porque dispone de historia sensorial real; el primer frame del overfit
@@ -47,8 +117,9 @@ incluyen etiquetas GT ni bytes RGB/eventos. Los originales y logs permanecen en
 
 ## Contrato causal y procesamiento
 
-La entrada es `inference_temporal7.json`, un JSON de predicciones sin GT generado
-por el checkpoint `52ec97774d06c2a7bc0d9320db616f2a50a3ac4dce50c7709fbdf4883fc4907f`.
+La entrada de la primera ejecución es `inference_temporal7.json`, un JSON de
+predicciones sin GT generado por el checkpoint
+`52ec97774d06c2a7bc0d9320db616f2a50a3ac4dce50c7709fbdf4883fc4907f`.
 SHA-256 del JSON: `5d81784ee88c4bb6800675abaea54316bc452b7cf06be8b34d8813e9e198567e`.
 El puente rechaza archivos que mezclen predicciones con `ground_truth` o campos
 de targets. La lectura Arrow solicita únicamente los siete tokens y columnas
@@ -115,7 +186,8 @@ el recibo declara desarrollo expuesto y no calcula MAE, cobertura ni mejora TTC.
 Una sola asociación de siete frames no valida un tracker general, oclusiones,
 cruces, escenas nuevas ni el servicio multiobjeto completo.
 
-El runtime sobre observaciones preparadas midió **0,7733 s en CPU, un hilo**.
+El runtime de la primera ejecución sobre observaciones preparadas midió
+**0,7733 s en CPU, un hilo**.
 Esa cifra excluye detección, decodificación y preparación sensorial, carga de pesos
 y parte de la coordinación. **No es latencia de extremo a extremo ni rendimiento
 en GPU**. El coste sensorial y la latencia física siguen sin caracterizarse aquí.
@@ -124,7 +196,8 @@ en GPU**. El coste sensorial y la latencia física siguen sin caracterizarse aqu
 
 El script ejecutado mantiene SHA-256
 `0ed624e423c3b5ff05742c4de56e4913f9e5a083c9a4c3485f19a1f06a8e01ad`, coincidente con
-ambos recibos. Las pruebas y este documento se añadieron después, sin cambiarlo.
+los cuatro recibos de preparación/inferencia. El mismo script se reutilizó para
+el piloto sin modificarlo.
 
 ```powershell
 ../phase-ttc-main-integration/.venv/Scripts/python.exe -X utf8 scripts/infer_detected_roi_phase.py --eap-root E:/eAP_dataset --predictions output/portable_experiments/overfit16_seed7_v1/inference_temporal7.json --sample-token qGsgzl4Q8B:000000929_000731755 --candidate-root D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE --output output/portable_experiments/overfit16_seed7_v1/phase_bridge_reproduction.json --device cpu --cpu-threads 1

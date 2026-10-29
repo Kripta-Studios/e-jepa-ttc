@@ -1,0 +1,84 @@
+{
+  "schema": "detector_phase_integrated_prediction_v1",
+  "status": "PREDICTED_DEVELOPMENT_EXPOSED",
+  "sample_token": "qGsgzl4Q8B:000000929_000731755",
+  "sensor_anchor_us": 929731755,
+  "decision_sensor_cutoff_us": 929733441,
+  "track_id": "detected_roi_0001",
+  "track_id_scope": "this bridge execution only; no identity correspondence across detector checkpoints",
+  "prediction_index": 0,
+  "detection": {
+    "class_name": "car",
+    "translation_m": [
+      29.097065305938475,
+      3.836908360357287,
+      0.24896709169849285
+    ],
+    "size_lwh_m": [
+      4.706995010375977,
+      1.8282244205474854,
+      1.7362303733825684
+    ],
+    "yaw_rad": -1.5681608558931792,
+    "score": 0.36398184299468994,
+    "velocity_mps": [
+      2.100983142852783,
+      -0.008294383063912392
+    ]
+  },
+  "detector_velocity_head": "PRESENT",
+  "velocity_semantics": "learned public HF native velocity target; no claim of ego-compensated relative velocity",
+  "phase": {
+    "ttc": -5.234902858734131,
+    "point_phase": -0.018922388553619385,
+    "q10": -0.02246370166540146,
+    "q90": -0.015581970103085041,
+    "raw_location": -0.018922388553619385
+  },
+  "phase_output_space": {
+    "ttc": "signed seconds",
+    "point_phase": "phase",
+    "q10": "phase",
+    "q90": "phase",
+    "raw_location": "phase"
+  },
+  "phase_interval_crosses_zero": false,
+  "phase_boundaries_are_calibrated_intervals": false,
+  "phase_ttc_derived_from_detector_velocity": false,
+  "associated_frames": 7,
+  "common_roi_xyxy": [
+    20,
+    410,
+    369,
+    720
+  ],
+  "event_history_count": 4,
+  "rgb_history_count": 5,
+  "event_roi_count": 408923,
+  "phase_prepared_runtime_seconds": 0.7174503999995068,
+  "timing_scope": "CPU one thread, prepared PHASE runtime only; excludes detector, sensor preparation and model loading",
+  "scope": "development_exposed interface demo; no TTC accuracy or official metric",
+  "exposure": "PHASE TRAIN40; query also belongs to pilot detector train sequence and sampled train frames",
+  "ground_truth_read_during_inference": false,
+  "garl_ids_used": false,
+  "official_submission": false,
+  "derivation": "Exact copy of predictions[sample_token][detected_history[-1].prediction_index] and native PhaseOnlyFinal outputs from the bound bridge receipt. Hash, token, class, score and velocity presence assertions passed; no new inference or fitting.",
+  "provenance": {
+    "detector_prediction_file": "output/portable_experiments/pilot256_seed7_velocity_v1/inference_temporal7.json",
+    "detector_prediction_sha256": "b6b7d7399b1ba2b3543f10dabecec393070aa9b7f4aa81422be93e8a25390bbb",
+    "detector_checkpoint_sha256": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+    "detector_preregistration_sha256": "4de9b76caed8e6ecbb1db618a502f3ecb5ecaa133810e484d745c37231284bd2",
+    "detector_inference_source_sha256": "eb3cd6ea4391b6f1fa1c5ef5cf5d95eca9f0a514215d3fb027f7e6f801b9b673",
+    "phase_bridge_receipt": "output/portable_experiments/pilot256_seed7_velocity_v1/phase_bridge_temporal7_pilot_v1.json",
+    "phase_bridge_receipt_sha256": "d56916747531bcd53907dea8ef5964a23e8e8b0098eb6fee095a7274566495f5",
+    "phase_bridge_script_sha256": "0ed624e423c3b5ff05742c4de56e4913f9e5a083c9a4c3485f19a1f06a8e01ad",
+    "media_manifest_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+    "phase_source_sha256": {
+      "operational/evttc_competition/runtime.py": "9d1d3d54bc4812671b5f8e00e48f7c2124033a5fbc25a601564c0b8a40d0e13b",
+      "operational/final_refit/test12.py": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6",
+      "operational/final_refit/training.py": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+      "operational/final_refit/features.py": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+      "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+    }
+  }
+}

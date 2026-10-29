@@ -200,7 +200,7 @@ def training_curve(path: Path, output: Path) -> dict[str, Any]:
         axis.set_ylabel(label)
         axis.grid(alpha=0.2)
     axes[-1].set_xlabel("Optimizer step (zero based)")
-    fig.suptitle("Measured training trace; individual samples, no smoothing")
+    fig.suptitle("Measured training trace; optimizer updates, no smoothing")
     fig.tight_layout()
     fig.savefig(output, dpi=160)
     plt.close(fig)

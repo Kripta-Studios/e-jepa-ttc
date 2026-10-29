@@ -6,6 +6,7 @@ import io
 import sys
 import tarfile
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -17,9 +18,11 @@ from scripts.infer_monodgp_eap import (
     RUNTIME_MODULES,
     EAPRGBInputs,
     compare_saved_predictions,
+    infer,
     load_runtime_modules,
     select_runtime_sources,
     sha256,
+    verify_media_source,
 )
 
 
@@ -105,6 +108,43 @@ def test_prediction_parity_compares_optional_velocity_and_presence():
     second["velocity_mps"] = [1, 2.001]
     result = compare_saved_predictions({"a": [first]}, {"a": [second]})
     assert result["mismatches"][0]["reason"] == "velocity_mps"
+
+
+def test_media_source_rejects_altered_calibration_manifest(tmp_path):
+    path = tmp_path / "train.parquet"
+    path.write_bytes(b"manifest with original K/T")
+    expected = sha256(path)
+    assert (
+        verify_media_source(path, expected)["source_media_verification"] == "VERIFIED_EXPECTED_HASH"
+    )
+    path.write_bytes(b"manifest with altered K/T")
+    with pytest.raises(ValueError, match="media/calibration"):
+        verify_media_source(path, expected)
+
+
+def test_media_source_without_expected_hash_is_only_observed(tmp_path):
+    path = tmp_path / "train.parquet"
+    path.write_bytes(b"manifest")
+    result = verify_media_source(path, None)
+    assert result["source_media_sha256"] == sha256(path)
+    assert result["expected_source_media_sha256"] is None
+    assert result["source_media_verification"] == "OBSERVED_HASH_ONLY"
+
+
+def test_tokens_json_media_mismatch_fails_before_torch_or_checkpoint(tmp_path, monkeypatch):
+    import json
+
+    data = tmp_path / "data"
+    data.mkdir()
+    (data / "train.parquet").write_bytes(b"unexpected bytes")
+    tokens = tmp_path / "tokens.json"
+    tokens.write_text(json.dumps({"sample_tokens": ["a:f"], "source_media_sha256": "0" * 64}))
+    monkeypatch.setitem(sys.modules, "torch", None)
+    args = SimpleNamespace(
+        output=tmp_path / "out.json", manifest=None, tokens_json=tokens, data_root=tmp_path
+    )
+    with pytest.raises(ValueError, match="media/calibration"):
+        infer(args)
 
 
 def runtime_fixture(tmp_path):

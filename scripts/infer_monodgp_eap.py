@@ -47,6 +47,21 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def verify_media_source(path: Path, expected_hash: str | None) -> dict[str, str | None]:
+    """Record the full media/calibration manifest and reject an expected-hash mismatch."""
+    observed = sha256(path)
+    if expected_hash is not None and observed != expected_hash:
+        raise ValueError("Input media/calibration manifest differs from the expected SHA-256")
+    return {
+        "source_media_path": str(path),
+        "source_media_sha256": observed,
+        "expected_source_media_sha256": expected_hash,
+        "source_media_verification": "VERIFIED_EXPECTED_HASH"
+        if expected_hash
+        else "OBSERVED_HASH_ONLY",
+    }
+
+
 RUNTIME_MODULES = (
     ("e_jepa_ttc.detection.development_metrics", "src/e_jepa_ttc/detection/development_metrics.py"),
     ("e_jepa_ttc.detection.eap_rgb_data", "src/e_jepa_ttc/detection/eap_rgb_data.py"),
@@ -194,8 +209,6 @@ def compare_saved_predictions(
 
 def infer(args: argparse.Namespace) -> dict[str, Any]:
     """Load strict checkpoint in this process and infer using targets=None."""
-    import torch
-
     if args.output.exists():
         raise FileExistsError("Choose a new inference output file; previous evidence is preserved")
     if args.manifest:
@@ -203,17 +216,24 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
         if not args.role:
             raise ValueError("--role is required with --manifest")
         tokens = payload[args.role]["sample_tokens"]
-        if sha256(args.data_root / "data/train.parquet") != payload["source_media_sha256"]:
-            raise ValueError("Input manifest differs from the declared pilot")
+        expected_media_hash = str(payload["source_media_sha256"])
         token_source = args.manifest
     else:
         payload = json.loads(args.tokens_json.read_text(encoding="utf-8"))
         tokens = payload if isinstance(payload, list) else payload["sample_tokens"]
+        expected_media_hash = (
+            None if isinstance(payload, list) else payload.get("source_media_sha256")
+        )
         token_source = args.tokens_json
     if not tokens or len(tokens) != len(set(tokens)):
         raise ValueError("Need a nonempty unique token population")
+    media_provenance = verify_media_source(
+        args.data_root / "data/train.parquet", expected_media_hash
+    )
     prereg_path = args.checkpoint.parent / "preregistration.json"
     prereg = json.loads(prereg_path.read_text(encoding="utf-8"))
+    import torch
+
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
     variant = str(checkpoint["variant"])
     if variant != prereg["variant"]:
@@ -311,6 +331,12 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
             decoding_seconds = time.perf_counter() - tick
             data_receipts[token] = {
                 "rgb_member_sha256": sample.member_sha256,
+                "K_event_sha256_float64_c_order": hashlib.sha256(
+                    sample.intrinsic.tobytes()
+                ).hexdigest(),
+                "T_event_ego_sha256_float64_c_order": hashlib.sha256(
+                    sample.event_from_ego.tobytes()
+                ).hexdigest(),
                 "original_image_wh": [sample.image.shape[1], sample.image.shape[0]],
                 "image_wh": [args.width, args.height],
                 "exposure_start_us": sample.exposure_start_us,
@@ -344,6 +370,7 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
         "inference_source_sha256": sha256(Path(__file__)),
         "code_sha256": code_hashes,
         "token_source_sha256": sha256(token_source),
+        **media_provenance,
         "sample_tokens": tokens,
         "model_targets_argument": None,
         "annotation_loader": "override_returns_empty_without_path_access",

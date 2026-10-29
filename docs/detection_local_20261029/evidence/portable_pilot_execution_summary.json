@@ -1,0 +1,49 @@
+{
+  "scope": "bounded_local_development_pilot_not_official_eap_score",
+  "run": "pilot256_seed7_velocity_v1",
+  "git_commit": "3ebac039e56e3e5af98e0e3302084f00923235a1",
+  "source_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "preregistration_sha256": "4de9b76caed8e6ecbb1db618a502f3ecb5ecaa133810e484d745c37231284bd2",
+  "report_sha256": "354d3ffcde03b8c77c20b4b6242d77f1cc7ba4fd17c3b4bde2cf594beeae7b33",
+  "checkpoint_sha256_reported_by_runner": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+  "checkpoint_bytes": 498531791,
+  "curve_sha256": "33ba0a4949f524cf2c798bfdd60c1b19a2e94e3404c6b1dd1aaace31c765a8f6",
+  "prediction_artifact_sha256": {
+    "initial_train.json": "3dd62e82d9621fdcf56e12deaa3f070b410a1293bba6e3fbef74abab061f97d5",
+    "final_train.json": "0876c950bb63187a562e35db0f2e2c39fe7f97dd3ad6f5d08204ad00c755768f",
+    "selection.json": "7a547a22222d4425cdd4faeaaf871f69210925adde94f69c629b48e94aceb896"
+  },
+  "exposure_audit": {
+    "unique_train_tokens": 256,
+    "image_exposures": 2048,
+    "min_per_frame": 8,
+    "max_per_frame": 8,
+    "train_tokens_exact": true,
+    "selection_tokens_never_trained": true,
+    "empty_target_exposures": 56,
+    "valid_velocity_object_exposures": 6632
+  },
+  "timings_seconds": {
+    "training_wall": 1096.5895780000137,
+    "summed_measured_steps": 564.5244887002045,
+    "outside_measured_steps": 532.0650892998092,
+    "median_measured_step": 1.022261799982516,
+    "initial_train_evaluation": 101.01619719999144,
+    "final_train_evaluation": 59.599581599992234,
+    "selection_evaluation": 53.448984600021504,
+    "preregistration_to_completion": 1316.054815,
+    "scope_note": "preregistration_to_completion excludes environment startup, model/source construction, and backbone loading before preregistration"
+  },
+  "status": "COMPLETED",
+  "parameter_finiteness": true,
+  "class_head_updated": true,
+  "velocity_heads_updated": [
+    true,
+    true,
+    true
+  ],
+  "checkpoint_reload": "PASS_STRICT",
+  "peak_allocated_bytes": 4544696320,
+  "peak_reserved_bytes": 4773117952
+}

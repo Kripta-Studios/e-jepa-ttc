@@ -1,0 +1,21 @@
+{
+  "schema": "eap_rgb_pilot_admission_v1",
+  "status": "PASS",
+  "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+  "candidate_split_sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+  "source_media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+  "source_split": "train",
+  "seed": 7,
+  "train_sequence_count": 2,
+  "selection_sequence_count": 2,
+  "train_token_count": 256,
+  "selection_token_count": 256,
+  "overfit_token_count": 16,
+  "canonical_rows_verified": 512,
+  "token_overlap_count": 0,
+  "sequence_overlap_count": 0,
+  "calibration_sequences_selected": 0,
+  "scope": "Metadata identity and sequence-disjoint admission only; not geometry, RGB bytes, official scorer or model approval",
+  "timing": "Retrospective verification of the already preregistered pilot inputs; runner hook is a later correction"
+}

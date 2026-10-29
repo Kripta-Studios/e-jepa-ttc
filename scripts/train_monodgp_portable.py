@@ -37,6 +37,7 @@ from smoke_monodgp_portable import (
 from e_jepa_ttc.detection.development_metrics import evaluate_detections
 from e_jepa_ttc.detection.eap_rgb_data import EAPRGBDataset
 from e_jepa_ttc.detection.monodgp_eap_adapter import decode_eap, prepare_sample
+from e_jepa_ttc.detection.pilot_admission import validate_pilot_admission
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -172,6 +173,8 @@ def run(args: argparse.Namespace, report: dict) -> None:
     if args.output.exists():
         raise FileExistsError(f"Use a new run directory; refusing to overwrite {args.output}")
     args.output.mkdir(parents=True)
+    admission = validate_pilot_admission(args.manifest, args.candidate_split, args.data_root)
+    report["metadata_admission"] = admission
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     tokens = manifest[args.role]["sample_tokens"]
     if args.batch_size > len(tokens):
@@ -258,6 +261,7 @@ def run(args: argparse.Namespace, report: dict) -> None:
             "velocity_extension.py",
             "velocity_diagnostics.py",
             "backbone_initialization.py",
+            "pilot_admission.py",
         )
     ]
     preregistration = {
@@ -308,6 +312,7 @@ def run(args: argparse.Namespace, report: dict) -> None:
             else None
         ),
         "manifest_sha256": sha256(args.manifest),
+        "metadata_admission": admission,
         "source": source,
         "code_sha256": {str(path.relative_to(ROOT)): sha256(path) for path in file_paths},
         "git_commit": subprocess.check_output(
@@ -557,6 +562,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument(
+        "--candidate-split",
+        type=Path,
+        required=True,
+        help="Sequence split whose exact SHA256 is bound by the pilot manifest.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--role", choices=("overfit16", "train"), default="overfit16")
     parser.add_argument("--steps", type=int, default=400)

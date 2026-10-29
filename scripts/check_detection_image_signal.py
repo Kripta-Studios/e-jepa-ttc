@@ -25,6 +25,7 @@ METHOD = "train_constant_prior_and_seed7_frame_derangement_v1"
 DECLARED_AT_UTC = "2026-10-29T13:22:15+00:00"
 SEED = 7
 YAW_RESULTANT_EPSILON = 1e-12
+METRIC_FLOAT_TOLERANCE = 1e-12
 Box = dict[str, Any]
 BoxesByToken = dict[str, list[Box]]
 
@@ -61,6 +62,30 @@ def load_results(path: Path) -> dict[str, Any]:
     return result
 
 
+def metrics_equivalent(expected: object, actual: object) -> bool:
+    """Compare metric structures exactly, allowing only tiny float roundoff."""
+    if isinstance(expected, float) and isinstance(actual, float):
+        return math.isclose(
+            expected,
+            actual,
+            rel_tol=METRIC_FLOAT_TOLERANCE,
+            abs_tol=METRIC_FLOAT_TOLERANCE,
+        )
+    if type(expected) is not type(actual):
+        return False
+    if isinstance(expected, dict):
+        assert isinstance(actual, dict)
+        return expected.keys() == actual.keys() and all(
+            metrics_equivalent(value, actual[key]) for key, value in expected.items()
+        )
+    if isinstance(expected, list):
+        assert isinstance(actual, list)
+        return len(expected) == len(actual) and all(
+            metrics_equivalent(left, right) for left, right in zip(expected, actual, strict=True)
+        )
+    return expected == actual
+
+
 def _validate_results(payload: Mapping[str, Any]) -> tuple[BoxesByToken, BoxesByToken]:
     for key in ("predictions", "ground_truth", "metrics"):
         if not isinstance(payload.get(key), dict):
@@ -80,7 +105,7 @@ def _validate_results(payload: Mapping[str, Any]) -> tuple[BoxesByToken, BoxesBy
     # This checks token equality, fields, finite numbers, classes and score range.
     recomputed = evaluate_detections(predictions, truth)
     for key, value in recomputed.items():
-        if payload["metrics"].get(key) != value:
+        if not metrics_equivalent(value, payload["metrics"].get(key)):
             raise ValueError(f"Stored metric differs from recomputation: {key}")
     return predictions, truth
 
@@ -170,6 +195,11 @@ def analyze_results(train: Mapping[str, Any], selection: Mapping[str, Any]) -> d
         "created_at_utc": datetime.now(UTC).isoformat(),
         "official_eap_score": False,
         "velocity_evaluated": False,
+        "stored_metric_comparison": {
+            "float_absolute_tolerance": METRIC_FLOAT_TOLERANCE,
+            "float_relative_tolerance": METRIC_FLOAT_TOLERANCE,
+            "structures_integers_booleans_strings_null": "exact",
+        },
         "train_sample_count": len(train_truth),
         "selection_sample_count": len(selection_truth),
         "train_tokens_sha256": canonical_hash(sorted(train_truth)),

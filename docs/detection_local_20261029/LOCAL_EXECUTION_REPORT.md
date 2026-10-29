@@ -2,6 +2,11 @@
 
 Fecha: 2026-10-29.
 
+> Informe histórico de la primera integración local. La continuación con
+> entrenamiento, inferencia y puente PHASE está en
+> [RGB_TRAINING_RESULTS.md](RGB_TRAINING_RESULTS.md). Los estados siguientes
+> corresponden a aquella etapa y se conservan para mantener su procedencia.
+
 **El paquete está integrado y comprobado en un worktree aislado. G0 sigue
 bloqueado, G1 sigue bloqueado y G2 no se ha ejecutado.** La continuación local
 recupera las etiquetas train, demuestra que Torch puede ejecutar CUDA con

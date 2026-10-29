@@ -1,0 +1,765 @@
+{
+  "run_name": "overfit16_seed7_v1",
+  "report_sha256": "c882d02740ab6fec84b0639c65df58d6265f6d9a170b0773a63abba8c97d7c6f",
+  "preregistration_sha256": "25a39908faf7efb11952db785d00963249c88db0409affccf4f8548cab53fef9",
+  "checkpoint_sha256_verified": true,
+  "preregistration": {
+    "created_at_utc": "2026-10-29T12:19:40.790000+00:00",
+    "variant": "monodgp_pytorch_grid_sample_v1",
+    "role": "overfit16",
+    "sample_tokens": [
+      "qGsgzl4Q8B:000000887_000231056",
+      "qGsgzl4Q8B:000000929_000731755",
+      "qGsgzl4Q8B:000000972_000132457",
+      "qGsgzl4Q8B:000001014_000633163",
+      "qGsgzl4Q8B:000001057_000033869",
+      "qGsgzl4Q8B:000001099_000434576",
+      "qGsgzl4Q8B:000001141_000935280",
+      "qGsgzl4Q8B:000001186_000736014",
+      "nRcwUlHyAd:000000489_000835720",
+      "nRcwUlHyAd:000000532_000236368",
+      "nRcwUlHyAd:000000574_000636987",
+      "nRcwUlHyAd:000000617_000137590",
+      "nRcwUlHyAd:000000659_000538179",
+      "nRcwUlHyAd:000000701_000938768",
+      "nRcwUlHyAd:000000744_000439357",
+      "nRcwUlHyAd:000000789_000239962"
+    ],
+    "seed": 7,
+    "model_config": {
+      "num_classes": 8,
+      "return_intermediate_dec": true,
+      "device": "cuda",
+      "backbone": "resnet50",
+      "train_backbone": true,
+      "num_feature_levels": 4,
+      "dilation": false,
+      "position_embedding": "sine",
+      "masks": false,
+      "mode": "LID",
+      "num_depth_bins": 80,
+      "depth_min": "1e-3",
+      "depth_max": 60.0,
+      "with_box_refine": true,
+      "use_dn": false,
+      "init_box": false,
+      "enc_layers": 3,
+      "dec_layers": 3,
+      "hidden_dim": 256,
+      "dim_feedforward": 256,
+      "dropout": 0.1,
+      "nheads": 8,
+      "num_queries": 50,
+      "group_num": 11,
+      "enc_n_points": 4,
+      "dec_n_points": 4,
+      "scalar": 5,
+      "label_noise_scale": 0.2,
+      "box_noise_scale": 0.4,
+      "num_patterns": 0,
+      "aux_loss": true,
+      "cls_loss_coef": 2,
+      "focal_alpha": 0.25,
+      "bbox_loss_coef": 5,
+      "giou_loss_coef": 2,
+      "3dcenter_loss_coef": 10,
+      "dim_loss_coef": 1,
+      "angle_loss_coef": 1,
+      "depth_loss_coef": 1,
+      "depth_map_loss_coef": 1,
+      "region_loss_coef": 1,
+      "set_cost_class": 2,
+      "set_cost_bbox": 5,
+      "set_cost_giou": 2,
+      "set_cost_3dcenter": 10
+    },
+    "image_hw": [
+      384,
+      640
+    ],
+    "batch_size": 1,
+    "learning_rate": 0.0002,
+    "maximum_steps": 400,
+    "maximum_training_seconds": 600.0,
+    "acceptance": {
+      "overfit16_mean_center_loss_ratio_at_most": 0.5,
+      "finite_parameters": true,
+      "active_class_head_updated": true,
+      "criterion_fixed_before_first_real_step": true
+    },
+    "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+    "source": {
+      "upstream_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "variant": "monodgp_pytorch_grid_sample_v1",
+      "patch_sha256": "5b4e63ddff88c744ffe950154f3e965f5117f9802e1caaa86b9bea3d3eb3c39b",
+      "patched_file_sha256": {
+        "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+        "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+        "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+        "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+        "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+        "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+        "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7"
+      },
+      "external_extension_used": false,
+      "automatic_pretrained_download": false
+    },
+    "code_sha256": {
+      "scripts\\train_monodgp_portable.py": "ae02950491eb1b6093e58f4e7bd108ad9ab3f660857b4f5523f2875a2d93ef9b",
+      "scripts\\smoke_monodgp_portable.py": "dde7b59bc835058113efa2624e1cef3cdabf7fb2bcae84d233e8036f2cb9ad41",
+      "src\\e_jepa_ttc\\detection\\portable_attention.py": "e3a5ca88ca989e7bd10fe1f8381f7da32b83eea3063ac89b67113511b045f7fa",
+      "src\\e_jepa_ttc\\detection\\monodgp_eap_adapter.py": "2c750a5c219ca8b2518bcb465ef5df24318c661cfcd330bc61592d5dbf3a6355",
+      "src\\e_jepa_ttc\\detection\\development_metrics.py": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6",
+      "src\\e_jepa_ttc\\detection\\eap_rgb_data.py": "09b889c72ec710c26a743a67c62000fd523b7cff1557afa939b3b94ee4bb9781"
+    },
+    "git_commit": "79efcbed4dc09f23dccabfdf678b727b584d0912",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "initialization": "random_no_pretrained_weights",
+    "selection_tokens": []
+  },
+  "report": {
+    "status": "COMPLETED",
+    "preregistration_sha256": "25a39908faf7efb11952db785d00963249c88db0409affccf4f8548cab53fef9",
+    "source": {
+      "upstream_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "variant": "monodgp_pytorch_grid_sample_v1",
+      "patch_sha256": "5b4e63ddff88c744ffe950154f3e965f5117f9802e1caaa86b9bea3d3eb3c39b",
+      "patched_file_sha256": {
+        "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+        "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+        "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+        "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+        "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+        "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+        "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7"
+      },
+      "external_extension_used": false,
+      "automatic_pretrained_download": false
+    },
+    "role": "overfit16",
+    "training_steps": 344,
+    "initial_train": {
+      "profile": "eap_development_xy_ap101_envelope_v1",
+      "official_eap_score": false,
+      "sample_count": 16,
+      "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+      "score_ties": "token lexicographic, then original prediction index",
+      "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+      "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+      "velocity_evaluated": false,
+      "tp_threshold_m": 2.0,
+      "supported_class_count": 6,
+      "dev_AP101_supported_classes": 0.0,
+      "dev_AP101_all_eight_absent_zero": 0.0,
+      "dev_ATE_m": null,
+      "dev_ASE": null,
+      "dev_AOE_rad": null,
+      "per_class": {
+        "car": {
+          "ground_truth_count": 32,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 32
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 32
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 32
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 32
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "bicycle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "truck": {
+          "ground_truth_count": 6,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 6
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 6
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 6
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 6
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "pedestrian": {
+          "ground_truth_count": 1,
+          "prediction_count": 1,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 1,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 1,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 1,
+              "FN": 1
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 1,
+              "FN": 1
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "motorcycle": {
+          "ground_truth_count": 5,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 5
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 5
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 5
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 5
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "bus": {
+          "ground_truth_count": 2,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 2
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 2
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 2
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 2
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "tricycle": {
+          "ground_truth_count": 1,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "other_vehicle": {
+          "ground_truth_count": 0,
+          "prediction_count": 29,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 29,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 29,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 29,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 29,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        }
+      },
+      "loss_center_mean": 0.07986338343471289,
+      "loss_center_median": 0.07223660871386528,
+      "loss_depth_mean": 30.335670828819275,
+      "total_weighted_loss_mean": 211.40095449471846,
+      "inference_and_scoring_seconds": 10.815569099970162,
+      "model_targets_argument": null
+    },
+    "stop_reason": "time_budget",
+    "training_seconds": 600.673826299957,
+    "step_seconds_median": 1.6974271000071894,
+    "peak_allocated_bytes": 1522961920,
+    "peak_reserved_bytes": 1644167168,
+    "active_head_updated": true,
+    "all_parameters_finite": true,
+    "checkpoint_sha256": "52ec97774d06c2a7bc0d9320db616f2a50a3ac4dce50c7709fbdf4883fc4907f",
+    "checkpoint_reload": "PASS_STRICT",
+    "final_train": {
+      "profile": "eap_development_xy_ap101_envelope_v1",
+      "official_eap_score": false,
+      "sample_count": 16,
+      "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+      "score_ties": "token lexicographic, then original prediction index",
+      "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+      "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+      "velocity_evaluated": false,
+      "tp_threshold_m": 2.0,
+      "supported_class_count": 6,
+      "dev_AP101_supported_classes": 0.10341481815184465,
+      "dev_AP101_all_eight_absent_zero": 0.07756111361388349,
+      "dev_ATE_m": 1.416108238110583,
+      "dev_ASE": 0.5330365980890731,
+      "dev_AOE_rad": 0.08857951638808699,
+      "per_class": {
+        "car": {
+          "ground_truth_count": 32,
+          "prediction_count": 342,
+          "AP101_mean_thresholds": 0.08822844148501463,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.005468231899570687,
+              "TP": 4,
+              "FP": 338,
+              "FN": 28
+            },
+            "1.0": {
+              "AP101": 0.03545746033009735,
+              "TP": 12,
+              "FP": 330,
+              "FN": 20
+            },
+            "2.0": {
+              "AP101": 0.10263757378828356,
+              "TP": 19,
+              "FP": 323,
+              "FN": 13
+            },
+            "4.0": {
+              "AP101": 0.2093504999221069,
+              "TP": 23,
+              "FP": 319,
+              "FN": 9
+            }
+          },
+          "TP_at_error_threshold": 19,
+          "ATE_m": 1.1935756287964847,
+          "ASE": 0.20280888431445548,
+          "AOE_rad": 0.05131094301956072
+        },
+        "bicycle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "truck": {
+          "ground_truth_count": 6,
+          "prediction_count": 139,
+          "AP101_mean_thresholds": 0.015279027902790268,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 139,
+              "FN": 6
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 139,
+              "FN": 6
+            },
+            "2.0": {
+              "AP101": 0.0076507650765076495,
+              "TP": 1,
+              "FP": 138,
+              "FN": 5
+            },
+            "4.0": {
+              "AP101": 0.05346534653465342,
+              "TP": 2,
+              "FP": 137,
+              "FN": 4
+            }
+          },
+          "TP_at_error_threshold": 1,
+          "ATE_m": 1.9776142578825706,
+          "ASE": 0.7391357814980118,
+          "AOE_rad": 0.09723380616703281
+        },
+        "pedestrian": {
+          "ground_truth_count": 1,
+          "prediction_count": 2,
+          "AP101_mean_thresholds": 0.25,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 2,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 2,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.5,
+              "TP": 1,
+              "FP": 1,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": 0.5,
+              "TP": 1,
+              "FP": 1,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 1,
+          "ATE_m": 1.89456055148289,
+          "ASE": 0.6352659575664219,
+          "AOE_rad": 0.06061985713335005
+        },
+        "motorcycle": {
+          "ground_truth_count": 5,
+          "prediction_count": 56,
+          "AP101_mean_thresholds": 0.06098109810981098,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.05198019801980198,
+              "TP": 1,
+              "FP": 55,
+              "FN": 4
+            },
+            "1.0": {
+              "AP101": 0.05198019801980198,
+              "TP": 1,
+              "FP": 55,
+              "FN": 4
+            },
+            "2.0": {
+              "AP101": 0.06998199819981997,
+              "TP": 2,
+              "FP": 54,
+              "FN": 3
+            },
+            "4.0": {
+              "AP101": 0.06998199819981997,
+              "TP": 2,
+              "FP": 54,
+              "FN": 3
+            }
+          },
+          "TP_at_error_threshold": 2,
+          "ATE_m": 0.6268979125666664,
+          "ASE": 0.5416290626281928,
+          "AOE_rad": 0.0392049236300247
+        },
+        "bus": {
+          "ground_truth_count": 2,
+          "prediction_count": 261,
+          "AP101_mean_thresholds": 0.20600034141345197,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 261,
+              "FN": 2
+            },
+            "1.0": {
+              "AP101": 0.2524752475247525,
+              "TP": 1,
+              "FP": 260,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.26954592010925266,
+              "TP": 2,
+              "FP": 259,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": 0.3019801980198027,
+              "TP": 2,
+              "FP": 259,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 2,
+          "ATE_m": 1.3878928398243031,
+          "ASE": 0.5463433044382836,
+          "AOE_rad": 0.19452805199046663
+        },
+        "tricycle": {
+          "ground_truth_count": 1,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "other_vehicle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        }
+      },
+      "loss_center_mean": 0.04411297512706369,
+      "loss_center_median": 0.036562513560056686,
+      "loss_depth_mean": 2.854231581091881,
+      "total_weighted_loss_mean": 32.4107917828951,
+      "inference_and_scoring_seconds": 22.49223739997251,
+      "model_targets_argument": null
+    },
+    "mean_center_loss_ratio": 0.5523554503939265,
+    "overfit_acceptance": "FAIL"
+  }
+}

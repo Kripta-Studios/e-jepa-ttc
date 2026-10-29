@@ -158,7 +158,93 @@ de geometría, diagnósticos de velocidad, extensión de velocidad e inicializac
 de backbone. La variante de velocidad exige la extensión registrada; importar el
 helper del backbone no ejecuta la inicialización ImageNet.
 
-Este soporte de código no se presenta aquí como una ejecución del piloto
-con velocidad. Ocho tests del CLI pasan, incluidos orden de carga canónico,
+Once tests del CLI pasan, incluidos orden de carga canónico,
 rechazo de snapshots alterados antes de ejecutar código, acceso RGB sin etiquetas
 y comparación de velocidad.
+
+## Procedencia de calibración en la inferencia
+
+La revisión detectó que la ruta histórica `--tokens-json` conservaba los hashes
+de RGB y del archivo de tokens, pero no registraba el SHA del manifest completo
+que suministra calibración y exposición. Los recibos históricos se conservan
+sin cambios: sus resultados no acreditan esa comprobación adicional.
+
+El CLI corregido calcula siempre `source_media_sha256` antes de cargar Torch o
+el checkpoint. Si el manifest o el JSON de tokens declara un hash esperado,
+exige coincidencia y registra `VERIFIED_EXPECTED_HASH`; si no lo declara, registra
+`OBSERVED_HASH_ONLY`. Cada frame conserva además hashes de `K_event` y
+`T_event_ego`, serializados como float64 en orden C. Los tests rechazan un manifest
+alterado y comprueban que ese rechazo sucede antes de cargar el modelo.
+
+El input de los siete frames previsto para el piloto incluye el SHA esperado
+`69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314`.
+Antes de actualizarlo se archivaron sus bytes históricos en
+`overfit16_seed7_v1/temporal7_tokens_input_v1.json`; su hash coincide con el
+registrado por la inferencia v1. La corrección añade procedencia y validación,
+sin cambiar tokens, imágenes, calibración ni predicciones históricas.
+
+## Piloto con velocidad: inferencia independiente ejecutada
+
+Tras terminar entrenamiento y evaluación de `pilot256_seed7_velocity_v1`, se
+ejecutaron tres procesos nuevos con su checkpoint final. Todos cargaron las
+nueve fuentes congeladas con hashes correctos, cargaron pesos de forma estricta,
+verificaron el manifest completo y registraron K/T por frame. Ninguno abrió
+archivos de etiquetas: todos devolvieron cero anotaciones, recibieron
+`targets=None` y guardaron únicamente predicciones y recibos de entrada.
+
+El [resumen derivado de los recibos](evidence/pilot_independent_inference.json)
+conserva hashes, conteos, paridad y tiempos. El checkpoint común tiene SHA-256
+`dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338`.
+
+| Población prefijada | Frames | Paridad con predicciones guardadas | Mediana forward GPU |
+|---|---:|---|---:|
+| Contexto temporal del puente | 7 | Sin referencia comparada | 46,73 ms |
+| Subconjunto train del overfit | 16 | Exacta; error máximo 0 | 43,26 ms |
+| Selection completo del piloto | 256 | Exacta; error máximo 0 | 47,89 ms |
+
+La comparación incluye clase, centro, dimensiones, yaw, velocidad y confianza,
+con tolerancia predeclarada de 1e-4. Las 13.950 cajas guardadas entre los tres
+procesos tienen `velocity_mps` aprendido. La paridad prueba reproducción de la
+inferencia, no precisión de esas cajas ni validez física de la velocidad.
+
+En selection, el bucle completo de 256 frames duró 24,08 s. Las medianas por
+frame fueron 25,95 ms de carga/preparación, 47,89 ms de forward sincronizado,
+3,66 ms de decode y 82,99 ms de tiempo total observado. La última medida incluye
+transferencias, comprobaciones y el calentamiento inicial donde corresponde;
+no incluye construcción del modelo ni PHASE. El máximo asignado por CUDA fue
+311.915.008 bytes y el máximo reservado 375.390.208 bytes en cada proceso.
+
+Los tres JSON y la fuente exacta del CLI se conservan en el run:
+
+```text
+inference_temporal7.json
+inference_label_free_train16.json
+inference_label_free_selection256.json
+train16_reference_predictions.json
+post_pilot_inference_execution.json
+inference_code_snapshot/infer_monodgp_eap.py
+```
+
+El subconjunto de referencia train utiliza los 16 tokens ya fijados por
+`manifest.overfit16`, extrae solo `predictions` de `final_train.json` y registra
+su hash. Los siete frames temporales emplean este mismo checkpoint, no el
+checkpoint anterior de overfit, para la ejecución posterior de PHASE.
+
+## Visuales del piloto sobre selection
+
+Se generaron e inspeccionaron el contact sheet y la curva de entrenamiento en
+`output/portable_experiments/pilot256_seed7_velocity_v1/visuals_selection_final/`.
+Los cuatro tokens son las posiciones 0, 85, 170 y 255 del manifest selection.
+La curva contiene los 512 updates registrados, cada uno con minibatch de cuatro
+frames, sin suavizado. El primer render queda conservado en `visuals_selection/`;
+el render final corrige únicamente el título de la curva para describir updates,
+y los cuatro PNG de escenas son idénticos por hash.
+
+Los conteos GT son 4, 6, 2 y 1; las cajas predichas dibujadas con confianza ≥0,2
+son 7, 10, 10 y 5, respectivamente, de 50 guardadas por frame. Se observan varias
+cajas aproximadamente sobre vehículos visibles, junto a duplicaciones y cajas
+desplazadas. En la segunda escena aparecen predicciones de coche sobre vehículos
+anotados como camiones. Esto ilustra errores pendientes; un overlay aproximado
+en imagen no demuestra centro o tamaño correctos en 3D ni sustituye las métricas.
+Se mantiene visible la advertencia de rectificación no certificada. No se
+consultaron etiquetas privadas ni se obtuvo una puntuación oficial.

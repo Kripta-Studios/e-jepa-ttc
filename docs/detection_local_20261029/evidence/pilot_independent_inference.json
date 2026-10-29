@@ -1,0 +1,177 @@
+{
+  "schema": "eap_pilot_independent_inference_summary_v1",
+  "created_at_utc": "2026-10-29T14:08:53.256401+00:00",
+  "generated_from_saved_receipts": true,
+  "run": "output\\portable_experiments\\pilot256_seed7_velocity_v1",
+  "execution_receipt_sha256": "4c624476a612ba71142252556a4c130a8652d12033f717d370bc1a3d7e9b01e3",
+  "predeclared_plan_sha256": "ba33a19289d98b87f8b3306cf917330a31d041c9e13bb9fdeea6e37fa6ffce6e",
+  "inference_source_snapshot_sha256": "eb3cd6ea4391b6f1fa1c5ef5cf5d95eca9f0a514215d3fb027f7e6f801b9b673",
+  "runs": [
+    {
+      "artifact_path": "output\\portable_experiments\\pilot256_seed7_velocity_v1\\inference_temporal7.json",
+      "artifact_sha256": "b6b7d7399b1ba2b3543f10dabecec393070aa9b7f4aa81422be93e8a25390bbb",
+      "sample_count": 7,
+      "prediction_count": 350,
+      "checkpoint_sha256": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+      "checkpoint_load": "PASS_STRICT_WEIGHTS_ONLY",
+      "source_media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+      "source_media_verification": "VERIFIED_EXPECTED_HASH",
+      "inference_source_sha256": "eb3cd6ea4391b6f1fa1c5ef5cf5d95eca9f0a514215d3fb027f7e6f801b9b673",
+      "runtime_source_count": 9,
+      "all_runtime_sources_frozen": true,
+      "all_frames_calibration_hashed": true,
+      "ground_truth_key_absent": true,
+      "all_annotation_counts_zero": true,
+      "model_targets_argument": null,
+      "velocity_head": "PRESENT",
+      "all_predictions_have_velocity": true,
+      "prediction_parity": null,
+      "inference_loop_seconds": 1.5340929999947548,
+      "median_forward_cuda_synchronized_ms": 46.73000000184402,
+      "median_load_and_prepare_ms": 26.625500002410263,
+      "median_decode_ms": 3.9508999907411635,
+      "median_frame_wall_ms_including_first_warmup": 83.9519000146538,
+      "peak_allocated_bytes": 311915008,
+      "peak_reserved_bytes": 375390208,
+      "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "matmul_precision": "highest"
+    },
+    {
+      "artifact_path": "output\\portable_experiments\\pilot256_seed7_velocity_v1\\inference_label_free_train16.json",
+      "artifact_sha256": "c1055cb95147d0bdf16f44079b241f74025391421bd71526cc22042fbadcbf0d",
+      "sample_count": 16,
+      "prediction_count": 800,
+      "checkpoint_sha256": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+      "checkpoint_load": "PASS_STRICT_WEIGHTS_ONLY",
+      "source_media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+      "source_media_verification": "VERIFIED_EXPECTED_HASH",
+      "inference_source_sha256": "eb3cd6ea4391b6f1fa1c5ef5cf5d95eca9f0a514215d3fb027f7e6f801b9b673",
+      "runtime_source_count": 9,
+      "all_runtime_sources_frozen": true,
+      "all_frames_calibration_hashed": true,
+      "ground_truth_key_absent": true,
+      "all_annotation_counts_zero": true,
+      "model_targets_argument": null,
+      "velocity_head": "PRESENT",
+      "all_predictions_have_velocity": true,
+      "prediction_parity": {
+        "status": "PASS",
+        "absolute_tolerance": 0.0001,
+        "maximum_absolute_error": 0.0,
+        "mismatches": [],
+        "scope": "Predictions only; reference ground_truth is not accessed"
+      },
+      "inference_loop_seconds": 2.0452810999704525,
+      "median_forward_cuda_synchronized_ms": 43.25575000257231,
+      "median_load_and_prepare_ms": 24.02589999837801,
+      "median_decode_ms": 3.394350002054125,
+      "median_frame_wall_ms_including_first_warmup": 75.50914998864755,
+      "peak_allocated_bytes": 311915008,
+      "peak_reserved_bytes": 375390208,
+      "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "matmul_precision": "highest"
+    },
+    {
+      "artifact_path": "output\\portable_experiments\\pilot256_seed7_velocity_v1\\inference_label_free_selection256.json",
+      "artifact_sha256": "25cc2f8069a93e9f9be86e5664af04b786fd97cdab0763ab9c65d48fc83b6ff2",
+      "sample_count": 256,
+      "prediction_count": 12800,
+      "checkpoint_sha256": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+      "checkpoint_load": "PASS_STRICT_WEIGHTS_ONLY",
+      "source_media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+      "source_media_verification": "VERIFIED_EXPECTED_HASH",
+      "inference_source_sha256": "eb3cd6ea4391b6f1fa1c5ef5cf5d95eca9f0a514215d3fb027f7e6f801b9b673",
+      "runtime_source_count": 9,
+      "all_runtime_sources_frozen": true,
+      "all_frames_calibration_hashed": true,
+      "ground_truth_key_absent": true,
+      "all_annotation_counts_zero": true,
+      "model_targets_argument": null,
+      "velocity_head": "PRESENT",
+      "all_predictions_have_velocity": true,
+      "prediction_parity": {
+        "status": "PASS",
+        "absolute_tolerance": 0.0001,
+        "maximum_absolute_error": 0.0,
+        "mismatches": [],
+        "scope": "Predictions only; reference ground_truth is not accessed"
+      },
+      "inference_loop_seconds": 24.077563199971337,
+      "median_forward_cuda_synchronized_ms": 47.89014998823404,
+      "median_load_and_prepare_ms": 25.95374998054467,
+      "median_decode_ms": 3.657799999928102,
+      "median_frame_wall_ms_including_first_warmup": 82.99070000066422,
+      "peak_allocated_bytes": 311915008,
+      "peak_reserved_bytes": 375390208,
+      "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "matmul_precision": "highest"
+    }
+  ],
+  "visuals": {
+    "receipt_path": "output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\visual_receipt.json",
+    "receipt_sha256": "ef06a07a49dc37d55c4c67f8cfb1f9e3dce7758c02fe1bad19215adc8d7a3803",
+    "selection": "linspace positions in declared manifest order; independent of predictions",
+    "tokens": [
+      "JaGC4Q9pgU:000000762_000410282",
+      "JaGC4Q9pgU:000000962_000813271",
+      "2Y46OkK3ff:000000356_000449950",
+      "2Y46OkK3ff:000000556_000852758"
+    ],
+    "display_score_threshold": 0.2,
+    "ground_truth_counts": [
+      4,
+      6,
+      2,
+      1
+    ],
+    "predictions_drawn_counts": [
+      7,
+      10,
+      10,
+      5
+    ],
+    "model_inference_executed_by_renderer": false,
+    "training_rows": 512,
+    "artifacts": [
+      {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\frame_00.png",
+        "sha256": "43182b13d7fe7c1b3addd17f8cdb4f525ed8c4d870e21aa1826e19b2c634e779"
+      },
+      {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\frame_01.png",
+        "sha256": "a9a16cec7547d21f5d07e7ba972480cb415ab0f34380a88adb8e3254e88be90f"
+      },
+      {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\frame_02.png",
+        "sha256": "91bb47325968483f7429543d696abe40de6a37a25c4050dd5b186fa970105afb"
+      },
+      {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\frame_03.png",
+        "sha256": "fc76022b9cea30246a79ce9f8771a3c8b7339d28b0fc653e72a0549c96911408"
+      },
+      {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\contact_sheet.png",
+        "sha256": "28aaa763c134ce8d72c5b1a95866343306300617f37f6ba9f8ecc14392b7a02d"
+      },
+      {
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\portable_experiments\\pilot256_seed7_velocity_v1\\visuals_selection_final\\training_curve.png",
+        "sha256": "f69e4a271023dcd09c18c8c5d1deaf0fec390619e3efa7151f4569f209d29328",
+        "training_rows": 512
+      }
+    ],
+    "previous_render_preserved": "visuals_selection; only curve title changed from individual samples to optimizer updates to correctly describe batch4"
+  },
+  "limitations": [
+    "All inputs come from public train media; no private test labels or official score are involved.",
+    "Exact parity validates independent checkpoint inference, not prediction accuracy or generalization.",
+    "Forward timing is detector-only. Frame timing excludes model initialization, PHASE and the full streaming service.",
+    "The four fixed pinhole overlays do not certify RGB/event pixel rectification.",
+    "Velocity is a learned output field; its physical reference frame and accuracy require separate evidence."
+  ]
+}

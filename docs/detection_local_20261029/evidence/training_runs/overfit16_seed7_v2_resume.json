@@ -1,0 +1,908 @@
+{
+  "run_name": "overfit16_seed7_v2_resume",
+  "report_sha256": "8bdab19be4a8e8cc6c4c9b75d2458b430b2a3d46712d7ed2af51d9abf2725e9f",
+  "preregistration_sha256": "cbf3474656bf583a93dc4bb982f47e0877b26da5211b0db0bfb4e17a017ea4cf",
+  "checkpoint_sha256_verified": true,
+  "preregistration": {
+    "created_at_utc": "2026-10-29T12:54:35.906633+00:00",
+    "variant": "monodgp_pytorch_grid_sample_v1",
+    "role": "overfit16",
+    "sample_tokens": [
+      "qGsgzl4Q8B:000000887_000231056",
+      "qGsgzl4Q8B:000000929_000731755",
+      "qGsgzl4Q8B:000000972_000132457",
+      "qGsgzl4Q8B:000001014_000633163",
+      "qGsgzl4Q8B:000001057_000033869",
+      "qGsgzl4Q8B:000001099_000434576",
+      "qGsgzl4Q8B:000001141_000935280",
+      "qGsgzl4Q8B:000001186_000736014",
+      "nRcwUlHyAd:000000489_000835720",
+      "nRcwUlHyAd:000000532_000236368",
+      "nRcwUlHyAd:000000574_000636987",
+      "nRcwUlHyAd:000000617_000137590",
+      "nRcwUlHyAd:000000659_000538179",
+      "nRcwUlHyAd:000000701_000938768",
+      "nRcwUlHyAd:000000744_000439357",
+      "nRcwUlHyAd:000000789_000239962"
+    ],
+    "seed": 7,
+    "model_config": {
+      "num_classes": 8,
+      "return_intermediate_dec": true,
+      "device": "cuda",
+      "backbone": "resnet50",
+      "train_backbone": true,
+      "num_feature_levels": 4,
+      "dilation": false,
+      "position_embedding": "sine",
+      "masks": false,
+      "mode": "LID",
+      "num_depth_bins": 80,
+      "depth_min": "1e-3",
+      "depth_max": 60.0,
+      "with_box_refine": true,
+      "use_dn": false,
+      "init_box": false,
+      "enc_layers": 3,
+      "dec_layers": 3,
+      "hidden_dim": 256,
+      "dim_feedforward": 256,
+      "dropout": 0.1,
+      "nheads": 8,
+      "num_queries": 50,
+      "group_num": 11,
+      "enc_n_points": 4,
+      "dec_n_points": 4,
+      "scalar": 5,
+      "label_noise_scale": 0.2,
+      "box_noise_scale": 0.4,
+      "num_patterns": 0,
+      "aux_loss": true,
+      "cls_loss_coef": 2,
+      "focal_alpha": 0.25,
+      "bbox_loss_coef": 5,
+      "giou_loss_coef": 2,
+      "3dcenter_loss_coef": 10,
+      "dim_loss_coef": 1,
+      "angle_loss_coef": 1,
+      "depth_loss_coef": 1,
+      "depth_map_loss_coef": 1,
+      "region_loss_coef": 1,
+      "set_cost_class": 2,
+      "set_cost_bbox": 5,
+      "set_cost_giou": 2,
+      "set_cost_3dcenter": 10
+    },
+    "image_hw": [
+      384,
+      640
+    ],
+    "batch_size": 1,
+    "training_precision": "fp32",
+    "inference_precision": "fp32",
+    "matmul_precision": "highest",
+    "learning_rate": 0.0002,
+    "maximum_steps": 456,
+    "step_budget_semantics": "additional_optimizer_updates",
+    "base_checkpoint_steps": 344,
+    "maximum_total_steps": 800,
+    "resume_checkpoint_sha256": "52ec97774d06c2a7bc0d9320db616f2a50a3ac4dce50c7709fbdf4883fc4907f",
+    "resume_rng_policy": "restart_seeded_sampler_and_torch_rng",
+    "acceptance_reference_sha256": "92a306e89b4422bb979b8b46258e80b3625c2e12288ca3c79705dccdac1e59f3",
+    "reference_initial_center_mean": 0.07986338343471289,
+    "absolute_center_acceptance_maximum": 0.03993169171735644,
+    "maximum_training_seconds": 1800.0,
+    "acceptance": {
+      "overfit16_mean_center_loss_ratio_at_most": 0.5,
+      "finite_parameters": true,
+      "active_class_head_updated": true,
+      "criterion_fixed_before_first_real_step": true
+    },
+    "manifest_sha256": "048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159",
+    "source": {
+      "upstream_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "variant": "monodgp_pytorch_grid_sample_v1",
+      "patch_sha256": "5b4e63ddff88c744ffe950154f3e965f5117f9802e1caaa86b9bea3d3eb3c39b",
+      "patched_file_sha256": {
+        "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+        "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+        "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+        "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+        "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+        "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+        "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7"
+      },
+      "complete_source_file_sha256": {
+        "LICENSE": "8e31470748ac395e7413b1142a74a97585755b8f757df71365e23ae2a5d7a099",
+        "configs/monodgp.yaml": "b736cc2d692b6aa9ae762e57298708fd96f86cfd3deb8e7ca3beffcebcfcf317",
+        "lib/datasets/kitti/kitti_dataset.py": "bda5071f4b7a786c3f68d41a6d1d3bb40bc3654b5d6bbe19d9d377bef792341b",
+        "lib/datasets/kitti/kitti_eval_python/LICENSE": "83e4dd21429a91fb7cea67a476032a9641425e5355df2e0f589a738b6ec9fd2c",
+        "lib/datasets/kitti/kitti_eval_python/README.md": "54db883f1952835aca7f75d5ae54ab2b7c40edb6e09ceddbf033a58e3588d624",
+        "lib/datasets/kitti/kitti_eval_python/eval.py": "c96ea8cdc8daadc5a0d7b06c50110035dc8f1aa2b972a55d93a9a155bc50efda",
+        "lib/datasets/kitti/kitti_eval_python/evaluate.py": "4f0f083a033c6bbb72db1ca1dda173228e81088efed4057fccf6e6415e8871ec",
+        "lib/datasets/kitti/kitti_eval_python/kitti_common.py": "38255af58ff703ceb7ad78ddc687e115a754287dbb02e0de9780f1ddf5d950a8",
+        "lib/datasets/kitti/kitti_eval_python/rotate_iou.py": "d9b2820b5be5d15ee7233147643134c5d73eff129c773aef4b59ce73a8ecd7f4",
+        "lib/datasets/kitti/kitti_utils.py": "96d7154928e2d11c595c9307e14346c3eadeda596d952ac493c531530723ad64",
+        "lib/datasets/kitti/pd.py": "ee5b0a07e70403ce595e5691c6dd94847a8b2759f6d972fbbbb4fa8b637411b1",
+        "lib/datasets/utils.py": "022b1564a6d84d4b700d72ed478fe7b943db7c867a7a42fcbf9100446ed8fbf8",
+        "lib/helpers/dataloader_helper.py": "4f1f3532e99d63b10a2b599d4c015ab715fe8b5dd2e80a287ed6cbbcb908653e",
+        "lib/helpers/decode_helper.py": "70ab57ff293f563c14c72121732a327d524b036fc5de6724fd844d61d4c09c7a",
+        "lib/helpers/model_helper.py": "20b910a692491cf54862b5034151607e2e1db1b2f1e76fcf4127400e8d6e0215",
+        "lib/helpers/optimizer_helper.py": "a5da952eaea50d334ba9b2b03faa659e1a91c1bbf4ebb5e356373d63d999aec2",
+        "lib/helpers/save_helper.py": "3f35882ed3d3a9267c0101fc370b06e54ed12afe01a64ba2f0749bc1d305ad0f",
+        "lib/helpers/scheduler_helper.py": "8066169cbb905f8a2339e8adcb43a4fd62d5143905a893d1411a75ea39424203",
+        "lib/helpers/tester_helper.py": "c83cec9527237550897ba8e9b89bc45d9865f4d4cec9814fd4b9a21a35b46dab",
+        "lib/helpers/trainer_helper.py": "fa1d656e1cdc1718a2be9d62f7d26c08e990b5af94acbea670785af7e67c8d36",
+        "lib/helpers/utils_helper.py": "c52ba2ac1907f2b214802dbd0ec060c4b28204ecc835f0bff86e4071da00832e",
+        "lib/losses/dim_aware_loss.py": "41c8e2df9b857505888f017542c2a34104adb28d93dca5ce17e923420deaa69f",
+        "lib/losses/focal_loss.py": "ee2b387e772aa8e8fcb37334912b643ca58bd8bceb6d4a87393769eb2a441659",
+        "lib/losses/uncertainty_loss.py": "4d360a7a55c6370fa1d9e74d3c318a2485a6c8471a15760ffd2bfb5e86eee540",
+        "lib/models/monodgp/__init__.py": "e96ae7a2754576f6a787424c33d85f87c116c195a7a459171d2986ea126ba600",
+        "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+        "lib/models/monodgp/depth_predictor/__init__.py": "be9b137295f541c87ebde8e3453eebdd53c068a2dc3c1ef068ce11e40f07af60",
+        "lib/models/monodgp/depth_predictor/ddn_loss/__init__.py": "721b492c190ade3cdd95aa07bb845b3b6352bbed60ea494c3816a6b937cb960c",
+        "lib/models/monodgp/depth_predictor/ddn_loss/balancer.py": "4110b7720bc1f6ca13a3676104f3dcaabe6e6102934ad35ac93ffde1bade859b",
+        "lib/models/monodgp/depth_predictor/ddn_loss/ddn_loss.py": "f641a264ae8c0c44810749e254bc50c5016658925c22d64934668faffb06a551",
+        "lib/models/monodgp/depth_predictor/ddn_loss/focalloss.py": "647eea4c53b87d3dacc7d084a19a086113a76e73fabf11bc8a43408e2a30ceaf",
+        "lib/models/monodgp/depth_predictor/depth_predictor.py": "a014c8202ffecea0b8f9ad8392ede30d7c3153d67eab08ff48a838309f3974a6",
+        "lib/models/monodgp/depth_predictor/transformer.py": "faf4e7351081139daf477e82b9bd1358a5e19bcec6d2df33d87656e4d8732edb",
+        "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+        "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+        "lib/models/monodgp/dn_components.py": "0d1e2880c6474a836f3b939c1da0ba60e2052c4c08666f1c401605910cc11771",
+        "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7",
+        "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+        "lib/models/monodgp/ops/functions/__init__.py": "e1a39c1cf23562b11d696d81f95cf8bef368c48149b681d1eadc7f6d188edd3a",
+        "lib/models/monodgp/ops/functions/__pycache__/__init__.cpython-38.pyc": "4981223bf5f268c77981f5d44cddaf8bf7a7324c82b7be03473d173d88c5402d",
+        "lib/models/monodgp/ops/functions/__pycache__/ms_deform_attn_func.cpython-38.pyc": "9fbcecf77042bd110418132b5554d4d76e18f641046589eb6a78c43bf52c1a56",
+        "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+        "lib/models/monodgp/ops/make.sh": "37a07393d06bc9114f634fbc216119ff709283a1718816aff8bd6eab6e26788b",
+        "lib/models/monodgp/ops/modules/__init__.py": "5ee74e878252076bc3709f52fc705730e9473e02fef6aefb099eaac2edb1c3bb",
+        "lib/models/monodgp/ops/modules/__pycache__/__init__.cpython-38.pyc": "7b0ad4ef091f3488721e9138171c3241cafa0cbae82a1c9821485e516ab610df",
+        "lib/models/monodgp/ops/modules/__pycache__/ms_deform_attn.cpython-38.pyc": "83c20a57d5e4a0a99f3bda79dd7ee9909841b31517f9222d5b454bbc05297113",
+        "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+        "lib/models/monodgp/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+        "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.cpp": "d7f7c3d2df2484f3905005e13c8dc12dd943fd4451a59a059bda367eefa4dccd",
+        "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.h": "b9114ab52ea7610184b3eb9672731c3d1a7ce92e69bfdec6cf661ae988416aef",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.h": "c9cd9345e0881dfeebbfa5e98b6e6990a3d415a430bcbaaba3706ce5a2379401",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+        "lib/models/monodgp/ops/src/ms_deform_attn.h": "2fdc244f99e3e3b9af8dae02e09139de3f546eef83748495c3f175f48278cf41",
+        "lib/models/monodgp/ops/src/vision.cpp": "8dec032236873cee3ae86921dabbbb02c62ffd95ddbb83aef0b1b856771e8a61",
+        "lib/models/monodgp/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+        "lib/models/monodgp/position_encoding.py": "f32948c98bae719686f7c87a97d7bcd87a9aa5b6e113a00e9bbf82be361432ff",
+        "lib/models/monodgp/region_seg_head.py": "daf58907b8f3093ff686717d3e38a6d60b1e6df3e661223dab219e4a62fd7735",
+        "utils/__init__.py": "a101de83cee507766e0ad18e63b9a5dfe707971b6e634166e2c646dc5a44b6fd",
+        "utils/box_ops.py": "24fbfc914bbbad278b5fdf3078b103d67f771fac24ccec22276fb5392afd9e40",
+        "utils/dino_utils.py": "e3a84229d6d1496df5a2ea5b7880658294abcf2994cdee362032ca56d530cc5e",
+        "utils/misc.py": "f835599a9402895811769e3eec19da12691686c859d23c55e90f4b05674ccea8"
+      },
+      "external_extension_used": false,
+      "automatic_pretrained_download": false
+    },
+    "code_sha256": {
+      "scripts\\train_monodgp_portable.py": "9bd339c101925a77926d8de4c925efea41761de6141da70d9a53e353024f1d38",
+      "scripts\\smoke_monodgp_portable.py": "2e615f3b57b79710fbe6681fb98894e14810a14a46db0f4c6977f749c2e67c1f",
+      "src\\e_jepa_ttc\\detection\\portable_attention.py": "e3a5ca88ca989e7bd10fe1f8381f7da32b83eea3063ac89b67113511b045f7fa",
+      "src\\e_jepa_ttc\\detection\\monodgp_eap_adapter.py": "2c750a5c219ca8b2518bcb465ef5df24318c661cfcd330bc61592d5dbf3a6355",
+      "src\\e_jepa_ttc\\detection\\development_metrics.py": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6",
+      "src\\e_jepa_ttc\\detection\\eap_rgb_data.py": "4193159d40b91b397a2b1ab769028cf92b6129e06c3ab93c0638ce24d38d005b",
+      "src\\e_jepa_ttc\\detection\\geometry_contract.py": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f"
+    },
+    "git_commit": "79efcbed4dc09f23dccabfdf678b727b584d0912",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "environment_lock_sha256": "2b7824ac8577fcc808fb9b347794684d4e158a9a7c7e8688cca85885ef68f061",
+    "initialization": "resume_public_train_experiment",
+    "selection_tokens": []
+  },
+  "report": {
+    "status": "COMPLETED",
+    "preregistration_sha256": "cbf3474656bf583a93dc4bb982f47e0877b26da5211b0db0bfb4e17a017ea4cf",
+    "source": {
+      "upstream_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+      "variant": "monodgp_pytorch_grid_sample_v1",
+      "patch_sha256": "5b4e63ddff88c744ffe950154f3e965f5117f9802e1caaa86b9bea3d3eb3c39b",
+      "patched_file_sha256": {
+        "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+        "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+        "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+        "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+        "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+        "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+        "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7"
+      },
+      "complete_source_file_sha256": {
+        "LICENSE": "8e31470748ac395e7413b1142a74a97585755b8f757df71365e23ae2a5d7a099",
+        "configs/monodgp.yaml": "b736cc2d692b6aa9ae762e57298708fd96f86cfd3deb8e7ca3beffcebcfcf317",
+        "lib/datasets/kitti/kitti_dataset.py": "bda5071f4b7a786c3f68d41a6d1d3bb40bc3654b5d6bbe19d9d377bef792341b",
+        "lib/datasets/kitti/kitti_eval_python/LICENSE": "83e4dd21429a91fb7cea67a476032a9641425e5355df2e0f589a738b6ec9fd2c",
+        "lib/datasets/kitti/kitti_eval_python/README.md": "54db883f1952835aca7f75d5ae54ab2b7c40edb6e09ceddbf033a58e3588d624",
+        "lib/datasets/kitti/kitti_eval_python/eval.py": "c96ea8cdc8daadc5a0d7b06c50110035dc8f1aa2b972a55d93a9a155bc50efda",
+        "lib/datasets/kitti/kitti_eval_python/evaluate.py": "4f0f083a033c6bbb72db1ca1dda173228e81088efed4057fccf6e6415e8871ec",
+        "lib/datasets/kitti/kitti_eval_python/kitti_common.py": "38255af58ff703ceb7ad78ddc687e115a754287dbb02e0de9780f1ddf5d950a8",
+        "lib/datasets/kitti/kitti_eval_python/rotate_iou.py": "d9b2820b5be5d15ee7233147643134c5d73eff129c773aef4b59ce73a8ecd7f4",
+        "lib/datasets/kitti/kitti_utils.py": "96d7154928e2d11c595c9307e14346c3eadeda596d952ac493c531530723ad64",
+        "lib/datasets/kitti/pd.py": "ee5b0a07e70403ce595e5691c6dd94847a8b2759f6d972fbbbb4fa8b637411b1",
+        "lib/datasets/utils.py": "022b1564a6d84d4b700d72ed478fe7b943db7c867a7a42fcbf9100446ed8fbf8",
+        "lib/helpers/dataloader_helper.py": "4f1f3532e99d63b10a2b599d4c015ab715fe8b5dd2e80a287ed6cbbcb908653e",
+        "lib/helpers/decode_helper.py": "70ab57ff293f563c14c72121732a327d524b036fc5de6724fd844d61d4c09c7a",
+        "lib/helpers/model_helper.py": "20b910a692491cf54862b5034151607e2e1db1b2f1e76fcf4127400e8d6e0215",
+        "lib/helpers/optimizer_helper.py": "a5da952eaea50d334ba9b2b03faa659e1a91c1bbf4ebb5e356373d63d999aec2",
+        "lib/helpers/save_helper.py": "3f35882ed3d3a9267c0101fc370b06e54ed12afe01a64ba2f0749bc1d305ad0f",
+        "lib/helpers/scheduler_helper.py": "8066169cbb905f8a2339e8adcb43a4fd62d5143905a893d1411a75ea39424203",
+        "lib/helpers/tester_helper.py": "c83cec9527237550897ba8e9b89bc45d9865f4d4cec9814fd4b9a21a35b46dab",
+        "lib/helpers/trainer_helper.py": "fa1d656e1cdc1718a2be9d62f7d26c08e990b5af94acbea670785af7e67c8d36",
+        "lib/helpers/utils_helper.py": "c52ba2ac1907f2b214802dbd0ec060c4b28204ecc835f0bff86e4071da00832e",
+        "lib/losses/dim_aware_loss.py": "41c8e2df9b857505888f017542c2a34104adb28d93dca5ce17e923420deaa69f",
+        "lib/losses/focal_loss.py": "ee2b387e772aa8e8fcb37334912b643ca58bd8bceb6d4a87393769eb2a441659",
+        "lib/losses/uncertainty_loss.py": "4d360a7a55c6370fa1d9e74d3c318a2485a6c8471a15760ffd2bfb5e86eee540",
+        "lib/models/monodgp/__init__.py": "e96ae7a2754576f6a787424c33d85f87c116c195a7a459171d2986ea126ba600",
+        "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+        "lib/models/monodgp/depth_predictor/__init__.py": "be9b137295f541c87ebde8e3453eebdd53c068a2dc3c1ef068ce11e40f07af60",
+        "lib/models/monodgp/depth_predictor/ddn_loss/__init__.py": "721b492c190ade3cdd95aa07bb845b3b6352bbed60ea494c3816a6b937cb960c",
+        "lib/models/monodgp/depth_predictor/ddn_loss/balancer.py": "4110b7720bc1f6ca13a3676104f3dcaabe6e6102934ad35ac93ffde1bade859b",
+        "lib/models/monodgp/depth_predictor/ddn_loss/ddn_loss.py": "f641a264ae8c0c44810749e254bc50c5016658925c22d64934668faffb06a551",
+        "lib/models/monodgp/depth_predictor/ddn_loss/focalloss.py": "647eea4c53b87d3dacc7d084a19a086113a76e73fabf11bc8a43408e2a30ceaf",
+        "lib/models/monodgp/depth_predictor/depth_predictor.py": "a014c8202ffecea0b8f9ad8392ede30d7c3153d67eab08ff48a838309f3974a6",
+        "lib/models/monodgp/depth_predictor/transformer.py": "faf4e7351081139daf477e82b9bd1358a5e19bcec6d2df33d87656e4d8732edb",
+        "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+        "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+        "lib/models/monodgp/dn_components.py": "0d1e2880c6474a836f3b939c1da0ba60e2052c4c08666f1c401605910cc11771",
+        "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7",
+        "lib/models/monodgp/monodgp.py": "8138f0a897037b5744bc1e2cebb602aa8ade46b01d3efecd8e048f0ef7d18377",
+        "lib/models/monodgp/ops/functions/__init__.py": "e1a39c1cf23562b11d696d81f95cf8bef368c48149b681d1eadc7f6d188edd3a",
+        "lib/models/monodgp/ops/functions/__pycache__/__init__.cpython-38.pyc": "4981223bf5f268c77981f5d44cddaf8bf7a7324c82b7be03473d173d88c5402d",
+        "lib/models/monodgp/ops/functions/__pycache__/ms_deform_attn_func.cpython-38.pyc": "9fbcecf77042bd110418132b5554d4d76e18f641046589eb6a78c43bf52c1a56",
+        "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+        "lib/models/monodgp/ops/make.sh": "37a07393d06bc9114f634fbc216119ff709283a1718816aff8bd6eab6e26788b",
+        "lib/models/monodgp/ops/modules/__init__.py": "5ee74e878252076bc3709f52fc705730e9473e02fef6aefb099eaac2edb1c3bb",
+        "lib/models/monodgp/ops/modules/__pycache__/__init__.cpython-38.pyc": "7b0ad4ef091f3488721e9138171c3241cafa0cbae82a1c9821485e516ab610df",
+        "lib/models/monodgp/ops/modules/__pycache__/ms_deform_attn.cpython-38.pyc": "83c20a57d5e4a0a99f3bda79dd7ee9909841b31517f9222d5b454bbc05297113",
+        "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+        "lib/models/monodgp/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+        "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.cpp": "d7f7c3d2df2484f3905005e13c8dc12dd943fd4451a59a059bda367eefa4dccd",
+        "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.h": "b9114ab52ea7610184b3eb9672731c3d1a7ce92e69bfdec6cf661ae988416aef",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.h": "c9cd9345e0881dfeebbfa5e98b6e6990a3d415a430bcbaaba3706ce5a2379401",
+        "lib/models/monodgp/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+        "lib/models/monodgp/ops/src/ms_deform_attn.h": "2fdc244f99e3e3b9af8dae02e09139de3f546eef83748495c3f175f48278cf41",
+        "lib/models/monodgp/ops/src/vision.cpp": "8dec032236873cee3ae86921dabbbb02c62ffd95ddbb83aef0b1b856771e8a61",
+        "lib/models/monodgp/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+        "lib/models/monodgp/position_encoding.py": "f32948c98bae719686f7c87a97d7bcd87a9aa5b6e113a00e9bbf82be361432ff",
+        "lib/models/monodgp/region_seg_head.py": "daf58907b8f3093ff686717d3e38a6d60b1e6df3e661223dab219e4a62fd7735",
+        "utils/__init__.py": "a101de83cee507766e0ad18e63b9a5dfe707971b6e634166e2c646dc5a44b6fd",
+        "utils/box_ops.py": "24fbfc914bbbad278b5fdf3078b103d67f771fac24ccec22276fb5392afd9e40",
+        "utils/dino_utils.py": "e3a84229d6d1496df5a2ea5b7880658294abcf2994cdee362032ca56d530cc5e",
+        "utils/misc.py": "f835599a9402895811769e3eec19da12691686c859d23c55e90f4b05674ccea8"
+      },
+      "external_extension_used": false,
+      "automatic_pretrained_download": false
+    },
+    "role": "overfit16",
+    "training_steps": 456,
+    "initial_train": {
+      "profile": "eap_development_xy_ap101_envelope_v1",
+      "official_eap_score": false,
+      "sample_count": 16,
+      "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+      "score_ties": "token lexicographic, then original prediction index",
+      "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+      "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+      "velocity_evaluated": false,
+      "tp_threshold_m": 2.0,
+      "supported_class_count": 6,
+      "dev_AP101_supported_classes": 0.10341481815184465,
+      "dev_AP101_all_eight_absent_zero": 0.07756111361388349,
+      "dev_ATE_m": 1.416108238110583,
+      "dev_ASE": 0.5330365980890731,
+      "dev_AOE_rad": 0.08857951638808699,
+      "per_class": {
+        "car": {
+          "ground_truth_count": 32,
+          "prediction_count": 342,
+          "AP101_mean_thresholds": 0.08822844148501463,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.005468231899570687,
+              "TP": 4,
+              "FP": 338,
+              "FN": 28
+            },
+            "1.0": {
+              "AP101": 0.03545746033009735,
+              "TP": 12,
+              "FP": 330,
+              "FN": 20
+            },
+            "2.0": {
+              "AP101": 0.10263757378828356,
+              "TP": 19,
+              "FP": 323,
+              "FN": 13
+            },
+            "4.0": {
+              "AP101": 0.2093504999221069,
+              "TP": 23,
+              "FP": 319,
+              "FN": 9
+            }
+          },
+          "TP_at_error_threshold": 19,
+          "ATE_m": 1.1935756287964847,
+          "ASE": 0.20280888431445548,
+          "AOE_rad": 0.05131094301956072
+        },
+        "bicycle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "truck": {
+          "ground_truth_count": 6,
+          "prediction_count": 139,
+          "AP101_mean_thresholds": 0.015279027902790268,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 139,
+              "FN": 6
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 139,
+              "FN": 6
+            },
+            "2.0": {
+              "AP101": 0.0076507650765076495,
+              "TP": 1,
+              "FP": 138,
+              "FN": 5
+            },
+            "4.0": {
+              "AP101": 0.05346534653465342,
+              "TP": 2,
+              "FP": 137,
+              "FN": 4
+            }
+          },
+          "TP_at_error_threshold": 1,
+          "ATE_m": 1.9776142578825706,
+          "ASE": 0.7391357814980118,
+          "AOE_rad": 0.09723380616703281
+        },
+        "pedestrian": {
+          "ground_truth_count": 1,
+          "prediction_count": 2,
+          "AP101_mean_thresholds": 0.25,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 2,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 2,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.5,
+              "TP": 1,
+              "FP": 1,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": 0.5,
+              "TP": 1,
+              "FP": 1,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 1,
+          "ATE_m": 1.89456055148289,
+          "ASE": 0.6352659575664219,
+          "AOE_rad": 0.06061985713335005
+        },
+        "motorcycle": {
+          "ground_truth_count": 5,
+          "prediction_count": 56,
+          "AP101_mean_thresholds": 0.06098109810981098,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.05198019801980198,
+              "TP": 1,
+              "FP": 55,
+              "FN": 4
+            },
+            "1.0": {
+              "AP101": 0.05198019801980198,
+              "TP": 1,
+              "FP": 55,
+              "FN": 4
+            },
+            "2.0": {
+              "AP101": 0.06998199819981997,
+              "TP": 2,
+              "FP": 54,
+              "FN": 3
+            },
+            "4.0": {
+              "AP101": 0.06998199819981997,
+              "TP": 2,
+              "FP": 54,
+              "FN": 3
+            }
+          },
+          "TP_at_error_threshold": 2,
+          "ATE_m": 0.6268979125666664,
+          "ASE": 0.5416290626281928,
+          "AOE_rad": 0.0392049236300247
+        },
+        "bus": {
+          "ground_truth_count": 2,
+          "prediction_count": 261,
+          "AP101_mean_thresholds": 0.20600034141345197,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 261,
+              "FN": 2
+            },
+            "1.0": {
+              "AP101": 0.2524752475247525,
+              "TP": 1,
+              "FP": 260,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.26954592010925266,
+              "TP": 2,
+              "FP": 259,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": 0.3019801980198027,
+              "TP": 2,
+              "FP": 259,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 2,
+          "ATE_m": 1.3878928398243031,
+          "ASE": 0.5463433044382836,
+          "AOE_rad": 0.19452805199046663
+        },
+        "tricycle": {
+          "ground_truth_count": 1,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 0,
+              "FN": 1
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "other_vehicle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        }
+      },
+      "loss_center_mean": 0.04411297512706369,
+      "loss_center_median": 0.036562513560056686,
+      "loss_depth_mean": 2.854231581091881,
+      "total_weighted_loss_mean": 32.4107917828951,
+      "inference_and_scoring_seconds": 3.6740625000093132,
+      "model_targets_argument": null
+    },
+    "training_seconds": 787.1560070999549,
+    "base_checkpoint_steps": 344,
+    "total_training_steps": 800,
+    "step_seconds_median": 1.718765199999325,
+    "peak_allocated_bytes": 1524598272,
+    "peak_reserved_bytes": 1646264320,
+    "active_head_updated": true,
+    "all_parameters_finite": true,
+    "checkpoint_sha256": "c308e9567e670326b0b46530f2c585d85fd442fa1a5541aa4db8155ada5c4b22",
+    "checkpoint_reload": "PASS_STRICT",
+    "final_train": {
+      "profile": "eap_development_xy_ap101_envelope_v1",
+      "official_eap_score": false,
+      "sample_count": 16,
+      "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+      "score_ties": "token lexicographic, then original prediction index",
+      "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+      "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+      "velocity_evaluated": false,
+      "tp_threshold_m": 2.0,
+      "supported_class_count": 6,
+      "dev_AP101_supported_classes": 0.20142131799454274,
+      "dev_AP101_all_eight_absent_zero": 0.15106598849590705,
+      "dev_ATE_m": 1.0811674011830077,
+      "dev_ASE": 0.19057980146747144,
+      "dev_AOE_rad": 0.08353615662754724,
+      "per_class": {
+        "car": {
+          "ground_truth_count": 32,
+          "prediction_count": 281,
+          "AP101_mean_thresholds": 0.16048328238400866,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.006094278583395203,
+              "TP": 6,
+              "FP": 275,
+              "FN": 26
+            },
+            "1.0": {
+              "AP101": 0.026705847805847144,
+              "TP": 11,
+              "FP": 270,
+              "FN": 21
+            },
+            "2.0": {
+              "AP101": 0.2212271981317564,
+              "TP": 23,
+              "FP": 258,
+              "FN": 9
+            },
+            "4.0": {
+              "AP101": 0.3879058050150359,
+              "TP": 28,
+              "FP": 253,
+              "FN": 4
+            }
+          },
+          "TP_at_error_threshold": 23,
+          "ATE_m": 1.3274690274917609,
+          "ASE": 0.1976407663540945,
+          "AOE_rad": 0.034125779638850134
+        },
+        "bicycle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "truck": {
+          "ground_truth_count": 6,
+          "prediction_count": 260,
+          "AP101_mean_thresholds": 0.23958546716740634,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.06452145214521447,
+              "TP": 2,
+              "FP": 258,
+              "FN": 4
+            },
+            "1.0": {
+              "AP101": 0.2979401388414703,
+              "TP": 3,
+              "FP": 257,
+              "FN": 3
+            },
+            "2.0": {
+              "AP101": 0.2979401388414703,
+              "TP": 3,
+              "FP": 257,
+              "FN": 3
+            },
+            "4.0": {
+              "AP101": 0.2979401388414703,
+              "TP": 3,
+              "FP": 257,
+              "FN": 3
+            }
+          },
+          "TP_at_error_threshold": 3,
+          "ATE_m": 0.5431535181249741,
+          "ASE": 0.24749112252034988,
+          "AOE_rad": 0.09231372458161353
+        },
+        "pedestrian": {
+          "ground_truth_count": 1,
+          "prediction_count": 9,
+          "AP101_mean_thresholds": 0.375,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 9,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 9,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.5,
+              "TP": 1,
+              "FP": 8,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": 1.0,
+              "TP": 1,
+              "FP": 8,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 1,
+          "ATE_m": 1.9306174743416522,
+          "ASE": 0.2204904944439502,
+          "AOE_rad": 0.10557365940858077
+        },
+        "motorcycle": {
+          "ground_truth_count": 5,
+          "prediction_count": 78,
+          "AP101_mean_thresholds": 0.032469059405940595,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 78,
+              "FN": 5
+            },
+            "1.0": {
+              "AP101": 0.008316831683168319,
+              "TP": 1,
+              "FP": 77,
+              "FN": 4
+            },
+            "2.0": {
+              "AP101": 0.008316831683168319,
+              "TP": 1,
+              "FP": 77,
+              "FN": 4
+            },
+            "4.0": {
+              "AP101": 0.11324257425742575,
+              "TP": 3,
+              "FP": 75,
+              "FN": 2
+            }
+          },
+          "TP_at_error_threshold": 1,
+          "ATE_m": 0.7055600191043552,
+          "ASE": 0.113295382417122,
+          "AOE_rad": 0.06216607996078638
+        },
+        "bus": {
+          "ground_truth_count": 2,
+          "prediction_count": 161,
+          "AP101_mean_thresholds": 0.4009900990099008,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 161,
+              "FN": 2
+            },
+            "1.0": {
+              "AP101": 0.4504950495049498,
+              "TP": 2,
+              "FP": 159,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": 0.4504950495049498,
+              "TP": 2,
+              "FP": 159,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": 0.7029702970297035,
+              "TP": 2,
+              "FP": 159,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 2,
+          "ATE_m": 0.8990369668522957,
+          "ASE": 0.1739812416018407,
+          "AOE_rad": 0.12350153954790533
+        },
+        "tricycle": {
+          "ground_truth_count": 1,
+          "prediction_count": 11,
+          "AP101_mean_thresholds": 0.0,
+          "thresholds": {
+            "0.5": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 11,
+              "FN": 1
+            },
+            "1.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 11,
+              "FN": 1
+            },
+            "2.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 11,
+              "FN": 1
+            },
+            "4.0": {
+              "AP101": 0.0,
+              "TP": 0,
+              "FP": 11,
+              "FN": 1
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        },
+        "other_vehicle": {
+          "ground_truth_count": 0,
+          "prediction_count": 0,
+          "AP101_mean_thresholds": null,
+          "thresholds": {
+            "0.5": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "1.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "2.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            },
+            "4.0": {
+              "AP101": null,
+              "TP": 0,
+              "FP": 0,
+              "FN": 0
+            }
+          },
+          "TP_at_error_threshold": 0,
+          "ATE_m": null,
+          "ASE": null,
+          "AOE_rad": null
+        }
+      },
+      "loss_center_mean": 0.02757038571871817,
+      "loss_center_median": 0.029218045994639397,
+      "loss_depth_mean": 2.4862639158964157,
+      "total_weighted_loss_mean": 20.986517409561202,
+      "inference_and_scoring_seconds": 11.117849699978251,
+      "model_targets_argument": null
+    },
+    "ratio_to_run_start_center_loss": 0.6249949281204454,
+    "mean_center_loss_ratio": 0.3452193550158884,
+    "overfit_acceptance": "PASS"
+  }
+}

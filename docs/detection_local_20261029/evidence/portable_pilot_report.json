@@ -1,0 +1,1242 @@
+{
+  "status": "COMPLETED",
+  "preregistration_sha256": "4de9b76caed8e6ecbb1db618a502f3ecb5ecaa133810e484d745c37231284bd2",
+  "source": {
+    "upstream_revision": "aa059a18214aebf644510e7f0793971b403f9d14",
+    "variant": "monodgp_pytorch_grid_sample_velocity_v1",
+    "patch_sha256": "a679536a6cf4e9683208a7bc45da5eac97b7f2bc654bb909b18d6a87d68cb8e2",
+    "patched_file_sha256": {
+      "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+      "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+      "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+      "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+      "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+      "lib/models/monodgp/monodgp.py": "ac16913d545b470cf1f741df2dd783f0ca82eaca515cc94a824a7074c4113c6e",
+      "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7"
+    },
+    "complete_source_file_sha256": {
+      "LICENSE": "8e31470748ac395e7413b1142a74a97585755b8f757df71365e23ae2a5d7a099",
+      "configs/monodgp.yaml": "b736cc2d692b6aa9ae762e57298708fd96f86cfd3deb8e7ca3beffcebcfcf317",
+      "lib/datasets/kitti/kitti_dataset.py": "bda5071f4b7a786c3f68d41a6d1d3bb40bc3654b5d6bbe19d9d377bef792341b",
+      "lib/datasets/kitti/kitti_eval_python/LICENSE": "83e4dd21429a91fb7cea67a476032a9641425e5355df2e0f589a738b6ec9fd2c",
+      "lib/datasets/kitti/kitti_eval_python/README.md": "54db883f1952835aca7f75d5ae54ab2b7c40edb6e09ceddbf033a58e3588d624",
+      "lib/datasets/kitti/kitti_eval_python/eval.py": "c96ea8cdc8daadc5a0d7b06c50110035dc8f1aa2b972a55d93a9a155bc50efda",
+      "lib/datasets/kitti/kitti_eval_python/evaluate.py": "4f0f083a033c6bbb72db1ca1dda173228e81088efed4057fccf6e6415e8871ec",
+      "lib/datasets/kitti/kitti_eval_python/kitti_common.py": "38255af58ff703ceb7ad78ddc687e115a754287dbb02e0de9780f1ddf5d950a8",
+      "lib/datasets/kitti/kitti_eval_python/rotate_iou.py": "d9b2820b5be5d15ee7233147643134c5d73eff129c773aef4b59ce73a8ecd7f4",
+      "lib/datasets/kitti/kitti_utils.py": "96d7154928e2d11c595c9307e14346c3eadeda596d952ac493c531530723ad64",
+      "lib/datasets/kitti/pd.py": "ee5b0a07e70403ce595e5691c6dd94847a8b2759f6d972fbbbb4fa8b637411b1",
+      "lib/datasets/utils.py": "022b1564a6d84d4b700d72ed478fe7b943db7c867a7a42fcbf9100446ed8fbf8",
+      "lib/helpers/dataloader_helper.py": "4f1f3532e99d63b10a2b599d4c015ab715fe8b5dd2e80a287ed6cbbcb908653e",
+      "lib/helpers/decode_helper.py": "70ab57ff293f563c14c72121732a327d524b036fc5de6724fd844d61d4c09c7a",
+      "lib/helpers/model_helper.py": "20b910a692491cf54862b5034151607e2e1db1b2f1e76fcf4127400e8d6e0215",
+      "lib/helpers/optimizer_helper.py": "a5da952eaea50d334ba9b2b03faa659e1a91c1bbf4ebb5e356373d63d999aec2",
+      "lib/helpers/save_helper.py": "3f35882ed3d3a9267c0101fc370b06e54ed12afe01a64ba2f0749bc1d305ad0f",
+      "lib/helpers/scheduler_helper.py": "8066169cbb905f8a2339e8adcb43a4fd62d5143905a893d1411a75ea39424203",
+      "lib/helpers/tester_helper.py": "c83cec9527237550897ba8e9b89bc45d9865f4d4cec9814fd4b9a21a35b46dab",
+      "lib/helpers/trainer_helper.py": "fa1d656e1cdc1718a2be9d62f7d26c08e990b5af94acbea670785af7e67c8d36",
+      "lib/helpers/utils_helper.py": "c52ba2ac1907f2b214802dbd0ec060c4b28204ecc835f0bff86e4071da00832e",
+      "lib/losses/dim_aware_loss.py": "41c8e2df9b857505888f017542c2a34104adb28d93dca5ce17e923420deaa69f",
+      "lib/losses/focal_loss.py": "ee2b387e772aa8e8fcb37334912b643ca58bd8bceb6d4a87393769eb2a441659",
+      "lib/losses/uncertainty_loss.py": "4d360a7a55c6370fa1d9e74d3c318a2485a6c8471a15760ffd2bfb5e86eee540",
+      "lib/models/monodgp/__init__.py": "e96ae7a2754576f6a787424c33d85f87c116c195a7a459171d2986ea126ba600",
+      "lib/models/monodgp/backbone.py": "210f2516ee086cc26a47a406530d3669f4e6c21a17d6f376d322f12277c1f128",
+      "lib/models/monodgp/depth_predictor/__init__.py": "be9b137295f541c87ebde8e3453eebdd53c068a2dc3c1ef068ce11e40f07af60",
+      "lib/models/monodgp/depth_predictor/ddn_loss/__init__.py": "721b492c190ade3cdd95aa07bb845b3b6352bbed60ea494c3816a6b937cb960c",
+      "lib/models/monodgp/depth_predictor/ddn_loss/balancer.py": "4110b7720bc1f6ca13a3676104f3dcaabe6e6102934ad35ac93ffde1bade859b",
+      "lib/models/monodgp/depth_predictor/ddn_loss/ddn_loss.py": "f641a264ae8c0c44810749e254bc50c5016658925c22d64934668faffb06a551",
+      "lib/models/monodgp/depth_predictor/ddn_loss/focalloss.py": "647eea4c53b87d3dacc7d084a19a086113a76e73fabf11bc8a43408e2a30ceaf",
+      "lib/models/monodgp/depth_predictor/depth_predictor.py": "a014c8202ffecea0b8f9ad8392ede30d7c3153d67eab08ff48a838309f3974a6",
+      "lib/models/monodgp/depth_predictor/transformer.py": "faf4e7351081139daf477e82b9bd1358a5e19bcec6d2df33d87656e4d8732edb",
+      "lib/models/monodgp/det2d_transformer.py": "4706f607808b2c5fd0e2033a4f5d40d803bfc02271d08adb05f9968805304ff2",
+      "lib/models/monodgp/det3d_transformer.py": "6f3a3957dd161b5cefa310bb9063c152fe8cd21e5405029dfee0e040406f30ac",
+      "lib/models/monodgp/dn_components.py": "0d1e2880c6474a836f3b939c1da0ba60e2052c4c08666f1c401605910cc11771",
+      "lib/models/monodgp/matcher.py": "49bffefb2d04e8c4a72dd74ff1d994332433cb380fe51c8338449e5e7fe82bb7",
+      "lib/models/monodgp/monodgp.py": "ac16913d545b470cf1f741df2dd783f0ca82eaca515cc94a824a7074c4113c6e",
+      "lib/models/monodgp/ops/functions/__init__.py": "e1a39c1cf23562b11d696d81f95cf8bef368c48149b681d1eadc7f6d188edd3a",
+      "lib/models/monodgp/ops/functions/__pycache__/__init__.cpython-38.pyc": "4981223bf5f268c77981f5d44cddaf8bf7a7324c82b7be03473d173d88c5402d",
+      "lib/models/monodgp/ops/functions/__pycache__/ms_deform_attn_func.cpython-38.pyc": "9fbcecf77042bd110418132b5554d4d76e18f641046589eb6a78c43bf52c1a56",
+      "lib/models/monodgp/ops/functions/ms_deform_attn_func.py": "a4b2d81242bef1c10f3a4c1d7aa6136a78e84603c2642ed4e50505f6685fbf97",
+      "lib/models/monodgp/ops/make.sh": "37a07393d06bc9114f634fbc216119ff709283a1718816aff8bd6eab6e26788b",
+      "lib/models/monodgp/ops/modules/__init__.py": "5ee74e878252076bc3709f52fc705730e9473e02fef6aefb099eaac2edb1c3bb",
+      "lib/models/monodgp/ops/modules/__pycache__/__init__.cpython-38.pyc": "7b0ad4ef091f3488721e9138171c3241cafa0cbae82a1c9821485e516ab610df",
+      "lib/models/monodgp/ops/modules/__pycache__/ms_deform_attn.cpython-38.pyc": "83c20a57d5e4a0a99f3bda79dd7ee9909841b31517f9222d5b454bbc05297113",
+      "lib/models/monodgp/ops/modules/ms_deform_attn.py": "92aa381b8d3ec0ac7daf88a35cb02b633573dd8ee248e5cdb996a48112e6515a",
+      "lib/models/monodgp/ops/setup.py": "d4b036c77ee95b6db3027b1926ccabe1be69c306590f2eba46d47e0aacb5a3ec",
+      "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.cpp": "d7f7c3d2df2484f3905005e13c8dc12dd943fd4451a59a059bda367eefa4dccd",
+      "lib/models/monodgp/ops/src/cpu/ms_deform_attn_cpu.h": "b9114ab52ea7610184b3eb9672731c3d1a7ce92e69bfdec6cf661ae988416aef",
+      "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.cu": "65cf318c67d99d6b163027e7190bc8776ff16a7197b332ad537f70cf6cc12be0",
+      "lib/models/monodgp/ops/src/cuda/ms_deform_attn_cuda.h": "c9cd9345e0881dfeebbfa5e98b6e6990a3d415a430bcbaaba3706ce5a2379401",
+      "lib/models/monodgp/ops/src/cuda/ms_deform_im2col_cuda.cuh": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad",
+      "lib/models/monodgp/ops/src/ms_deform_attn.h": "2fdc244f99e3e3b9af8dae02e09139de3f546eef83748495c3f175f48278cf41",
+      "lib/models/monodgp/ops/src/vision.cpp": "8dec032236873cee3ae86921dabbbb02c62ffd95ddbb83aef0b1b856771e8a61",
+      "lib/models/monodgp/ops/test.py": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942",
+      "lib/models/monodgp/position_encoding.py": "f32948c98bae719686f7c87a97d7bcd87a9aa5b6e113a00e9bbf82be361432ff",
+      "lib/models/monodgp/region_seg_head.py": "daf58907b8f3093ff686717d3e38a6d60b1e6df3e661223dab219e4a62fd7735",
+      "utils/__init__.py": "a101de83cee507766e0ad18e63b9a5dfe707971b6e634166e2c646dc5a44b6fd",
+      "utils/box_ops.py": "24fbfc914bbbad278b5fdf3078b103d67f771fac24ccec22276fb5392afd9e40",
+      "utils/dino_utils.py": "e3a84229d6d1496df5a2ea5b7880658294abcf2994cdee362032ca56d530cc5e",
+      "utils/misc.py": "f835599a9402895811769e3eec19da12691686c859d23c55e90f4b05674ccea8"
+    },
+    "external_extension_used": false,
+    "automatic_pretrained_download": false
+  },
+  "role": "train",
+  "training_steps": 512,
+  "initial_train": {
+    "profile": "eap_development_xy_ap101_envelope_v1",
+    "official_eap_score": false,
+    "sample_count": 256,
+    "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+    "score_ties": "token lexicographic, then original prediction index",
+    "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+    "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+    "velocity_evaluated": false,
+    "tp_threshold_m": 2.0,
+    "supported_class_count": 7,
+    "dev_AP101_supported_classes": 0.0,
+    "dev_AP101_all_eight_absent_zero": 0.0,
+    "dev_ATE_m": null,
+    "dev_ASE": null,
+    "dev_AOE_rad": null,
+    "per_class": {
+      "car": {
+        "ground_truth_count": 589,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 589
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 589
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 589
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 589
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "bicycle": {
+        "ground_truth_count": 1,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "truck": {
+        "ground_truth_count": 86,
+        "prediction_count": 153,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 153,
+            "FN": 86
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 153,
+            "FN": 86
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 153,
+            "FN": 86
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 153,
+            "FN": 86
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "pedestrian": {
+        "ground_truth_count": 15,
+        "prediction_count": 397,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 397,
+            "FN": 15
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 397,
+            "FN": 15
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 397,
+            "FN": 15
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 397,
+            "FN": 15
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "motorcycle": {
+        "ground_truth_count": 108,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 108
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 108
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 108
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 108
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "bus": {
+        "ground_truth_count": 18,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 18
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 18
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 18
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 18
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "tricycle": {
+        "ground_truth_count": 12,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 12
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 12
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 12
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 12
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "other_vehicle": {
+        "ground_truth_count": 0,
+        "prediction_count": 51,
+        "AP101_mean_thresholds": null,
+        "thresholds": {
+          "0.5": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 51,
+            "FN": 0
+          },
+          "1.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 51,
+            "FN": 0
+          },
+          "2.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 51,
+            "FN": 0
+          },
+          "4.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 51,
+            "FN": 0
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      }
+    },
+    "native_velocity": {
+      "profile": "eap_native_velocity_label_matches_v1",
+      "official_eap_score": false,
+      "semantics": "Errors of the first two released velocity components; not a TTC input",
+      "matching_threshold_m": 2.0,
+      "matching": "Confidence-ranked class/ego-XY matching; distance < threshold",
+      "ground_truth_velocity_count": 829,
+      "box_matches": 0,
+      "valid_velocity_matches": 0,
+      "component_mae_mps": null,
+      "summed_component_mae_mps": null,
+      "vector_l2_mean_mps": null,
+      "per_class": {
+        "car": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "bicycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "truck": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "pedestrian": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "motorcycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "bus": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "tricycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "other_vehicle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        }
+      }
+    },
+    "loss_center_mean": 0.07940234011039138,
+    "loss_center_median": 0.07809558510780334,
+    "loss_depth_mean": 27.372498996555805,
+    "total_weighted_loss_mean": 164.74201510057685,
+    "inference_and_scoring_seconds": 101.01619719999144,
+    "model_targets_argument": null
+  },
+  "training_seconds": 1096.5895780000137,
+  "base_checkpoint_steps": 0,
+  "total_training_steps": 512,
+  "image_exposures_this_stage": 2048,
+  "empty_target_exposures": 56,
+  "valid_velocity_object_exposures": 6632,
+  "step_seconds_median": 1.022261799982516,
+  "peak_allocated_bytes": 4544696320,
+  "peak_reserved_bytes": 4773117952,
+  "active_head_updated": true,
+  "all_parameters_finite": true,
+  "velocity_heads_updated": [
+    true,
+    true,
+    true
+  ],
+  "checkpoint_sha256": "dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338",
+  "checkpoint_reload": "PASS_STRICT",
+  "final_train": {
+    "profile": "eap_development_xy_ap101_envelope_v1",
+    "official_eap_score": false,
+    "sample_count": 256,
+    "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+    "score_ties": "token lexicographic, then original prediction index",
+    "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+    "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+    "velocity_evaluated": false,
+    "tp_threshold_m": 2.0,
+    "supported_class_count": 7,
+    "dev_AP101_supported_classes": 0.05837491968099525,
+    "dev_AP101_all_eight_absent_zero": 0.05107805472087085,
+    "dev_ATE_m": 1.26568419872231,
+    "dev_ASE": 0.48062440935350564,
+    "dev_AOE_rad": 0.17432501925374805,
+    "per_class": {
+      "car": {
+        "ground_truth_count": 589,
+        "prediction_count": 5138,
+        "AP101_mean_thresholds": 0.19115474023744267,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.05553022315928303,
+            "TP": 201,
+            "FP": 4937,
+            "FN": 388
+          },
+          "1.0": {
+            "AP101": 0.09999571752185214,
+            "TP": 266,
+            "FP": 4872,
+            "FN": 323
+          },
+          "2.0": {
+            "AP101": 0.21379762469652883,
+            "TP": 394,
+            "FP": 4744,
+            "FN": 195
+          },
+          "4.0": {
+            "AP101": 0.3952953955721067,
+            "TP": 517,
+            "FP": 4621,
+            "FN": 72
+          }
+        },
+        "TP_at_error_threshold": 394,
+        "ATE_m": 0.9960023144848601,
+        "ASE": 0.12646706311173547,
+        "AOE_rad": 0.06061013798416908
+      },
+      "bicycle": {
+        "ground_truth_count": 1,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 0,
+            "FN": 1
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "truck": {
+        "ground_truth_count": 86,
+        "prediction_count": 1996,
+        "AP101_mean_thresholds": 0.03788930196638727,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0013283870339741832,
+            "TP": 5,
+            "FP": 1991,
+            "FN": 81
+          },
+          "1.0": {
+            "AP101": 0.012789526369949827,
+            "TP": 21,
+            "FP": 1975,
+            "FN": 65
+          },
+          "2.0": {
+            "AP101": 0.04023050614822937,
+            "TP": 38,
+            "FP": 1958,
+            "FN": 48
+          },
+          "4.0": {
+            "AP101": 0.0972087883133957,
+            "TP": 49,
+            "FP": 1947,
+            "FN": 37
+          }
+        },
+        "TP_at_error_threshold": 38,
+        "ATE_m": 1.2596205859166179,
+        "ASE": 0.6696308180480295,
+        "AOE_rad": 0.17546483883337308
+      },
+      "pedestrian": {
+        "ground_truth_count": 15,
+        "prediction_count": 2287,
+        "AP101_mean_thresholds": 0.0009979142674861466,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2287,
+            "FN": 15
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2287,
+            "FN": 15
+          },
+          "2.0": {
+            "AP101": 0.001783493627850266,
+            "TP": 3,
+            "FP": 2284,
+            "FN": 12
+          },
+          "4.0": {
+            "AP101": 0.0022081634420943203,
+            "TP": 4,
+            "FP": 2283,
+            "FN": 11
+          }
+        },
+        "TP_at_error_threshold": 3,
+        "ATE_m": 1.2000168816535348,
+        "ASE": 0.6215896772934636,
+        "AOE_rad": 0.06249319975000622
+      },
+      "motorcycle": {
+        "ground_truth_count": 108,
+        "prediction_count": 2637,
+        "AP101_mean_thresholds": 0.026096471825138558,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0005297619765829646,
+            "TP": 5,
+            "FP": 2632,
+            "FN": 103
+          },
+          "1.0": {
+            "AP101": 0.004625670886614468,
+            "TP": 19,
+            "FP": 2618,
+            "FN": 89
+          },
+          "2.0": {
+            "AP101": 0.028501654625169466,
+            "TP": 50,
+            "FP": 2587,
+            "FN": 58
+          },
+          "4.0": {
+            "AP101": 0.07072879981218733,
+            "TP": 74,
+            "FP": 2563,
+            "FN": 34
+          }
+        },
+        "TP_at_error_threshold": 50,
+        "ATE_m": 1.359703337137274,
+        "ASE": 0.3575170104116455,
+        "AOE_rad": 0.5211703816078688
+      },
+      "bus": {
+        "ground_truth_count": 18,
+        "prediction_count": 740,
+        "AP101_mean_thresholds": 0.15248600947051216,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 740,
+            "FN": 18
+          },
+          "1.0": {
+            "AP101": 0.0594059405940594,
+            "TP": 1,
+            "FP": 739,
+            "FN": 17
+          },
+          "2.0": {
+            "AP101": 0.27475247524752455,
+            "TP": 7,
+            "FP": 733,
+            "FN": 11
+          },
+          "4.0": {
+            "AP101": 0.27578562204046464,
+            "TP": 8,
+            "FP": 732,
+            "FN": 10
+          }
+        },
+        "TP_at_error_threshold": 7,
+        "ATE_m": 1.5130778744192634,
+        "ASE": 0.6279174779026542,
+        "AOE_rad": 0.05188653809332301
+      },
+      "tricycle": {
+        "ground_truth_count": 12,
+        "prediction_count": 2,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2,
+            "FN": 12
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2,
+            "FN": 12
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2,
+            "FN": 12
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2,
+            "FN": 12
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "other_vehicle": {
+        "ground_truth_count": 0,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": null,
+        "thresholds": {
+          "0.5": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "1.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "2.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "4.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      }
+    },
+    "native_velocity": {
+      "profile": "eap_native_velocity_label_matches_v1",
+      "official_eap_score": false,
+      "semantics": "Errors of the first two released velocity components; not a TTC input",
+      "matching_threshold_m": 2.0,
+      "matching": "Confidence-ranked class/ego-XY matching; distance < threshold",
+      "ground_truth_velocity_count": 829,
+      "box_matches": 492,
+      "valid_velocity_matches": 492,
+      "component_mae_mps": [
+        0.33567840466811893,
+        0.026335703645827612
+      ],
+      "summed_component_mae_mps": 0.3620141083139466,
+      "vector_l2_mean_mps": 0.33958095027996266,
+      "per_class": {
+        "car": {
+          "valid_velocity_matches": 394,
+          "component_mae_mps": [
+            0.350034236868486,
+            0.023579833337913584
+          ],
+          "summed_component_mae_mps": 0.3736140702063996,
+          "vector_l2_mean_mps": 0.35337540599334855
+        },
+        "bicycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "truck": {
+          "valid_velocity_matches": 38,
+          "component_mae_mps": [
+            0.4083139029228876,
+            0.05258420390600804
+          ],
+          "summed_component_mae_mps": 0.46089810682889565,
+          "vector_l2_mean_mps": 0.41577425941015145
+        },
+        "pedestrian": {
+          "valid_velocity_matches": 3,
+          "component_mae_mps": [
+            0.030051169528936345,
+            0.013056632752219835
+          ],
+          "summed_component_mae_mps": 0.04310780228115618,
+          "vector_l2_mean_mps": 0.036197950876852805
+        },
+        "motorcycle": {
+          "valid_velocity_matches": 50,
+          "component_mae_mps": [
+            0.13832542437594383,
+            0.03016861912978129
+          ],
+          "summed_component_mae_mps": 0.16849404350572514,
+          "vector_l2_mean_mps": 0.14430815879275982
+        },
+        "bus": {
+          "valid_velocity_matches": 7,
+          "component_mae_mps": [
+            0.6739903902967593,
+            0.017273036490743316
+          ],
+          "summed_component_mae_mps": 0.6912634267875026,
+          "vector_l2_mean_mps": 0.6743562752154266
+        },
+        "tricycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "other_vehicle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        }
+      }
+    },
+    "loss_center_mean": 0.02817886066623032,
+    "loss_center_median": 0.02638942003250122,
+    "loss_depth_mean": 2.2324720670003444,
+    "total_weighted_loss_mean": 23.406143234299815,
+    "inference_and_scoring_seconds": 59.599581599992234,
+    "model_targets_argument": null
+  },
+  "ratio_to_run_start_center_loss": 0.3548870301184304,
+  "mean_center_loss_ratio": 0.3548870301184304,
+  "overfit_acceptance": "NOT_APPLICABLE_PILOT",
+  "selection": {
+    "profile": "eap_development_xy_ap101_envelope_v1",
+    "official_eap_score": false,
+    "sample_count": 256,
+    "matching": "greedy confidence-ranked, class-constrained ego XY, distance < threshold",
+    "score_ties": "token lexicographic, then original prediction index",
+    "ap": "101 recall points with precision envelope; no minimum recall/precision clipping",
+    "tp_errors": "mean of actual matched boxes per class; macro over classes with matches",
+    "velocity_evaluated": false,
+    "tp_threshold_m": 2.0,
+    "supported_class_count": 5,
+    "dev_AP101_supported_classes": 0.02064070955899264,
+    "dev_AP101_all_eight_absent_zero": 0.0129004434743704,
+    "dev_ATE_m": 1.2214770325896167,
+    "dev_ASE": 0.5296896236047282,
+    "dev_AOE_rad": 0.1794217772493456,
+    "per_class": {
+      "car": {
+        "ground_truth_count": 721,
+        "prediction_count": 6317,
+        "AP101_mean_thresholds": 0.08338670219978991,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.00742666769119659,
+            "TP": 122,
+            "FP": 6195,
+            "FN": 599
+          },
+          "1.0": {
+            "AP101": 0.022780904859030428,
+            "TP": 208,
+            "FP": 6109,
+            "FN": 513
+          },
+          "2.0": {
+            "AP101": 0.07595589145019015,
+            "TP": 342,
+            "FP": 5975,
+            "FN": 379
+          },
+          "4.0": {
+            "AP101": 0.2273833447987425,
+            "TP": 560,
+            "FP": 5757,
+            "FN": 161
+          }
+        },
+        "TP_at_error_threshold": 342,
+        "ATE_m": 1.1707738326410821,
+        "ASE": 0.16515060139434065,
+        "AOE_rad": 0.10145251911895807
+      },
+      "bicycle": {
+        "ground_truth_count": 0,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": null,
+        "thresholds": {
+          "0.5": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "1.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "2.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "4.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "truck": {
+        "ground_truth_count": 205,
+        "prediction_count": 1966,
+        "AP101_mean_thresholds": 0.019732439652909457,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0016094726881595042,
+            "TP": 10,
+            "FP": 1956,
+            "FN": 195
+          },
+          "1.0": {
+            "AP101": 0.005870900140406168,
+            "TP": 29,
+            "FP": 1937,
+            "FN": 176
+          },
+          "2.0": {
+            "AP101": 0.018736179747146964,
+            "TP": 58,
+            "FP": 1908,
+            "FN": 147
+          },
+          "4.0": {
+            "AP101": 0.05271320603592519,
+            "TP": 96,
+            "FP": 1870,
+            "FN": 109
+          }
+        },
+        "TP_at_error_threshold": 58,
+        "ATE_m": 1.1836386103612018,
+        "ASE": 0.7410337615916756,
+        "AOE_rad": 0.18841216918217302
+      },
+      "pedestrian": {
+        "ground_truth_count": 2,
+        "prediction_count": 1605,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 1605,
+            "FN": 2
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 1605,
+            "FN": 2
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 1605,
+            "FN": 2
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 1605,
+            "FN": 2
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "motorcycle": {
+        "ground_truth_count": 6,
+        "prediction_count": 2816,
+        "AP101_mean_thresholds": 8.440594226382746e-05,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2816,
+            "FN": 6
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 2816,
+            "FN": 6
+          },
+          "2.0": {
+            "AP101": 7.193026995007196e-05,
+            "TP": 1,
+            "FP": 2815,
+            "FN": 5
+          },
+          "4.0": {
+            "AP101": 0.0002656934991052379,
+            "TP": 2,
+            "FP": 2814,
+            "FN": 4
+          }
+        },
+        "TP_at_error_threshold": 1,
+        "ATE_m": 1.3100186547665664,
+        "ASE": 0.6828845078281682,
+        "AOE_rad": 0.2484006434469057
+      },
+      "bus": {
+        "ground_truth_count": 4,
+        "prediction_count": 84,
+        "AP101_mean_thresholds": 0.0,
+        "thresholds": {
+          "0.5": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 84,
+            "FN": 4
+          },
+          "1.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 84,
+            "FN": 4
+          },
+          "2.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 84,
+            "FN": 4
+          },
+          "4.0": {
+            "AP101": 0.0,
+            "TP": 0,
+            "FP": 84,
+            "FN": 4
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "tricycle": {
+        "ground_truth_count": 0,
+        "prediction_count": 12,
+        "AP101_mean_thresholds": null,
+        "thresholds": {
+          "0.5": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 12,
+            "FN": 0
+          },
+          "1.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 12,
+            "FN": 0
+          },
+          "2.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 12,
+            "FN": 0
+          },
+          "4.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 12,
+            "FN": 0
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      },
+      "other_vehicle": {
+        "ground_truth_count": 0,
+        "prediction_count": 0,
+        "AP101_mean_thresholds": null,
+        "thresholds": {
+          "0.5": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "1.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "2.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          },
+          "4.0": {
+            "AP101": null,
+            "TP": 0,
+            "FP": 0,
+            "FN": 0
+          }
+        },
+        "TP_at_error_threshold": 0,
+        "ATE_m": null,
+        "ASE": null,
+        "AOE_rad": null
+      }
+    },
+    "native_velocity": {
+      "profile": "eap_native_velocity_label_matches_v1",
+      "official_eap_score": false,
+      "semantics": "Errors of the first two released velocity components; not a TTC input",
+      "matching_threshold_m": 2.0,
+      "matching": "Confidence-ranked class/ego-XY matching; distance < threshold",
+      "ground_truth_velocity_count": 938,
+      "box_matches": 401,
+      "valid_velocity_matches": 401,
+      "component_mae_mps": [
+        0.5920886489895969,
+        0.030880058515930002
+      ],
+      "summed_component_mae_mps": 0.6229687075055269,
+      "vector_l2_mean_mps": 0.5949011525138362,
+      "per_class": {
+        "car": {
+          "valid_velocity_matches": 342,
+          "component_mae_mps": [
+            0.6073230981761426,
+            0.030003243357380367
+          ],
+          "summed_component_mae_mps": 0.637326341533523,
+          "vector_l2_mean_mps": 0.6099901583215729
+        },
+        "bicycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "truck": {
+          "valid_velocity_matches": 58,
+          "component_mae_mps": [
+            0.5093514611663553,
+            0.036485800027078547
+          ],
+          "summed_component_mae_mps": 0.5458372611934339,
+          "vector_l2_mean_mps": 0.5130685649575458
+        },
+        "pedestrian": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "motorcycle": {
+          "valid_velocity_matches": 1,
+          "component_mae_mps": [
+            0.18066392093896866,
+            0.005617835093289614
+          ],
+          "summed_component_mae_mps": 0.18628175603225827,
+          "vector_l2_mean_mps": 0.1807512445328588
+        },
+        "bus": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "tricycle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        },
+        "other_vehicle": {
+          "valid_velocity_matches": 0,
+          "component_mae_mps": null,
+          "summed_component_mae_mps": null,
+          "vector_l2_mean_mps": null
+        }
+      }
+    },
+    "loss_center_mean": 0.036752932202944066,
+    "loss_center_median": 0.03152973763644695,
+    "loss_depth_mean": 2.944944642018527,
+    "total_weighted_loss_mean": 32.780419887846435,
+    "inference_and_scoring_seconds": 53.448984600021504,
+    "model_targets_argument": null
+  },
+  "ended_at_utc": "2026-10-29T14:04:20.183797+00:00"
+}

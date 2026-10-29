@@ -1,0 +1,278 @@
+{
+  "method": "native_velocity_shared_match_zero_train_mean_v1",
+  "declared_at_utc": "2026-10-29T13:49:51+00:00",
+  "created_at_utc": "2026-10-29T14:06:02.060406+00:00",
+  "official_eap_score": false,
+  "ttc_evaluated": false,
+  "stored_metric_comparison": {
+    "float_absolute_tolerance": 1e-12,
+    "float_relative_tolerance": 1e-12,
+    "structures_integers_booleans_strings_null": "exact"
+  },
+  "train_sample_count": 256,
+  "selection_sample_count": 256,
+  "train_tokens_sha256": "558b0fc1e3c02927308688a2c33f2762c7f8990b69ca5b9af85d5132c1a78566",
+  "selection_tokens_sha256": "ed5706fab89ab3b70699623786453ea6bf1d5fe0a66cbb779d2826fdac0ddfe6",
+  "train_selection_tokens_disjoint": true,
+  "train_mean_velocity_components_mps": [
+    0.6944943899326075,
+    0.0020785578388463326
+  ],
+  "train_valid_velocity_objects": 829,
+  "fit_method": "global arithmetic component means over valid training boxes only",
+  "matching": "Same evaluator and unchanged boxes/classes/scores/order; strict ego XY < 2 m",
+  "same_box_and_velocity_matching_counts": true,
+  "supported_matched_classes": [
+    "car",
+    "truck",
+    "motorcycle"
+  ],
+  "observed_head": {
+    "profile": "eap_native_velocity_label_matches_v1",
+    "official_eap_score": false,
+    "semantics": "Errors of the first two released velocity components; not a TTC input",
+    "matching_threshold_m": 2.0,
+    "matching": "Confidence-ranked class/ego-XY matching; distance < threshold",
+    "ground_truth_velocity_count": 938,
+    "box_matches": 401,
+    "valid_velocity_matches": 401,
+    "component_mae_mps": [
+      0.5920886489895969,
+      0.030880058515930002
+    ],
+    "summed_component_mae_mps": 0.6229687075055269,
+    "vector_l2_mean_mps": 0.5949011525138365,
+    "per_class": {
+      "car": {
+        "valid_velocity_matches": 342,
+        "component_mae_mps": [
+          0.6073230981761426,
+          0.030003243357380367
+        ],
+        "summed_component_mae_mps": 0.637326341533523,
+        "vector_l2_mean_mps": 0.6099901583215729
+      },
+      "bicycle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "truck": {
+        "valid_velocity_matches": 58,
+        "component_mae_mps": [
+          0.5093514611663553,
+          0.036485800027078547
+        ],
+        "summed_component_mae_mps": 0.5458372611934339,
+        "vector_l2_mean_mps": 0.5130685649575458
+      },
+      "pedestrian": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "motorcycle": {
+        "valid_velocity_matches": 1,
+        "component_mae_mps": [
+          0.18066392093896866,
+          0.005617835093289614
+        ],
+        "summed_component_mae_mps": 0.18628175603225827,
+        "vector_l2_mean_mps": 0.1807512445328588
+      },
+      "bus": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "tricycle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "other_vehicle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      }
+    }
+  },
+  "zero_velocity": {
+    "profile": "eap_native_velocity_label_matches_v1",
+    "official_eap_score": false,
+    "semantics": "Errors of the first two released velocity components; not a TTC input",
+    "matching_threshold_m": 2.0,
+    "matching": "Confidence-ranked class/ego-XY matching; distance < threshold",
+    "ground_truth_velocity_count": 938,
+    "box_matches": 401,
+    "valid_velocity_matches": 401,
+    "component_mae_mps": [
+      1.3807441541307288,
+      0.02085950064459137
+    ],
+    "summed_component_mae_mps": 1.4016036547753201,
+    "vector_l2_mean_mps": 1.3811502059018668,
+    "per_class": {
+      "car": {
+        "valid_velocity_matches": 342,
+        "component_mae_mps": [
+          1.4687854972237733,
+          0.022179628379357202
+        ],
+        "summed_component_mae_mps": 1.4909651256031304,
+        "vector_l2_mean_mps": 1.4692169360732021
+      },
+      "bicycle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "truck": {
+        "valid_velocity_matches": 58,
+        "component_mae_mps": [
+          0.8852224263908535,
+          0.01336628291229035
+        ],
+        "summed_component_mae_mps": 0.8985887093031437,
+        "vector_l2_mean_mps": 0.8854735955152316
+      },
+      "pedestrian": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "motorcycle": {
+        "valid_velocity_matches": 1,
+        "component_mae_mps": [
+          0.010865025222301483,
+          0.003982443828135729
+        ],
+        "summed_component_mae_mps": 0.014847469050437212,
+        "vector_l2_mean_mps": 0.011571889730096107
+      },
+      "bus": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "tricycle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "other_vehicle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      }
+    }
+  },
+  "train_mean_velocity": {
+    "profile": "eap_native_velocity_label_matches_v1",
+    "official_eap_score": false,
+    "semantics": "Errors of the first two released velocity components; not a TTC input",
+    "matching_threshold_m": 2.0,
+    "matching": "Confidence-ranked class/ego-XY matching; distance < threshold",
+    "ground_truth_velocity_count": 938,
+    "box_matches": 401,
+    "valid_velocity_matches": 401,
+    "component_mae_mps": [
+      0.7576222006652252,
+      0.02062332255895378
+    ],
+    "summed_component_mae_mps": 0.778245523224179,
+    "vector_l2_mean_mps": 0.7591277457551672,
+    "per_class": {
+      "car": {
+        "valid_velocity_matches": 342,
+        "component_mae_mps": [
+          0.7959384114137256,
+          0.02188824442703506
+        ],
+        "summed_component_mae_mps": 0.8178266558407606,
+        "vector_l2_mean_mps": 0.7975521567310611
+      },
+      "bicycle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "truck": {
+        "valid_velocity_matches": 58,
+        "component_mae_mps": [
+          0.5329644206646692,
+          0.013415719834956766
+        ],
+        "summed_component_mae_mps": 0.5463801404996259,
+        "vector_l2_mean_mps": 0.5338574519559637
+      },
+      "pedestrian": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "motorcycle": {
+        "valid_velocity_matches": 1,
+        "component_mae_mps": [
+          0.683629364710306,
+          0.0060610016669820615
+        ],
+        "summed_component_mae_mps": 0.6896903663772881,
+        "vector_l2_mean_mps": 0.6836562323532374
+      },
+      "bus": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "tricycle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      },
+      "other_vehicle": {
+        "valid_velocity_matches": 0,
+        "component_mae_mps": null,
+        "summed_component_mae_mps": null,
+        "vector_l2_mean_mps": null
+      }
+    }
+  },
+  "head_minus_zero_vector_l2_mps": -0.7862490533880303,
+  "head_minus_train_mean_vector_l2_mps": -0.1642265932413307,
+  "limitations": [
+    "Label-component affinity only; physical frame and relative semantics unresolved",
+    "No TTC, time-to-collision, closing speed or official AVE is computed",
+    "Error comparison is conditional on detected box matches, not all ground-truth objects",
+    "Missing GT velocity still consumes a box match but is excluded from velocity errors",
+    "Missing predicted velocity fails even for an unmatched prediction",
+    "Global training means, no per-class or selection fit, no model change"
+  ],
+  "source_sha256": {
+    "train_results": "0876c950bb63187a562e35db0f2e2c39fe7f97dd3ad6f5d08204ad00c755768f",
+    "selection_results": "7a547a22222d4425cdd4faeaaf871f69210925adde94f69c629b48e94aceb896",
+    "script": "b16b74c88efbabd64ac86da55644eebfd160c5e005ef4a78bb0825708eb7b458",
+    "velocity_diagnostics": "a5330444c0d1a82e99ea90b0f2bf01d18b2ed865aade222303498c95c3347918",
+    "input_validation": "5c9e44f81c86a4ab6af48ab30cc41c71b1f61a49ff9a0af9e2846f9e9d576206",
+    "development_metrics": "1f53f8fc042d1840d95c9a438d334bbd6ab82e7f56fb9767cefae6b7bcb582c6"
+  },
+  "input_paths": {
+    "train_results": "output\\portable_experiments\\pilot256_seed7_velocity_v1\\final_train.json",
+    "selection_results": "output\\portable_experiments\\pilot256_seed7_velocity_v1\\selection.json"
+  },
+  "python_version": "3.12.13 (main, Mar 10 2026, 18:15:39) [MSC v.1944 64 bit (AMD64)]"
+}

@@ -1,0 +1,5 @@
+# Experimental receipts are hashed as bytes. Do not normalize line endings.
+*.json -text
+*.xml -text
+*.patch -text
+*.txt -text

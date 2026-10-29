@@ -8,9 +8,11 @@ sintética con alcance explícito.** Su precisión eAP se mide por separado.
 
 Se conserva ResNet-50, hidden dimension 256, cuatro niveles, tres capas de encoder
 y decoder según la configuración upstream, cabezas de clase/caja/dimensión/
-profundidad/ángulo, predictor de profundidad y segmentación regional. No se
-descargaron pesos preentrenados. El modelo empieza con inicialización aleatoria.
-La configuración nativa con 11 grupos contiene 42.168.788 parámetros.
+profundidad/ángulo, predictor de profundidad y segmentación regional. Los primeros
+smokes y los dos runs de overfit usaron inicialización aleatoria, sin descargar
+pesos preentrenados. La configuración inicial con 11 grupos contiene 42.168.788
+parámetros. El piloto posterior incorpora un backbone ImageNet descargado
+explícitamente y una cabeza de velocidad, descritos más abajo.
 
 ## Backend y comprobaciones independientes
 
@@ -78,7 +80,8 @@ comprobador para inspeccionar `class_embed[dec_layers-1]` y se repitió la ejecu
 
 El decode nativo produce 50 registros finitos de 14 valores. En la primera
 prueba aleatoria las dimensiones físicas todavía eran inválidas: finitud y
-ejecución no demuestran detecciones útiles. No existe cabeza de velocidad.
+ejecución no demuestran detecciones útiles. Esa primera variante no incluía
+cabeza de velocidad; la variante posterior del piloto sí la incorpora.
 
 ## Entorno y reproducción
 
@@ -99,6 +102,7 @@ resueltas del entorno propio; no modifica `uv.lock` de PHASE.
 
 & .venv-detector/Scripts/python.exe scripts/train_monodgp_portable.py `
   --data-root E:/eAP_dataset --manifest output/eap_rgb_pilot/manifest.json `
+  --candidate-split data/splits/eap_detection_candidate_v1.json `
   --output output/portable_experiments/overfit16_reproduction `
   --role overfit16 --steps 400 --max-seconds 600 `
   --width 640 --height 384 --group-num 11 --lr 0.0002 --seed 7
@@ -217,7 +221,7 @@ FP32 `highest`, group11 y tensores contiguos NCHW:
 | 2 | 0,21567 s | 9,27 | 2,54 GB |
 | 4 | 0,28341 s | 14,11 | 4,53 GB |
 
-El piloto queda definido antes de ejecutarse: 256 imágenes de dos secuencias
+El piloto se preregistró antes de ejecutarse: 256 imágenes de dos secuencias
 train, 256 imágenes de dos secuencias de selección separadas, batch 4,
 512 updates máximos (2.048 exposiciones, ocho pasadas si se completa), semilla
 7, AdamW con LR global 2e-4, decay 1e-4, clip 1,0 y límite de entrenamiento
@@ -234,6 +238,100 @@ disponen de dos componentes de velocidad finitas. La cabeza tiene ocho salidas,
 pero este piloto no demuestra entrenamiento positivo real de las ocho clases.
 La proyección breve de 145 s de cómputo no garantiza velocidad sostenida;
 los perfiles previos mostraron variación de latencia y presión de memoria host.
+
+## Resultado del piloto y coste observado
+
+`pilot256_seed7_velocity_v1` terminó los **512 updates y 2.048 exposiciones**
+previstos dentro del límite. Cada uno de los 256 tokens train apareció
+exactamente ocho veces; ningún token de selección apareció en la curva de
+entrenamiento. Hubo 56 exposiciones sin targets admitidos y 6.632 exposiciones
+de objetos con targets de velocidad válidos. Los parámetros permanecieron
+finitos, cambiaron la cabeza de clase y las tres cabezas de velocidad utilizadas,
+y el checkpoint completo se recargó con `strict=True`.
+
+El [informe íntegro](evidence/portable_pilot_report.json), la
+[preregistración](evidence/portable_pilot_preregistration.json) y el
+[resumen verificable de ejecución](evidence/portable_pilot_execution_summary.json)
+conservan las cifras y sus hashes. Los scores siguientes son de desarrollo,
+en escala 0–1; **no son resultados oficiales eAP**.
+
+| Medida | Train, 256 frames | Selección, 256 frames |
+|---|---:|---:|
+| Clases presentes tras filtros | 7 | 5 |
+| AP101, macro de clases presentes | 0,058375 | 0,020641 |
+| AP101, ocho clases con ausentes a cero | 0,051078 | 0,012900 |
+| ATE de desarrollo, m | 1,26568 | 1,22148 |
+| ASE de desarrollo | 0,480624 | 0,529690 |
+| AOE de desarrollo, rad | 0,174325 | 0,179422 |
+| Matches a 2 m con velocidad | 492 | 401 |
+| MAE de velocidad X/Y publicada, m/s | 0,33568 / 0,02634 | 0,59209 / 0,03088 |
+
+La media de pérdida de centro train pasó de 0,0794023 a 0,0281789, y la de
+profundidad de 27,3725 a 2,23247. El piloto no tenía un umbral preregistrado de
+precisión para declararlo un detector útil. El AP sigue siendo bajo: en selección
+solo car, truck y motorcycle tienen matches a 2 m (342, 58 y 1), mientras bus
+y pedestrian no tienen ninguno. Se guardaron las 50 propuestas por imagen,
+sin umbral de score para AP; sus 12.800 propuestas incluyen 12.399 no emparejadas
+a 2 m. Esto requiere mejorar ranking, supresión de duplicados y geometría antes
+de afirmar robustez. Las macros train/selección tienen distintos conjuntos de
+clases y no deben interpretarse como una diferencia de generalización aislada.
+La comparación de velocidad con cero y media train se conserva por separado en
+los controles offline; el MAE por sí solo no prueba aprovechamiento de imagen.
+
+Los [controles de imagen prefijados](evidence/pilot256_image_signal_controls.json)
+obtuvieron AP101 de selección 0,004126 para el prior constante ajustado solo en
+train y 0,003728 al permutar las predicciones entre frames sin puntos fijos,
+frente a 0,020641 del modelo. Esto aporta evidencia descriptiva de correspondencia
+con la imagen en este pequeño conjunto, sin eliminar su baja precisión absoluta.
+El [control de velocidad sobre los mismos 401 matches](evidence/pilot256_velocity_signal_controls.json)
+compara la cabeza con cero y la media global train: MAE X de 0,59209 / 1,38074 /
+0,75762 m/s, respectivamente. En Y la cabeza es peor: 0,03088 frente a 0,02086 /
+0,02062 m/s. El beneficio observado está limitado a la primera componente y a
+los objetos emparejados de tres clases; no demuestra velocidad física completa
+ni precisión TTC.
+
+El entrenamiento consumió 1.096,590 s (18,28 min). La suma de los tramos de step
+cronometrados fue 564,524 s, con mediana 1,02226 s; otros 532,065 s ocurrieron
+fuera de ese tramo, incluyendo preparación, transferencias y escritura. Las
+evaluaciones inicial train, final train y selección tardaron 101,016 / 59,600 /
+53,449 s. Desde preregistración hasta cierre transcurrieron 1.316,055 s
+(21,93 min), sin incluir construcción de modelo/fuentes ni carga del backbone
+anteriores a la preregistración. El pico Torch asignado fue 4.544.696.320 bytes,
+y el reservado 4.773.117.952 bytes. El perfil breve de 145 s no predijo el coste
+integral. No se utilizó cloud ni se cargó gasto de entrenamiento externo.
+
+Una inferencia posterior en proceso separado, sin leer anotaciones, reprodujo
+exactamente las predicciones guardadas de 16 frames train y 256 de selección,
+incluida velocidad (`max_abs_difference=0`). Las medianas de forward sincronizado
+fueron 43,26 y 47,89 ms respectivamente; excluyen lectura, preparación, decode,
+asociación y PHASE. Los siete frames temporales del mismo checkpoint se
+entregaron al puente de PHASE por separado.
+
+## Reproducción del piloto registrado
+
+El run utilizó el commit `3ebac039e56e3e5af98e0e3302084f00923235a1` y el
+[snapshot de diez fuentes y patch](evidence/portable_pilot_code_snapshot.zip).
+La reproducción histórica debe usar esa fuente y el lock del detector, con el
+manifest SHA `048636cd79e8f5160b97a8056b0e2ed6f78846f4bbb365b77efa5884766be159`
+y el backbone oficial ya verificado. El comando ejecutado fue:
+
+```powershell
+& .venv-detector/Scripts/python.exe scripts/train_monodgp_portable.py `
+  --data-root E:/eAP_dataset --manifest output/eap_rgb_pilot/manifest.json `
+  --output output/portable_experiments/pilot256_seed7_velocity_v1 `
+  --role train --steps 512 --max-seconds 1200 --group-num 11 --batch-size 4 `
+  --width 640 --height 384 --lr 0.0002 --seed 7 --predict-velocity `
+  --velocity-loss-coef 0.1 `
+  --backbone-weights output/external_weights/resnet50-0676ba61.pth `
+  --precision fp32 --matmul-precision highest
+```
+
+El runner rechaza sobrescribir un directorio existente: usar otro directorio
+para una nueva réplica. El guard de admisión añadido después de este run exige
+además `--candidate-split data/splits/eap_detection_candidate_v1.json`; esa
+validación del run histórico es retrospectiva y no debe atribuirse al runner
+congelado. El checkpoint local pesa 498.531.791 bytes y tiene SHA256
+`dc0ce304ad1c8a791ef66395be85b09f22526bc11a834472dcb18ce16384e338`.
 
 ## Límites científicos y licencias
 
