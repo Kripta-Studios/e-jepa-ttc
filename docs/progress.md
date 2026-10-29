@@ -521,3 +521,47 @@ PDF SHA-256:
 `b07b078c03bee3393924bd6c451fb0961699343573c7b5f28c9ddbaa5a7985e5`.
 Source ZIP SHA-256:
 `563b948d6a9d64a41896739fc1739afc8ecdad1968d3b5ac8074f1037fbef098`.
+
+## 2026-10-29 — Scientific prose and caption revision
+
+Revised the full manuscript in `output/pdf/phase_ttc_editorial_paper` after
+paragraph-level editorial and scientific review. Captions now describe the
+displayed content directly; repeated qualifications are consolidated in the
+methods and discussion. The prose uses simpler terminology, fewer formulaic
+conclusions, and rounded metrics where precision does not affect interpretation.
+Figure and table generators carry the revised wording into future rebuilds.
+The preceding edition remains in `output/pdf/phase_ttc_final_paper`.
+
+All 21 distributed data files, all citations and cross-reference labels, the
+paired bootstrap values, and the numerical analyses remain unchanged. Scientific
+review retained the dated leaderboard scope, unequal temporal support, mixed
+RGB/fusion error distribution, inconclusive paired intervals, historical JEPA
+controls, and the distinction between labeled transfer and unscored competition
+queries. No training, inference, model selection, or submission was performed.
+
+The revised article has 52 pages, 24 numbered figures, and 27 tables. Every page
+passed visual inspection after correcting a sentence-interrupting float and
+the appendix table placement. Both modular and consolidated builds have zero
+LaTeX warnings, overfull boxes, missing glyphs, or undefined references. A fresh
+extraction of the 197-file source package regenerated every asset, reproduced
+the consolidated TeX byte for byte, and matched PDF text and pagination exactly.
+The source manifest adds one archive member. Public text scans found no local
+machine paths or internal authoring commentary.
+
+Validation commands:
+
+```text
+python output/pdf/phase_ttc_editorial_paper/scripts/build_final.py
+python tmp/pdfs/editorial_revision/package_final.py
+python tmp/pdfs/editorial_source_roundtrip_final/PHASE_TTC_Final_Source/scripts/build_final.py
+python tmp/pdfs/editorial_revision/finalize_delivery.py
+```
+
+Verified copies replace the previous `PHASE_TTC_Final.pdf`,
+`PHASE_TTC_Final.tex`, and `PHASE_TTC_Final_Complete_Source.zip` in Downloads.
+The final receipt is `output/pdf/final_delivery_receipt.json`.
+
+PDF SHA-256:
+`70aa8a9757777286cbeb4d8b934cde5c5bd67e84ab4467e445c84c57c0c79fed`.
+Source ZIP SHA-256:
+`1d3137c0522fca53bcb3aa409bd93bc3298a6a61835a1055f1c578e3c0a683d2`.
