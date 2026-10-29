@@ -1,0 +1,26 @@
+{
+  "schema": "eap_event_probe_superseded_receipt_tombstones_v1",
+  "status": "INTEGRITY_RECORD",
+  "records": [
+    {
+      "former_path": "output/event_feasibility/event_representation_50ms_qGsgzl4Q8B_v2.json",
+      "sha256": "d9bdcf9c071b4b7040038c264ea56c686c1038f62a6987fab2ad95bc58581d4f",
+      "bytes_recoverable": false,
+      "reason_superseded": "The parent-side RSS sampler followed the Windows venv launcher PID rather than the real worker process, so its peak/delta fields were not admissible. The event module was also subsequently optimized without changing scientific semantics.",
+      "restoration_policy": "No byte reconstruction was attempted because the exact deleted bytes are not available. This tombstone records only observed facts and the SHA printed at generation time."
+    },
+    {
+      "former_path": "output/event_feasibility/event_representation_50ms_qGsgzl4Q8B_v2.json",
+      "sha256": "62504ed692fd265eb5de889d92fa912c51ad144deffb3adafd90f076af50cb47",
+      "created_at_utc_observed": "2026-10-29T16:47:46.544607+00:00",
+      "bytes_recoverable": false,
+      "reason_superseded": "The self-sampling worker fix was valid, but the representation receipt still used the v1 inner schema after the numerical accumulation algorithm changed. It was superseded by an explicitly versioned inner representation receipt.",
+      "restoration_policy": "No byte reconstruction was attempted because the exact deleted bytes are not available. This tombstone records only fields observed before deletion and the SHA printed at generation time."
+    }
+  ],
+  "current_preserved_v2": {
+    "path": "output/event_feasibility/event_representation_50ms_qGsgzl4Q8B_v2.json",
+    "sha256_at_tombstone_creation": "9a13103927f10c9997680e1ba3c339899050ba6bde813dab478b8789eedb26e4",
+    "note": "Preserved without modification; final admission receipt is generated at a distinct v3 path."
+  }
+}

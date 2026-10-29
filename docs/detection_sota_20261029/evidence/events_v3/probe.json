@@ -1,0 +1,76 @@
+{
+  "schema": "eap_causal_event_voxel_probe_v3",
+  "created_at_utc": "2026-10-29T16:51:13.996079+00:00",
+  "status": "PASS",
+  "scope": "one CPU 50 ms window; sampled reads; no labels/test/GPU",
+  "canonical_sample": {
+    "sample_token": "qGsgzl4Q8B:000001037_000033536",
+    "sequence_id": "qGsgzl4Q8B",
+    "rgb_exposure_start_timestamp_us": 1037033536,
+    "rgb_exposure_end_timestamp_us": 1037036031,
+    "events_path": "data/train/qGsgzl4Q8B/events.h5"
+  },
+  "provenance": {
+    "train_metadata_sha256_observed": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+    "train_metadata_sha256_expected": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+    "public_file_manifest_sha256": "2e65cd7f2600eea55f37f59e9a22d55b5ba0aa50445756fd7aaf01332c2b3ff1",
+    "event_h5_expected_sha256_from_public_manifest": "b12c384ae5a53d1879d410ba77d22ec47feadb393505b292f3b3fc0fe8127404",
+    "event_h5_expected_size_bytes": 10201847567,
+    "event_h5_observed_size_bytes": 10201847567,
+    "event_h5_full_sha256_observed": null,
+    "event_h5_verification_scope": "expected public hash recorded; local size verified; this bounded probe did not read the full 10.2 GB member and therefore does not certify its local full hash",
+    "implementation_module_sha256": "0ee69247ae11ee766c960c3da283eb166ec64f2c99b7c612572820f17df74d55",
+    "entrypoint_sha256": "afd163cd9091e06ce0e968374d7126c3df5f4dc1a3483953643da18c52ab978f"
+  },
+  "resource_sampling": {
+    "method": "worker_self_rss_thread",
+    "baseline_rss_bytes": 606617600,
+    "sampled_peak_rss_bytes": 728866816,
+    "sampled_peak_delta_bytes": 122249216,
+    "sample_interval_ms": 10,
+    "sample_count": 157
+  },
+  "probe": {
+    "elapsed_cpu_wall_seconds": 2.4893890999956056,
+    "receipt": {
+      "schema": "eap_causal_event_voxel_v2",
+      "sequence_id": "qGsgzl4Q8B",
+      "window_start_us_inclusive": 1036986031,
+      "window_end_us_exclusive": 1037036031,
+      "event_count": 2014179,
+      "nonempty_chunk_count": 9,
+      "maximum_chunk_events_observed": 250000,
+      "voxel_shape": [
+        10,
+        384,
+        640
+      ],
+      "voxel_dtype": "float32",
+      "voxel_sha256_float32_le": "8eaf3fac6175cc389ecb11521b403465b840ac4fdf247320f1ef7149c1d1ba96",
+      "config": {
+        "width": 640,
+        "height": 384,
+        "window_ms": 50,
+        "bins_per_polarity": 5,
+        "chunk_events": 250000,
+        "max_open_handles": 2,
+        "normalize": true
+      },
+      "source_size_wh": [
+        1280,
+        720
+      ],
+      "coordinate_mapping": "floor((2*coord+1)*dst/(2*src)); Pillow pixel-center nearest",
+      "temporal_mapping": "linear interpolation over five bins per polarity",
+      "accumulation": "exact int64 common-denominator numerators; one final float cast",
+      "raw_polarity_mapping": "0 -> negative channels; 1 -> positive channels",
+      "events_discarded_by_cap": 0,
+      "cutoff_source": "rgb_exposure_end_timestamp_us",
+      "uses_future_events": false,
+      "events_path": "data/train/qGsgzl4Q8B/events.h5",
+      "open_reader_count_after_read": 1
+    },
+    "voxel_finite": true,
+    "voxel_nonzero_count": 680712
+  }
+}

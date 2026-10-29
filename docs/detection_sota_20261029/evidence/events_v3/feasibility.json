@@ -1,0 +1,839 @@
+{
+  "schema": "eap_event_data_feasibility_v1",
+  "created_at_utc": "2026-10-29T16:13:47.319519+00:00",
+  "audit_script_sha256": "c3846d5d498fbfabf9bc199bfc8f7bbb56be4ec7aa1c56c5828acbba44a17279",
+  "scope": "local public train metadata and bounded HDF5 reads; no labels/test/GPU",
+  "data_root": "E:\\eAP_dataset",
+  "train_metadata_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "metadata_row_count": 118247,
+  "metadata_columns": [
+    "sample_token",
+    "split",
+    "sequence_id",
+    "events_path",
+    "rgb_exposure_start_timestamp_us",
+    "rgb_exposure_end_timestamp_us",
+    "K_event",
+    "T_event_ego"
+  ],
+  "rgb_exposure_duration_us_min_median_max": [
+    886,
+    1812.0,
+    19992
+  ],
+  "rgb_frame_end_interval_us_min_median_max": [
+    96612,
+    100001.0,
+    300003
+  ],
+  "calibration": {
+    "unique_K_event_sha256_float64_le": [
+      "2e293630fb55ed09449333c7040b7c634d061e8ad06345f8a6086cab60558d32"
+    ],
+    "unique_T_event_ego_sha256_float64_le": [
+      "8ecac5d2c61d39fe1450de58564cdb35cdcc4ab538422fa2296d4dd8bc218bb2"
+    ]
+  },
+  "sequence_count": 40,
+  "total_hdf5_bytes": 448999857897,
+  "total_event_count": 179449844003,
+  "all_sequences_have_100ms_history": true,
+  "all_sequences_cover_last_frame_end": true,
+  "inventory": [
+    {
+      "sequence_id": "2JkLL5W891",
+      "file_size_bytes": 10281831426,
+      "event_count": 5121658607,
+      "event_first_us": 286470000,
+      "event_last_us_inclusive": 586074999,
+      "frame_count": 2995,
+      "first_frame_end_us": 286585969,
+      "last_frame_end_us": 585990776,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 586074,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "2Y46OkK3ff",
+      "file_size_bytes": 11157935518,
+      "event_count": 5318331667,
+      "event_first_us": 257348000,
+      "event_last_us_inclusive": 556951999,
+      "frame_count": 2995,
+      "first_frame_end_us": 257453575,
+      "last_frame_end_us": 556857762,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 556951,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "2cyv0Oedzg",
+      "file_size_bytes": 4073639368,
+      "event_count": 1598268331,
+      "event_first_us": 221412000,
+      "event_last_us_inclusive": 521015999,
+      "frame_count": 2995,
+      "first_frame_end_us": 221513217,
+      "last_frame_end_us": 520919420,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 521015,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "34K84TaN11",
+      "file_size_bytes": 10446478776,
+      "event_count": 5070151998,
+      "event_first_us": 641554000,
+      "event_last_us_inclusive": 941158662,
+      "frame_count": 2993,
+      "first_frame_end_us": 641656462,
+      "last_frame_end_us": 941064167,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 941158,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "5ilM1PX2vz",
+      "file_size_bytes": 11530276951,
+      "event_count": 5593111752,
+      "event_first_us": 494531000,
+      "event_last_us_inclusive": 794234999,
+      "frame_count": 2996,
+      "first_frame_end_us": 494636889,
+      "last_frame_end_us": 794139109,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 794234,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "6WCDpro5rE",
+      "file_size_bytes": 7588541226,
+      "event_count": 3335248681,
+      "event_first_us": 277946000,
+      "event_last_us_inclusive": 577650999,
+      "frame_count": 2996,
+      "first_frame_end_us": 278047920,
+      "last_frame_end_us": 577553172,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 577650,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "6h5yRW2LGc",
+      "file_size_bytes": 8319570806,
+      "event_count": 3863933906,
+      "event_first_us": 886576000,
+      "event_last_us_inclusive": 1186179661,
+      "frame_count": 2994,
+      "first_frame_end_us": 886696380,
+      "last_frame_end_us": 1186100520,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1186179,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "8SdieOgbva",
+      "file_size_bytes": 9063055821,
+      "event_count": 4117343564,
+      "event_first_us": 516552000,
+      "event_last_us_inclusive": 816155999,
+      "frame_count": 2995,
+      "first_frame_end_us": 516653290,
+      "last_frame_end_us": 816058548,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 816155,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "8mNnrXjpVB",
+      "file_size_bytes": 8789042602,
+      "event_count": 3963047819,
+      "event_first_us": 262742000,
+      "event_last_us_inclusive": 562345999,
+      "frame_count": 2995,
+      "first_frame_end_us": 262862337,
+      "last_frame_end_us": 562266797,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 562345,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "9ITOs4twfk",
+      "file_size_bytes": 9550255242,
+      "event_count": 4473052065,
+      "event_first_us": 175598000,
+      "event_last_us_inclusive": 475301999,
+      "frame_count": 2996,
+      "first_frame_end_us": 175700664,
+      "last_frame_end_us": 475204735,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 475301,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "A1Nhv0KtmL",
+      "file_size_bytes": 11698048311,
+      "event_count": 5751766074,
+      "event_first_us": 341595000,
+      "event_last_us_inclusive": 641298999,
+      "frame_count": 2996,
+      "first_frame_end_us": 341696756,
+      "last_frame_end_us": 641204082,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 641298,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "ClXqVoZOFu",
+      "file_size_bytes": 9823716253,
+      "event_count": 4382254549,
+      "event_first_us": 462305000,
+      "event_last_us_inclusive": 761909999,
+      "frame_count": 2995,
+      "first_frame_end_us": 462407085,
+      "last_frame_end_us": 761811842,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 761909,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "CzyQ8HKP6X",
+      "file_size_bytes": 10239222750,
+      "event_count": 4831733185,
+      "event_first_us": 157437000,
+      "event_last_us_inclusive": 457041999,
+      "frame_count": 2995,
+      "first_frame_end_us": 157541929,
+      "last_frame_end_us": 456943684,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 457041,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "DGqicHUGWb",
+      "file_size_bytes": 3563162410,
+      "event_count": 1446782781,
+      "event_first_us": 879396000,
+      "event_last_us_inclusive": 1116799446,
+      "frame_count": 2372,
+      "first_frame_end_us": 879516083,
+      "last_frame_end_us": 1116719734,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1116799,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "EllUE6bwVp",
+      "file_size_bytes": 9804404526,
+      "event_count": 4598167431,
+      "event_first_us": 289063000,
+      "event_last_us_inclusive": 588666999,
+      "frame_count": 2995,
+      "first_frame_end_us": 289166742,
+      "last_frame_end_us": 588569661,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 588666,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "EuFGqTcqIz",
+      "file_size_bytes": 12204105878,
+      "event_count": 6301365389,
+      "event_first_us": 809517000,
+      "event_last_us_inclusive": 1109121437,
+      "frame_count": 2994,
+      "first_frame_end_us": 809618334,
+      "last_frame_end_us": 1109022708,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1109121,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "GjMYZjmSQb",
+      "file_size_bytes": 10022792136,
+      "event_count": 4486627982,
+      "event_first_us": 162301000,
+      "event_last_us_inclusive": 461904999,
+      "frame_count": 2995,
+      "first_frame_end_us": 162402418,
+      "last_frame_end_us": 461807273,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 461904,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "JaGC4Q9pgU",
+      "file_size_bytes": 9450129842,
+      "event_count": 4231251191,
+      "event_first_us": 762310000,
+      "event_last_us_inclusive": 1061914662,
+      "frame_count": 2993,
+      "first_frame_end_us": 762411779,
+      "last_frame_end_us": 1061819735,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1061914,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "L36QTEoVkB",
+      "file_size_bytes": 11441160618,
+      "event_count": 5611537032,
+      "event_first_us": 757446000,
+      "event_last_us_inclusive": 1057049662,
+      "frame_count": 2994,
+      "first_frame_end_us": 757547212,
+      "last_frame_end_us": 1056951569,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1057049,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "LMHPShQkaU",
+      "file_size_bytes": 8971653898,
+      "event_count": 4015053932,
+      "event_first_us": 286580000,
+      "event_last_us_inclusive": 586183999,
+      "frame_count": 2995,
+      "first_frame_end_us": 286681772,
+      "last_frame_end_us": 586086023,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 586183,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "OBneIVg4Cw",
+      "file_size_bytes": 6762496438,
+      "event_count": 2719032259,
+      "event_first_us": 851399000,
+      "event_last_us_inclusive": 1151003446,
+      "frame_count": 2994,
+      "first_frame_end_us": 851519845,
+      "last_frame_end_us": 1150924243,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1151003,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "OYgB6RGWcq",
+      "file_size_bytes": 11578349977,
+      "event_count": 5577668576,
+      "event_first_us": 641599000,
+      "event_last_us_inclusive": 941303662,
+      "frame_count": 2995,
+      "first_frame_end_us": 641704250,
+      "last_frame_end_us": 941206367,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 941303,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "Po6ePjWYAz",
+      "file_size_bytes": 11311159846,
+      "event_count": 5553960095,
+      "event_first_us": 587126000,
+      "event_last_us_inclusive": 886830999,
+      "frame_count": 2996,
+      "first_frame_end_us": 587231070,
+      "last_frame_end_us": 886732760,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 886830,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "VLA3oBKFyX",
+      "file_size_bytes": 11344487770,
+      "event_count": 5642935609,
+      "event_first_us": 46454028,
+      "event_last_us_inclusive": 346156999,
+      "frame_count": 2996,
+      "first_frame_end_us": 46555161,
+      "last_frame_end_us": 346059668,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 346156,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "WbCh1DRerJ",
+      "file_size_bytes": 11461788191,
+      "event_count": 5753615691,
+      "event_first_us": 194527000,
+      "event_last_us_inclusive": 494230999,
+      "frame_count": 2996,
+      "first_frame_end_us": 194629376,
+      "last_frame_end_us": 494136882,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 494230,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "Z30i8WuL2N",
+      "file_size_bytes": 12581074665,
+      "event_count": 6381737651,
+      "event_first_us": 281166000,
+      "event_last_us_inclusive": 580870999,
+      "frame_count": 2996,
+      "first_frame_end_us": 281271357,
+      "last_frame_end_us": 580773428,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 580870,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "eX8t2nGd6O",
+      "file_size_bytes": 11970874958,
+      "event_count": 6558069623,
+      "event_first_us": 589067000,
+      "event_last_us_inclusive": 888671999,
+      "frame_count": 2995,
+      "first_frame_end_us": 589169670,
+      "last_frame_end_us": 888577015,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 888671,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "mHGFBekt7X",
+      "file_size_bytes": 5695591438,
+      "event_count": 2102806094,
+      "event_first_us": 475602000,
+      "event_last_us_inclusive": 775305999,
+      "frame_count": 2996,
+      "first_frame_end_us": 475704696,
+      "last_frame_end_us": 775207417,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 775305,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "nRcwUlHyAd",
+      "file_size_bytes": 9484266848,
+      "event_count": 4562252245,
+      "event_first_us": 489735000,
+      "event_last_us_inclusive": 789338999,
+      "frame_count": 2995,
+      "first_frame_end_us": 489836723,
+      "last_frame_end_us": 789240965,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 789338,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "pBqGOb2vYq",
+      "file_size_bytes": 7507265140,
+      "event_count": 3458083673,
+      "event_first_us": 500555000,
+      "event_last_us_inclusive": 800158993,
+      "frame_count": 2995,
+      "first_frame_end_us": 500658592,
+      "last_frame_end_us": 800060805,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 800158,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "pakWgyPNTL",
+      "file_size_bytes": 7323438241,
+      "event_count": 3444268240,
+      "event_first_us": 527372000,
+      "event_last_us_inclusive": 826976993,
+      "frame_count": 2995,
+      "first_frame_end_us": 527474479,
+      "last_frame_end_us": 826878370,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 826976,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "pzJcg1OCfc",
+      "file_size_bytes": 10316906120,
+      "event_count": 4708569632,
+      "event_first_us": 893880000,
+      "event_last_us_inclusive": 1193484442,
+      "frame_count": 2994,
+      "first_frame_end_us": 893985677,
+      "last_frame_end_us": 1193390142,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1193484,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "q2k6O0X6JY",
+      "file_size_bytes": 41362740059,
+      "event_count": 3181320335,
+      "event_first_us": 494598000,
+      "event_last_us_inclusive": 696402334,
+      "frame_count": 2018,
+      "first_frame_end_us": 494699601,
+      "last_frame_end_us": 696402335,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 696403,
+      "compression_filter": "none"
+    },
+    {
+      "sequence_id": "qGsgzl4Q8B",
+      "file_size_bytes": 10201847567,
+      "event_count": 4991621260,
+      "event_first_us": 887131000,
+      "event_last_us_inclusive": 1186835659,
+      "frame_count": 2995,
+      "first_frame_end_us": 887232796,
+      "last_frame_end_us": 1186741009,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1186835,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "qoohcdtLDH",
+      "file_size_bytes": 5498737189,
+      "event_count": 2464127808,
+      "event_first_us": 630780000,
+      "event_last_us_inclusive": 930483436,
+      "frame_count": 2995,
+      "first_frame_end_us": 630881025,
+      "last_frame_end_us": 930385020,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 930483,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "rhYxPcU29n",
+      "file_size_bytes": 43792259784,
+      "event_count": 3367893976,
+      "event_first_us": 899893000,
+      "event_last_us_inclusive": 1204201501,
+      "frame_count": 3042,
+      "first_frame_end_us": 899994685,
+      "last_frame_end_us": 1204201501,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1204202,
+      "compression_filter": "none"
+    },
+    {
+      "sequence_id": "t79dBxj1WS",
+      "file_size_bytes": 12114506274,
+      "event_count": 6044566781,
+      "event_first_us": 346457000,
+      "event_last_us_inclusive": 646160999,
+      "frame_count": 2996,
+      "first_frame_end_us": 346559458,
+      "last_frame_end_us": 646063918,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 646160,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "vWp9XNYQ9V",
+      "file_size_bytes": 12814473044,
+      "event_count": 6837397275,
+      "event_first_us": 877955000,
+      "event_last_us_inclusive": 1177659446,
+      "frame_count": 2995,
+      "first_frame_end_us": 878056457,
+      "last_frame_end_us": 1177560770,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1177659,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "wE9MZUmiJP",
+      "file_size_bytes": 9496268969,
+      "event_count": 4230296601,
+      "event_first_us": 341550000,
+      "event_last_us_inclusive": 641153999,
+      "frame_count": 2995,
+      "first_frame_end_us": 341655136,
+      "last_frame_end_us": 641056417,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 641153,
+      "compression_filter": "blosc2"
+    },
+    {
+      "sequence_id": "xkiVthsGwf",
+      "file_size_bytes": 8362301021,
+      "event_count": 3758932643,
+      "event_first_us": 851930000,
+      "event_last_us_inclusive": 1151534440,
+      "frame_count": 2994,
+      "first_frame_end_us": 852050162,
+      "last_frame_end_us": 1151454768,
+      "has_100ms_before_first_frame_end": true,
+      "has_events_through_last_frame_end": true,
+      "ms_to_idx_entries": 1151534,
+      "compression_filter": "blosc2"
+    }
+  ],
+  "detailed_probes": [
+    {
+      "sequence_id": "2Y46OkK3ff",
+      "sample_token": "2Y46OkK3ff:000000407_000150662",
+      "rgb_exposure_start_us": 407150662,
+      "rgb_exposure_end_us": 407155666,
+      "event_window_cutoff": "rgb_exposure_end_timestamp_us; half-open [cutoff-duration, cutoff)",
+      "window_event_counts": {
+        "50ms": 1752588,
+        "100ms": 3468742
+      },
+      "K_event": [
+        [
+          1682.2731186337587,
+          0.0,
+          633.8652322285988
+        ],
+        [
+          0.0,
+          1694.1323524131867,
+          353.5166685085387
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_event_ego": [
+        [
+          -0.08493949857139917,
+          -0.9958585863953359,
+          -0.03242624135168679,
+          0.011403673347878056
+        ],
+        [
+          0.09594946048282134,
+          0.024217433056601873,
+          -0.9950917694068429,
+          0.842814425427173
+        ],
+        [
+          0.9917559463618625,
+          -0.08763377908706851,
+          0.09349499089715854,
+          -1.9880180930240097
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "payload_probe": {
+        "sampled_events": 200000,
+        "sampled_chunk_starts": [
+          0,
+          1329562916,
+          2659145833,
+          3988728749,
+          5318291667
+        ],
+        "x_observed_min_max": [
+          0,
+          1279
+        ],
+        "y_observed_min_max": [
+          0,
+          719
+        ],
+        "polarity_observed_values": [
+          0,
+          1
+        ],
+        "timestamps_monotonic_within_sampled_chunks": true
+      }
+    },
+    {
+      "sequence_id": "Po6ePjWYAz",
+      "sample_token": "Po6ePjWYAz:000000737_000028553",
+      "rgb_exposure_start_us": 737028553,
+      "rgb_exposure_end_us": 737030455,
+      "event_window_cutoff": "rgb_exposure_end_timestamp_us; half-open [cutoff-duration, cutoff)",
+      "window_event_counts": {
+        "50ms": 430701,
+        "100ms": 836430
+      },
+      "K_event": [
+        [
+          1682.2731186337587,
+          0.0,
+          633.8652322285988
+        ],
+        [
+          0.0,
+          1694.1323524131867,
+          353.5166685085387
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_event_ego": [
+        [
+          -0.08493949857139917,
+          -0.9958585863953359,
+          -0.03242624135168679,
+          0.011403673347878056
+        ],
+        [
+          0.09594946048282134,
+          0.024217433056601873,
+          -0.9950917694068429,
+          0.842814425427173
+        ],
+        [
+          0.9917559463618625,
+          -0.08763377908706851,
+          0.09349499089715854,
+          -1.9880180930240097
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "payload_probe": {
+        "sampled_events": 200000,
+        "sampled_chunk_starts": [
+          0,
+          1388470023,
+          2776960047,
+          4165450070,
+          5553920095
+        ],
+        "x_observed_min_max": [
+          0,
+          1279
+        ],
+        "y_observed_min_max": [
+          0,
+          719
+        ],
+        "polarity_observed_values": [
+          0,
+          1
+        ],
+        "timestamps_monotonic_within_sampled_chunks": true
+      }
+    },
+    {
+      "sequence_id": "qGsgzl4Q8B",
+      "sample_token": "qGsgzl4Q8B:000001037_000033536",
+      "rgb_exposure_start_us": 1037033536,
+      "rgb_exposure_end_us": 1037036031,
+      "event_window_cutoff": "rgb_exposure_end_timestamp_us; half-open [cutoff-duration, cutoff)",
+      "window_event_counts": {
+        "50ms": 2014179,
+        "100ms": 3962377
+      },
+      "K_event": [
+        [
+          1682.2731186337587,
+          0.0,
+          633.8652322285988
+        ],
+        [
+          0.0,
+          1694.1323524131867,
+          353.5166685085387
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_event_ego": [
+        [
+          -0.08493949857139917,
+          -0.9958585863953359,
+          -0.03242624135168679,
+          0.011403673347878056
+        ],
+        [
+          0.09594946048282134,
+          0.024217433056601873,
+          -0.9950917694068429,
+          0.842814425427173
+        ],
+        [
+          0.9917559463618625,
+          -0.08763377908706851,
+          0.09349499089715854,
+          -1.9880180930240097
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "payload_probe": {
+        "sampled_events": 200000,
+        "sampled_chunk_starts": [
+          0,
+          1247885314,
+          2495790629,
+          3743695944,
+          4991581260
+        ],
+        "x_observed_min_max": [
+          0,
+          1279
+        ],
+        "y_observed_min_max": [
+          0,
+          719
+        ],
+        "polarity_observed_values": [
+          0,
+          1
+        ],
+        "timestamps_monotonic_within_sampled_chunks": true
+      }
+    }
+  ],
+  "units_interpretation": "events/t and RGB exposure columns share the integer microsecond clock used by ms_to_idx[t//1000]; HDF5 has no explicit unit attribute",
+  "arrival_time_available": false
+}
