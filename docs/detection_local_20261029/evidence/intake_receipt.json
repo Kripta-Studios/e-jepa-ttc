@@ -1,0 +1,15 @@
+{
+  "archive_sha256": "75ec2ebd7fabb814f1150ad8fcf64ff3cdcdbf5d31903327cdbe9d02936bf55d",
+  "entries": 46,
+  "manifest_entries_verified": 45,
+  "base_commit": "f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef",
+  "declared_delivery_commit": "327dba42dbd1e028ee7d6b239f487163b1e6e0d7",
+  "loose_documents_equal_archive": {
+    "DEVELOPMENT_PLAN.md": true,
+    "EXECUTION_REPORT.md": true,
+    "G0_DATA_GEOMETRY.md": true,
+    "G1_DETECTOR_FEASIBILITY.md": true,
+    "INDEPENDENT_REVIEW.md": true
+  },
+  "extraction": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\handoff_intake_20261029"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "probe_source_sha256": "373454f70774e2e6960e0304d83a2edc27cf445c6c8ed618dfec8c12a34cceff",
+  "scope": "deformable_operator_only_not_detector",
+  "status": "FAIL",
+  "created_at_utc": "2026-10-29T11:48:10.012607+00:00",
+  "family": "monodetr",
+  "source_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\detector_sources\\MonoDETR",
+  "seed": 7,
+  "dtype_results": [],
+  "g1_passed": false,
+  "torch_version": "2.11.0+cu128",
+  "cuda_build": "12.8",
+  "source_wrapper_sha256": "dd9906037ce7dc45b9ef6f39d4934bb4dddefc3e09049024496827714b6738bc",
+  "source_revision": "6994b9f512400b258c6edb75f77423beb9c126f2",
+  "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reason": "ModuleNotFoundError: No module named 'MultiScaleDeformableAttention'"
+}

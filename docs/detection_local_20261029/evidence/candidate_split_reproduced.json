@@ -1,0 +1,65 @@
+{
+  "schema": "eap_detection_sequence_split_v1",
+  "dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+  "media_sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314",
+  "source_split": "train",
+  "seed": 7,
+  "assignments": {
+    "train": [
+      "2cyv0Oedzg",
+      "34K84TaN11",
+      "5ilM1PX2vz",
+      "6WCDpro5rE",
+      "8SdieOgbva",
+      "9ITOs4twfk",
+      "A1Nhv0KtmL",
+      "ClXqVoZOFu",
+      "DGqicHUGWb",
+      "GjMYZjmSQb",
+      "L36QTEoVkB",
+      "LMHPShQkaU",
+      "OYgB6RGWcq",
+      "Po6ePjWYAz",
+      "eX8t2nGd6O",
+      "mHGFBekt7X",
+      "nRcwUlHyAd",
+      "pzJcg1OCfc",
+      "q2k6O0X6JY",
+      "qGsgzl4Q8B",
+      "qoohcdtLDH",
+      "t79dBxj1WS",
+      "wE9MZUmiJP",
+      "xkiVthsGwf"
+    ],
+    "selection": [
+      "2Y46OkK3ff",
+      "CzyQ8HKP6X",
+      "EllUE6bwVp",
+      "JaGC4Q9pgU",
+      "OBneIVg4Cw",
+      "WbCh1DRerJ",
+      "pBqGOb2vYq",
+      "vWp9XNYQ9V"
+    ],
+    "calibration": [
+      "2JkLL5W891",
+      "6h5yRW2LGc",
+      "8mNnrXjpVB",
+      "EuFGqTcqIz",
+      "VLA3oBKFyX",
+      "Z30i8WuL2N",
+      "pakWgyPNTL",
+      "rhYxPcU29n"
+    ]
+  },
+  "method": "sha256(seed:sequence_id); selection then calibration then train",
+  "status": "CANDIDATE_METADATA_ONLY",
+  "independence_scope": "new detector fits only; not existing TRAIN40 weights",
+  "grouping": "sequence_id; cross-sequence session linkage not verified",
+  "source_frame_count": 118247,
+  "code_commit": "227c66a02cb54761848a1d608d6ccc869711c996",
+  "implementation_sha256": {
+    "scripts/prepare_detection_protocol.py": "86fd3442eb3b102119203a4bc7713f7c66b61fadc7666d6e565e1bb37e95127d",
+    "src/e_jepa_ttc/detection/protocol.py": "3a514445b74edc6418efd6779218044e5bc39313712b0e560c677cc186f9c053"
+  }
+}

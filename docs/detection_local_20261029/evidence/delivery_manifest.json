@@ -1,0 +1,246 @@
+{
+  "schema": "phase_ttc_delivery_v1",
+  "created_at_utc": "2026-10-29T11:21:00.712412+00:00",
+  "repository": "https://github.com/Kripta-Studios/phase-ttc",
+  "base_commit": "f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef",
+  "local_delivery_commit": "327dba42dbd1e028ee7d6b239f487163b1e6e0d7",
+  "branch": "dev/eap-detection-g0-g1-20261029",
+  "remote_publication": false,
+  "worktree_clean": true,
+  "new_repository_files": 43,
+  "modified_legacy_files": 0,
+  "gates": {
+    "G0": "BLOCKED",
+    "G1": "BLOCKED",
+    "G2": "NOT_RUN"
+  },
+  "targeted_tests_passed": 63,
+  "patch_reverse_check_exit_code": 0,
+  "files": [
+    {
+      "path": "DELIVERY_README.md",
+      "bytes": 2691,
+      "sha256": "099e675a972a2d8083cc5323b2ec2c19f5ed659a9cc114b61149af1df9c1b065"
+    },
+    {
+      "path": "DEVELOPMENT_PLAN.md",
+      "bytes": 76364,
+      "sha256": "2d635205be1ef07f99a12069001513b8c21fe1fdd5ccba477bbb7d864a68e7fa"
+    },
+    {
+      "path": "configs/detection/detector_sources_v1.json",
+      "bytes": 3471,
+      "sha256": "67f1489bb7adb2291ecf48d2fcdff386159722317c38e6a2d6026df56aee4d55"
+    },
+    {
+      "path": "configs/detection/eap_contract_v1.json",
+      "bytes": 1580,
+      "sha256": "e1a49bbc9104afbae2b2bb4784963594cfdc459f107515746e148c7d362d23cf"
+    },
+    {
+      "path": "configs/detection/environment_candidate_v1.json",
+      "bytes": 1801,
+      "sha256": "84cfa0909aa8ec6c8194eb8032be6c34018cd89f152c52be4b631ac330703240"
+    },
+    {
+      "path": "configs/detection/g0_requirements.lock.txt",
+      "bytes": 184,
+      "sha256": "673367095dcd67c270070c38ef2d197f3c50551ef343f0a9a14e579d67a4f673"
+    },
+    {
+      "path": "configs/detection/requirements-audit.txt",
+      "bytes": 249,
+      "sha256": "3989bf177c9f09ac6f9594429378df084a466ebba9eb89f6b4d0686ba487e80c"
+    },
+    {
+      "path": "data/manifests/eap_detection_public_files_v1.json",
+      "bytes": 65372,
+      "sha256": "2e65cd7f2600eea55f37f59e9a22d55b5ba0aa50445756fd7aaf01332c2b3ff1"
+    },
+    {
+      "path": "data/splits/eap_detection_candidate_v1.json",
+      "bytes": 1761,
+      "sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/EXECUTION_REPORT.md",
+      "bytes": 17018,
+      "sha256": "b9ecceb98b4224e2d8cdc1985dc3f5f5d90dfd16d8c1715aaafec9ce3f39c317"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/G0_DATA_GEOMETRY.md",
+      "bytes": 18284,
+      "sha256": "f3ecf659bee9199cc0270a4e6944509cc404d0e3f4ccf9fd9d1e9e3b50e1c35f"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/G1_DETECTOR_FEASIBILITY.md",
+      "bytes": 20011,
+      "sha256": "c2a273afcd34fe19c91db792d1c11804a3365c4a1f0e74c00ab5fdea1d849328"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/INDEPENDENT_REVIEW.md",
+      "bytes": 18791,
+      "sha256": "8d663d0ea033f10b07a35b79b69bf42e13092c6f618331a3900c1bd5b0ab1a7d"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/final_paper_integrity.txt",
+      "bytes": 280,
+      "sha256": "ae0d22d4a0e8b84c29c42b2b19e3f16f30309014b1a2547ef2d95a59632e311f"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/final_ruff_check.txt",
+      "bytes": 401,
+      "sha256": "9acda2bec903de0dc63c82268d38c05b8961c45effe5dc113b211da9fb892f86"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/final_ruff_format.txt",
+      "bytes": 418,
+      "sha256": "71c9674b80ccd24ff65e7f8ffa060316e3ffefd4dc013c53b367287126268911"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/final_targeted_tests.txt",
+      "bytes": 352,
+      "sha256": "5b3d3268ab586ee95174f7ebb2e7b35917bb79708ff7db0abed7dd26541c1844"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/final_tests.xml",
+      "bytes": 8804,
+      "sha256": "aaa9cd812112420134ec619c9b15ffa005b27ecbec3c99006a0d95a24657e02b"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/final_verification.json",
+      "bytes": 6949,
+      "sha256": "a80bb04feae31f5e7c6ba0dbc17226e143f1a62bb553450f2a0a51c7234a5acb"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g0_audit.json",
+      "bytes": 57284,
+      "sha256": "9a68ffd39bf57965a729070ebc239e09dfba45ba72f83573337bb0d5aeca7fe0"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g0_original_geometry.json",
+      "bytes": 3463,
+      "sha256": "48a87a30560eeb13aa48b5cba34ec5925dfaea5583fed25841c268789981e1e1"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g0_original_geometry.svg",
+      "bytes": 5980,
+      "sha256": "215f6cb06412407cfd652aec227b52bafd650d9776f83c763fba5d9b2c152d2a"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g0_recovery_plan.json",
+      "bytes": 11815,
+      "sha256": "4a9621933ad6c46e87489aaff2954998a836bbe96c72f45c15c333d2aa755727"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g0_sources.json",
+      "bytes": 8921,
+      "sha256": "c712895457d33fb61db4eb4247820f3ff5ab38f6a9cd21846a35538a95874890"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g1_audit_environment_freeze.txt",
+      "bytes": 104,
+      "sha256": "2d9c65e6f7cb2a249f6f39bb32912c5688d6fc5a9f5006f68684ae92e430a7ef"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g1_environment.json",
+      "bytes": 5232,
+      "sha256": "a9735f8e97e33728313d77cd943b4b7140178783e535dc6191e842c2ad0297ef"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g1_monodetr_operator.json",
+      "bytes": 460,
+      "sha256": "78a96c2dd5b0a1ecb7411cf20c4c1b58c37579b8806087a1d9842762442f297b"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g1_monodgp_operator.json",
+      "bytes": 458,
+      "sha256": "a94edfedfe31e40e336a8d3d1b310f6e451d93ba0ba1c1efce2f53dd0293cdbd"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g1_tests.txt",
+      "bytes": 99,
+      "sha256": "941172fcd5bebf2a93236de3a802737d59a803d0698e33646b9b06399808f0a9"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/g1_upstream_static_audit.json",
+      "bytes": 3313,
+      "sha256": "7bc172be28f93df08f7a8c50bef403c42c43488c4170a0577b12f446a7c66c4a"
+    },
+    {
+      "path": "docs/detection_g0_g2_20261029/evidence/inspection.json",
+      "bytes": 2018,
+      "sha256": "ed987135fccb0112e53bfd6d2e7fb0f95adc642171e3af5d9ad9a8f61b0510a2"
+    },
+    {
+      "path": "phase_ttc_g0_g1.patch",
+      "bytes": 452267,
+      "sha256": "8f244450489b677cd99a44f8ddac51d7f9c330258b271da60a57ca065891ba51"
+    },
+    {
+      "path": "scripts/audit_eap_detection.py",
+      "bytes": 2589,
+      "sha256": "e8c6d4d43001c9e41ce915c85118d06d1beafa7c0f2c768e8ec7cfd3e339beee"
+    },
+    {
+      "path": "scripts/check_deformable_operator.py",
+      "bytes": 6443,
+      "sha256": "373454f70774e2e6960e0304d83a2edc27cf445c6c8ed618dfec8c12a34cceff"
+    },
+    {
+      "path": "scripts/check_eap_geometry_reference.py",
+      "bytes": 5264,
+      "sha256": "8e4816b6733a4eb2b7b50ab754a5b9d94600e7ce2194e630dd24c7575244f94f"
+    },
+    {
+      "path": "scripts/prepare_detection_protocol.py",
+      "bytes": 3289,
+      "sha256": "86fd3442eb3b102119203a4bc7713f7c66b61fadc7666d6e565e1bb37e95127d"
+    },
+    {
+      "path": "scripts/probe_detection_environment.py",
+      "bytes": 9095,
+      "sha256": "67abaca72327be6aae96162bcc1f523f2ca06c6495689123000fb481a814cf52"
+    },
+    {
+      "path": "src/e_jepa_ttc/detection/__init__.py",
+      "bytes": 71,
+      "sha256": "d438c13788118f469d350a51cfbb8e481b9ed2d30dc2d1772da2135cdb51a074"
+    },
+    {
+      "path": "src/e_jepa_ttc/detection/data_audit.py",
+      "bytes": 24133,
+      "sha256": "9c2000f4dea317e3f3bbb4ddf858546f35880978ca1895c51b621dc077c3068c"
+    },
+    {
+      "path": "src/e_jepa_ttc/detection/geometry_contract.py",
+      "bytes": 7304,
+      "sha256": "ad0355871fa9743d464284c1a3131a8fd9f89cac33556c18855e82f2afd6d79f"
+    },
+    {
+      "path": "src/e_jepa_ttc/detection/protocol.py",
+      "bytes": 5573,
+      "sha256": "3a514445b74edc6418efd6779218044e5bc39313712b0e560c677cc186f9c053"
+    },
+    {
+      "path": "tests/fixtures/detection/eap_original_visualizer_corners.json",
+      "bytes": 3554,
+      "sha256": "4e1b5796cde09d009d3b0072fb6e49248c233f2e61944183d8f1f31e33e9a540"
+    },
+    {
+      "path": "tests/unit/test_detection_environment.py",
+      "bytes": 5682,
+      "sha256": "19c644b317791ebd27c564586edc7a57d68ba9a7ebf7e85954a3a336dc516d3d"
+    },
+    {
+      "path": "tests/unit/test_detection_protocol.py",
+      "bytes": 3609,
+      "sha256": "b559cd1ed21c84f5d742bcd72604022718c8a68b0d4ce274c967fca829b6baf0"
+    },
+    {
+      "path": "tests/unit/test_eap_detection_audit.py",
+      "bytes": 15297,
+      "sha256": "c246054da7cf68f8073d6656cd52ec8892e17a8d200323ac4f5de0886240dc0c"
+    }
+  ]
+}

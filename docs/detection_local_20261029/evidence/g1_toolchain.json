@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-29T11:49:19.563752+00:00",
+  "purpose": "local_toolchain_inventory_no_compilation",
+  "new_detector_environment_created": false,
+  "environment_reused_read_only": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-main-integration\\.venv\\Scripts\\python.exe",
+  "python": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "torch": "2.11.0+cu128",
+  "torch_cuda_build": "12.8",
+  "cuda_home_observed": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4",
+  "compiler_on_path": null,
+  "toolkits": {
+    "12.4": {
+      "nvcc_version": {
+        "command": [
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin\\nvcc.exe",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout": "nvcc: NVIDIA (R) Cuda compiler driver\r\nCopyright (c) 2005-2024 NVIDIA Corporation\r\nBuilt on Thu_Mar_28_02:30:10_Pacific_Daylight_Time_2024\r\nCuda compilation tools, release 12.4, V12.4.131\r\nBuild cuda_12.4.r12.4/compiler.34097967_0",
+        "stderr": ""
+      },
+      "advertised_architectures": {
+        "command": [
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin\\nvcc.exe",
+          "--list-gpu-arch"
+        ],
+        "returncode": 0,
+        "stdout": "compute_50\r\ncompute_52\r\ncompute_53\r\ncompute_60\r\ncompute_61\r\ncompute_62\r\ncompute_70\r\ncompute_72\r\ncompute_75\r\ncompute_80\r\ncompute_86\r\ncompute_87\r\ncompute_89\r\ncompute_90",
+        "stderr": ""
+      },
+      "advertises_compute_120": false,
+      "torch_cuda_version_precheck_only": {
+        "command": [
+          "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-main-integration\\.venv\\Scripts\\python.exe",
+          "-I",
+          "-X",
+          "utf8",
+          "-c",
+          "import torch.utils.cpp_extension as e; from torch.torch_version import TorchVersion; e.CUDA_HOME='C:\\\\Program Files\\\\NVIDIA GPU Computing Toolkit\\\\CUDA\\\\v12.4'; e._check_cuda_version(\"cl\",TorchVersion(\"19.50.35729\"))"
+        ],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "W1029 12:52:25.270000 43240 Lib\\site-packages\\torch\\utils\\cpp_extension.py:546] The detected CUDA version (12.4) has a minor version mismatch with the version that was used to compile PyTorch (12.8). Most likely this shouldn't be a problem."
+      }
+    },
+    "13.1": {
+      "nvcc_version": {
+        "command": [
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.1\\bin\\nvcc.exe",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout": "nvcc: NVIDIA (R) Cuda compiler driver\r\nCopyright (c) 2005-2025 NVIDIA Corporation\r\nBuilt on Tue_Dec_16_19:27:18_Pacific_Standard_Time_2025\r\nCuda compilation tools, release 13.1, V13.1.115\r\nBuild cuda_13.1.r13.1/compiler.37061995_0",
+        "stderr": ""
+      },
+      "advertised_architectures": {
+        "command": [
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.1\\bin\\nvcc.exe",
+          "--list-gpu-arch"
+        ],
+        "returncode": 0,
+        "stdout": "compute_75\r\ncompute_80\r\ncompute_86\r\ncompute_87\r\ncompute_88\r\ncompute_89\r\ncompute_90\r\ncompute_100\r\ncompute_110\r\ncompute_103\r\ncompute_120\r\ncompute_121",
+        "stderr": ""
+      },
+      "advertises_compute_120": true,
+      "torch_cuda_version_precheck_only": {
+        "command": [
+          "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-main-integration\\.venv\\Scripts\\python.exe",
+          "-I",
+          "-X",
+          "utf8",
+          "-c",
+          "import torch.utils.cpp_extension as e; from torch.torch_version import TorchVersion; e.CUDA_HOME='C:\\\\Program Files\\\\NVIDIA GPU Computing Toolkit\\\\CUDA\\\\v13.1'; e._check_cuda_version(\"cl\",TorchVersion(\"19.50.35729\"))"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-main-integration\\.venv\\Lib\\site-packages\\torch\\utils\\cpp_extension.py\", line 545, in _check_cuda_version\n    raise RuntimeError(CUDA_MISMATCH_MESSAGE, cuda_str_version, torch.version.cuda)\nRuntimeError: ('The detected CUDA version (%s) mismatches the version that was used to compilePyTorch (%s). Please make sure to use the same CUDA versions.', '13.1', '12.8')"
+      }
+    },
+    "13.2": {
+      "nvcc_version": {
+        "command": [
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.2\\bin\\nvcc.exe",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout": "nvcc: NVIDIA (R) Cuda compiler driver\r\nCopyright (c) 2005-2026 NVIDIA Corporation\r\nBuilt on Mon_Mar__2_21:54:11_Pacific_Standard_Time_2026\r\nCuda compilation tools, release 13.2, V13.2.51\r\nBuild cuda_13.2.r13.2/compiler.37434383_0",
+        "stderr": ""
+      },
+      "advertised_architectures": {
+        "command": [
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.2\\bin\\nvcc.exe",
+          "--list-gpu-arch"
+        ],
+        "returncode": 0,
+        "stdout": "compute_75\r\ncompute_80\r\ncompute_86\r\ncompute_87\r\ncompute_88\r\ncompute_89\r\ncompute_90\r\ncompute_100\r\ncompute_110\r\ncompute_103\r\ncompute_120\r\ncompute_121",
+        "stderr": ""
+      },
+      "advertises_compute_120": true,
+      "torch_cuda_version_precheck_only": {
+        "command": [
+          "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-main-integration\\.venv\\Scripts\\python.exe",
+          "-I",
+          "-X",
+          "utf8",
+          "-c",
+          "import torch.utils.cpp_extension as e; from torch.torch_version import TorchVersion; e.CUDA_HOME='C:\\\\Program Files\\\\NVIDIA GPU Computing Toolkit\\\\CUDA\\\\v13.2'; e._check_cuda_version(\"cl\",TorchVersion(\"19.50.35729\"))"
+        ],
+        "returncode": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-main-integration\\.venv\\Lib\\site-packages\\torch\\utils\\cpp_extension.py\", line 545, in _check_cuda_version\n    raise RuntimeError(CUDA_MISMATCH_MESSAGE, cuda_str_version, torch.version.cuda)\nRuntimeError: ('The detected CUDA version (%s) mismatches the version that was used to compilePyTorch (%s). Please make sure to use the same CUDA versions.', '13.2', '12.8')"
+      }
+    }
+  },
+  "actual_build_attempted": false,
+  "detector_execution": "NOT_RUN",
+  "operator_numerical_parity": "NOT_RUN",
+  "msvc": {
+    "command": [
+      "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe"
+    ],
+    "returncode": 0,
+    "stdout": "uso : cl [ opción... ] nombre de archivo... [ /link opción de vínculo... ]",
+    "stderr": "Compilador de optimización de C/C++ de Microsoft (R) versión 19.50.35729 para x64\r\n(C) Microsoft Corporation. Todos los derechos reservados."
+  },
+  "wsl_inventory_only": {
+    "command": [
+      "wsl",
+      "--list",
+      "--verbose"
+    ],
+    "returncode": 0,
+    "stdout": "NAME              STATE           VERSION\r\n* Ubuntu-24.04      Stopped         2\r\n  docker-desktop    Stopped         2",
+    "stderr": ""
+  },
+  "nvidia_smi": {
+    "command": [
+      "nvidia-smi",
+      "--query-gpu=name,driver_version,memory.total,memory.free",
+      "--format=csv,noheader"
+    ],
+    "returncode": 0,
+    "stdout": "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227 MiB, 9178 MiB",
+    "stderr": ""
+  },
+  "environment_packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "numpy": "2.4.6",
+    "setuptools": "81.0.0",
+    "pytest": "9.1.1",
+    "ruff": "0.15.20"
+  },
+  "source_sha256_checks": {
+    "monodgp": {
+      "checked_files": 10,
+      "mismatches": [],
+      "git_status": {
+        "command": [
+          "git",
+          "-C",
+          "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\detector_sources\\MonoDGP",
+          "status",
+          "--porcelain"
+        ],
+        "returncode": 0,
+        "stdout": "?? lib/models/monodgp/ops/functions/__pycache__/ms_deform_attn_func.cpython-311.pyc",
+        "stderr": ""
+      }
+    },
+    "monodetr": {
+      "checked_files": 10,
+      "mismatches": [],
+      "git_status": {
+        "command": [
+          "git",
+          "-C",
+          "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-detection-local\\output\\detector_sources\\MonoDETR",
+          "status",
+          "--porcelain"
+        ],
+        "returncode": 0,
+        "stdout": "?? lib/models/monodetr/ops/functions/__pycache__/",
+        "stderr": ""
+      }
+    }
+  },
+  "original_checkout_environment": {
+    "root": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv",
+    "torch_init_present": false,
+    "startup": {
+      "command": [
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv\\Scripts\\python.exe",
+        "-X",
+        "utf8",
+        "-c",
+        "print(\"startup_ok\")"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Fatal Python error: init_import_site: Failed to import the site module\nPython runtime state: initialized\nTraceback (most recent call last):\r\n  File \"<frozen importlib._bootstrap>\", line 1176, in _find_and_load\r\n  File \"<frozen importlib._bootstrap>\", line 1147, in _find_and_load_unlocked\r\n  File \"<frozen importlib._bootstrap>\", line 690, in _load_unlocked\r\n  File \"<frozen importlib._bootstrap>\", line 980, in exec_module\r\n  File \"<frozen site>\", line 626, in <module>\r\n  File \"<frozen site>\", line 609, in main\r\n  File \"<frozen site>\", line 541, in venv\r\n  File \"<frozen site>\", line 394, in addsitepackages\r\n  File \"<frozen site>\", line 236, in addsitedir\r\n  File \"<frozen site>\", line 188, in addpackage\r\n  File \"C:\\Users\\Álvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\Lib\\encodings\\cp1252.py\", line 23, in decode\r\n    return codecs.charmap_decode(input,self.errors,decoding_table)[0]\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nUnicodeDecodeError: 'charmap' codec can't decode byte 0x81 in position 10: character maps to <undefined>"
+    }
+  },
+  "limits": [
+    "No detector dependency installation, no new detector lockfile, no CUDA compilation, no upstream patch, no model forward/backward/decode.",
+    "CUDA13.x precheck rejection comes from installed PyTorch code; no binary compilation was attempted.",
+    "CUDA12.4 advertises no compute_120; this inventory did not test PTX fallback or other architectural strategies.",
+    "MSVC executable exists; activated developer-shell environment and CUDA-host compiler compatibility remain untested.",
+    "WSL inventory only; no distribution started."
+  ],
+  "msvc_version_argument_in_torch_precheck": "19.50.35729",
+  "source_generated_bytecode_note": "Operator wrapper imports created untracked __pycache__ files in source clones. No tracked source file changed; all 20 pinned-file SHA256 checks match."
+}
