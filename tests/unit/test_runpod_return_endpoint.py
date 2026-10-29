@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from pathlib import Path, PurePosixPath
 
 import pytest
 
@@ -39,6 +40,60 @@ def test_only_path_locations_are_normalized(tmp_path):
     assert not canonical_role_equal(left, {**right, "rows_sha256": "b" * 64}, mapper)
     assert not canonical_role_equal(left, {**right, "group_ids": ["g2", "g1"]}, mapper)
     assert left["rows_path"].startswith("/workspace/")
+
+
+@pytest.fixture
+def posix_mapping(tmp_path, monkeypatch):
+    mapper = ReturnPathMap(
+        {
+            "run_root": "/workspace/cloud",
+            "bundle_root": "/workspace/bundle",
+            "roots": {"/tmp/registered-original": "original"},
+        },
+        tmp_path,
+    )
+    # Exercise the Linux destination spelling even when tests run on Windows.
+    monkeypatch.setattr(mapper, "downloaded", PurePosixPath("/tmp/registered-download"))
+    return mapper
+
+
+@pytest.mark.parametrize("suffix", ["", "/roles.json", "/nested/rows.parquet"])
+def test_registered_posix_paths_are_idempotent(posix_mapping, suffix):
+    downloaded = "/tmp/registered-download" + suffix
+    assert posix_mapping.translate("/workspace/cloud" + suffix) == downloaded
+    assert posix_mapping.translate(downloaded) == downloaded
+    original = "/tmp/registered-original" + suffix
+    assert posix_mapping.translate(original) == original
+    assert posix_mapping.translate("/workspace/bundle/original" + suffix) == str(Path(original))
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/tmp/unregistered/roles.json",
+        "/tmp/registered-download-sibling/roles.json",
+        "/tmp/registered-original-sibling/roles.json",
+        "/workspace/cloud-sibling/roles.json",
+        "/workspace/bundle/original-sibling/roles.json",
+    ],
+)
+def test_posix_local_and_cloud_siblings_remain_unregistered(posix_mapping, path):
+    with pytest.raises(ValueError, match="Unregistered"):
+        posix_mapping.translate(path)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/tmp/registered-download/../roles.json",
+        "/tmp/registered-original/../roles.json",
+        "/workspace/cloud/../roles.json",
+        "/workspace/bundle/original/../roles.json",
+    ],
+)
+def test_registered_posix_roots_do_not_admit_traversal(posix_mapping, path):
+    with pytest.raises(ValueError, match="traversal"):
+        posix_mapping.translate(path)
 
 
 def test_unknown_cloud_outputs_and_traversal_fail_closed(tmp_path):

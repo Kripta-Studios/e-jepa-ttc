@@ -8,6 +8,7 @@ import torch
 
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
 from e_jepa_ttc.reproducibility import seed_everything
+from operational.rgb_port import recipe as producer_recipe
 from operational.rgb_port.accounting import atomic_write_json, read_json_shared
 from operational.rgb_port.recipe import assert_matched_pair, resolved_recipe, verify_authority
 from operational.rgb_port.train_producers import (
@@ -21,6 +22,10 @@ from operational.rgb_port.train_producers import (
 )
 
 CONFIG = Path("configs/rgb_port/producers.json")
+HISTORICAL_AUTHORITY = Path("tests/fixtures/rgb_port_historical_authority_projection.json")
+HISTORICAL_AUTHORITY_CANONICAL_SHA256 = (
+    "9504e07f4268eaa446127fa29c8493b1e342672747fbb19b5727cca38f3a8667"
+)
 ROLE_SHA = "a" * 64
 
 
@@ -44,12 +49,17 @@ def test_matched_recipes_change_only_modality_and_channels() -> None:
     assert event.teacher_policy == rgb.teacher_policy
 
 
-def test_expanded_config_matches_audited_historical_authority() -> None:
-    authority = Path(
-        "../e-jepa-ttc-v12-efficient-context/artifacts/"
-        "train40_system_20261005/TRAINING_PROTOCOL.json"
+def test_expanded_config_matches_self_contained_authority(tmp_path, monkeypatch) -> None:
+    authority_payload = read_json_shared(HISTORICAL_AUTHORITY)
+    assert (
+        producer_recipe.canonical_sha256(authority_payload) == HISTORICAL_AUTHORITY_CANONICAL_SHA256
     )
-    result = verify_authority(CONFIG, authority)
+    monkeypatch.setattr(
+        producer_recipe,
+        "AUTHORITY_SHA256",
+        producer_recipe.file_sha256(HISTORICAL_AUTHORITY),
+    )
+    result = verify_authority(CONFIG, HISTORICAL_AUTHORITY)
     assert result["status"] == "MATCHED"
     assert result["producer_ids"] == [
         "E_A5_MATCHED",
@@ -57,6 +67,13 @@ def test_expanded_config_matches_audited_historical_authority() -> None:
         "R_A5",
         "R_C2F",
     ]
+    changed = read_json_shared(HISTORICAL_AUTHORITY)
+    changed["producers"]["a5"]["loss_config"]["risk_weight"] += 0.1
+    authority = tmp_path / "changed_authority.json"
+    atomic_write_json(authority, changed)
+    monkeypatch.setattr(producer_recipe, "AUTHORITY_SHA256", producer_recipe.file_sha256(authority))
+    with pytest.raises(ValueError, match="loss differs"):
+        verify_authority(CONFIG, authority)
 
 
 def test_rgb_forward_backward_and_label_free_feature_contract() -> None:

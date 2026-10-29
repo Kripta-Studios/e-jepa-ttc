@@ -6,9 +6,11 @@ import torch
 from operational.range_transfer.qa import same
 from operational.representation_audit.precision import initialize as base
 from operational.representation_audit.unclipped import initialize, unclipped_norm
+from tests.fixtures.representation_audit import install
 
 
-def test_unclipped_initialization_and_optimizer_are_exact_u0():
+def test_unclipped_initialization_and_optimizer_are_exact_u0(tmp_path, monkeypatch):
+    install(tmp_path, monkeypatch)
     a, ac, ao, al, ar = base(7, device="cpu")
     b, bc, bo, bl, br = initialize(7, "N0", device="cpu")
     assert same(a.state_dict(), b.state_dict()) and ac == bc

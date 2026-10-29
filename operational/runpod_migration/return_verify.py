@@ -41,6 +41,12 @@ class ReturnPathMap:
             except ValueError:
                 continue
             return str(destination.joinpath(*suffix.parts))
+        # A translated local path may be compared with its cloud equivalent
+        # again. POSIX local roots have no drive marker, unlike Windows roots;
+        # recognize only the destinations explicitly registered by this map.
+        for destination in (str(self.downloaded), *self.roots.values()):
+            if destination.startswith("/") and path.is_relative_to(PurePosixPath(destination)):
+                return raw
         raise ValueError(f"Unregistered cloud return path: {raw}")
 
 

@@ -5,11 +5,11 @@ import torch
 from operational.range_readout.cache_readout import loss as original_loss
 from operational.representation_audit.precision import (
     PRECISION,
-    Vectors,
     homogeneous_nll,
     initialize,
     objective,
 )
+from tests.fixtures.representation_audit import install
 
 
 def test_homogeneous_nll_gradient():
@@ -23,10 +23,10 @@ def test_homogeneous_nll_gradient():
     )
 
 
-def test_u0_is_original_native_objective_and_gradients():
+def test_u0_is_original_native_objective_and_gradients(tmp_path, monkeypatch):
+    synthetic = install(tmp_path, monkeypatch)
     model, config, *_ = initialize(7, device="cpu")
-    data = Vectors("P", synthetic=True)
-    values = {k: torch.from_numpy(v[:8].copy()) for k, v in data.values.items()}
+    values = {key: value[:8].clone() for key, value in synthetic.items()}
     parameters = [p for p in model.parameters() if p.requires_grad]
     torch.manual_seed(42)
     original, _ = original_loss(model, values, config)
