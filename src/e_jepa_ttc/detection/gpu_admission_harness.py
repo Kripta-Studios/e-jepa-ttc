@@ -303,8 +303,13 @@ def _ceiling(repeat_delta: float, floor: float, cap: float, multiplier: float) -
     return min(cap, max(floor, repeat_delta * multiplier))
 
 
-def verify_metrics(plan: Mapping[str, Any]) -> dict[str, object]:
-    """Compare exact inputs and bounded numerical drift without selecting a candidate."""
+def verify_numerical_metrics(plan: Mapping[str, Any]) -> dict[str, object]:
+    """Verify exposure identity and bounded numerical drift only.
+
+    This deliberately makes no timing, memory, speed, or candidate decision.  It is
+    suitable for recovering numerical evidence after a resource-admission failure,
+    while the ordinary admission remains non-passing.
+    """
     count = int(plan["updates"])
     rows = {
         name: _records(Path(plan["arms"][name]["metrics_path"]), count)
@@ -397,6 +402,25 @@ def verify_metrics(plan: Mapping[str, Any]) -> dict[str, object]:
                 "maximum_per_head_loss_delta": maximum_head_delta,
             }
         )
+    return {
+        "status": "PASS_NUMERICAL_PARITY_ONLY",
+        "candidate_decision": None,
+        "performance_comparison": "INCONCLUSIVE",
+        "memory_comparison": "INCONCLUSIVE",
+        "numerical": numerical,
+        "exposures_per_arm": count * int(plan["batch_size"]),
+    }
+
+
+def verify_metrics(plan: Mapping[str, Any]) -> dict[str, object]:
+    """Compare exact inputs, bounded drift, and preregistered performance gates."""
+    numerical_result = verify_numerical_metrics(plan)
+    count = int(plan["updates"])
+    rows = {
+        name: _records(Path(plan["arms"][name]["metrics_path"]), count)
+        for name in ARM_NAMES
+    }
+    tolerance = Tolerances(**plan["tolerances"])
     halves = (range(0, count // 2), range(count // 2, count))
     speedups = []
     for half in halves:
@@ -490,7 +514,7 @@ def verify_metrics(plan: Mapping[str, Any]) -> dict[str, object]:
         "status": "PASS_ENGINEERING_ADMISSION_ONLY",
         "candidate_decision": None,
         "extrapolation_to_8192_updates": None,
-        "numerical": numerical,
+        "numerical": numerical_result["numerical"],
         "preparation_speedup_by_half": speedups,
         "performance": performance,
         "exposures_per_arm": count * int(plan["batch_size"]),
@@ -515,5 +539,6 @@ __all__ = [
     "load_plan",
     "validate_initial_state",
     "validate_checkpoint_lineage",
+    "verify_numerical_metrics",
     "verify_metrics",
 ]

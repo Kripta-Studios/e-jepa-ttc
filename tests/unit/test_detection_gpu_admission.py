@@ -20,6 +20,7 @@ from e_jepa_ttc.detection.gpu_admission_harness import (
     validate_checkpoint_lineage,
     validate_initial_state,
     verify_metrics,
+    verify_numerical_metrics,
 )
 
 ROOT = Path(__file__).parents[2]
@@ -280,6 +281,21 @@ def test_metrics_admit_repeat_bounded_drift_and_consistent_speedup(tmp_path: Pat
     assert result["status"] == "PASS_ENGINEERING_ADMISSION_ONLY"
     assert result["candidate_decision"] is None
     assert result["extrapolation_to_8192_updates"] is None
+
+
+def test_numerical_recovery_never_claims_performance_or_memory(tmp_path: Path) -> None:
+    plan = _plan(tmp_path)
+    for name in ARM_NAMES:
+        summary = Path(plan["arms"][name]["summary_path"])
+        payload = json.loads(summary.read_text(encoding="utf-8"))
+        payload["preprocessing_seconds_median"] = "not-performance-evidence"
+        summary.write_text(json.dumps(payload), encoding="utf-8")
+    result = verify_numerical_metrics(plan)
+    assert result["status"] == "PASS_NUMERICAL_PARITY_ONLY"
+    assert result["performance_comparison"] == "INCONCLUSIVE"
+    assert result["memory_comparison"] == "INCONCLUSIVE"
+    with pytest.raises(ValueError, match="summary timing is malformed"):
+        verify_metrics(plan)
 
 
 def test_first_loss_has_separate_strict_ceiling(tmp_path: Path) -> None:
