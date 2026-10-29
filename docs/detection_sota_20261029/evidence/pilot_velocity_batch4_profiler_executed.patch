@@ -1,0 +1,17 @@
+Reconstruction patch for the source executed by pilot_velocity_batch4.json.
+
+Apply these replacements to the current scripts/profile_detection_campaign.py.
+The reconstructed file must have SHA-256
+f61b17131a09141d014a96dfd40281f7781f8adcf52b238b556d7dc2b4045542.
+
+@@ _weighted_loss
+-    terms: list[torch.Tensor] = [
++    terms = [
+         value * criterion.weight_dict[name]
+         for name, value in losses.items()
+         if name in criterion.weight_dict
+     ]
+     if not terms:
+         raise ValueError("Criterion produced no weighted loss terms")
+-    result = torch.stack(terms).sum()
++    result = sum(terms)

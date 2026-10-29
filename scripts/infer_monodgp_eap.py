@@ -27,6 +27,11 @@ sys.path[:0] = [str(ROOT), str(ROOT / "src"), str(ROOT / "scripts")]
 
 import numpy as np
 
+from e_jepa_ttc.detection.diagnostic_export import (
+    build_sidecar,
+    capture_exposed_outputs,
+    validate_json_finite,
+)
 from e_jepa_ttc.detection.eap_rgb_data import EAPRGBDataset
 
 
@@ -211,6 +216,11 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
     """Load strict checkpoint in this process and infer using targets=None."""
     if args.output.exists():
         raise FileExistsError("Choose a new inference output file; previous evidence is preserved")
+    diagnostic_path = getattr(args, "diagnostic_sidecar", None)
+    if diagnostic_path is not None and diagnostic_path.exists():
+        raise FileExistsError("Choose a new diagnostic sidecar; previous evidence is preserved")
+    if diagnostic_path is not None and diagnostic_path.resolve() == args.output.resolve():
+        raise ValueError("Diagnostic sidecar and prediction output must be different paths")
     if args.manifest:
         payload = json.loads(args.manifest.read_text(encoding="utf-8"))
         if not args.role:
@@ -300,6 +310,7 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
     del checkpoint, criterion
     model.eval()
     predictions, decode_counts, data_receipts, timings = {}, {}, {}, []
+    diagnostic_frames: list[dict[str, Any]] = []
     torch.cuda.reset_peak_memory_stats()
     started = time.perf_counter()
     with input_loader(args.data_root, tokens) as dataset, torch.inference_mode():
@@ -324,6 +335,10 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
             torch.cuda.synchronize()
             forward_seconds = time.perf_counter() - tick
             require_finite(outputs)
+            if diagnostic_path is not None:
+                diagnostic_frames.append(
+                    capture_exposed_outputs(outputs, sample_token=token, batch_index=0)
+                )
             tick = time.perf_counter()
             predictions[token], decode_counts[token] = decode_eap(
                 outputs, 0, prepared.calibration, sample.event_from_ego, prepared.image_size
@@ -404,6 +419,18 @@ def infer(args: argparse.Namespace) -> dict[str, Any]:
         report["reference_sha256"] = sha256(args.reference_predictions)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    if diagnostic_path is not None:
+        sidecar = build_sidecar(
+            diagnostic_frames,
+            checkpoint_sha256=checkpoint_hash,
+            prediction_output_sha256=sha256(args.output),
+            observer_path=ROOT / "src/e_jepa_ttc/detection/diagnostic_export.py",
+        )
+        validate_json_finite(sidecar)
+        diagnostic_path.parent.mkdir(parents=True, exist_ok=True)
+        diagnostic_path.write_text(
+            json.dumps(sidecar, indent=2, allow_nan=False) + "\n", encoding="utf-8"
+        )
     return report
 
 
@@ -421,6 +448,11 @@ def main() -> int:
     parser.add_argument("--height", type=int, default=384)
     parser.add_argument("--warmup", type=int, default=2)
     parser.add_argument("--reference-predictions", type=Path)
+    parser.add_argument(
+        "--diagnostic-sidecar",
+        type=Path,
+        help="New JSON path for an external query-tensor observer; predictions remain unchanged",
+    )
     parser.add_argument(
         "--source-root", type=Path, default=ROOT / "output/detector_sources/MonoDGP"
     )
