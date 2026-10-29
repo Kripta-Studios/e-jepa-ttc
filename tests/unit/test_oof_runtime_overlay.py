@@ -73,9 +73,7 @@ def test_new_run_save_captures_cursor_prefetches_and_restores_symbols() -> None:
     cursor = _cursor()
     source = _Source()
 
-    with FoldPrefetchRuntime(
-        module, parallel_rgb_decode=False, stats_callback=snapshots.append
-    ):
+    with FoldPrefetchRuntime(module, parallel_rgb_decode=False, stats_callback=snapshots.append):
         assert module.ProducerCheckpoint is not original_checkpoint
         assert module._effective_batch is not original_batch
         checkpoint = module.ProducerCheckpoint("run", identity={})
@@ -102,9 +100,7 @@ def test_restore_captures_exact_cursor_reference_and_binding_kwargs() -> None:
         "execution_binding_origin_prior_sha256": None,
     }
 
-    with FoldPrefetchRuntime(
-        module, parallel_rgb_decode=False, checkpoint_binding_kwargs=binding
-    ):
+    with FoldPrefetchRuntime(module, parallel_rgb_decode=False, checkpoint_binding_kwargs=binding):
         checkpoint = module.ProducerCheckpoint("run", identity={})
         restored = checkpoint.restore(1)
         assert restored is cursor

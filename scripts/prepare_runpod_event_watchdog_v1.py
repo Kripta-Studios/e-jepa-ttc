@@ -25,9 +25,7 @@ def process_environment(pid: int, proc_root: Path) -> dict[str, str]:
     }
 
 
-def find_worker(
-    task: dict[str, Any], run: str, proc_root: Path = Path("/proc")
-) -> dict[str, Any]:
+def find_worker(task: dict[str, Any], run: str, proc_root: Path = Path("/proc")) -> dict[str, Any]:
     """Reject duplicate owners and bind the exact current command and start time."""
     matches = []
     for directory in proc_root.iterdir():
@@ -40,10 +38,9 @@ def find_worker(
         if str(task["entrypoint"]) not in argv:
             continue
         try:
-            same = (
-                watchdog.option(argv, "--run") == run
-                and watchdog.option(argv, "--rotation") == str(task["rotation"])
-            )
+            same = watchdog.option(argv, "--run") == run and watchdog.option(
+                argv, "--rotation"
+            ) == str(task["rotation"])
             if task["fit"] in watchdog.PRODUCERS:
                 same = same and watchdog.option(argv, "--fit") == task["fit"]
             else:
@@ -69,7 +66,10 @@ def build(spec: dict[str, Any], proc_root: Path = Path("/proc")) -> dict[str, An
             raise ValueError(f"Preparation environment differs: {name}")
     authority = dict(spec["authority"])
     for key in (
-        "pod_budget", "downstream_budget", "migration_binding", "legacy_controller_exclusion"
+        "pod_budget",
+        "downstream_budget",
+        "migration_binding",
+        "legacy_controller_exclusion",
     ):
         path = Path(authority[f"{key}_path"]).resolve(strict=True)
         authority[f"{key}_path"] = str(path)
@@ -85,8 +85,10 @@ def build(spec: dict[str, Any], proc_root: Path = Path("/proc")) -> dict[str, An
         if not directory.name.isdecimal():
             continue
         identity = watchdog.proc_identity(int(directory.name), proc_root)
-        if identity and identity["state"] != "Z" and any(
-            path in identity["argv"] for path in disabled_paths
+        if (
+            identity
+            and identity["state"] != "Z"
+            and any(path in identity["argv"] for path in disabled_paths)
         ):
             raise ValueError(f"Legacy controller is still running: PID {directory.name}")
     tasks = []
@@ -103,23 +105,36 @@ def build(spec: dict[str, Any], proc_root: Path = Path("/proc")) -> dict[str, An
             for path in task["runtime_files"]
         ]
         task.update(
-            role_schema=(watchdog.PRODUCER_ROLE_SCHEMA if task["fit"] in watchdog.PRODUCERS
-                         else watchdog.DOWNSTREAM_ROLE_SCHEMA),
-            run=spec["run_root"], pid=identity["pid"],
+            role_schema=(
+                watchdog.PRODUCER_ROLE_SCHEMA
+                if task["fit"] in watchdog.PRODUCERS
+                else watchdog.DOWNSTREAM_ROLE_SCHEMA
+            ),
+            run=spec["run_root"],
+            pid=identity["pid"],
             pid_start_ticks=identity["start_ticks"],
             pid_started_epoch=identity["started_epoch"],
-            pid_cmdline_sha256=identity["cmdline_sha256"], argv=argv, adopted_argv=[argv],
+            pid_cmdline_sha256=identity["cmdline_sha256"],
+            argv=argv,
+            adopted_argv=[argv],
             entrypoint_sha256=watchdog.digest(Path(task["entrypoint"])),
-            assignment_path=str(assignment), assignment_sha256=watchdog.digest(assignment),
+            assignment_path=str(assignment),
+            assignment_sha256=watchdog.digest(assignment),
             runtime_files=runtime_files,
         )
         tasks.append(task)
     return {
-        "schema": watchdog.SCHEMA, "bundle_root": spec["bundle_root"],
-        "run_root": spec["run_root"], "required_environment": environment,
-        "backoff_seconds": 60, "max_retries": 12, "poll_seconds": 10,
-        "status_path": spec["status_path"], "lock_path": spec["lock_path"],
-        "authority": authority, "tasks": tasks,
+        "schema": watchdog.SCHEMA,
+        "bundle_root": spec["bundle_root"],
+        "run_root": spec["run_root"],
+        "required_environment": environment,
+        "backoff_seconds": 60,
+        "max_retries": 12,
+        "poll_seconds": 10,
+        "status_path": spec["status_path"],
+        "lock_path": spec["lock_path"],
+        "authority": authority,
+        "tasks": tasks,
     }
 
 
@@ -138,9 +153,12 @@ def main() -> None:
         # Recheck adopted workers after hashes; a cut here must not fabricate an owner.
         for task in config["tasks"]:
             current = watchdog.proc_identity(task["pid"])
-            if (current is None or current["state"] == "Z"
-                    or current["start_ticks"] != task["pid_start_ticks"]
-                    or not watchdog.command_matches(task, current)):
+            if (
+                current is None
+                or current["state"] == "Z"
+                or current["start_ticks"] != task["pid_start_ticks"]
+                or not watchdog.command_matches(task, current)
+            ):
                 raise RuntimeError(f"Worker changed during preparation: {task['id']}")
         # Exclusive publication, never overwrite an authority created by another preparer.
         with args.output.open("x", encoding="utf-8") as stream:
@@ -150,9 +168,18 @@ def main() -> None:
             os.fsync(stream.fileno())
     finally:
         pending.unlink(missing_ok=True)
-    print(json.dumps({"status": "PASS", "config_sha256": watchdog.digest(args.output),
-                      "tasks": len(config["tasks"]), "processes_started": 0,
-                      "processes_stopped": 0, "optimizer_updates": 0}))
+    print(
+        json.dumps(
+            {
+                "status": "PASS",
+                "config_sha256": watchdog.digest(args.output),
+                "tasks": len(config["tasks"]),
+                "processes_started": 0,
+                "processes_stopped": 0,
+                "optimizer_updates": 0,
+            }
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -946,9 +946,7 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
                     f"{args.output.stem}.{fit_id}.{regime}.progress.json"
                 )
 
-                def save_progress(
-                    value: Mapping[str, Any], *, path: Path = progress_path
-                ) -> None:
+                def save_progress(value: Mapping[str, Any], *, path: Path = progress_path) -> None:
                     _atomic_json(path, value)
 
                 try:

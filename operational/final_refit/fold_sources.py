@@ -165,9 +165,7 @@ def load_fold_inventory(
         "producer_rows_sha256": file_sha256(paths["producer"]),
         "producer_population": len(producer),
         "producer_group_ids": sorted(group_sets["producer"]),
-        "ordered_sample_token_sha256": _ordered_sha(
-            producer["sample_token"].astype(str).tolist()
-        ),
+        "ordered_sample_token_sha256": _ordered_sha(producer["sample_token"].astype(str).tolist()),
         "ordered_native_ordinal_sha256": _ordered_sha(
             producer["source_ordinal"].astype(int).tolist()
         ),
@@ -268,8 +266,7 @@ class FoldRGBProducerSource:
                 str(observed["sample_token"]) != self._tokens[local]
                 or str(observed["group_id"]) != str(row["group_id"])
                 or str(observed["historical_role"]) != str(row["historical_role"])
-                or int(observed["historical_role_ordinal"])
-                != int(row["historical_local_ordinal"])
+                or int(observed["historical_role_ordinal"]) != int(row["historical_local_ordinal"])
             ):
                 raise ValueError("Fold RGB row differs from native TRAIN40 lookup")
         self.population_size = len(self._native)
@@ -346,8 +343,7 @@ class FoldEventProducerSource:
         self.sources, self.inventory = dict(sources), inventory
         records = rows.to_dict("records")
         self._lookup = [
-            (str(row["historical_role"]), int(row["historical_local_ordinal"]))
-            for row in records
+            (str(row["historical_role"]), int(row["historical_local_ordinal"])) for row in records
         ]
         self._tokens = [str(row["sample_token"]) for row in records]
         for index, (role, local) in enumerate(self._lookup):

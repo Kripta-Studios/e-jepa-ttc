@@ -81,13 +81,16 @@ class PreparedTargetCounts:
     foreground_pair_ratio: int
 
     def __post_init__(self) -> None:
-        if min(
-            self.physical_ratio,
-            self.supervised_ttc,
-            self.foreground_extent,
-            self.foreground_geometry,
-            self.foreground_pair_ratio,
-        ) < 0:
+        if (
+            min(
+                self.physical_ratio,
+                self.supervised_ttc,
+                self.foreground_extent,
+                self.foreground_geometry,
+                self.foreground_pair_ratio,
+            )
+            < 0
+        ):
             raise ValueError("prepared target counts must be non-negative")
 
 
@@ -383,9 +386,7 @@ def causal_scale_ttc_loss(
         mask_valid,
         beta=cfg.smooth_l1_beta,
         target_geometry=target_geometry,
-        prepared_count=(
-            None if prepared_counts is None else prepared_counts.foreground_extent
-        ),
+        prepared_count=(None if prepared_counts is None else prepared_counts.foreground_extent),
     )
     foreground_width, foreground_center, foreground_geometry_count = (
         _foreground_width_center_losses(
@@ -403,9 +404,7 @@ def causal_scale_ttc_loss(
         mask_valid,
         beta=cfg.smooth_l1_beta,
         target_geometry=target_geometry,
-        prepared_count=(
-            None if prepared_counts is None else prepared_counts.foreground_pair_ratio
-        ),
+        prepared_count=(None if prepared_counts is None else prepared_counts.foreground_pair_ratio),
     )
     residual_regularization = output.residual_log_height_ratio.square().mean()
     pair_known = output.diagnostics["pair_known"].bool()

@@ -116,9 +116,7 @@ def _resume_state_path(root: Path, filename: str) -> Path:
 
 def _validated_resume_committed(root: Path, row: dict[str, Any]) -> int:
     state_path = _resume_state_path(root, row["relative"])
-    partial = (root / row["relative"]).with_name(
-        (root / row["relative"]).name + ".partial"
-    )
+    partial = (root / row["relative"]).with_name((root / row["relative"]).name + ".partial")
     if not state_path.exists():
         return 0
     state = _read(state_path)
@@ -268,9 +266,8 @@ def _urllib_download(
         digest, prefix_calls = _scan_committed_prefix(
             partial, offset, str(state.get("prefix_sha256", ""))
         )
-    url = (
-        f"https://huggingface.co/datasets/{REPO}/resolve/{REVISION}/"
-        + urllib.parse.quote(filename, safe="/")
+    url = f"https://huggingface.co/datasets/{REPO}/resolve/{REVISION}/" + urllib.parse.quote(
+        filename, safe="/"
     )
     headers = {"Accept-Encoding": "identity", "User-Agent": "ejepa-event-restore-v2"}
     if offset:
@@ -301,12 +298,11 @@ def _urllib_download(
             response.close()
             raise RuntimeError("HF response length differs from pinned remaining bytes")
         etag = response.headers.get("ETag", "").strip('"')
+
         def commit(committed: int, prefix_sha: str) -> None:
             state["committed_bytes"] = committed
             state["prefix_sha256"] = prefix_sha
-            state_payload = {
-                key: value for key, value in state.items() if key != "receipt_sha256"
-            }
+            state_payload = {key: value for key, value in state.items() if key != "receipt_sha256"}
             state["receipt_sha256"] = _canonical(state_payload)
             _atomic_json(state_path, state)
 
@@ -335,9 +331,7 @@ def _urllib_download(
         "fsync_before_eviction": True,
         "posix_fadvise_dontneed": True,
         "fadvise_calls": prefix_calls + int(write_result["fadvise_calls"]),
-        "page_cache_bytes_advised": (
-            offset + int(write_result["page_cache_bytes_advised"])
-        ),
+        "page_cache_bytes_advised": (offset + int(write_result["page_cache_bytes_advised"])),
         "chunk_bytes": STREAM_CHUNK_BYTES,
         "scope": "owned EVENT raw partial during download",
         "global_drop_caches_used": False,

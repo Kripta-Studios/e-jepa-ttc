@@ -189,9 +189,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "status": "PROFILED",
             "scientific_updates": 0,
             "technical_optimizer_steps": sum(
-                int(item.get("steps", 0)) + 1
-                for item in arms
-                if not item.get("unsupported")
+                int(item.get("steps", 0)) + 1 for item in arms if not item.get("unsupported")
             ),
             "checkpoint_sha256": __import__("hashlib").sha256(checkpoint.read_bytes()).hexdigest(),
             "checkpoint_completed_updates": payload["completed_updates"],
@@ -227,9 +225,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     result = run(args)
     _atomic_json(args.output.resolve(), result)
     print(
-        json.dumps(
-            {"status": result["status"], "technical": result["technical_optimizer_steps"]}
-        )
+        json.dumps({"status": result["status"], "technical": result["technical_optimizer_steps"]})
     )
     return 0
 

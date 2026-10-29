@@ -65,9 +65,7 @@ def test_stage_readiness_and_selective_routing_preserve_identity(tmp_path: Path)
         identity=identity,
         base=SimpleNamespace(datasets={"P": dataset}, teacher=teacher_cache),
     )
-    routing = route_rgb_source(
-        source, logical_root=logical, stage_root=stage, readiness_path=ready
-    )
+    routing = route_rgb_source(source, logical_root=logical, stage_root=stage, readiness_path=ready)
     assert routing["status"] == "READY_FOR_NUMERIC_PROOF"
     assert source.identity == identity
     assert Path(rgb_shard["path"]).is_relative_to(stage.resolve())
@@ -138,13 +136,9 @@ def test_router_rejects_shards_outside_logical_bundle(tmp_path: Path) -> None:
         identity={"identity_sha256": "b" * 64},
         base=SimpleNamespace(
             datasets={
-                "P": SimpleNamespace(
-                    prepared_cache=SimpleNamespace(_lookup={0: (shard, 0)})
-                )
+                "P": SimpleNamespace(prepared_cache=SimpleNamespace(_lookup={0: (shard, 0)}))
             },
-            teacher=SimpleNamespace(
-                shards=({"path": str(teacher), "sha256": _sha(teacher)},)
-            ),
+            teacher=SimpleNamespace(shards=({"path": str(teacher), "sha256": _sha(teacher)},)),
         ),
     )
     with pytest.raises(ValueError, match="outside"):

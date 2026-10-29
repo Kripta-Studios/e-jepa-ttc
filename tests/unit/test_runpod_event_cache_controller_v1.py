@@ -23,8 +23,7 @@ def _sealed_stage(tmp_path: Path) -> tuple[Path, Path, list[Path]]:
     root = tmp_path / "stage"
     producer = root / "drives/E/EJEPA_TRAIN40_CACHE_20261005/producer_inputs/a.npz"
     teacher = root / (
-        "workspace/e-jepa-ttc-v12-efficient-context/artifacts/"
-        "train40_system_20261005/teacher/b.npz"
+        "workspace/e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/teacher/b.npz"
     )
     excluded = root / "workspace/other.npz"
     for path, payload in ((producer, b"producer"), (teacher, b"teacher"), (excluded, b"other")):
@@ -164,12 +163,8 @@ def test_cgroup_observation_reports_anon_and_file_cache(
             }
         ]
 
-    monkeypatch.setattr(
-        "scripts.runpod_event_cache_controller_v1.memory_snapshot", snapshot
-    )
-    observed = cgroup_observation(
-        cgroup_root=tmp_path / "unused", membership_path=membership
-    )
+    monkeypatch.setattr("scripts.runpod_event_cache_controller_v1.memory_snapshot", snapshot)
+    observed = cgroup_observation(cgroup_root=tmp_path / "unused", membership_path=membership)
     assert observed["effective_headroom_bytes"] == 7 * GIB
     assert observed["anon_or_rss_bytes"] == 32 * GIB
     assert observed["file_cache_bytes"] == 9 * GIB

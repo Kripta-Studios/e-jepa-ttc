@@ -43,9 +43,7 @@ def _prepare_part(part: ObjectEventV4Batch) -> PreparedEffectivePart:
     _, physical_valid = target_log_ratio_from_ttc(part.target_ttc_s, delta[:, -1])
     physical_valid &= target_valid
     supervised_valid = (
-        torch.isfinite(part.target_ttc_s)
-        & (part.target_ttc_s.abs() > 1.0e-8)
-        & target_valid
+        torch.isfinite(part.target_ttc_s) & (part.target_ttc_s.abs() > 1.0e-8) & target_valid
     )
     endpoint_valid = torch.ones(part.boxes_xyxy.shape[:2], dtype=torch.bool)
     endpoint_valid[:, 0] = False
@@ -78,9 +76,7 @@ def _prepare_part(part: ObjectEventV4Batch) -> PreparedEffectivePart:
     )
 
 
-def prepare_effective_batch(
-    batch: EffectiveBatch, recipe: ProducerRecipe
-) -> EffectiveBatch:
+def prepare_effective_batch(batch: EffectiveBatch, recipe: ProducerRecipe) -> EffectiveBatch:
     """Validate an effective CPU batch and attach target-only support counts."""
     if not isinstance(batch, EffectiveBatch) or not batch.parts:
         raise ValueError("host loss preparation requires a nonempty EffectiveBatch")

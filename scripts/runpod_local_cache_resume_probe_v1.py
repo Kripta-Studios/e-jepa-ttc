@@ -95,16 +95,13 @@ def main() -> int:
         "migration_binding_sha256": migration_sha256,
         "readiness_sha256": digest(args.readiness),
         "local_cache_source_sha256": digest(
-            Path(__file__).resolve().parents[1]
-            / "operational/runpod_migration/local_cache.py"
+            Path(__file__).resolve().parents[1] / "operational/runpod_migration/local_cache.py"
         ),
         "runtime_prefetch_source_sha256": digest(
-            Path(__file__).resolve().parents[1]
-            / "operational/runpod_migration/runtime_prefetch.py"
+            Path(__file__).resolve().parents[1] / "operational/runpod_migration/runtime_prefetch.py"
         ),
         "bounded_prefetch_source_sha256": digest(
-            Path(__file__).resolve().parents[1]
-            / "operational/runpod_migration/bounded_prefetch.py"
+            Path(__file__).resolve().parents[1] / "operational/runpod_migration/bounded_prefetch.py"
         ),
         "technical_optimizer_updates": resume["technical_optimizer_updates"],
         "scientific_optimizer_updates": 0,

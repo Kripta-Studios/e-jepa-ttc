@@ -24,7 +24,8 @@ def durable_sha256_and_evict(
     path = path.absolute()
     root = allowed_root.resolve(strict=True)
     if (
-        os.name != "posix" and advise is None
+        os.name != "posix"
+        and advise is None
         or path.is_symlink()
         or not path.resolve(strict=True).is_relative_to(root)
         or expected_bytes <= 0

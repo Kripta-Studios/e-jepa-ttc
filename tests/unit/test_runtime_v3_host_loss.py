@@ -20,25 +20,29 @@ from operational.rgb_port_revision.loss import EffectiveBatch, collect_loss_scal
 def _model() -> CausalScaleTTC:
     return CausalScaleTTC(
         CausalScaleTTCConfig(
-            modality="rgb", in_channels=3, hidden_dim=16, geometry_dim=24,
-            residual_depth=1, dropout=0.0,
-            foreground_decoder="equivariant_separable", foreground_fullres_dim=8,
+            modality="rgb",
+            in_channels=3,
+            hidden_dim=16,
+            geometry_dim=24,
+            residual_depth=1,
+            dropout=0.0,
+            foreground_decoder="equivariant_separable",
+            foreground_fullres_dim=8,
         )
     )
 
 
 def _batch(steps: int, prefix: str, targets: torch.Tensor) -> ObjectEventV4Batch:
     size = len(targets)
-    events = torch.linspace(0.0, 1.0, size * steps * 3 * 16 * 16).reshape(
-        size, steps, 3, 16, 16
-    )
+    events = torch.linspace(0.0, 1.0, size * steps * 3 * 16 * 16).reshape(size, steps, 3, 16, 16)
     boxes = torch.tensor([2.0, 3.0, 12.0, 11.0]).repeat(size, steps, 1)
     return ObjectEventV4Batch(
         events=events,
         delta_t_s=torch.full((size, steps - 1), 0.1),
         observable_motion=torch.zeros(size, 18),
         visible_heights_px=torch.ones(size, max(1, steps - 1)),
-        target_ttc_s=targets.float(), boxes_xyxy=boxes,
+        target_ttc_s=targets.float(),
+        boxes_xyxy=boxes,
         common_square_xyxy=torch.tensor([0.0, 0.0, 16.0, 16.0]).repeat(size, 1),
         sequence_ids=[f"sequence-{prefix}-{index}" for index in range(size)],
         sample_tokens=[f"token-{prefix}-{index}" for index in range(size)],

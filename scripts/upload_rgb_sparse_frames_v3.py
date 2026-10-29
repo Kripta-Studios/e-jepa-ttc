@@ -19,7 +19,7 @@ from typing import Any
 
 GIT_SSH = Path("C:/Program Files/Git/usr/bin/ssh.exe")
 
-RECEIVER = r'''
+RECEIVER = r"""
 import hashlib,json,os,pathlib,re,stat,sys,tempfile
 root=pathlib.Path(sys.argv[1]).resolve(strict=True);reserve=int(sys.argv[2])
 def reply(v):
@@ -70,7 +70,7 @@ while True:
   f.flush();os.fsync(f.fileno())
  if partial.stat().st_size!=size or checksum.hexdigest()!=expected:raise ValueError("received file differs")
  partial.chmod(0o444);os.replace(partial,target);syncdir(target.parent);seal(target,size,expected);reply({"status":"OK","relative":str(rel),"bytes":size})
-'''
+"""
 
 
 @dataclass(frozen=True)
@@ -133,6 +133,7 @@ def load_ready(marker: Path, root: Path) -> Ready:
     before = tar.stat()
     observed = digest(tar)
     after = tar.stat()
+
     def identity(stat_result: os.stat_result) -> tuple[int, int, int, int]:
         return (
             stat_result.st_size,
@@ -140,6 +141,7 @@ def load_ready(marker: Path, root: Path) -> Ready:
             stat_result.st_ino,
             stat_result.st_dev,
         )
+
     size, expected = int(value["sparse_tar_bytes"]), str(value["sparse_tar_sha256"])
     if identity(before) != identity(after) or size != after.st_size or observed != expected:
         raise ValueError("Sparse TAR changed or differs from verified marker")
@@ -185,7 +187,7 @@ def remote_free(command: list[str], root: str) -> int:
     code = "import os;v=os.statvfs(" + repr(root) + ");print(v.f_bavail*v.f_frsize)"
     encoded = base64.b64encode(code.encode()).decode()
     result = subprocess.run(
-        command + [f'python3 -c "import base64;exec(base64.b64decode(\'{encoded}\'))"'],
+        command + [f"python3 -c \"import base64;exec(base64.b64decode('{encoded}'))\""],
         check=True,
         capture_output=True,
         text=True,
@@ -196,7 +198,7 @@ def remote_free(command: list[str], root: str) -> int:
 
 def transfer(item: Ready, command: list[str], root: str, reserve: int) -> dict[str, int]:
     encoded = base64.b64encode(RECEIVER.encode()).decode()
-    remote = f'python3 -u -c "import base64;exec(base64.b64decode(\'{encoded}\'))" {root} {reserve}'
+    remote = f"python3 -u -c \"import base64;exec(base64.b64decode('{encoded}'))\" {root} {reserve}"
     process = subprocess.Popen(command + [remote], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     if process.stdin is None or process.stdout is None:
         raise RuntimeError("SSH pipes unavailable")
@@ -346,7 +348,9 @@ def main() -> int:
                     if item.plan_sha256 != args.plan_sha256:
                         raise ValueError(f"READY marker belongs to another plan: {hint}")
                     if (args.require_role == "refiner") != item.refiner:
-                        raise ValueError(f"READY marker has the wrong role for this uploader: {hint}")
+                        raise ValueError(
+                            f"READY marker has the wrong role for this uploader: {hint}"
+                        )
                     known[hint] = item
             pending = sorted(
                 (
@@ -358,7 +362,9 @@ def main() -> int:
             )
             if pending and len(active) < args.streams:
                 free = remote_free(command, args.remote_root)
-                inflight = args.external_inflight_bytes + sum(item.total for item in active.values())
+                inflight = args.external_inflight_bytes + sum(
+                    item.total for item in active.values()
+                )
                 while pending and len(active) < args.streams:
                     item = pending.pop(0)
                     if not can_schedule(free, args.reserve_bytes, inflight, item.total):

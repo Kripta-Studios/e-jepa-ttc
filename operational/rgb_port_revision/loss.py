@@ -93,9 +93,7 @@ def validate_prepared_part(item: Any, prepared: PreparedEffectivePart) -> Prepar
         or tuple(item.target_ttc_s.shape) != prepared.target_shape
         or (
             item.target_ttc_s.device.type == "cpu"
-            and target_support_sha256(
-                item.target_ttc_s, item.delta_t_s, item.boxes_xyxy
-            )
+            and target_support_sha256(item.target_ttc_s, item.delta_t_s, item.boxes_xyxy)
             != prepared.target_support_sha256
         )
     ):

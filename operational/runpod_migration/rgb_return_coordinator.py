@@ -291,7 +291,7 @@ class SingleInstanceLock(AbstractContextManager["SingleInstanceLock"]):
         self.stream = None
 
 
-RESULTS_PROBE = r'''
+RESULTS_PROBE = r"""
 # EJEPART_RGB_RESULTS_PROBE_V1
 import json, pathlib, sys
 expected = {int(item) for item in sys.argv[1].split(",")}
@@ -316,9 +316,9 @@ complete = (
     and {item["rotation"] for item in values} == expected
 )
 print(json.dumps({"status": "COMPLETE" if complete else "WAITING", "results": values}))
-'''
+"""
 
-EXPORT_RECEIPT_PROBE = r'''
+EXPORT_RECEIPT_PROBE = r"""
 # EJEPART_RGB_EXPORT_RECEIPT_PROBE_V1
 import json, pathlib, re, sys
 receipt_path, archive_path = map(pathlib.Path, sys.argv[1:])
@@ -342,7 +342,7 @@ valid = (
     and archive_path.stat().st_size == value["archive_bytes"]
 )
 print(json.dumps(value if valid else {"status": "INVALID", "reason": "IDENTITY"}))
-'''
+"""
 
 
 class Coordinator:

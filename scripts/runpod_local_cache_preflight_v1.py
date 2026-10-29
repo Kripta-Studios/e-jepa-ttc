@@ -50,9 +50,7 @@ def main() -> int:
         "fit": "R_A5",
         "migration_binding_sha256": digest(args.run / "MIGRATION_BINDING.json"),
         "runtime_sources": {
-            "local_cache": digest(
-                repository / "operational/runpod_migration/local_cache.py"
-            ),
+            "local_cache": digest(repository / "operational/runpod_migration/local_cache.py"),
             "preflight": digest(Path(__file__)),
         },
         "training_called": False,

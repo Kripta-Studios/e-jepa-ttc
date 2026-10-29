@@ -79,9 +79,7 @@ def _install_fault(state: ProducerCheckpoint, fault: str, target_update: int) ->
 
     def journal(self: ProducerCheckpoint) -> None:
         commit_boundary = (
-            self.completed == target_update
-            and not self.pending
-            and self.durable < self.completed
+            self.completed == target_update and not self.pending and self.durable < self.completed
         )
         if fault == "commit_journal_before" and commit_boundary:
             _exit()

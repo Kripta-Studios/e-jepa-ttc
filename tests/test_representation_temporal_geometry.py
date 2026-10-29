@@ -1,10 +1,17 @@
 """A reused E control must be exactly the registered F0 control."""
 
+import pytest
 import torch
 
 from operational.range_transfer.qa import same
 from operational.representation_audit.geometry import initialize as initialize_e
 from operational.representation_audit.temporal_geometry import initialize as initialize_f
+from tests.fixtures.representation_audit import install
+
+
+@pytest.fixture(autouse=True)
+def synthetic_audit(tmp_path, monkeypatch):
+    install(tmp_path, monkeypatch)
 
 
 def test_f0_reuses_exact_e_control_initialization_optimizer_and_sampler():

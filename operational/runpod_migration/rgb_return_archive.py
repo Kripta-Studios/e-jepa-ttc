@@ -52,16 +52,12 @@ def _canonical_sha256(value: object) -> str:
     ).hexdigest()
 
 
-def _source_by_sha256(
-    operational_sources: Sequence[Path], expected: object, *, label: str
-) -> Path:
+def _source_by_sha256(operational_sources: Sequence[Path], expected: object, *, label: str) -> Path:
     """Resolve an immutable operational record by bytes, not a future filename."""
     if not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{64}", expected):
         raise ValueError(f"{label} lacks a lowercase SHA-256")
     matches = [
-        path.resolve(strict=True)
-        for path in operational_sources
-        if sha256(path) == expected
+        path.resolve(strict=True) for path in operational_sources if sha256(path) == expected
     ]
     if len(matches) != 1:
         raise ValueError(f"{label} must resolve to exactly one operational source")
@@ -345,8 +341,7 @@ def _validate_rgb_path_compatibility(
         or value.get("status") != "PASS"
         or value.get("overlay_sha256") != sha256(overlay)
         or value.get("original_bootstrap_sha256") != sha256(bootstrap)
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("native_path_isinstance_preserved") is not True
         or value.get("translation_constructor_unchanged") is not True
         or value.get("scientific_sources_rewritten") is not False
@@ -370,8 +365,7 @@ def _validate_rgb_operational_recovery_v2(
         {Path(path).name: sha for path, sha in dependencies.items()}
         if isinstance(dependencies, dict)
         and all(
-            isinstance(path, str) and isinstance(sha, str)
-            for path, sha in dependencies.items()
+            isinstance(path, str) and isinstance(sha, str) for path, sha in dependencies.items()
         )
         else {}
     )
@@ -387,8 +381,7 @@ def _validate_rgb_operational_recovery_v2(
             path_compat.name: sha256(path_compat),
             quota.name: sha256(quota),
         }
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("heartbeat_emitted_by_active_worker") is not True
         or value.get("heartbeat_interval_seconds") != 30
         or value.get("quota_retry_scope") != "GNU-du status1 ENOENT only"
@@ -415,8 +408,7 @@ def _validate_optional_rgb_operational_recovery_v3(
         or value.get("status") != "PASS"
         or value.get("source_sha256") != sha256(recovery_v3)
         or value.get("frozen_v2_sha256") != sha256(recovery_v2)
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("heartbeat_receipt_precedes_optional_external_guard") is not True
         or value.get("external_guard_success_inferred") is not False
         or value.get("optimizer_updates_inferred") is not False
@@ -442,8 +434,7 @@ def _validate_optional_rgb_history_v4(
         source.name != "runpod_rgb_metadata_v4.py"
         or value.get("schema") != "ejepa_rgb_history_metadata_adapter_v4"
         or value.get("status") != "PASS"
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("scientific_sources_rewritten") is not False
     ):
         raise ValueError("Historical RGB V4 sidecar/source binding changed")
@@ -480,8 +471,7 @@ def _validate_rgb_operational_recovery_v5(
         or bindings["repair"].name != "oof_rgb_metadata_fix.py"
         or value.get("schema") != "ejepa_rgb_context_metadata_recovery_v5"
         or value.get("status") != "PASS"
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("excluded_query_reference_fields")
         != ["query_age_us", "query_time_us", "sample_token"]
         or value.get("materializer_ast_comparisons_replaced") != 1
@@ -549,12 +539,9 @@ def _validate_rgb_operational_recovery_v6(
         or sha256(v5) != RGB_CONTEXT_V5_SHA256
         or value.get("schema") != "ejepa_rgb_frame_gate_routing_v6"
         or value.get("status") != "PASS"
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("reader_routing_scope") != "materializer_call_only"
-        or not re.fullmatch(
-            r"[0-9a-f]{64}", str(value.get("initial_media_config_sha256"))
-        )
+        or not re.fullmatch(r"[0-9a-f]{64}", str(value.get("initial_media_config_sha256")))
         or value.get("original_frames_crops_clocks_changed") is not False
         or value.get("model_inference_requires_scope_admission") is not True
     ):
@@ -566,9 +553,7 @@ def _validate_rgb_operational_recovery_v6(
     if not isinstance(scopes, list):
         raise ValueError("RGB media config scopes are malformed")
     scope_map = {
-        (item.get("rotation"), item.get("role")): item
-        for item in scopes
-        if isinstance(item, dict)
+        (item.get("rotation"), item.get("role")): item for item in scopes if isinstance(item, dict)
     }
     results: list[tuple[str, Path, Path, list[Path]]] = []
     if (downstream / "RGB_OPERATIONAL_RECOVERY_V8.json").is_file():
@@ -625,9 +610,7 @@ def _validate_rgb_operational_recovery_v6(
             if read_json(receipt_path) != record:
                 raise ValueError("RGB sparse TAR member-hash receipt changed")
             members = record.get("members")
-            record_payload = {
-                key: item for key, item in record.items() if key != "receipt_sha256"
-            }
+            record_payload = {key: item for key, item in record.items() if key != "receipt_sha256"}
             if (
                 record.get("schema") != "ejepa_rgb_sparse_tar_receipt_v1"
                 or record.get("status") != "COMPLETE_BYTE_AND_PIXEL_VERIFIED"
@@ -665,8 +648,7 @@ def _validate_rgb_operational_recovery_v7(
         or sha256(v6) != RGB_CONTEXT_V6_SHA256
         or value.get("schema") != "ejepa_rgb_media_stat_cache_v7"
         or value.get("status") != "PASS"
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("barrier_fields")
         != ["st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns"]
         or value.get("barrier_scope") != "plan_manifest_all_tars_all_sidecars"
@@ -707,8 +689,7 @@ def _validate_rgb_operational_recovery_v8(
         or value.get("status") != "PASS"
         or value.get("layout_authority_sha256") != _canonical_sha256(layout_header)
         or value.get("original_config_sha256") != sha256(original_media_config)
-        or value.get("migration_binding_sha256")
-        != sha256(downstream / "MIGRATION_BINDING.json")
+        or value.get("migration_binding_sha256") != sha256(downstream / "MIGRATION_BINDING.json")
         or value.get("allowed_physical_roots")
         != ["/opt/ejepa_rgb_frames", "/workspace/ejepa_rgb_frames"]
         or value.get("physical_sidecar_roles_relabelled") is not False
@@ -734,9 +715,9 @@ def _validate_rgb_operational_recovery_v8(
     }
     combined_authority = _canonical_sha256(
         {
-            "original_authority_sha256": read_json(
-                downstream / "RGB_OPERATIONAL_RECOVERY_V6.json"
-            )["media_authority_sha256"],
+            "original_authority_sha256": read_json(downstream / "RGB_OPERATIONAL_RECOVERY_V6.json")[
+                "media_authority_sha256"
+            ],
             "layout_authority_sha256": value["layout_authority_sha256"],
         }
     )
@@ -773,9 +754,7 @@ def _validate_rgb_operational_recovery_v8(
                 or plan.get("receipt_sha256") != _canonical_sha256(payload)
             ):
                 raise ValueError(f"R4/{role} V8 {label} plan receipt changed")
-        manifest_payload = {
-            key: item for key, item in manifest.items() if key != "receipt_sha256"
-        }
+        manifest_payload = {key: item for key, item in manifest.items() if key != "receipt_sha256"}
         if (
             manifest.get("schema") != "ejepa_rgb_frame_supplement_v1"
             or manifest.get("status") != "COMPLETE_BYTE_AND_PIXEL_VERIFIED"
@@ -835,12 +814,10 @@ def _validate_rgb_operational_recovery_v8(
                 or proof.get("same_logical_tar_paths") is not True
                 or proof.get("target", {}).get("rotation") != 4
                 or proof.get("target", {}).get("role") != role
-                or proof.get("target", {}).get("plan_sha256")
-                != sha256(paths["target_plan"])
+                or proof.get("target", {}).get("plan_sha256") != sha256(paths["target_plan"])
                 or proof.get("physical", {}).get("rotation") != physical_rotation
                 or proof.get("physical", {}).get("role") != physical_role
-                or proof.get("physical", {}).get("plan_sha256")
-                != sha256(paths["source_plan"])
+                or proof.get("physical", {}).get("plan_sha256") != sha256(paths["source_plan"])
                 or proof.get("physical", {}).get("manifest_sha256")
                 != sha256(paths["source_manifest"])
             ):
@@ -848,12 +825,13 @@ def _validate_rgb_operational_recovery_v8(
         receipts: list[Path] = []
         for record in manifest.get("tars", []):
             relative = _safe_relative(str(record.get("relative")))
-            receipt_path = Path(physical_root).joinpath(*relative.parts).with_suffix(
-                Path(relative.name).suffix + ".json"
-            ).resolve(strict=True)
-            record_payload = {
-                key: item for key, item in record.items() if key != "receipt_sha256"
-            }
+            receipt_path = (
+                Path(physical_root)
+                .joinpath(*relative.parts)
+                .with_suffix(Path(relative.name).suffix + ".json")
+                .resolve(strict=True)
+            )
+            record_payload = {key: item for key, item in record.items() if key != "receipt_sha256"}
             if (
                 read_json(receipt_path) != record
                 or record.get("schema") != "ejepa_rgb_sparse_tar_receipt_v1"
@@ -938,25 +916,19 @@ def collect_rgb_return(
             raise ValueError("RGB pilot input binding changed")
         admission = read_json(downstream / "RGB_DOWNSTREAM_ADMISSION.json")
         deployment_binding = downstream / "RGB_DEPLOYMENT_BINDING.json"
-        path_compatibility = _validate_rgb_path_compatibility(
-            downstream, operational_by_name
-        )
+        path_compatibility = _validate_rgb_path_compatibility(downstream, operational_by_name)
         operational_recovery = _validate_rgb_operational_recovery_v2(
             downstream, operational_by_name
         )
         optional_recovery_v3 = _validate_optional_rgb_operational_recovery_v3(
             downstream, operational_by_name
         )
-        historical_v4 = _validate_optional_rgb_history_v4(
-            downstream, operational_sources
-        )
+        historical_v4 = _validate_optional_rgb_history_v4(downstream, operational_sources)
         operational_recovery_v5, _ = _validate_rgb_operational_recovery_v5(
             downstream, operational_sources
         )
         operational_recovery_v6, media_config, scope_evidence, _ = (
-            _validate_rgb_operational_recovery_v6(
-                downstream, rotation, operational_sources
-            )
+            _validate_rgb_operational_recovery_v6(downstream, rotation, operational_sources)
         )
         operational_recovery_v7, _ = _validate_rgb_operational_recovery_v7(
             downstream, operational_sources
@@ -964,10 +936,8 @@ def collect_rgb_return(
         recovery_v8: Path | None = None
         v8_evidence: list[dict[str, Any]] = []
         if (downstream / "RGB_OPERATIONAL_RECOVERY_V8.json").is_file():
-            recovery_v8, _, _, v8_evidence = (
-                _validate_rgb_operational_recovery_v8(
-                    downstream, rotation, operational_sources, media_config
-                )
+            recovery_v8, _, _, v8_evidence = _validate_rgb_operational_recovery_v8(
+                downstream, rotation, operational_sources, media_config
             )
             compositional_v8_rotations.append(rotation)
         elif rotation == 4:
@@ -978,8 +948,7 @@ def collect_rgb_return(
             or admission.get("task") != {"rotation": rotation, "fit": "RGB_DOWNSTREAM"}
             or admission.get("migration_binding_sha256")
             != sha256(downstream / "MIGRATION_BINDING.json")
-            or admission.get("external_deployment_binding_sha256")
-            != sha256(deployment_binding)
+            or admission.get("external_deployment_binding_sha256") != sha256(deployment_binding)
             or authority.get("rgb_downstream_admission_sha256")
             != sha256(downstream / "RGB_DOWNSTREAM_ADMISSION.json")
         ):
@@ -1002,9 +971,7 @@ def collect_rgb_return(
         ):
             _add_record(records, f"{downstream_prefix}/{name}", downstream / name, downstream)
         if recovery_v8 is not None:
-            _add_record(
-                records, f"{downstream_prefix}/{recovery_v8.name}", recovery_v8, downstream
-            )
+            _add_record(records, f"{downstream_prefix}/{recovery_v8.name}", recovery_v8, downstream)
         if optional_recovery_v3 is not None:
             _add_record(
                 records,
@@ -1032,9 +999,7 @@ def collect_rgb_return(
             raise ValueError("RGB runs use different append-only media configs")
         for role, plan, media_manifest, tar_receipts in scope_evidence:
             scope_prefix = f"operations/rgb_media_scope/R{rotation}_{role}"
-            admission_path = (
-                downstream / f"RGB_MEDIA_SCOPE_ADMISSION_R{rotation}_{role}.json"
-            )
+            admission_path = downstream / f"RGB_MEDIA_SCOPE_ADMISSION_R{rotation}_{role}.json"
             _add_record(
                 records,
                 f"{downstream_prefix}/{admission_path.name}",
@@ -1052,9 +1017,7 @@ def collect_rgb_return(
             for receipt_path in tar_receipts:
                 receipt = read_json(receipt_path)
                 relative = _safe_relative(str(receipt["relative"]))
-                archive_relative = (
-                    f"{scope_prefix}/tar_receipts/{relative.as_posix()}.json"
-                )
+                archive_relative = f"{scope_prefix}/tar_receipts/{relative.as_posix()}.json"
                 _add_record(records, archive_relative, receipt_path, receipt_path.parent)
                 receipt_records.append(
                     {
@@ -1158,9 +1121,7 @@ def collect_rgb_return(
                 "SCIENTIFIC_CONFIG.json",
                 "SCIENTIFIC_CLOUD_ADMISSION.json",
             ):
-                _add_record(
-                    records, f"{producer_prefix}/{name}", producer / name, producer
-                )
+                _add_record(records, f"{producer_prefix}/{name}", producer / name, producer)
             proof = producer / f"technical_resume_probe/{fit}/RESULT.json"
             _add_record(
                 records,
@@ -1296,9 +1257,7 @@ def collect_rgb_return(
         "source_paths_preserved_verbatim": True,
         "unknown_symlinks_followed": False,
         "active_rgb_context_chain": (
-            ["V5", "V6", "V7", "V8"]
-            if compositional_v8_rotations
-            else ["V5", "V6", "V7"]
+            ["V5", "V6", "V7", "V8"] if compositional_v8_rotations else ["V5", "V6", "V7"]
         ),
         "compositional_v8_rotations": sorted(compositional_v8_rotations),
         "historical_v4_preserved_not_active": sorted(historical_v4_rotations),
@@ -1327,6 +1286,7 @@ def publish_rgb_return(
     temporary = output.with_name(f".{output.name}.{os.getpid()}.pending")
     try:
         manifest_bytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode()
+
         def entry_bytes(name: str, size: int) -> int:
             info = tarfile.TarInfo(name)
             info.size = size
@@ -1336,8 +1296,7 @@ def publish_rgb_return(
 
         predicted = entry_bytes("MANIFEST.json", len(manifest_bytes)) + tarfile.RECORDSIZE
         predicted += sum(
-            entry_bytes(relative, int(identity["bytes"]))
-            for relative, identity in records.items()
+            entry_bytes(relative, int(identity["bytes"])) for relative, identity in records.items()
         )
         predicted = (
             (predicted + tarfile.RECORDSIZE - 1) // tarfile.RECORDSIZE
@@ -1497,8 +1456,7 @@ def _verified_manifest(
         or manifest.get("individual_rotation_return")
         is not (selected == INDIVIDUAL_RETURN_ROTATIONS)
         or manifest.get("progress_presented_as_endpoint") is not False
-        or manifest.get("input_bindings", {}).get("RGB_PILOT.tar", {}).get("sha256")
-        != PILOT_SHA256
+        or manifest.get("input_bindings", {}).get("RGB_PILOT.tar", {}).get("sha256") != PILOT_SHA256
         or manifest.get("active_rgb_context_chain") != ["V5", "V6", "V7", "V8"]
         or manifest.get("compositional_v8_rotations") != [4]
         or manifest.get("sparse_rgb_tar_payloads_included") is not False
@@ -1506,9 +1464,7 @@ def _verified_manifest(
         raise ValueError("RGB return manifest is not a complete READY archive")
     media = manifest.get("rgb_media_scope_evidence")
     expected_scopes = {
-        f"R{rotation}_{role}"
-        for rotation in selected
-        for role in ("refiner", "generation")
+        f"R{rotation}_{role}" for rotation in selected for role in ("refiner", "generation")
     }
     if not isinstance(media, dict) or set(media) != expected_scopes:
         raise ValueError("RGB return lacks the selected media scope evidence records")
@@ -1532,12 +1488,9 @@ def _verified_manifest(
                 or evidence.get("physical_role") not in {"refiner", "generation"}
             ):
                 raise ValueError(f"Malformed compositional RGB evidence: {scope}")
-        elif (
-            not re.fullmatch(r"[0-9a-f]{64}", str(evidence.get("plan_sha256")))
-            or not re.fullmatch(
-                r"[0-9a-f]{64}", str(evidence.get("manifest_sha256"))
-            )
-        ):
+        elif not re.fullmatch(
+            r"[0-9a-f]{64}", str(evidence.get("plan_sha256"))
+        ) or not re.fullmatch(r"[0-9a-f]{64}", str(evidence.get("manifest_sha256"))):
             raise ValueError(f"Malformed direct RGB media evidence: {scope}")
     files = manifest.get("files")
     if not isinstance(files, dict) or names != set(files) | {"MANIFEST.json"}:
@@ -1698,18 +1651,23 @@ def admit_local_rgb_return(
                         if isinstance(rotation_evidence, dict)
                         else {}
                     )
-                    endpoint_evidence = isinstance(endpoints, dict) and set(endpoints) == {
-                        "PAIR_R",
-                        "R_CTX",
-                    } and all(
-                        endpoint.get("original_verify_scientific_admission") == "PASS"
-                        and re.fullmatch(
-                            r"[0-9a-f]{64}", str(endpoint.get("admission_sha256", ""))
+                    endpoint_evidence = (
+                        isinstance(endpoints, dict)
+                        and set(endpoints)
+                        == {
+                            "PAIR_R",
+                            "R_CTX",
+                        }
+                        and all(
+                            endpoint.get("original_verify_scientific_admission") == "PASS"
+                            and re.fullmatch(
+                                r"[0-9a-f]{64}", str(endpoint.get("admission_sha256", ""))
+                            )
+                            and re.fullmatch(
+                                r"[0-9a-f]{64}", str(endpoint.get("checkpoint_sha256", ""))
+                            )
+                            for endpoint in endpoints.values()
                         )
-                        and re.fullmatch(
-                            r"[0-9a-f]{64}", str(endpoint.get("checkpoint_sha256", ""))
-                        )
-                        for endpoint in endpoints.values()
                     )
                     if not endpoint_evidence:
                         break
@@ -1719,10 +1677,7 @@ def admit_local_rgb_return(
                 and reuse.get("scientific_reusability_verified") is True
                 and reuse.get("archive_sha256") == expected_sha256
                 and reuse.get("selected_root_path_maps_verified") is True
-                and (
-                    selected != ROTATIONS
-                    or reuse.get("three_root_path_maps_verified") is True
-                )
+                and (selected != ROTATIONS or reuse.get("three_root_path_maps_verified") is True)
                 and reuse.get("active_fits_modified") is False
                 and endpoint_evidence
             )
@@ -1780,11 +1735,7 @@ def admit_local_rgb_return(
 
 def _verify_extracted_files(root: Path, manifest: Mapping[str, Any]) -> None:
     expected = manifest["files"]
-    observed = {
-        path.relative_to(root).as_posix()
-        for path in root.rglob("*")
-        if path.is_file()
-    }
+    observed = {path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()}
     if observed != set(expected) | {"MANIFEST.json"}:
         raise ValueError("Extracted RGB file coverage differs")
     for relative, identity in expected.items():

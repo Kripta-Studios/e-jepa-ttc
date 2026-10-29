@@ -7,11 +7,11 @@ import json
 import os
 import runpy
 import sys
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 
 def _argument(name: str) -> str:

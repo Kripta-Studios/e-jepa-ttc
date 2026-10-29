@@ -35,14 +35,10 @@ def _canonical(value: object) -> str:
     ).hexdigest()
 
 
-def _archive(
-    path: Path, *, unsafe: bool = False, rotations: tuple[int, ...] = (2, 3, 4)
-) -> str:
+def _archive(path: Path, *, unsafe: bool = False, rotations: tuple[int, ...] = (2, 3, 4)) -> str:
     payload = b"rgb-output"
     safe_relative = (
-        "roots/r4_downstream/output.bin"
-        if rotations == (4,)
-        else "r2/downstream/output.bin"
+        "roots/r4_downstream/output.bin" if rotations == (4,) else "r2/downstream/output.bin"
     )
     relative = "../escape.bin" if unsafe else safe_relative
     files = {
@@ -443,12 +439,27 @@ def test_rgb_operational_recovery_v5_requires_exact_audit_and_sources(tmp_path: 
     downstream.mkdir()
     migration = downstream / "MIGRATION_BINDING.json"
     migration.write_text("{}\n", encoding="utf-8")
+    audit = tmp_path / "RGB_OBSERVATION_METADATA_STABILITY_AUDIT.json"
+    audit.write_text(
+        json.dumps(
+            {
+                "schema": "ejepa_rgb_observation_metadata_stability_audit_v1",
+                "status": "PASS",
+                "invariants": {
+                    "all_observed_duplicate_differences_are_exact_three_query_fields": True,
+                    "sensor_roi_group_role_conflicts": 0,
+                    "model_forward_calls": 0,
+                    "remote_updates": 0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
     sources = [
         repository / "scripts/runpod_rgb_context_v5.py",
         repository / "scripts/runpod_rgb_recovery_v3.py",
         repository / "operational/oof_rgb_metadata_fix.py",
-        repository
-        / "artifacts/runpod_migration_20261026/RGB_OBSERVATION_METADATA_STABILITY_AUDIT.json",
+        audit,
     ]
     value = {
         "schema": "ejepa_rgb_context_metadata_recovery_v5",
@@ -500,9 +511,7 @@ def test_rgb_operational_recovery_v6_requires_both_scope_evidence_sets(
             "schema": "ejepa_rgb_sparse_tar_receipt_v1",
             "status": "COMPLETE_BYTE_AND_PIXEL_VERIFIED",
             "relative": relative,
-            "members": [
-                {"member": "rgb/frame.png", "compressed_payload_sha256": "3" * 64}
-            ],
+            "members": [{"member": "rgb/frame.png", "compressed_payload_sha256": "3" * 64}],
         }
         receipt["receipt_sha256"] = _canonical(receipt)
         receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
@@ -583,9 +592,7 @@ def test_rgb_operational_recovery_v6_requires_both_scope_evidence_sets(
         (downstream / f"RGB_MEDIA_SCOPE_ADMISSION_R2_{scope['role']}.json").write_text(
             json.dumps(admission), encoding="utf-8"
         )
-    _, observed_config, evidence, _ = _validate_rgb_operational_recovery_v6(
-        downstream, 2, sources
-    )
+    _, observed_config, evidence, _ = _validate_rgb_operational_recovery_v6(downstream, 2, sources)
     assert observed_config == config_path
     assert [item[0] for item in evidence] == ["refiner", "generation"]
     (downstream / "RGB_MEDIA_SCOPE_ADMISSION_R2_generation.json").unlink()

@@ -8,12 +8,12 @@ import torch
 
 from e_jepa_ttc.rgb_port.features import pair133
 from operational.representation_audit.geometry import initialize
-from operational.representation_audit.run import OLD
 from operational.representation_audit.spatial_model import (
     SpatialReadout,
     fit_spatial_ridge,
     spatial_inputs,
 )
+from tests.fixtures.representation_audit import install
 
 
 def test_global_control_removes_vertical_order_but_active_keeps_it():
@@ -68,7 +68,8 @@ def test_chunked_ridge_matches_dense_registered_objective(active):
     )
 
 
-def test_spatial_height_does_not_change_real_pair133_or_uncertainty():
+def test_spatial_height_does_not_change_native_pair133_or_uncertainty(tmp_path, monkeypatch):
+    values = install(tmp_path, monkeypatch)
     original, *_ = initialize(7, "Q1", device="cpu")
     calibration = {
         "role": "P",
@@ -79,12 +80,7 @@ def test_spatial_height_does_not_change_real_pair133_or_uncertainty():
     }
     control = SpatialReadout(copy.deepcopy(original.model), calibration, "SP0").eval()
     active = SpatialReadout(copy.deepcopy(original.model), calibration, "SP1").eval()
-    with np.load(OLD / "vector_cache/P/part_000000.npz", allow_pickle=False) as arc:
-        inputs = {
-            k: torch.from_numpy(arc[k][:4].copy())
-            for k in arc.files
-            if k != "sample_token" and not k.startswith(("target_", "dino_"))
-        }
+    inputs = {k: v[:4].clone() for k, v in values.items() if not k.startswith(("target_", "dino_"))}
     inputs["height_features"] = torch.from_numpy(
         np.random.default_rng(17).normal(size=(4, 3, 512)).astype(np.float32)
     )

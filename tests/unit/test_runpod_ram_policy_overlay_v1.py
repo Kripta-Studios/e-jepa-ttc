@@ -55,9 +55,7 @@ def test_runtime_monitor_replaces_historical_cap_and_preserves_base_guard(
 
     monkeypatch.setattr(policy.resources.LinuxResourceMonitor, "guard", base_guard)
     monitor = policy.RealCgroupLinuxResourceMonitor(budget_bytes=46_000_000_000)
-    allowed, report = monitor.guard(
-        tmp_path, checkpoint_reservation=1024**3, completed_updates=123
-    )
+    allowed, report = monitor.guard(tmp_path, checkpoint_reservation=1024**3, completed_updates=123)
 
     assert allowed is True
     assert observed["budget"] == 61_000_000_000

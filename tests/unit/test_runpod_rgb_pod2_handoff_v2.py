@@ -56,7 +56,7 @@ def test_v2_does_not_replace_resume_or_finalize_implementation() -> None:
         assert inspect.getsource(runtime.Pod2Handoff.run) == run_source
         assert inspect.getsource(runtime.Pod2Handoff._remote_call) == remote_source
         assert 'probe = self._remote_call("probe"' in run_source
-        assert 'stream.seek(offset)' in run_source
+        assert "stream.seek(offset)" in run_source
         assert '"finalize", name, total, total, sha' in run_source
     finally:
         _restore(original)

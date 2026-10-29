@@ -49,9 +49,7 @@ class FoldProducerSource(Protocol):
     sampling_groups: Sequence[Sequence[int]]
     identity: Mapping[str, Any]
 
-    def batch(
-        self, indices: Sequence[int], modality: str
-    ) -> ObjectEventV4Batch: ...
+    def batch(self, indices: Sequence[int], modality: str) -> ObjectEventV4Batch: ...
 
     def close(self) -> None: ...
 
@@ -193,10 +191,7 @@ def fit_fold_producer_technical(
     )
     generator = torch.Generator(device="cpu").manual_seed(recipe.seed)
     fit_directory = (
-        run_root.resolve()
-        / "technical"
-        / f"rotation_{int(source.identity['rotation'])}"
-        / fit_id
+        run_root.resolve() / "technical" / f"rotation_{int(source.identity['rotation'])}" / fit_id
     )
     identity = _identity(source, recipe, config_path, device_name)
     state = ProducerCheckpoint(fit_directory, identity, recipe.updates)
@@ -230,9 +225,7 @@ def fit_fold_producer_technical(
             _validate_batch(part, recipe)
         optimizer.zero_grad(set_to_none=True)
         with _autocast(target, str(recipe.training_config["precision"])):
-            loss, components = _producer_loss(
-                model, batch, warmup if epoch <= 3 else loss_config
-            )
+            loss, components = _producer_loss(model, batch, warmup if epoch <= 3 else loss_config)
         if not bool(torch.isfinite(loss)):
             raise FloatingPointError("Fold producer technical loss became nonfinite")
         loss.backward()
@@ -251,8 +244,7 @@ def fit_fold_producer_technical(
                 "update": state.completed,
                 "total": float(loss.detach().float().cpu()),
                 "components": {
-                    name: float(value.detach().float().cpu())
-                    for name, value in components.items()
+                    name: float(value.detach().float().cpu()) for name, value in components.items()
                 },
             }
         )

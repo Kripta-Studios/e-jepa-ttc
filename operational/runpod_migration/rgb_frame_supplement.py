@@ -77,9 +77,7 @@ def enumerate_references(
         frame = pd.read_parquet(path)
         frame["_historical_role"] = historical_role
         native_parts.append(frame)
-    native = pd.concat(native_parts, ignore_index=True).sort_values(
-        "source_ordinal", kind="stable"
-    )
+    native = pd.concat(native_parts, ignore_index=True).sort_values("source_ordinal", kind="stable")
     ordinals = native.source_ordinal.to_numpy(np.int64)
     if len(native) != 88_744 or not np.array_equal(ordinals, np.arange(88_744)):
         raise ValueError("P/H/V rows are not the exact native TRAIN40 ordinal union")
@@ -119,10 +117,16 @@ def plan_supplement(
     roles: tuple[str, ...] = ("refiner", "generation"),
 ) -> dict[str, Any]:
     """Scan TAR headers and write an exact member/size plan without copying pixels."""
-    if not rotations or set(rotations) - {2, 3, 4} or not roles or set(roles) - {
-        "refiner",
-        "generation",
-    }:
+    if (
+        not rotations
+        or set(rotations) - {2, 3, 4}
+        or not roles
+        or set(roles)
+        - {
+            "refiner",
+            "generation",
+        }
+    ):
         raise ValueError("RGB supplement scope must use registered rotations and roles")
     media_root, references = enumerate_references(
         descriptor_path, fold_contract, rotations=rotations, roles=roles
@@ -246,9 +250,10 @@ def build_supplement(plan_path: Path, destination_root: Path, output: Path) -> d
             continue
         if destination.exists():
             members = []
-            with tarfile.open(source, mode="r") as original, tarfile.open(
-                destination, mode="r"
-            ) as sparse:
+            with (
+                tarfile.open(source, mode="r") as original,
+                tarfile.open(destination, mode="r") as sparse,
+            ):
                 expected_names = {str(item["member"]) for item in tar_record["members"]}
                 if set(sparse.getnames()) != expected_names:
                     raise ValueError(f"Interrupted sparse RGB TAR membership differs: {relative}")
@@ -346,8 +351,7 @@ def build_supplement(plan_path: Path, destination_root: Path, output: Path) -> d
                     encoded = extracted.read()
                 if (
                     len(encoded) != item["payload_bytes"]
-                    or hashlib.sha256(encoded).hexdigest()
-                    != item["compressed_payload_sha256"]
+                    or hashlib.sha256(encoded).hexdigest() != item["compressed_payload_sha256"]
                 ):
                     raise ValueError(f"Sparse RGB compressed payload parity differs: {name}")
                 if item.get("decoded_pixel_parity_sample"):

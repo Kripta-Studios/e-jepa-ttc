@@ -49,9 +49,7 @@ def verify_event_downstream_plan(
         for item in inventory["files"]
         if str(item["relative"]).replace("\\", "/") in members
     }
-    included.update(
-        {str(Path(item["source"]).resolve()): item for item in producer["files"]}
-    )
+    included.update({str(Path(item["source"]).resolve()): item for item in producer["files"]})
     deferred = {str(Path(item["source"]).resolve()): item for item in raw["files"]}
     required: dict[str, dict[str, Any]] = {}
 

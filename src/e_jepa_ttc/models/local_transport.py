@@ -278,9 +278,7 @@ def _summarise_one(
     entropy = _weighted_mean(forward.entropy, base_weight)
 
     reverse_dx, reverse_dy, reverse_valid = (
-        _sample_reverse_flow(
-            reverse, forward, deterministic_sampling=deterministic_sampling
-        )
+        _sample_reverse_flow(reverse, forward, deterministic_sampling=deterministic_sampling)
         if reverse_sample is None
         else reverse_sample
     )
@@ -338,9 +336,7 @@ def transport_physical_features(
         raise ValueError("foreground_weight must have shape [B,H,W] or [B,1,H,W]")
 
     reverse_sample = (
-        _sample_reverse_flow(
-            reverse, forward, deterministic_sampling=deterministic_sampling
-        )
+        _sample_reverse_flow(reverse, forward, deterministic_sampling=deterministic_sampling)
         if reuse_reverse_sample
         else None
     )

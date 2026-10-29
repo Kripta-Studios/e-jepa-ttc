@@ -43,7 +43,8 @@ def groups() -> dict[str, list[str]]:
         "test12_rgb_metadata": ["/workspace/ejepa_test12_rgb"],
         "rgb_fold_closure": ["/workspace/ejepa_rgb_handoff/extracted_v10"],
         "final_auxiliary_runtime": [
-            "/workspace/ejepa_test12_cache_controller", "/workspace/ejepa_preservation"
+            "/workspace/ejepa_test12_cache_controller",
+            "/workspace/ejepa_preservation",
         ],
     }
     for rotation in (2, 3, 4):

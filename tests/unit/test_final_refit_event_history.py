@@ -93,6 +93,4 @@ def test_compaction_rejects_referenced_missing_observation() -> None:
         "features": np.asarray([[1, 2]], np.float32),
     }
     with pytest.raises(ValueError, match="missing generated observations"):
-        compact_referenced_observations(
-            source, np.asarray([["missing"]]), np.asarray([[True]])
-        )
+        compact_referenced_observations(source, np.asarray([["missing"]]), np.asarray([[True]]))

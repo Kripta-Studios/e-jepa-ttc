@@ -89,9 +89,7 @@ def _fixture_workspace(root: Path) -> Path:
         {
             **base_manifest,
             "directory": str(input_dir),
-            "ordered_shards": [
-                {"name": "shard.npz", "start": 0, "stop": 88744, "bytes": 5}
-            ],
+            "ordered_shards": [{"name": "shard.npz", "start": 0, "stop": 88744, "bytes": 5}],
         },
     )
     teacher_manifest_path = run12 / "TEACHER_MANIFEST.json"
@@ -101,9 +99,7 @@ def _fixture_workspace(root: Path) -> Path:
             **base_manifest,
             "directory": str(teacher_dir),
             "freeze_sha256": freeze_sha256,
-            "ordered_shards": [
-                {"name": "shard.npz", "start": 0, "stop": 88744, "bytes": 7}
-            ],
+            "ordered_shards": [{"name": "shard.npz", "start": 0, "stop": 88744, "bytes": 7}],
         },
     )
     _write_json(

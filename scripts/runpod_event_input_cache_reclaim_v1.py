@@ -20,9 +20,10 @@ def cgroup_usage() -> int:
 def reclaim(root: Path, seal_path: Path, receipt: Path) -> dict[str, Any]:
     root, seal_path = root.resolve(strict=True), seal_path.resolve(strict=True)
     seal = json.loads(seal_path.read_text(encoding="utf-8"))
-    if seal.get("schema") != "ejepa_immutable_local_bundle_seal_v1" or seal.get(
-        "status"
-    ) != "SEALED":
+    if (
+        seal.get("schema") != "ejepa_immutable_local_bundle_seal_v1"
+        or seal.get("status") != "SEALED"
+    ):
         raise ValueError("Immutable bundle seal is required")
     selected = [
         item

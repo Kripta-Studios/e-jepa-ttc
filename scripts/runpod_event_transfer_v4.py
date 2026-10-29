@@ -263,9 +263,17 @@ def transfer(
     remote = f"python3 -u -c \"import base64;exec(base64.b64decode('{encoded}'))\" {remote_root}"
     command = [
         os.environ.get("EJEPA_TRANSFER_SSH", "ssh"),
-        "-T", "-p", str(port), "-i", str(identity_file.resolve(strict=True)),
-        "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
-        f"{user}@{host}", remote,
+        "-T",
+        "-p",
+        str(port),
+        "-i",
+        str(identity_file.resolve(strict=True)),
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        f"{user}@{host}",
+        remote,
     ]
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     if process.stdin is None or process.stdout is None:
@@ -399,20 +407,35 @@ def main() -> int:
     args = parser.parse_args()
     if not args.execute:
         manifest = transfer_v3._read(args.manifest.resolve(strict=True))
-        print(json.dumps({
-            "status": "DRY_RUN",
-            "files": manifest.get("file_count"),
-            "bytes": manifest.get("total_bytes"),
-            "remote_root": args.remote_root,
-            "sender": "runpod_event_transfer_v4",
-            "prefetch_cache_bytes": PREFETCH_CACHE_BYTES,
-            "current_buffer_bytes": CURRENT_BUFFER_BYTES,
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "status": "DRY_RUN",
+                    "files": manifest.get("file_count"),
+                    "bytes": manifest.get("total_bytes"),
+                    "remote_root": args.remote_root,
+                    "sender": "runpod_event_transfer_v4",
+                    "prefetch_cache_bytes": PREFETCH_CACHE_BYTES,
+                    "current_buffer_bytes": CURRENT_BUFFER_BYTES,
+                },
+                indent=2,
+            )
+        )
         return 0
-    print(json.dumps(transfer(
-        args.manifest, args.host, args.user, args.port, args.identity_file,
-        args.remote_root, telemetry_interval_seconds=args.telemetry_interval_seconds,
-    ), indent=2))
+    print(
+        json.dumps(
+            transfer(
+                args.manifest,
+                args.host,
+                args.user,
+                args.port,
+                args.identity_file,
+                args.remote_root,
+                telemetry_interval_seconds=args.telemetry_interval_seconds,
+            ),
+            indent=2,
+        )
+    )
     return 0
 
 

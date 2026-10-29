@@ -267,11 +267,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 },
             )
         parity = [_parity(evidence[0], candidate) for candidate in evidence[1:]]
-        admitted_candidates = [
-            index
-            for index in range(1, 4)
-            if parity[index - 1]["passed"]
-        ]
+        admitted_candidates = [index for index in range(1, 4) if parity[index - 1]["passed"]]
         best_index = min(admitted_candidates, key=lambda index: arms[index]["wall_ms"])
         profiler: dict[str, Any]
         profiler_steps = 0

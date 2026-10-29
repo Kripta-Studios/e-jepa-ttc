@@ -12,6 +12,7 @@ import sys
 import tarfile
 import time
 import uuid
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -19,22 +20,36 @@ import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "artifacts/runpod_event_migration_20261026/resume_20261027"))
-from rpc import call as transport_call  # noqa: E402 - existing session transport
 
 RECEIPTS = ROOT / "artifacts/runpod_event_migration_20261026/final_20261027/POD2_RETURN"
 DEADLINE = 1793145600.0
 
 
+def _load_transport_call() -> Callable[..., Any]:
+    """Load the session-only transport when a remote operation is requested."""
+    try:
+        from rpc import call as transport_call
+    except ModuleNotFoundError as error:
+        if error.name != "rpc":
+            raise
+        raise RuntimeError(
+            "RunPod preservation transport is unavailable: the session module 'rpc' "
+            "must be present to run remote preservation operations. Offline archive "
+            "verification does not require it."
+        ) from error
+    return transport_call
+
+
 def call(code: str, timeout: int = 45) -> Any:
     """Retry pre-execution SSH/DNS failures until the authorized deadline."""
+    transport_call = _load_transport_call()
     attempt = 0
     while time.time() < DEADLINE and not (RECEIPTS / "STOP_BACKUP_REQUEST").exists():
         try:
             return transport_call(code, timeout=timeout)
         except RuntimeError as error:
             if not any(
-                marker in str(error)
-                for marker in ("banner exchange", "Could not resolve hostname")
+                marker in str(error) for marker in ("banner exchange", "Could not resolve hostname")
             ):
                 raise
             attempt += 1

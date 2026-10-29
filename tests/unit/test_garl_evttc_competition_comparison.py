@@ -9,6 +9,23 @@ import pytest
 import scripts.compare_garl_evttc_competition as comparison
 
 COUNTS = (50, 43, 30, 46, 55, 59, 42, 40, 51, 18)
+LITERATURE_FIXTURE = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "garl_evttc_literature_receipt.json"
+)
+
+
+@pytest.fixture(autouse=True)
+def _bind_tracked_literature_receipt(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Use a tracked primary-source projection instead of a workstation audit cache."""
+    receipt = comparison.read_json(LITERATURE_FIXTURE)
+    papers = [paper for paper in receipt["papers"] if "evttc_result" in paper]
+    assert len(papers) == 1
+    result = papers[0]["evttc_result"]
+    sequence_values = [item["rte_percent"] for item in result["sequences"].values()]
+    assert len(sequence_values) == 3
+    assert sum(sequence_values) / len(sequence_values) == pytest.approx(10.60)
+    assert result["unweighted_three_sequence_average"]["rte_percent"] == pytest.approx(10.60)
+    monkeypatch.setattr(comparison, "LITERATURE_RECEIPT", LITERATURE_FIXTURE)
 
 
 def _json(path: Path, value: object) -> None:

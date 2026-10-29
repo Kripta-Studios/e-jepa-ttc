@@ -65,9 +65,7 @@ class QuotaPublisher:
         }
 
 
-def validate_budget(
-    assignment: dict[str, Any], budget: dict[str, Any], rotation: int
-) -> None:
+def validate_budget(assignment: dict[str, Any], budget: dict[str, Any], rotation: int) -> None:
     """Admit exactly one C2F producer without expanding the shared user cap."""
     task = [{"rotation": rotation, "fit": FIT}]
     limit, assigned = budget.get("maximum_total_usd"), assignment.get("maximum_compute_usd")

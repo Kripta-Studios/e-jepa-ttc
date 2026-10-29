@@ -12,7 +12,6 @@ from typing import Any
 from .bundle import safe_member
 from .inventory import digest, read
 
-
 SCHEMA = "ejepa_immutable_local_bundle_seal_v1"
 
 
@@ -116,7 +115,12 @@ def verify(root: Path, seal_path: Path) -> dict[str, Any]:
             observed.st_ino,
             observed.st_mode,
         )
-        if path.is_symlink() or not path.is_file() or actual != expected or observed.st_mode & 0o222:
+        if (
+            path.is_symlink()
+            or not path.is_file()
+            or actual != expected
+            or observed.st_mode & 0o222
+        ):
             raise ValueError(f"Sealed local member changed: {relative}")
     return manifest
 

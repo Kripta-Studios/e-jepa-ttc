@@ -59,9 +59,7 @@ def main() -> None:
     admission = json.loads(admission_path.read_text(encoding="utf-8"))
     os.environ["EJEPA_EVENT_SUPPLEMENT_ROOT"] = str(admission["root"])
     os.environ["EJEPA_EVENT_SUPPLEMENT_ADMISSION"] = str(admission_path.resolve())
-    os.environ["EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ROOT"] = (
-        "/opt/ejepa_event_authority_supplement_v2"
-    )
+    os.environ["EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ROOT"] = "/opt/ejepa_event_authority_supplement_v2"
     os.environ["EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ADMISSION"] = (
         "/workspace/ejepa_event_operations/authority_supplement_v2/"
         "EVENT_AUTHORITY_SUPPLEMENT_ADMISSION.json"
@@ -78,4 +76,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

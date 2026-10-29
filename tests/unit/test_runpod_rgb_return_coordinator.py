@@ -53,8 +53,7 @@ def _config(tmp_path: Path) -> tuple[Path, dict[str, Any]]:
         "ssh_known_hosts": str(known_hosts),
         "remote_python": "/opt/ejepa_env/bin/python",
         "remote_export_entrypoint": (
-            "/workspace/ejepa_operations/rgb_archive/scripts/"
-            "runpod_rgb_complete_export_v1.py"
+            "/workspace/ejepa_operations/rgb_archive/scripts/runpod_rgb_complete_export_v1.py"
         ),
         "remote_run_roots": {
             str(rotation): {
@@ -182,8 +181,7 @@ class FakeAdmit:
             },
             "eviction": (
                 {"status": "PASS"}
-                if kwargs.get("expected_rotations") == (4,)
-                and "reuse_verification" in kwargs
+                if kwargs.get("expected_rotations") == (4,) and "reuse_verification" in kwargs
                 else None
             ),
         }
@@ -211,9 +209,7 @@ def _individual_r4_config(tmp_path: Path) -> tuple[Path, dict[str, Any]]:
 
 def test_individual_r4_config_is_singleton_closed_and_completes(tmp_path: Path) -> None:
     repository, config = _individual_r4_config(tmp_path)
-    remote = FakeRemote(
-        b"individual-r4-tar", archive="/opt/ejepa_rgb_return/R4_COMPLETE.tar"
-    )
+    remote = FakeRemote(b"individual-r4-tar", archive="/opt/ejepa_rgb_return/R4_COMPLETE.tar")
     admit = FakeAdmit(tmp_path / "r4-extracted")
     coordinator = Coordinator(config, repository, runner=remote, admit=admit)
     assert coordinator.config["rotations"] == (4,)

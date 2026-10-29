@@ -10,10 +10,7 @@ import torch
 
 
 def _load_transport() -> ModuleType:
-    source = (
-        Path(__file__).resolve().parents[2]
-        / "src/e_jepa_ttc/models/local_transport.py"
-    )
+    source = Path(__file__).resolve().parents[2] / "src/e_jepa_ttc/models/local_transport.py"
     name = "runtime_v3_local_transport"
     spec = importlib.util.spec_from_file_location(name, source)
     if spec is None or spec.loader is None:
@@ -88,8 +85,7 @@ def _output_and_gradients(
     weights = torch.linspace(0.5, 1.5, output.numel(), dtype=output.dtype).reshape_as(output)
     (output * weights).sum().backward()
     gradients = [
-        None if leaf.grad is None else leaf.grad.detach().clone()
-        for leaf in [*leaves, foreground]
+        None if leaf.grad is None else leaf.grad.detach().clone() for leaf in [*leaves, foreground]
     ]
     return output.detach(), gradients
 
@@ -107,9 +103,7 @@ def test_reuse_preserves_forward_and_all_nine_leaf_gradients() -> None:
             assert reused_gradient is historical_gradient is None
             continue
         assert torch.isfinite(reused_gradient).all()
-        torch.testing.assert_close(
-            reused_gradient, historical_gradient, rtol=1.0e-12, atol=1.0e-12
-        )
+        torch.testing.assert_close(reused_gradient, historical_gradient, rtol=1.0e-12, atol=1.0e-12)
 
 
 def test_reuse_calls_reverse_sampler_once_and_default_calls_it_twice(
@@ -125,9 +119,7 @@ def test_reuse_calls_reverse_sampler_once_and_default_calls_it_twice(
         return original(*args, **kwargs)
 
     monkeypatch.setattr(transport, "_sample_reverse_flow", counted)
-    transport.transport_physical_features(
-        forward, reverse, foreground_weight=None, radius=2
-    )
+    transport.transport_physical_features(forward, reverse, foreground_weight=None, radius=2)
     assert calls == 2
     calls = 0
     transport.transport_physical_features(

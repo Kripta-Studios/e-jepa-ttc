@@ -28,8 +28,7 @@ DEFAULT_MAX_FILES_PER_CYCLE = 256
 STAGE_ROOT = Path("/opt/ejepa_event_bundle")
 ALLOWED_PREFIXES = (
     "drives/E/EJEPA_TRAIN40_CACHE_20261005/producer_inputs/",
-    "workspace/e-jepa-ttc-v12-efficient-context/artifacts/"
-    "train40_system_20261005/teacher/",
+    "workspace/e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/teacher/",
 )
 
 
@@ -229,9 +228,8 @@ def advise_cycle(
     before = observe()
     ranges: list[dict[str, Any]] = []
     advised_bytes = 0
-    while (
-        int(before["effective_headroom_bytes"]) < target_headroom_bytes
-        and len(ranges) < min(max_files, len(inventory))
+    while int(before["effective_headroom_bytes"]) < target_headroom_bytes and len(ranges) < min(
+        max_files, len(inventory)
     ):
         item = inventory[cursor]
         if ranges and advised_bytes + item.bytes > max_bytes:

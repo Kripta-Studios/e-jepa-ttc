@@ -87,6 +87,22 @@ select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 # Historical CLI adapters inspect JSON, dynamically loaded modules and model hooks.
 # Keep explicit Any at those boundaries; all other annotation rules still apply.
 "scripts/**/*.py" = ["ANN401"]
+# These six expired execution wrappers are published evidence from commit 2ad7a057.
+# Keep lint active and suppress only their observed style/annotation diagnostics.
+"scripts/runpod_deadline_extension_0100_20261027.py" = ["E501"]
+"scripts/runpod_deadline_extension_20261027.py" = ["E501"]
+"scripts/runpod_event_extended_0100_20261027.py" = [
+  "I001", "ANN201", "ANN001", "E701", "ANN202", "E702", "E501",
+]
+"scripts/runpod_event_extended_parallel_20261027.py" = [
+  "I001", "ANN201", "ANN001", "E701", "ANN202", "E702", "E501",
+]
+"scripts/runpod_event_relocated_parallel_20261027.py" = [
+  "I001", "ANN201", "ANN001", "E701", "ANN202", "E702", "E501",
+]
+"scripts/runpod_event_resource_watchdog_v14.py" = ["I001", "ANN201", "E501"]
+# This runtime-bound watchdog is clean for F/B/UP/N; preserve only its observed style findings.
+"scripts/runpod_event_resource_watchdog_v12.py" = ["I001", "E501", "E701", "E702"]
 # Sensor admission already binds these executed bytes; preserve its three long lines.
 "operational/joint_measurement/data.py" = ["E501"]
 
@@ -98,6 +114,33 @@ exclude = [
   "src/e_jepa_ttc/data/object_event_v4.py",
   "operational/rgb_port/report.py",
   "operational/rgb_port_c2f_graph/contracts.py",
+  # Expired wrappers preserved byte-for-byte from published commit 2ad7a057.
+  "scripts/runpod_deadline_extension_0100_20261027.py",
+  "scripts/runpod_deadline_extension_20261027.py",
+  "scripts/runpod_event_extended_0100_20261027.py",
+  "scripts/runpod_event_extended_parallel_20261027.py",
+  "scripts/runpod_event_relocated_parallel_20261027.py",
+  "scripts/runpod_event_resource_watchdog_v14.py",
+  # Runtime-bound source preserved from integration commit 2a047bf1.
+  "operational/runpod_migration/event_queue.py",
+  "operational/runpod_migration/pod2_rgb_handoff.py",
+  "scripts/runpod_event_queue_v1.py",
+  "scripts/runpod_event_queue_waiter_v2.py",
+  "scripts/runpod_event_resource_watchdog_v1.py",
+  "scripts/runpod_event_resource_watchdog_v12.py",
+  "scripts/runpod_event_resource_watchdog_v7.py",
+  "scripts/runpod_measure_window.py",
+  "scripts/runpod_rgb_context_v5.py",
+  "scripts/runpod_rgb_context_v6.py",
+  "scripts/runpod_rgb_context_v7.py",
+  "scripts/runpod_rgb_context_v8.py",
+  "scripts/runpod_rgb_input_cache_reclaim_v1.py",
+  "scripts/runpod_rgb_path_compat_v1.py",
+  "scripts/upload_rgb_atomic_status_v1.py",
+  "scripts/upload_rgb_sparse_frames_v2.py",
+  "scripts/upload_rgb_sparse_frames_v4.py",
+  "scripts/upload_rgb_sparse_frames_v5.py",
+  "scripts/upload_rgb_sparse_frames_v6.py",
 ]
 
 [tool.pytest.ini_options]

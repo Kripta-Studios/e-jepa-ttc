@@ -53,9 +53,11 @@ def _write_once(path: Path, value: dict[str, Any]) -> None:
 def _rows(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     rows = []
     for item in manifest["files"]:
-        relative = PureWindowsPath(item["source"]).relative_to(
-            PureWindowsPath("E:/eAP_dataset")
-        ).as_posix()
+        relative = (
+            PureWindowsPath(item["source"])
+            .relative_to(PureWindowsPath("E:/eAP_dataset"))
+            .as_posix()
+        )
         rows.append(
             {
                 "relative": relative,

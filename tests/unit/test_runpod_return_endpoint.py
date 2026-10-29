@@ -82,7 +82,8 @@ def test_rgb_downstream_requires_exact_archive_bytes_and_task(tmp_path):
         "status": "READY",
         "files": {
             "roots/r2_downstream/RGB_DOWNSTREAM_ADMISSION.json": {
-                "sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload)
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "bytes": len(payload),
             }
         },
     }

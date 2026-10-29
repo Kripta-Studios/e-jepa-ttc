@@ -8,10 +8,21 @@ from scripts import prepare_runpod_event_watchdog_v1 as prepare
 
 
 def _identity(pid: int, rotation: int = 2, state: str = "S") -> dict:
-    return {"pid": pid, "state": state, "argv": [
-        "/opt/python", "/ops/event.py", "producer", "--run", "/runs",
-        "--rotation", str(rotation), "--fit", "E_A5",
-    ]}
+    return {
+        "pid": pid,
+        "state": state,
+        "argv": [
+            "/opt/python",
+            "/ops/event.py",
+            "producer",
+            "--run",
+            "/runs",
+            "--rotation",
+            str(rotation),
+            "--fit",
+            "E_A5",
+        ],
+    }
 
 
 def test_adoption_ignores_other_rotation_and_zombie(tmp_path: Path, monkeypatch) -> None:

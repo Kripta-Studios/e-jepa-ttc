@@ -60,7 +60,10 @@ def reserve(run: Path, receipt_path: Path, rotation: int) -> dict[str, Any]:
                 fit: digest(run / f"rotations/{rotation}/fits/{fit}/STOP_REQUEST")
                 for fit in ("R_A5", "R_C2F")
             },
-            "mechanism": "frozen pipeline completes all four producers before any PAIR or CTX stage; both RGB producers remain effectively stopped locally",
+            "mechanism": (
+                "frozen pipeline completes all four producers before any PAIR or CTX stage; "
+                "both RGB producers remain effectively stopped locally"
+            ),
             "producer_publication_forbidden_until_downstream_return_verified": True,
             "head_stop_files_claimed": False,
             "active_event_fit_interrupted": False,

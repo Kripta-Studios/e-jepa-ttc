@@ -125,5 +125,3 @@ def test_in_place_order_mutation_is_rejected() -> None:
         order[0], order[1] = order[1], order[0]
         with pytest.raises(ValueError, match="mutated in place"):
             prefetch.get((1, 0, 2))
-
-

@@ -7,6 +7,10 @@ import torch
 
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
 from e_jepa_ttc.models.local_transport import local_correlation_match, transport_physical_features
+from operational.train40_runtime.producers import (
+    TRANSPORT_REUSE_MODES,
+    transport_reuse_contract,
+)
 from operational.train40_runtime.transport import (
     CorrelationSession,
     adjacent_pair_indices,
@@ -75,23 +79,7 @@ def test_session_rejects_wrong_direction_and_restores_probability_choice():
 
 
 @pytest.mark.parametrize("pyramid", [False, True])
-@pytest.mark.parametrize(
-    "deduplicate",
-    [
-        False,
-        pytest.param(
-            True,
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason=(
-                    "UNADMITTED adjacent-pair dedup changes batch shape; observed CPU "
-                    "pair_tokens differ bitwise. Keep exact assertion and final "
-                    "1e-5 gate unchanged."
-                ),
-            ),
-        ),
-    ],
-)
+@pytest.mark.parametrize("deduplicate", [False, True])
 def test_model_view_preserves_all_outputs_and_frozen_state(pyramid, deduplicate):
     torch.manual_seed(11)
     model = (
@@ -125,19 +113,54 @@ def test_model_view_preserves_all_outputs_and_frozen_state(pyramid, deduplicate)
     with torch.inference_mode():
         expected = model(sensor, delta, return_dense_features=True)
         actual = view(sensor, delta, return_dense_features=True)
-    for field in fields(expected):
-        a, b = getattr(actual, field.name), getattr(expected, field.name)
-        if isinstance(a, torch.Tensor):
-            assert torch.equal(a, b), field.name
-        elif isinstance(a, dict):
-            assert all(torch.equal(a[key], b[key]) for key in a), field.name
-        else:
-            assert a == b
     assert dict(model.named_modules()) == original_modules
     assert all(
         torch.equal(value, model.state_dict()[name]) for name, value in original_state.items()
     )
     assert all(a is b for a, b in zip(model.parameters(), view.parameters(), strict=True))
+
+    differences = []
+
+    def compare_tensor(a, b, name):
+        assert a.shape == b.shape and a.dtype == b.dtype and a.device == b.device, name
+        assert torch.isfinite(a).all() and torch.isfinite(b).all(), name
+        if deduplicate:
+            # The unadmitted candidate may change CPU reduction rounding when
+            # it reduces the pair batch. Bound every field before reporting an
+            # exact-parity failure; never turn a large error into an xfail.
+            torch.testing.assert_close(a, b, atol=1e-5, rtol=1e-5, msg=name)
+            if not torch.equal(a, b):
+                differences.append(name)
+        else:
+            assert torch.equal(a, b), name
+
+    for field in fields(expected):
+        a, b = getattr(actual, field.name), getattr(expected, field.name)
+        if isinstance(a, torch.Tensor):
+            compare_tensor(a, b, field.name)
+        elif isinstance(a, dict):
+            assert a.keys() == b.keys(), field.name
+            for key in a:
+                compare_tensor(a[key], b[key], f"{field.name}.{key}")
+        else:
+            assert a == b
+    if differences:
+        # Some CPU backends are exact on this fixture. That is a passing
+        # diagnostic, not production admission. All state, structure and 1e-5
+        # checks above remain hard failures on every backend.
+        pytest.xfail("UNADMITTED adjacent-pair CPU bitwise differences: " + ", ".join(differences))
+
+
+@pytest.mark.parametrize("mode", TRANSPORT_REUSE_MODES)
+def test_registered_production_modes_exclude_adjacent_pair_deduplication(mode):
+    contract = transport_reuse_contract(mode)
+    assert contract["history_group_size"] is None
+    assert contract["adjacent_pair_deduplication"] is False
+
+
+def test_adjacent_pair_deduplication_is_not_a_registered_production_mode():
+    with pytest.raises(ValueError, match="Transport reuse must be"):
+        transport_reuse_contract("adjacent-pair-deduplication")
 
 
 def test_runtime_guard_is_explicit_and_training_rejected():

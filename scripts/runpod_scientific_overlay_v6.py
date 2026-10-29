@@ -62,8 +62,7 @@ def _validate_proofs(
         or resume_input.get("logical_vs_local_bit_exact") is not True
         or resume_input.get("python_numpy_torch_rng_unchanged") is not True
         or resume_route.get("readiness_sha256") != readiness_sha
-        or input_route.get("content_identity_sha256")
-        != resume_route.get("content_identity_sha256")
+        or input_route.get("content_identity_sha256") != resume_route.get("content_identity_sha256")
     ):
         raise ValueError("Local-cache input/resume proofs are incomplete or disagree")
     return input_proof, resume_proof
@@ -151,9 +150,7 @@ def main() -> int:
                 "shared_transient_limit_bytes": 512 * 1024**2,
                 "zero_io_claimed": False,
             }
-            runner._write_once(
-                scientific_run / "LOCAL_CACHE_RUNTIME_ADMISSION.json", admission
-            )
+            runner._write_once(scientific_run / "LOCAL_CACHE_RUNTIME_ADMISSION.json", admission)
 
             def stats(value: dict[str, object]) -> None:
                 atomic_write_json(

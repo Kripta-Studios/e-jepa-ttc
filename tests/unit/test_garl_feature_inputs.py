@@ -4,11 +4,18 @@ from concurrent.futures import Future
 from types import SimpleNamespace
 
 import numpy as np
+import psutil
 import pytest
 import torch
 
 from operational.efficient_context import garl_feature_inputs, parallel_inputs
 from operational.efficient_context.garl_feature_inputs import prepare_inference
+
+
+@pytest.fixture(autouse=True)
+def available_host_ram(monkeypatch):
+    """Exercise input contracts at the allowed RAM boundary on every host."""
+    monkeypatch.setattr(psutil, "virtual_memory", lambda: SimpleNamespace(available=2 * 1024**3))
 
 
 def inputs(tmp_path, monkeypatch):
@@ -89,8 +96,6 @@ def test_uninitialized_reader_refused(tmp_path, monkeypatch):
 
 
 def test_host_ram_floor_preserved(tmp_path, monkeypatch):
-    import psutil
-
     native, identity, _, _, calls = inputs(tmp_path, monkeypatch)
     monkeypatch.setattr(
         psutil, "virtual_memory", lambda: SimpleNamespace(available=2 * 1024**3 - 1)

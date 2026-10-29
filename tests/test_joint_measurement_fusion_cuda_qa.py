@@ -9,7 +9,9 @@ from operational.range_transfer.common import read, sha, write
 def cpu_proof(tmp_path, monkeypatch):
     monkeypatch.setattr(qa, "CPU", tmp_path / "cpu")
     monkeypatch.setattr(qa, "OUT", tmp_path / "cuda")
+    monkeypatch.setattr(qa, "PREVIOUS", tmp_path / "previous")
     monkeypatch.setattr(qa, "committed_sources", lambda _: "test")
+    write(qa.PREVIOUS / "REGISTRATION.json", {"status": "SUPERSEDED"})
     write(qa.CPU / "REGISTRATION.json", {"sources": {}})
     write(
         qa.CPU / "PASS.json",

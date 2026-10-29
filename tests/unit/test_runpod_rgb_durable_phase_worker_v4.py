@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -89,15 +90,56 @@ def test_proof_hash_mismatch_fails_closed(tmp_path: Path) -> None:
         module.validate_eviction_authority(path)
 
 
-def test_config_binds_authority_fix_and_preserves_state_paths() -> None:
+def test_config_binds_authority_fix_and_preserves_state_paths(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    base = tmp_path / "SYNTHETIC_RGB_DURABLE_PHASE_WORKER_CONFIG_V2.json"
+    authority_path = tmp_path / "SYNTHETIC_R4_AUTHORITY_FIX_CONFIG.json"
+    write(base, {"schema": "synthetic_v2"})
+    write(authority_path, {"schema": "synthetic_authority_fix"})
+
+    underlying = SimpleNamespace(
+        read_json=lambda path: json.loads(Path(path).read_text(encoding="utf-8")),
+        load_config=lambda path: {
+            "return_coordinator_argv": [
+                "python",
+                "coordinator.py",
+                "--config",
+                "synthetic-old-config.json",
+            ],
+            "state_path": str(tmp_path / "RGB_PHASE_WORKER_STATE.json"),
+        },
+    )
+    v3_wrapper = SimpleNamespace(install_v3=lambda: underlying)
+
+    class Loader:
+        @staticmethod
+        def exec_module(module: object) -> None:
+            return None
+
+    spec = SimpleNamespace(name="synthetic_durable_worker_v3", loader=Loader())
+    monkeypatch.setattr(wrapper.importlib.util, "spec_from_file_location", lambda *_args: spec)
+    monkeypatch.setattr(wrapper.importlib.util, "module_from_spec", lambda _spec: v3_wrapper)
+    monkeypatch.setattr(wrapper, "BASE_CONFIG_SHA256", sha(base))
+    monkeypatch.setattr(wrapper, "AUTHORITY_FIX_CONFIG_SHA256", sha(authority_path))
+
+    overlay = tmp_path / "SYNTHETIC_RGB_DURABLE_PHASE_WORKER_CONFIG_V3.json"
+    write(
+        overlay,
+        {
+            "schema": "ejepa_rgb_durable_phase_worker_config_v3",
+            "base_config_path": str(base),
+            "base_config_sha256": wrapper.BASE_CONFIG_SHA256,
+            "authority_fix_config_path": str(authority_path),
+            "authority_fix_config_sha256": wrapper.AUTHORITY_FIX_CONFIG_SHA256,
+        },
+    )
     module = wrapper.install_v4()
-    root = Path(__file__).resolve().parents[2]
-    config = module.load_config(
-        root / "artifacts/runpod_migration_20261026/RGB_DURABLE_PHASE_WORKER_CONFIG_V3.json"
-    )
+    config = module.load_config(overlay)
     argv = config["return_coordinator_argv"]
-    assert argv[argv.index("--config") + 1].endswith(
-        "RGB_RETURN_COORDINATOR_INDIVIDUAL_R4_AUTHORITY_FIX_CONFIG.json"
-    )
+    assert argv[argv.index("--config") + 1] == str(authority_path)
     assert config["return_coordinator_config_sha256"] == wrapper.AUTHORITY_FIX_CONFIG_SHA256
     assert config["state_path"].endswith("RGB_PHASE_WORKER_STATE.json")
+    authority_path.write_text('{"changed":true}\n', encoding="utf-8")
+    with pytest.raises(ValueError, match="authority-fix config bytes differ"):
+        module.load_config(overlay)

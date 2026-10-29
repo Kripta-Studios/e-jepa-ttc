@@ -46,15 +46,17 @@ def main() -> None:
     ]
     admission_path = Path(sys.argv[sys.argv.index("--supplemental-admission") + 1])
     admission = json.loads(admission_path.read_text(encoding="utf-8"))
-    os.environ.update({
-        "EJEPA_EVENT_SUPPLEMENT_ROOT": str(admission["root"]),
-        "EJEPA_EVENT_SUPPLEMENT_ADMISSION": str(admission_path.resolve()),
-        "EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ROOT": "/opt/ejepa_event_authority_supplement_v2",
-        "EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ADMISSION": (
-            "/workspace/ejepa_event_operations/authority_supplement_v2/"
-            "EVENT_AUTHORITY_SUPPLEMENT_ADMISSION.json"
-        ),
-    })
+    os.environ.update(
+        {
+            "EJEPA_EVENT_SUPPLEMENT_ROOT": str(admission["root"]),
+            "EJEPA_EVENT_SUPPLEMENT_ADMISSION": str(admission_path.resolve()),
+            "EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ROOT": "/opt/ejepa_event_authority_supplement_v2",
+            "EJEPA_EVENT_AUTHORITY_SUPPLEMENT_ADMISSION": (
+                "/workspace/ejepa_event_operations/authority_supplement_v2/"
+                "EVENT_AUTHORITY_SUPPLEMENT_ADMISSION.json"
+            ),
+        }
+    )
     load(
         "operational.runpod_migration.event_queue",
         root / "operational/runpod_migration/event_queue.py",

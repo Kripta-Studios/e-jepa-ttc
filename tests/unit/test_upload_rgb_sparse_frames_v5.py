@@ -95,9 +95,7 @@ def test_remote_resume_credit_rejects_impossible_total() -> None:
             "/workspace/ejepa_rgb_frames",
             [("data/a.tar", 50)],
             runner=lambda *_args, **_kwargs: SimpleNamespace(
-                stdout=json.dumps(
-                    {"credit_bytes": 51, "target_files": 0, "partial_files": 1}
-                )
+                stdout=json.dumps({"credit_bytes": 51, "target_files": 0, "partial_files": 1})
             ),
         )
 

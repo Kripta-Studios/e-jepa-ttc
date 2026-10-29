@@ -74,25 +74,42 @@ def main(argv: Sequence[str] | None = None) -> int:
                 payload = copy.deepcopy(initial)
                 payload["cursor"]["epoch"] = epoch
                 baseline, baseline_trace = _one_arm(
-                    payload=payload, recipe=recipe, source=source, threads=original_threads,
-                    steps=1, run_root=args.run_root.resolve(),
+                    payload=payload,
+                    recipe=recipe,
+                    source=source,
+                    threads=original_threads,
+                    steps=1,
+                    run_root=args.run_root.resolve(),
                 )
                 candidate, candidate_trace = _one_arm(
-                    payload=payload, recipe=recipe, source=source, threads=1,
-                    steps=1, run_root=args.run_root.resolve(),
+                    payload=payload,
+                    recipe=recipe,
+                    source=source,
+                    threads=1,
+                    steps=1,
+                    run_root=args.run_root.resolve(),
                 )
                 parity = _parity(baseline_trace, candidate_trace)
                 cases.append(
-                    {"fit_id": fit_id, "epoch": epoch, "baseline": baseline,
-                     "candidate": candidate, "parity": parity,
-                     "passed": parity["passed"]}
+                    {
+                        "fit_id": fit_id,
+                        "epoch": epoch,
+                        "baseline": baseline,
+                        "candidate": candidate,
+                        "parity": parity,
+                        "passed": parity["passed"],
+                    }
                 )
                 technical += 4
                 _atomic_json(
                     args.output.resolve(),
-                    {"schema": "final_refit_runtime_thread_admission_v1", "status": "RUNNING",
-                     "scientific_updates": 0, "technical_optimizer_steps": technical,
-                     "cases": cases},
+                    {
+                        "schema": "final_refit_runtime_thread_admission_v1",
+                        "status": "RUNNING",
+                        "scientific_updates": 0,
+                        "technical_optimizer_steps": technical,
+                        "cases": cases,
+                    },
                 )
         receipt = {
             "schema": "final_refit_runtime_thread_admission_v1",

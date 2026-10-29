@@ -46,9 +46,7 @@ def _compatibility(source: Any) -> dict[str, Any]:
         "train40_index_sha256": identity["train40_index_sha256"],
         "dino_teacher_freeze_sha256": identity["dino_teacher_freeze_sha256"],
         "dino_targets_sha256": identity["dino_targets_sha256"],
-        "decoded_event_cache_limit_bytes": int(
-            identity["decoded_event_cache_limit_bytes"]
-        ),
+        "decoded_event_cache_limit_bytes": int(identity["decoded_event_cache_limit_bytes"]),
         "metadata_sha256": canonical_sha256(list(inputs.metadata)),
     }
 

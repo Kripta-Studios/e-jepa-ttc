@@ -112,8 +112,7 @@ def _complete_stage(
             and int(identity.get("producer_population", -1)) == recipe.train_queries
             and identity.get("population_role") == "TRAIN"
             and identity.get("historical_roles_preserved") == ["P", "H", "V"]
-            and identity.get("initialization")
-            == "fresh_seed7_no_event_or_historical_rgb_weights"
+            and identity.get("initialization") == "fresh_seed7_no_event_or_historical_rgb_weights"
             and identity.get("producer_contract_schema") == PRODUCER_PLAN_SCHEMA
             and identity.get("producer_contract_sha256") == sha256(contract)
             and plan.launch_authorized
@@ -128,13 +127,11 @@ def _complete_stage(
             and isinstance(identity.get("source_identity"), dict)
             and bool(identity["source_identity"])
             and isinstance(teacher, dict)
-            and teacher.get("teacher_manifest_sha256")
-            == plan.input_sha256.get("teacher_manifest")
+            and teacher.get("teacher_manifest_sha256") == plan.input_sha256.get("teacher_manifest")
             and teacher.get("teacher_rows_sha256") == plan.input_sha256.get("train40_rows")
             and isinstance(executed, dict)
             and all(
-                executed.get(key) == plan.executed_source_sha256.get(key)
-                for key in common_sources
+                executed.get(key) == plan.executed_source_sha256.get(key) for key in common_sources
             )
             and executed.get("configs/rgb_port/producers.json")
             == plan.input_sha256.get("producer_config")
@@ -192,9 +189,7 @@ def _complete_stage(
         ),
         "executed_source_sha256": identity.get("executed_source_sha256"),
         "cache_normalizers": (
-            dict(validated_cache.get("normalizers", {}))
-            if validated_cache is not None
-            else {}
+            dict(validated_cache.get("normalizers", {})) if validated_cache is not None else {}
         ),
     }
 
@@ -320,12 +315,9 @@ def seal_final_chain(
             raise ValueError(f"RGB producer {field} bindings differ")
     expected_normalizer_parents = {
         "event": {
-            name: checkpoint_hashes[name]
-            for name in stage(recipe, "E_CTX_MATCHED").depends_on
+            name: checkpoint_hashes[name] for name in stage(recipe, "E_CTX_MATCHED").depends_on
         },
-        "rgb": {
-            name: checkpoint_hashes[name] for name in stage(recipe, "R_CTX").depends_on
-        },
+        "rgb": {name: checkpoint_hashes[name] for name in stage(recipe, "R_CTX").depends_on},
     }
     for item in sealed_normalizers:
         if item["parents"] != expected_normalizer_parents[item["modality"]]:
@@ -525,9 +517,9 @@ def package_final_predictions(
     if not required.issubset(frame.columns):
         missing = sorted(required - set(frame.columns))
         raise ValueError(f"Prediction columns differ: missing {missing}")
-    if frame["sample_token"].duplicated().any() or set(
-        frame["sample_token"].astype(str)
-    ) != set(tokens):
+    if frame["sample_token"].duplicated().any() or set(frame["sample_token"].astype(str)) != set(
+        tokens
+    ):
         raise ValueError("Prediction tokens differ from frozen official INPUTS")
     frame = frame.copy()
     frame["sample_token"] = frame["sample_token"].astype(str)

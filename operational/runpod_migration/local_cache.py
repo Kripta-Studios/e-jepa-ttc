@@ -162,9 +162,7 @@ def stage_bundle(
         lock.unlink(missing_ok=True)
 
 
-def readiness_barrier(
-    logical_root: Path, stage_root: Path, readiness_path: Path
-) -> dict[str, Any]:
+def readiness_barrier(logical_root: Path, stage_root: Path, readiness_path: Path) -> dict[str, Any]:
     """Re-hash the complete stage and require its exact logical-root binding."""
     logical, stage = logical_root.resolve(strict=True), stage_root.resolve(strict=True)
     receipt = read(readiness_path.resolve(strict=True))

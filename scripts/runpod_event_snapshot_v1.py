@@ -41,7 +41,9 @@ def snapshot(run: Path, rotation: int, fit: str) -> dict[str, object]:
     target, archive = root / identity, root / f"{identity}.tar"
     if archive.is_file():
         return {
-            "status": "READY", "updates": step, "archive": str(archive),
+            "status": "READY",
+            "updates": step,
+            "archive": str(archive),
             "archive_sha256": sha(archive),
         }
     pending = root / f".{identity}.{os.getpid()}.pending"
@@ -79,9 +81,12 @@ def snapshot(run: Path, rotation: int, fit: str) -> dict[str, object]:
         manifest = {
             "schema": "ejepa_event_checkpoint_snapshot_v1",
             "snapshot_exporter_sha256": sha(Path(__file__)),
-            "rotation": rotation, "fit": fit, "completed_updates": step,
+            "rotation": rotation,
+            "fit": fit,
+            "completed_updates": step,
             "checkpoint_sha256": pointer["checkpoint_sha256"],
-            "checkpoint_status": receipt["status"], "files": files,
+            "checkpoint_status": receipt["status"],
+            "files": files,
             "training_paused_for_snapshot": False,
         }
         (pending / "MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")
@@ -93,7 +98,9 @@ def snapshot(run: Path, rotation: int, fit: str) -> dict[str, object]:
                     output.add(path, arcname=path.relative_to(target).as_posix())
         os.replace(temporary, archive)
         return {
-            "status": "READY", "updates": step, "archive": str(archive),
+            "status": "READY",
+            "updates": step,
+            "archive": str(archive),
             "archive_sha256": sha(archive),
         }
     finally:

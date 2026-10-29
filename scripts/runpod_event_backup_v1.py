@@ -31,9 +31,7 @@ def admit(archive: Path, root: Path, expected: str) -> dict[str, object]:
     with tarfile.open(archive) as source:
         members = source.getmembers()
         unsafe = any(
-            not item.isfile()
-            or Path(item.name).is_absolute()
-            or ".." in Path(item.name).parts
+            not item.isfile() or Path(item.name).is_absolute() or ".." in Path(item.name).parts
             for item in members
         )
         if unsafe:
@@ -83,8 +81,16 @@ def main() -> None:
         raise ValueError("Event backups must remain under artifacts/runpod_returns")
     root.mkdir(parents=True, exist_ok=True)
     ssh = [
-        "ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
-        "-i", str(args.key), "-p", str(args.port), args.host,
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-i",
+        str(args.key),
+        "-p",
+        str(args.port),
+        args.host,
     ]
     latest = {task: -1 for task in TASKS}
     while not (root / "STOP_BACKUP").exists():
@@ -95,12 +101,19 @@ def main() -> None:
                 command = [
                     "/opt/ejepa_env/bin/python",
                     "/workspace/ejepa_event_operations/event_snapshot_v1.py",
-                    "--run", "/workspace/ejepa_event_runs", "--rotation", str(rotation),
-                    "--fit", fit,
+                    "--run",
+                    "/workspace/ejepa_event_runs",
+                    "--rotation",
+                    str(rotation),
+                    "--fit",
+                    fit,
                 ]
                 result = subprocess.run(
-                    ssh + [shlex.join(command)], capture_output=True, text=True,
-                    check=True, timeout=180,
+                    ssh + [shlex.join(command)],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    timeout=180,
                 )
                 remote = json.loads(result.stdout)
                 step = int(remote.get("updates", -1))
@@ -111,7 +124,9 @@ def main() -> None:
                     with pending.open("wb") as output:
                         subprocess.run(
                             ssh + [shlex.join(["cat", str(remote["archive"])])],
-                            stdout=output, check=True, timeout=300,
+                            stdout=output,
+                            check=True,
+                            timeout=300,
                         )
                     manifest = admit(pending, folder, str(remote["archive_sha256"]))
                     pending.unlink()

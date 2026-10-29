@@ -216,20 +216,52 @@ def build_fold_training_unit(
     context_updates = math.ceil(2_500 * refiner_n / 18_422)
     stages = (
         FoldStage(
-            "PAIR_E", "pair_head", "producer_pair", producer_n, 24, pair_updates, 32,
-            1e-4, ("E_A5",), "final_refit_pair_cache_v1",
+            "PAIR_E",
+            "pair_head",
+            "producer_pair",
+            producer_n,
+            24,
+            pair_updates,
+            32,
+            1e-4,
+            ("E_A5",),
+            "final_refit_pair_cache_v1",
         ),
         FoldStage(
-            "PAIR_R", "pair_head", "producer_pair", producer_n, 24, pair_updates, 32,
-            1e-4, ("R_A5",), "final_refit_pair_cache_v1",
+            "PAIR_R",
+            "pair_head",
+            "producer_pair",
+            producer_n,
+            24,
+            pair_updates,
+            32,
+            1e-4,
+            ("R_A5",),
+            "final_refit_pair_cache_v1",
         ),
         FoldStage(
-            "E_CTX", "temporal_head", "refiner", refiner_n, 8, context_updates, 128,
-            1e-3, ("E_A5", "E_C2F", "PAIR_E"), "final_refit_context_cache_v1",
+            "E_CTX",
+            "temporal_head",
+            "refiner",
+            refiner_n,
+            8,
+            context_updates,
+            128,
+            1e-3,
+            ("E_A5", "E_C2F", "PAIR_E"),
+            "final_refit_context_cache_v1",
         ),
         FoldStage(
-            "R_CTX", "temporal_head", "refiner", refiner_n, 8, context_updates, 128,
-            1e-3, ("R_A5", "R_C2F", "PAIR_R"), "final_refit_context_cache_v1",
+            "R_CTX",
+            "temporal_head",
+            "refiner",
+            refiner_n,
+            8,
+            context_updates,
+            128,
+            1e-3,
+            ("R_A5", "R_C2F", "PAIR_R"),
+            "final_refit_context_cache_v1",
         ),
     )
     if not executed_sources:
@@ -403,8 +435,7 @@ def _validate_ancestors(
             or admission.get("checkpoint_receipt_path") != str(receipt_path)
             or admission.get("checkpoint_receipt_sha256") != sha256(receipt_path)
             or admission.get("training_cache_role") != "producer_pair"
-            or admission.get("generation_group_ids")
-            != unit.roles["generation"]["group_ids"]
+            or admission.get("generation_group_ids") != unit.roles["generation"]["group_ids"]
             or admission.get("generation_token_set_sha256")
             != unit.roles["generation"]["sample_token_set_sha256"]
             or admission.get("generation_rows_excluded_from_all_ancestors") is not True
@@ -419,12 +450,10 @@ def _validate_ancestors(
             or checkpoint_identity.get("schema") != expected_identity_schema
             or checkpoint_identity.get("fit_id") != name
             or checkpoint_identity.get("technical") is not False
-            or checkpoint_identity.get("identity_sha256")
-            != receipt.get("identity_sha256")
+            or checkpoint_identity.get("identity_sha256") != receipt.get("identity_sha256")
             or checkpoint.get("identity_sha256") != receipt.get("identity_sha256")
             or canonical_sha256(identity_payload) != receipt.get("identity_sha256")
-            or admission.get("checkpoint_identity_sha256")
-            != receipt.get("identity_sha256")
+            or admission.get("checkpoint_identity_sha256") != receipt.get("identity_sha256")
             or checkpoint_identity.get("training_cache_sha256")
             != admission.get("training_cache_sha256")
             or checkpoint_identity.get("training_sample_token_sha256")
@@ -476,9 +505,7 @@ def fit_fold_stage(
         raise ValueError("Fold technical call requires between one and five updates")
     if stage.updates <= TECHNICAL_LIFETIME_UPDATE_CAP:
         raise ValueError("Fold scientific endpoint is too small for isolated technical probing")
-    technical_directory = (
-        run_root / f"rotation_{unit.rotation}" / "technical" / stage.stage_id
-    )
+    technical_directory = run_root / f"rotation_{unit.rotation}" / "technical" / stage.stage_id
     prior_receipt_path = technical_directory / "CHECKPOINT_RECEIPT.json"
     prior_updates = 0
     if prior_receipt_path.is_file():
@@ -494,9 +521,7 @@ def fit_fold_stage(
         raise ValueError("Fold technical lifetime update cap would be exceeded")
     cache = cache_path.resolve(strict=True)
     _validate_cache(unit, stage, cache)
-    ancestor_checkpoints = _validate_ancestors(
-        unit, stage, parent_receipts, ancestor_admissions
-    )
+    ancestor_checkpoints = _validate_ancestors(unit, stage, parent_receipts, ancestor_admissions)
     scope = CachedTrainingScope(
         population=stage.population,
         groups=stage.groups,

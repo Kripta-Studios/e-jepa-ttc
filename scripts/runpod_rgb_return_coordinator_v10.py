@@ -22,9 +22,7 @@ def main() -> int:
     config = json.loads(args.config.resolve(strict=True).read_text(encoding="utf-8"))
     if not isinstance(config, dict):
         raise ValueError("Coordinator config must be a JSON object")
-    return Coordinator(
-        config, repository, admit=admit_local_rgb_return
-    ).run(once=args.once)
+    return Coordinator(config, repository, admit=admit_local_rgb_return).run(once=args.once)
 
 
 if __name__ == "__main__":

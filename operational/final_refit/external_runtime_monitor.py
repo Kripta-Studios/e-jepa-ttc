@@ -50,10 +50,7 @@ def _commit() -> dict[str, int] | None:
 
 
 def _gpu() -> dict[str, float] | None:
-    fields = (
-        "utilization.gpu,memory.used,power.draw,temperature.gpu,"
-        "clocks.sm,clocks.mem"
-    )
+    fields = "utilization.gpu,memory.used,power.draw,temperature.gpu,clocks.sm,clocks.mem"
     try:
         result = subprocess.run(
             [

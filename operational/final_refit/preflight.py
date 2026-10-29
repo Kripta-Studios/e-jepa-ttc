@@ -287,10 +287,9 @@ def build_preflight(workspace: Path, output: Path | None = None) -> dict[str, An
     teacher_cache = _validate_shard_cache(
         teacher_manifest, label="DINO teacher", expected_rows=len(native)
     )
-    if (
-        teacher_cache["shards"] != int(teacher_admission.get("shards_verified", -1))
-        or teacher_cache["bytes"] != int(teacher_admission.get("verified_bytes", -1))
-    ):
+    if teacher_cache["shards"] != int(
+        teacher_admission.get("shards_verified", -1)
+    ) or teacher_cache["bytes"] != int(teacher_admission.get("verified_bytes", -1)):
         raise ValueError("Current teacher cache size/coverage differs from complete admission")
     sources.extend(
         _source(workspace, path)
@@ -319,8 +318,7 @@ def build_preflight(workspace: Path, output: Path | None = None) -> dict[str, An
         raise ValueError("A5 and C2F event producers do not share one scientific protocol")
 
     eap_roots = {
-        str(_read_json(run13 / f"{role}_MANIFEST.json").get("eap_root", ""))
-        for role in _ROLES
+        str(_read_json(run13 / f"{role}_MANIFEST.json").get("eap_root", "")) for role in _ROLES
     }
     if len(eap_roots) != 1:
         raise ValueError("Role manifests disagree on the eAP media root")
@@ -398,4 +396,3 @@ def build_preflight(workspace: Path, output: Path | None = None) -> dict[str, An
             newline="\n",
         )
     return result
-

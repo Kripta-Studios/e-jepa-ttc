@@ -78,14 +78,18 @@ def stage(archive: Path, root: Path, admission_path: Path) -> dict[str, object]:
             observed = path.stat()
             stats.append(
                 {
-                    "relative": item["relative"], "bytes": observed.st_size,
-                    "mtime_ns": observed.st_mtime_ns, "inode": observed.st_ino,
-                    "device": observed.st_dev, "mode": observed.st_mode,
+                    "relative": item["relative"],
+                    "bytes": observed.st_size,
+                    "mtime_ns": observed.st_mtime_ns,
+                    "inode": observed.st_ino,
+                    "device": observed.st_dev,
+                    "mode": observed.st_mode,
                 }
             )
         seal = {
             "schema": "ejepa_event_supplement_immutable_seal_v1",
-            "status": "SEALED", "root": str(root),
+            "status": "SEALED",
+            "root": str(root),
             "manifest_sha256": digest(root / "SUPPLEMENT_MANIFEST.json"),
             "content_identity_sha256": manifest["content_identity_sha256"],
             "files": stats,
@@ -94,9 +98,12 @@ def stage(archive: Path, root: Path, admission_path: Path) -> dict[str, object]:
         atomic(seal_path, seal)
         admission = {
             "schema": "ejepa_event_downstream_supplemental_admission_v1",
-            "status": "VERIFIED", "root": str(root),
+            "status": "VERIFIED",
+            "root": str(root),
             "scientific_config_sha256": manifest["scientific_config_sha256"],
-            "files": 13, "total_bytes": 81_182_038, "hashes_verified": 13,
+            "files": 13,
+            "total_bytes": 81_182_038,
+            "hashes_verified": 13,
             "mapping_verified": True,
             "manifest_sha256": digest(root / "SUPPLEMENT_MANIFEST.json"),
             "immutable_seal_sha256": digest(seal_path),

@@ -129,10 +129,7 @@ def test_transitive_context_lineage_excludes_generation_from_every_ancestor(tmp_
     assert ancestry["generation_rows_excluded_from_all_ancestors"] is True
     assert len(ancestry["ancestor_train_group_ids"]) == 32
     assert value["deployment_dependencies"] == {}
-    assert (
-        value["status"]
-        == "VERIFIED_STRUCTURAL_OOF_ENDPOINT_NOT_SCIENTIFICALLY_ADMITTED"
-    )
+    assert value["status"] == "VERIFIED_STRUCTURAL_OOF_ENDPOINT_NOT_SCIENTIFICALLY_ADMITTED"
     assert value["artifact_files_rehashed"] is True
     assert value["blind_validation_claim"] is False
 

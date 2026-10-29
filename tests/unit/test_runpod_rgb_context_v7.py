@@ -87,9 +87,10 @@ def test_scope_member_role_or_authority_mutation_invalidates(tmp_path: Path) -> 
     config["scope_map"]["R3_refiner"]["roles"] = ["generation"]
     with pytest.raises(ValueError, match="authority/scope changed"):
         cache.verify(config, 3, "refiner")
-    assert canonical(config["scope_map"]["R3_refiner"]) != cache.entries[(3, "refiner")][
-        "scope_evidence_sha256"
-    ]
+    assert (
+        canonical(config["scope_map"]["R3_refiner"])
+        != cache.entries[(3, "refiner")]["scope_evidence_sha256"]
+    )
 
 
 def test_none_is_never_cached_and_gains_no_false_benefit(tmp_path: Path) -> None:
@@ -156,9 +157,7 @@ def test_real_v3_v5_v6_v7_composition_executes_dummy_queue_once(
     with v7.compatible_v6_composed_v5_hook(v6, v5, media_config):
         with v5.composed_v3_hook(v3, repair_path):
             v3.install_queue_heartbeat(module, clock=lambda: 0.0)
-        result = module.run_rgb_downstream(
-            tmp_path, 3, external_guard=lambda: None
-        )
+        result = module.run_rgb_downstream(tmp_path, 3, external_guard=lambda: None)
 
     assert result == {"status": "COMPLETE"}
     assert queue_calls == [True]

@@ -58,8 +58,7 @@ def _validate_authority(
         is not True
         or set(exclusion.get("producer_stop_sha256", {})) != {"R_A5", "R_C2F"}
         or digest(exclusion_path) != assignment.get("local_queue_exclusion_receipt_sha256")
-        or exclusion.get("scientific_config_sha256")
-        != migration.get("original_authority_sha256")
+        or exclusion.get("scientific_config_sha256") != migration.get("original_authority_sha256")
     ):
         raise ValueError("RGB local/cloud dependency ownership is absent or changed")
     return deadline, {
@@ -69,8 +68,7 @@ def _validate_authority(
         "migration_binding_sha256": digest(migration_path),
         "queue_entrypoint_sha256": digest(Path(__file__)),
         "queue_library_sha256": digest(
-            Path(__file__).resolve().parents[1]
-            / "operational/runpod_migration/rgb_queue.py"
+            Path(__file__).resolve().parents[1] / "operational/runpod_migration/rgb_queue.py"
         ),
         "queue_endpoint_router_sha256": digest(
             Path(__file__).resolve().parents[1]
@@ -141,8 +139,7 @@ def _validate_coverage(run: Path, path: Path) -> dict[str, str]:
         coverage.get("schema") != "ejepa_rgb_downstream_bundle_coverage_v1"
         or coverage.get("status") != "PASS"
         or claimed != actual
-        or coverage.get("scientific_config_sha256")
-        != migration.get("original_authority_sha256")
+        or coverage.get("scientific_config_sha256") != migration.get("original_authority_sha256")
         or set(coverage.get("rotations", {})) != {"2", "3", "4"}
         or coverage.get("pair_r", {}).get("covered") is not True
         or coverage.get("r_ctx", {}).get("covered") is not True
@@ -194,9 +191,7 @@ def main() -> int:
     from operational.final_refit.scientific_oof_pipeline import ResourcePause
 
     run = args.run.resolve(strict=True)
-    provenance = _install_origin_attribution(
-        run, args.bundle_receipt.resolve(strict=True)
-    )
+    provenance = _install_origin_attribution(run, args.bundle_receipt.resolve(strict=True))
     provenance.update(_validate_coverage(run, args.coverage_receipt.resolve(strict=True)))
     if args.prepare_only:
         print(

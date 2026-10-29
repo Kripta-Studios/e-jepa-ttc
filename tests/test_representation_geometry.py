@@ -2,7 +2,6 @@
 
 import copy
 
-import numpy as np
 import pytest
 import torch
 
@@ -10,18 +9,18 @@ from e_jepa_ttc.range_readout.readout import VectorReadout
 from e_jepa_ttc.rgb_port.features import pair133
 from operational.representation_audit.geometry import initialize
 from operational.representation_audit.precision import objective
-from operational.representation_audit.run import OLD
+from tests.fixtures.representation_audit import install
 
 
-def values():
-    with np.load(OLD / "vector_cache/P/part_000000.npz", allow_pickle=False) as arc:
-        return {k: torch.from_numpy(arc[k][:8].copy()) for k in arc.files if k != "sample_token"}
+@pytest.fixture
+def values(tmp_path, monkeypatch):
+    return install(tmp_path, monkeypatch)
 
 
-def test_constant_height_shift_preserves_ttc_and_native_scorer_gradients():
+def test_constant_height_shift_preserves_ttc_and_native_scorer_gradients(values):
     calibrated, config, *_ = initialize(7, "Q0", device="cpu")
     native = VectorReadout(copy.deepcopy(calibrated.model))
-    data = values()
+    data = values
     inputs = {k: v for k, v in data.items() if not k.startswith(("target_", "dino_"))}
     calibrated.eval()
     native.eval()
@@ -40,11 +39,11 @@ def test_constant_height_shift_preserves_ttc_and_native_scorer_gradients():
     assert all(torch.equal(x, y) for x, y in zip(ga, gb, strict=True))
 
 
-def test_active_geometry_keeps_real_pair133_bit_identical():
+def test_active_geometry_keeps_native_pair133_bit_identical_on_synthetic_inputs(values):
     model, *_ = initialize(7, "Q1", device="cpu")
     model.eval()
     native = VectorReadout(copy.deepcopy(model.model)).eval()
-    data = {k: v for k, v in values().items() if not k.startswith(("target_", "dino_"))}
+    data = {k: v for k, v in values.items() if not k.startswith(("target_", "dino_"))}
     with torch.no_grad():
         before, after = native(data), model(data)
     assert not torch.equal(before.analytic_log_height_ratio, after.analytic_log_height_ratio)
@@ -66,13 +65,13 @@ def test_active_geometry_keeps_real_pair133_bit_identical():
     )
 
 
-def test_geometry_operator_serializes_and_rejects_targets():
+def test_geometry_operator_serializes_and_rejects_targets(values):
     model, *_ = initialize(7, "Q1", device="cpu")
     restored, *_ = initialize(7, "Q0", device="cpu")
     restored.load_state_dict(model.state_dict(), strict=True)
     model.eval()
     restored.eval()
-    data = values()
+    data = values
     with pytest.raises(ValueError, match="targets"):
         model(data)
     inputs = {k: v for k, v in data.items() if not k.startswith(("target_", "dino_"))}

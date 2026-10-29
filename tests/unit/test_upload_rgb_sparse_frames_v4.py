@@ -34,15 +34,16 @@ def _stat(free: int = 2 * 1024**5):
 def test_frozen_dependencies_are_bound_by_hash() -> None:
     scripts = Path(__file__).resolve().parents[2] / "scripts"
     assert digest(scripts / "upload_rgb_sparse_frames_v2.py") == V2_SHA256
-    assert (
-        digest(scripts / "upload_rgb_atomic_status_v1.py") == ATOMIC_STATUS_SHA256
-    )
+    assert digest(scripts / "upload_rgb_atomic_status_v1.py") == ATOMIC_STATUS_SHA256
 
 
 def test_quota_caps_fake_two_pib_statvfs() -> None:
     replies = iter([_stat(), SimpleNamespace(stdout="18900000000\t/workspace\n")])
     free, report = remote_inventory(
-        ["ssh"], "/workspace/ejepa_rgb_frames", "/workspace", 50_000_000_000,
+        ["ssh"],
+        "/workspace/ejepa_rgb_frames",
+        "/workspace",
+        50_000_000_000,
         runner=lambda *_args, **_kwargs: next(replies),
     )
     assert free == 31_100_000_000
@@ -66,8 +67,13 @@ def test_gnu_du_enoent_is_retried_bounded_then_succeeds() -> None:
 
     delays: list[float] = []
     free, report = remote_inventory(
-        ["ssh"], "/workspace/ejepa_rgb_frames", "/workspace", 50_000_000_000,
-        runner=runner, delays=(0.1, 0.2), sleeper=delays.append,
+        ["ssh"],
+        "/workspace/ejepa_rgb_frames",
+        "/workspace",
+        50_000_000_000,
+        runner=runner,
+        delays=(0.1, 0.2),
+        sleeper=delays.append,
     )
     assert free == 40_000_000_000
     assert report["du_enoent_retries"] == 2
@@ -88,7 +94,10 @@ def test_permission_error_is_never_ignored() -> None:
 
     with pytest.raises(subprocess.CalledProcessError):
         remote_inventory(
-            ["ssh"], "/workspace/ejepa_rgb_frames", "/workspace", 50_000_000_000,
+            ["ssh"],
+            "/workspace/ejepa_rgb_frames",
+            "/workspace",
+            50_000_000_000,
             runner=runner,
         )
 
@@ -100,15 +109,16 @@ def test_other_filesystem_or_root_fails_closed() -> None:
     bad.stdout = json.dumps(payload)
     with pytest.raises(ValueError, match="another filesystem"):
         remote_inventory(
-            ["ssh"], "/workspace/ejepa_rgb_frames", "/workspace", 50_000_000_000,
+            ["ssh"],
+            "/workspace/ejepa_rgb_frames",
+            "/workspace",
+            50_000_000_000,
             runner=lambda *_args, **_kwargs: bad,
         )
 
 
 def test_usage_above_authorized_quota_fails_closed() -> None:
-    replies = iter(
-        [_stat(2 * 1024**5), SimpleNamespace(stdout="50000000001\t/workspace\n")]
-    )
+    replies = iter([_stat(2 * 1024**5), SimpleNamespace(stdout="50000000001\t/workspace\n")])
     with pytest.raises(ValueError, match="outside authorization"):
         remote_inventory(
             ["ssh"],

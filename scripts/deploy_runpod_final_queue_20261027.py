@@ -1,22 +1,23 @@
 """Deploy final queue fixes while adopting, rather than stopping, live workers."""
+
 from __future__ import annotations
 
 import base64
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 
 def main() -> None:
     root = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(root / 'artifacts/runpod_event_migration_20261026/resume_20261027'))
+    sys.path.insert(0, str(root / "artifacts/runpod_event_migration_20261026/resume_20261027"))
     from rpc import call
 
     payload = {
-        name: base64.b64encode((root / 'scripts' / name).read_bytes()).decode()
-        for name in ('runpod_final_bootstrap.py', 'runpod_final_queue.py')
+        name: base64.b64encode((root / "scripts" / name).read_bytes()).decode()
+        for name in ("runpod_final_bootstrap.py", "runpod_final_queue.py")
     }
-    code = '''import pathlib,json,base64,hashlib,os,subprocess,time,psutil
+    code = """import pathlib,json,base64,hashlib,os,subprocess,time,psutil
 ops=pathlib.Path('/workspace/ejepa_final_operations')
 entry=ops/'runpod_final_bootstrap.py'
 queue=ops/'runpod_final_queue.py'
@@ -46,12 +47,15 @@ with (ops/'coordinator.log').open('a') as stream:
     child=subprocess.Popen(['/opt/ejepa_env/bin/python',str(queue)],stdin=subprocess.DEVNULL,stdout=stream,stderr=stream,start_new_session=True)
 result={'timestamp':time.time(),'pid':child.pid,'preserved_workers':workers,'deployed_sha256':hashes,'checkpoint_updates':100,'deadline_utc':'2026-10-28T00:00:00+00:00'}
 (ops/'FINAL_QUEUE_DEPLOYMENT.json').write_text(json.dumps(result,indent=2))
-print('PODSTATUS:'+json.dumps(result))'''.replace('PAYLOAD', repr(payload))
+print('PODSTATUS:'+json.dumps(result))""".replace("PAYLOAD", repr(payload))
     result = call(code, timeout=60)
-    destination = root / 'artifacts/runpod_event_migration_20261026/final_20261027/FINAL_QUEUE_DEPLOYMENT.json'
-    destination.write_text(json.dumps(result, indent=2), encoding='utf-8')
+    destination = (
+        root
+        / "artifacts/runpod_event_migration_20261026/final_20261027/FINAL_QUEUE_DEPLOYMENT.json"
+    )
+    destination.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(json.dumps(result, indent=2))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

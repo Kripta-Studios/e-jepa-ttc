@@ -144,11 +144,7 @@ def validate_config(path: Path) -> dict[str, Any]:
     ):
         raise ValueError("Watchdog admission/global budget binding is invalid")
     bundle = safe_linux_path(value.get("bundle_root"))
-    expected_tasks = {
-        f"R{rotation}_{fit}"
-        for rotation in (2, 3, 4)
-        for fit in (*PRODUCERS, HEAD)
-    }
+    expected_tasks = {f"R{rotation}_{fit}" for rotation in (2, 3, 4) for fit in (*PRODUCERS, HEAD)}
     if len(tasks) != 9:
         raise ValueError("Watchdog requires exactly six producers and three RGB heads")
     normalized: list[dict[str, Any]] = []
@@ -230,9 +226,7 @@ def proc_identity(
         state = tail[0]
         start_ticks = int(tail[19])
         argv = [
-            item.decode("utf-8")
-            for item in (root / "cmdline").read_bytes().split(b"\0")
-            if item
+            item.decode("utf-8") for item in (root / "cmdline").read_bytes().split(b"\0") if item
         ]
         btime_line = next(
             line
@@ -295,9 +289,7 @@ def clean_checkpoint(directory: Path, started_epoch: float, pid: int) -> tuple[b
     return True, "DURABLE"
 
 
-def immutable_complete_head_endpoint(
-    directory: Path, rotation: int, fit: str
-) -> tuple[bool, str]:
+def immutable_complete_head_endpoint(directory: Path, rotation: int, fit: str) -> tuple[bool, str]:
     """Verify an older sealed head endpoint without requiring current-process mtimes."""
     receipt_path = directory / "CHECKPOINT_RECEIPT.json"
     journal_path = directory / "UPDATE_JOURNAL.json"

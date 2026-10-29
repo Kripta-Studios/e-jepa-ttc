@@ -89,13 +89,9 @@ def test_nested_patch_context_restores_each_level(
 ) -> None:
     materialize, scientific_oof_features, original = _fake_consumers(monkeypatch)
     outer, inner = object(), object()
-    with v5.patched_materializer_context(
-        SimpleNamespace(patched_materializer=lambda: outer)
-    ):
+    with v5.patched_materializer_context(SimpleNamespace(patched_materializer=lambda: outer)):
         assert materialize.materialize_rgb_observations is outer
-        with v5.patched_materializer_context(
-            SimpleNamespace(patched_materializer=lambda: inner)
-        ):
+        with v5.patched_materializer_context(SimpleNamespace(patched_materializer=lambda: inner)):
             assert materialize.materialize_rgb_observations is inner
             assert scientific_oof_features.materialize_rgb_observations is inner
         assert materialize.materialize_rgb_observations is outer
@@ -126,9 +122,7 @@ def test_v3_heartbeat_clock_guard_frequency_and_result_are_preserved(
     v5.install_queue_heartbeat(
         module, clock=lambda: next(times), repair_path=tmp_path / "repair.py"
     )
-    result = module.run_rgb_downstream(
-        tmp_path, 3, external_guard=lambda: guards.append(True)
-    )
+    result = module.run_rgb_downstream(tmp_path, 3, external_guard=lambda: guards.append(True))
     assert materialize.materialize_rgb_observations is original
     assert len(receipts) == 2
     assert len(guards) == 3

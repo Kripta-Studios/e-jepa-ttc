@@ -18,7 +18,6 @@ from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
-
 GIB = 1024**3
 EVENT_FITS = ("E_A5", "E_C2F")
 ROTATIONS = (2, 3, 4)
@@ -143,7 +142,10 @@ def _checkpoint_observation(run: Path) -> dict[str, Any]:
         "note": (
             "Authoritative paused handoff; cloud resume remains blocked pending execution binding."
             if authoritative
-            else "Observation only. Capture a newer durable boundary after cloud preflight and local ownership exclusion."
+            else (
+                "Observation only. Capture a newer durable boundary after cloud preflight "
+                "and local ownership exclusion."
+            )
         ),
     }
 
@@ -312,14 +314,18 @@ def prepare(inventory_path: Path, run: Path, output: Path) -> dict[str, Any]:
                 }
             )
     if len(raw_event_files) != 41:
-        raise ValueError(f"Expected train.parquet plus 40 event HDF5 files, got {len(raw_event_files)}")
+        raise ValueError(
+            f"Expected train.parquet plus 40 event HDF5 files, got {len(raw_event_files)}"
+        )
     if not 8_000 <= len(event_files) <= 9_000:
         raise ValueError(f"Unexpected event producer closure: {len(event_files)} files")
     output.mkdir(parents=True, exist_ok=True)
     producer_manifest = _manifest(
         "ejepa_event_producer_data_manifest_v1", "event_producers", event_files
     )
-    raw_manifest = _manifest("ejepa_event_raw_deferred_manifest_v1", "event_raw_deferred", raw_event_files)
+    raw_manifest = _manifest(
+        "ejepa_event_raw_deferred_manifest_v1", "event_raw_deferred", raw_event_files
+    )
     _write_json(output / "EVENT_PRODUCER_DATA_MANIFEST.json", producer_manifest)
     _write_json(output / "EVENT_RAW_DEFERRED_MANIFEST.json", raw_manifest)
     checkpoint = _checkpoint_observation(run)

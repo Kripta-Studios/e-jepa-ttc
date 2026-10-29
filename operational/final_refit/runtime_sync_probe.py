@@ -162,16 +162,24 @@ def main(argv: Sequence[str] | None = None) -> int:
         traces: list[list[dict[str, Any]]] = []
         for synchronized in (False, True, False, True):
             arm, trace = _arm(
-                payload, recipe, source, args.run_root.resolve(),
-                synchronized=synchronized, steps=args.steps,
+                payload,
+                recipe,
+                source,
+                args.run_root.resolve(),
+                synchronized=synchronized,
+                steps=args.steps,
             )
             arms.append(arm)
             traces.append(trace)
             _atomic_json(
                 args.output.resolve(),
-                {"schema": "final_refit_runtime_sync_probe_v1", "status": "RUNNING",
-                 "scientific_updates": 0, "technical_optimizer_steps": len(arms) * (args.steps + 1),
-                 "arms": arms},
+                {
+                    "schema": "final_refit_runtime_sync_probe_v1",
+                    "status": "RUNNING",
+                    "scientific_updates": 0,
+                    "technical_optimizer_steps": len(arms) * (args.steps + 1),
+                    "arms": arms,
+                },
             )
         parity = [_parity(traces[0], trace) for trace in traces[1:]]
         receipt = {

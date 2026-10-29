@@ -315,8 +315,7 @@ def verify_endpoint_lineage(value: Mapping[str, Any] | Path) -> dict[str, Any]:
     claimed = payload.get("lineage_sha256")
     if (
         payload.get("schema") != ENDPOINT_SCHEMA
-        or payload.get("status")
-        != "VERIFIED_STRUCTURAL_OOF_ENDPOINT_NOT_SCIENTIFICALLY_ADMITTED"
+        or payload.get("status") != "VERIFIED_STRUCTURAL_OOF_ENDPOINT_NOT_SCIENTIFICALLY_ADMITTED"
         or payload.get("artifact_files_rehashed") is not True
         or payload.get("targets_used_for_partitioning") is not False
         or payload.get("blind_validation_claim") is not False
@@ -347,9 +346,7 @@ def verify_endpoint_lineage(value: Mapping[str, Any] | Path) -> dict[str, Any]:
     checkpoint_receipt = _verify_artifact_reference(
         artifacts["checkpoint_receipt"], name="checkpoint_receipt"
     )
-    training_cache = _verify_artifact_reference(
-        artifacts["training_cache"], name="training_cache"
-    )
+    training_cache = _verify_artifact_reference(artifacts["training_cache"], name="training_cache")
     if (
         payload.get("checkpoint_sha256") != checkpoint["sha256"]
         or payload.get("checkpoint_receipt_sha256") != checkpoint_receipt["sha256"]
@@ -484,8 +481,7 @@ def build_endpoint_lineage(
 def _atomic_json(path: Path, value: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     encoded = (
-        json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False)
-        + "\n"
+        json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n"
     )
     if path.exists():
         if path.read_text(encoding="utf-8") != encoded:
@@ -532,8 +528,7 @@ def verify_stitch_receipt(value: Mapping[str, Any] | Path) -> dict[str, Any]:
         or interface not in INTERFACES
         or receipt.get("feature_semantics") != "physical_phase_clock_coordinates"
         or receipt.get("width") != INTERFACES[interface][0]
-        or receipt.get("status")
-        != "VERIFIED_STRUCTURAL_OOF_STITCH_NOT_SCIENTIFICALLY_ADMITTED"
+        or receipt.get("status") != "VERIFIED_STRUCTURAL_OOF_STITCH_NOT_SCIENTIFICALLY_ADMITTED"
         or receipt.get("artifact_files_rehashed") is not True
         or receipt.get("targets_read_for_stitching") is not False
         or receipt.get("blind_validation_claim") is not False
@@ -544,8 +539,8 @@ def verify_stitch_receipt(value: Mapping[str, Any] | Path) -> dict[str, Any]:
     contract_path = Path(str(receipt["fold_contract_path"])).resolve(strict=True)
     if file_sha256(contract_path) != receipt.get("fold_contract_sha256"):
         raise ValueError("OOF stitch fold contract changed")
-    expected_population, expected_groups, expected_tokens, _, expected_ordinals = (
-        _fold_universe(contract_path)
+    expected_population, expected_groups, expected_tokens, _, expected_ordinals = _fold_universe(
+        contract_path
     )
     fragments = receipt.get("fragments")
     if not isinstance(fragments, list) or len(fragments) != 5:
@@ -561,8 +556,7 @@ def verify_stitch_receipt(value: Mapping[str, Any] | Path) -> dict[str, Any]:
         if (
             fragment.get("rotation") != rotation
             or fragment.get("generation_rows_sha256") != generation.rows_sha256
-            or fragment.get("ordered_sample_token_sha256")
-            != generation.ordered_sample_token_sha256
+            or fragment.get("ordered_sample_token_sha256") != generation.ordered_sample_token_sha256
             or fragment.get("sample_token_set_sha256") != generation.sample_token_set_sha256
             or fragment.get("group_ids") != list(generation.group_ids)
             or int(fragment.get("population", -1)) != generation.population
@@ -606,8 +600,7 @@ def verify_stitch_receipt(value: Mapping[str, Any] | Path) -> dict[str, Any]:
         or len(group_union) != expected_groups
         or token_union != expected_tokens
         or ordinal_union != expected_ordinals
-        or receipt.get("generation_token_set_sha256")
-        != set_identity_sha256(sorted(token_union))
+        or receipt.get("generation_token_set_sha256") != set_identity_sha256(sorted(token_union))
         or receipt.get("generation_source_ordinal_set_sha256")
         != set_identity_sha256([str(value) for value in sorted(ordinal_union)])
         or receipt.get("generation_token_sets_sha256") != canonical_sha256(token_hashes)
@@ -624,13 +617,15 @@ def build_stitch_receipt(
     endpoint_lineages: Mapping[int, Mapping[str, Path]],
 ) -> dict[str, Any]:
     """Bind five generation payloads to exact rows and temporary endpoint ancestry."""
-    if interface not in INTERFACES or set(fragment_payloads) != set(range(5)) or set(
-        endpoint_lineages
-    ) != set(range(5)):
+    if (
+        interface not in INTERFACES
+        or set(fragment_payloads) != set(range(5))
+        or set(endpoint_lineages) != set(range(5))
+    ):
         raise ValueError("OOF stitch inputs require rotations 0..4 and a known physical interface")
     contract_path = fold_contract_path.resolve(strict=True)
-    expected_population, expected_groups, expected_tokens, _, expected_ordinals = (
-        _fold_universe(contract_path)
+    expected_population, expected_groups, expected_tokens, _, expected_ordinals = _fold_universe(
+        contract_path
     )
     fragments: list[dict[str, Any]] = []
     token_hashes: list[str] = []

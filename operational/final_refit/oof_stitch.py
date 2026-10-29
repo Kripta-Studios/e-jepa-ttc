@@ -303,8 +303,7 @@ def stitch_from_verified_lineage(
 
     authority = verify_stitch_receipt(lineage_receipt)
     if (
-        authority.get("status")
-        != "VERIFIED_STRUCTURAL_OOF_STITCH_NOT_SCIENTIFICALLY_ADMITTED"
+        authority.get("status") != "VERIFIED_STRUCTURAL_OOF_STITCH_NOT_SCIENTIFICALLY_ADMITTED"
         or authority.get("scientific_launch_authorized") is not False
         or authority.get("blind_validation_claim") is not False
         or authority.get("targets_read_for_stitching") is not False
@@ -344,9 +343,7 @@ def stitch_from_verified_lineage(
     receipt["lineage_authority_verified"] = True
     receipt["lineage_authority_status"] = str(authority["status"])
     receipt["status"] = "LINEAGE_VERIFIED_NOT_SCIENTIFICALLY_ADMITTED"
-    receipt["integration_scope"] = (
-        "LINEAGE_BOUND_TRAINING_FEATURES_NOT_SCIENTIFICALLY_ADMITTED"
-    )
+    receipt["integration_scope"] = "LINEAGE_BOUND_TRAINING_FEATURES_NOT_SCIENTIFICALLY_ADMITTED"
     return stitched, receipt
 
 

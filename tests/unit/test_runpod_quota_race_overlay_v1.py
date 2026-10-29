@@ -23,8 +23,7 @@ def failure(stderr: str, *, returncode: int = 1) -> subprocess.CalledProcessErro
 def test_only_workspace_du_enoent_is_retryable() -> None:
     assert transient_workspace_enoent(
         failure(
-            "du: cannot access '/workspace/run/cloud_snapshots/.old': "
-            "No such file or directory\n"
+            "du: cannot access '/workspace/run/cloud_snapshots/.old': No such file or directory\n"
         )
     )
     assert not transient_workspace_enoent(
@@ -91,9 +90,7 @@ def test_exhausted_enoent_retries_fail_closed_without_stale_value() -> None:
         attempts += 1
         raise failure("du: cannot access '/workspace/gone': No such file or directory\n")
 
-    inventory = RetryingStorageInventory(
-        original, delays=(0.0, 0.0), sleeper=lambda _delay: None
-    )
+    inventory = RetryingStorageInventory(original, delays=(0.0, 0.0), sleeper=lambda _delay: None)
     with pytest.raises(RuntimeError, match="bounded ENOENT retries"):
         inventory(Path("/workspace/run"))
     assert attempts == 3

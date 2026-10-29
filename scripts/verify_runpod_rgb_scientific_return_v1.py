@@ -36,11 +36,7 @@ def main() -> int:
     manifest = read(root / "MANIFEST.json")
     if manifest.get("rotations") != list(rotations_requested):
         raise ValueError("Archive rotations differ from scientific verifier selection")
-    producers = [
-        root / f"roots/r{n}_{kind}"
-        for n in rotations_requested
-        for kind in ("a5", "c2f")
-    ]
+    producers = [root / f"roots/r{n}_{kind}" for n in rotations_requested for kind in ("a5", "c2f")]
     heads = [root / f"roots/r{n}_downstream" for n in rotations_requested]
     with verified_cloud_consumption(producers, repository, downstream_roots=heads) as verified:
         rotations = {

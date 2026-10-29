@@ -168,9 +168,9 @@ def run_rgb_downstream(
         context_admission = verify_scientific_admission(context_admission_path)
         receipt = read_json_shared(fragment_receipt)
         expected_parents = {
-            name: verify_scientific_admission(
-                root / "fits" / name / "ENDPOINT_ADMISSION.json"
-            )["checkpoint_sha256"]
+            name: verify_scientific_admission(root / "fits" / name / "ENDPOINT_ADMISSION.json")[
+                "checkpoint_sha256"
+            ]
             for name in ("R_A5", "R_C2F", "PAIR_R")
         }
         if (

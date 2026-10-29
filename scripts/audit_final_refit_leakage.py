@@ -25,10 +25,7 @@ DEFAULT_TEST_INPUTS = (
     / "docs/multimodal_results_20261012/artifacts/multimodal_research_20261012"
     / "test12_phase_only/INPUTS.json"
 )
-DEFAULT_OUTPUT = (
-    REPOSITORY
-    / "artifacts/final_refit_20261017/audit/CAUSALITY_AND_SPLITS.json"
-)
+DEFAULT_OUTPUT = REPOSITORY / "artifacts/final_refit_20261017/audit/CAUSALITY_AND_SPLITS.json"
 ROLES = ("P", "H", "V")
 MAX_HISTORY_US = 650_000
 RGB_INTERVAL_TOLERANCE_US = 100
@@ -49,9 +46,7 @@ def canonical_sha256(value: object) -> str:
 
 def resolve_from(owner: Path, raw: str) -> Path:
     candidate = Path(raw)
-    return (candidate if candidate.is_absolute() else owner.parent / candidate).resolve(
-        strict=True
-    )
+    return (candidate if candidate.is_absolute() else owner.parent / candidate).resolve(strict=True)
 
 
 def as_list(value: Any) -> list[Any]:
@@ -186,12 +181,8 @@ def audit_train(descriptor_path: Path) -> tuple[dict[str, Any], set[str], set[st
                 violations["cutoff_after_query"] += 1
 
             producer_times = [int(x) for x in as_list(values["producer_times_us"][index])]
-            producer_available = [
-                int(x) for x in as_list(values["producer_available_us"][index])
-            ]
-            producer_sensor = [
-                int(x) for x in as_list(values["producer_sensor_times_us"][index])
-            ]
+            producer_available = [int(x) for x in as_list(values["producer_available_us"][index])]
+            producer_sensor = [int(x) for x in as_list(values["producer_sensor_times_us"][index])]
             if not (
                 len(producer_times) == len(producer_available) == len(producer_sensor)
                 and len(producer_times) in {2, 3}
@@ -207,9 +198,7 @@ def audit_train(descriptor_path: Path) -> tuple[dict[str, Any], set[str], set[st
                 violations["producer_annotation_after_query"] += 1
             if any(
                 arrival < stamp
-                for stamp, arrival in zip(
-                    producer_times, producer_available, strict=True
-                )
+                for stamp, arrival in zip(producer_times, producer_available, strict=True)
             ):
                 violations["producer_available_before_annotation"] += 1
             for left, right, s_left, s_right in zip(
@@ -224,9 +213,7 @@ def audit_train(descriptor_path: Path) -> tuple[dict[str, Any], set[str], set[st
                 if abs(difference) > RGB_INTERVAL_TOLERANCE_US:
                     violations["producer_cross_clock_interval_mismatch"] += 1
 
-            observation_time_groups = nested_int_lists(
-                values["observation_times_us"][index]
-            )
+            observation_time_groups = nested_int_lists(values["observation_times_us"][index])
             observation_available_groups = nested_int_lists(
                 values["observation_available_us"][index]
             )
@@ -237,9 +224,7 @@ def audit_train(descriptor_path: Path) -> tuple[dict[str, Any], set[str], set[st
             observation_available = [
                 item for group in observation_available_groups for item in group
             ]
-            observation_anchors = [
-                int(x) for x in as_list(values["observation_anchor_us"][index])
-            ]
+            observation_anchors = [int(x) for x in as_list(values["observation_anchor_us"][index])]
             if any(value > query for value in observation_times):
                 violations["observation_annotation_after_query"] += 1
             if any(value > query for value in observation_available):
@@ -296,9 +281,7 @@ def audit_train(descriptor_path: Path) -> tuple[dict[str, Any], set[str], set[st
             violations["role_sample_token_overlap"] += int(overlap["sample_tokens"])
         if overlap["groups"]:
             violations["role_group_overlap"] += int(overlap["groups"])
-    teacher_manifest_path = resolve_from(
-        descriptor_path, str(descriptor["teacher_manifest"])
-    )
+    teacher_manifest_path = resolve_from(descriptor_path, str(descriptor["teacher_manifest"]))
     teacher_manifest = json.loads(teacher_manifest_path.read_text(encoding="utf-8"))
     canonical_rows_path = (teacher_manifest_path.parent / "TRAIN40_ROWS.parquet").resolve(
         strict=True

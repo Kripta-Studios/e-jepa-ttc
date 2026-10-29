@@ -25,9 +25,7 @@ def _validate_r2_v8(
     sidecar = downstream / "RGB_OPERATIONAL_RECOVERY_V8.json"
     value = frozen.read_json(sidecar)
     source = frozen._source_by_sha256(sources, value.get("source_sha256"), label="V8")
-    v7_source = frozen._source_by_sha256(
-        sources, value.get("context_v7_sha256"), label="V7"
-    )
+    v7_source = frozen._source_by_sha256(sources, value.get("context_v7_sha256"), label="V7")
     layout = frozen._source_by_sha256(sources, value.get("layout_sha256"), label="layout")
     layout_value = frozen.read_json(layout)
     if (
@@ -105,15 +103,12 @@ def _validate_r2_v8(
                 or plan.get("receipt_sha256") != frozen._canonical_sha256(payload)
             ):
                 raise ValueError(f"R2/{role} V8 {label} plan receipt changed")
-        manifest_payload = {
-            key: item for key, item in manifest.items() if key != "receipt_sha256"
-        }
+        manifest_payload = {key: item for key, item in manifest.items() if key != "receipt_sha256"}
         if (
             manifest.get("schema") != "ejepa_rgb_frame_supplement_v1"
             or manifest.get("status") != "COMPLETE_BYTE_AND_PIXEL_VERIFIED"
             or manifest.get("plan_sha256") != frozen.sha256(paths["source_plan"])
-            or manifest.get("receipt_sha256")
-            != frozen._canonical_sha256(manifest_payload)
+            or manifest.get("receipt_sha256") != frozen._canonical_sha256(manifest_payload)
             or manifest.get("payload_recompressed") is not False
             or manifest.get("decoded_pixel_parity") is not True
         ):
@@ -149,19 +144,19 @@ def _validate_r2_v8(
         receipts: list[Path] = []
         for record in manifest.get("tars", []):
             relative = frozen._safe_relative(str(record.get("relative")))
-            receipt = Path(physical_root).joinpath(*relative.parts).with_suffix(
-                Path(relative.name).suffix + ".json"
-            ).resolve(strict=True)
-            record_payload = {
-                key: item for key, item in record.items() if key != "receipt_sha256"
-            }
+            receipt = (
+                Path(physical_root)
+                .joinpath(*relative.parts)
+                .with_suffix(Path(relative.name).suffix + ".json")
+                .resolve(strict=True)
+            )
+            record_payload = {key: item for key, item in record.items() if key != "receipt_sha256"}
             members = record.get("members")
             if (
                 frozen.read_json(receipt) != record
                 or record.get("schema") != "ejepa_rgb_sparse_tar_receipt_v1"
                 or record.get("status") != "COMPLETE_BYTE_AND_PIXEL_VERIFIED"
-                or record.get("receipt_sha256")
-                != frozen._canonical_sha256(record_payload)
+                or record.get("receipt_sha256") != frozen._canonical_sha256(record_payload)
                 or not isinstance(members, list)
                 or not members
                 or any(
@@ -195,8 +190,7 @@ def _validate_r2_v8(
                 or proof.get("target", {}).get("role") != role
                 or proof.get("physical", {}).get("rotation") != physical_rotation
                 or proof.get("physical", {}).get("role") != physical_role
-                or proof.get("target", {}).get("plan_sha256")
-                != frozen.sha256(paths["target_plan"])
+                or proof.get("target", {}).get("plan_sha256") != frozen.sha256(paths["target_plan"])
                 or proof.get("physical", {}).get("plan_sha256")
                 != frozen.sha256(paths["source_plan"])
                 or proof.get("physical", {}).get("manifest_sha256")

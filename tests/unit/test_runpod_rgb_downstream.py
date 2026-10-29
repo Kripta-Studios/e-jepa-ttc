@@ -4,10 +4,13 @@ import inspect
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import SimpleNamespace
 
+import pandas as pd
 import pytest
 
 from operational.final_refit.recipe import canonical_sha256
+from operational.runpod_migration import rgb_downstream_coverage as coverage
 from operational.runpod_migration.rgb_queue import (
     _needs_context_replay,
     rgb_dependency_state,
@@ -51,20 +54,146 @@ def test_rgb_queue_source_has_no_event_fit_or_context_calls() -> None:
     assert "E_CTX" not in source
 
 
-def test_real_rgb_coverage_receipt_is_complete_and_self_hashed() -> None:
-    path = Path("artifacts/runpod_migration_20261026/RGB_DOWNSTREAM_COVERAGE.json")
-    receipt = json.loads(path.read_text(encoding="utf-8"))
+def test_synthetic_rgb_coverage_is_derived_and_signed_by_production(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def write(path: Path, value: object) -> Path:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(value) + "\n", encoding="utf-8")
+        return path.resolve()
+
+    contract = write(tmp_path / "contract/folds.json", {"schema": "synthetic_folds"})
+    descriptor_root = tmp_path / "rgb"
+    descriptor: dict[str, object] = {"role_manifests": {}, "cache_bindings": {}}
+    required = [contract]
+    for role in ("P", "H", "V"):
+        rows = write(descriptor_root / f"{role}_rows.json", {"role": role})
+        manifest = write(
+            descriptor_root / f"{role}_manifest.json",
+            {"rows_path": str(rows), "rows_sha256": coverage.digest(rows)},
+        )
+        shard = descriptor_root / f"{role}_cache.bin"
+        shard.write_bytes(f"synthetic-{role}".encode())
+        shard = shard.resolve()
+        cache_manifest = write(
+            descriptor_root / f"{role}_cache_manifest.json",
+            {"shards": [{"path": str(shard), "sha256": coverage.digest(shard)}]},
+        )
+        binding = write(
+            descriptor_root / f"{role}_binding.json",
+            {
+                "cache_manifest_path": str(cache_manifest),
+                "cache_manifest_sha256": coverage.digest(cache_manifest),
+            },
+        )
+        descriptor["role_manifests"][role] = manifest.name
+        descriptor["cache_bindings"][role] = binding.name
+        required.extend((rows, manifest, shard, cache_manifest, binding))
+    descriptor_path = write(descriptor_root / "descriptor.json", descriptor)
+    required.append(descriptor_path)
+
+    teacher_root = tmp_path / "teacher"
+    teacher_shard = teacher_root / "teacher.bin"
+    teacher_shard.parent.mkdir()
+    teacher_shard.write_bytes(b"synthetic-teacher")
+    teacher_shard = teacher_shard.resolve()
+    teacher = write(
+        teacher_root / "teacher.json",
+        {
+            "directory": str(teacher_root.resolve()),
+            "ordered_shards": [
+                {"name": teacher_shard.name, "sha256": coverage.digest(teacher_shard)}
+            ],
+        },
+    )
+    required.extend((teacher, teacher_shard))
+
+    config = write(
+        tmp_path / "scientific_config.json",
+        {
+            "schema": "scientific_oof_execution_v1",
+            "fold_contract": str(contract),
+            "rgb_source": str(descriptor_path),
+            "teacher": str(teacher),
+            "input_sha256": {
+                str(contract): coverage.digest(contract),
+                str(descriptor_path): coverage.digest(descriptor_path),
+                str(teacher): coverage.digest(teacher),
+            },
+        },
+    )
+    required.append(config)
+    inventory = write(
+        tmp_path / "inventory.json",
+        {
+            "schema": "ejepa_runpod_inventory_v1",
+            "scientific_config_sha256": coverage.digest(config),
+            "files": [
+                {
+                    "source": str(path),
+                    "profiles": ["rgb_pilot"],
+                    "bytes": path.stat().st_size,
+                    "sha256": coverage.digest(path),
+                    "hash_status": "VERIFIED",
+                }
+                for path in required
+            ],
+        },
+    )
+
+    rows_by_role = {"producer": 0, "refiner": 1, "generation": 2}
+
+    class SyntheticRGBSource:
+        population_size = 3
+
+        @staticmethod
+        def row(ordinal: int) -> dict[str, object]:
+            return {"sample_token": f"token-{ordinal}", "group_id": f"group-{ordinal}"}
+
+        @staticmethod
+        def batch(ordinals: list[int], _modality: str) -> SimpleNamespace:
+            return SimpleNamespace(rgb=coverage.torch.tensor(ordinals, dtype=coverage.torch.int64))
+
+        @staticmethod
+        def close() -> None:
+            return None
+
+    def role_rows(_contract: Path, _rotation: int, role: str) -> pd.DataFrame:
+        ordinal = rows_by_role[role]
+        return pd.DataFrame(
+            {
+                "sample_token": [f"token-{ordinal}"],
+                "source_ordinal": [ordinal],
+                "group_id": [f"group-{ordinal}"],
+            }
+        )
+
+    monkeypatch.setattr(
+        "operational.final_refit.rgb.load_all_train_source",
+        lambda *_args: SyntheticRGBSource(),
+    )
+    monkeypatch.setattr("operational.final_refit.scientific_oof_features.role_rows", role_rows)
+
+    receipt = coverage.verify_rgb_downstream_coverage(config, inventory)
     claimed = receipt.pop("receipt_sha256")
     assert canonical_sha256(receipt) == claimed
     assert receipt["status"] == "PASS"
     assert receipt["required_rgb_files"] > 0
-    assert receipt["required_rgb_bytes"] > 9 * 1024**3
+    assert receipt["required_rgb_bytes"] == sum(path.stat().st_size for path in set(required))
     assert set(receipt["rotations"]) == {"2", "3", "4"}
     for roles in receipt["rotations"].values():
         assert set(roles) == {"producer", "refiner", "generation"}
         assert all(role["sample_batch"] for role in roles.values())
     assert receipt["r_ctx"]["event_metadata_required"] is False
     assert receipt["complete_combined_finish_rotation"]["covered_by_rgb_pilot"] is False
+
+    changed = json.loads(inventory.read_text(encoding="utf-8"))
+    next(item for item in changed["files"] if item["source"] == str(descriptor_path))["sha256"] = (
+        "0" * 64
+    )
+    inventory.write_text(json.dumps(changed), encoding="utf-8")
+    with pytest.raises(ValueError, match="RGB pilot hash differs"):
+        coverage.verify_rgb_downstream_coverage(config, inventory)
 
 
 def test_external_rgb_endpoint_is_verified_and_routed_without_copy(

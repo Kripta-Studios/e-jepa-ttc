@@ -10,24 +10,24 @@ from e_jepa_ttc.range_readout.operators import ResidualSpec
 from operational.range_transfer.qa import same
 from operational.representation_audit.export_weights import load_export
 from operational.representation_audit.nonlinear import initialize
-from operational.representation_audit.run import OLD, RUN
-from operational.representation_audit.spatial_cache import pool, source_for
 from operational.representation_audit.spatial_geometry import initialize as init_spatial
+from tests.fixtures.representation_audit import install
 
 
-def inputs(count=4, targets=False):
-    with np.load(OLD / "vector_cache/P/part_000000.npz", allow_pickle=False) as archive:
-        values = {
-            key: torch.from_numpy(archive[key][:count].copy())
-            for key in archive.files
-            if key != "sample_token" and (targets or not key.startswith(("target_", "dino_")))
-        }
-    with np.load(RUN / "spatial_cache/P/part_000000.npz", allow_pickle=False) as archive:
-        values["height_features"] = torch.from_numpy(archive["height_features"][:count].copy())
-    return values
+@pytest.fixture
+def audit_values(tmp_path, monkeypatch):
+    return install(tmp_path, monkeypatch)
 
 
-def test_zero_initialization_matches_sp1_and_scorer_state_exactly():
+def inputs(values, count=4, targets=False):
+    return {
+        key: value[:count].clone()
+        for key, value in values.items()
+        if targets or not key.startswith(("target_", "dino_"))
+    }
+
+
+def test_zero_initialization_matches_sp1_and_scorer_state_exactly(audit_values):
     reference, _, opt_a, sched_a, rng_a = init_spatial(7, "SP1", device="cpu")
     candidate, _, opt_b, sched_b, rng_b = initialize(7, "NL1", device="cpu", technical=True)
     assert same(opt_a.state_dict(), opt_b.state_dict())
@@ -37,7 +37,7 @@ def test_zero_initialization_matches_sp1_and_scorer_state_exactly():
         assert torch.equal(value, candidate.state_dict()[key])
     reference.eval()
     candidate.eval()
-    values = inputs()
+    values = inputs(audit_values)
     left, right = reference(values), candidate(values)
     for key in (
         "ttc_mean_seconds",
@@ -62,7 +62,7 @@ def test_zero_initialization_matches_sp1_and_scorer_state_exactly():
     )
 
 
-def test_geometry_stage_uses_only_height_targets_and_only_trains_new_mlp():
+def test_geometry_stage_uses_only_height_targets_and_only_trains_new_mlp(audit_values):
     model, _, optimizer, _, _ = initialize(7, "NLH", device="cpu", technical=True)
     assert {id(p) for p in model.parameters() if p.requires_grad} == {
         id(p) for group in optimizer.param_groups for p in group["params"]
@@ -70,7 +70,7 @@ def test_geometry_stage_uses_only_height_targets_and_only_trains_new_mlp():
     assert all(
         key.startswith("height_mlp.") for key, p in model.named_parameters() if p.requires_grad
     )
-    values = inputs(targets=True)
+    values = inputs(audit_values, targets=True)
     actual = model.geometry_loss(values)
     changed = model.geometry_loss({**values, "target_ttc": values["target_ttc"] * 1000})
     assert torch.equal(actual, changed)
@@ -80,18 +80,13 @@ def test_geometry_stage_uses_only_height_targets_and_only_trains_new_mlp():
     assert sum(float(g.square().sum()) for g in gradients) > 0
 
 
-def test_native_map_composition_and_cached_height_gradients_match(tmp_path):
+def test_native_map_composition_and_cached_height_gradients_match(tmp_path, audit_values):
     model, *_ = initialize(7, "NLH", device="cpu", technical=True)
-    values = inputs(count=2, targets=True)
-    source = source_for("P")
-    try:
-        batch = source.batch([0, 1], "event")
-    finally:
-        source.close()
-    b, t, c, h, w = batch.events.shape
+    values = inputs(audit_values, count=2, targets=True)
     with torch.no_grad():
-        dense = model.model.encoder.features(batch.events.reshape(b * t, c, h, w).float())
-        raw = pool(dense, b, t)
+        # These features were produced from the same synthetic events through the
+        # native encoder and registered pooling operator in the shared fixture.
+        raw = audit_values["height_features"][:2].clone()
         final = model.height_mlp[-1]
         assert isinstance(final, torch.nn.Linear)
         final.weight.fill_(0.001)
@@ -130,7 +125,7 @@ def test_native_map_composition_and_cached_height_gradients_match(tmp_path):
         assert torch.equal(getattr(original, key), getattr(direct_output, key))
 
 
-def test_portable_nonlinear_operator_preserves_learned_height_branch(tmp_path):
+def test_portable_nonlinear_operator_preserves_learned_height_branch(tmp_path, audit_values):
     model, *_ = initialize(7, "NLH", device="cpu", technical=True)
     model.eval()
     with torch.no_grad():
@@ -157,6 +152,6 @@ def test_portable_nonlinear_operator_preserves_learned_height_branch(tmp_path):
     )
     restored = load_export(path)
     with torch.no_grad():
-        left, right = model(inputs()), restored(inputs())
+        left, right = model(inputs(audit_values)), restored(inputs(audit_values))
     assert torch.equal(left.ttc_mean_seconds, right.ttc_mean_seconds)
     assert torch.equal(left.pair_log_height_ratio, right.pair_log_height_ratio)

@@ -16,9 +16,10 @@ def verify_downstream_authority(root: Path, repository: Path) -> dict[str, Any]:
         raise ValueError("RGB returns must remain isolated from the active run")
     archive = root.parents[1]
     manifest = read(archive / "MANIFEST.json")
-    if manifest.get("schema") != "ejepa_cloud_rgb_complete_archive_v1" or manifest.get(
-        "status"
-    ) != "READY":
+    if (
+        manifest.get("schema") != "ejepa_cloud_rgb_complete_archive_v1"
+        or manifest.get("status") != "READY"
+    ):
         raise ValueError("RGB heads require the complete immutable return archive")
     prefix = root.relative_to(archive).as_posix() + "/"
     expected = {
@@ -98,8 +99,7 @@ def verify_downstream_authority(root: Path, repository: Path) -> dict[str, Any]:
         or deployment.get("frozen_migration_sources_unchanged") is not True
         or {Path(name).name for name in source_hashes} != set(source_locations)
         or any(
-            sha != digest(source_locations[Path(name).name])
-            for name, sha in source_hashes.items()
+            sha != digest(source_locations[Path(name).name]) for name, sha in source_hashes.items()
         )
     ):
         raise ValueError("RGB external deployment differs from locally reviewed code")

@@ -1,5 +1,6 @@
 """Integrity checks for preservation archives independent of training execution."""
 
+import builtins
 import hashlib
 import io
 import json
@@ -7,7 +8,7 @@ import tarfile
 
 import pytest
 
-from scripts.runpod_final_preservation import verify_archive
+from scripts.runpod_final_preservation import _load_transport_call, verify_archive
 
 
 def make_archive(path, *, member=b"checkpoint", member_sha=None):
@@ -48,3 +49,16 @@ def test_archive_corruption_rejected(tmp_path):
         stream.write(b"corruption")
     with pytest.raises(ValueError, match="Archive SHA mismatch"):
         verify_archive(path, expected)
+
+
+def test_remote_transport_has_actionable_error_when_rpc_is_unavailable(monkeypatch):
+    real_import = builtins.__import__
+
+    def import_without_rpc(name, *args, **kwargs):
+        if name == "rpc":
+            raise ModuleNotFoundError("No module named 'rpc'", name="rpc")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", import_without_rpc)
+    with pytest.raises(RuntimeError, match="session module 'rpc'.*Offline archive verification"):
+        _load_transport_call()

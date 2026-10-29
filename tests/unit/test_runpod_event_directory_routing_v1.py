@@ -66,9 +66,7 @@ def test_required_history_child_closure(tmp_path: Path, name: str) -> None:
     (supplemental / relative).mkdir(parents=True)
     expected = supplemental / relative / name
     expected.write_bytes(b"x")
-    path_type = compositional_path_factory(
-        mapped_path_class, Mapping(primary, (supplemental,))
-    )
+    path_type = compositional_path_factory(mapped_path_class, Mapping(primary, (supplemental,)))
     assert path_type(primary / relative) / name == expected
 
 

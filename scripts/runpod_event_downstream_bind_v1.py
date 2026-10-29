@@ -30,9 +30,7 @@ def write_once(path: Path, value: dict[str, object]) -> None:
 
 
 def bind(run: Path, authorization: Path, budget_source: Path, output: Path) -> None:
-    run, authorization, budget_source = map(
-        Path.resolve, (run, authorization, budget_source)
-    )
+    run, authorization, budget_source = map(Path.resolve, (run, authorization, budget_source))
     authorized = json.loads(authorization.read_text(encoding="utf-8"))
     source = json.loads(budget_source.read_text(encoding="utf-8"))
     migration = run / "EVENT_MIGRATION_BINDING.json"

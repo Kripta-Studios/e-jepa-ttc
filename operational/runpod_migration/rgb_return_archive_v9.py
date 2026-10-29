@@ -26,9 +26,7 @@ def _source_by_hash(sources: Sequence[Path], expected: object, name: str) -> Pat
     return matches[0]
 
 
-def _validate_v9(
-    downstream: Path, operational_sources: Sequence[Path]
-) -> tuple[Path, Path]:
+def _validate_v9(downstream: Path, operational_sources: Sequence[Path]) -> tuple[Path, Path]:
     sidecar = downstream / "RGB_OPERATIONAL_RECOVERY_V9.json"
     value = v8.read_json(sidecar)
     source = _source_by_hash(
@@ -45,9 +43,7 @@ def _validate_v9(
         if parent_version == 8
         else ""
     )
-    parent = _source_by_hash(
-        operational_sources, value.get("parent_context_sha256"), parent_name
-    )
+    parent = _source_by_hash(operational_sources, value.get("parent_context_sha256"), parent_name)
     if (
         value.get("schema") != V9_SCHEMA
         or value.get("status") != "PASS"

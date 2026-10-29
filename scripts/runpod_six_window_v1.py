@@ -25,7 +25,7 @@ def main() -> None:
     )
     status = OPS / "SIX_WINDOW_STATUS.json"
     fits = {}
-    for name, pid in PIDS.items():
+    for name, _pid in PIDS.items():
         kind, rotation = name.split("_")
         run = f"r{rotation}_{'rgb' if kind == 'A5' else 'c2f'}_v3"
         fits[name] = Path(f"/workspace/ejepa_technical/{run}/rotations/{rotation}/fits/R_{kind}")

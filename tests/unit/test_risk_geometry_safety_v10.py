@@ -3,7 +3,9 @@
 import importlib.util
 import json
 import os
+import shutil
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import psutil
@@ -50,7 +52,17 @@ def test_scientific_fit_without_real_ledger_rejected(tmp_path):
     assert set(tmp_path.iterdir()) == before
 
 
-def test_live_owner_rejected_stale_preserved(tmp_path):
+@pytest.fixture
+def available_campaign_resources(monkeypatch):
+    """Keep ownership tests independent of concurrent host resource use."""
+    monkeypatch.setattr(psutil, "virtual_memory", lambda: SimpleNamespace(available=6 * 1024**3))
+    monkeypatch.setattr(
+        psutil.Process, "memory_info", lambda self: SimpleNamespace(rss=24 * 1024**3)
+    )
+    monkeypatch.setattr(shutil, "disk_usage", lambda path: SimpleNamespace(free=10 * 1024**3))
+
+
+def test_live_owner_rejected_stale_preserved(tmp_path, available_campaign_resources):
     p = tmp_path / "ACTIVE_OWNER.json"
     p.write_text(json.dumps(dict(pid=os.getpid(), created=psutil.Process().create_time())))
     with pytest.raises(RuntimeError, match="live"):
@@ -60,6 +72,30 @@ def test_live_owner_rejected_stale_preserved(tmp_path):
     with CampaignOwner(tmp_path):
         assert p.exists()
     assert list(tmp_path.glob("STALE_OWNER*")) and list(tmp_path.glob("CLOSED_OWNER*"))
+
+
+@pytest.mark.parametrize("resource", ["ram", "rss", "disk"])
+def test_campaign_resource_boundaries_remain_enforced(
+    tmp_path, monkeypatch, available_campaign_resources, resource
+):
+    owner = CampaignOwner(tmp_path)
+    owner.check()
+    if resource == "ram":
+        monkeypatch.setattr(
+            psutil, "virtual_memory", lambda: SimpleNamespace(available=6 * 1024**3 - 1)
+        )
+    elif resource == "rss":
+        monkeypatch.setattr(
+            psutil.Process, "memory_info", lambda self: SimpleNamespace(rss=24 * 1024**3 + 1)
+        )
+    else:
+        monkeypatch.setattr(
+            shutil, "disk_usage", lambda path: SimpleNamespace(free=10 * 1024**3 - 1)
+        )
+    with pytest.raises(RuntimeError, match="RESOURCE_BLOCKED"):
+        with owner:
+            pytest.fail("resource-blocked owner entered the campaign")
+    assert not (tmp_path / "ACTIVE_OWNER.json").exists()
 
 
 def test_forged_diagnostic_complete_flag_rejected(tmp_path):

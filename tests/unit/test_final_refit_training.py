@@ -115,9 +115,9 @@ def test_group_mass_is_unit_sum_and_equal_between_unequal_groups() -> None:
 
 
 def test_technical_training_stays_below_small_scientific_endpoint() -> None:
-    assert _technical_execution_limit(
-        stage_updates=5, completed_updates=0, requested_updates=5
-    ) == 4
+    assert (
+        _technical_execution_limit(stage_updates=5, completed_updates=0, requested_updates=5) == 4
+    )
     _validate_technical_receipt(
         {
             "status": "IN_PROGRESS",
@@ -152,9 +152,7 @@ def test_cached_pair_training_resumes_to_fixed_endpoint(tmp_path: Path) -> None:
         stacking="unit",
         event_branch="unit",
         native_train40_rows_sha256="c" * 64,
-        ordered_row_identity_sha256=ordered_row_identity_sha256(
-            tokens.tolist(), groups.tolist()
-        ),
+        ordered_row_identity_sha256=ordered_row_identity_sha256(tokens.tolist(), groups.tolist()),
         stages=(stage,),
         source_sha256={"unit": "a" * 64},
         external_parent_sha256={},

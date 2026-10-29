@@ -69,8 +69,7 @@ def _origin(directory: Path) -> tuple[Path, dict[str, Any], dict[str, Any], dict
         == receipt.get("identity_sha256")
         == journal.get("identity_sha256")
         and all(
-            value.get("execution_binding_sha256") is None
-            for value in (pointer, receipt, journal)
+            value.get("execution_binding_sha256") is None for value in (pointer, receipt, journal)
         )
     ):
         raise ValueError("Imported event checkpoint is not one exact durable unbound transaction")

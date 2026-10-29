@@ -139,9 +139,7 @@ def analyze_window(
     if observed_compute_pids:
         if missing_compute_pid_samples:
             violations.append("CUDA PID inventory is missing from some samples")
-        mismatches = [
-            sorted(value) for value in observed_compute_pids if value != expected_pids
-        ]
+        mismatches = [sorted(value) for value in observed_compute_pids if value != expected_pids]
         if mismatches:
             violations.append(
                 f"CUDA PID set differs from expected {sorted(expected_pids)}: {mismatches[:3]}"

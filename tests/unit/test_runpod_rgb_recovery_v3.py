@@ -56,9 +56,7 @@ def test_heartbeat_frequency_guard_calls_and_result_are_preserved(tmp_path: Path
         _receipt=lambda *args, **kwargs: receipts.append((args, kwargs)),
     )
     install_queue_heartbeat(module, clock=lambda: next(times))
-    result = module.run_rgb_downstream(
-        tmp_path, 3, external_guard=lambda: guards.append(True)
-    )
+    result = module.run_rgb_downstream(tmp_path, 3, external_guard=lambda: guards.append(True))
 
     assert len(receipts) == 2
     assert len(guards) == 3

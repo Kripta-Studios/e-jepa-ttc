@@ -150,9 +150,15 @@ def main() -> int:
                     from operational.runpod_migration.event_restart_probe import probe
 
                     result = probe(
-                        science, source, recipe, setup["config"], args.run,
-                        fit=args.fit, assignment=args.assignment,
-                        pause_receipt=args.pause_receipt, monitor=monitor,
+                        science,
+                        source,
+                        recipe,
+                        setup["config"],
+                        args.run,
+                        fit=args.fit,
+                        assignment=args.assignment,
+                        pause_receipt=args.pause_receipt,
+                        monitor=monitor,
                     )
                 else:
                     from operational.runpod_migration.probe import probe
@@ -164,8 +170,13 @@ def main() -> int:
                         case_root / "SCIENTIFIC_CONFIG.json",
                     )
                     result = probe(
-                        source, science, setup["config"], case_root, args.fit,
-                        monitor, setup["migration_binding_sha256"],
+                        source,
+                        science,
+                        setup["config"],
+                        case_root,
+                        args.fit,
+                        monitor,
+                        setup["migration_binding_sha256"],
                     )
                     atomic_write_json(result_path, result)
             print(json.dumps(result, indent=2))
@@ -177,11 +188,17 @@ def main() -> int:
             if args.pause_receipt is None:
                 raise ValueError("Imported E_A5/R2 producer requires --pause-receipt")
             context = activated(
-                science, args.run / "rotations/2/fits/E_A5", source, recipe,
-                fit=args.fit, assignment=args.assignment,
-                pause_receipt=args.pause_receipt, technical=False,
+                science,
+                args.run / "rotations/2/fits/E_A5",
+                source,
+                recipe,
+                fit=args.fit,
+                assignment=args.assignment,
+                pause_receipt=args.pause_receipt,
+                technical=False,
             )
         else:
+
             def cloud_identity(*pos: Any, **kw: Any) -> dict[str, Any]:
                 identity = original_identity(*pos, **kw)
                 identity.pop("identity_sha256")
@@ -198,15 +215,21 @@ def main() -> int:
         try:
             with context as binding, queue_lock(lock):
                 receipt = science.train(
-                    source=source, fit=args.fit,
+                    source=source,
+                    fit=args.fit,
                     config=Path(setup["config"]["config"]),
-                    contract=Path(setup["config"]["fold_contract"]), run=args.run,
-                    monitor=monitor, device="cuda", max_updates=args.additional_updates,
+                    contract=Path(setup["config"]["fold_contract"]),
+                    run=args.run,
+                    monitor=monitor,
+                    device="cuda",
+                    max_updates=args.additional_updates,
                 )
             if receipt["status"] == "COMPLETE":
                 admission = {
                     "schema": "ejepa_event_scientific_cloud_admission_v1",
-                    "status": "ADMITTED", "rotation": args.rotation, "fit": args.fit,
+                    "status": "ADMITTED",
+                    "rotation": args.rotation,
+                    "fit": args.fit,
                     "assignment_sha256": digest(args.assignment),
                     "execution_binding_sha256": (
                         digest(
@@ -214,7 +237,8 @@ def main() -> int:
                             / f"rotations/{args.rotation}/fits/{args.fit}"
                             / "EVENT_EXECUTION_BINDING.json"
                         )
-                        if binding else None
+                        if binding
+                        else None
                     ),
                     "probe_result_sha256": digest(result_path),
                     "input_identity_sha256": canonical_sha256(report["batch_identity"]),

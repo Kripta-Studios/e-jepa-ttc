@@ -124,13 +124,15 @@ def fixture(root: Path, mutation: str | None = None) -> None:
 def test_replays_all_states_without_recounting_shared_prefix(tmp_path: Path) -> None:
     """Physical work is eight, logical endpoint six, and replay trains nothing."""
     fixture(tmp_path)
+    cuda_initialized_before = torch.cuda.is_initialized()
     result = replay_runtime(tmp_path)
     assert result["status"] == "PASS"
     assert len(result["checks"]) == 9 and all(result["checks"].values())
     assert result["retained_physical_updates"] == 8
     assert result["logical_updates"] == 6 and result["shared_prefix_updates"] == 4
     assert result["optimizer_updates"] == 0 and not result["eager_bitwise_equivalence"]
-    assert not result["cuda_initialized"]
+    assert torch.cuda.is_initialized() is cuda_initialized_before
+    assert result["cuda_initialized"] is cuda_initialized_before
 
 
 @pytest.mark.parametrize(

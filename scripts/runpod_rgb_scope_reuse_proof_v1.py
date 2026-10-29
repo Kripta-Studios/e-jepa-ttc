@@ -146,9 +146,7 @@ def main() -> None:
     parser.add_argument("--physical-manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = prove_reuse(
-        args.target_plan, args.physical_plan, args.physical_manifest, args.output
-    )
+    result = prove_reuse(args.target_plan, args.physical_plan, args.physical_manifest, args.output)
     print(json.dumps(result, indent=2, sort_keys=True))
 
 

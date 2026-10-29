@@ -248,8 +248,7 @@ def load_recipe(path: Path) -> FinalRefitRecipe:
         or stages != _stages(TRAIN40_QUERIES)
         or set(recipe.external_parent_sha256) != {"E_A5", "E_C2F"}
         or any(
-            len(digest) != 64
-            or any(character not in "0123456789abcdef" for character in digest)
+            len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest)
             for digest in (
                 recipe.native_train40_rows_sha256,
                 recipe.ordered_row_identity_sha256,

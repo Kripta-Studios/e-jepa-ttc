@@ -61,9 +61,7 @@ def _fold_contract(root: Path, *, overlap: bool = False) -> Path:
     }
     manifest_path = root / "rotation_0.json"
     _json(manifest_path, manifest)
-    rotations = [
-        {"path": manifest_path.name, "sha256": sha256(manifest_path)} for _ in range(5)
-    ]
+    rotations = [{"path": manifest_path.name, "sha256": sha256(manifest_path)} for _ in range(5)]
     contract = {
         "schema": "final_refit_oof_fold_contract_v1",
         "status": "PASS",

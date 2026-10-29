@@ -60,9 +60,7 @@ def _route_child(path: Path, primary: Path, roots: tuple[Path, ...]) -> Path:
     return primary.joinpath(*relative.parts)
 
 
-def compositional_path_factory(
-    original: Callable[[Any], type[Path]], mapping: Any
-) -> type[Path]:
+def compositional_path_factory(original: Callable[[Any], type[Path]], mapping: Any) -> type[Path]:
     """Return the normal mapped Path type plus per-child supplement composition."""
     base = original(mapping)
     layout = _layout(mapping)
@@ -99,4 +97,3 @@ def install() -> None:
 
     factory._event_directory_routing_v1 = True  # type: ignore[attr-defined]
     paths.mapped_path_class = factory
-

@@ -142,8 +142,7 @@ def _prime_efficient_context_without_unshipped_scanner(bundle: Path) -> None:
     if name in sys.modules:
         raise RuntimeError("Efficient-context package loaded before migration overlay")
     package_root = (
-        bundle
-        / "workspace/e-jepa-ttc-v18-joint-measurement/operational/efficient_context"
+        bundle / "workspace/e-jepa-ttc-v18-joint-measurement/operational/efficient_context"
     )
     if not package_root.is_dir():
         raise FileNotFoundError(package_root)

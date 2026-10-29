@@ -185,9 +185,7 @@ def test_final_producer_requires_physical_and_commit_headroom() -> None:
     assert not _final_memory_allowed(
         True, {**healthy, "windows_commit_headroom_bytes": 2 * 1024**3 - 1}
     )
-    assert _final_memory_allowed(
-        True, {**healthy, "windows_commit_headroom_bytes": 2 * 1024**3}
-    )
+    assert _final_memory_allowed(True, {**healthy, "windows_commit_headroom_bytes": 2 * 1024**3})
     assert not _final_memory_allowed(False, healthy)
 
 

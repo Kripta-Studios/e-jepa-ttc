@@ -17,13 +17,33 @@ SCHEMA = "ejepa_pod1_operational_supplement_v1"
 MAX_FILE_BYTES = 64 * 1024 * 1024
 TOP_LEVEL_SUFFIXES = {".json", ".jsonl", ".log", ".txt", ".py", ".sh"}
 SOURCE_SUFFIXES = {
-    ".cff", ".cfg", ".ini", ".json", ".lock", ".md", ".ps1", ".py", ".sh",
-    ".toml", ".txt", ".yaml", ".yml",
+    ".cff",
+    ".cfg",
+    ".ini",
+    ".json",
+    ".lock",
+    ".md",
+    ".ps1",
+    ".py",
+    ".sh",
+    ".toml",
+    ".txt",
+    ".yaml",
+    ".yml",
 }
 SOURCE_NAMES = {"LICENSE", "Makefile", "Dockerfile", ".gitignore"}
 EXCLUDED_DIRECTORIES = {
-    ".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".venv", "__pycache__",
-    "artifacts", "checkpoints", "data", "drives", "rgb_shards",
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+    "artifacts",
+    "checkpoints",
+    "data",
+    "drives",
+    "rgb_shards",
 }
 
 
@@ -58,9 +78,7 @@ def plain_file(path: Path) -> Path:
     return resolved
 
 
-def collect(
-    files: list[str], top_levels: list[str], trees: list[str]
-) -> dict[str, dict[str, Any]]:
+def collect(files: list[str], top_levels: list[str], trees: list[str]) -> dict[str, dict[str, Any]]:
     records: dict[str, dict[str, Any]] = {}
 
     def add(relative: PurePosixPath, path: Path) -> None:

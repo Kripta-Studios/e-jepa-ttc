@@ -1,0 +1,30 @@
+{
+  "schema": "garl_evttc_literature_test_projection_v1",
+  "scope": "Tracked projection of the published Garl-TTC Table VI zero-shot EvTTC result used by comparison unit tests.",
+  "papers": [
+    {
+      "id": "arXiv:2603.16303v1",
+      "title": "Toward Deep Representation Learning for Event-Enhanced Visual Autonomous Perception: the eAP Dataset",
+      "evttc_result": {
+        "table": "Table VI",
+        "training_transfer": "Trained on eAP; evaluated on EvTTC without fine-tuning.",
+        "metric": "RTE = abs(tau - tau_hat) / tau * 100%",
+        "sequences": {
+          "CCRs2-medium": {
+            "rte_percent": 8.31
+          },
+          "CCRs2-high": {
+            "rte_percent": 10.56
+          },
+          "CCRm-medium": {
+            "rte_percent": 12.93
+          }
+        },
+        "unweighted_three_sequence_average": {
+          "rte_percent": 10.60
+        },
+        "applicability_limit": "Separate three-sequence cross-dataset result; not the ten-sequence competition population."
+      }
+    }
+  ]
+}

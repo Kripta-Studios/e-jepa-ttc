@@ -22,8 +22,16 @@ def main() -> None:
     parser.add_argument("--status", type=Path, required=True)
     args = parser.parse_args()
     ssh = [
-        "ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
-        "-i", str(args.key), "-p", str(args.port), args.host,
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-i",
+        str(args.key),
+        "-p",
+        str(args.port),
+        args.host,
     ]
     while True:
         try:
@@ -40,21 +48,39 @@ def main() -> None:
     remote_pending = "/workspace/ejepa_event_operations/EVENT_DOWNSTREAM_SUPPLEMENT.tar.partial"
     subprocess.run(
         [
-            "scp", "-P", str(args.port), "-i", str(args.key),
-            "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
-            str(args.archive.resolve(strict=True)), f"{args.host}:{remote_pending}",
+            "scp",
+            "-P",
+            str(args.port),
+            "-i",
+            str(args.key),
+            "-o",
+            "BatchMode=yes",
+            "-o",
+            "StrictHostKeyChecking=yes",
+            str(args.archive.resolve(strict=True)),
+            f"{args.host}:{remote_pending}",
         ],
         check=True,
         timeout=600,
     )
     command = [
-        "set", "-eu;",
-        "printf", f"'%s  %s\\n' {ARCHIVE_SHA} {remote_pending}", "|", "sha256sum", "-c", "-;",
-        "mkdir", "-p", "/workspace/ejepa_event_operations/supplement;",
+        "set",
+        "-eu;",
+        "printf",
+        f"'%s  %s\\n' {ARCHIVE_SHA} {remote_pending}",
+        "|",
+        "sha256sum",
+        "-c",
+        "-;",
+        "mkdir",
+        "-p",
+        "/workspace/ejepa_event_operations/supplement;",
         "/opt/ejepa_env/bin/python",
         "/workspace/ejepa_event_operations/event_downstream_runtime_v4/scripts/runpod_event_supplement_v1.py",
-        "--archive", remote_pending,
-        "--root", "/opt/ejepa_event_supplement",
+        "--archive",
+        remote_pending,
+        "--root",
+        "/opt/ejepa_event_supplement",
         "--admission",
         "/workspace/ejepa_event_operations/supplement/EVENT_DOWNSTREAM_SUPPLEMENTAL_ADMISSION.json",
     ]

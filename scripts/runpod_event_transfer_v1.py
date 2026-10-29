@@ -5,13 +5,11 @@ from __future__ import annotations
 import argparse
 import base64
 import json
-import os
 import re
 import subprocess
 from pathlib import Path, PurePosixPath
 
-
-REMOTE_RECEIVER = r'''
+REMOTE_RECEIVER = r"""
 import hashlib, json, os, pathlib, sys, tempfile
 
 root = pathlib.Path(sys.argv[1]).resolve(strict=True)
@@ -95,7 +93,7 @@ while True:
     seal.chmod(0o444)
     fsync_dir(target.parent)
     reply({"status": "OK", "relative": str(relative), "bytes": size})
-'''
+"""
 
 
 def _safe_relative(value: str) -> str:

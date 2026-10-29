@@ -98,9 +98,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "schema": SCHEMA,
             "status": "PASS" if passed else "FAILED",
             "scientific_updates": 0,
-            "technical_optimizer_steps": sum(
-                item["technical_optimizer_steps"] for item in results
-            ),
+            "technical_optimizer_steps": sum(item["technical_optimizer_steps"] for item in results),
             "batch_key": list(key),
             "effective_batch_size": 32,
             "physical_shapes": physical_shapes,
@@ -127,9 +125,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     result = run(args)
     _atomic_json(args.output.resolve(), result)
     print(
-        json.dumps(
-            {"status": result["status"], "runtime_admission": result["runtime_admission"]}
-        )
+        json.dumps({"status": result["status"], "runtime_admission": result["runtime_admission"]})
     )
     return 0 if result["status"] == "PASS" else 3
 

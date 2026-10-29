@@ -15,9 +15,7 @@ def test_large_inventory_is_sent_on_stdin_not_command_line() -> None:
     def runner(command: list[str], **kwargs: object) -> SimpleNamespace:
         observed.update(command=command, **kwargs)
         return SimpleNamespace(
-            stdout=json.dumps(
-                {"credit_bytes": 0, "target_files": 0, "partial_files": 0}
-            )
+            stdout=json.dumps({"credit_bytes": 0, "target_files": 0, "partial_files": 0})
         )
 
     credit, _ = remote_staged_credit(["ssh"], "/workspace/root", files, runner=runner)
@@ -34,9 +32,7 @@ def test_credit_bound_is_preserved() -> None:
             "/workspace/root",
             [("data/train/s/rgb_shards/a.tar", 10)],
             runner=lambda *_args, **_kwargs: SimpleNamespace(
-                stdout=json.dumps(
-                    {"credit_bytes": 11, "target_files": 0, "partial_files": 1}
-                )
+                stdout=json.dumps({"credit_bytes": 11, "target_files": 0, "partial_files": 1})
             ),
         )
 

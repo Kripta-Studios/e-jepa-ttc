@@ -259,9 +259,7 @@ def _query_plan(
     sequence = str(index["sequences"][row])
     windows = np.asarray(index["windows_us"][row], dtype=np.int64)
     start_bound, end_bound = sources.bounds[sequence]
-    endpoints = [
-        sources.frames[(sequence, str(member))] for member in index["rgb_members"][row]
-    ]
+    endpoints = [sources.frames[(sequence, str(member))] for member in index["rgb_members"][row]]
     exposure_starts = [int(frame["rgb_exposure_start_timestamp_us"]) for frame in endpoints]
     if exposure_starts != windows[1:, 1].tolist():
         raise ValueError("TRAIN exposure and event clock mapping differs")
@@ -521,9 +519,7 @@ def materialize_event_history(
         "group_id": groups,
         "role": np.full(len(prefix), ROLE),
     }
-    compacted_observations = compact_referenced_observations(
-        observation_source, requested, valid
-    )
+    compacted_observations = compact_referenced_observations(observation_source, requested, valid)
     receipt = build_observation_cache(
         compacted_observations,
         observations_output,

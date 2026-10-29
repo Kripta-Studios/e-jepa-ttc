@@ -115,9 +115,8 @@ def verify_rgb_downstream_coverage(
                 token_sets[role], ordinal_sets[role] = set(tokens), set(ordinals)
                 native = ordinals[0]
                 observed = base.row(native)
-                if (
-                    str(observed["sample_token"]) != tokens[0]
-                    or str(observed["group_id"]) != str(rows.iloc[0].group_id)
+                if str(observed["sample_token"]) != tokens[0] or str(observed["group_id"]) != str(
+                    rows.iloc[0].group_id
                 ):
                     raise ValueError(f"R{rotation} {role} native RGB lookup differs")
                 batch = base.batch([native], "rgb")
@@ -131,15 +130,11 @@ def verify_rgb_downstream_coverage(
                     "sample_batch": _tensor_identity(batch),
                 }
             names = tuple(token_sets)
-            if (
-                any(
-                    token_sets[left] & token_sets[right]
-                    or ordinal_sets[left] & ordinal_sets[right]
-                    for index, left in enumerate(names)
-                    for right in names[index + 1 :]
-                )
-                or set().union(*ordinal_sets.values()) != set(range(base.population_size))
-            ):
+            if any(
+                token_sets[left] & token_sets[right] or ordinal_sets[left] & ordinal_sets[right]
+                for index, left in enumerate(names)
+                for right in names[index + 1 :]
+            ) or set().union(*ordinal_sets.values()) != set(range(base.population_size)):
                 raise ValueError(f"R{rotation} roles overlap or omit native TRAIN40 rows")
             rotation_receipts[str(rotation)] = role_receipts
     finally:

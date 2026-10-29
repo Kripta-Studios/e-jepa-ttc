@@ -44,9 +44,7 @@ def _verified_manifest_v10(
     ):
         raise ValueError("Global V10 manifest genealogy changed")
     expected_scopes = {
-        f"R{rotation}_{role}"
-        for rotation in (2, 3, 4)
-        for role in ("refiner", "generation")
+        f"R{rotation}_{role}" for rotation in (2, 3, 4) for role in ("refiner", "generation")
     }
     if set(media) != expected_scopes:
         raise ValueError("Global V10 media scope set changed")
@@ -59,8 +57,7 @@ def _verified_manifest_v10(
     for scope, (physical_rotation, physical_role, mode) in expected_v8.items():
         evidence = media[scope]
         if (
-            evidence.get("admission_schema")
-            != "ejepa_rgb_compositional_scope_admission_v8"
+            evidence.get("admission_schema") != "ejepa_rgb_compositional_scope_admission_v8"
             or evidence.get("physical_rotation") != physical_rotation
             or evidence.get("physical_role") != physical_role
             or evidence.get("composition_mode") != mode

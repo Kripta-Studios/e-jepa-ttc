@@ -17,10 +17,9 @@ def _sources(tmp_path: Path) -> list[Path]:
     repository = Path(__file__).resolve().parents[2]
     v9_source = tmp_path / "runpod_rgb_context_v9.py"
     v9_source.write_bytes(b"v9 fixture")
-    return [
-        repository / f"scripts/runpod_rgb_context_v{version}.py"
-        for version in (6, 7, 8)
-    ] + [v9_source]
+    return [repository / f"scripts/runpod_rgb_context_v{version}.py" for version in (6, 7, 8)] + [
+        v9_source
+    ]
 
 
 def _sidecar(run: Path, sources: list[Path], *, parent_version: int = 7) -> Path:
