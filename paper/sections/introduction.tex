@@ -1,0 +1,22 @@
+\section{Introduction}
+An approaching object's image expands before contact. Recovering time-to-contact (TTC) from that expansion requires preserving small changes in scale through cropping, feature extraction, and temporal aggregation. Event cameras make this a particularly demanding measurement problem: they record asynchronous brightness changes, and the number of events depends on texture, illumination, contrast, and sensor thresholds as well as motion. Features that predict event activity accurately may therefore carry little information about approach speed.
+
+PHASE-TTC combines geometric measurements from events and RGB images with their recent history. Each modality first produces its own motion estimate. The final fusion head receives named phase, timing, and support features and learns a correction to the RGB estimate. This lets the two branches share interpretable measurements without requiring their hidden coordinates to align. We train the later stages on out-of-fold predictions generated from separate sequence groups. \evidence{M22,M23}
+
+The resulting TRAIN40 system ranks first on the public GarlTTC Test leaderboard as of 28 October 2026. It scores \OfficialPhasePublishedOverallMiD{} Overall MiD, compared with \OfficialGarlOverallMiD{} for Garl-TTC, with a 0\% scorer-defined failure rate over \OfficialSampleCount{} tokens \citep{codabench2026}. This \OfficialOverallRelativeGain{} reduction is measured in the benchmark's weighted phase error. To understand the result beyond the leaderboard, we examine the contribution of each modality, the effects of temporal context, and the time required to deliver a complete prediction. \evidence{B01,B02}
+
+We also apply frozen checkpoints to 434 queries from ten EvTTC competition sequences. PHASE-TTC returns a prediction for every query; reproduced Garl full, event-only, and visual-only models return 424, 434, and 426 predictions. Verified TTC labels are not yet mapped to these exact queries. We therefore analyze coverage and disagreement between models, keeping this experiment separate from the earlier labeled transfer evaluation (Section~\ref{sec:evttc-competition}). \evidence{T01}
+
+\subsection{Contributions}
+Our contributions are the phase-based estimator and its training procedure, an evaluation that includes both modalities separately, and a study of prediction delivery under paced arrivals. The design experiments explain which changes helped and which failed. A post-hoc analysis compares fusion and RGB errors on the labeled transfer queries, with uncertainty estimated by resampling complete sequences (Appendix~\ref{app:derived-transfer}).
+
+\subsection{Relation to prior work}
+Event cameras provide high temporal resolution through asynchronous brightness changes, but downstream algorithms must still construct task-relevant spatial and temporal representations \citep{eventsurvey}. DSEC demonstrates synchronized event and frame acquisition in demanding driving conditions \citep{dsec}.
+
+I-JEPA learns by predicting target representations from context \citep{ijepa}. VICReg regularizes representation variance and covariance \citep{vicreg}. These approaches motivate the early predictive-learning experiments, whose losses and regularizers are reported with each configuration.
+
+Predictive joint embeddings can favor slowly varying distractors over a changing state of interest \citep{slowfeatures}. We test this possibility by changing nuisance dynamics independently of the TTC signal. The resulting controls help distinguish predictable appearance from useful motion information.
+
+Prior event-based TTC methods estimate motion through geometric fitting and spatio-temporal registration \citep{eventaided}. EvTTC supplies synchronized observations and a dedicated TTC benchmark \citep{evttc}. The eAP study introduces geometry-aware representations for event-enhanced perception and the Garl models used in our comparisons \citep{eap}. We retain the evaluation populations defined by each experiment when comparing these methods. \evidence{T02}
+
+

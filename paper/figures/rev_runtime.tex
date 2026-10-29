@@ -1,0 +1,32 @@
+\documentclass[tikz,border=3pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{XCharter}
+\usepackage[xcharter]{newtxmath}
+\usepackage[scaled=.92]{helvet}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,decorations.pathreplacing,patterns}
+\usepgfplotslibrary{groupplots,fillbetween}
+\pgfplotsset{compat=1.18}
+\definecolor{ink}{HTML}{172536}
+\definecolor{rgb}{HTML}{3563B8}
+\definecolor{event}{HTML}{17857C}
+\definecolor{fusion}{HTML}{76529C}
+\definecolor{reference}{HTML}{8994A3}
+\definecolor{warn}{HTML}{AC5948}
+\definecolor{muted}{HTML}{657183}
+\definecolor{rule}{HTML}{D9E0E8}
+\definecolor{pale}{HTML}{F5F7FA}
+\color{ink}
+\tikzset{box/.style={rounded corners=2pt,draw=rule,fill=white,align=center,inner sep=4pt,font=\sffamily\fontsize{9}{10.8}\selectfont,minimum height=9mm},rb/.style={box,draw=rgb!50,fill=rgb!5},eb/.style={box,draw=event!50,fill=event!5},fb/.style={box,draw=fusion!55,fill=fusion!5},arrow/.style={-{Latex[length=1.8mm]},line width=.65pt,draw=muted},note/.style={font=\sffamily\fontsize{8.4}{10.2}\selectfont,align=center,text=muted},heading/.style={font=\sffamily\fontsize{10}{12}\selectfont\bfseries,align=left,text=ink}}
+\pgfplotsset{paper/.style={width=15.7cm,height=6cm,axis lines*=left,axis line style={rule},tick style={draw=none},tick label style={font=\sffamily\fontsize{8.8}{10.4}\selectfont,text=muted},label style={font=\sffamily\fontsize{9.4}{11}\selectfont,text=ink},title style={font=\sffamily\fontsize{10}{12}\selectfont\bfseries,text=ink},legend style={draw=none,fill=none,font=\sffamily\fontsize{9}{11}\selectfont,cells={anchor=west}},grid=major,grid style={rule!65,line width=.3pt},minor tick num=0,scaled ticks=false,unbounded coords=jump,clip mode=individual}}
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[paper,width=15.0cm,height=5.9cm,xmin=0,xmax=40,ymin=-.65,ymax=4.65,ytick={0,1,2,3,4},yticklabels={Maximum,99th percentile,95th percentile,Median,Mean},xlabel={Response time (ms)},xtick={0,10,20,30,40},ymajorgrids=false,legend style={at={(.5,1.04)},anchor=south,legend columns=2,/tikz/every even column/.append style={column sep=6pt}}]
+\draw[dashed,warn,line width=.8pt] (axis cs:20,-.6)--(axis cs:20,4.6);
+\addplot[only marks,mark=diamond*,mark size=3.1pt,fusion] coordinates {(35.3326,0) (32.414209,1) (29.143155,2) (24.538,3) (23.9071148,4)};\addlegendentry{Scheduled-arrival response}
+\addplot[only marks,mark=*,mark size=2.6pt,rgb] coordinates {(29.593,0) (27.627191,1) (25.25299,2) (20.8045,3) (20.7330316,4)};\addlegendentry{RAW-availability response}
+\node[note,text=warn,anchor=east] at (axis cs:19.4,.4) {20 ms budget};
+\end{axis}\end{tikzpicture}
+\end{document}

@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering\small
+\caption{Offline processing time in seconds per query. Model time covers the synchronized forward pass and host output; full time includes tensor preparation. The Garl variants ran in full/event/visual order; PHASE-TTC used its own adapter and history length. \evidence{T01}}
+\label{tab:evttc-runtime}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Model} & \textbf{Model med.} & \textbf{Model P95} & \textbf{Full med.} & \textbf{Full P95} \\
+\midrule
+PHASE-TTC & 0.753 & 7.820 & 2.687 & 9.073 \\
+Garl full & 0.039 & 0.045 & 0.542 & 1.009 \\
+Garl event-only & 0.007 & 0.011 & 0.350 & 0.806 \\
+Garl visual-only & 0.007 & 0.011 & 0.158 & 0.221 \\
+\bottomrule
+\end{tabular}
+\end{table}

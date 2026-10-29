@@ -1,0 +1,134 @@
+{
+  "schema": "phase_ttc_official_benchmark_v1",
+  "as_of": "2026-10-28",
+  "benchmark": {
+    "name": "GarlTTC Test",
+    "competition_id": 17289,
+    "phase_id": 28838,
+    "task_id": 34531,
+    "lower_is_better": true,
+    "url": "https://www.codabench.org/competitions/17289/#/results-tab",
+    "leaderboard_api": "https://www.codabench.org/api/phases/28838/get_leaderboard/?page=1&page_size=50",
+    "ranking_metric": "overall_MiD",
+    "band_weights": {
+      "MiDc": 0.5,
+      "MiDs": 0.3,
+      "MiDl": 0.1,
+      "MiDn": 0.1
+    }
+  },
+  "phase_submission": {
+    "id": 1016512,
+    "method": "PHASE-TTC (TRAIN40, 650 ms causal history)",
+    "rank": 1,
+    "metrics": {
+      "MiDc": 43.5189935425749,
+      "FRc": 0.0,
+      "MiDs": 28.25675232393477,
+      "FRs": 0.0,
+      "MiDl": 25.71789700925724,
+      "FRl": 0.0,
+      "MiDn": 29.931394114302854,
+      "FRn": 0.0,
+      "mean_MiD": 29.298890906303914,
+      "overall_MiD": 35.80145158082389,
+      "num_samples": 6762,
+      "failed_rate": 0.0
+    },
+    "source": "B01 public identity and rounded score; B02 full-precision scorer values",
+    "causal_history_ms": 650,
+    "training_population": "TRAIN40",
+    "uses_event": true,
+    "uses_image": true
+  },
+  "competitor": {
+    "id": 817519,
+    "method": "Garl-TTC",
+    "rank": 2,
+    "metrics": {
+      "overall_MiD": 45.03,
+      "MiDc": 53.13,
+      "FRc": 0.0,
+      "MiDs": 37.58,
+      "FRs": 0.0,
+      "MiDl": 40.61,
+      "FRl": 0.0,
+      "MiDn": 31.29,
+      "FRn": 0.0,
+      "failed_rate": 0.0,
+      "num_samples": 6762.0
+    },
+    "source": "B01 published leaderboard values at two-decimal precision"
+  },
+  "leaderboard_entries": [
+    {
+      "id": 1016512,
+      "method": "PHASE-TTC (TRAIN40, 650 ms causal history)",
+      "rank": 1,
+      "metrics": {
+        "overall_MiD": 35.8,
+        "MiDc": 43.52,
+        "FRc": 0.0,
+        "MiDs": 28.26,
+        "FRs": 0.0,
+        "MiDl": 25.72,
+        "FRl": 0.0,
+        "MiDn": 29.93,
+        "FRn": 0.0,
+        "failed_rate": 0.0,
+        "num_samples": 6762.0
+      }
+    },
+    {
+      "id": 817519,
+      "method": "Garl-TTC",
+      "rank": 2,
+      "metrics": {
+        "overall_MiD": 45.03,
+        "MiDc": 53.13,
+        "FRc": 0.0,
+        "MiDs": 37.58,
+        "FRs": 0.0,
+        "MiDl": 40.61,
+        "FRl": 0.0,
+        "MiDn": 31.29,
+        "FRn": 0.0,
+        "failed_rate": 0.0,
+        "num_samples": 6762.0
+      },
+      "source": "B01 published leaderboard values at two-decimal precision"
+    },
+    {
+      "id": 970318,
+      "method": "Unnamed public submission",
+      "rank": 3,
+      "metrics": {
+        "overall_MiD": 45.03,
+        "MiDc": 53.13,
+        "FRc": 0.0,
+        "MiDs": 37.59,
+        "FRs": 0.0,
+        "MiDl": 40.61,
+        "FRl": 0.0,
+        "MiDn": 31.28,
+        "FRn": 0.0,
+        "failed_rate": 0.0,
+        "num_samples": 6762.0
+      }
+    }
+  ],
+  "provenance": {
+    "B01": {
+      "source": "https://www.codabench.org/api/phases/28838/get_leaderboard/?page=1&page_size=50",
+      "original_sha256": "0c7114c5acfded5e661446cd483735da99c0156fe553e81cc3ca1fe14c558067",
+      "projection": "/leaderboard_entries"
+    },
+    "B02": {
+      "source": "scores.json from the official scoring-result archive",
+      "original_sha256": "e06e99ba1e5d6c4eccc0a475384d797961de771f61d7dbb0fc56a00dc9e75092",
+      "distributed_file": "data/official_scoring_scores.json"
+    },
+    "attribution": "Public submission identity and rank are established by B01; B02 full-precision values match every corresponding displayed score. Result archives do not contain a submitted-prediction hash.",
+    "artifact_scope": "Saved scorer outputs and public ranking; no private labels or per-query official predictions are distributed."
+  }
+}

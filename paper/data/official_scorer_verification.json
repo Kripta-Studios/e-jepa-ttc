@@ -1,0 +1,24 @@
+{
+  "schema": "phase_ttc_official_scorer_verification_v1",
+  "date": "2026-10-28",
+  "scope": "Four original scorer integration checks, using the SHA-pinned official scorer; no model inference or training.",
+  "status": "PASS",
+  "passed": 4,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_functions": [
+    "test_perfect_predictions_cover_all_four_official_bands",
+    "test_known_crucial_error_has_half_weight_in_ranking",
+    "test_missing_negative_band_does_not_renormalize_ranking",
+    "test_invalid_height_ratio_is_not_hidden_by_conditional_mean"
+  ],
+  "test_source": {
+    "path": "tests/test_garl_mid.py",
+    "sha256": "bc9ecaa5089bfcd00a9a2f6fd51e8a098c6d3af60daa6d1307b9a635dbb01f50"
+  },
+  "scorer_sha256": "f3bbf089ba6e47edfce1de522c92ddc969db2260fac7544e82bc017fedf82dce",
+  "original_xml_sha256": "e241c42afc716c657f6a5d7814a3ff79f2447bcce73e11a86aeb6d278242ec4b",
+  "python_version": "3.11.15",
+  "pytest_version": "9.1.1"
+}

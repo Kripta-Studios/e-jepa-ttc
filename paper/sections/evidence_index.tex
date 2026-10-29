@@ -1,0 +1,193 @@
+\section{Evidence index}
+\label{app:evidence}
+Source keys map each reported measurement to its result artifact. Numerical ledgers drive table and figure regeneration, while \path{data/public_evidence_registry.json} records full digests and field selectors. The index separates original-artifact hashes from distributed-file hashes. \emph{Digest only} entries preserve source identity without distributing the fields required for metric recomputation. B02 denotes the official scorer JSON.
+\subsection{Result-source identities}
+\begingroup\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.32\linewidth}>{\raggedright\arraybackslash}p{.41\linewidth}>{\raggedright\arraybackslash}p{.22\linewidth}@{}}
+\toprule
+Source key & Distributed ledger & Original SHA-256 \\
+\midrule\endfirsthead
+\toprule
+Source key & Distributed ledger & Original SHA-256 \\
+\midrule\endhead
+\midrule\multicolumn{3}{r}{\scriptsize Continued on next page}\\\endfoot
+\bottomrule\endlastfoot
+\path{E01} & \path{data/early_results.json} & \path{55b5494b40f97f1b} \\
+\path{E02} & \path{data/early_results.json} & \path{27ee1c9a21cca0ec} \\
+\path{E03} & \path{data/early_results.json} & \path{aa46f6d199bcf5a4} \\
+\path{E04} & \path{data/early_results.json} & \path{02c215aa4678f307} \\
+\path{E05} & \emph{Digest only} & \path{6fe8c8761d0a14fb} \\
+\path{E06} & \emph{Digest only} & \path{d38021db5b3b5b62} \\
+\path{E07} & \path{data/early_results.json} & \path{d53b6ce406fa7b80} \\
+\path{E08} & \path{data/early_results.json} & \path{d69f8b9082c883da} \\
+\path{E09} & \path{data/early_results.json} & \path{9bf197c3d64635a3} \\
+\path{E10} & \path{data/early_results.json} & \path{d47face1e36d1d2c} \\
+\path{E11} & \path{data/early_results.json} & \path{6db419fd7c7fe536} \\
+\path{E12} & \path{data/early_results.json} & \path{f33dc9abbad8fd08} \\
+\path{E13} & \emph{Digest only} & \path{ac26c1b2ad87c6c9} \\
+\path{E14} & \emph{Digest only} & \path{f947b32f05e655a1} \\
+\path{E15} & \emph{Digest only} & \path{7c60bc0fa9f1c5f0} \\
+\path{E16} & \path{data/early_results.json} & \path{be5fdbc0b2e9773d} \\
+\path{E17} & \path{data/early_results.json} & \path{d3fb5a5feb848ac7} \\
+\path{E18} & \path{data/early_results.json} & \path{a3c4765f5278a3f4} \\
+\path{E19} & \path{data/early_results.json} & \path{f1471599d502f2de} \\
+\path{E20} & \path{data/early_results.json} & \path{3e02fd81751e3f86} \\
+\path{E21} & \path{data/early_results.json} & \path{5c7b1eb24c07bd08} \\
+\path{E22} & \emph{Digest only} & \path{2e2eef6698ef28a4} \\
+\path{E23} & \path{data/early_results.json} & \path{bc540cc21ddb317f} \\
+\path{E24} & \emph{Digest only} & \path{dab563a02450abe6} \\
+\path{E25} & \path{data/early_results.json} & \path{06619299d1ceb785} \\
+\path{E26} & \path{data/early_results.json} & \path{06dc45cf3ea7a3e0} \\
+\path{M_SIMPLEX} & \path{data/middle_results.json} & \path{93f83e71f86dfcad} \\
+\path{M_HEAD_COST} & \path{data/middle_results.json} & \path{8d96bbc9bd66d8fb} \\
+\path{M_ROUTE_COST} & \path{data/middle_results.json} & \path{d1d834ab36d14fbd} \\
+\path{M_WIDE} & \emph{Digest only} & \path{c15e32a8dea0eece} \\
+\path{M_EWMA} & \emph{Digest only} & \path{47cca03ccda6f054} \\
+\path{M_STAGE61} & \path{data/middle_results.json} & \path{20f1990bb70e5de7} \\
+\path{M_STAGE62} & \path{data/middle_results.json} & \path{c4a0e1ae20d79094} \\
+\path{M_GEOMETRY} & \emph{Digest only} & \path{fa917902b5696e4b} \\
+\path{M_STAGE67_DECISION} & \emph{Digest only} & \path{ab1d3095955477f4} \\
+\path{M_STAGE69_DECISION} & \emph{Digest only} & \path{dfd1956775492584} \\
+\path{M_ENGINEERING} & \emph{Digest only} & \path{e756ba5c7a433efd} \\
+\path{M_SCIENCE_AUDIT} & \emph{Digest only} & \path{06073f4182de1a41} \\
+\path{M_STAGE63_REPAIR} & \emph{Digest only} & \path{f96b7fe795637cc5} \\
+\path{M_CAPACITY_PROTOCOL} & \emph{Digest only} & \path{1be3a4c9f9b64a08} \\
+\path{M_CAPACITY_AUDIT} & \emph{Digest only} & \path{07ef97a56b4159fa} \\
+\path{M_STAGE70_LEDGER} & \emph{Digest only} & \path{62597e162571def0} \\
+\path{M_TRANSFER_REPORT} & \emph{Digest only} & \path{d92c9074516354bd} \\
+\path{M_ROUTE_REPORT} & \emph{Digest only} & \path{1f29a459c91f6b68} \\
+\path{M_TEMPORAL_MODEL} & \emph{Digest only} & \path{4c26ad5ecf9e8354} \\
+\path{M_PHASE_CONTRACT} & \emph{Digest only} & \path{7ee447190ef7b218} \\
+\path{M_STAGE64} & \emph{Digest only} & \path{68409fb88499899f} \\
+\path{M_X0} & \emph{Digest only} & \path{61d8a0e40b6d87ad} \\
+\path{M_X05} & \emph{Digest only} & \path{c4aa55dd6a944d01} \\
+\path{M_X05_GATE} & \emph{Digest only} & \path{61eae7d38fb6ea5a} \\
+\path{M_STAGE65} & \emph{Digest only} & \path{4f88f676eecc7e90} \\
+\path{M_STAGE67_DIAGNOSTICS} & \emph{Digest only} & \path{885ac3604160cf27} \\
+\path{M_S67_SIMPLEX17} & \emph{Digest only} & \path{969cf5db29b2a251} \\
+\path{M_S67_UNCONSTRAINED17} & \emph{Digest only} & \path{1419522be60fc952} \\
+\path{M_S67_SIMPLEX8GATE} & \emph{Digest only} & \path{e094512164179869} \\
+\path{M_S67_SIMPLEX17_PAIRPERM} & \emph{Digest only} & \path{451821bb98c1d0c2} \\
+\path{M_S65_RISK17} & \emph{Digest only} & \path{b964e12180efbcbc} \\
+\path{M_S65_RISK8} & \emph{Digest only} & \path{75d98c9e0be9ddc3} \\
+\path{M_V12_EVTTC_946} & \path{data/middle_results.json} & \path{03c57b4503ca95f4} \\
+\path{M_V12_EVTTC_946_PAIRED} & \emph{Digest only} & \path{5fee507ffe8a4aca} \\
+\path{M_V12_EVTTC_946_ROWS} & \emph{Digest only} & \path{d284e52a0c25a897} \\
+\path{M_V12_EVTTC_3640} & \path{data/middle_results.json} & \path{792a5042dfa8be8b} \\
+\path{M_V12_EVTTC_3640_PAIRED} & \emph{Digest only} & \path{2619cc3d11be7320} \\
+\path{M_V12_EVTTC_3640_ROWS} & \emph{Digest only} & \path{20f58c1200b3834d} \\
+\path{M_V12_FCWD_597} & \path{data/middle_results.json} & \path{a1c0c4a741b08a36} \\
+\path{M_V12_FCWD_597_PAIRED} & \emph{Digest only} & \path{2581bd042f29a466} \\
+\path{M_V12_FCWD_597_ROWS} & \emph{Digest only} & \path{68f4cd5610f50c8b} \\
+\path{L01} & \path{data/late_results.json} & \path{9136babd4a07411e} \\
+\path{L02} & \path{data/late_results.json} & \path{844e0771bab79717} \\
+\path{L03} & \path{data/late_results.json} & \path{4af996900a99c585} \\
+\path{L10} & \path{data/late_results.json} & \path{f5bf12b2873a2ee4} \\
+\path{L11} & \path{data/late_results.json} & \path{22e82a376b18c9f0} \\
+\path{L12} & \path{data/late_results.json} & \path{fafd9cefbeddcd49} \\
+\path{L13} & \path{data/late_results.json} & \path{86ce201ca25bcc12} \\
+\path{L14} & \path{data/late_results.json} & \path{0588956e96dab44f} \\
+\path{L20} & \path{data/late_results.json} & \path{6d15d1acfad38592} \\
+\path{L21} & \path{data/late_results.json} & \path{2b33ba213186f3c5} \\
+\path{L22} & \path{data/late_results.json} & \path{b1ad71b126b20e87} \\
+\path{L23} & \path{data/late_results.json} & \path{0698e433731da0d3} \\
+\path{L24} & \path{data/late_results.json} & \path{5f3789bd7efebce3} \\
+\path{L25} & \path{data/late_results.json} & \path{774c751e4aaa91d7} \\
+\path{L30} & \path{data/late_results.json} & \path{1073ab21e307ae26} \\
+\path{L31} & \path{data/late_results.json} & \path{54ebca7a19d5a9eb} \\
+\path{L32} & \path{data/late_results.json} & \path{d4fbc7494769a5d1} \\
+\path{L33} & \path{data/late_results.json} & \path{025a058d846a7ceb} \\
+\path{L40} & \path{data/late_results.json} & \path{c27d5d980f2bb1c1} \\
+\path{L41} & \emph{Digest only} & \path{d8df9ca6444c6dc0} \\
+\path{L42} & \emph{Digest only} & \path{06ab49e521db7255} \\
+\path{L43} & \emph{Digest only} & \path{aed0bdd40c58d827} \\
+\path{L44} & \emph{Digest only} & \path{e447c5147e4e1c25} \\
+\path{L45} & \emph{Digest only} & \path{4f643a15cbf3d963} \\
+\path{L46} & \path{data/transfer_queries.csv} & \path{1fbff40f000c879b} \\
+\path{L50} & \emph{Digest only} & \path{3069072fb5180272} \\
+\path{L51} & \emph{Digest only} & \path{ad4a2a0660bd2da9} \\
+\path{L52} & \emph{Digest only} & \path{46e5516c40511837} \\
+\path{B01} & \path{data/official_benchmark.json} & \path{0c7114c5acfded5e} \\
+\path{B02} & \path{data/official_scoring_scores.json} & \path{e06e99ba1e5d6c4e} \\
+\path{T01} & \path{data/evttc_competition_summary.json} & \path{96c849f29383c35f} \\
+\path{T02} & \path{data/evttc_competition_summary.json} & \path{ceb5c6b5f3ef1b93} \\
+\end{longtable}
+\endgroup
+\subsection{Implementation and verification references}
+Implementation keys map source revisions, method descriptions, and selected verification results to their distributed manifests.
+\begingroup\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.32\linewidth}>{\raggedright\arraybackslash}p{.41\linewidth}>{\raggedright\arraybackslash}p{.22\linewidth}@{}}
+\toprule
+Source key & Distributed manifest & Ledger selector \\
+\midrule\endfirsthead
+\toprule
+Source key & Distributed manifest & Ledger selector \\
+\midrule\endhead
+\midrule\multicolumn{3}{r}{\scriptsize Continued on next page}\\\endfoot
+\bottomrule\endlastfoot
+\path{M01} & \path{research/architecture_sources.json} & \path{id=M01} \\
+\path{M02} & \path{research/architecture_sources.json} & \path{id=M02} \\
+\path{M03} & \path{research/architecture_sources.json} & \path{id=M03} \\
+\path{M04} & \path{research/architecture_sources.json} & \path{id=M04} \\
+\path{M05} & \path{research/architecture_sources.json} & \path{id=M05} \\
+\path{M06} & \path{research/architecture_sources.json} & \path{id=M06} \\
+\path{M07} & \path{research/architecture_sources.json} & \path{id=M07} \\
+\path{M08} & \path{research/architecture_sources.json} & \path{id=M08} \\
+\path{M09} & \path{research/architecture_sources.json} & \path{id=M09} \\
+\path{M10} & \path{research/architecture_sources.json} & \path{id=M10} \\
+\path{M11} & \path{research/architecture_sources.json} & \path{id=M11} \\
+\path{M12} & \path{research/architecture_sources.json} & \path{id=M12} \\
+\path{M13} & \path{research/architecture_sources.json} & \path{id=M13} \\
+\path{M14} & \path{research/architecture_sources.json} & \path{id=M14} \\
+\path{M15} & \path{research/architecture_sources.json} & \path{id=M15} \\
+\path{M16} & \path{research/architecture_sources.json} & \path{id=M16} \\
+\path{M17} & \path{research/architecture_sources.json} & \path{id=M17} \\
+\path{M18} & \path{research/architecture_sources.json} & \path{id=M18} \\
+\path{M19} & \path{research/architecture_sources.json} & \path{id=M19} \\
+\path{M20} & \path{research/architecture_sources.json} & \path{id=M20} \\
+\path{M21} & \path{research/architecture_sources.json} & \path{id=M21} \\
+\path{M22} & \path{research/architecture_sources.json} & \path{id=M22} \\
+\path{M23} & \path{research/architecture_sources.json} & \path{id=M23} \\
+\path{M24} & \path{research/architecture_sources.json} & \path{id=M24} \\
+\end{longtable}
+\endgroup
+\needspace{14\baselineskip}
+\subsection{Distributed data integrity}
+Digest prefixes identify the numerical files and manifests used for regeneration; the build verifies each full hash before analysis.
+\begingroup\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.32\linewidth}>{\raggedright\arraybackslash}p{.41\linewidth}>{\raggedright\arraybackslash}p{.22\linewidth}@{}}
+\toprule
+File ID & Distributed file & SHA-256 prefix \\
+\midrule\endfirsthead
+\toprule
+File ID & Distributed file & SHA-256 prefix \\
+\midrule\endhead
+\midrule\multicolumn{3}{r}{\scriptsize Continued on next page}\\\endfoot
+\bottomrule\endlastfoot
+D01 & \path{data/early_results.json} & \path{bbc3e4b30c44e6af} \\
+D02 & \path{data/early_tables.json} & \path{e7c769877f14ecf2} \\
+D03 & \path{data/git_summary.json} & \path{40b8eac8566ed3de} \\
+D04 & \path{data/late_results.json} & \path{e7093f1b75a4e96b} \\
+D05 & \path{data/middle_results.json} & \path{236eb5dab7db1932} \\
+D06 & \path{data/official_benchmark.json} & \path{f7bc1a8bd786f814} \\
+D07 & \path{data/official_scorer_verification.json} & \path{98ccc01371304d3a} \\
+D08 & \path{data/official_scoring_scores.json} & \path{e06e99ba1e5d6c4e} \\
+D09 & \path{data/transfer_queries.csv} & \path{2fd4c33716a6c48e} \\
+D10 & \path{data/visual_source_manifest.json} & \path{7cd53750ff473479} \\
+D11 & \path{research/architecture_sources.json} & \path{a544f7aab9d12e34} \\
+D12 & \path{data/evttc_competition_summary.json} & \path{9ad728d4168c0b41} \\
+D13 & \path{data/evttc_competition_predictions.csv} & \path{5e58c4155d90cf5e} \\
+\end{longtable}
+\endgroup
+
+\subsection{Post-hoc paired transfer analysis}
+R01 maps \path{revision/derived_transfer_analysis.json} and the complete paired-bootstrap differences to \path{scripts/prepare_revision.py}. The analysis uses the L46 transfer-query predictions and retains their source digest. Appendix~\ref{app:derived-transfer} gives the sequence-resampling procedure and numerical cases.
+
+\subsection{Deployment metadata and output map}
+R02 maps \path{revision/deployment_contract.json} to the native phase-output transformation and L40 paced-run configuration. It records original source digests, the executed code revision, model identities, hardware, precision, and initialization boundaries. R02 contains metadata from the recorded run rather than a new performance measurement. The build verifies its full digest before regenerating Table~\ref{tab:runtime-setup}.

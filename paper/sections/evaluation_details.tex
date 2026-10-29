@@ -1,0 +1,44 @@
+\section{Evaluation details and causal checks}
+\label{app:evaluation-details}
+This appendix describes data separation, causal checks, and runtime measurement in detail.
+
+\subsection{The unit of independence}
+Windows from one trajectory share appearance, geometry, object identity, and adjacent event history. We therefore partition complete sequence groups and resample at the sequence level. Small disjoint splits remain development evidence when the project has reused their sequences for diagnosis. \evidence{M16}
+
+Recovery experiments keep every learned parent fold-local. Outer-development rows stay outside encoder fitting, teacher-derived caches, feature normalizers, and expert parents that feed the downstream model. A frozen parent still carries its prior exposure, so the analysis follows sample membership through preprocessing, checkpoints, cached features, normalization, and model selection.
+
+A deterministic event representation can be reused when preprocessing and sample identity stay fixed. A checkpoint fitted on a larger population changes the exposure of every downstream result. File identity verifies which representation or model was used; training membership determines the strength of the resulting claim. \evidence{M17}
+
+\subsection{Paired inference at the sequence level}
+Comparisons pair the same eligible rows and sequences. For per-row metric differences $d_{si}$ in sequence $s$, the sample-weighted estimate is
+\begin{equation}
+ \widehat\Delta=\frac{\sum_s\sum_{i=1}^{n_s}d_{si}}{\sum_s n_s}.
+\end{equation}
+A paired sequence bootstrap samples sequence identities with replacement and carries every row from each selected sequence into the replicate. Sample-weighted resampling recomputes the ratio of summed differences to summed counts; the sequence-macro calculation averages sequence means. The scorer-based comparison uses the sample-weighted form with a fixed bootstrap seed, complete sequence clusters, and no removal of invalid MiD rows. \evidence{M15}
+
+Intervals based on few sequences have limited precision and inherit development exposure and experiment multiplicity. Random seeds measure optimization variation for a fixed split, whereas out-of-fold partitions vary the held-out groups. Results report seeds, folds, and sequences separately.
+
+\subsection{Causality tests}
+Prefix-invariance tests determine whether later inputs alter an earlier output. The causal-scale suite checks foreground logits, geometry tokens, pair tokens, analytic and residual log-ratios, and TTC. A legacy symmetric smoother provides a positive control by violating prefix invariance; the causal-left mode must remain invariant under the same perturbation. \evidence{M18}
+
+Network masks alone cannot establish causality. Tests also perturb crop coordinates, normalization inputs, teacher frames, and labels. Self-supervised samples must remain unchanged when labels change, and crop tests restrict geometry to the designated endpoint boxes. \evidence{M03,M18}
+
+Streaming tests cover state reset and update semantics. The bounded object-ROI estimator rejects timestamp rollback until reset, validates aligned packets and coordinates, and discards events outside its history. It consumes ROI-local event coordinates and supplied object observations. Paced replay then adds acquisition, queuing, temporal state, multiple objects, and host-visible output. \evidence{M19}
+
+\subsection{Matched controls and the scope of attribution}
+Architectural ablations match rows, seeds, training budgets, parent exposure, selection rules, and model capacity. A zeroed-input model removes modality information while retaining capacity. A shuffled-future control disrupts temporal correspondence while preserving the future marginal and optimization schedule. A frozen random encoder measures what the downstream head can recover without learned features.
+
+A hard router selects among fixed expert predictions; a residual phase model can correct them. Teacher distillation measures the effect of privileged RGB supervision on an event backbone. Failed and vetoed arms remain in the analysis because they constrain mechanism-level explanations.
+
+\subsection{Latency, memory, and sustained service}
+A tensor-forward benchmark starts after tensor preparation. The paced runner instead includes a RAW producer, absolute arrivals, a bounded queue, and host-visible output. Completion occurs when the consumer returns every required prediction. Fixed arrivals expose backlog, while the results record drops, acquisition errors, incomplete histories, and invalid outputs. \evidence{M20}
+
+The primary deadline-to-output response is
+\begin{equation}
+ L_i=t_i^{\mathrm{host\ output}}-t_i^{\mathrm{scheduled\ arrival}}.
+\end{equation}
+A secondary clock starts after RAW acquisition. Deadline evaluation reports tail quantiles, maximum response, coverage, backlog, and drops because mean response can hide missed arrivals. Warmup uses data available before the first admitted anchor. The 50-Hz milestone requires sustained cadence, numerical parity, and complete finite outputs. \evidence{M20}
+
+The available RAW sequences are shorter than the sustained-service milestone. The replay therefore characterizes short-run latency for its hardware, population, numerical tolerance, and duration.
+
+Implementation checks and their scope are reported in Appendix~\ref{app:reproduction}. \evidence{M21} The official leaderboard score evaluates prediction accuracy; it provides no measurement of sensor-to-output latency or sustained service.

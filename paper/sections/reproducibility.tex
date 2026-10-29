@@ -1,0 +1,78 @@
+\section{Reproducibility}
+\label{app:reproduction}
+
+The release contains the manuscript source, analysis scripts, derived-result
+ledgers, and selected query-level predictions needed to regenerate the reported
+tables and figures. Repeating model training or sensor inference also requires
+the datasets, checkpoints, and experiment configurations listed in the evidence
+registry.
+
+\subsection{Manuscript and result regeneration}
+
+Install Python, NumPy, Matplotlib, and a LaTeX distribution. From the manuscript
+source root, run:
+\begin{lstlisting}
+python scripts/build_final.py
+\end{lstlisting}
+The script verifies the distributed files, regenerates figures and tables, and
+runs pdfLaTeX, BibTeX, and the required cross-reference passes. Once the
+dependencies are installed, the build uses bundled ledgers and requires neither
+network access nor raw sensor data.
+
+Each ledger records the evaluation population, source key, and measured value.
+The verification scripts match source identities and recompute metrics from the
+distributed query-level predictions. Hardware-specific inference parity requires
+the corresponding checkpoints, inputs, and runtime environment.
+
+\subsection{Numerical verification}
+The verification suite checks 13 data-file hashes, eight transfer summaries, twelve official-scorer fields, and weighted Overall MiD. The competition verifier recomputes coverage, signed ranges, disagreements, and timing summaries from all 1,736 model--query rows. The dated leaderboard snapshot supplies the official ranking.
+
+\input{tables/official_weighted_contributions}
+
+The transfer analysis recomputes mean, median, p95, and relative error for four Extended-new methods from 468 eligible rows. It then constructs error-exceedance curves and paired complete-sequence bootstrap intervals. The fixed seed, quantile convention, bootstrap differences, and source-file digest reside under \path{revision/}. This post-hoc analysis uses fixed predictions and does not repeat model training or inference.
+
+\subsection{Paced-run configuration}
+The L40 receipts identify the final model and component digests used for the PHASE-TTC competition inference, while recording a separate replay input and timing protocol. Synthetic startup priming used no raw observations or targets and made no optimizer updates. The update clock includes unexpected shape preparation. The receipts omit the CPU model and GPU-driver version. \evidence{L40,R02}
+\input{tables/runtime_setup}
+
+\subsection{Code verification}
+
+Selected tests cover event representations, target updates, prefix causality,
+label rejection, source tracking, fusion fallbacks, and paced-runtime accounting.
+The environment used Python 3.11.15, PyTorch 2.11.0+cu128, and pytest 9.1.1.
+Across two batches, 178 tests passed and four skipped, with no failures. Four
+additional tests ran against the SHA-pinned official evaluator and passed with
+no skips or failures. They cover perfect predictions across four bands,
+crucial-band weighting, absent-band handling, and invalid-output retention.
+\evidence{M21,M24}
+
+For the competition adapter and verifier, 41 focused tests passed; the
+CPU-oriented suite skipped one conditional CUDA case. A separate CUDA test
+confirmed strict loading and native-model forward parity for all three public
+Garl checkpoints. Post-run validation covered 1,302 Garl terminal records, 434
+PHASE predictions, input identities, causal timing, signed FP32 height-ratio
+conversion, and complete or partial result packages. \evidence{T01}
+
+\subsection{Evidence integrity and source revision}
+
+SHA-256 checks identify 95 original result snapshots.
+Appendix~\ref{app:evidence} lists their digest prefixes and numerical projections.
+Entries without a projection preserve source identity but cannot support metric
+recomputation from the distributed data alone. For the official benchmark, the
+scorer JSON agrees with the dated leaderboard after display rounding. Because
+the scorer output contains no submitted-prediction hash, it does not link the
+reported score to a specific prediction file at the byte level.
+
+The scientific source snapshot is
+\path{0219a84f0fc3b07c171295a8a65176a7e0f631c1} in
+\href{https://github.com/Kripta-Studios/phase-ttc}{Kripta-Studios/phase-ttc}.
+
+The competition adapter used source revision
+\path{1d8de7d95b2ff8ccba884dbd40141c48745a1e95}. The public competition
+projection contains the numerical predictions, measurement boundaries,
+checkpoint identities, and source digests required to regenerate coverage,
+disagreement, and timing summaries without distributing raw sensor files.
+
+\path{ASSETS.md} documents the supplied visual material and its attribution.
+The visual-source manifest records the sensor illustration's checksum and
+transformation; original dataset and material rights remain with their owners.

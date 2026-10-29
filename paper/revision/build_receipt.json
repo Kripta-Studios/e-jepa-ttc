@@ -1,0 +1,58 @@
+{
+  "built_at_utc": "2026-10-29T08:55:54.155392+00:00",
+  "scope": "Result-ledger validation and reproducible saved-prediction analysis; no training or sensor inference",
+  "python": "3.11.15",
+  "numpy_version": "2.4.6",
+  "pdflatex": "MiKTeX-pdfTeX 4.26 (MiKTeX 26.2)",
+  "bibtex_executable": "bibtex.EXE",
+  "main_tex": "PHASE_TTC_Final.tex",
+  "pdf": "PHASE_TTC_Final.pdf",
+  "pdf_sha256": "bbec72cf1a52591416edcb780bd5a3772412bf96c1fbf8c60800b31ee63f590f",
+  "tex_sha256": "1546c877ade084df737b5355eedab335ab13a77329c2b6995728efecc7875925",
+  "pages": 52,
+  "numbered_figures": 24,
+  "numbered_tables": 27,
+  "regenerated_figure_sources": [
+    "figures\\rev_architecture.tex",
+    "figures\\rev_fusion.tex",
+    "figures\\rev_oof.tex",
+    "figures\\rev_history.tex",
+    "figures\\rev_runtime_clock.tex",
+    "figures\\rev_hero.tex",
+    "figures\\rev_weighted.tex",
+    "figures\\rev_phase.tex",
+    "figures\\rev_exceedance.tex",
+    "figures\\rev_transfer_pair.tex",
+    "figures\\rev_sequence.tex",
+    "figures\\rev_h16.tex",
+    "figures\\rev_v18.tex",
+    "figures\\rev_runtime.tex",
+    "figures\\rev_coverage.tex",
+    "figures\\rev_competition_symlog.tex",
+    "figures\\rev_competition_linear.tex"
+  ],
+  "source_validation": {
+    "public_hashes_verified": 13,
+    "transfer_recomputations": 8,
+    "official_score_fields_verified": 12,
+    "official_weighted_MiD": 35.80145158082389,
+    "official_public_rank": 1,
+    "query_overlap": 0,
+    "shared_sequence_groups": 3
+  },
+  "competition_validation": "revision/competition_validation.json",
+  "new_analysis": "revision/derived_transfer_analysis.json",
+  "modular_log_checks": {
+    "overfull_boxes": 0,
+    "missing_glyphs": 0,
+    "undefined_references_or_citations": 0,
+    "latex_warnings": 0
+  },
+  "delivered_log_checks": {
+    "overfull_boxes": 0,
+    "missing_glyphs": 0,
+    "undefined_references_or_citations": 0,
+    "latex_warnings": 0
+  },
+  "visual_review": "Requires visual inspection of the exact compiled output."
+}

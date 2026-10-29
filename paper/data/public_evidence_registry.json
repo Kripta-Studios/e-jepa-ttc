@@ -1,0 +1,1257 @@
+{
+  "schema": "phase_ttc_public_evidence_registry_v1",
+  "records": [
+    {
+      "evidence_id": "E01",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "55b5494b40f97f1b0578e95ee3bd9fc9a785e2f468eec11336da3ed3694309b9",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E01",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E02",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "27ee1c9a21cca0ecf6bd4b259211d728fdf81c766b717de6cefa839a94419d77",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E02",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E03",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "aa46f6d199bcf5a4e054a32433aa0de90c8332e582711e478d6fbfb835167f9f",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E03",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E04",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "02c215aa4678f307991806a9ce7cc5d4345f5ce4c7bea6eaf9d8442a712b64c2",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E04",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E05",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "6fe8c8761d0a14fb92fc8e7570b85a1c96a399822631beb1fb117bbb6d883c0a",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E06",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d38021db5b3b5b62d24378ce664b2226b02296d07ea2c012c6af44773f835739",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E07",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d53b6ce406fa7b809c608f4264e87c559f79c346a6d22232c26dad233a2ff94a",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E07",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E08",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d69f8b9082c883dadaac8bf524dcb938242813c4d03d6c5ed2c891899aef7322",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E08",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E09",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "9bf197c3d64635a3c3091bce977f8ea1b07f4203eb51b3462b45ab17f16d1fa9",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E09",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E10",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d47face1e36d1d2c77fb531c61fca26f3601849f86ffbc898f59412078dea3b6",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E10",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E11",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "6db419fd7c7fe53655e3bce2fc654476247cbcd7dfe1d3a80e76839c14a895b8",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E11",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E12",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "f33dc9abbad8fd08a6366b6e692679023b42e92d69fe3ffbf150f1ecdeb934c4",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E12",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E13",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "ac26c1b2ad87c6c991decd46b8fd2e478cd87dcd926f49edd492bcdf3214c7e8",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E14",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "f947b32f05e655a116ef22e711fcd5df474b459f2d158b3096283bae55e2eff6",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E15",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "7c60bc0fa9f1c5f004b093875d5bfbbce8ba682c2a491b5bc1ac93e03317f708",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E16",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "be5fdbc0b2e9773d6ac37455ad7184f88df7546f619e399f6431f568d77c325e",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E16",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E17",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d3fb5a5feb848ac7652b9ae453c93510984d00652162c48cb9a1c0a505efde56",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E17",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E18",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "a3c4765f5278a3f403218514d9534f08905976e25778303c5472cd15932538e0",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E18",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E19",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "f1471599d502f2de39855446149b374fc04055e9322186c9d56a3088694dc282",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E19",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E20",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "3e02fd81751e3f86d7146dfd3120a23ae14021e60705e9ba69f95d51daaaa587",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E20",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E21",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "5c7b1eb24c07bd08bf3bbafe46cf57f26dd3d15baea993c4e6022a1bb3c3fe7e",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E21",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E22",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "2e2eef6698ef28a4394500165ad3fa676a18bafdc9eb6473106164e9c181d323",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E23",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "bc540cc21ddb317f48d4d026103f8e0b9cbf211b0b7eb2a5d75665881541c378",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E23",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E24",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "dab563a02450abe6a272eb77ce45f82334ed33acf59cd5bacb49511ce28d9606",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "E25",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "06619299d1ceb7858b7076864e2b01267794cc994c310e89bdae0864caa6994b",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E25",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "E26",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "06dc45cf3ea7a3e0193b105025b31bb8f52f4776a3de2655e1f2301b932721af",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/early_results.json",
+      "public_selector": "evidence_id=E26",
+      "public_claim_scope": "derived scalar rows and early tables"
+    },
+    {
+      "evidence_id": "M_SIMPLEX",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "93f83e71f86dfcada1ef70e691f2d0153ce2a3e37351d3d640d4dad6837ebd5e",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/h16_replication",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_HEAD_COST",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "8d96bbc9bd66d8fb09d1b0e4db03804be19373338ee05501d6b82478a47e5f2e",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/head_cost",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_ROUTE_COST",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d1d834ab36d14fbd28e4d4c02f5a217472ccf87aaff6d42b3c060e1d70225f8a",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/shared_route_cost",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_WIDE",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "c15e32a8dea0eece9ab99aced7dc183f6946acee29d84c824a2ef4ac231c79b5",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_EWMA",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "47cca03ccda6f0542014f48f1dbe71d99bcbcd86ae4739dc17e79e72160015e5",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE61",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "20f1990bb70e5de7707b9a0e85c539a0f32fcfc49268ed9e612476b39cae9e3a",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/stages/61",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_STAGE62",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "c4a0e1ae20d79094ec1821580b768e298d8823bae18cf176d005eae3c64cb88d",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/stages/62",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_GEOMETRY",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "fa917902b5696e4b97c5ddb78d7418d48f397034648bdbd341ba85d1528e34e2",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE67_DECISION",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "ab1d3095955477f4be6f65ae77e620dde0c8038bba9beac401a16db13a95bffe",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE69_DECISION",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "dfd1956775492584582f7fd3135809efcb16ccfe21001a7f174f7745ff82a890",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_ENGINEERING",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "e756ba5c7a433efd0e70c94fc91fd324bfe9c7993a89feca66a6b4f831536242",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_SCIENCE_AUDIT",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "06073f4182de1a419dd3d1775675248bccd80a5b34ab8b4e9a7d50318c431954",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE63_REPAIR",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "f96b7fe795637cc514f51d338abef19420a3d5ea0d0242a30542b3a39b8fcaac",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_CAPACITY_PROTOCOL",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "1be3a4c9f9b64a0829f1b775d6ce6ea06610ba43ee203f343e80c06a97c516c4",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_CAPACITY_AUDIT",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "07ef97a56b4159faf6e06e8c65886aaff5adbecda461424c47faf0cf98bc2b5a",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE70_LEDGER",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "62597e162571def0a6604ad14f8873cf15511804a11d4165dc87e73c82820148",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_TRANSFER_REPORT",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d92c9074516354bdad3629926ecad1cbca6eb933f6d4be281734ae79a077f17a",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_ROUTE_REPORT",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "1f29a459c91f6b68793286d7e51b0a5b34d749ba480d01a9c8f38e55a38766c4",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_TEMPORAL_MODEL",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_PHASE_CONTRACT",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE64",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "68409fb88499899f8199b34ca47f8ea850021cd36f9df5b350e84d94bfbe8d0a",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_X0",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "61d8a0e40b6d87ad4b526f4048cfdebe98c6205ac44ffa1a567921f50ce59dec",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_X05",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "c4aa55dd6a944d019db948737968d4117b52c2421d3d9096018bdccdfaf750ca",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_X05_GATE",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "61eae7d38fb6ea5a4c2c7357677893f477c300254836755bbdc0d0d19ad6d3c0",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE65",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "4f88f676eecc7e90af4d8fae07297c1b2d9afd360e304a11fc5a9b5ca2b63a25",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_STAGE67_DIAGNOSTICS",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "885ac3604160cf27beea9bc65a342e255ac884cf3f61d719fd7f6db2a2da4971",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_S67_SIMPLEX17",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "969cf5db29b2a251a420d93d32b6e7ff6b6c9a2e25524e38270d4d01b6cbec15",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_S67_UNCONSTRAINED17",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "1419522be60fc952e4ca06436154aaf13b75745f38d9dad1dc6ee1b33defb447",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_S67_SIMPLEX8GATE",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "e0945121641798690d7c438d4e8ff60341084fe102d52576b6d7d593740d3c32",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_S67_SIMPLEX17_PAIRPERM",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "451821bb98c1d0c2320c9fd9cd1a9c8a01911599407531cdeb4b6bad21b87b75",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_S65_RISK17",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "b964e12180efbcbc9dd2960efe627f60d49279b7ce32a0c3064b4dbb95c0d689",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_S65_RISK8",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "75d98c9e0be9ddc34eccbfc2b99214ec034da684ee800249a16259d7c59a81da",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_V12_EVTTC_946",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "03c57b4503ca95f4a0875885fed971d013c4acab73e7fb79f88d136c27248e7a",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/transfer/V12_EVTTC_946",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_V12_EVTTC_946_PAIRED",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "5fee507ffe8a4aca40fcf8281eb06a660648074a20ca0c828ee374bdbe62d74c",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_V12_EVTTC_946_ROWS",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d284e52a0c25a8978cffb03943480b247fdfd95f0e9f1c3fc4d861a5921d4f9f",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_V12_EVTTC_3640",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "792a5042dfa8be8b3d572dbc32a21646e4a20eec2c26b8589dc02953fc8117ee",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/transfer/V12_EVTTC_3640",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_V12_EVTTC_3640_PAIRED",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "2619cc3d11be7320451e7edd0642b34784c20c891a3dcc5be5af3a229bb4acba",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_V12_EVTTC_3640_ROWS",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "20f58c1200b3834dd69c13aafd94e770580517b07d9f41299369c66a1d3eec86",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_V12_FCWD_597",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "a1c0c4a741b08a36f92a0f050723fa20162624758d97e1fd8ffd7a7086ce1b40",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/middle_results.json",
+      "public_selector": "/transfer/V12_FCWD_597",
+      "public_claim_scope": "curated table and figure fields"
+    },
+    {
+      "evidence_id": "M_V12_FCWD_597_PAIRED",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "2581bd042f29a466beb2e53d9865cab8cb29b8dcf0efad561f5e38345a0015ea",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "M_V12_FCWD_597_ROWS",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "68f4cd5610f50c8b9d5cf1d393e22a7bae091245caccc4d4b1e878030626fa9f",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L01",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "9136babd4a07411e96cc4458856128cc0f6e1b11e424dd2e389ec91efdc9da11",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L01",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L02",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "844e0771bab79717aefbfe5fb3b363c87ceb25040e7671fe4c702b2150e475df",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L02",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L03",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "4af996900a99c585f8e4a86fae5eba89a28e3f49cf9e2307f1298209850d747c",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L03",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L10",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "f5bf12b2873a2ee4fad7ce2acfd6ced586bdccfa197b4ed2f4609f3f8b40ba5d",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L10",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L11",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "22e82a376b18c9f0b89067fab5297c78304a3da2e8b5e5c377629f4a686f50a7",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L11",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L12",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "fafd9cefbeddcd49cc1bb51ea67d63596a13c7c85ada0e666e846276cd3ac051",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L12",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L13",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "86ce201ca25bcc12d19a26a7f3c3523f07048b79beeb9e54448ba943e3936911",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L13",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L14",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "0588956e96dab44f0f5277fc4b995fa385c431eb0dc8469974bba41058ddc3f3",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L14",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L20",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "6d15d1acfad385929e6da6867ffef0bad49cdfe6d23c1770845e5b54516afcb3",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L20",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L21",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "2b33ba213186f3c53fb344d970a130ed2c24b5ce856eeab6598dd04fc875f00b",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L21",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L22",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "b1ad71b126b20e874825ac4cb6e84f3dea4943f46f7098177abf497d4828fefb",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L22",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L23",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "0698e433731da0d3d4e85d3d8099fd47fe39870eb5ffe82fefcf463c89066fd2",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L23",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L24",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "5f3789bd7efebce31e17d0bb2f3b65dacec24a3158225412661873b6295d7a8a",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L24",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L25",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "774c751e4aaa91d73bc1b4e588d3626e14fde71f4a68925c7754513a8eef3b80",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L25",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L30",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "1073ab21e307ae266221816fd52422f5117f23b0fb7927429e89970a6d996927",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L30",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L31",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "54ebca7a19d5a9ebefea1bcdcbc25b02ae2c1c6be8a2ae2448b37234b7b298cf",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L31",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L32",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d4fbc7494769a5d184dbb65e12af907bee66acfa90fb35c4ff718c9895b63432",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L32",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L33",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "025a058d846a7cebf404522f5ccc78bd2aee3a4263517affc69d1df1184510ff",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L33",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L40",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "c27d5d980f2bb1c163b073f0f71d66b3aab887ce73f98c6b19c3d6ef4bcf322d",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/late_results.json",
+      "public_selector": "evidence_id=L40",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L41",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "d8df9ca6444c6dc0f7aa2f45f6907263f5ad1b767583db2006db1ab9dc66a721",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L42",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "06ab49e521db725526c3c839d6c7543f47e4e5c4ed75c03b19f5b8faeb29453c",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L43",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L44",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "e447c5147e4e1c25cd4b210689445fafcaf453eb8b2386d51184bd3a6807fad1",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L45",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "4f643a15cbf3d9634a84b09cd15235784613c9e1f8ef471934b8fb6481ad2122",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L46",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "1fbff40f000c879baba3e498eabc86a7d61fc69277299344259d35c871896c87",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/transfer_queries.csv",
+      "public_selector": "all projected rows",
+      "public_claim_scope": "curated result rows or projected queries"
+    },
+    {
+      "evidence_id": "L50",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "3069072fb5180272e5230e097ba1067f4bd034cdbbf527675560668332f72b6e",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L51",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "ad4a2a0660bd2da9b00cc71541bb6b66dbd0e798ccf5b461093b66d37648bfd5",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "L52",
+      "evidence_kind": "primary result snapshot",
+      "original_sha256": "46e5516c40511837a65c15bd4577682963ac10dced60512ad0adc4fb8d50eddb",
+      "distributed": false,
+      "projection_distributed": false,
+      "public_ledger": null,
+      "public_selector": null,
+      "public_claim_scope": "provenance digest only"
+    },
+    {
+      "evidence_id": "B01",
+      "evidence_kind": "official benchmark result",
+      "original_sha256": "0c7114c5acfded5e661446cd483735da99c0156fe553e81cc3ca1fe14c558067",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/official_benchmark.json",
+      "public_selector": "/leaderboard_entries",
+      "public_claim_scope": "dated public ranking and published comparison"
+    },
+    {
+      "evidence_id": "B02",
+      "evidence_kind": "official benchmark result",
+      "original_sha256": "e06e99ba1e5d6c4eccc0a475384d797961de771f61d7dbb0fc56a00dc9e75092",
+      "distributed": true,
+      "projection_distributed": true,
+      "public_ledger": "data/official_scoring_scores.json",
+      "public_selector": "/overall_MiD",
+      "public_claim_scope": "original full-precision scorer output"
+    },
+    {
+      "evidence_id": "T01",
+      "evidence_kind": "result provenance",
+      "original_sha256": "96c849f29383c35f4e87716829a3708415a73c7f0544f37cb55853001ab14519",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/evttc_competition_summary.json",
+      "public_selector": "/evidence/T01",
+      "public_claim_scope": "Frozen competition predictions, coverage, disagreement and observational runtime; no accuracy"
+    },
+    {
+      "evidence_id": "T02",
+      "evidence_kind": "result provenance",
+      "original_sha256": "ceb5c6b5f3ef1b939cf5a875b9e72636ca7dbbc13100b6573d34a29fb4420b8e",
+      "distributed": false,
+      "projection_distributed": true,
+      "public_ledger": "data/evttc_competition_summary.json",
+      "public_selector": "/literature",
+      "public_claim_scope": "Published Garl-TTC Table VI RTE on three EvTTC sequences; separate evaluation population"
+    }
+  ],
+  "implementation_records": [
+    {
+      "evidence_id": "M01",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M01",
+      "public_claim_scope": "Data and label contracts",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M02",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M02",
+      "public_claim_scope": "Voxel representation and normalization",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M03",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M03",
+      "public_claim_scope": "Common ROI and oracle conditioning",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M04",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M04",
+      "public_claim_scope": "Generic multi-horizon JEPA",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M05",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M05",
+      "public_claim_scope": "Closed V8 three-view attribution",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M06",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M06",
+      "public_claim_scope": "Factorized spatial-temporal encoders",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M07",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M07",
+      "public_claim_scope": "Causal scale, current-endpoint geometry, uncertainty",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M08",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M08",
+      "public_claim_scope": "Local cross-time transport",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M09",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M09",
+      "public_claim_scope": "Privileged RGB relational distillation",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M10",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M10",
+      "public_claim_scope": "Signed benchmark phase and earlier-anchor height ratio",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M11",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M11",
+      "public_claim_scope": "Constrained absolute-phase risk router",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M12",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M12",
+      "public_claim_scope": "Temporal residual, phase quantiles, sparse history",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M13",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M13",
+      "public_claim_scope": "RGB anchor and event ZERO control",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M14",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M14",
+      "public_claim_scope": "Native effective-batch objective",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M15",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M15",
+      "public_claim_scope": "Official-score binding, invalid counts and clustered bootstrap",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M16",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M16",
+      "public_claim_scope": "Sequence splits and claim-level metadata",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M17",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M17",
+      "public_claim_scope": "Provenance guards and tested admission behaviour",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M18",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M18",
+      "public_claim_scope": "Prefix causality and label separation",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M19",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M19",
+      "public_claim_scope": "ROI-local bounded streaming API",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M20",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M20",
+      "public_claim_scope": "Paced runtime boundary and measurement contract",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M21",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M21",
+      "public_claim_scope": "Fresh bounded verification runs",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M22",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M22",
+      "public_claim_scope": "Final PHASE-TTC fusion interface and anchored output map",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M23",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M23",
+      "public_claim_scope": "Grouped out-of-fold ancestry and final-stage training interfaces",
+      "original_sha256": null
+    },
+    {
+      "evidence_id": "M24",
+      "evidence_kind": "implementation or protocol reference",
+      "public_ledger": "research/architecture_sources.json",
+      "public_selector": "id=M24",
+      "public_claim_scope": "Four direct official-scorer integration checks",
+      "original_sha256": null
+    }
+  ],
+  "note": "Historical source snapshots remain private. Public ledgers are projections; B02 additionally distributes the original scorer JSON. The original leaderboard-response digest identifies B01's retained source.",
+  "public_files": [
+    {
+      "path": "data/early_results.json",
+      "sha256": "bbc3e4b30c44e6af003574c49fbc18d38b2fb501473f0807e9ee5c819db97fae",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/early_tables.json",
+      "sha256": "e7c769877f14ecf234b4bda872258215ebaeed5a3f815afb4a3cd6e5d7595847",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/git_summary.json",
+      "sha256": "40b8eac8566ed3de60f320fa25aab8b9ee768578114630537a7310632245a6b5",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/late_results.json",
+      "sha256": "e7093f1b75a4e96bc2298d96525f47a3ede6e84e961673a95492bcd309d5185e",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/middle_results.json",
+      "sha256": "236eb5dab7db19326e9ac6ec50f603b65d0cfd0e007ca08c41293766ca19aea2",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/official_benchmark.json",
+      "sha256": "f7bc1a8bd786f8149ff6ce44ad60bfe43aaa8f7e7833d04b07f4b6ce004aa532",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/official_scorer_verification.json",
+      "sha256": "98ccc01371304d3ae71ebaea5d651c0c2709773e3b9bd007b072790173ba509f",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/official_scoring_scores.json",
+      "sha256": "e06e99ba1e5d6c4eccc0a475384d797961de771f61d7dbb0fc56a00dc9e75092",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/transfer_queries.csv",
+      "sha256": "2fd4c33716a6c48e50aab581b3a6f172e5492d9136d408433868f63a71431621",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "data/visual_source_manifest.json",
+      "sha256": "7cd53750ff47347988b608a71f926b11535172ccdfe7b200be9ccc32f260b57b",
+      "role": "public derived evidence"
+    },
+    {
+      "path": "research/architecture_sources.json",
+      "sha256": "a544f7aab9d12e34148768cd2a2371e4f4609331295a08eb082c0f350d1f246f",
+      "role": "implementation reference registry"
+    },
+    {
+      "path": "data/evttc_competition_summary.json",
+      "sha256": "9ad728d4168c0b41594956d1d028e2a3f7b820b621c98303bd7ed64733382806",
+      "role": "public derived competition evidence"
+    },
+    {
+      "path": "data/evttc_competition_predictions.csv",
+      "sha256": "5e58c4155d90cf5ea9ce3421325bbd0552b2fffe060b0941ad3ae2757be565eb",
+      "role": "public derived competition evidence"
+    }
+  ]
+}

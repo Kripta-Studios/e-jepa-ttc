@@ -565,3 +565,41 @@ PDF SHA-256:
 `70aa8a9757777286cbeb4d8b934cde5c5bd67e84ab4467e445c84c57c0c79fed`.
 Source ZIP SHA-256:
 `1d3137c0522fca53bcb3aa409bd93bc3298a6a61835a1055f1c578e3c0a683d2`.
+
+## 2026-10-29 — Publication and main-branch integration
+
+The publication source now lives in `paper/`, alongside its compiled PDF,
+consolidated TeX, generators, numerical inputs, and complete source archive.
+The cover names Álvaro Schwiedop Souto as the sole author, includes the supplied
+logo unchanged, and links the requested email, LinkedIn profile, and repository.
+There is no organization affiliation or additional author credit.
+
+The article retains 52 pages, 24 numbered figures, and 27 tables. All 21 data
+files remain unchanged. Both TeX builds pass without warnings; the source
+package contains 200 manifested files and the manifest itself. A staged-byte
+check confirms that Git preserves every packaged SHA-256, including original
+line endings. The PDF SHA-256 is
+`bbec72cf1a52591416edcb780bd5a3772412bf96c1fbf8c60800b31ee63f590f`.
+
+Clean-clone validation now covers the full test suite, including top-level
+test modules previously omitted by CI. Unit tests use deterministic synthetic
+inputs through production operators instead of depending on private local
+artifacts. Optional external historical evidence remains explicitly labeled.
+Resource-boundary rejection, numerical tolerances, immutable source hashes,
+and production admission rules are retained. ADR-0044 records the byte-preserved
+orchestration sources. Offline archive verification no longer imports a missing
+session-only transport.
+
+The paper workflow verifies the committed archive against its manifest before
+regenerating figures and compiling both TeX forms. The main and release workflows
+run lint, formatting, type checks, the complete tests, wheel building, and both
+command entry points. The smoke workflow also runs on changes to `main`.
+
+Local validation completed before publication: Ruff lint and formatting,
+Pyright, wheel build, both CLI help commands, manuscript compilation, package
+verification, and the independent focused scientific review (108 passed, two
+optional external-data skips). Full-suite and GitHub Actions results are recorded
+on the integration pull request; merging requires those checks to pass.
+
+No new training, model selection, benchmark submission, or scientific-result
+change is part of this integration.

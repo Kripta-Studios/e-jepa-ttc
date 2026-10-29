@@ -1,0 +1,76 @@
+{
+  "prediction_rows": 1736,
+  "query_identities": 434,
+  "sequence_variant_cells": 30,
+  "stats": {
+    "phase": {
+      "records": 434,
+      "finite_predictions": 434,
+      "null_predictions": 0,
+      "negative_predictions": 2,
+      "prediction_min_s": -42.22498321533203,
+      "prediction_max_s": 51.869014739990234,
+      "model_wall_median_s": 0.7526040999800898,
+      "model_wall_p95_s": 7.820092595016467,
+      "full_cost_median_s": 2.6868840500246733,
+      "full_cost_p95_s": 9.07308337005088
+    },
+    "garl_full": {
+      "records": 434,
+      "finite_predictions": 424,
+      "null_predictions": 10,
+      "negative_predictions": 0,
+      "prediction_min_s": 0.9068331122398376,
+      "prediction_max_s": 52.705101013183594,
+      "model_wall_median_s": 0.03924144999473356,
+      "model_wall_p95_s": 0.04492036002338864,
+      "full_cost_median_s": 0.5420503499917686,
+      "full_cost_p95_s": 1.0089360350015328
+    },
+    "garl_event": {
+      "records": 434,
+      "finite_predictions": 434,
+      "null_predictions": 0,
+      "negative_predictions": 10,
+      "prediction_min_s": -42.211082458496094,
+      "prediction_max_s": 406.0953063964844,
+      "model_wall_median_s": 0.007217450009193271,
+      "model_wall_p95_s": 0.011125020001782095,
+      "full_cost_median_s": 0.3497003999655135,
+      "full_cost_p95_s": 0.8056055250053756
+    },
+    "garl_visual": {
+      "records": 434,
+      "finite_predictions": 426,
+      "null_predictions": 8,
+      "negative_predictions": 5,
+      "prediction_min_s": -23.83188819885254,
+      "prediction_max_s": 38.766727447509766,
+      "model_wall_median_s": 0.006782950018532574,
+      "model_wall_p95_s": 0.011035094986436886,
+      "full_cost_median_s": 0.15787424996960908,
+      "full_cost_p95_s": 0.22092852503119498
+    }
+  },
+  "disagreements": {
+    "garl_full": {
+      "shared_valid_queries": 424,
+      "null_gap_queries": 10,
+      "absolute_disagreement_median_s": 0.2607053518295288,
+      "absolute_disagreement_p95_s": 1.0976390480995175
+    },
+    "garl_event": {
+      "shared_valid_queries": 434,
+      "null_gap_queries": 0,
+      "absolute_disagreement_median_s": 0.6813866496086121,
+      "absolute_disagreement_p95_s": 5.622940573096274
+    },
+    "garl_visual": {
+      "shared_valid_queries": 426,
+      "null_gap_queries": 8,
+      "absolute_disagreement_median_s": 0.23591333627700806,
+      "absolute_disagreement_p95_s": 1.5243998765945435
+    }
+  },
+  "scope": "Recomputation of distributed saved predictions; no raw inference"
+}

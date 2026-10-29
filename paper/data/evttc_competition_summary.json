@@ -1,0 +1,684 @@
+{
+  "evidence": {
+    "T01": {
+      "ground_truth_available_for_matching_queries": false,
+      "metric_semantics": "Prediction disagreement, not error, MAE, RTE, or accuracy",
+      "scope": "Label-blind, same-query local inference on 434 EvTTC query identities",
+      "source_artifact_sha256": {
+        "comparison": "a779436ff16902e5fd97fa68bda4684e87f495772692ab48a704f687a8e5e543",
+        "garl_all_rows": "96c849f29383c35f4e87716829a3708415a73c7f0544f37cb55853001ab14519",
+        "garl_independent_audit": "3527a832bf61f3d0b5ccfdf94ff217456ba23de5e7cd48ee86b3e267870d851e",
+        "garl_run_freeze": "3168520154bcde371e66986804f559241319fb4af1279e82c4acc226e8eed4db",
+        "phase_all_rows": "e420f65ef05ce54a82502ceaaf9cc18b0c339ce7761d9aa049a687c60382126f",
+        "phase_independent_audit": "c36d84f9fbbc6cd33aea1ba7df24e84effa00126cfd938012119d719736225a8",
+        "phase_run_freeze": "fab56dfcd99d953a54067a2103faba49e8edb9d886c94e7bc06d805877bf6324"
+      }
+    },
+    "T02": {
+      "comparability": "Separate literature result; not numerically comparable to T01 as accuracy",
+      "scope": "Published Garl-TTC Table VI zero-shot EvTTC result on three sequences",
+      "source_receipt_sha256": "ceb5c6b5f3ef1b939cf5a875b9e72636ca7dbbc13100b6573d34a29fb4420b8e"
+    }
+  },
+  "generated_from_frozen_outputs": true,
+  "literature": {
+    "comparability": "Separate published evaluation; not an accuracy comparison with T01",
+    "metric": "relative TTC error",
+    "reported_sequences": 3,
+    "rows": [
+      {
+        "rte_percent": 8.31,
+        "sequence_id": "CCRs2-medium"
+      },
+      {
+        "rte_percent": 10.56,
+        "sequence_id": "CCRs2-high"
+      },
+      {
+        "rte_percent": 12.93,
+        "sequence_id": "CCRm-medium"
+      }
+    ],
+    "unit": "percent",
+    "unweighted_average_rte_percent": 10.6
+  },
+  "models": {
+    "garl_event": {
+      "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+      "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+      "dataset_mode": "event_only",
+      "native_delta_t_s": 0.1,
+      "parameter_count": 24674178,
+      "public_name": "Garl-TTC event-only",
+      "strict_state_load": true
+    },
+    "garl_full": {
+      "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+      "config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+      "dataset_mode": "image_event",
+      "native_delta_t_s": 0.1,
+      "parameter_count": 243109898,
+      "public_name": "Garl-TTC full",
+      "strict_state_load": true
+    },
+    "garl_visual": {
+      "checkpoint_sha256": "02d900d0ddf81086f4176b63663f952a7c753eeb033b13acc5030a892a88cf70",
+      "config_sha256": "ff09557e8526c94b1a654d03e4291adb0dfa8e0e1877ff6709a56e6b45af12b4",
+      "dataset_mode": "image_only",
+      "native_delta_t_s": 0.1,
+      "parameter_count": 24567554,
+      "public_name": "Garl-TTC visual-only",
+      "strict_state_load": true
+    },
+    "phase": {
+      "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+      "component_sha256": {
+        "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+        "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+        "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+        "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+        "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+        "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+        "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+        "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+        "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+        "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+      },
+      "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "public_name": "PHASE-TTC",
+      "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3"
+    }
+  },
+  "per_sequence_prediction_disagreement": [
+    {
+      "absolute_disagreement_median_s": 0.4647486209869385,
+      "absolute_disagreement_p95_s": 0.9258820056915281,
+      "coverage_fraction": 0.98,
+      "null_gap_queries": 1,
+      "queries": 50,
+      "sequence_id": "CCRs1-low",
+      "shared_valid_queries": 49,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.7758543491363525,
+      "absolute_disagreement_p95_s": 1.480029463768005,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 50,
+      "sequence_id": "CCRs1-low",
+      "shared_valid_queries": 50,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.2126147747039795,
+      "absolute_disagreement_p95_s": 1.1807046413421625,
+      "coverage_fraction": 0.98,
+      "null_gap_queries": 1,
+      "queries": 50,
+      "sequence_id": "CCRs1-low",
+      "shared_valid_queries": 49,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.3082573413848877,
+      "absolute_disagreement_p95_s": 1.0353012442588796,
+      "coverage_fraction": 0.9767441860465116,
+      "null_gap_queries": 1,
+      "queries": 43,
+      "sequence_id": "CCRs1-medium",
+      "shared_valid_queries": 42,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.8632935285568237,
+      "absolute_disagreement_p95_s": 1.5998838901519774,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 43,
+      "sequence_id": "CCRs1-medium",
+      "shared_valid_queries": 43,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.1995450258255005,
+      "absolute_disagreement_p95_s": 1.467543876171111,
+      "coverage_fraction": 0.9767441860465116,
+      "null_gap_queries": 1,
+      "queries": 43,
+      "sequence_id": "CCRs1-medium",
+      "shared_valid_queries": 42,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.20674198865890503,
+      "absolute_disagreement_p95_s": 0.535151410102844,
+      "coverage_fraction": 0.9666666666666667,
+      "null_gap_queries": 1,
+      "queries": 30,
+      "sequence_id": "CCRs1-high",
+      "shared_valid_queries": 29,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.5189850926399231,
+      "absolute_disagreement_p95_s": 1.8502313435077666,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 30,
+      "sequence_id": "CCRs1-high",
+      "shared_valid_queries": 30,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.11055386066436768,
+      "absolute_disagreement_p95_s": 0.6922217607498167,
+      "coverage_fraction": 0.9666666666666667,
+      "null_gap_queries": 1,
+      "queries": 30,
+      "sequence_id": "CCRs1-high",
+      "shared_valid_queries": 29,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.22081518173217773,
+      "absolute_disagreement_p95_s": 0.9466713905334471,
+      "coverage_fraction": 0.9782608695652174,
+      "null_gap_queries": 1,
+      "queries": 46,
+      "sequence_id": "CCRs2-low",
+      "shared_valid_queries": 45,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.33947718143463135,
+      "absolute_disagreement_p95_s": 5.43675696849823,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 46,
+      "sequence_id": "CCRs2-low",
+      "shared_valid_queries": 46,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.24331247806549072,
+      "absolute_disagreement_p95_s": 0.4760848522186279,
+      "coverage_fraction": 0.9782608695652174,
+      "null_gap_queries": 1,
+      "queries": 46,
+      "sequence_id": "CCRs2-low",
+      "shared_valid_queries": 45,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.17756730318069458,
+      "absolute_disagreement_p95_s": 0.8939950048923482,
+      "coverage_fraction": 0.9818181818181818,
+      "null_gap_queries": 1,
+      "queries": 55,
+      "sequence_id": "CCRs2-medium",
+      "shared_valid_queries": 54,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 1.0451580286026,
+      "absolute_disagreement_p95_s": 4.911683666706085,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 55,
+      "sequence_id": "CCRs2-medium",
+      "shared_valid_queries": 55,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.2535697817802429,
+      "absolute_disagreement_p95_s": 1.5258642494678467,
+      "coverage_fraction": 0.9818181818181818,
+      "null_gap_queries": 1,
+      "queries": 55,
+      "sequence_id": "CCRs2-medium",
+      "shared_valid_queries": 54,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.18829208612442017,
+      "absolute_disagreement_p95_s": 1.8052811861038207,
+      "coverage_fraction": 0.9830508474576272,
+      "null_gap_queries": 1,
+      "queries": 59,
+      "sequence_id": "CCRs2-high",
+      "shared_valid_queries": 58,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.6821368932723999,
+      "absolute_disagreement_p95_s": 5.081796395778654,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 59,
+      "sequence_id": "CCRs2-high",
+      "shared_valid_queries": 59,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.22255641222000122,
+      "absolute_disagreement_p95_s": 1.173855972290039,
+      "coverage_fraction": 0.9830508474576272,
+      "null_gap_queries": 1,
+      "queries": 59,
+      "sequence_id": "CCRs2-high",
+      "shared_valid_queries": 58,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.2696502208709717,
+      "absolute_disagreement_p95_s": 0.8556938171386719,
+      "coverage_fraction": 0.9761904761904762,
+      "null_gap_queries": 1,
+      "queries": 42,
+      "sequence_id": "CCRm-low",
+      "shared_valid_queries": 41,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.7034152746200562,
+      "absolute_disagreement_p95_s": 12.841495633125277,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 42,
+      "sequence_id": "CCRm-low",
+      "shared_valid_queries": 42,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.282773494720459,
+      "absolute_disagreement_p95_s": 1.6423616409301758,
+      "coverage_fraction": 0.9761904761904762,
+      "null_gap_queries": 1,
+      "queries": 42,
+      "sequence_id": "CCRm-low",
+      "shared_valid_queries": 41,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.15098905563354492,
+      "absolute_disagreement_p95_s": 0.4476387023925782,
+      "coverage_fraction": 0.975,
+      "null_gap_queries": 1,
+      "queries": 40,
+      "sequence_id": "CCRm-medium",
+      "shared_valid_queries": 39,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.8388850688934326,
+      "absolute_disagreement_p95_s": 3.8935680150985714,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 40,
+      "sequence_id": "CCRm-medium",
+      "shared_valid_queries": 40,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.3495134115219116,
+      "absolute_disagreement_p95_s": 1.1563589572906499,
+      "coverage_fraction": 0.975,
+      "null_gap_queries": 1,
+      "queries": 40,
+      "sequence_id": "CCRm-medium",
+      "shared_valid_queries": 39,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.40771472454071045,
+      "absolute_disagreement_p95_s": 8.521305274963325,
+      "coverage_fraction": 0.9607843137254902,
+      "null_gap_queries": 2,
+      "queries": 51,
+      "sequence_id": "Slider-750",
+      "shared_valid_queries": 49,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.46989011764526367,
+      "absolute_disagreement_p95_s": 241.68505764007568,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 51,
+      "sequence_id": "Slider-750",
+      "shared_valid_queries": 51,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.25779831409454346,
+      "absolute_disagreement_p95_s": 43.601431369781494,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 51,
+      "sequence_id": "Slider-750",
+      "shared_valid_queries": 51,
+      "variant": "garl_visual"
+    },
+    {
+      "absolute_disagreement_median_s": 0.2881806492805481,
+      "absolute_disagreement_p95_s": 0.503127920627594,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 18,
+      "sequence_id": "Slider-1000",
+      "shared_valid_queries": 18,
+      "variant": "garl_full"
+    },
+    {
+      "absolute_disagreement_median_s": 0.11863160133361816,
+      "absolute_disagreement_p95_s": 0.313376700878143,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 18,
+      "sequence_id": "Slider-1000",
+      "shared_valid_queries": 18,
+      "variant": "garl_event"
+    },
+    {
+      "absolute_disagreement_median_s": 0.06682103872299194,
+      "absolute_disagreement_p95_s": 0.21149537265300733,
+      "coverage_fraction": 1.0,
+      "null_gap_queries": 0,
+      "queries": 18,
+      "sequence_id": "Slider-1000",
+      "shared_valid_queries": 18,
+      "variant": "garl_visual"
+    }
+  ],
+  "phase_stats": {
+    "finite_predictions": 434,
+    "full_cost_median_s": 2.6868840500246733,
+    "full_cost_p95_s": 9.07308337005088,
+    "history_and_cadence": {
+      "delta_count": 7214,
+      "delta_seconds_max": 0.100024,
+      "delta_seconds_median": 0.1,
+      "delta_seconds_min": 0.005767,
+      "delta_semantics": "all declared sensor interval deltas in the PHASE input audit",
+      "window_group_count": 6504,
+      "windows_per_group_max": 3,
+      "windows_per_group_min": 2
+    },
+    "model_wall_median_s": 0.7526040999800898,
+    "model_wall_p95_s": 7.820092595016467,
+    "negative_predictions": 2,
+    "null_predictions": 0,
+    "outside_empirical_p01_p99": 10,
+    "prediction_max_s": 51.869014739990234,
+    "prediction_min_s": -42.22498321533203,
+    "prediction_p01_s": 1.0425739943981172,
+    "prediction_p99_s": 12.027089128494264,
+    "records": 434,
+    "unavailable_reasons": {}
+  },
+  "policies": {
+    "garl": {
+      "bbox_fallback_availability": "query timestamp",
+      "bbox_selection": "latest supplied causal bbox at or before each sensor endpoint; earliest query-causal fallback only when none exists",
+      "camera": "road right event/right RGB; Slider supplied event/RGB pair",
+      "comparison_scope": "local adapted predictions and coverage only; no accuracy or paper-protocol equivalence",
+      "eap_x_offset_pixels": 0,
+      "eap_x_plus_5_not_transferred": true,
+      "event_endpoints": "two real endpoint windows; mature event-only 2x100ms, startup observed prefix split in two",
+      "event_representation": "polarity-agnostic native 20-plane timevolume per endpoint",
+      "event_windows": "exact half-open microseconds inside recorded coverage",
+      "full_event_support": "min(actual RGB endpoint spacing,100000us) ending independently at each RGB endpoint",
+      "interpolation_or_frame_duplication": false,
+      "missing_rgb_pair": "variant unavailable/null",
+      "native_bin_boundary_behavior": "each endpoint uses at most 100000us of sensor support; native timevolume retains its released first-event-relative 0.1s boundary mask",
+      "native_bin_width_s": 0.005,
+      "native_timevolume_bins": 20,
+      "native_timevolume_range_s": 0.1,
+      "native_training_delta_t_s": 0.1,
+      "nonfinite_or_singular_height_ratio_output": "variant unavailable/null",
+      "query_population": "same 434 supplied EvTTC bbox rows in original order",
+      "raw_event_empty": "variant unavailable/null",
+      "rgb_endpoints": "two distinct causal real frames; latest <= query and predecessor nearest 100ms earlier",
+      "rgb_projection": "calibrated event rays and rotation; translation omitted without depth",
+      "roi_event_empty": "valid all-zero native timevolume",
+      "short_window_relabeling": false,
+      "signed_ttc": "preserve finite signed output; no clipping or absolute value",
+      "targets_used": false,
+      "ttc_conversion_delta": "actual endpoint spacing in FP32; native model dT remains 0.1",
+      "variants": [
+        "full",
+        "event",
+        "visual"
+      ],
+      "version": "garl_evttc_competition_transfer_v1"
+    },
+    "phase": {
+      "bbox_availability": "provided_annotation_available_at_its_RGB_frame_timestamp",
+      "bbox_bounds": "zero_based_xyxy_half_open_explicit_clipping",
+      "bbox_plane": "event_raster_inferred_from_clock_and_sensor_overlays",
+      "crop": "last_two_causal_boxes_common_square_margin_0.25_at_query",
+      "event_empty_windows": "retain_observed_empty_windows_with_explicit_zero_support_diagnostics",
+      "event_history_anchors": "fixed_query_minus_300_200_100_0_ms_independent_of_outputs",
+      "event_mature": "three_100ms_windows_per_observation_up_to_four_100ms_history_anchors",
+      "event_representation": "canonical_float64_ROI_mapping_five_bins_per_polarity_plus_count_rate",
+      "event_startup": "at_each_anchor_partition_available_prefix_if_under_300ms_into_three_real_windows",
+      "event_support": "positive_duration_windows_inside_recorded_sensor_coverage",
+      "event_to_rgb": "calibrated_rays_rotation_only_translation_omitted_no_depth",
+      "infinite_expert_ttc": "phase_limit_but_native_feature_nonfinite_fail_fast_not_observation_filtered",
+      "information_span_us_max": 650000,
+      "missing_support": "retain_query_with_null_prediction_and_reason_no_constant_fill",
+      "model": "unchanged_sealed_TRAIN40_nine_components_and_normalizers",
+      "model_phase_anchor_seconds": 0.1,
+      "observation_admission": "mathematical_phase_representability_independent_of_known_mask_or_accuracy",
+      "output_clock": "original_bbox_csv_timestamp_text",
+      "outputs": "preserve_signed_TTC_no_new_clamp_or_absolute_value",
+      "query_population": "every_supplied_bbox_csv_row_in_original_order",
+      "rgb_availability": "provided_RGB_frame_available_at_its_dataset_timestamp",
+      "rgb_cadence": "nearest_real_predecessor_to_100ms_earlier_tie_prefers_earlier_index",
+      "rgb_delta": "measured_frame_intervals_no_interpolation_or_nominal_relabeling",
+      "rgb_history": "at_most_eight_observations_whose_first_frame_is_within_650ms",
+      "rgb_observations": "T3_sliding_triplets_or_T2_with_two_selected_real_startup_frames",
+      "rgb_representation": "canonical_PIL_bilinear_ROI_uint8_then_float32_div255",
+      "road_camera": "right_event_and_right_RGB",
+      "single_box_startup": "reuse_same_box_for_crop_only_never_duplicate_sensor_frames",
+      "targets_used": false,
+      "training_updates": 0,
+      "unrepresentable_observation": "reject_whole_observation_only_on_exact_frozen_phase_domain_error_and_invalid_expert_TTC",
+      "version": "evttc_competition_causal_adapter_v2"
+    }
+  },
+  "prediction_disagreement": {
+    "garl_event": {
+      "absolute_disagreement_median_s": 0.6813866496086121,
+      "absolute_disagreement_p95_s": 5.622940573096274,
+      "null_gap_queries": 0,
+      "shared_valid_queries": 434,
+      "signed_disagreement_max_s": 394.1099433898926,
+      "signed_disagreement_median_s": 0.5713688135147095,
+      "signed_disagreement_min_s": -45.832616329193115
+    },
+    "garl_full": {
+      "absolute_disagreement_median_s": 0.2607053518295288,
+      "absolute_disagreement_p95_s": 1.0976390480995175,
+      "null_gap_queries": 10,
+      "shared_valid_queries": 424,
+      "signed_disagreement_max_s": 17.647005558013916,
+      "signed_disagreement_median_s": -0.1531783938407898,
+      "signed_disagreement_min_s": -14.10215950012207
+    },
+    "garl_visual": {
+      "absolute_disagreement_median_s": 0.23591333627700806,
+      "absolute_disagreement_p95_s": 1.5243998765945435,
+      "null_gap_queries": 8,
+      "shared_valid_queries": 426,
+      "signed_disagreement_max_s": 57.313297271728516,
+      "signed_disagreement_median_s": 0.16001546382904053,
+      "signed_disagreement_min_s": -75.70090293884277
+    }
+  },
+  "published_garl_rte": [
+    {
+      "rte_percent": 8.31,
+      "sequence_id": "CCRs2-medium"
+    },
+    {
+      "rte_percent": 10.56,
+      "sequence_id": "CCRs2-high"
+    },
+    {
+      "rte_percent": 12.93,
+      "sequence_id": "CCRm-medium"
+    },
+    {
+      "rte_percent": 10.6,
+      "sequence_id": "Unweighted average"
+    }
+  ],
+  "query_population": {
+    "models_per_query": 4,
+    "prediction_rows": 1736,
+    "queries": 434,
+    "queries_per_model": 434,
+    "sequence_count": 10,
+    "sequence_queries": {
+      "CCRm-low": 42,
+      "CCRm-medium": 40,
+      "CCRs1-high": 30,
+      "CCRs1-low": 50,
+      "CCRs1-medium": 43,
+      "CCRs2-high": 59,
+      "CCRs2-low": 46,
+      "CCRs2-medium": 55,
+      "Slider-1000": 18,
+      "Slider-750": 51
+    }
+  },
+  "runtime_boundary": {
+    "cross_model_efficiency_claim_supported": false,
+    "cross_variant_latency_ranking_supported": false,
+    "excluded": [
+      "model_loading",
+      "indexing",
+      "calibration",
+      "source_hashing"
+    ],
+    "included": "Per-query preprocessing plus synchronized model-to-host wall time",
+    "purpose": "Descriptive observations from independent offline implementations",
+    "reason": "Garl variants ran once in fixed full/event/visual order and may share OS/HDF5 page-cache and GPU warm state. PHASE used a different history and recomputed offline adapter."
+  },
+  "schema": "phase_ttc_evttc_public_evidence_v1",
+  "semantics": {
+    "disagreement": "Absolute pointwise difference between a Garl variant and PHASE-TTC on shared-finite queries.",
+    "no_ground_truth": "No verified exact-query ground truth was available for these 434 identities.",
+    "nulls": "Unavailable predictions remain explicit null gaps and are never imputed.",
+    "published_rte": "The T02 percentages are transcribed published results, not recomputed from T01.",
+    "signed_predictions": "Predictions are preserved without clipping or absolute-value transformation."
+  },
+  "timing_policy": {
+    "cross_variant_latency_ranking_supported": false,
+    "excluded": [
+      "model_loading",
+      "indexing",
+      "calibration",
+      "source_hashing"
+    ],
+    "fixed_variant_order": [
+      "full",
+      "event",
+      "visual"
+    ],
+    "no_explicit_tensor_or_preprocessing_reuse": true,
+    "not_optimized_streaming_latency": true,
+    "per_variant": "independent_preparation_plus_synchronized_model_to_host_wall_time",
+    "shared_state": "OS_and_HDF5_page_cache_and_GPU_warm_state_can_be_shared"
+  },
+  "variant_stats": {
+    "garl_event": {
+      "finite_predictions": 434,
+      "full_cost_median_s": 0.3497003999655135,
+      "full_cost_p95_s": 0.8056055250053756,
+      "history_and_cadence": {
+        "delta_count": 434,
+        "delta_seconds_max": 0.1,
+        "delta_seconds_median": 0.1,
+        "delta_seconds_min": 0.010133,
+        "delta_semantics": "one input conversion_delta_t_s per available query",
+        "window_group_count": 434,
+        "windows_per_group_max": 2,
+        "windows_per_group_min": 2
+      },
+      "model_wall_median_s": 0.007217450009193271,
+      "model_wall_p95_s": 0.011125020001782095,
+      "negative_predictions": 10,
+      "null_predictions": 0,
+      "outside_empirical_p01_p99": 10,
+      "prediction_max_s": 406.0953063964844,
+      "prediction_min_s": -42.211082458496094,
+      "prediction_p01_s": -11.593773527145386,
+      "prediction_p99_s": 143.53080726623574,
+      "records": 434,
+      "unavailable_reasons": {}
+    },
+    "garl_full": {
+      "finite_predictions": 424,
+      "full_cost_median_s": 0.5420503499917686,
+      "full_cost_p95_s": 1.0089360350015328,
+      "history_and_cadence": {
+        "delta_count": 424,
+        "delta_seconds_max": 0.100024,
+        "delta_seconds_median": 0.099999,
+        "delta_seconds_min": 0.049999,
+        "delta_semantics": "one input conversion_delta_t_s per available query",
+        "window_group_count": 426,
+        "windows_per_group_max": 2,
+        "windows_per_group_min": 0
+      },
+      "model_wall_median_s": 0.03924144999473356,
+      "model_wall_p95_s": 0.04492036002338864,
+      "negative_predictions": 0,
+      "null_predictions": 10,
+      "outside_empirical_p01_p99": 10,
+      "prediction_max_s": 52.705101013183594,
+      "prediction_min_s": 0.9068331122398376,
+      "prediction_p01_s": 0.939508780837059,
+      "prediction_p99_s": 11.8823175525665,
+      "records": 434,
+      "unavailable_reasons": {
+        "event_window_out_of_recorded_coverage": 2,
+        "fewer_than_two_real_causal_rgb_frames": 8
+      }
+    },
+    "garl_visual": {
+      "finite_predictions": 426,
+      "full_cost_median_s": 0.15787424996960908,
+      "full_cost_p95_s": 0.22092852503119498,
+      "history_and_cadence": {
+        "delta_count": 426,
+        "delta_seconds_max": 0.100024,
+        "delta_seconds_median": 0.099999,
+        "delta_seconds_min": 0.040081,
+        "delta_semantics": "one input conversion_delta_t_s per available query",
+        "window_group_count": 0,
+        "windows_per_group_max": null,
+        "windows_per_group_min": null
+      },
+      "model_wall_median_s": 0.006782950018532574,
+      "model_wall_p95_s": 0.011035094986436886,
+      "negative_predictions": 5,
+      "null_predictions": 8,
+      "outside_empirical_p01_p99": 10,
+      "prediction_max_s": 38.766727447509766,
+      "prediction_min_s": -23.83188819885254,
+      "prediction_p01_s": -7.217178627848625,
+      "prediction_p99_s": 6.1701847314834595,
+      "records": 434,
+      "unavailable_reasons": {
+        "fewer_than_two_real_causal_rgb_frames": 8
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+\documentclass[tikz,border=3pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{XCharter}
+\usepackage[xcharter]{newtxmath}
+\usepackage[scaled=.92]{helvet}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,decorations.pathreplacing,patterns}
+\usepgfplotslibrary{groupplots,fillbetween}
+\pgfplotsset{compat=1.18}
+\definecolor{ink}{HTML}{172536}
+\definecolor{rgb}{HTML}{3563B8}
+\definecolor{event}{HTML}{17857C}
+\definecolor{fusion}{HTML}{76529C}
+\definecolor{reference}{HTML}{8994A3}
+\definecolor{warn}{HTML}{AC5948}
+\definecolor{muted}{HTML}{657183}
+\definecolor{rule}{HTML}{D9E0E8}
+\definecolor{pale}{HTML}{F5F7FA}
+\color{ink}
+\tikzset{box/.style={rounded corners=2pt,draw=rule,fill=white,align=center,inner sep=4pt,font=\sffamily\fontsize{9}{10.8}\selectfont,minimum height=9mm},rb/.style={box,draw=rgb!50,fill=rgb!5},eb/.style={box,draw=event!50,fill=event!5},fb/.style={box,draw=fusion!55,fill=fusion!5},arrow/.style={-{Latex[length=1.8mm]},line width=.65pt,draw=muted},note/.style={font=\sffamily\fontsize{8.4}{10.2}\selectfont,align=center,text=muted},heading/.style={font=\sffamily\fontsize{10}{12}\selectfont\bfseries,align=left,text=ink}}
+\pgfplotsset{paper/.style={width=15.7cm,height=6cm,axis lines*=left,axis line style={rule},tick style={draw=none},tick label style={font=\sffamily\fontsize{8.8}{10.4}\selectfont,text=muted},label style={font=\sffamily\fontsize{9.4}{11}\selectfont,text=ink},title style={font=\sffamily\fontsize{10}{12}\selectfont\bfseries,text=ink},legend style={draw=none,fill=none,font=\sffamily\fontsize{9}{11}\selectfont,cells={anchor=west}},grid=major,grid style={rule!65,line width=.3pt},minor tick num=0,scaled ticks=false,unbounded coords=jump,clip mode=individual}}
+\begin{document}
+\begin{tikzpicture}
+\begin{groupplot}[paper,group style={group size=2 by 5,horizontal sep=1.15cm,vertical sep=1.25cm},width=7.9cm,height=3.36cm,ymin=-55,ymax=420,ytick={0,200,400},tick label style={font=\sffamily\fontsize{8}{9}\selectfont,text=muted},title style={font=\sffamily\fontsize{9}{10.5}\selectfont\bfseries},xlabel={},ylabel={},grid=major]
+\nextgroupplot[title={CCRs1-low / \(n=50\)},xmin=0,xmax=2.519736599999999,xlabel={},ylabel={Signed TTC (s)}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-low_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-low_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-low_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-low_garl_visual.dat};
+\nextgroupplot[title={CCRs1-medium / \(n=43\)},xmin=0,xmax=2.1627784199999986,xlabel={},ylabel={}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-medium_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-medium_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-medium_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-medium_garl_visual.dat};
+\nextgroupplot[title={CCRs1-high / \(n=30\)},xmin=0,xmax=1.5001364400000021,xlabel={},ylabel={Signed TTC (s)}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-high_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-high_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-high_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs1-high_garl_visual.dat};
+\nextgroupplot[title={CCRs2-low / \(n=46\)},xmin=0,xmax=2.315734559999999,xlabel={},ylabel={}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-low_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-low_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-low_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-low_garl_visual.dat};
+\nextgroupplot[title={CCRs2-medium / \(n=55\)},xmin=0,xmax=2.7747406799999994,xlabel={},ylabel={Signed TTC (s)}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-medium_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-medium_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-medium_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-medium_garl_visual.dat};
+\nextgroupplot[title={CCRs2-high / \(n=59\)},xmin=0,xmax=2.9788651200000014,xlabel={},ylabel={}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-high_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-high_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-high_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRs2-high_garl_visual.dat};
+\nextgroupplot[title={CCRm-low / \(n=42\)},xmin=0,xmax=2.1117712799999997,xlabel={},ylabel={Signed TTC (s)}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-low_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-low_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-low_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-low_garl_visual.dat};
+\nextgroupplot[title={CCRm-medium / \(n=40\)},xmin=0,xmax=2.0099875199999975,xlabel={},ylabel={}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-medium_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-medium_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-medium_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_CCRm-medium_garl_visual.dat};
+\nextgroupplot[title={Slider-750 / \(n=51\)},xmin=0,xmax=2.0850647306442247,xlabel={Query time (s)},ylabel={Signed TTC (s)}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_Slider-750_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_Slider-750_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_Slider-750_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_Slider-750_garl_visual.dat};
+\nextgroupplot[title={Slider-1000 / \(n=18\)},xmin=0,xmax=1.4309263658523552,xlabel={Query time (s)},ylabel={}]
+\addplot[fusion,line width=1.0pt,mark=none] table[x=t,y=v]{revision/comp_Slider-1000_phase.dat};
+\addplot[reference,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_Slider-1000_garl_full.dat};
+\addplot[event,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_Slider-1000_garl_event.dat};
+\addplot[rgb,line width=0.65pt,mark=none] table[x=t,y=v]{revision/comp_Slider-1000_garl_visual.dat};
+\end{groupplot}
+\node[note,anchor=south] at ($(group c1r1.north west)!.5!(group c2r1.north east)+(0,.65)$) {\textcolor{fusion}{\rule{9pt}{1.5pt}} PHASE-TTC\quad\textcolor{reference}{\rule{9pt}{1.5pt}} Garl full\quad\textcolor{event}{\rule{9pt}{1.5pt}} Garl event-only\quad\textcolor{rgb}{\rule{9pt}{1.5pt}} Garl visual-only};\end{tikzpicture}
+\end{document}

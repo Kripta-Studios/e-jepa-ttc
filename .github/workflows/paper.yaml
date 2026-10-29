@@ -1,0 +1,80 @@
+name: paper
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "paper/**"
+      - "scripts/ci_paper_validation.py"
+      - ".github/workflows/paper.yaml"
+  push:
+    branches:
+      - "**"
+    paths:
+      - "paper/**"
+      - "scripts/ci_paper_validation.py"
+      - ".github/workflows/paper.yaml"
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: paper-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      MPLBACKEND: Agg
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: paper/requirements-paper.txt
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            texlive-bibtex-extra \
+            texlive-fonts-extra \
+            texlive-fonts-recommended \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-latex-recommended \
+            texlive-pictures \
+            texlive-science
+      - name: Install manuscript Python dependencies
+        run: python -m pip install --requirement paper/requirements-paper.txt
+      - name: Regenerate, validate, and compile the manuscript
+        run: python scripts/ci_paper_validation.py
+      - name: Archive the compiled manuscript and validation receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-ttc-paper-${{ github.sha }}
+          path: |
+            paper/PHASE_TTC_Final.pdf
+            paper/revision/build_receipt.json
+            paper/revision/public_validation.json
+            paper/revision/competition_validation.json
+            paper/revision/*_validation.log
+            paper/revision/*pass*.log
+          if-no-files-found: error
+          retention-days: 14
+      - name: Archive manuscript diagnostics after a failed build
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-ttc-paper-failure-${{ github.sha }}
+          path: |
+            paper/*.log
+            paper/revision/*.log
+            paper/revision/*.json
+          if-no-files-found: warn
+          retention-days: 7

@@ -8,13 +8,31 @@ on:
       - "scripts/**"
       - "tests/**"
       - "configs/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/smoke-train.yaml"
+  push:
+    branches:
+      - "main"
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - "configs/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/smoke-train.yaml"
+
+permissions:
+  contents: read
 
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
-      - run: uv sync --all-groups --no-editable
+      - run: uv sync --locked --all-groups --no-editable
       - run: uv run --no-sync pytest -q tests/unit/test_synthetic_smoke.py tests/unit/test_generic_api_contracts.py
       - run: uv run --no-sync python scripts/run_plan_phase12_smoke.py --help

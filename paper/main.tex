@@ -1,0 +1,54 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{paper_style}
+\hypersetup{pdftitle={PHASE-TTC: From Motion to Time},pdfsubject={Causal Event--RGB Fusion for Signed Time-to-Contact Estimation}}
+\input{tables/official_macros.tex}
+\input{tables/evttc_macros.tex}
+\input{tables/revision_macros.tex}
+\begin{document}
+\papertitle{PHASE-TTC}{From Motion to Time}{Causal Event--RGB Fusion\\for Signed Time-to-Contact Estimation}{\'Alvaro Schwiedop Souto}
+\begin{abstract}
+PHASE-TTC estimates signed time-to-contact by combining event and RGB measurements over causal history. Each modality estimates motion separately; a compact head then corrects the RGB estimate using twenty phase, timing, and support features. Out-of-fold predictions train the later stages while keeping sequence groups separate. With up to 650\,ms of history, the submitted TRAIN40 system ranks first on the public GarlTTC Test leaderboard as of 28 October 2026, scoring \OfficialPhasePublishedOverallMiD{} Overall MiD over \OfficialSampleCount{} tokens, a \OfficialOverallRelativeGain{} reduction relative to Garl-TTC. The transfer experiments reveal a more mixed picture. On labeled EvTTC sequences used during development, fusion has a lower 95th-percentile absolute error than RGB alone, but higher mean error and more errors above ten seconds. Paired sequence-bootstrap intervals for the mean, median, and p95 differences all include zero. PHASE-TTC also returns predictions for all 434 queries in a separate competition set whose TTC targets remain unverified. Historical controls identify temporal and multimodal gains in specific configurations, without establishing a JEPA-pretraining benefit. A paced replay preserves numerical parity but reaches 29.14\,ms at p95, exceeding the 20\,ms deadline.
+\end{abstract}
+\begin{figure}[H]
+\centering\includegraphics[width=\linewidth]{figures/rev_hero.pdf}
+\caption{\textbf{GarlTTC Test leaderboard, 28 October 2026.} Overall MiD appears on the left and the four TTC bands on the right. Circles denote PHASE-TTC and squares Garl-TTC. Both entries report 0\% scorer-defined failures across 6,762 tokens. \evidence{B01,B02}}
+\label{fig:official}
+\end{figure}
+\clearpage
+\tableofcontents
+\medskip
+\finding{Evaluation overview}{\textbf{GarlTTC Test:} scored benchmark performance (6,762 tokens).\par
+\textbf{Labeled EvTTC transfer:} errors and constituent controls (468 eligible queries).\par
+\textbf{Unscored EvTTC competition:} coverage and disagreement (434 queries).\par
+\textbf{Paced replay:} complete-output response time (250 updates).}
+\clearpage
+\input{sections/introduction}
+\clearpage
+\input{sections/final_model}
+\FloatBarrier
+\input{sections/protocol}
+\input{sections/official_results}
+\input{sections/transfer}
+\input{sections/evttc_competition}
+\input{sections/design_analysis}
+\input{sections/runtime}
+\input{sections/discussion}
+\clearpage
+\begingroup\small
+\setlength{\bibsep}{3pt}
+\bibliographystyle{plainnat}
+\bibliography{references}
+\endgroup
+\appendixdivider
+\appendix
+\input{sections/methods}
+\input{sections/evaluation_details}
+\input{sections/derived_transfer}
+\input{sections/competition_details}
+\input{sections/early}
+\input{sections/middle}
+\input{sections/late_research}
+\input{sections/history}
+\input{sections/reproducibility}
+\input{sections/evidence_index}
+\end{document}

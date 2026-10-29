@@ -1,0 +1,450 @@
+[
+  {
+    "id": "M01",
+    "title": "Data and label contracts",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/data/types.py",
+        "sha256": "79121bf50fc8a060bd8fa8c73bc4c572ed28ad960d6bf8e7476af6b5c450bd48",
+        "bytes": 5258
+      },
+      {
+        "path": "src/e_jepa_ttc/data/evttc.py",
+        "sha256": "b2a691744dc5cf8dbb0ee4258b39673c4520bfdee373aa8e0e33963275085d6a",
+        "bytes": 17405
+      },
+      {
+        "path": "src/e_jepa_ttc/data/eap.py",
+        "sha256": "1ac679c886763f35698ebff2fa484064d95c65bbbf9ff5d3e420a5e9a7c4d40f",
+        "bytes": 34973
+      }
+    ]
+  },
+  {
+    "id": "M02",
+    "title": "Voxel representation and normalization",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/representations/voxel_grid.py",
+        "sha256": "2669d0eda1b56ad2c404c162577c0ccc6870ba61c68984781f79fb0c445edf08",
+        "bytes": 3564
+      },
+      {
+        "path": "tests/unit/test_representations.py",
+        "sha256": "a1a938aae5511f111455742cc04ddbe2744eda7b7c8541065c92db7267b093f7",
+        "bytes": 3962
+      }
+    ]
+  },
+  {
+    "id": "M03",
+    "title": "Common ROI and oracle conditioning",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/data/event_v4_common_roi.py",
+        "sha256": "81a13706cc5ef74753e8ed4fb74f9e18e2fdf43fcdccde91a44e659bbfe663ea",
+        "bytes": 7072
+      },
+      {
+        "path": "src/e_jepa_ttc/data/event_v4_geometry.py",
+        "sha256": "4476f01232c08dd4c120258ae5761643701e08fcdecdd24311e3c39483ebf68b",
+        "bytes": 6681
+      },
+      {
+        "path": "tests/unit/test_scientific_recovery_causality.py",
+        "sha256": "3eb87afcf118dbbb089d7f816c6b1147caaabf64afe9d891b054c48ab425a9ac",
+        "bytes": 6484
+      }
+    ]
+  },
+  {
+    "id": "M04",
+    "title": "Generic multi-horizon JEPA",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/training/jepa.py",
+        "sha256": "346d619a76a35a5cc929c232c493fa189fa6c50a65b56cd24d7f78f4b2ce83fe",
+        "bytes": 79023
+      },
+      {
+        "path": "src/e_jepa_ttc/losses/jepa_dense.py",
+        "sha256": "b99392774677f40a99432e6932c67876cb758b4aea0748f4f78a25886f9ab2e2",
+        "bytes": 1397
+      }
+    ]
+  },
+  {
+    "id": "M05",
+    "title": "Closed V8 three-view attribution",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/models/causal_scale_jepa_v8.py",
+        "sha256": "cae27671cd120a05f7526dc05dad94f26b660f4066ae16199af22ece95613554",
+        "bytes": 20606
+      },
+      {
+        "path": "src/e_jepa_ttc/training/scientific_recovery_v8_jepa.py",
+        "sha256": "41536ee8b561ae33ffe07ed638311ed7dbc70e37042950b196404a63317a82e5",
+        "bytes": 18718
+      },
+      {
+        "path": "tests/unit/test_scientific_recovery_v8_jepa.py",
+        "sha256": "60ae3e54c79dc789df9113bf8297830e1f2a1c5878decda53d997b8a5553648b",
+        "bytes": 11690
+      }
+    ]
+  },
+  {
+    "id": "M06",
+    "title": "Factorized spatial-temporal encoders",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/models/highres_factorized.py",
+        "sha256": "45a315dec6b1cfdb5e3f49b1075ddaf351621d81de73ea2da143df4cee1a1a87",
+        "bytes": 33446
+      },
+      {
+        "path": "src/e_jepa_ttc/models/temporal_kda.py",
+        "sha256": "eb604aa8eb401961186138cab7073a6f6dcaa302cc2a810f63e1e3227133e375",
+        "bytes": 20148
+      },
+      {
+        "path": "src/e_jepa_ttc/models/block_causal_transformer.py",
+        "sha256": "a571812e2d4cca85d1adcbe1987b444218076b2707bc40e85f2f7c9c783c36bd",
+        "bytes": 2825
+      },
+      {
+        "path": "tests/unit/test_kda_chunk_recurrent_equivalence.py",
+        "sha256": "f2dc32fbc07ce3fdd090a6d86aacc5b130a4bf0454fdebdd373add3906ee82da",
+        "bytes": 2101
+      },
+      {
+        "path": "tests/unit/test_temporal_kda_axis.py",
+        "sha256": "2e6ed97aa2f85a41ab9bd04c809e89c9ef8b06050de208b5d5e53cfd3f7bd779",
+        "bytes": 2382
+      }
+    ]
+  },
+  {
+    "id": "M07",
+    "title": "Causal scale, current-endpoint geometry, uncertainty",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+        "sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+        "bytes": 58202
+      }
+    ]
+  },
+  {
+    "id": "M08",
+    "title": "Local cross-time transport",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/models/local_transport.py",
+        "sha256": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d",
+        "bytes": 14258
+      }
+    ]
+  },
+  {
+    "id": "M09",
+    "title": "Privileged RGB relational distillation",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/distillation/dinov3_relational.py",
+        "sha256": "6176dcd3fcb641e2cf783987f44070409cd5e7eb17051c4b0bffa45904bad67e",
+        "bytes": 10665
+      }
+    ]
+  },
+  {
+    "id": "M10",
+    "title": "Signed benchmark phase and earlier-anchor height ratio",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/simplex_t/phase.py",
+        "sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+        "bytes": 1784
+      },
+      {
+        "path": "src/e_jepa_ttc/models/collision_clock_math.py",
+        "sha256": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f",
+        "bytes": 4207
+      },
+      {
+        "path": "src/e_jepa_ttc/models/height_ratio_head.py",
+        "sha256": "d1a979524d98429537e1c8d586bf602c4b0428b95cc7f133a360849084cdfc76",
+        "bytes": 1934
+      }
+    ]
+  },
+  {
+    "id": "M11",
+    "title": "Constrained absolute-phase risk router",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/models/simplex_risk_router.py",
+        "sha256": "e1a084f5c019f17d81baaed6d5fb067e740e2d9847e6fdcbf3b94cd0a6ad2004",
+        "bytes": 5743
+      }
+    ]
+  },
+  {
+    "id": "M12",
+    "title": "Temporal residual, phase quantiles, sparse history",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/simplex_t/model.py",
+        "sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+        "bytes": 6868
+      },
+      {
+        "path": "src/e_jepa_ttc/efficient_context/sparse_history.py",
+        "sha256": "44f23088c35bc9a2e83218fdce6ae2d97341d674d0b4fa7d70c39cce841b9c75",
+        "bytes": 2097
+      }
+    ]
+  },
+  {
+    "id": "M13",
+    "title": "RGB anchor and event ZERO control",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "operational/joint_measurement/fusion_model.py",
+        "sha256": "3fca5727e0aa747f8122a2c3170412b73de8fddd944fcd4dc8eafe5e653ff2ef",
+        "bytes": 5077
+      },
+      {
+        "path": "tests/test_joint_measurement_fusion_model.py",
+        "sha256": "77592c146944dd43733f05da94b69e7d45b5f7ae5b6908bcc3b10f570536a098",
+        "bytes": 5174
+      }
+    ]
+  },
+  {
+    "id": "M14",
+    "title": "Native effective-batch objective",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "operational/joint_measurement/native_loss.py",
+        "sha256": "a78b1b4b78352a47b6c0c65146587dd742acbb9e50a3a580aae34bf491f6e189",
+        "bytes": 5185
+      }
+    ]
+  },
+  {
+    "id": "M15",
+    "title": "Official-score binding, invalid counts and clustered bootstrap",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "operational/garl_comparison/mid.py",
+        "sha256": "bcd464fa1a6258f576def8fd433c7cbc7b80b2883fa49336198bc7c025517866",
+        "bytes": 11376
+      },
+      {
+        "path": "tests/test_garl_mid.py",
+        "sha256": "bc9ecaa5089bfcd00a9a2f6fd51e8a098c6d3af60daa6d1307b9a635dbb01f50",
+        "bytes": 3013
+      }
+    ]
+  },
+  {
+    "id": "M16",
+    "title": "Sequence splits and claim-level metadata",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/data/split.py",
+        "sha256": "3fd4bbe6ce767f001054c1337cc338ce96347b4518872d05945f338245839d72",
+        "bytes": 7814
+      }
+    ]
+  },
+  {
+    "id": "M17",
+    "title": "Provenance guards and tested admission behaviour",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "tests/unit/test_v8_integrity_provenance.py",
+        "sha256": "ee65036d96caa80bbe88bbfe2741a1cd50dc5e28c9a63f029915b031f7c749ac",
+        "bytes": 18131
+      },
+      {
+        "path": "src/e_jepa_ttc/scientific_provenance.py",
+        "sha256": "49587028e119051d1a1b3611d1de03f31aa1c114260557d715c316afdcc80ecb",
+        "bytes": 8149
+      }
+    ]
+  },
+  {
+    "id": "M18",
+    "title": "Prefix causality and label separation",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "tests/unit/test_scientific_recovery_causality.py",
+        "sha256": "3eb87afcf118dbbb089d7f816c6b1147caaabf64afe9d891b054c48ab425a9ac",
+        "bytes": 6484
+      },
+      {
+        "path": "tests/scientific/test_garl_no_leakage_v4.py",
+        "sha256": "3fefe8bf2e920a2423d041c5cc41b932dee35be97038eaba82a1be2e8fb98b64",
+        "bytes": 4674
+      },
+      {
+        "path": "tests/scientific/test_stage61_no_leakage.py",
+        "sha256": "b7a234ceceac07d521d8657179e4ff3f01348419f63f75b26663992309188996",
+        "bytes": 949
+      },
+      {
+        "path": "tests/scientific/test_collision_clock_no_leakage.py",
+        "sha256": "21e8aae7c4563faa200bdcbdaf687ba0fa5d41c8ed015524c42f606b59d0d28a",
+        "bytes": 2835
+      }
+    ]
+  },
+  {
+    "id": "M19",
+    "title": "ROI-local bounded streaming API",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "src/e_jepa_ttc/runtime/streaming.py",
+        "sha256": "d4f36303de07495df8142c5a93995e7e2630db0005ca46421ce1e464f7e24738",
+        "bytes": 13437
+      }
+    ]
+  },
+  {
+    "id": "M20",
+    "title": "Paced runtime boundary and measurement contract",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "operational/train40_runtime/paced.py",
+        "sha256": "1543d64261f1440d158cad4c55959e5a16a9a9d8fe2b09cc9855055b2d9eca31",
+        "bytes": 19084
+      },
+      {
+        "path": "docs/train40_runtime_council_20261028/MEASUREMENT_AUDIT.md",
+        "sha256": "5d7ace98138e8db3c70e543cad6b5ad05a3203d8929cd50d74815583fb0e9aa8",
+        "bytes": 6310
+      },
+      {
+        "path": "tests/unit/test_train40_runtime_paced.py",
+        "sha256": "353260b7e8064b9b4f1e0feb104a20a957e47933cdd73603c60c29a711f750b2",
+        "bytes": 20566
+      },
+      {
+        "path": "tests/unit/test_train40_paced_runner.py",
+        "sha256": "d0b78e7be9010ab3dc9c6b276e6c3ba3ea3c84f332134061073da68757adddaf",
+        "bytes": 34338
+      }
+    ]
+  },
+  {
+    "id": "M21",
+    "title": "Fresh bounded verification runs",
+    "evidence_kind": "fresh_test_artifact",
+    "sources": [
+      {
+        "path": "output/pdf/e_jepa_ttc_paper/data/verification_architecture.log",
+        "sha256": "ebf5c3331cc9b87820e048e8a377b20f608895d10be4238e4b8e3c020491c243",
+        "bytes": 2462
+      },
+      {
+        "path": "output/pdf/e_jepa_ttc_paper/data/verification_architecture.xml",
+        "sha256": "7f6e8f3ce4a16d428cab55b8786df37ef5ac5573bfa221c72b5800389b9c972a",
+        "bytes": 11321
+      },
+      {
+        "path": "output/pdf/e_jepa_ttc_paper/data/verification_protocol.log",
+        "sha256": "2528c4db4d4762fb320b7463096641a3bc34613cde6c2a381bed034f9e6d9bb0",
+        "bytes": 184
+      },
+      {
+        "path": "output/pdf/e_jepa_ttc_paper/data/verification_protocol.xml",
+        "sha256": "865dd55d804d86b1cb5c789eb24e084c61c54ac3375a4316b407213fc65e1021",
+        "bytes": 16396
+      }
+    ]
+  },
+  {
+    "id": "M22",
+    "title": "Final PHASE-TTC fusion interface and anchored output map",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "operational/final_refit/training.py",
+        "sha256": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+        "bytes": 27012
+      },
+      {
+        "path": "operational/final_refit/features.py",
+        "sha256": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+        "bytes": 39853
+      }
+    ]
+  },
+  {
+    "id": "M23",
+    "title": "Grouped out-of-fold ancestry and final-stage training interfaces",
+    "evidence_kind": "inspected_implementation_or_contract",
+    "sources": [
+      {
+        "path": "operational/final_refit/scientific_oof_final.py",
+        "sha256": "1a1c71fbb1f87c6c351cc94ef4f72f083170ed39c3b3907e8f9b7947cbf69d64",
+        "bytes": 59144
+      },
+      {
+        "path": "operational/final_refit/oof_stitch.py",
+        "sha256": "e090c3b535d59418d7c0feb9b4d7e42864c0ced8a1b58e368362055b141e5027",
+        "bytes": 21186
+      },
+      {
+        "path": "operational/final_refit/oof_lineage.py",
+        "sha256": "33b1c64acbdef66b8155a80f26ab7784c187d37f150c64801af66da11d8939ba",
+        "bytes": 32722
+      },
+      {
+        "path": "operational/final_refit/scientific_oof_features.py",
+        "sha256": "088d17c4029622f76001a379bf4f39035cec4c03f2dba3b048ea2723d0882f81",
+        "bytes": 30283
+      }
+    ]
+  },
+  {
+    "id": "M24",
+    "title": "Four direct official-scorer integration checks",
+    "evidence_kind": "fresh_test_artifact",
+    "sources": [
+      {
+        "path": "tests/test_garl_mid.py",
+        "sha256": "bc9ecaa5089bfcd00a9a2f6fd51e8a098c6d3af60daa6d1307b9a635dbb01f50",
+        "bytes": 3013
+      },
+      {
+        "path": "output/pdf/phase_ttc_paper/data/official_scorer_verification.json",
+        "sha256": "98ccc01371304d3ae71ebaea5d651c0c2709773e3b9bd007b072790173ba509f",
+        "bytes": 974
+      }
+    ]
+  }
+]

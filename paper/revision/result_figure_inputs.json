@@ -1,0 +1,137 @@
+{
+  "schema": "phase_ttc_revision_result_figures_v1",
+  "sources": {
+    "official_benchmark.json": "f7bc1a8bd786f8149ff6ce44ad60bfe43aaa8f7e7833d04b07f4b6ce004aa532",
+    "transfer_queries.csv": "2fd4c33716a6c48e50aab581b3a6f172e5492d9136d408433868f63a71431621",
+    "middle_results.json": "236eb5dab7db19326e9ac6ec50f603b65d0cfd0e007ca08c41293766ca19aea2",
+    "late_results.json": "e7093f1b75a4e96bc2298d96525f47a3ede6e84e961673a95492bcd309d5185e"
+  },
+  "hero": {
+    "phase_overall_mid": 35.80145158082389,
+    "reference_overall_mid": 45.03,
+    "relative_reduction_percent": 20.494222560906316,
+    "bands": {
+      "MiDn": {
+        "phase": 29.931394114302854,
+        "reference": 31.29
+      },
+      "MiDl": {
+        "phase": 25.71789700925724,
+        "reference": 40.61
+      },
+      "MiDs": {
+        "phase": 28.25675232393477,
+        "reference": 37.58
+      },
+      "MiDc": {
+        "phase": 43.5189935425749,
+        "reference": 53.13
+      }
+    },
+    "samples": 6762
+  },
+  "weighted": {
+    "contributions": {
+      "MiDc": 4.805503228712553,
+      "MiDs": 2.7969743028195686,
+      "MiDl": 1.4892102990742762,
+      "MiDn": 0.13586058856971447
+    },
+    "weights": {
+      "MiDc": 0.5,
+      "MiDs": 0.3,
+      "MiDl": 0.1,
+      "MiDn": 0.1
+    },
+    "note": "Reference band values are published to two decimals; decomposition uses those saved values."
+  },
+  "transfer_pair": {
+    "p95": {
+      "phase": 3.2430100058319082,
+      "rgb": 3.798780919168089,
+      "phase_minus_rgb": -0.5557709133361808
+    },
+    "median": {
+      "phase": 0.4635651296310425,
+      "rgb": 0.40789732163238535,
+      "phase_minus_rgb": 0.05566780799865717
+    },
+    "mean": {
+      "phase": 1.0226772891449645,
+      "rgb": 1.0153774810531568,
+      "phase_minus_rgb": 0.007299808091807636
+    }
+  },
+  "h16": {
+    "7": {
+      "point_delta": -2.7805933473086526,
+      "hierarchical_ci95": [
+        -5.8793891043486735,
+        0.3014086898835507
+      ]
+    },
+    "13": {
+      "point_delta": -2.1441502588669983,
+      "hierarchical_ci95": [
+        -5.3172817792701785,
+        0.7117871784090213
+      ]
+    },
+    "23": {
+      "point_delta": -2.7032542932385475,
+      "hierarchical_ci95": [
+        -5.514432149695562,
+        -0.07054196680497006
+      ]
+    },
+    "new13_23": {
+      "point_delta": -2.423702276052773,
+      "hierarchical_ci95": [
+        -5.244259454753143,
+        0.04109148518456987
+      ]
+    },
+    "all7_13_23": {
+      "point_delta": -2.5426659664713998,
+      "hierarchical_ci95": [
+        -5.2133978893639155,
+        -0.11124053108043853
+      ]
+    }
+  },
+  "v18": {
+    "23": {
+      "true": 86.96132293834016,
+      "zero": 92.3148751166311
+    },
+    "13": {
+      "true": 86.63029171497132,
+      "zero": 92.45479668781982
+    },
+    "7": {
+      "true": 88.27042690764233,
+      "zero": 92.63848017880913
+    }
+  },
+  "runtime": {
+    "deadline_response_ms": {
+      "max_ms": 35.3326,
+      "p99_ms": 32.41420899999999,
+      "p95_ms": 29.143155,
+      "p50_ms": 24.538,
+      "mean_ms": 23.9071148
+    },
+    "raw_availability_response_ms": {
+      "max_ms": 29.593,
+      "p99_ms": 27.627190999999996,
+      "p95_ms": 25.252989999999997,
+      "p50_ms": 20.804499999999997,
+      "mean_ms": 20.733031599999997
+    }
+  },
+  "exceedance": {
+    "definition": "100 * count(absolute_error > threshold) / 468",
+    "ties": "collapsed to unique thresholds",
+    "zero_percent": "stored exactly; plotted as NaN on the log axis"
+  }
+}

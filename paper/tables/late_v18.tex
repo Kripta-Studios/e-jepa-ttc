@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+\centering\small
+\caption{V18 primary and adaptive experiments on development subset H (18,422 rows). Sources \evidence{L10--L14,L20--L25}.}
+\label{tab:late_v18}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Model} & \textbf{MiD} & \textbf{Crucial} & \textbf{Negative} & \textbf{MAE (s)} \\
+\midrule
+A5-P2-FROZEN & 112.29 & 157.27 & 65.52 & 5.64 \\
+PAIR-DIRECT-S7 & 103.87 & 117.98 & 148.17 & 5.00 \\
+PAIR-CORR-S7 & 103.51 & 115.56 & 156.00 & 5.50 \\
+PAIR-CORR-FROZEN-S7 & 106.72 & 123.61 & 146.99 & 5.40 \\
+NATIVE-P2-FT-S7 & 104.05 & 145.12 & 61.26 & 4.65 \\
+PAIR-CORR-GEOMETRY-S7 & 90.95 & 114.35 & 106.23 & 6.95 \\
+PAIR-CORR-WIDE-S7 & 115.12 & 124.48 & 206.42 & 6.79 \\
+B1-TTC-CONTROL-STAGE2-S7 & 85.98 & 106.71 & 96.63 & 6.11 \\
+B1-CORRESPONDENCE-STAGE2-S7 & 81.44 & 100.22 & 84.12 & 5.48 \\
+A1-LAST-BLOCK-S7 & 90.64 & 111.03 & 97.96 & 7.11 \\
+A1-FULL-S7 & 78.92 & 95.85 & 87.09 & 5.45 \\
+\bottomrule
+\end{tabular}
+\end{table}

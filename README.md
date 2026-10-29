@@ -2,10 +2,41 @@
 
 **Causal Event–RGB Fusion for Time-to-Contact Estimation**
 
-Formerly **E-JEPA-TTC**. The current name reflects the final system's signed phase
-representation, causal temporal context, and event–RGB fusion. JEPA remains part
-of the research history; the name does not imply a demonstrated JEPA advantage,
-an official SOTA result, or a sustained real-time deployment claim.
+PHASE-TTC estimates signed time-to-contact from causal event streams and RGB
+frames. Each modality measures motion separately; temporal refiners and a
+compact RGB-anchored fusion head combine the resulting phase estimates.
+
+## Research article and current implementation
+
+**[PHASE-TTC: From Motion to Time](paper/PHASE_TTC_Final.pdf)** documents the
+final TRAIN40 system, the experiments that led to it, and its evaluation.
+The implementation and public research evidence are maintained together on
+`main`.
+
+- [Article PDF](paper/PHASE_TTC_Final.pdf)
+- [LaTeX source and build instructions](paper/README.md)
+- [Complete article source bundle](paper/PHASE_TTC_Final_Complete_Source.zip)
+- [Scientific and engineering history](docs/engineering_history_20261027/README.md)
+
+As of **28 October 2026**, PHASE-TTC ranks first among the three displayed
+GarlTTC Test submissions: **35.80 Overall MiD**, compared with **45.03** for
+Garl-TTC, a **20.49% reduction** across **6,762 scored tokens** with **0% scorer-defined
+failures**. The TRAIN40 submission uses up to **650 ms of causal event–RGB
+history**. The [distributed scoring records](paper/data/official_benchmark.json)
+and article specify the protocol and comparison scope.
+
+The paper also reports 468 labeled transfer queries from 32 sequences, 434
+separate EvTTC competition queries with unverified TTC labels, and a 250-update
+paced replay. Fusion has a mixed error profile against RGB alone, and the
+replay's 29.14 ms p95 response exceeds the 20 ms target.
+
+**Author:** Álvaro Schwiedop Souto
+
+[Email](mailto:alvaro.schwiedop@evocon-solutions.com) ·
+[LinkedIn](https://www.linkedin.com/in/%C3%A1lvaro-schwiedop-souto-92718b339/) ·
+[GitHub](https://github.com/Kripta-Studios/phase-ttc)
+
+Formerly **E-JEPA-TTC**. JEPA remains part of the documented research history.
 
 Repository: [Kripta-Studios/phase-ttc](https://github.com/Kripta-Studios/phase-ttc).
 The Python distribution and preferred command are `phase-ttc`. The `e_jepa_ttc`
@@ -13,10 +44,10 @@ import namespace and `e-jepa-ttc` command remain compatible with existing script
 and checkpoints. Historical artifacts retain their original identifiers.
 See [the naming decision](docs/decisions/ADR-0042-phase-ttc-name.md).
 
-The completed implementation is on
-[`perf/train40-persistent-50hz`](https://github.com/Kripta-Studios/phase-ttc/tree/perf/train40-persistent-50hz);
-`main` preserves the earlier implementation lineage. Branch names and dated
-research records are not changed by this naming migration.
+## Historical development notes
+
+The dated notes below preserve the status at each research checkpoint. The
+article and current summary above supersede earlier submission-status notes.
 
 **Cierre de runtime del 28 de octubre de 2026:** el [handoff del consejo de
 agentes](docs/train40_runtime_council_20261028/HANDOFF.md) conserva los ensayos,

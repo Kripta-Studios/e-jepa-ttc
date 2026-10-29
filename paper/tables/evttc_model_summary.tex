@@ -1,0 +1,15 @@
+\begin{table}[tbp]
+\centering\small
+\caption{Predictions on 434 EvTTC competition queries. The table reports finite-output coverage, signed TTC range, and negative counts. Median and P95 summarize absolute differences from PHASE-TTC where both models produce finite outputs. \evidence{T01}}
+\label{tab:evttc-model-summary}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Model} & \textbf{Finite} & \textbf{Range (s)} & \textbf{$<0$} & \textbf{Median (s)} & \textbf{P95 (s)} \\
+\midrule
+PHASE-TTC & 434/434 & [-42.225, 51.869] & 2 & -- & -- \\
+Garl full & 424/434 & [0.907, 52.705] & 0 & 0.261 & 1.098 \\
+Garl event-only & 434/434 & [-42.211, 406.095] & 10 & 0.681 & 5.623 \\
+Garl visual-only & 426/434 & [-23.832, 38.767] & 5 & 0.236 & 1.524 \\
+\bottomrule
+\end{tabular}
+\end{table}

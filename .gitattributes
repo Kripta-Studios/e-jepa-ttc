@@ -8,6 +8,8 @@ docs/train40_runtime_council_20261028/evidence/** -text -whitespace
 docs/train40_runtime_council_20261028/*_GENERATED.* -text -whitespace
 
 *.png binary
+*.pdf binary
+*.zip binary
 *.jpg binary
 *.jpeg binary
 *.gif binary
@@ -15,6 +17,9 @@ docs/train40_runtime_council_20261028/*_GENERATED.* -text -whitespace
 *.bag binary
 *.hdf5 binary
 *.h5 binary
+
+# The publication bundle contains SHA-256-bound inputs with original line endings.
+paper/** -text whitespace=cr-at-eol
 
 # Frozen A5 V3 file_sha256 was observed on the original CRLF bytes.
 artifacts/metrics/a5_transport_preflight_v3_confirm/a5_transport_preflight_v3_confirm.json binary
