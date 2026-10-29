@@ -1,0 +1,105 @@
+{
+  "dataset_revision": "a814a946e60d37f7242358af5f344542177e50c5",
+  "implementation": {
+    "entrypoint": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-s0-evaluation\\scripts\\audit_detection_temporal_data.py",
+    "entrypoint_sha256": "cab8d3a21b0c500f16db9f68438bfb494e49f34693213ed262bb3440f6fd6648",
+    "module": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-s0-evaluation\\src\\e_jepa_ttc\\detection\\temporal_data.py",
+    "module_sha256": "0ddea06600111cf359145ead1a107c28cb59117c56f677e792650758accc2c3d"
+  },
+  "media": {
+    "columns_read": [
+      "sample_token",
+      "split",
+      "sequence_id",
+      "rgb_exposure_start_timestamp_us",
+      "rgb_exposure_end_timestamp_us"
+    ],
+    "path": "data/train.parquet",
+    "sha256": "69ffedab74ea28b295fe3ec2c2c83c08716bc31c216bc2ec9971f8ca9644a314"
+  },
+  "schema": "eap_detection_temporal_audit_receipt_v1",
+  "scope": {
+    "arrival_timestamp": "unavailable",
+    "causality": "sensor exposure timestamps only",
+    "event_data_opened": false,
+    "labels_opened": false,
+    "rgb_opened": false,
+    "test_opened": false
+  },
+  "source_split": "train",
+  "split": {
+    "calibration_sequence_ids_excluded": [
+      "2JkLL5W891",
+      "6h5yRW2LGc",
+      "8mNnrXjpVB",
+      "EuFGqTcqIz",
+      "VLA3oBKFyX",
+      "Z30i8WuL2N",
+      "pakWgyPNTL",
+      "rhYxPcU29n"
+    ],
+    "path": "data/splits/eap_detection_candidate_v1.json",
+    "selection_sequence_ids": [
+      "2Y46OkK3ff",
+      "CzyQ8HKP6X",
+      "EllUE6bwVp",
+      "JaGC4Q9pgU",
+      "OBneIVg4Cw",
+      "WbCh1DRerJ",
+      "pBqGOb2vYq",
+      "vWp9XNYQ9V"
+    ],
+    "sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+    "train_sequence_ids": [
+      "2cyv0Oedzg",
+      "34K84TaN11",
+      "5ilM1PX2vz",
+      "6WCDpro5rE",
+      "8SdieOgbva",
+      "9ITOs4twfk",
+      "A1Nhv0KtmL",
+      "ClXqVoZOFu",
+      "DGqicHUGWb",
+      "GjMYZjmSQb",
+      "L36QTEoVkB",
+      "LMHPShQkaU",
+      "OYgB6RGWcq",
+      "Po6ePjWYAz",
+      "eX8t2nGd6O",
+      "mHGFBekt7X",
+      "nRcwUlHyAd",
+      "pzJcg1OCfc",
+      "q2k6O0X6JY",
+      "qGsgzl4Q8B",
+      "qoohcdtLDH",
+      "t79dBxj1WS",
+      "wE9MZUmiJP",
+      "xkiVthsGwf"
+    ]
+  },
+  "support": {
+    "availability_scope": "sensor exposure timestamps only; arrival unavailable",
+    "history_rule": "previous two same-sequence frames with exposure_end <= current_start",
+    "roles": {
+      "selection": {
+        "frames": 23958,
+        "history_0": 8,
+        "history_1": 8,
+        "history_2": 23942,
+        "history_age_us_max": 399879,
+        "history_age_us_min": 98760,
+        "sequence_count": 8
+      },
+      "train": {
+        "frames": 70282,
+        "history_0": 24,
+        "history_1": 24,
+        "history_2": 70234,
+        "history_age_us_max": 400005,
+        "history_age_us_min": 96612,
+        "sequence_count": 24
+      }
+    },
+    "schema": "eap_detection_temporal_support_v1"
+  }
+}
