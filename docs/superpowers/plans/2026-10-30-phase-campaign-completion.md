@@ -1,0 +1,78 @@
+# PHASE campaign completion
+
+## Authority and scope
+
+User: execute all remaining work locally. Base:50b2bb68, existing isolated branch
+research/evttc-transfer-v2. Specification: the 21-document PHASE_TTC package,
+particularly chapters05–10 and15. Existing identity, ancestry, target alignment,
+40-query traces, all-data F1 and exact runtime admission remain evidence, not tasks
+to redo. No cloud use. Preserve original candidate, all-data F1 and negative results.
+
+Ruling: the package explicitly makes P0/JEPA conditional; close each branch with an
+evidence-based decision rather than launch every architecture. Missing external
+independence cannot be manufactured through new splits. Cost if wrong: a branch may
+remain scientifically unresolved, which the final claim matrix must disclose.
+
+## Fixed protocol before new comparison
+
+- Local development target: existing bounded20ms CSV TTC at query time, signed,
+  no extrapolation. Keep all3828 sensor-eligible rows and reasons for257 unsupported
+  targets. Distinguish this contract from official434-query scoring.
+- Exclude the eight identified overlap recordings from new adaptation validation.
+  Use leave-one-scenario-family-out over the remaining24 recordings (seven families).
+  This is a conservative family proxy, NOT certified acquisition independence.
+- Each fold starts from the ORIGINAL sealed head, never the all-data F1. TRAIN40
+  cache stays in training. Entire held-out family is absent from current head fitting,
+  quality normalization and calibration. Upstream historical exposure stays declared.
+- F1 uses the previously fixed AdamW1e-4/wd1e-4/batch128/clip1/complete-epochs/2000-update
+  recipe and seeds7,13,21; last endpoint. No sweep or best-seed selection.
+- Primary diagnostic metric: macro-recording relative absolute error; also micro,
+  MAE, coverage, negative/short TTC, worst recording and paired family bootstrap.
+  Family intervals are conditional exploratory uncertainty, not certified acquisition CIs.
+- No practical deployment margin has been provided. Report effects and uncertainty;
+  do not invent a universal margin or automatically promote a candidate.
+- F2/Fcap only if observable quality predicts residual failure in diagnosis. At most
+  these two additional candidates, with the same folds, seeds and fixed recipe.
+- Freeze original and delivered F1 before opening Slider-500 labels. Reader adaptation
+  may broaden documented topic aliases, but never infer clocks by minimizing TTC error.
+  Treat Slider-500 as external to this head fit, with acquisition relation unresolved.
+
+## Execution tasks and completion contracts
+
+1. Local target audit, grouped protocol and analysis CLI: physical CSV consistency,
+   bbox expansion baselines, per-stage cached predictions, phase/quantile diagnostics,
+   all-data F1 resubstitution separated from validation. Meaningful RED/GREEN tests.
+2. Fixed grouped F0/F1 experiment: all seven families and three seeds; saved predictions,
+   fit-only calibration, bootstrap and regenerated report. No train/test contamination
+   by the delivered all-data checkpoint.
+3. Physical and sensor diagnosis: actual pipeline clock/future invariance, synthetic
+   parallax and endpoint/cadence fixtures, predefined raw queries and overlays, restart
+   and perturbation suite. Baselines on a declared common diagnostic population,
+   with missingness and local-port status preserved.
+4. Conditional intervention: evaluate T0 if innovation warrants it; F2/Fcap only when
+   quality evidence supports it. Probe representation before considering P0/J0/J1/J2.
+   Unsupported branches close as unresolved/negative, never as implemented successes.
+5. External Slider-500: verify source format/clock/calibration, add narrow tested adapter,
+   run locked original/F1, then join labels under documented contract; report unknown
+   independence. If contract cannot be resolved, preserve evidence and precise gap.
+6. Final confirmation/robustness/runtime report: seeds, grouped paired results,
+   uncertainty, sensor perturbations, latency distributions, export/load integrity;
+   one fresh independent review, one material-fix pass, final claim matrix and handoff.
+
+## Pre-flight interfaces
+
+- Immutable340D cache -> F1 training: preserve original20-coordinate selector;
+  metadata/labels never become input features. Additional quality must be inference-available.
+- Fold protocol -> metrics/calibration: family IDs only define roles/resampling, never
+  input features. Calibrators consume training rows only.
+- Raw perturbations -> frozen producer graphs: preserve shapes and timestamps or define
+  explicit changed physical times; retain per-query coverage and failed variants.
+- External reader -> competition preparation: aliases alone do not establish camera
+  plane or label clock; those contracts are separate checks.
+
+## Ledger
+
+- Started after user explicitly rejected closing at the F1 refit and requested the
+  remaining program. Current hardware retained; no pod launched.
+- Existing worktree isolation verified. Applying executing-plans, TDD, and final
+  verification workflow. A single whole-campaign review will follow execution.
