@@ -5,9 +5,64 @@ from __future__ import annotations
 from typing import Any
 
 from .common import canonical_sha
+from .lineage import MODEL_IDS
 
 ROLES = {"excluded", "development_exposed", "fit", "selection", "holdout_exposed", "holdout_clean"}
 UNKNOWN = (None, "", "unknown", "unresolved", "PENDING")
+
+
+def _identity_complete(receipt: dict[str, Any], inventory: dict[str, Any]) -> bool:
+    sequences = receipt.get("sequences", [])
+    if (
+        receipt.get("schema") != "evttc_transfer_identity_v1"
+        or not sequences
+        or not receipt.get("manifest_sha256")
+        or receipt["manifest_sha256"] != inventory.get("manifest_sha256")
+        or inventory.get("identity_audit_sha256") != canonical_sha(receipt)
+    ):
+        return False
+    names = [r.get("competition_sequence") for r in sequences]
+    if len(names) != len(set(names)):
+        return False
+    for row in sequences:
+        if row.get("status") != "unique" or len(row.get("matches", [])) != 1:
+            return False
+        match = row["matches"][0]
+        frames = match.get("all_rgb_frames", [])
+        if (
+            not match.get("sequence_id")
+            or not frames
+            or len(frames) != row.get("query_frames")
+            or not all(
+                f.get("equal") is True
+                and f.get("competition_sha256")
+                and f.get("competition_sha256") == f.get("original_sha256")
+                for f in frames
+            )
+        ):
+            return False
+    return True
+
+
+def _lineage_complete(receipt: dict[str, Any], exclusions: set[str]) -> bool:
+    components = receipt.get("components", [])
+    binding = receipt.get("binding", {})
+    return (
+        receipt.get("schema") == "evttc_transfer_lineage_v1"
+        and receipt.get("identity_status") == "verified"
+        and len(components) == len(MODEL_IDS)
+        and {r.get("component_id") for r in components} == set(MODEL_IDS)
+        and all(
+            r.get("exposure_status") == "clear"
+            and not r.get("unresolved")
+            and r.get("verified_evidence")
+            and r.get("artifact_sha256")
+            and r["artifact_sha256"] == binding.get(r["component_id"])
+            for r in components
+        )
+        and receipt.get("exclusions_sha256")
+        == canonical_sha({"excluded_recordings": sorted(exclusions)})
+    )
 
 
 def validate_protocol(
@@ -39,7 +94,7 @@ def validate_protocol(
     excluded = set(identities.get("excluded_recordings", []))
     violations: list[str] = []
     unresolved: list[str] = []
-    if identities.get("status") != "verified":
+    if identities.get("status") != "verified" or not _identity_complete(identities, inventory):
         unresolved.append("identity_audit_unverified")
     for sequence in identities.get("sequences", []):
         if sequence["status"] != "unique":
@@ -62,7 +117,25 @@ def validate_protocol(
         if row.get("role") not in ROLES:
             violations.append(f"{sid}:invalid_role")
         exposure = row.get("historical_exposure")
-        if exposure is None or "unknown" in exposure:
+        allowed_exposure = {
+            "scores_inspected",
+            "targets_inspected",
+            "design_use_unknown",
+            "training",
+            "architecture_selection",
+            "checkpoint_selection",
+            "sensors_only",
+            "verified_unexposed",
+            "unknown",
+        }
+        if (
+            not isinstance(exposure, list)
+            or not exposure
+            or any(
+                not isinstance(item, str) or item not in allowed_exposure or "unknown" in item
+                for item in exposure
+            )
+        ):
             unresolved.append(f"{sid}:historical_exposure")
         if row.get("role") == "holdout_clean" and exposure != ["verified_unexposed"]:
             violations.append(f"{sid}:clean_holdout_has_exposure_or_unknown_history")
@@ -79,7 +152,7 @@ def validate_protocol(
             violations.append(
                 "related_records_cross_roles:" + ",".join(r["sequence_id"] for r in members)
             )
-    if lineage.get("status") != "verified":
+    if lineage.get("status") != "verified" or not _lineage_complete(lineage, excluded):
         unresolved.append("component_ancestry_unresolved")
     status = "rejected" if violations else "unresolved" if unresolved else "verified"
     return {
@@ -89,6 +162,7 @@ def validate_protocol(
         "population_sha256": canonical_sha(inventory),
         "identities_sha256": canonical_sha(identities),
         "lineage_sha256": canonical_sha(lineage),
+        "candidate_binding": lineage.get("binding", {}),
         "violations": violations,
         "unresolved": sorted(set(unresolved)),
         "effective_exclusions": effective,

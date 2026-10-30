@@ -71,13 +71,15 @@ No official submission or message to organizers is authorized.
 - Existing sensor tests cover future frames/events/boxes, short prefixes, observed
   silence and missing recording support.
 - Forty real queries: indices 0,1,10,last in all ten sequences; untraced/traced
-  predictions equal exactly. Canonical receipt: `A00_compact/report.json`.
+  predictions equal exactly. First compact receipt: `A00_compact/report.json`.
 - First trace attempt retained full intermediate feature maps (~918 MB). Added a
   failing bounded-serialization test, summarized large tensors by shape/hash/statistics,
   and reran all forty queries. Scalar/vector observations remain available.
 - First attempt metadata captured source files at run end during formatting edits;
-  the compact rerun binds source hashes before/after execution. Use only the compact
-  rerun for source-bound trace claims. Both attempts retained.
+  the compact rerun bound only three source hashes before/after execution. Independent
+  review found that insufficient. The reviewed rerun binds the entire local Python
+  scientific graph, orchestration and candidate components before/after execution.
+  Earlier attempts remain preserved but are not authoritative provenance evidence.
 
 ## External data search
 
@@ -113,3 +115,54 @@ experiments remain conditional on eligible development and a resolved target con
 
 Audit tooling and first exposed diagnostic implemented; scientific G1/G2/G3 remain
 limited as detailed above. G4/G5 conditional and unopened. No push or submission.
+
+## Independent review and one correction pass
+
+- A read-only reviewer identified three Important issues: declarative lineage could
+  become clear without verified evidence; status-only receipts and unknown exposure
+  could open training; diagnostics did not bind all preparation sources and candidate
+  components to the protocol. Accepted all three findings.
+- Added regression tests, observed six failures before fixes, then verified corrected
+  behavior. Evidence references now resolve inside the candidate and match SHA-256;
+  empty ancestry scopes need explicit verified absence evidence. Unknown selections
+  and recursive ancestors remain unresolved.
+- Protocol now validates receipt schemas, identity/frame details, manifest/inventory
+  hashes, component bindings and known exposure vocabulary. Missing or declarative
+  evidence cannot authorize training.
+- Diagnosis now matches the actual candidate against the lineage binding, verifies
+  it again after execution, and snapshots all Python sources under `src/e_jepa_ttc`
+  and `operational`, plus the audit and transfer entry points, before and after.
+- Reviewer also reported a Minor zero-coverage report crash. Regraded Important:
+  coverage accounting is a scientific acceptance requirement. Report renders absent
+  metrics as `N/A`; end-to-end fixtures cover absent and zero-valued targets with
+  missing predictions, retaining all six method rows.
+- Reviewer declined judgments on official target equivalence, acquisition independence,
+  unknown ancestor cleanliness, JEPA benefit and real-world causes inferred from
+  physical fixtures. Accepted those limits; none is represented as established.
+- Reviewed inputs and receipts use new paths `inputs_reviewed`, `D01_reviewed`,
+  `D02_reviewed`, `A00_reviewed`; previous evidence is preserved.
+- Final focused review tests: 44 passed in 11.21 s. Ruff passes and targeted Pyright
+  reports zero errors/warnings. No second review was requested.
+- Reviewed diagnosis completed with exact parity on all 40 queries. Authoritative
+  trace receipt: `A00_reviewed/report.json`; candidate and full source snapshot
+  verified unchanged before/after execution. Original RUN_FREEZE, results ZIP and
+  prediction ledger hashes also rechecked unchanged.
+
+## Final verification outcome
+
+- Whole repository: 7,254 passed, 46 skipped, 17 subtests passed, one failed in
+  1,369.56 s. Failure: existing
+  `test_result_timeout_keeps_arena_leased_until_terminal_consumption`, where the
+  second `future.result(timeout=2)` exhausted its wall-clock budget. The suite ran
+  concurrently with the scientific diagnosis. No audit code occurs in that traceback.
+- Repeated the complete shared-pool file after diagnosis finished: 10 passed in
+  21.14 s, including the failed test, with no code changes. This is consistent with
+  timing sensitivity under load; it does not prove the full suite is unconditionally
+  green. Preserve both logs, and treat the two-second test budget as a remaining
+  reliability concern rather than altering the sealed runtime for this task.
+- The full suite was collected before the final review additions. Those changes
+  have their own final 44-test run. The earlier broader targeted run passed 115 tests.
+- Regenerated six baseline reports and five paired comparisons using the final
+  report implementation (`E01_reviewed`); no metric changes.
+- Canonical logs: `full_suite_environment_fixed.log`, `shared_pool_recheck.log`,
+  `review_final_tests.log`, `pyright_reviewed.log` under `output/evttc_transfer_v2`.

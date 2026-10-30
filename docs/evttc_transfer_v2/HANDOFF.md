@@ -32,6 +32,10 @@ La decisión de piloto está en [PILOT_DECISION.md](PILOT_DECISION.md).
 - La comparación usa predicciones originales firmadas, conserva negativos y muestra
   ausencias. [BASELINES.md](BASELINES.md) se genera desde ledgers, no desde cifras copiadas.
 - Los pesos, normalizadores, ZIP y ledger originales no se han modificado.
+- Las 40 consultas instrumentadas mantienen paridad exacta con la ejecución sin
+  trazas. El recibo final es `output/evttc_transfer_v2/A00_reviewed/report.json`:
+  vincula el candidato con la genealogía del protocolo y comprueba los hashes del
+  código de preparación, geometría, modelo y orquestación antes y después del run.
 - La verificación histórica de 434 filas pasa al usar los bytes del archivo preservado.
   El verificador sobre el checkout actual detectó primero una diferencia en
   `local_transport.py`. El commit `820e6a6f` cambió el formato; la comparación AST
@@ -115,3 +119,16 @@ Los subcomandos de auditoría usan códigos 0 (completado dentro del alcance),
 con salida 0 y estado científico `unresolved` no autoriza entrenamiento.
 
 Ver [EXECUTION_LEDGER.md](EXECUTION_LEDGER.md) para pruebas, decisiones y fallos conservados.
+
+## Verificación final
+
+Las 44 pruebas específicas de la revisión pasan; Ruff y Pyright sobre el código
+nuevo no reportan errores. La batería general terminó con 7.254 pruebas aprobadas,
+46 omitidas y un fallo por timeout de dos segundos en una prueba existente del
+pool de procesos. Al repetir ese archivo sin el diagnóstico concurrente, sus diez
+pruebas pasaron sin cambios de código. Se conservan ambos resultados: no se afirma
+que la ejecución general haya terminado completamente en verde.
+
+La instrumentación final verificó 40/40 predicciones idénticas, 1.300 archivos de
+código y 13 componentes/recibos del candidato. La revisión independiente y las
+correcciones están documentadas en el ledger.

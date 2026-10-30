@@ -28,7 +28,12 @@ sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 import h5py
 import numpy as np
 
-from operational.evttc_transfer_audit.common import file_sha, read_document, write_receipt
+from operational.evttc_transfer_audit.common import (
+    canonical_sha,
+    file_sha,
+    read_document,
+    write_receipt,
+)
 from operational.evttc_transfer_audit.lineage import MODEL_IDS
 
 
@@ -102,6 +107,8 @@ def prepare(args: argparse.Namespace) -> None:
         "protocol_id": "evttc_transfer_v2",
         "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         "records": records,
+        "manifest_sha256": file_sha(args.manifest),
+        "identity_audit_sha256": canonical_sha(identities),
     }
     write_receipt(output / "population.json", inventory)
     portable = read_document(args.candidate / "PORTABLE_PATHS.json")
@@ -150,12 +157,12 @@ def prepare(args: argparse.Namespace) -> None:
                 "evidence_refs": [
                     "MODEL_SEAL.json",
                     "OOF_RECIPE.json",
-                    "DEPLOYMENT_TRAIN40_SCOPE.json",
+                    "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json",
                 ],
                 "evidence_sha256": {
                     "MODEL_SEAL.json": file_sha(args.candidate / "MODEL_SEAL.json"),
                     "OOF_RECIPE.json": file_sha(args.candidate / "OOF_RECIPE.json"),
-                    "DEPLOYMENT_TRAIN40_SCOPE.json": file_sha(scope_path),
+                    "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": file_sha(scope_path),
                 },
                 "unknown_reason": (
                     "Historical architecture/checkpoint selection and recursive teacher scopes "

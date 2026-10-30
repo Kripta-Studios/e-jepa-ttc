@@ -17,6 +17,11 @@ from operational.evttc_transfer_audit.common import file_sha, read_document, wri
 from operational.evttc_transfer_audit.scoring import score_rows
 
 
+def metric_text(value: float | None) -> str:
+    """Render absent metrics without losing zero-coverage baseline rows."""
+    return "N/A" if value is None else f"{value:.6f}"
+
+
 def main() -> None:
     """Write full-population coverage and paired comparisons without imputing outputs."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -81,8 +86,9 @@ def main() -> None:
         lines.append(
             f"| {method} | {counts['finite_prediction']}/{counts['requested']} | "
             f"{counts['scored']} | "
-            f"{micro['mae_seconds']:.6f} | {micro['relative_absolute_error_pct']:.6f} | "
-            f"{macro['relative_absolute_error_pct']:.6f} |"
+            f"{metric_text(micro['mae_seconds'])} | "
+            f"{metric_text(micro['relative_absolute_error_pct'])} | "
+            f"{metric_text(macro['relative_absolute_error_pct'])} |"
         )
     lines += [
         "",
@@ -94,8 +100,8 @@ def main() -> None:
     for method, reports in paired.items():
         lines.append(
             f"| {method} | {reports[method]['counts']['scored']} | "
-            f"{reports['PHASE']['metrics']['micro']['relative_absolute_error_pct']:.6f} | "
-            f"{reports[method]['metrics']['micro']['relative_absolute_error_pct']:.6f} |"
+            f"{metric_text(reports['PHASE']['metrics']['micro']['relative_absolute_error_pct'])} | "
+            f"{metric_text(reports[method]['metrics']['micro']['relative_absolute_error_pct'])} |"
         )
     lines += [
         "",

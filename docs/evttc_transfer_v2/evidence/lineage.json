@@ -25,12 +25,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -53,6 +53,11 @@
         "ancestry_not_evidenced",
         "unknown_parents",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -65,12 +70,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -93,6 +98,11 @@
         "ancestry_not_evidenced",
         "unknown_parents",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -105,12 +115,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -180,6 +190,11 @@
         "normalization_fit_groups",
         "ancestry_not_evidenced",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -192,12 +207,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -267,6 +282,11 @@
         "normalization_fit_groups",
         "ancestry_not_evidenced",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -281,12 +301,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -319,6 +339,11 @@
         "ancestry_not_evidenced",
         "recursive_parent_audit_required",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -333,12 +358,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -371,6 +396,11 @@
         "ancestry_not_evidenced",
         "recursive_parent_audit_required",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -387,12 +417,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -427,6 +457,11 @@
         "ancestry_not_evidenced",
         "recursive_parent_audit_required",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -443,12 +478,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -523,6 +558,11 @@
         "ancestry_not_evidenced",
         "recursive_parent_audit_required",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     },
     {
@@ -538,12 +578,12 @@
       "evidence_refs": [
         "MODEL_SEAL.json",
         "OOF_RECIPE.json",
-        "DEPLOYMENT_TRAIN40_SCOPE.json"
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ],
       "evidence_sha256": {
-        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
         "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
-        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b"
       },
       "excluded_groups_seen": [],
       "exposure_status": "unresolved",
@@ -577,12 +617,17 @@
         "ancestry_not_evidenced",
         "recursive_parent_audit_required",
         "teacher_ancestry"
+      ],
+      "verified_evidence": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "diagnostics/evidence/DEPLOYMENT_TRAIN40_SCOPE.json"
       ]
     }
   ],
   "exclusions_sha256": "f83ce3bd29d74d71e34992535e7cbbdd05510d19469923e638b3b9f85e61d7bc",
   "identity_status": "verified",
-  "inventory_sha256": "f7891eedbef92da6c311d024ed1fcede3de935d2f57936fe4e8bbf7913910137",
+  "inventory_sha256": "41c7a7c131b2e7149eb7adde6d7baee01b68e035adac252416482d66e300a08a",
   "limitations": [
     "Hashes establish identity, not clean ancestry; frozen does not mean unexposed.",
     "Parent and teacher declarations require independent recursive evidence."

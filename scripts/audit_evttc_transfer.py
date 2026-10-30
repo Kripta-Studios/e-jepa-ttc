@@ -29,17 +29,20 @@ def diagnose(args: argparse.Namespace) -> dict[str, Any]:
     from operational.evttc_competition.readers import SensorSequence
     from operational.evttc_competition.runtime import CompetitionRuntime
     from operational.evttc_transfer_audit.diagnostics import trace_query
+    from operational.evttc_transfer_audit.provenance import (
+        assert_sources_unchanged,
+        bind_candidate,
+        snapshot_sources,
+    )
+    from scripts.final_train40_transfer import verify_candidate
 
-    source_paths = [
-        ROOT / "operational/evttc_competition/runtime.py",
-        ROOT / "operational/evttc_transfer_audit/diagnostics.py",
-        ROOT / "src/e_jepa_ttc/models/local_transport.py",
-    ]
-    source_hashes = {p.relative_to(ROOT).as_posix(): file_sha(p) for p in source_paths}
+    source_hashes = snapshot_sources(ROOT)
     config = read_document(args.diagnostic_config)
     protocol = read_document(args.protocol)
     if config["scope"] != "exposed_diagnostic" or protocol["status"] == "rejected":
         raise ValueError("Diagnosis requires an explicit exposed scope and non-rejected protocol")
+    _, candidate_binding = verify_candidate(args.candidate)
+    bind_candidate(candidate_binding, protocol)
     queries = read_document(args.query_manifest)
     requested = {(q["sequence_id"], q["query_us"]): q["query_id"] for q in queries}
     torch.set_num_threads(2)
@@ -87,8 +90,10 @@ def diagnose(args: argparse.Namespace) -> dict[str, Any]:
                     }
                 )
         print(f"{sequence}: {len(indices)} traced queries", flush=True)
-    if source_hashes != {p.relative_to(ROOT).as_posix(): file_sha(p) for p in source_paths}:
-        raise ValueError("Source changed during diagnosis; retain traces as an incomplete attempt")
+    assert_sources_unchanged(ROOT, source_hashes)
+    _, final_binding = verify_candidate(args.candidate)
+    if candidate_binding != final_binding:
+        raise ValueError("Candidate changed during diagnosis")
     return {
         "schema": "evttc_transfer_diagnosis_v1",
         "status": "diagnostic_partial" if all(r["parity"] for r in receipts) else "rejected",
@@ -99,6 +104,7 @@ def diagnose(args: argparse.Namespace) -> dict[str, Any]:
         "protocol_sha256": file_sha(args.protocol),
         "query_manifest_sha256": file_sha(args.query_manifest),
         "source_sha256": source_hashes,
+        "candidate_binding": candidate_binding,
     }
 
 

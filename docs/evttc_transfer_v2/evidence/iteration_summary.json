@@ -506,21 +506,28 @@
     }
   },
   "diagnostics": {
+    "authoritative_receipt": "A00_reviewed/report.json",
+    "candidate_components_bound": 13,
     "exact_parity": 40,
     "labels_read": false,
     "queries": 40,
-    "scope": "exposed_diagnostic"
+    "scope": "exposed_diagnostic",
+    "source_files_bound": 1300
   },
   "evidence_sha256": {
-    "A00_compact/report.json": "90823424b6434086f5cb3048f24d4b62f566246a6edd2c3e93c79c4725643fd2",
+    "A00_reviewed/report.json": "80cb43c247b433b058dbdc38253236273c45ab59963ea3e5226b849d424435e1",
     "D00_identity/report.json": "1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e",
-    "D01_lineage/report.json": "532d8f52d6c8b59e3e1c85049252956d8f0a43732137a986c10b04f3b0e855b4",
-    "D02_protocol/report.json": "45cf50beb98a35b5b0a8a322d356506840fd9c7c5e81521db8ddad6cd2937096",
+    "D01_reviewed/report.json": "705898d7bea3e1c0c08ade621ad9113bb56b25539693d4a4f8c85f76b23a1bc1",
+    "D02_reviewed/report.json": "231a02c3916e06da54c39237ca3685bd1f4d3ed8a57dc867ec54d5d950a1ff5b",
     "E00_targets/report.json": "9f50e7cbe3eb6bb32a58585e2e340b862a8e3b86b89f2c739efea444eaf685ce",
-    "E01_comparison/report.json": "26b481693c4c0927690e664e717d70610dae0ceef595f3fe1a7aaf6c41943001",
+    "E01_reviewed/report.json": "26b481693c4c0927690e664e717d70610dae0ceef595f3fe1a7aaf6c41943001",
     "T00_historical_verification/report.json": "96493b8da10139aad79af589a840913743d761da62fbe136b7035405104e6de3",
     "external/slider500_receipt.json": "16329622d24ece999bc586f109381261313ea4e7374502d2c40424543fccb655",
-    "inputs/preflight.json": "5117a6afc3f840c54a1174dde1b8d36539e1d82a14059237c7791f25b3960115"
+    "full_suite_environment_fixed.log": "a4637a92299e2630d366d5f8419b0be605cc4599dddf83e83630d3aec77d47f6",
+    "inputs_reviewed/preflight.json": "852d78339e6bb50b44147d968aa0614facf0cb3aad3c8fb7c83e141385918b75",
+    "pyright_reviewed.log": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+    "review_final_tests.log": "503b3dbd3e6248cb50f6ab529d5f3f7f96445062f158b3069d0ec405f6779d1e",
+    "shared_pool_recheck.log": "6357d0cc3a42220d719cd23a4d778596c263f5b992ca80bb20e069384cb73251"
   },
   "identity": {
     "frames": 365,
@@ -533,6 +540,13 @@
     "excluded": 8,
     "independent_acquisitions": null,
     "recordings": 32
+  },
+  "review": {
+    "focused_tests_passed": 44,
+    "important_findings_fixed": 4,
+    "ruff": "passed",
+    "targeted_pyright_errors": 0,
+    "training_allowed": false
   },
   "schema": "evttc_transfer_iteration_summary_v1",
   "scope": "exposed_diagnostic",
@@ -553,5 +567,24 @@
     "requested": 434,
     "valid": 354
   },
-  "training_performed": false
+  "training_performed": false,
+  "verification": {
+    "final_review_tests": {
+      "passed": 44,
+      "seconds": 11.21
+    },
+    "full_suite": {
+      "failed": 1,
+      "failure": "test_result_timeout_keeps_arena_leased_until_terminal_consumption",
+      "passed": 7254,
+      "seconds": 1369.56,
+      "skipped": 46,
+      "subtests_passed": 17
+    },
+    "isolated_shared_pool_recheck": {
+      "code_changed": false,
+      "passed": 10,
+      "seconds": 21.14
+    }
+  }
 }

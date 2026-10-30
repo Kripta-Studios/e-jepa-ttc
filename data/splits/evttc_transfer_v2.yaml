@@ -1,3 +1,5 @@
+identity_audit_sha256: 2a6274a0cf7fddb0852560ede78442b71da14ac62dac3c4738156ffe6f5871a1
+manifest_sha256: 607f8faa2aebeaa95ac7b61fb5bbcbe105c9e3606152ee6584e2e8cb4621722c
 protocol_id: evttc_transfer_v2
 records:
 - acquisition_group: unknown
@@ -961,4 +963,4 @@ records:
   speed_bucket: medium
   target_type: pedestrian
 schema: evttc_transfer_population_v1
-source_commit: 0f091880da2c4c5c9b7ebc17b9c5f75410c70ad5
+source_commit: 02a0d7f61ce08e2d78eeb7198d00a5c8dfd7eb38

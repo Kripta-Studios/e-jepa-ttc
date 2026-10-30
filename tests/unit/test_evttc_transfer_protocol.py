@@ -69,3 +69,17 @@ def test_missing_identity_receipt_cannot_open_training() -> None:
     )
     assert result["status"] == "unresolved"
     assert result["training_allowed"] is False
+
+
+@pytest.mark.parametrize("history", [[], ["design_use_unknown"], ["unknown"]])
+def test_status_only_receipts_and_unknown_histories_cannot_open_training(history) -> None:
+    row = record("a", "session")
+    row["historical_exposure"] = history
+    result = validate_protocol(
+        {"training_allowed": True},
+        {"records": [row]},
+        {"status": "verified"},
+        {"status": "verified"},
+    )
+    assert result["status"] == "unresolved"
+    assert result["training_allowed"] is False

@@ -26,13 +26,49 @@ SCOPES = (
 )
 
 
-def evaluate_ancestry(component: dict[str, Any], exclusions: set[str]) -> dict[str, Any]:
+def verify_evidence(candidate: Path, component: dict[str, Any]) -> frozenset[str]:
+    """Resolve and hash-check scientific references inside the candidate, without trusting flags."""
+    root = candidate.resolve(strict=True)
+    verified = set()
+    for reference in component.get("evidence_refs", []):
+        path = (root / reference).resolve(strict=True)
+        if not path.is_relative_to(root):
+            raise ValueError("Evidence reference escapes candidate")
+        if file_sha(path) != component.get("evidence_sha256", {}).get(reference):
+            raise ValueError(f"Evidence hash mismatch: {reference}")
+        verified.add(reference)
+    return frozenset(verified)
+
+
+def evaluate_ancestry(
+    component: dict[str, Any],
+    exclusions: set[str],
+    *,
+    verified_evidence: frozenset[str] = frozenset(),
+) -> dict[str, Any]:
     """Never interpret an empty or missing scope as verified absence of exposure."""
     exposure = sorted(
         {group for scope in SCOPES for group in (component.get(scope) or []) if group in exclusions}
     )
     unresolved = [scope for scope in SCOPES if not isinstance(component.get(scope), list)]
-    if component.get("ancestry_complete") is not True or not component.get("evidence_refs"):
+    for scope in SCOPES:
+        groups = component.get(scope)
+        if isinstance(groups, list):
+            if any(
+                not isinstance(g, str)
+                or not g
+                or any(
+                    sentinel in g.lower() for sentinel in ("unknown", "unresolved", "pending", "<")
+                )
+                for g in groups
+            ):
+                unresolved.append(f"{scope}:unknown_groups")
+            if (
+                not groups
+                and component.get("absence_evidence", {}).get(scope) not in verified_evidence
+            ):
+                unresolved.append(f"{scope}:unevidenced_absence")
+    if component.get("ancestry_complete") is not True or not verified_evidence:
         unresolved.append("ancestry_not_evidenced")
     parents = component.get("parent_artifact_hashes")
     if parents is None:
@@ -47,6 +83,7 @@ def evaluate_ancestry(component: dict[str, Any], exclusions: set[str]) -> dict[s
         exposure_status="exposed" if exposure else "unresolved" if unresolved else "clear",
         excluded_groups_seen=exposure,
         unresolved=unresolved,
+        verified_evidence=sorted(verified_evidence),
     )
 
 
@@ -93,7 +130,8 @@ def audit_lineage(
         name = component["component_id"]
         if component.get("artifact_sha256") != binding[name]:
             raise ValueError(f"Inventory hash differs: {name}")
-        rows.append(evaluate_ancestry(component, excluded))
+        verified = verify_evidence(candidate, component)
+        rows.append(evaluate_ancestry(component, excluded, verified_evidence=verified))
     return {
         "schema": "evttc_transfer_lineage_v1",
         "identity_status": "verified",

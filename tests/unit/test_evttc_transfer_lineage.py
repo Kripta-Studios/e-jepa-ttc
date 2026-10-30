@@ -1,4 +1,34 @@
-from operational.evttc_transfer_audit.lineage import evaluate_ancestry
+import pytest
+
+from operational.evttc_transfer_audit.lineage import SCOPES, evaluate_ancestry
+
+
+@pytest.mark.parametrize("groups", [[], ["unknown"], ["design_use_unknown"]])
+def test_complete_declarations_without_verified_evidence_cannot_be_clear(groups) -> None:
+    component = {scope: groups for scope in SCOPES}
+    component.update(
+        ancestry_complete=True,
+        evidence_refs=["nonexistent-receipt"],
+        parent_artifact_hashes=[],
+        teacher_artifact_hash=None,
+    )
+    assert evaluate_ancestry(component, set())["exposure_status"] == "unresolved"
+
+
+def test_evidence_must_exist_and_match_hash(tmp_path) -> None:
+    from operational.evttc_transfer_audit.lineage import verify_evidence
+
+    with pytest.raises(FileNotFoundError):
+        verify_evidence(
+            tmp_path,
+            {"evidence_refs": ["absent.json"], "evidence_sha256": {"absent.json": "a" * 64}},
+        )
+    (tmp_path / "receipt.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(ValueError, match="hash"):
+        verify_evidence(
+            tmp_path,
+            {"evidence_refs": ["receipt.json"], "evidence_sha256": {"receipt.json": "a" * 64}},
+        )
 
 
 def test_frozen_weights_and_empty_lists_do_not_prove_clean_lineage() -> None:
