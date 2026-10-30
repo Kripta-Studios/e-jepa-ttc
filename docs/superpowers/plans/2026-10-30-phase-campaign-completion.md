@@ -76,3 +76,25 @@ remain scientifically unresolved, which the final claim matrix must disclose.
   remaining program. Current hardware retained; no pod launched.
 - Existing worktree isolation verified. Applying executing-plans, TDD, and final
   verification workflow. A single whole-campaign review will follow execution.
+- Task1 complete: target CSV depth/speed agrees within22.1us rounding; full and
+  shared bbox/producer baselines, interval diagnostics and24-record width/error
+  correlations saved in output/phase_campaign/diagnosis. Five meaningful core
+  tests RED->GREEN; source commit0e3c0469.
+- Task2 complete:21 fits, seven families x seeds7/13/21, original sealed head per
+  fold,2531 held-out queries each. All fixed endpoints completed and source hashes
+  unchanged. Reports and checkpoints in output/phase_campaign/F1_grouped.
+- Task4 partial: fixed T0 and context probes executed. T0 reduces aggregate error
+  but delays0.5s alert by100ms on the acceleration fixture. Context features carry
+  inverse-TTC information; this does not establish an encoder limitation. Native
+  width/error correlation has median-0.0129,11/24 positive. Ruling: do not promote
+  T0 or launch F2/JEPA from these results alone; unmeasured quality/representation
+  hypotheses remain unresolved. Cost if wrong: potentially useful interventions
+  are deferred until a diagnostic supports their additional complexity.
+- Task5 sensor stage: explicit event_aided_ttc topic profile, strict original
+  profile retained; seven reader tests green. Slider50077queries and weight/data
+  hashes frozen before first TTC-value read. Fixed RGB/event quartile overlays
+  produced; central overlay visually tracks object but extrinsics remain provisional.
+- Added external identity/clock join test and raw perturbation immutability/causality
+  tests RED->GREEN. Focused core+reader+physical fixture run25passed. Queued external
+  inference after GPU cross-validation completed; training-only interval scaling
+  runs on CPU, with no conformal coverage claim.

@@ -72,15 +72,18 @@ def _message(connection: int, data: bytes, bag_seconds: int = 99) -> bytes:
     )
 
 
-def _write_slider(root: Path, name: str = "Slider-test") -> Path:
+def _write_slider(
+    root: Path, name: str = "Slider-test", *,
+    event_topic: bytes = b"/capture_node/events", rgb_topic: bytes = b"/image_raw",
+) -> Path:
     directory = root / name
     directory.mkdir()
     event_connection = _record(
-        {"op": b"\x07", "conn": struct.pack("<I", 1), "topic": b"/capture_node/events"},
+        {"op": b"\x07", "conn": struct.pack("<I", 1), "topic": event_topic},
         _field("type", b"dv_ros_msgs/EventArray") + _field("md5sum", b"test"),
     )
     image_connection = _record(
-        {"op": b"\x07", "conn": struct.pack("<I", 2), "topic": b"/image_raw"},
+        {"op": b"\x07", "conn": struct.pack("<I", 2), "topic": rgb_topic},
         _field("type", b"sensor_msgs/Image") + _field("md5sum", b"test"),
     )
     zero_header_empty = _message(1, _event_packet(0, (0, 0), []))
@@ -117,6 +120,18 @@ def _write_slider(root: Path, name: str = "Slider-test") -> Path:
     )
     (directory / "bbox.csv").write_text("1,0.0010000000000000,1,2,3,4\n", encoding="utf-8")
     return directory
+
+
+def test_external_slider_profile_is_explicit_and_preserves_header_clock(tmp_path):
+    _write_slider(tmp_path, event_topic=b"/dvs/events", rgb_topic=b"/aps/image_raw")
+    with pytest.raises(ValueError, match="audited"):
+        SensorSequence(tmp_path, "Slider-test")
+    with SensorSequence(tmp_path, "Slider-test", slider_profile="event_aided_ttc") as source:
+        assert source.rgb_timestamps_us.tolist() == [0, 1000]
+        assert len(source.read_events(-20, 1000)) == 3
+        metadata = source.source_metadata()
+        assert metadata["event_topic"] == "/dvs/events"
+        assert metadata["rgb_topic"] == "/aps/image_raw"
 
 
 def _write_road(root: Path, name: str = "road") -> Path:

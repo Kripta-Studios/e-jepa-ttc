@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import torch
@@ -79,8 +80,8 @@ def main() -> None:
             {
                 "recording": str(group),
                 "rows": int(m.sum()),
-                "spearman_width_error": float(correlation[0])
-                if np.isfinite(correlation[0])
+                "spearman_width_error": float(cast(float, correlation[0]))
+                if np.isfinite(cast(float, correlation[0]))
                 else None,
             }
         )

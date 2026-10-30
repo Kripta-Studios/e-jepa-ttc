@@ -13,7 +13,7 @@ import struct
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any, BinaryIO
+from typing import Any, BinaryIO, Literal
 
 import h5py
 import numpy as np
@@ -166,7 +166,17 @@ class _ImageRecord:
 class SensorSequence:
     """Read one road-HDF5 or Slider-ROS1 sequence without mutating inputs."""
 
-    def __init__(self, root: Path, sequence_id: str) -> None:
+    def __init__(
+        self, root: Path, sequence_id: str, *,
+        slider_profile: Literal["competition", "event_aided_ttc"] = "competition",
+    ) -> None:
+        profiles = {
+            "competition": ("/capture_node/events", "/image_raw"),
+            "event_aided_ttc": ("/dvs/events", "/aps/image_raw"),
+        }
+        if slider_profile not in profiles:
+            raise ValueError("Unknown explicit Slider topic profile")
+        self._slider_topics = profiles[slider_profile]
         self.root = Path(root)
         self.sequence_id = sequence_id
         self.sequence_dir = self.root / sequence_id
@@ -336,10 +346,10 @@ class SensorSequence:
         event_ids = [
             cid
             for cid, value in connections.items()
-            if value == ("/capture_node/events", _EVENT_TYPE)
+            if value == (self._slider_topics[0], _EVENT_TYPE)
         ]
         image_ids = [
-            cid for cid, value in connections.items() if value == ("/image_raw", _IMAGE_TYPE)
+            cid for cid, value in connections.items() if value == (self._slider_topics[1], _IMAGE_TYPE)
         ]
         if len(event_ids) != 1 or len(image_ids) != 1:
             self.close()
@@ -722,10 +732,10 @@ class SensorSequence:
         else:
             metadata.update(
                 {
-                    "clock_origin": "first /image_raw Header.stamp",
+                    "clock_origin": f"first {self._slider_topics[1]} Header.stamp",
                     "clock_origin_ns": self._event_origin_ns,
-                    "event_topic": "/capture_node/events",
-                    "rgb_topic": "/image_raw",
+                    "event_topic": self._slider_topics[0],
+                    "rgb_topic": self._slider_topics[1],
                     "negative_event_times_allowed": True,
                 }
             )
