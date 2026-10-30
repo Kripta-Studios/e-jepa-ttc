@@ -1,0 +1,9 @@
+{
+  "status": "PASS_STRICT_RESUME_4096_TO_4097",
+  "checkpoint_sha256": "a187fd777b73d0386f186a1b86fa5483406762acc8d9aa65539e33eb46e4c6aa",
+  "original_processes_paused": [
+    9167,
+    9162,
+    10080
+  ]
+}

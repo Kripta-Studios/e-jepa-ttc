@@ -1,0 +1,19 @@
+{
+  "status": "PASS_EXACT_STATE_PROVENANCE_ONLY",
+  "source": "/workspace/phase_release/cloud_runs_input_v1/r0_seed7/checkpoints/selected.pt",
+  "source_sha256": "197e97f165c2dfa5f748ca7483caef8b5c2e3a06e0cf6fad231e206959493d56",
+  "checkpoint": "/workspace/phase_release/evaluation_optimization_v1/r0_migration/checkpoints/last.pt",
+  "checkpoint_sha256": "a187fd777b73d0386f186a1b86fa5483406762acc8d9aa65539e33eb46e4c6aa",
+  "update": 4096,
+  "state_sha256": "e39929ab3635f3e30bbf7b2ca3408ea464251f6588700e4e7d77f0e605adc5ee",
+  "new_runtime_provenance": {
+    "runtime_preregistration_sha256": "8afdcb3becd8fc88aaae6491a121ec3f8f9e5e2c93c2c627a88272396799c037",
+    "source_receipt_sha256": "2a739d5f47eea4781f6a1ede0fb38879a07698fff0daae90ee99bee10571acce",
+    "effective_model_sha256": "95fd076c4c25e11b43c33f2b2ce7708d1ebb669ffe57b966e9317526a7a01dcf",
+    "code_sha256_manifest": "bbc086d0a3af69461a18d47283da560e33f916fc7c4c1401cad126eda1728db6",
+    "portable_source_sha256_manifest": "860d7197da063f9c33a47174b2e2921b6bda65f27fc6bf10af6bea7b849d907b",
+    "matmul_precision": "highest"
+  },
+  "pending_full_evaluation": 4096,
+  "original_training_state_preserved": true
+}

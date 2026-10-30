@@ -1,0 +1,13 @@
+{
+  "status": "MIGRATED_TO_EVALUATION_PREFETCH",
+  "update": 4096,
+  "training_updates_discarded": 0,
+  "unfinished_full_evaluation_restarted": true,
+  "previous_pids": {
+    "9080": "activate_input_optimization.py",
+    "10080": "runpod_evaluation_prefetch_queue.py",
+    "9162": "runpod_input_optimized_queue.py",
+    "9167": "train_detection_campaign.py"
+  },
+  "epoch": 1793392284.6061409
+}

@@ -1,0 +1,9 @@
+{
+  "stage": "inference",
+  "completed_frames": 3584,
+  "total_frames": 23958,
+  "elapsed_seconds": 186.21827887010295,
+  "inference_seconds_total": 144.22794489143416,
+  "load_prepare_cpu_seconds": 123.87743964116089,
+  "ground_truth_cpu_seconds": 38.45427185273729
+}

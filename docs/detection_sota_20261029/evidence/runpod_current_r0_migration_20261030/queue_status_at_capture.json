@@ -1,0 +1,18 @@
+{
+  "status": "EVALUATING_R0_UPDATE_4096",
+  "active": [
+    "r0_seed7"
+  ],
+  "completed": {},
+  "failures": {},
+  "pending": [
+    "r2_seed7",
+    "r0_seed13",
+    "r2_seed13",
+    "r0_seed23",
+    "r2_seed23"
+  ],
+  "concurrency": 1,
+  "resume_update": 4096,
+  "evaluation_progress": "/workspace/phase_release/evaluation_optimization_v1/r0_migration/pending_evaluation/evaluation_progress/full_selection_update_004096.json"
+}

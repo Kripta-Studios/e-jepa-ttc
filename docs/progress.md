@@ -648,3 +648,10 @@ fields. It preserves single-frame FP32 inference and the complete scorer.
 The admitted handoff retains the active run and applies the revision to pending
 replicas after the existing R0 completes. Details, validation scope and rollout
 receipts are in [the A40 evaluation report](detection_sota_20261029/RUNPOD_EVALUATION_OPTIMIZATION.md).
+
+At the user's subsequent request, the revision also applies to active R0 via an
+explicit update-4096 checkpoint migration. Every state value outside runtime
+provenance is preserved, and a real strict-loader 4096-to-4097 smoke passed.
+The interrupted full evaluation is repeated with prefetch, followed automatically
+by the remaining training and five pending replicas. The original checkpoints
+and aborted evaluation evidence remain available.

@@ -84,3 +84,40 @@ Raw panel outputs remain on the Pod; small receipts, profile and hashes are stor
 in `evidence/runpod_evaluation_optimization_20261030/`.
 
 Profiler reference: [py-spy documentation](https://github.com/benfred/py-spy).
+
+## Applying the revision to the active R0
+
+The user subsequently requested immediate application to the active R0. Its
+selected checkpoint at update 4096 contains complete optimizer, scheduler,
+sampler and RNG state. Its member ledger already covers all 23,958 full-selection
+tokens (28,054 known hashes overall), so re-evaluation retains every consumed-data
+identity check.
+
+`migrate_runpod_evaluation_checkpoint.py` admits exactly the previously profiled
+parent/child producer hashes and two added prefetch modules. It checks scientific
+runtime fields and source snapshots and writes a new checkpoint copy with only
+the two runtime-provenance fields changed. A recursive fingerprint covers every
+other scalar and tensor byte. The original checkpoint is preserved. This is an
+explicit, recorded migration, not a relaxation of the strict checkpoint loader.
+
+The strict new loader successfully resumed update 4096 to 4097, completed its
+1024-frame stop evaluation and saved a checkpoint. That one-update smoke is
+diagnostic; production resumes from the preserved update-4096 state. The original
+controllers and producer were then stopped, and `resume_runpod_r0_prefetch.py`
+started the pending full evaluation with the admitted prefetch implementation.
+No completed training update was discarded. The unfinished full evaluation has
+to be repeated because the original evaluator did not save reusable partial
+predictions; the original run directory remains intact.
+
+The controller completes that full evaluation before resuming training at update
+4097. It binds the inherited update-4096 evaluation to the checkpoint SHA and
+attaches the verified artifact to the resumed run before full-population gates.
+The resumed summary retains its start update, checkpoint ancestry and cumulative
+training progress; operational time spent in the interrupted evaluation and the
+external replacement evaluation must be accounted for separately from the
+runner's training-time field. After R0 finishes, the five remaining runs continue.
+
+Initial production observation: 1536/23,958 frames completed in 80.05 seconds,
+including preparation, before scoring and serialization. This is progress evidence,
+not a completed-evaluation speed comparison. Six additional migration tests pass;
+the combined migration/prefetch contract suite contains 33 tests.
