@@ -1,0 +1,7 @@
+{
+  "same_ordered_train_tokens_every_update": true,
+  "updates": 8192,
+  "exposures_per_run": 32768,
+  "unique_frames": 4096,
+  "ordered_tokens_sha256": "21965341c78e9f8a41cff261a67b64b87d62c35146b8201508da29dec4412f1e"
+}

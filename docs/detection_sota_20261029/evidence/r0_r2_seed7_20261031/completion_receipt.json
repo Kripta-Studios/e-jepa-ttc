@@ -1,0 +1,34 @@
+{
+  "status": "R0_R2_SEED7_COMPLETE_NEXT_INTERVENTION_DEFINED",
+  "active": [],
+  "completed": {
+    "r0_seed7": {
+      "output": "/workspace/phase_release/cloud_runs_eval_v1/r0_seed7_resumed",
+      "summary_sha256": "ac93fa69b24ea8f4313bc1b24c3e34cff1391ce86df1bdf7c5db7734d0101308",
+      "metric": 0.10420094273555215
+    },
+    "r2_seed7": {
+      "output": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7",
+      "summary_sha256": "04bf2adf52e4e70645538550abed20b846ca3ca41327ade9457506d77418c4b1",
+      "metric": 0.11681927043777389,
+      "full_final_AP": 0.11645298017774904
+    }
+  },
+  "failures": {},
+  "pending": [],
+  "concurrency": 1,
+  "resume_update": 4096,
+  "evaluation_progress": "/workspace/phase_release/evaluation_optimization_v1/r0_migration/pending_evaluation/evaluation_progress/full_selection_update_004096.json",
+  "run_output": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7",
+  "deferred": [
+    "r0_seed13",
+    "r2_seed13",
+    "r0_seed23",
+    "r2_seed23"
+  ],
+  "decision": "User deferred seeds 13 and 23; finish R2 seed 7, compare R0 and choose next intervention.",
+  "updated_at_utc": "2026-10-30T23:38:01.046810+00:00",
+  "comparison_path": "/workspace/phase_release/r0_r2_comparison_v1/comparison.json",
+  "completion_basis": "Both summaries, checkpoint hashes, full evaluations and identical GT verified; original child exit code not observed after controller retirement.",
+  "next_intervention": "R2-rare-v1: train-only identity-capped rare sampling; proposed, not launched"
+}

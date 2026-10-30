@@ -1,0 +1,175 @@
+{
+  "schema": "eap_detection_campaign_coverage_v2",
+  "manifest_file_sha256": "9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1",
+  "manifest_canonical_sha256": "9acaf17cc98db2f8c8dd34bd2857663f92192f2dc4ec1772a8a5803023aa01ce",
+  "train": {
+    "frame_count": 4096,
+    "raw_negative_frames": 54,
+    "trainer_overflow_frames": 0,
+    "raw_annotations": {
+      "bicycle": 181,
+      "bus": 305,
+      "car": 17435,
+      "motorcycle": 1409,
+      "other_vehicle": 20,
+      "pedestrian": 469,
+      "tricycle": 160,
+      "truck": 6255
+    },
+    "evaluable_annotations_v2": {
+      "bicycle": 173,
+      "bus": 130,
+      "car": 11194,
+      "motorcycle": 749,
+      "other_vehicle": 8,
+      "pedestrian": 252,
+      "tricycle": 105,
+      "truck": 2219
+    },
+    "trainable_annotations_legacy_profile": {
+      "bicycle": 162,
+      "bus": 110,
+      "car": 10455,
+      "motorcycle": 693,
+      "other_vehicle": 7,
+      "pedestrian": 245,
+      "tricycle": 97,
+      "truck": 1994
+    },
+    "trainable_identity_count": {
+      "bicycle": 69,
+      "bus": 24,
+      "car": 1548,
+      "motorcycle": 362,
+      "other_vehicle": 6,
+      "pedestrian": 130,
+      "tricycle": 51,
+      "truck": 388
+    }
+  },
+  "selection": {
+    "frame_count": 1024,
+    "raw_negative_frames": 0,
+    "trainer_overflow_frames": 0,
+    "raw_annotations": {
+      "bicycle": 30,
+      "bus": 143,
+      "car": 3885,
+      "motorcycle": 1719,
+      "other_vehicle": 7,
+      "pedestrian": 623,
+      "tricycle": 117,
+      "truck": 1686
+    },
+    "evaluable_annotations_v2": {
+      "bicycle": 26,
+      "bus": 85,
+      "car": 2524,
+      "motorcycle": 963,
+      "other_vehicle": 4,
+      "pedestrian": 338,
+      "tricycle": 80,
+      "truck": 619
+    },
+    "trainable_annotations_legacy_profile": {
+      "bicycle": 25,
+      "bus": 50,
+      "car": 2352,
+      "motorcycle": 906,
+      "other_vehicle": 4,
+      "pedestrian": 320,
+      "tricycle": 80,
+      "truck": 538
+    },
+    "trainable_identity_count": {
+      "bicycle": 23,
+      "bus": 18,
+      "car": 483,
+      "motorcycle": 584,
+      "other_vehicle": 3,
+      "pedestrian": 241,
+      "tricycle": 43,
+      "truck": 131
+    }
+  },
+  "train_sequence_frames": {
+    "2cyv0Oedzg": 171,
+    "34K84TaN11": 171,
+    "5ilM1PX2vz": 171,
+    "6WCDpro5rE": 171,
+    "8SdieOgbva": 171,
+    "9ITOs4twfk": 171,
+    "A1Nhv0KtmL": 171,
+    "ClXqVoZOFu": 171,
+    "DGqicHUGWb": 171,
+    "GjMYZjmSQb": 171,
+    "L36QTEoVkB": 171,
+    "LMHPShQkaU": 171,
+    "OYgB6RGWcq": 171,
+    "Po6ePjWYAz": 171,
+    "eX8t2nGd6O": 171,
+    "mHGFBekt7X": 171,
+    "nRcwUlHyAd": 170,
+    "pzJcg1OCfc": 170,
+    "q2k6O0X6JY": 170,
+    "qGsgzl4Q8B": 170,
+    "qoohcdtLDH": 170,
+    "t79dBxj1WS": 170,
+    "wE9MZUmiJP": 170,
+    "xkiVthsGwf": 170
+  },
+  "selection_sequence_frames": {
+    "2Y46OkK3ff": 128,
+    "CzyQ8HKP6X": 128,
+    "EllUE6bwVp": 128,
+    "JaGC4Q9pgU": 128,
+    "OBneIVg4Cw": 128,
+    "WbCh1DRerJ": 128,
+    "pBqGOb2vYq": 128,
+    "vWp9XNYQ9V": 128
+  },
+  "replacement": {
+    "old_index": 2063,
+    "old_sample_token": "OYgB6RGWcq:000000661_000000160",
+    "old_exposure_start_us": 661000160,
+    "new": {
+      "sample_token": "OYgB6RGWcq:000000660_000900159",
+      "sequence_id": "OYgB6RGWcq",
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "rgb_member_path": "rgb/000000660_000900159.png",
+      "member_size_bytes": 688998,
+      "member_sha256": "27bd317ae7cfcb8dab3363fb19c229b44d9904c55cc3c960cdf838aaf16e7500",
+      "image_wh": [
+        1280,
+        720
+      ],
+      "tar_size_bytes": 1075773440,
+      "tar_sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+      "tar_expected_sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+      "strict_decode": true
+    },
+    "new_exposure_start_us": 660900159,
+    "selection_rule": "same sequence, unused, trainer_overflow=false, minimum absolute exposure distance, ties prefer earlier, strict media admission",
+    "attempts": [
+      {
+        "rank": 1,
+        "sample_token": "OYgB6RGWcq:000000660_000900159",
+        "distance_us": 100001,
+        "is_earlier": true,
+        "status": "ADMITTED"
+      }
+    ]
+  },
+  "rare_identity_retention": {
+    "bicycle": {
+      "old_identity_count": 69,
+      "new_identity_count": 69,
+      "all_original_identities_retained": true
+    },
+    "other_vehicle": {
+      "old_identity_count": 6,
+      "new_identity_count": 6,
+      "all_original_identities_retained": true
+    }
+  }
+}

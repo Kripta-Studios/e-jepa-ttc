@@ -1,0 +1,262 @@
+{
+  "r0": [
+    {
+      "update": 1024,
+      "AP": 0.037275599904394253,
+      "per_class_AP": {
+        "car": 0.24416325647932186,
+        "bicycle": 0.0,
+        "truck": 0.020470587532258985,
+        "pedestrian": 9.305441822377725e-06,
+        "motorcycle": 0.0334160469861771,
+        "bus": 0.0,
+        "tricycle": 0.00014560279557367502,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_input_v1/r0_seed7/evaluation/selection_update_001024.json",
+      "sha256": "8a2c9c7fe6109cf2aa55a7bf7015df44fa95e4b8ca451c6703ba3a8474d8a249"
+    },
+    {
+      "update": 2048,
+      "AP": 0.07372467719595754,
+      "per_class_AP": {
+        "car": 0.4575960095439777,
+        "bicycle": 0.0,
+        "truck": 0.065011836110172,
+        "pedestrian": 0.006137704835560609,
+        "motorcycle": 0.06097797909213644,
+        "bus": 7.388798581350672e-05,
+        "tricycle": 0.0,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_input_v1/r0_seed7/evaluation/selection_update_002048.json",
+      "sha256": "646913f8fce572dccaad7afe4352a81983c659ae6ff609acb449042395c7b3ac"
+    },
+    {
+      "update": 3072,
+      "AP": 0.07051789088564556,
+      "per_class_AP": {
+        "car": 0.44765810987615856,
+        "bicycle": 0.005198575979750913,
+        "truck": 0.03511573292522524,
+        "pedestrian": 0.00010901384227807747,
+        "motorcycle": 0.05403918297687932,
+        "bus": 0.012286693785657636,
+        "tricycle": 0.009735817699214756,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_input_v1/r0_seed7/evaluation/selection_update_003072.json",
+      "sha256": "b8b5c3da9728a562972f58c3009b52a74ec965e92711e301f6ec559809554d75"
+    },
+    {
+      "update": 4096,
+      "AP": 0.07918911679096645,
+      "per_class_AP": {
+        "car": 0.4507313967939239,
+        "bicycle": 0.007893431079735521,
+        "truck": 0.05703397140033922,
+        "pedestrian": 0.0036139433830800643,
+        "motorcycle": 0.08767819606628369,
+        "bus": 0.025185465656486467,
+        "tricycle": 0.0013765299478826925,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_input_v1/r0_seed7/evaluation/selection_update_004096.json",
+      "sha256": "ebb30ccd4cfd43c0c67d8d772afd4504199f5d9c624e99dcf15cc76a59d4b4b7"
+    },
+    {
+      "update": 5120,
+      "AP": 0.08981751029113325,
+      "per_class_AP": {
+        "car": 0.4665178714931174,
+        "bicycle": 0.0019251925192519251,
+        "truck": 0.09354557633849853,
+        "pedestrian": 0.014027519230665007,
+        "motorcycle": 0.08972540546456503,
+        "bus": 0.03602419190345437,
+        "tricycle": 0.01677432537951374,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r0_seed7_resumed/evaluation/selection_update_005120.json",
+      "sha256": "6021694f6171b5a78508fb23b1907bb50226d3e36d950273b00ab639a59d380b"
+    },
+    {
+      "update": 6144,
+      "AP": 0.10420094273555215,
+      "per_class_AP": {
+        "car": 0.5191964801600311,
+        "bicycle": 0.0,
+        "truck": 0.15642435113155972,
+        "pedestrian": 0.006391345259114308,
+        "motorcycle": 0.09337071211624406,
+        "bus": 0.04597050658031086,
+        "tricycle": 0.012254146637157227,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r0_seed7_resumed/evaluation/selection_update_006144.json",
+      "sha256": "a7307d8f754bbcea8e42554559f2f5d76845ff64d348ad187987dd2ba1962339"
+    },
+    {
+      "update": 7168,
+      "AP": 0.09704601884455046,
+      "per_class_AP": {
+        "car": 0.49099840681564133,
+        "bicycle": 0.01490359562272016,
+        "truck": 0.16040025219596177,
+        "pedestrian": 0.00849227409052431,
+        "motorcycle": 0.08754937530272427,
+        "bus": 0.01375324544717571,
+        "tricycle": 0.0002710012816559803,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r0_seed7_resumed/evaluation/selection_update_007168.json",
+      "sha256": "6e03431828e4273b8a262c313ecc62c281bab5fa7a8d4221a39fa45ff9a93df5"
+    },
+    {
+      "update": 8192,
+      "AP": 0.0998754060012031,
+      "per_class_AP": {
+        "car": 0.4922200426367064,
+        "bicycle": 0.0369699834175147,
+        "truck": 0.1320885000292224,
+        "pedestrian": 0.007664479724612838,
+        "motorcycle": 0.07567878002113164,
+        "bus": 0.04661310213962387,
+        "tricycle": 0.007768360040812956,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r0_seed7_resumed/evaluation/selection_update_008192.json",
+      "sha256": "8ab1dd7e0fe21780c6b8dc600c4e044834d2a70f2e074de8570a0fa2af470c6a"
+    }
+  ],
+  "r2": [
+    {
+      "update": 1024,
+      "AP": 0.06220261834473135,
+      "per_class_AP": {
+        "car": 0.39415843593691924,
+        "bicycle": 0.0017472335468841002,
+        "truck": 0.016379155685311786,
+        "pedestrian": 0.0002560243461532083,
+        "motorcycle": 0.08508009724258246,
+        "bus": 0.0,
+        "tricycle": 0.0,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_001024.json",
+      "sha256": "5ac77d7646ed6f9cd91f0f9a3a5d55d063371afc2d7daf461b5b09615ec75f1c"
+    },
+    {
+      "update": 2048,
+      "AP": 0.07811640465274229,
+      "per_class_AP": {
+        "car": 0.44030091655132664,
+        "bicycle": 0.0,
+        "truck": 0.10364439425517977,
+        "pedestrian": 0.007370908679114121,
+        "motorcycle": 0.07206865769201751,
+        "bus": 0.0,
+        "tricycle": 0.001546360044300206,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_002048.json",
+      "sha256": "64775082187f87f0d039c7b1339fe76e633f11615d4e72800d199c2690ab5e0a"
+    },
+    {
+      "update": 3072,
+      "AP": 0.10292892213936247,
+      "per_class_AP": {
+        "car": 0.48914807132689964,
+        "bicycle": 0.08366684209634379,
+        "truck": 0.1344069049979011,
+        "pedestrian": 0.009484401748081456,
+        "motorcycle": 0.08569008761775551,
+        "bus": 0.00165016501650165,
+        "tricycle": 0.019384904311416658,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_003072.json",
+      "sha256": "fca98e6ed1f512950e1f1b64c14753dc6e5262ffefee30720d6c2b7843cb72df"
+    },
+    {
+      "update": 4096,
+      "AP": 0.09026598509447033,
+      "per_class_AP": {
+        "car": 0.4765840996407228,
+        "bicycle": 0.0,
+        "truck": 0.10084716179552683,
+        "pedestrian": 0.009732879097649185,
+        "motorcycle": 0.09340535320573758,
+        "bus": 0.013621752377082663,
+        "tricycle": 0.027936634639043653,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_004096.json",
+      "sha256": "9da39dd1836cf707e40c30eb447fa67dbd4078087033a0ac031b60d2251f8e3d"
+    },
+    {
+      "update": 5120,
+      "AP": 0.10384537462577237,
+      "per_class_AP": {
+        "car": 0.4706178916397487,
+        "bicycle": 0.04202420242024203,
+        "truck": 0.14648427329755115,
+        "pedestrian": 0.017134752263852953,
+        "motorcycle": 0.09926853262236718,
+        "bus": 0.032398508017532454,
+        "tricycle": 0.022834836744884526,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_005120.json",
+      "sha256": "0cabc32f7da407e6e9b362abd08998cd69ac3c6bd7ae2ec8e8eef08f16480725"
+    },
+    {
+      "update": 6144,
+      "AP": 0.11027994412618082,
+      "per_class_AP": {
+        "car": 0.5280409120676175,
+        "bicycle": 0.0,
+        "truck": 0.1870143901137952,
+        "pedestrian": 0.009155168928718729,
+        "motorcycle": 0.07526351572040509,
+        "bus": 0.06339104826854829,
+        "tricycle": 0.0193745179103618,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_006144.json",
+      "sha256": "be3546e932a7947837d64198daccceb402282495f3cd34eec3e7a898e775f2d0"
+    },
+    {
+      "update": 7168,
+      "AP": 0.11491515626081472,
+      "per_class_AP": {
+        "car": 0.5229644231413798,
+        "bicycle": 0.0,
+        "truck": 0.20021535377650035,
+        "pedestrian": 0.01384724717730687,
+        "motorcycle": 0.10644072748504099,
+        "bus": 0.0561241193405761,
+        "tricycle": 0.019729379165713545,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_007168.json",
+      "sha256": "d4b7e846533991c4301eedf3463c418cae07ffe963c530459b7e054bc4957876"
+    },
+    {
+      "update": 8192,
+      "AP": 0.11681927043777389,
+      "per_class_AP": {
+        "car": 0.5337449707439932,
+        "bicycle": 2.8781947962238083e-05,
+        "truck": 0.19738125588297936,
+        "pedestrian": 0.013035852703880415,
+        "motorcycle": 0.11222756821401217,
+        "bus": 0.058195628720373066,
+        "tricycle": 0.019940105288990716,
+        "other_vehicle": 0.0
+      },
+      "source": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/evaluation/selection_update_008192.json",
+      "sha256": "de2598d8e08c5075f75142ac553ec5770f5bd17bde46990bca45bfe8cd9805ee"
+    }
+  ]
+}
