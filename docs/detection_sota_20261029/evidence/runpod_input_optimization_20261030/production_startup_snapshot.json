@@ -1,0 +1,90 @@
+{
+  "observed_epoch": 1793387928.5996752,
+  "campaign_status": {
+    "status": "RUNNING",
+    "concurrency": 1,
+    "active": [
+      "r0_seed7"
+    ],
+    "completed": {},
+    "failures": {}
+  },
+  "last_update": 215,
+  "input_cache": {
+    "device": "cuda",
+    "capacity": 4096,
+    "resident_samples": 860,
+    "image_bytes": 2536243200,
+    "peak_image_bytes": 2536243200,
+    "maximum_image_bytes": 13958643712,
+    "hits": 0,
+    "misses": 860
+  },
+  "last_16": {
+    "count": 16,
+    "preprocessing_seconds": 0.15015408338513225,
+    "forward_backward_update_seconds": 0.23488498405640712,
+    "updates_per_minute_inside_recorded_regions": 155.8283433384583
+  },
+  "last_64": {
+    "count": 64,
+    "preprocessing_seconds": 0.13570995862755808,
+    "forward_backward_update_seconds": 0.23434872817233554,
+    "updates_per_minute_inside_recorded_regions": 162.1364452186054
+  },
+  "last_128": {
+    "count": 128,
+    "preprocessing_seconds": 0.1459863765803675,
+    "forward_backward_update_seconds": 0.23531571989951772,
+    "updates_per_minute_inside_recorded_regions": 157.35554709483526
+  },
+  "memory_stat": {
+    "cache": 43776548864,
+    "rss": 5841678336,
+    "rss_huge": 18874368,
+    "shmem": 16723968,
+    "mapped_file": 554274816,
+    "dirty": 4096,
+    "writeback": 0,
+    "workingset_refault_anon": 0,
+    "workingset_refault_file": 54399123,
+    "swap": 0,
+    "swapcached": 0,
+    "pgpgin": 177882649,
+    "pgpgout": 165777515,
+    "pgfault": 16887696,
+    "pgmajfault": 12276,
+    "inactive_anon": 75927552,
+    "active_anon": 5809643520,
+    "inactive_file": 11076669440,
+    "active_file": 32683155456,
+    "unevictable": 0,
+    "hierarchical_memory_limit": 49999998976,
+    "hierarchical_memsw_limit": 49999998976,
+    "total_cache": 43776548864,
+    "total_rss": 5841678336,
+    "total_rss_huge": 18874368,
+    "total_shmem": 16723968,
+    "total_mapped_file": 554274816,
+    "total_dirty": 4096,
+    "total_writeback": 0,
+    "total_workingset_refault_anon": 0,
+    "total_workingset_refault_file": 54399123,
+    "total_swap": 0,
+    "total_swapcached": 0,
+    "total_pgpgin": 177882649,
+    "total_pgpgout": 165777515,
+    "total_pgfault": 16887696,
+    "total_pgmajfault": 12276,
+    "total_inactive_anon": 75927552,
+    "total_active_anon": 5809643520,
+    "total_inactive_file": 11076669440,
+    "total_active_file": 32683155456,
+    "total_unevictable": 0
+  },
+  "gpu": "47 %, 7601 MiB, 46068 MiB",
+  "processes": [
+    "   9162 Sl         03:11 589920 /workspace/phase_release/.venv-detector/bin/python /workspace/phase_release/optimization_v1/runpod_input_optimized_queue.py run --root /workspace/phase_release --jobs 1",
+    "   9167 Rl         03:06 5929988 /workspace/phase_release/.venv-detector/bin/python /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/scripts/train_detection_campaign.py --config /workspace/phase_release/cloud_configs_input_v1/r0_seed7.yaml --output /workspace/phase_release/cloud_runs_input_v1/r0_seed7"
+  ]
+}

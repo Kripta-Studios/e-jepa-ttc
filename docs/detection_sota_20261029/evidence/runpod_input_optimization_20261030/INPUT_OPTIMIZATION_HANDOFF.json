@@ -1,0 +1,7 @@
+{
+  "status": "SUPERSEDED_BY_EXACT_INPUT_OPTIMIZATION",
+  "checkpoint": "/workspace/phase_release/cloud_runs/r0_seed7/checkpoints/last.pt",
+  "checkpoint_sha256": "a45f18a29edd04dc216a787e792cda96bf93b2794ef61273272b40d162a5431c",
+  "new_campaign": "/workspace/phase_release/cloud_runs_input_v1",
+  "restart": "COLD_MATCHED_REPLICATES; NO_CHECKPOINT_PROVENANCE_RELAXATION"
+}

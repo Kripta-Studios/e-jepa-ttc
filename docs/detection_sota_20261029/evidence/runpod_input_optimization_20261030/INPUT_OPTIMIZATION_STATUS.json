@@ -1,0 +1,8 @@
+{
+  "status": "OPTIMIZED_QUEUE_RUNNING",
+  "epoch": 1793387737.0054538,
+  "queue": "/workspace/phase_release/cloud_runs_input_v1",
+  "status_file": "/workspace/phase_release/cloud_runs_input_v1/status.json",
+  "optimization": "exact_input_residency_v1",
+  "jobs": 1
+}

@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "jobs": [
+    {
+      "name": "r0_seed7",
+      "path": "/workspace/phase_release/cloud_configs_input_v1/r0_seed7.yaml",
+      "sha256": "32f9f8a9cbf1205abb21139ec7d91ce4ad335ef7d88daebd02557751fe028852",
+      "source_config_sha256": "d189308e267f3d7eeeac17e228e09bd86b6014e651fb6ef40967a1692db41992"
+    },
+    {
+      "name": "r2_seed7",
+      "path": "/workspace/phase_release/cloud_configs_input_v1/r2_seed7.yaml",
+      "sha256": "8884353691000fc5f6b1a78608758c47c52e409314c71520d5e2385f704bc634",
+      "source_config_sha256": "de1c8809b88b35270487aa80073cf7a32f82f9ed486432fd895649b79f879994"
+    },
+    {
+      "name": "r0_seed13",
+      "path": "/workspace/phase_release/cloud_configs_input_v1/r0_seed13.yaml",
+      "sha256": "2f35e34aa683da3528b4cea98cae3696ed9745760318e182d0a5b3f469e7d27e",
+      "source_config_sha256": "d189308e267f3d7eeeac17e228e09bd86b6014e651fb6ef40967a1692db41992"
+    },
+    {
+      "name": "r2_seed13",
+      "path": "/workspace/phase_release/cloud_configs_input_v1/r2_seed13.yaml",
+      "sha256": "77bdd81c83356aa95f6a86184609da4972c66452366b14f8524a2a8cf2fd4a39",
+      "source_config_sha256": "de1c8809b88b35270487aa80073cf7a32f82f9ed486432fd895649b79f879994"
+    },
+    {
+      "name": "r0_seed23",
+      "path": "/workspace/phase_release/cloud_configs_input_v1/r0_seed23.yaml",
+      "sha256": "ee7a13bfe9b415fcd63c6a6b542b29ebd0002d89bd5798d2f89bc0b21056070c",
+      "source_config_sha256": "d189308e267f3d7eeeac17e228e09bd86b6014e651fb6ef40967a1692db41992"
+    },
+    {
+      "name": "r2_seed23",
+      "path": "/workspace/phase_release/cloud_configs_input_v1/r2_seed23.yaml",
+      "sha256": "c70f6cb5bec92ceed9ea1a1e2d482c66573f2b6044a1e20152fce05233115e88",
+      "source_config_sha256": "de1c8809b88b35270487aa80073cf7a32f82f9ed486432fd895649b79f879994"
+    }
+  ],
+  "cold_replicates": true,
+  "runner_sha256": "d1eef04a4f4d5bdf2a7d77d88d8fb44efc6e3dded0919d3e9ce001b8f2628352",
+  "parity_receipt_sha256": "64cb2429c4c9445c05821f18953fcca5ba4d41da73dfd5a8a229fe8422904320",
+  "parent_runs": "/workspace/phase_release/cloud_runs",
+  "input_optimization": {
+    "status": "MATERIALIZED_REQUIRES_GPU_ADMISSION",
+    "parent_producer": "/workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/detection_campaign/rgb_screen_v5_seed7_v1/producer",
+    "parent_runner_sha256": "659dfe453aaf574f67b7fb037a40bf56d2e77783e86da8b20a69dc8e07b326fc",
+    "runner_sha256": "d1eef04a4f4d5bdf2a7d77d88d8fb44efc6e3dded0919d3e9ce001b8f2628352",
+    "resident_cache_sha256": "24fd9fa828bd784d5adeef2f12110282079d3969572e03d3852ec20518a4eff8",
+    "changed_existing_files": [
+      "scripts/train_detection_campaign.py"
+    ],
+    "added_files": [
+      "src/e_jepa_ttc/detection/resident_input_cache.py"
+    ],
+    "precision_batch_sampler_model_loss_unchanged": true
+  }
+}

@@ -74,7 +74,14 @@ Configuration, checkpoint and full-evaluation population checks remain active.
 The measured single-worker rate was 4.135 updates/s. Two simultaneous workers
 achieved 4.052 updates/s in aggregate (0.980x); their median individual update
 times were 0.493 and 0.495 seconds. The admitted production setting is therefore
-**one worker**, preserving the better aggregate throughput and memory headroom.
+**one worker**, since two showed no throughput gain and consume more memory.
+
+This is a warm-cache comparison, with synthetic GPU memory padding; it does
+not measure two complete D4096 populations in CPU memory or their cold I/O.
+The approximately two-percent rate difference does not establish a statistically
+significant advantage for one worker. It shows no observed aggregate benefit
+from two workers in this probe. Overlapping cold reads or evaluation with training
+remains a separate measurement question.
 
 Cold optimized repetitions are recorded separately from the original partial
 run. Its checkpoint is not rewritten to bypass strict runtime provenance.
@@ -92,3 +99,31 @@ and [CUDA semantics](https://docs.pytorch.org/docs/2.11/notes/cuda.html).
 
 Local evidence and the deployment receipt are collected in the adjacent
 `evidence/runpod_input_optimization_20261030` directory after admission.
+
+## Deployment
+
+The optimized producer passed a real 16-update smoke run, including the
+unscheduled-stop evaluation and checkpoint transaction. The autonomous queue
+then started R0 seed 7 under `cloud_runs_input_v1`; it contains R0 and R2 for
+seeds 7, 13 and 23. The original partial run was stopped only after this admission,
+and its update-256 checkpoint remains preserved with its original hash.
+
+The activation and hardware-admission receipts are included with the evidence.
+`production_startup_snapshot.json` records a point-in-time observation, not a
+live status or a completed result. Startup includes cold archive indexing and
+image loading, so the warm-cache probe must not be used as a full-run ETA.
+Container memory usage includes reclaimable file cache; it must be read alongside
+`memory.stat`, rather than equated to process memory.
+
+At update 215, the most recent 64 updates averaged 0.1357 seconds of input
+preparation and 0.2343 seconds of forward/backward/update work, equivalent to
+162.1 updates/minute inside those measured regions. This excludes evaluation,
+checkpoint writes and earlier indexing startup. The cache held 860 unique images
+(2.536 GB); all were first visits, so this observation does not depend on repeat
+image-cache hits. The process RSS was approximately 6.07 GB and device usage was
+7601 MiB at this snapshot. It is not a final memory peak or campaign ETA.
+
+Validation before deployment: 14 targeted tests passed, Ruff passed, and Pyright
+reported zero errors for the added implementation and queue files. Input and
+forward parity on the actual GPU is documented above; no accuracy improvement
+is claimed from this operational change.
