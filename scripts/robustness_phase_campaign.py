@@ -31,6 +31,9 @@ def main() -> None:
     args = parser.parse_args()
     configure_cuda()
     torch.set_num_threads(2)
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cudnn.benchmark = False
     values, metadata, _ = load_data(args.data)
     records = yaml.safe_load(args.protocol.read_text(encoding="utf-8"))["records"]
     groups = sorted(r["sequence_id"] for r in records if r["role"] == "development_exposed")

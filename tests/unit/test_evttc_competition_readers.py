@@ -73,8 +73,11 @@ def _message(connection: int, data: bytes, bag_seconds: int = 99) -> bytes:
 
 
 def _write_slider(
-    root: Path, name: str = "Slider-test", *,
-    event_topic: bytes = b"/capture_node/events", rgb_topic: bytes = b"/image_raw",
+    root: Path,
+    name: str = "Slider-test",
+    *,
+    event_topic: bytes = b"/capture_node/events",
+    rgb_topic: bytes = b"/image_raw",
 ) -> Path:
     directory = root / name
     directory.mkdir()

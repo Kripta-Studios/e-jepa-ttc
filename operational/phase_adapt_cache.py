@@ -34,7 +34,8 @@ def save_npz(path: Path, values: dict[str, Any]) -> None:
     if path.exists():
         with np.load(path, allow_pickle=False) as stored:
             if set(stored.files) != set(values) or any(
-                stored[k].dtype != v.dtype or not np.array_equal(stored[k], v)
+                stored[k].dtype != v.dtype
+                or not np.array_equal(stored[k], v, equal_nan=np.issubdtype(v.dtype, np.inexact))
                 for k, v in values.items()
             ):
                 raise ValueError(f"Orphan contains different feature arrays: {path}")

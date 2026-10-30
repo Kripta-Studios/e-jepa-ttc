@@ -167,7 +167,10 @@ class SensorSequence:
     """Read one road-HDF5 or Slider-ROS1 sequence without mutating inputs."""
 
     def __init__(
-        self, root: Path, sequence_id: str, *,
+        self,
+        root: Path,
+        sequence_id: str,
+        *,
         slider_profile: Literal["competition", "event_aided_ttc"] = "competition",
     ) -> None:
         profiles = {
@@ -349,7 +352,9 @@ class SensorSequence:
             if value == (self._slider_topics[0], _EVENT_TYPE)
         ]
         image_ids = [
-            cid for cid, value in connections.items() if value == (self._slider_topics[1], _IMAGE_TYPE)
+            cid
+            for cid, value in connections.items()
+            if value == (self._slider_topics[1], _IMAGE_TYPE)
         ]
         if len(event_ids) != 1 or len(image_ids) != 1:
             self.close()

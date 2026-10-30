@@ -98,3 +98,19 @@ remain scientifically unresolved, which the final claim matrix must disclose.
   tests RED->GREEN. Focused core+reader+physical fixture run25passed. Queued external
   inference after GPU cross-validation completed; training-only interval scaling
   runs on CPU, with no conformal coverage claim.
+- Task5 inference complete:77labelled queries,76finite F0/F1 outputs. F0 RAE83.89%
+  versus fixed-seed7 F1 RAE87.58%; external result is negative for a general RAE
+  improvement. Actual-producer clock translation and future-append checks agree
+  at all three fixed quartiles. Do not redesign using this external result and
+  continue calling it confirmation. As-executed external source:27cc992a; subsequent
+  formatting changes do not change behavior, and frozen source hashes remain in
+  FREEZE.json and Git history.
+- Task2 uncertainty control complete: training-only interval scale remains below
+  nominal80% on held-out families (approximately69-70%). No conformal guarantee,
+  no silent integration into final bundle.
+- Geometric pilot first attempt finished its12predictions before the external
+  target seal existed, so scoring raised FileNotFoundError. Failure log retained.
+  Recovery exposed an NPZ idempotency defect for declared NaN predictions; test
+  test_recovery_preserves_declared_missing_predictions_and_rejects_changes RED->GREEN,
+  four cache tests pass. Re-execution reused byte-verified same prediction arrays
+  (NaN positions equal) and completed scoring after external targets existed.
