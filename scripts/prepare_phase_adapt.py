@@ -26,6 +26,7 @@ from operational.evttc_transfer_audit.provenance import assert_sources_unchanged
 from operational.phase_adapt import ROLE, compatible_target, validate_population
 from operational.phase_adapt_cache import atomic_receipt as write_receipt
 from operational.phase_adapt_cache import migrate_shards, resume_binding, save_npz
+from operational.phase_adapt_runtime import CachedAdaptPredictor
 from scripts.final_train40_transfer import HEAD, FinalTransferPredictor, verify_candidate
 from scripts.final_train40_transfer_inputs import sequence_population
 
@@ -94,6 +95,16 @@ def prepare(args: argparse.Namespace) -> None:
         "role": ROLE,
         "policy": "all_native_annotated_anchors_bounded20ms_labels_prefilter_v2",
     }
+    if args.runtime_evidence is not None:
+        evidence = read(args.runtime_evidence)
+        if (
+            evidence.get("exact") is not True
+            or evidence["candidate"] != candidate
+            or evidence["runtime_sha256"] != file_sha(ROOT / "operational/phase_adapt_runtime.py")
+        ):
+            raise ValueError("Cached runtime admission evidence differs")
+        binding["execution"] = "cached_io_native_batches_cuda_producer_cores"
+        binding["runtime_evidence_sha256"] = file_sha(args.runtime_evidence)
     if (args.output / "BINDING.json").exists():
         binding = resume_binding(read(args.output / "BINDING.json"), binding)
         sources = binding["sources"]
@@ -120,13 +131,21 @@ def prepare(args: argparse.Namespace) -> None:
         },
     )
     print(f"Inventory: {len(specs)} recordings, {len(rows)} eligible anchors", flush=True)
+    if args.runtime_evidence is not None:
+        if evidence["population_sha256"] != file_sha(args.output / "POPULATION.json"):
+            raise ValueError("Runtime evidence population differs")
+        write_receipt(args.output / "RUNTIME_ADMISSION.json", evidence)
     if args.inventory_only:
         return
     if args.migrate_from is not None:
         migrated = migrate_shards(args.migrate_from, args.output, ROOT)
         print(f"Verified migration: {len(migrated['shards'])} prior shards", flush=True)
     source_values = restore_train40(args.candidate, args.output)
-    predictor = FinalTransferPredictor(paths, args.device)
+    predictor = (
+        CachedAdaptPredictor(paths, args.device)
+        if args.runtime_evidence is not None
+        else FinalTransferPredictor(paths, args.device)
+    )
     captured: dict[str, np.ndarray] = {}
 
     def capture(_module: Any, inputs: Any) -> None:
@@ -206,6 +225,15 @@ def prepare(args: argparse.Namespace) -> None:
                 )
     finally:
         hook.remove()
+        if isinstance(predictor, CachedAdaptPredictor):
+            write_receipt(
+                args.output / f"RUNTIME_{time.time_ns()}.json",
+                {
+                    "producers": predictor.producers.diagnostics(),
+                    "sensor_cache": predictor.inputs.stats,
+                },
+            )
+            predictor.close()
     if not features:
         raise ValueError("No EvTTC fusion training states")
     n_source = len(source_values["features"])
@@ -274,6 +302,7 @@ def main() -> None:
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--inventory-only", action="store_true")
     parser.add_argument("--migrate-from", type=Path)
+    parser.add_argument("--runtime-evidence", type=Path, help="Exact CUDA/cache parity receipt")
     prepare(parser.parse_args())
 
 
