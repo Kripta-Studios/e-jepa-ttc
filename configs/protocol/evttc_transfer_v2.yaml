@@ -1,0 +1,13 @@
+schema: evttc_transfer_policy_v1
+protocol_id: evttc_transfer_v2
+scope: diagnostic_partial
+grouping: recording_and_acquisition_with_alias_closure
+assignment_basis: metadata_and_identity_only
+training_allowed: false
+confirmation: external_new_acquisitions_required
+historical_exposure: all_32_have_prior_score_inspection
+unknown_relationships: unresolved_no_independence_claim
+selection_source: group_validation_only_after_relationship_review
+planned_seeds: [7, 13, 21]
+conditional_interventions: [B1, T0, F1, F2_Fcap, P0, J0_J1_J2]
+open_interventions: []

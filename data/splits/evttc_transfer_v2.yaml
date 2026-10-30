@@ -1,0 +1,964 @@
+protocol_id: evttc_transfer_v2
+records:
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 8ab743adea1a3aa38110f89743eca397d3f5759ad581579df2ebd71a7fbf29f3
+  hdf5_bytes: 7290398940
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: e494f3f96184e67c2b215c90389dec7bca68ed798b1380c7f1bff8931423c743
+  recording_group: CCRm-low-0-overlap-0
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 24500635
+  rgb_clock_start_us: 37
+  rgb_frames: 491
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRm
+  sequence_id: CCRm-low-0-overlap-0
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 17fcd8b9101f430635ce6958cb0bf650beed7303c26e2dd163e62db967a90443
+  hdf5_bytes: 6285476952
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 4b382c146a71499e9ca4d80a419cb0e2c9e2ca91b74c9b548aa88061e82d52d1
+  recording_group: CCRm-low-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 20300530
+  rgb_clock_start_us: 37
+  rgb_frames: 407
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRm
+  sequence_id: CCRm-low-100-overlap-100
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 326ad35b2633000bb2c9e341de56c48bfb7e9bea0c64862283e05238f8e148cc
+  hdf5_bytes: 5661799887
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 7127949e0d645c47ba8447200337e5fa46c7f498e95e2eebe9e2c73d47d3c4f1
+  recording_group: CCRm-low-50-overlap-50
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 19750512
+  rgb_clock_start_us: 37
+  rgb_frames: 396
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRm
+  sequence_id: CCRm-low-50-overlap-50
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: a82f3eb73e5983a9a774be120fa689aa843e9d7a9d9aafcfe1b395f872eb9414
+  hdf5_bytes: 6950377080
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: f9d26e4eeba9b39d9e7a3812b039065985478486406c2962233d9881bdb055d1
+  recording_group: CCRm-medium-0-overlap-0
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 23250602
+  rgb_clock_start_us: 37
+  rgb_frames: 466
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRm
+  sequence_id: CCRm-medium-0-overlap-0
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: f4f5a802bd41cc23dda05649887b64380b8b192610e026721ec1ebf4548bb99b
+  hdf5_bytes: 8266783070
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: f80ee9f318a65fc68be57557fdcde6d34b4407389f9846f5e758472af1eee579
+  recording_group: CCRm-medium-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 28800739
+  rgb_clock_start_us: 37
+  rgb_frames: 577
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRm
+  sequence_id: CCRm-medium-100-overlap-100
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 7afb47e98f28abdba597d160c34de493b94cc05c058fd877ff2bf209bc7730f0
+  hdf5_bytes: 5838091801
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 07f59611a7c3aece0f2bcb4e1ad98629b59de24b66bef085b4f24ba9485fe5e5
+  recording_group: CCRm-medium-50-overlap-50
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 19400500
+  rgb_clock_start_us: 37
+  rgb_frames: 389
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRm
+  sequence_id: CCRm-medium-50-overlap-50
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 28adcf5b9f6da219b99261ae1b92192558d21d5772b020a41a4d9e9001c70872
+  hdf5_bytes: 7496632361
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 9d3b8acbc750bf53e53a4a8c956a84b451ecc1cc68a59c52d7b4e02efdef2fe4
+  recording_group: CCRs-1-high-0-overlap-0
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 23730680
+  rgb_clock_start_us: 25
+  rgb_frames: 476
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-high-0-overlap-0
+  speed_bucket: high
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: a8b102cdef0396b6644b227251c18bd629807b941d53b946ec55ba973514ad36
+  hdf5_bytes: 7618027837
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: dcef1fe2bdbc6d809a08b35da38411af696caa26b6b5e30ee6be870d454a33d2
+  recording_group: CCRs-1-high-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 26299800
+  rgb_clock_start_us: 25
+  rgb_frames: 527
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-high-100-overlap-100
+  speed_bucket: high
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: d43b61b65096fc20eaa4fd818c7aa3dc3bcf01b8800870e006d48bae5bdce4bd
+  hdf5_bytes: 7578841115
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: e731bf9ad4c1cd32c7bd8f8106ed5c53b077ac741009f8aa41d0be619fd5c526
+  recording_group: CCRs-1-high-50-overlap-50
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 25856143
+  rgb_clock_start_us: 25
+  rgb_frames: 518
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-high-50-overlap-50
+  speed_bucket: high
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: e7621de766655bdb771a3b27fa568a1718195f370253b9dac7c8bef55cf7a8f4
+  hdf5_bytes: 5393641515
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 293d6c880755c087ebd6aa14a486f7f75a2cbbeab003c9fb6444a06e7b8597cd
+  recording_group: CCRs-1-low-0-overlap-0
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 26500679
+  rgb_clock_start_us: 25
+  rgb_frames: 531
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-low-0-overlap-0
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 2529df7843a65fa19283d3a6e880e0ea75610fe605c8ea52da8786648539543a
+  hdf5_bytes: 3453501728
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 780ee30ff9775da8452102bbbb9f5120ae903055007348096ecbc24b594b8c76
+  recording_group: CCRs-1-low-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 16850455
+  rgb_clock_start_us: 25
+  rgb_frames: 338
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-low-100-overlap-100
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 926fe2c15bcb38729fe050e5f1e41a35920f0ba95be52f408447fffba9f92f88
+  hdf5_bytes: 5195865417
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: c6cac3cb22653db4c1d9ba44091d0da3ba7e5434151ed848c65c9f3f30c1413e
+  recording_group: CCRs-1-low-50-overlap-50
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 25700676
+  rgb_clock_start_us: 25
+  rgb_frames: 515
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-low-50-overlap-50
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 8407cdf7cf6fa48e13a863819ee66813a237946b318d5107a3a556e5dc16f1a3
+  hdf5_bytes: 4628252418
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 0b2cbb110a62a13daefeb49ad3180b593b2f8f5f7347d459117e5021f5c2770a
+  recording_group: CCRs-1-medium-0-overlap-0
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 21900571
+  rgb_clock_start_us: 25
+  rgb_frames: 439
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-medium-0-overlap-0
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: aaa23b4bc223d03dfa0eac580d6d8a6e32db41ad64bb40412b2a489318dc3dbc
+  hdf5_bytes: 3850726592
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 1c5adba8667acb8096eb80c26e9a9229ca3a7d76d0a6d998085c2d9b4e820fed
+  recording_group: CCRs-1-medium-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 18400497
+  rgb_clock_start_us: 25
+  rgb_frames: 369
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-medium-100-overlap-100
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 63bd4437f187c4dd5d101e29dff0d2db4e65bf48b0863afb3d8e156f4a192860
+  hdf5_bytes: 4620365633
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: e8b4a0230369c3700c0af60be58d7ee71d5d958e7980ffdda06c40aa58af2fab
+  recording_group: CCRs-1-medium-50-overlap-50
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 23200598
+  rgb_clock_start_us: 25
+  rgb_frames: 465
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-1
+  sequence_id: CCRs-1-medium-50-overlap-50
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 87a491eecf38de2b7ab20d95882c9277c784440f8ad86daf14ab9b94c8b40249
+  hdf5_bytes: 6825396355
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 55a5ceb6f145c794a0479abc68a905bf0344e4d605dbd14768ca7c37cf1cf764
+  recording_group: CCRs-2-high-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 22350574
+  rgb_clock_start_us: 37
+  rgb_frames: 448
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRs-2
+  sequence_id: CCRs-2-high-100-overlap-100
+  speed_bucket: high
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 4f8f6d69375fd78d6b47df20e865f289c2ea1c15754c8be22870fe474c789a4c
+  hdf5_bytes: 5222564828
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: e627046c8a44483317204a6247af9661379e2c709a4ca8e7d6c4df47d248cfcb
+  recording_group: CCRs-2-low-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 19600515
+  rgb_clock_start_us: 37
+  rgb_frames: 393
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRs-2
+  sequence_id: CCRs-2-low-100-overlap-100
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 2a204f9446673185954bb0424442665bed71de632ed3f4659d919b6102e2f549
+  hdf5_bytes: 5649443186
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 45f1fb65a2066d087f8eebda197396108fee4608586a9f9b9427454745c5e656
+  recording_group: CCRs-2-medium-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 20650569
+  rgb_clock_start_us: 37
+  rgb_frames: 414
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: excluded
+  scenario_family: CCRs-2
+  sequence_id: CCRs-2-medium-100-overlap-100
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 618801726c61ee1c4cdfe427adeb4b52eed8697540f023208fba70daf5f42d44
+  hdf5_bytes: 5345517316
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: c3715dbdb17d1ebaae99107270371a6c6da15ccd0c0c3899b5f8a3a1beabca91
+  recording_group: CCRs-3-low-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 18050487
+  rgb_clock_start_us: 37
+  rgb_frames: 362
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-3
+  sequence_id: CCRs-3-low-100-overlap-100
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 124009ffc4b1a79f5ebd0f80ccccad6530d324ed8cf3b13056da5c73fd2e4e34
+  hdf5_bytes: 5548335671
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 0f53de84a93fd5434071db450c9b5140044f37fa8252ed968372a119bb425b2c
+  recording_group: CCRs-3-medium-100-overlap-100
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 17200458
+  rgb_clock_start_us: 37
+  rgb_frames: 345
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-3
+  sequence_id: CCRs-3-medium-100-overlap-100
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 4fa6e46d5b6c98977bf1b3682f2a815655d297ca1286444794cd8e01cbcb108c
+  hdf5_bytes: 5552990172
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: c26213c8a0a0adeb18484110f1f0ec52d57723fc77bfb8ad6c184168b7b17cf1
+  recording_group: CCRs-side-high
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 19119022
+  rgb_clock_start_us: 25
+  rgb_frames: 383
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-side
+  sequence_id: CCRs-side-high
+  speed_bucket: high
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: ca794a7c60ecc3cf7504de35bb22221289b89ddb78ee45c1bf34fdf4802e5687
+  hdf5_bytes: 4811301729
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 030dfc001e9ce445ff9c90bfb71306e0bb2b33f4075641de8590c1801b303259
+  recording_group: CCRs-side-low
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 24350652
+  rgb_clock_start_us: 25
+  rgb_frames: 488
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-side
+  sequence_id: CCRs-side-low
+  speed_bucket: low
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: b61dbf9fd85954da8e3e2b5458b54848db1e172f73fc19c5d28c5aa794593fdc
+  hdf5_bytes: 4570683242
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: fdd38df97cf0af9a1cdc3a894c44e523a6556f1a8d8766cb7358ea458ff9a447
+  recording_group: CCRs-side-medium
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 23550621
+  rgb_clock_start_us: 25
+  rgb_frames: 472
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CCRs-side
+  sequence_id: CCRs-side-medium
+  speed_bucket: medium
+  target_type: car
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: aa4282e6c7f4eb78e1388d8501e8d08af4547608b5cd5d913067a01bab483470
+  hdf5_bytes: 6998450625
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 34ebf9788269542d8e31c1799de26d97832d3d17d42998a39da0392153601a72
+  recording_group: CPLA-high
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 22690735
+  rgb_clock_start_us: 25
+  rgb_frames: 457
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPLA
+  sequence_id: CPLA-high
+  speed_bucket: high
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 8b210408960528c66fc943377c00960ab43419c73783a3d10dbf748cbf12e0f6
+  hdf5_bytes: 7530933704
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: ee3e960801c82a5201552d98b12b603ad2865ae0119f3cccbdfb772832315230
+  recording_group: CPLA-low
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 27850752
+  rgb_clock_start_us: 150
+  rgb_frames: 558
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPLA
+  sequence_id: CPLA-low
+  speed_bucket: low
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: e6e05d7d75d0b8ebc8b1bcd5d684c3dce81fd764286efe5c08d33384220f2dbf
+  hdf5_bytes: 6585537003
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 67c7f67c9e1fb1c6bff12904693d5e96c04986f67fff0ac02d6aef1dc5039e0a
+  recording_group: CPLA-medium
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 23800656
+  rgb_clock_start_us: 150
+  rgb_frames: 477
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPLA
+  sequence_id: CPLA-medium
+  speed_bucket: medium
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 73b367444988bf7e48568946c5ff9ac3903853d72367cb60e3f5a08c74252518
+  hdf5_bytes: 7753994967
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 511ecfbde36972545480b8a94305f870d32cde24c3e1089460337c3ec6710296
+  recording_group: CPNA-high
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 25430047
+  rgb_clock_start_us: 25
+  rgb_frames: 510
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPNA
+  sequence_id: CPNA-high
+  speed_bucket: high
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 65209f278096f7aca9a143537fc2c2626129f6c86b2fc184993ad7b1a34e71d4
+  hdf5_bytes: 7500732545
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 6cb2a3c524d157e95be2185f26bbf2ff0ce4c959d99ca343ae0d23597bc9ea90
+  recording_group: CPNA-low
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 27450764
+  rgb_clock_start_us: 150
+  rgb_frames: 550
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPNA
+  sequence_id: CPNA-low
+  speed_bucket: low
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 811146e27b5858aa657af9ca607927366344913199158f61cd3f72c15929695d
+  hdf5_bytes: 6888201678
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 4820918cbc149ebbf2a7896b131e3d31436dc7fe95728fd3b264e7262b629473
+  recording_group: CPNA-medium
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 24300672
+  rgb_clock_start_us: 150
+  rgb_frames: 487
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPNA
+  sequence_id: CPNA-medium
+  speed_bucket: medium
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 87733ac40b1bedaeb72b46aa8b9d864a4610f7b7650a7f91d3ea3beae0b96c3b
+  hdf5_bytes: 6291870413
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: bd9c61dcc2699211f867f9baf22ee38b0e559e84dd359c076ee9e0461d441320
+  recording_group: CPNAO-high
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 20750441
+  rgb_clock_start_us: 25
+  rgb_frames: 416
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPNAO
+  sequence_id: CPNAO-high
+  speed_bucket: high
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 8526bcad393e7feac94c401d283bbbaecb6c128dd50bddc048b9893b52ad51af
+  hdf5_bytes: 8164072308
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 8ffe13afccf78a859f47f454ff99bf79d33075b54b77479a34ab8b44a500a8f4
+  recording_group: CPNAO-low
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 31650845
+  rgb_clock_start_us: 150
+  rgb_frames: 634
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPNAO
+  sequence_id: CPNAO-low
+  speed_bucket: low
+  target_type: pedestrian
+- acquisition_group: unknown
+  aliases: []
+  exposure_evidence:
+  - 'README.md: historical 468 labeled queries across 32 sequences'
+  first_frame_sha256: 12f897ec0d698b3470298336217146e4404dcf1bf2d493d734f76f59494e9a06
+  hdf5_bytes: 6412206137
+  historical_exposure:
+  - scores_inspected
+  - targets_inspected
+  - design_use_unknown
+  identity_evidence_sha256: 1294ccf468a5b1ee3332c8c2fba2478532571ac3abd65560a01384a45442d30e
+  labels_present: true
+  labels_sha256: 2979232e6e0abf52644f770d5db9610aa4b7a1f18b80bb775ad7cb374bd2ca28
+  recording_group: CPNAO-medium
+  relationship_evidence: []
+  relationship_reason: Distinct filenames and nominal split_group do not prove separate
+    acquisitions
+  review_status: unresolved
+  rgb_clock_end_us: 23100654
+  rgb_clock_start_us: 150
+  rgb_frames: 463
+  rgb_shape:
+  - 1200
+  - 1920
+  - 3
+  role: development_exposed
+  scenario_family: CPNAO
+  sequence_id: CPNAO-medium
+  speed_bucket: medium
+  target_type: pedestrian
+schema: evttc_transfer_population_v1
+source_commit: 0f091880da2c4c5c9b7ebc17b9c5f75410c70ad5
