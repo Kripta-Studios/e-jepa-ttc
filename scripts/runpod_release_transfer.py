@@ -8,6 +8,8 @@ import json
 import os
 import re
 import shutil
+import subprocess
+import sys
 import tarfile
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -54,17 +56,37 @@ def fetch_one(root: Path, row: dict[str, Any]) -> None:
         verify_file(target, row)
         return
     target.parent.mkdir(parents=True, exist_ok=True)
+    if row.get("requires_hf_token"):
+        if not os.environ.get("HF_TOKEN"):
+            raise RuntimeError("Set HF_TOKEN in the Pod environment for the gated teacher")
+        executable = Path(sys.executable).with_name("hf.exe" if os.name == "nt" else "hf")
+        if not executable.is_file():
+            raise RuntimeError("Use the prepared PHASE environment, which includes the hf CLI")
+        stage = target.parent / ".hf_download_stage"
+        subprocess.run(
+            [
+                str(executable),
+                "download",
+                row["repository"],
+                "--revision",
+                row["revision"],
+                "--include",
+                row["repository_path"],
+                "--local-dir",
+                str(stage),
+            ],
+            check=True,
+        )
+        downloaded = safe_path(stage, row["repository_path"])
+        verify_file(downloaded, row)
+        downloaded.replace(target)
+        return
     partial = target.with_name(target.name + ".part")
     offset = partial.stat().st_size if partial.exists() else 0
     if offset > row["bytes"]:
         raise ValueError(f"Oversized partial: {partial}")
     if offset < row["bytes"]:
         headers = {"Range": f"bytes={offset}-"} if offset else {}
-        if row.get("requires_hf_token"):
-            token = os.environ.get("HF_TOKEN")
-            if not token:
-                raise RuntimeError("Set HF_TOKEN in the Pod environment for the gated teacher")
-            headers["Authorization"] = "Bearer " + token
         request = urllib.request.Request(row["url"], headers=headers)
         with urllib.request.urlopen(request, timeout=120) as response:
             if response.status == 206:
