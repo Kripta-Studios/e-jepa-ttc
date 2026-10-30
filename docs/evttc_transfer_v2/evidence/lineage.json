@@ -1,0 +1,592 @@
+{
+  "binding": {
+    "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+    "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+    "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+    "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+    "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+    "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+    "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+    "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+    "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+    "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+    "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+    "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+  },
+  "components": [
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "checkpoint_selection_groups": null,
+      "component_id": "E_A5",
+      "deployment_dependencies": {},
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": null,
+      "stage_declared": {},
+      "supervision": "dinov3_local_relational",
+      "teacher_artifact_hash": "646d5569671e9d8af9b21c84c12a55584be675ccfc77dc5e996ccea6fb8d38de",
+      "training_groups": null,
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "training_groups",
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "unknown_parents",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "checkpoint_selection_groups": null,
+      "component_id": "E_C2F",
+      "deployment_dependencies": {},
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": null,
+      "stage_declared": {},
+      "supervision": "dinov3_local_relational",
+      "teacher_artifact_hash": "646d5569671e9d8af9b21c84c12a55584be675ccfc77dc5e996ccea6fb8d38de",
+      "training_groups": null,
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "training_groups",
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "unknown_parents",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "checkpoint_selection_groups": null,
+      "component_id": "R_A5",
+      "deployment_dependencies": {},
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [],
+      "stage_declared": {
+        "batch_size": 32,
+        "cache_schema": null,
+        "fresh_initialization": true,
+        "kind": "rgb_producer",
+        "stage_id": "R_A5",
+        "updates": 49932,
+        "weight_decay": 0.0001
+      },
+      "supervision": "dinov3_local_relational",
+      "teacher_artifact_hash": "6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20",
+      "training_groups": [
+        "2JkLL5W891",
+        "2Y46OkK3ff",
+        "2cyv0Oedzg",
+        "34K84TaN11",
+        "5ilM1PX2vz",
+        "6WCDpro5rE",
+        "6h5yRW2LGc",
+        "8SdieOgbva",
+        "8mNnrXjpVB",
+        "9ITOs4twfk",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "CzyQ8HKP6X",
+        "DGqicHUGWb",
+        "EllUE6bwVp",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "LMHPShQkaU",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "WbCh1DRerJ",
+        "Z30i8WuL2N",
+        "eX8t2nGd6O",
+        "mHGFBekt7X",
+        "nRcwUlHyAd",
+        "pBqGOb2vYq",
+        "pakWgyPNTL",
+        "pzJcg1OCfc",
+        "q2k6O0X6JY",
+        "qGsgzl4Q8B",
+        "qoohcdtLDH",
+        "rhYxPcU29n",
+        "t79dBxj1WS",
+        "vWp9XNYQ9V",
+        "wE9MZUmiJP",
+        "xkiVthsGwf"
+      ],
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "checkpoint_selection_groups": null,
+      "component_id": "R_C2F",
+      "deployment_dependencies": {},
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [],
+      "stage_declared": {
+        "batch_size": 32,
+        "cache_schema": null,
+        "fresh_initialization": true,
+        "kind": "rgb_producer",
+        "stage_id": "R_C2F",
+        "updates": 49932,
+        "weight_decay": 0.0001
+      },
+      "supervision": "dinov3_local_relational",
+      "teacher_artifact_hash": "6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20",
+      "training_groups": [
+        "2JkLL5W891",
+        "2Y46OkK3ff",
+        "2cyv0Oedzg",
+        "34K84TaN11",
+        "5ilM1PX2vz",
+        "6WCDpro5rE",
+        "6h5yRW2LGc",
+        "8SdieOgbva",
+        "8mNnrXjpVB",
+        "9ITOs4twfk",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "CzyQ8HKP6X",
+        "DGqicHUGWb",
+        "EllUE6bwVp",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "LMHPShQkaU",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "WbCh1DRerJ",
+        "Z30i8WuL2N",
+        "eX8t2nGd6O",
+        "mHGFBekt7X",
+        "nRcwUlHyAd",
+        "pBqGOb2vYq",
+        "pakWgyPNTL",
+        "pzJcg1OCfc",
+        "q2k6O0X6JY",
+        "qGsgzl4Q8B",
+        "qoohcdtLDH",
+        "rhYxPcU29n",
+        "t79dBxj1WS",
+        "vWp9XNYQ9V",
+        "wE9MZUmiJP",
+        "xkiVthsGwf"
+      ],
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "checkpoint_selection_groups": null,
+      "component_id": "PAIR_E",
+      "deployment_dependencies": {
+        "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758"
+      },
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [
+        "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758"
+      ],
+      "stage_declared": {
+        "batch_size": 32,
+        "cache_schema": "final_refit_pair_cache_v1",
+        "fresh_initialization": true,
+        "kind": "pair_head",
+        "stage_id": "PAIR_E_MATCHED",
+        "updates": 11264,
+        "weight_decay": 0.0001
+      },
+      "supervision": "see recipe and native training loss",
+      "teacher_artifact_hash": "unknown",
+      "training_groups": null,
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "training_groups",
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "recursive_parent_audit_required",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "checkpoint_selection_groups": null,
+      "component_id": "PAIR_R",
+      "deployment_dependencies": {
+        "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29"
+      },
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [
+        "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29"
+      ],
+      "stage_declared": {
+        "batch_size": 32,
+        "cache_schema": "final_refit_pair_cache_v1",
+        "fresh_initialization": true,
+        "kind": "pair_head",
+        "stage_id": "PAIR_R",
+        "updates": 11264,
+        "weight_decay": 0.0001
+      },
+      "supervision": "see recipe and native training loss",
+      "teacher_artifact_hash": "unknown",
+      "training_groups": null,
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "training_groups",
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "recursive_parent_audit_required",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "checkpoint_selection_groups": null,
+      "component_id": "E_CTX_MATCHED",
+      "deployment_dependencies": {
+        "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+        "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+        "PAIR_E_MATCHED": null
+      },
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [
+        "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+        "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+        "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680"
+      ],
+      "stage_declared": {
+        "batch_size": 128,
+        "cache_schema": "final_refit_context_cache_v1",
+        "fresh_initialization": true,
+        "kind": "temporal_head",
+        "stage_id": "E_CTX_MATCHED",
+        "updates": 12044,
+        "weight_decay": 0.001
+      },
+      "supervision": "see recipe and native training loss",
+      "teacher_artifact_hash": "unknown",
+      "training_groups": null,
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "training_groups",
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "recursive_parent_audit_required",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "checkpoint_selection_groups": null,
+      "component_id": "R_CTX",
+      "deployment_dependencies": {
+        "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+        "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+        "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35"
+      },
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [
+        "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+        "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+        "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1"
+      ],
+      "stage_declared": {
+        "batch_size": 128,
+        "cache_schema": "final_refit_context_cache_v1",
+        "fresh_initialization": true,
+        "kind": "temporal_head",
+        "stage_id": "R_CTX",
+        "updates": 12044,
+        "weight_decay": 0.001
+      },
+      "supervision": "see recipe and native training loss",
+      "teacher_artifact_hash": "unknown",
+      "training_groups": [
+        "2JkLL5W891",
+        "2Y46OkK3ff",
+        "2cyv0Oedzg",
+        "34K84TaN11",
+        "5ilM1PX2vz",
+        "6WCDpro5rE",
+        "6h5yRW2LGc",
+        "8SdieOgbva",
+        "8mNnrXjpVB",
+        "9ITOs4twfk",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "CzyQ8HKP6X",
+        "DGqicHUGWb",
+        "EllUE6bwVp",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "LMHPShQkaU",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "WbCh1DRerJ",
+        "Z30i8WuL2N",
+        "eX8t2nGd6O",
+        "mHGFBekt7X",
+        "nRcwUlHyAd",
+        "pBqGOb2vYq",
+        "pakWgyPNTL",
+        "pzJcg1OCfc",
+        "q2k6O0X6JY",
+        "qGsgzl4Q8B",
+        "qoohcdtLDH",
+        "rhYxPcU29n",
+        "t79dBxj1WS",
+        "vWp9XNYQ9V",
+        "wE9MZUmiJP",
+        "xkiVthsGwf"
+      ],
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "recursive_parent_audit_required",
+        "teacher_ancestry"
+      ]
+    },
+    {
+      "ancestry_complete": false,
+      "architecture_selection_groups": null,
+      "artifact_sha256": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "checkpoint_selection_groups": null,
+      "component_id": "PHASE_ONLY_EVENT_S7_TRAIN40",
+      "deployment_dependencies": {
+        "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+        "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852"
+      },
+      "evidence_refs": [
+        "MODEL_SEAL.json",
+        "OOF_RECIPE.json",
+        "DEPLOYMENT_TRAIN40_SCOPE.json"
+      ],
+      "evidence_sha256": {
+        "DEPLOYMENT_TRAIN40_SCOPE.json": "aed0bdd40c58d82725a77309535718a44f5b6cbea10c6080dbfc7bcef96c4f4b",
+        "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+        "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00"
+      },
+      "excluded_groups_seen": [],
+      "exposure_status": "unresolved",
+      "normalization_fit_groups": null,
+      "parent_artifact_hashes": [
+        "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+        "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e"
+      ],
+      "stage_declared": {
+        "batch_size": 128,
+        "cache_schema": "final_refit_phase_cache_v1",
+        "fresh_initialization": true,
+        "kind": "phase_only_head",
+        "stage_id": "PHASE_ONLY_EVENT_S7_TRAIN40",
+        "updates": 12044,
+        "weight_decay": 0.001
+      },
+      "supervision": "see recipe and native training loss",
+      "teacher_artifact_hash": "unknown",
+      "training_groups": null,
+      "training_manifest_hashes": [
+        "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c"
+      ],
+      "training_scope_declared": "eAP full TRAIN40; OOF training ancestry distinct from deployment graph",
+      "unknown_reason": "Historical architecture/checkpoint selection and recursive teacher scopes not certified by portable seal",
+      "unresolved": [
+        "training_groups",
+        "checkpoint_selection_groups",
+        "architecture_selection_groups",
+        "normalization_fit_groups",
+        "ancestry_not_evidenced",
+        "recursive_parent_audit_required",
+        "teacher_ancestry"
+      ]
+    }
+  ],
+  "exclusions_sha256": "f83ce3bd29d74d71e34992535e7cbbdd05510d19469923e638b3b9f85e61d7bc",
+  "identity_status": "verified",
+  "inventory_sha256": "f7891eedbef92da6c311d024ed1fcede3de935d2f57936fe4e8bbf7913910137",
+  "limitations": [
+    "Hashes establish identity, not clean ancestry; frozen does not mean unexposed.",
+    "Parent and teacher declarations require independent recursive evidence."
+  ],
+  "schema": "evttc_transfer_lineage_v1",
+  "status": "unresolved"
+}
