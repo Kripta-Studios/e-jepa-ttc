@@ -5,7 +5,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import shutil
 import tarfile
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -31,7 +33,13 @@ def safe_path(root: Path, name: str) -> Path:
 
 def selected(row: dict[str, Any], profile: str) -> bool:
     """Training never includes public test media or test labels."""
-    return row["kind"] == "private" or profile == "all" or row.get("modality") != "events"
+    if profile == "all":
+        return True
+    if profile.startswith("events-"):
+        return row.get("modality") == "events" and row.get("role") == profile[7:]
+    if profile == "phase-inputs":
+        return "phase-inputs" in row.get("profiles", [])
+    return "rgb" in row.get("profiles", ["rgb"] if row.get("modality") != "events" else [])
 
 
 def verify_file(path: Path, row: dict[str, Any]) -> None:
@@ -51,9 +59,13 @@ def fetch_one(root: Path, row: dict[str, Any]) -> None:
     if offset > row["bytes"]:
         raise ValueError(f"Oversized partial: {partial}")
     if offset < row["bytes"]:
-        request = urllib.request.Request(
-            row["url"], headers={"Range": f"bytes={offset}-"} if offset else {}
-        )
+        headers = {"Range": f"bytes={offset}-"} if offset else {}
+        if row.get("requires_hf_token"):
+            token = os.environ.get("HF_TOKEN")
+            if not token:
+                raise RuntimeError("Set HF_TOKEN in the Pod environment for the gated teacher")
+            headers["Authorization"] = "Bearer " + token
+        request = urllib.request.Request(row["url"], headers=headers)
         with urllib.request.urlopen(request, timeout=120) as response:
             if response.status == 206:
                 match = re.fullmatch(
@@ -74,11 +86,23 @@ def fetch_one(root: Path, row: dict[str, Any]) -> None:
     print(json.dumps({"downloaded": row["target"], "bytes": row["bytes"]}), flush=True)
 
 
-def unpack(root: Path, incoming: Path, manifest: dict[str, Any]) -> None:
+def unpack(
+    root: Path,
+    incoming: Path,
+    manifest: dict[str, Any],
+    profile: str = "all",
+    remove_verified: bool = False,
+) -> None:
     """Verify each archive and allow only regular manifest-listed files."""
-    expected = {row["target"]: row for row in manifest["files"] if row["kind"] == "private"}
+    expected = {
+        row["target"]: row
+        for row in manifest["files"]
+        if row["kind"] == "private" and selected(row, profile)
+    }
     seen = set()
     for part in json.loads((incoming / "PARTS.json").read_text()):
+        if profile not in part.get("profiles", ["rgb", "all"]):
+            continue
         archive_path = safe_path(incoming, part["name"])
         verify_file(archive_path, part)
         with tarfile.open(archive_path, "r:") as archive:
@@ -104,6 +128,8 @@ def unpack(root: Path, incoming: Path, manifest: dict[str, Any]) -> None:
                     temporary.replace(target)
                 seen.add(member.name)
         print(json.dumps({"unpacked": part["name"]}), flush=True)
+        if remove_verified:
+            archive_path.unlink()  # Only the verified uploaded duplicate; payloads remain intact.
     if seen != set(expected):
         raise ValueError("Private payload population is incomplete")
 
@@ -114,7 +140,20 @@ def main() -> None:
     parser.add_argument("--root", required=True, type=Path)
     parser.add_argument("--incoming", required=True, type=Path)
     parser.add_argument("--manifest-sha256", required=True)
-    parser.add_argument("--profile", choices=("rgb", "all"), default="rgb")
+    parser.add_argument(
+        "--profile",
+        choices=(
+            "rgb",
+            "phase-inputs",
+            "events-train",
+            "events-selection",
+            "events-calibration",
+            "all",
+        ),
+        default="rgb",
+    )
+    parser.add_argument("--remove-verified-archives", action="store_true")
+    parser.add_argument("--reserve-gib", type=int, default=50)
     parser.add_argument("--workers", type=int, choices=(1, 2, 3, 4), default=2)
     args = parser.parse_args()
     path = args.incoming / "MANIFEST.json"
@@ -123,9 +162,17 @@ def main() -> None:
     manifest = json.loads(path.read_text())
     rows = [row for row in manifest["files"] if selected(row, args.profile)]
     if args.mode == "unpack":
-        unpack(args.root, args.incoming, manifest)
+        unpack(args.root, args.incoming, manifest, args.profile, args.remove_verified_archives)
     elif args.mode == "fetch":
         public = [row for row in rows if row["kind"] == "public"]
+        if args.reserve_gib < 20:
+            raise ValueError("Keep at least 20 GiB reserved for runtime and outputs")
+        args.root.mkdir(parents=True, exist_ok=True)
+        needed = sum(
+            row["bytes"] for row in public if not safe_path(args.root, row["target"]).is_file()
+        )
+        if needed + args.reserve_gib * 2**30 > shutil.disk_usage(args.root).free:
+            raise RuntimeError("Insufficient disk with reserve: use a smaller event-role profile")
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             list(pool.map(lambda row: fetch_one(args.root, row), public))
     else:

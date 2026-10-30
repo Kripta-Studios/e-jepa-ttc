@@ -204,4 +204,15 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as error:
+        if "--root" in sys.argv:
+            root = Path(sys.argv[sys.argv.index("--root") + 1]).resolve()
+            owner = root / "cloud_runs/OWNER.json"
+            state = root / "cloud_runs/status.json"
+            if owner.is_file() and json.loads(owner.read_text()).get("pid") == os.getpid():
+                previous = json.loads(state.read_text()) if state.is_file() else {}
+                previous.update(status="FAILED_NEEDS_REVIEW", error=str(error))
+                state.write_text(json.dumps(previous, indent=2))
+        raise

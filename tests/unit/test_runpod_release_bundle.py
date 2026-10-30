@@ -36,6 +36,16 @@ def test_registered_windows_roots_only():
         BUILD.relative(Path("D:/secret/key"), {"E:/": "data"})
 
 
+def test_stage_profiles_keep_event_roles_separate():
+    row = {"kind": "public", "modality": "events", "role": "calibration"}
+    assert not TRANSFER.selected(row, "rgb")
+    assert not TRANSFER.selected(row, "events-train")
+    assert TRANSFER.selected(row, "events-calibration")
+    private = {"kind": "private", "profiles": ["phase-inputs", "all"]}
+    assert not TRANSFER.selected(private, "rgb")
+    assert TRANSFER.selected(private, "phase-inputs")
+
+
 def test_range_resume_requires_correct_server_ack(tmp_path, monkeypatch):
     data = b"abcdef"
     row = {

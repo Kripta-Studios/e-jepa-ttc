@@ -83,8 +83,12 @@ que ejecute automáticamente S0–S6 completos y produzca hoy el modelo final.
 
 ## Recursos del Pod
 
-Para todos los datos y espacio de trabajo, reservar aproximadamente 1 TB de
-almacenamiento; para RGB inicial puede utilizarse un perfil más pequeño. Para
+El usuario ha elegido preparar una estrategia de 700 GB. Se descargan primero
+RGB/metadatos y luego eventos por rol: train, selection y calibration. Se conserva
+una reserva de 50 GiB; si una fase no cabe, se rechaza la descarga antes de empezar.
+Los duplicados TAR del Pod pueden eliminarse después de extraer y verificar sus
+payloads. No se promete conservar simultáneamente todos los datos, archivos de
+transporte, entornos y futuros resultados dentro de 700 GB. Para
 reducir presión del evaluador, preferir al menos 48–64 GiB de RAM y CPU/disco
 rápidos. Los tamaños definitivos se obtienen del manifest/receipt del paquete,
 no de estimaciones de compresión. Docker/Pod, acceso SSH y velocidad de red se
