@@ -146,3 +146,13 @@ remain scientifically unresolved, which the final claim matrix must disclose.
   deferring possible gains until sufficient diagnostic/independent support exists.
 - Final: Ruling: broad-suite outcome is the executor's responsibility and will
   be recorded from actual exit status, never inferred from review approval.
+- Final verification: full corrected Windows run exit0,7297passed/46skipped,
+  17subtests passed in709.93s. Initial full run retained7288passes/46skips/7failures;
+  the7failures were subprocess UTF-8 decoding under the accented workspace path.
+  All7passed with inherited PYTHONUTF8/PYTHONIOENCODING, followed by the fully
+  successful rerun. Focused31tests pass; Ruff clean; Pyright0errors/0warnings.
+- Final: fixed both review audit gaps in one pass,2RED->GREEN regressions,
+  full suite7297/7297non-skipped tests plus17subtests. No deferred minor remains.
+- Final: Ruling: retain the existing local worktree/branch and research plan as
+  requested by 'continua haciendo todo aquí'; no merge/push or workspace deletion.
+  Cost: integration into another branch remains an explicit future operation.

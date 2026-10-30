@@ -23,6 +23,7 @@ los probes y la reescala de intervalos se ejecutan en CPU.
 ```powershell
 $env:PYTHONPATH='src;.'
 $env:PYTHONUTF8='1'
+$env:PYTHONIOENCODING='utf-8'
 $env:UV_PROJECT_ENVIRONMENT=(Resolve-Path .venv-transfer).Path
 $env:OMP_NUM_THREADS='2'
 $env:MKL_NUM_THREADS='2'
