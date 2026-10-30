@@ -1,0 +1,15 @@
+schema: evttc_transfer_target_contract_v1
+unit: seconds
+timestamp_unit: microseconds
+reference: query
+geometry: local_EvTTC_CSV_reference_not_verified_equivalent_to_organizer
+sign: signed
+interpolation: linear_ttc
+zero_policy: mae_only
+max_gap_us: 20000
+official_equivalence: unverified
+clock_evidence: exact_RGB_identity_integer_offsets
+csv_columns: [index, timestamp_s, depth_m, closing_speed_m_s, ttc_s]
+population: all_434_competition_queries_exposed_diagnostic
+missing_slider_targets: retain_missing
+extrapolation: forbidden

@@ -52,20 +52,24 @@ def match_recording(competition_hdf5: Path, source_hdf5: Path) -> dict[str, Any]
                     left, right = cf[index], sf[start + index]
                     if not np.array_equal(left, right):
                         break
-                    frames.append({
-                        "competition_frame": index,
-                        "original_frame": start + index,
-                        "equal": True,
-                        "competition_sha256": hashlib.sha256(left.tobytes()).hexdigest(),
-                        "original_sha256": hashlib.sha256(right.tobytes()).hexdigest(),
-                    })
+                    frames.append(
+                        {
+                            "competition_frame": index,
+                            "original_frame": start + index,
+                            "equal": True,
+                            "competition_sha256": hashlib.sha256(left.tobytes()).hexdigest(),
+                            "original_sha256": hashlib.sha256(right.tobytes()).hexdigest(),
+                        }
+                    )
                 else:
-                    matches.append({
-                        "original_start_frame": start,
-                        "timestamp_offset_us": int(st[start]) - int(ct[0]),
-                        "all_query_rgb_timestamps_match": True,
-                        "all_rgb_frames": frames,
-                    })
+                    matches.append(
+                        {
+                            "original_start_frame": start,
+                            "timestamp_offset_us": int(st[start]) - int(ct[0]),
+                            "all_query_rgb_timestamps_match": True,
+                            "all_rgb_frames": frames,
+                        }
+                    )
     return {
         "status": "unique" if len(matches) == 1 else "ambiguous" if matches else "no_match",
         "query_frames": count,
@@ -97,6 +101,8 @@ def compare_reference(result: Mapping[str, Any], reference: Mapping[str, Any]) -
     actual = result["matches"]
     expected = reference["verified_sample_matches"]
     fields = ("sequence_id", "original_start_frame", "timestamp_offset_us", "all_rgb_frames")
-    return result["status"] == "unique" and len(expected) == 1 and all(
-        actual[0][field] == expected[0][field] for field in fields
+    return (
+        result["status"] == "unique"
+        and len(expected) == 1
+        and all(actual[0][field] == expected[0][field] for field in fields)
     )

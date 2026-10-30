@@ -1,5 +1,7 @@
 """Portable receipts and strict structured input helpers."""
 
+# ruff: noqa: ANN401 -- arbitrary structured documents are validated by each audit boundary
+
 from __future__ import annotations
 
 import hashlib

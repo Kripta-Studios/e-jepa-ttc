@@ -9,7 +9,9 @@ from operational.evttc_transfer_audit.identity import match_recording, match_sou
 def hdf5(path: Path, times: list[int], pixels: list[int]) -> Path:
     with h5py.File(path, "w") as handle:
         handle["blackflys/right/ts"] = np.array(times, dtype=np.int64)
-        handle["blackflys/right/data"] = np.array(pixels, dtype=np.uint8).reshape(-1, 1, 1, 1).repeat(3, axis=3)
+        handle["blackflys/right/data"] = (
+            np.array(pixels, dtype=np.uint8).reshape(-1, 1, 1, 1).repeat(3, axis=3)
+        )
     return path
 
 
