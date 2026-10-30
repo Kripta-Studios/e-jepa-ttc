@@ -1,0 +1,7 @@
+/workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torch/functional.py:505: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:4381.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+{"mode": 0, "seconds": 15.92347471404355, "profiled": true, "inference_seconds": 5.769443989382125, "exact_payload": true}
+{"mode": 1, "seconds": 7.172517444938421, "profiled": false, "inference_seconds": 4.784518392756581, "exact_payload": true}
+{"mode": 1, "seconds": 7.219332318985835, "profiled": false, "inference_seconds": 4.873692509485409, "exact_payload": true}
+{"mode": 0, "seconds": 10.797109019942582, "profiled": false, "inference_seconds": 4.16229528025724, "exact_payload": true}
+{"status": "PASS_EXACT_PAYLOAD", "speedup": 1.5004477113160903}

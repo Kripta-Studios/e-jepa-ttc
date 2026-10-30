@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/phase_release/evaluation_threads_probe_v1/profile.py", line 2, in <module>
+    import cProfile
+  File "/usr/lib/python3.11/cProfile.py", line 11, in <module>
+    import profile as _pyprofile
+  File "/workspace/phase_release/evaluation_threads_probe_v1/profile.py", line 72, in <module>
+    profiler = cProfile.Profile()
+               ^^^^^^^^^^^^^^^^
+AttributeError: partially initialized module 'cProfile' has no attribute 'Profile' (most likely due to a circular import)
