@@ -1,0 +1,11 @@
+{
+  "status": "MATERIALIZED_REQUIRES_PARITY_AND_TIMING",
+  "parent_runner_sha256": "d1eef04a4f4d5bdf2a7d77d88d8fb44efc6e3dded0919d3e9ce001b8f2628352",
+  "runner_sha256": "e8c7291de32f39e7326857c0722bb04068f81f605f0ab22ebdb5240f317519db",
+  "modules": {
+    "src/e_jepa_ttc/detection/evaluation_prefetch.py": "ce56072e26cbfc7b75f292a82ea20232c0d874dd073e26c5047d8ac7423d99bd",
+    "src/e_jepa_ttc/detection/bounded_prefetch.py": "5854b9e2b45b1d0d42683b0cf279a8523e5d3fa27ef2860cd62b05cf5f4e40b3"
+  },
+  "batch_size": 1,
+  "model_and_scorer_unchanged": true
+}

@@ -1,0 +1,43 @@
+         13806641 function calls (10368187 primitive calls) in 15.889 seconds
+
+   Ordered by: cumulative time
+   List reduced from 636 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.016    0.016   15.905   15.905 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/scripts/train_detection_campaign.py:191(evaluate)
+65792/128    0.084    0.000    5.756    0.045 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torch/nn/modules/module.py:1775(_wrapped_call_impl)
+65792/128    0.173    0.000    5.756    0.045 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torch/nn/modules/module.py:1783(_call_impl)
+      128    0.097    0.001    5.746    0.045 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/monodgp.py:138(forward)
+      128    0.004    0.000    3.849    0.030 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/src/e_jepa_ttc/detection/resident_input_cache.py:60(get)
+      128    0.008    0.000    2.662    0.021 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/src/e_jepa_ttc/detection/eap_rgb_data.py:179(__getitem__)
+      256    0.465    0.002    2.556    0.010 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/src/e_jepa_ttc/detection/monodgp_eap_adapter.py:76(prepare_sample)
+      384    0.023    0.000    2.183    0.006 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/PIL/ImageFile.py:296(load)
+    18080    2.179    0.000    2.179    0.000 {method 'decode' of 'ImagingDecoder' objects}
+      128    0.018    0.000    1.765    0.014 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/det2d_transformer.py:83(forward)
+      128    0.003    0.000    1.717    0.013 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/backbone.py:115(forward)
+        1    0.000    0.000    1.526    1.526 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/scripts/train_detection_campaign.py:63(write_json)
+3072/2560    0.015    0.000    1.510    0.001 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torch/nn/modules/container.py:248(forward)
+        1    0.197    0.197    1.508    1.508 /usr/lib/python3.11/json/__init__.py:120(dump)
+      256    0.003    0.000    1.493    0.006 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/PIL/Image.py:2332(resize)
+      256    1.486    0.006    1.486    0.006 {method 'resize' of 'ImagingCore' objects}
+      128    0.003    0.000    1.459    0.011 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/backbone.py:84(forward)
+      128    0.004    0.000    1.442    0.011 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torchvision/models/_utils.py:66(forward)
+     1152    0.419    0.000    1.434    0.001 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/ops/modules/ms_deform_attn.py:116(forward)
+      128    0.001    0.000    1.381    0.011 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/scripts/train_detection_campaign.py:173(legacy_ground_truth)
+   734102    0.125    0.000    1.253    0.000 /usr/lib/python3.11/json/encoder.py:414(_iterencode)
+        1    0.021    0.021    1.191    1.191 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/src/e_jepa_ttc/detection/evaluation_v2.py:161(evaluate_detections_v2)
+      128    0.000    0.000    1.181    0.009 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/scripts/train_detection_campaign.py:93(prepare)
+      128    0.001    0.000    1.180    0.009 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/scripts/train_detection_campaign.py:106(prepare_model_input)
+     2048    0.061    0.000    1.144    0.001 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torchvision/models/resnet.py:143(forward)
+3883476/734102    0.724    0.000    1.129    0.000 /usr/lib/python3.11/json/encoder.py:334(_iterencode_dict)
+      128    0.360    0.003    1.015    0.008 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/producer/src/e_jepa_ttc/detection/monodgp_eap_adapter.py:249(decode_eap)
+      128    0.001    0.000    0.892    0.007 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/det3d_transformer.py:73(forward)
+      128    0.020    0.000    0.887    0.007 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/det3d_transformer.py:230(forward)
+    10624    0.022    0.000    0.852    0.000 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torch/nn/modules/conv.py:552(forward)
+      128    0.003    0.000    0.848    0.007 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/det2d_transformer.py:211(forward)
+    10624    0.013    0.000    0.819    0.000 /workspace/phase_release/.venv-detector/lib/python3.11/site-packages/torch/nn/modules/conv.py:534(_conv_forward)
+    10624    0.806    0.000    0.806    0.000 {built-in method torch.conv2d}
+      128    0.024    0.000    0.788    0.006 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/det2d_transformer.py:319(forward)
+      384    0.029    0.000    0.772    0.002 /workspace/phase_release/workspace/phase-ttc-s0-evaluation/output/cloud_input_optimized_v1/portable_r0_seed7/lib/models/monodgp/det3d_transformer.py:152(forward)
+
+

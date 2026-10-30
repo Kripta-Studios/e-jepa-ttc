@@ -634,3 +634,17 @@ quantiles. These engineering checks do not demonstrate new TTC generalization.
 Detailed commands, scoped verification and remaining scientific gates are in
 [the execution ledger](detection_sota_20261029/EXECUTION.md). No cloud training,
 benchmark submission or external publication was performed in this continuation.
+
+## 2026-10-30 — Authorized A40 cloud campaign and evaluation optimization
+
+The subsequent user-authorized campaign runs on the user's RunPod A40. Exact
+input residency removed repeated TAR indexing and reached approximately 256
+updates/minute with warm training inputs. R0 seed 7 remains in progress; the
+release model and six-replica confirmation are not complete.
+
+An evaluation-only CPU prefetch candidate measured 1.5004x throughput on a fixed
+128-frame selection panel with exact evaluation payload parity apart from timing
+fields. It preserves single-frame FP32 inference and the complete scorer.
+The admitted handoff retains the active run and applies the revision to pending
+replicas after the existing R0 completes. Details, validation scope and rollout
+receipts are in [the A40 evaluation report](detection_sota_20261029/RUNPOD_EVALUATION_OPTIMIZATION.md).

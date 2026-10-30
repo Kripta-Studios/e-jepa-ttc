@@ -1,0 +1,18 @@
+{
+  "status": "PASS_EXACT_PAYLOAD_AND_TRAINING_SMOKE",
+  "runner_sha256": "e8c7291de32f39e7326857c0722bb04068f81f605f0ab22ebdb5240f317519db",
+  "modules": {
+    "src/e_jepa_ttc/detection/evaluation_prefetch.py": "ce56072e26cbfc7b75f292a82ea20232c0d874dd073e26c5047d8ac7423d99bd",
+    "src/e_jepa_ttc/detection/bounded_prefetch.py": "5854b9e2b45b1d0d42683b0cf279a8523e5d3fa27ef2860cd62b05cf5f4e40b3"
+  },
+  "evidence_sha256": {
+    "evaluation_optimization_v1/admission.json": "703fdc43c79b5ec42f0d60e1c36fc30a68212fd4690b1547e3df24821e7b8bc9",
+    "evaluation_optimization_v1/hardware_smoke/summary.json": "79e2d0fc991774b0b3a3bc1881983862be752528555840f3d790dd643299b66a",
+    "evaluation_optimization_v1/rng_sampler_parity.json": "e2a428b03ca63a08faccb2807ce6daa11b812c29588baede67e3ae3b3b2704b5",
+    "optimization_v1/profile_evaluation_overlap.py": "1d1d3765b55313525eb8804ed6ab6fc2e1ce4eb018243a5cbf6baf0715ffe494",
+    "workspace/phase-ttc-s0-evaluation/output/cloud_evaluation_prefetch_v1/producer/EVALUATION_PREFETCH_RECEIPT.json": "44bc97b55f9e6af29ac3ba6084d142ce87dbcc42137523012d8c3faddb47813b"
+  },
+  "speedup_128_frame_panel": 1.5004477113160903,
+  "cpu_threads": 4,
+  "batch_size": 1
+}

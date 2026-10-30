@@ -1,0 +1,19 @@
+{
+  "panel_admission.json": "703fdc43c79b5ec42f0d60e1c36fc30a68212fd4690b1547e3df24821e7b8bc9",
+  "baseline_cprofile.txt": "86e2fca8f415d483a3a3ed432da3f0df319c844c3656818b42c70facb9e48ee7",
+  "deployment_admission.json": "5607b8f7f247da4845018fba4abfb08a318d9b6dd31e3276eb6165d0c9b9e803",
+  "rng_sampler_parity.json": "e2a428b03ca63a08faccb2807ce6daa11b812c29588baede67e3ae3b3b2704b5",
+  "panel_artifacts_sha256.json": "c7b08c0223b5c36e9c205ac85e08a5aedaca9b45a78d6a8542881c40b8320177",
+  "profile_evaluation_overlap.py": "1d1d3765b55313525eb8804ed6ab6fc2e1ce4eb018243a5cbf6baf0715ffe494",
+  "profile.log": "55b57ad0172a93ab1d37bf8f69c21497f002bce7fd020aa9351462c14cffe882",
+  "smoke_summary.json": "79e2d0fc991774b0b3a3bc1881983862be752528555840f3d790dd643299b66a",
+  "smoke_evaluation_progress.json": "1c441e89f6d3814877a290c4419d28b9e32cca626ac56b1b4ded0a12d8d713e8",
+  "admit_training_smoke.py": "19562f0226264766634116d883bade750163442cd9e68ef7b12f02588bca278d",
+  "QUEUE_LAUNCH.json": "fd9863071730cefe136ada81d2cb2a2e09fc29715cc15cea1e328c3fba3c091b",
+  "queue_status_at_deployment.json": "e97d5f99316b77b224f7ec847dc1d61c71f207390730c00eb478701fed73fc51",
+  "handoff_at_deployment.json": "cac2e35b33464bbe70175adc24bf2529f75bf292c23e7689a0228713af212407",
+  "threads_one_admission.json": "7a4670774ee4ec302c2f135f77491f2ce112236f1012d4395e338121762bab58",
+  "threads_one_failed_import.log": "e55e137c3b47f136ea7a3c7ceb50b72c0e182255be375eb8568b0965a24e8194",
+  "threads_one_probe.py": "cfc233901207ded5b78754bfd75900767f943792dd7494dcc08f6043a9a1cafe",
+  "EVALUATION_PREFETCH_RECEIPT.json": "44bc97b55f9e6af29ac3ba6084d142ce87dbcc42137523012d8c3faddb47813b"
+}

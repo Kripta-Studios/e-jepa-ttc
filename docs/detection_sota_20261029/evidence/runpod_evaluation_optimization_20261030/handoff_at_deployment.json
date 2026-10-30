@@ -1,0 +1,6 @@
+{
+  "status": "WAITING_FOR_PARENT_R0",
+  "parent_queue": "/workspace/phase_release/cloud_runs_input_v1",
+  "next_queue": "/workspace/phase_release/cloud_runs_eval_v1",
+  "admission_sha256": "5607b8f7f247da4845018fba4abfb08a318d9b6dd31e3276eb6165d0c9b9e803"
+}

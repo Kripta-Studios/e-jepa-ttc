@@ -1,0 +1,5 @@
+{
+  "rng_exact": true,
+  "sampler_exact": true,
+  "status": "PASS_EXACT_RNG_AND_SAMPLER"
+}

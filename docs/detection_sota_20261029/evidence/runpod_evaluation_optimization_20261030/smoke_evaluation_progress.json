@@ -1,0 +1,9 @@
+{
+  "stage": "complete",
+  "completed_frames": 1024,
+  "total_frames": 1024,
+  "elapsed_seconds": 79.91538326709997,
+  "inference_seconds_total": 50.40655801794492,
+  "load_prepare_cpu_seconds": 45.38037021574564,
+  "ground_truth_cpu_seconds": 11.937856495031156
+}
