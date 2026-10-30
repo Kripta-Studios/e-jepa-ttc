@@ -5,6 +5,18 @@ from operational.final_refit.training import PhaseOnlyFinal
 from operational.phase_adapt_training import fit_head, load_head
 
 
+def test_cuda_workspace_config_is_set_or_rejected(monkeypatch):
+    import pytest
+
+    from operational.phase_adapt_training import configure_cuda
+
+    monkeypatch.delenv("CUBLAS_WORKSPACE_CONFIG", raising=False)
+    assert configure_cuda() == ":4096:8"
+    monkeypatch.setenv("CUBLAS_WORKSPACE_CONFIG", "unsupported")
+    with pytest.raises(ValueError, match="CUBLAS_WORKSPACE_CONFIG"):
+        configure_cuda()
+
+
 def test_real_training_updates_weights_and_roundtrips(tmp_path):
     tmp_path = tmp_path / "run"
     torch.manual_seed(7)

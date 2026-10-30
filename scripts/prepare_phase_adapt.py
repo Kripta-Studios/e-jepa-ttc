@@ -7,7 +7,6 @@ import argparse
 import hashlib
 import io
 import json
-import os
 import sys
 import tarfile
 import time
@@ -22,28 +21,17 @@ import torch
 import yaml
 
 from e_jepa_ttc.simplex_t.phase import ttc_to_phase
-from operational.evttc_transfer_audit.common import canonical_sha, file_sha, write_receipt
+from operational.evttc_transfer_audit.common import canonical_sha, file_sha
 from operational.evttc_transfer_audit.provenance import assert_sources_unchanged, snapshot_sources
 from operational.phase_adapt import ROLE, compatible_target, validate_population
+from operational.phase_adapt_cache import atomic_receipt as write_receipt
+from operational.phase_adapt_cache import migrate_shards, resume_binding, save_npz
 from scripts.final_train40_transfer import HEAD, FinalTransferPredictor, verify_candidate
 from scripts.final_train40_transfer_inputs import sequence_population
 
 
 def read(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def save_npz(path: Path, values: dict[str, np.ndarray]) -> None:
-    """Atomically commit a new feature shard, without replacing prior artifacts."""
-    if path.exists():
-        raise ValueError(f"Refusing to overwrite {path}")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(".tmp")
-    with temporary.open("wb") as stream:
-        np.savez_compressed(stream, **values)
-        stream.flush()
-        os.fsync(stream.fileno())
-    os.replace(temporary, path)
 
 
 def restore_train40(candidate: Path, output: Path) -> dict[str, np.ndarray]:
@@ -55,8 +43,12 @@ def restore_train40(candidate: Path, output: Path) -> dict[str, np.ndarray]:
         raise ValueError("TRAIN40 preservation archive hash mismatch")
     prefix = "workspace/ejepa_final_runs/final/cache/PHASE_ONLY_EVENT_S7_TRAIN40"
     with tarfile.open(archive) as source:
-        payload = source.extractfile(prefix + ".npz").read()
-        receipt = json.loads(source.extractfile(prefix + ".json").read())
+        arrays_file = source.extractfile(prefix + ".npz")
+        receipt_file = source.extractfile(prefix + ".json")
+        if arrays_file is None or receipt_file is None:
+            raise ValueError("TRAIN40 cache members missing")
+        payload = arrays_file.read()
+        receipt = json.loads(receipt_file.read())
     unsigned = {k: v for k, v in receipt.items() if k != "receipt_payload_sha256"}
     if (
         canonical_sha(unsigned) != receipt["receipt_payload_sha256"]
@@ -100,8 +92,11 @@ def prepare(args: argparse.Namespace) -> None:
         "sources": sources,
         "manifest_sha256": file_sha(args.manifest),
         "role": ROLE,
-        "policy": "all_native_annotated_anchors_bounded20ms_labels_v1",
+        "policy": "all_native_annotated_anchors_bounded20ms_labels_prefilter_v2",
     }
+    if (args.output / "BINDING.json").exists():
+        binding = resume_binding(read(args.output / "BINDING.json"), binding)
+        sources = binding["sources"]
     write_receipt(args.output / "BINDING.json", binding)
     specs = yaml.safe_load(args.manifest.read_text(encoding="utf-8"))["sequences"]
     rows, excluded, inventory = [], [], []
@@ -127,6 +122,9 @@ def prepare(args: argparse.Namespace) -> None:
     print(f"Inventory: {len(specs)} recordings, {len(rows)} eligible anchors", flush=True)
     if args.inventory_only:
         return
+    if args.migrate_from is not None:
+        migrated = migrate_shards(args.migrate_from, args.output, ROOT)
+        print(f"Verified migration: {len(migrated['shards'])} prior shards", flush=True)
     source_values = restore_train40(args.candidate, args.output)
     predictor = FinalTransferPredictor(paths, args.device)
     captured: dict[str, np.ndarray] = {}
@@ -141,6 +139,22 @@ def prepare(args: argparse.Namespace) -> None:
     start = time.perf_counter()
     try:
         for index, row in enumerate(rows):
+            label_path = Path(row["ttc_csv_path"])
+            if str(label_path) not in tables:
+                label_hashes[str(label_path)] = file_sha(label_path)
+                tables[str(label_path)] = np.loadtxt(label_path, ndmin=2)
+            target = compatible_target(tables[str(label_path)], row["anchor_us"])
+            if target is None:
+                ledger.append(
+                    {
+                        "query_id": row["query_id"],
+                        "group": row["sequence_id"],
+                        "target_ttc": None,
+                        "status": "unsupported_local_target",
+                        "shard": None,
+                    }
+                )
+                continue
             key = canonical_sha({"row": row, "binding": binding})
             destination = args.output / "shards" / f"{key}.npz"
             receipt_path = destination.with_suffix(".json")
@@ -165,11 +179,6 @@ def prepare(args: argparse.Namespace) -> None:
                     "targets_read_during_inference": False,
                 }
                 write_receipt(receipt_path, receipt)
-            label_path = Path(row["ttc_csv_path"])
-            if str(label_path) not in tables:
-                label_hashes[str(label_path)] = file_sha(label_path)
-                tables[str(label_path)] = np.loadtxt(label_path, ndmin=2)
-            target = compatible_target(tables[str(label_path)], row["anchor_us"])
             reason = "used" if target is not None else "unsupported_local_target"
             if receipt["feature_sha256"] is None:
                 reason = "no_fusion_state"
@@ -220,6 +229,8 @@ def prepare(args: argparse.Namespace) -> None:
         if merged[key].dtype != np.float32 or not np.isfinite(merged[key]).all():
             raise ValueError(f"Nonfinite or non-FP32 {key}")
     assert_sources_unchanged(ROOT, sources)
+    if any(file_sha(Path(path)) != digest for path, digest in label_hashes.items()):
+        raise ValueError("Labels changed during extraction")
     if verify_candidate(args.candidate)[1] != candidate:
         raise ValueError("Parent candidate changed")
     output = args.output / "training.npz"
@@ -262,6 +273,7 @@ def main() -> None:
         parser.add_argument(f"--{name}", type=Path, required=True)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--inventory-only", action="store_true")
+    parser.add_argument("--migrate-from", type=Path)
     prepare(parser.parse_args())
 
 

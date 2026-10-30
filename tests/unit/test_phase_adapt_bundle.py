@@ -6,6 +6,32 @@ from operational.final_refit.training import PhaseOnlyFinal
 from operational.phase_adapt_bundle import HeadExport, verified_paths
 
 
+@pytest.mark.parametrize("wrong", ["seed", "parent"])
+def test_valid_checkpoint_cannot_misstate_seed_or_parent(wrong):
+    from operational.phase_adapt_bundle import validate_head_binding
+
+    payload = {
+        "status": "COMPLETE",
+        "model_class": "PhaseOnlyFinal",
+        "binding": {"parent": {"id": "original"}, "data_receipt_sha256": "data"},
+        "recipe": {"seed": 7},
+        "selection": "last_endpoint_fixed_budget_no_test_selection",
+    }
+    manifest = {
+        "parent_binding": {"id": "original"},
+        "new_head_seed": 7,
+        "data_receipt_sha256": "data",
+        "adapted_recipe": {"seed": 7},
+    }
+    validate_head_binding(payload, manifest)
+    if wrong == "seed":
+        payload["recipe"]["seed"] = 13
+    else:
+        payload["binding"]["parent"] = {"id": "another"}
+    with pytest.raises(ValueError, match="binding"):
+        validate_head_binding(payload, manifest)
+
+
 def test_export_matches_all_point_predictions_and_quantiles():
     model = PhaseOnlyFinal().eval()
     features = torch.zeros(3, 340)

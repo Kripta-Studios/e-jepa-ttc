@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import random
 from datetime import UTC, datetime
 from pathlib import Path
@@ -15,6 +16,14 @@ from e_jepa_ttc.simplex_t.phase import phase_to_ttc
 from operational.evttc_transfer_audit.common import file_sha, write_receipt
 from operational.final_refit.training import PhaseOnlyFinal
 from operational.phase_adapt import balanced_mass, epoch_count
+
+
+def configure_cuda() -> str:
+    """Establish deterministic cuBLAS configuration before the first CUDA allocation."""
+    config = os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    if config not in {":4096:8", ":16:8"}:
+        raise ValueError("Set CUBLAS_WORKSPACE_CONFIG=:4096:8 before launching training")
+    return config
 
 
 def load_head(path: Path, expected_sha256: str) -> PhaseOnlyFinal:

@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import cast
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
@@ -21,7 +22,7 @@ from operational.evttc_transfer_audit.common import canonical_sha, file_sha, wri
 from operational.evttc_transfer_audit.provenance import assert_sources_unchanged, snapshot_sources
 from operational.phase_adapt import ROLE, validate_population
 from operational.phase_adapt_bundle import AdaptedPredictor, HeadExport
-from operational.phase_adapt_training import fit_head, load_head
+from operational.phase_adapt_training import configure_cuda, fit_head, load_head
 from scripts.final_train40_transfer import HEAD, verify_candidate
 
 
@@ -36,6 +37,7 @@ def main() -> None:
         parser.add_argument(f"--{name}", type=Path, required=True)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     args = parser.parse_args()
+    cuda_config = configure_cuda()
     torch.set_num_threads(2)
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
@@ -73,6 +75,7 @@ def main() -> None:
             "torch": torch.__version__,
             "cuda": torch.version.cuda,
             "device": args.device,
+            "cublas_workspace_config": cuda_config,
             "gpu": torch.cuda.get_device_name(0) if args.device == "cuda" else None,
         },
         "role": ROLE,
@@ -135,11 +138,14 @@ def main() -> None:
             shutil.copyfile(source, destination)
         files[name] = {"path": relative, "sha256": file_sha(destination)}
     head = load_head(bundle / files["head"]["path"], files["head"]["sha256"])
-    exported = torch.jit.trace(
-        HeadExport(head),
-        (
-            torch.from_numpy(values["features"][:1].copy()),
-            torch.from_numpy(values["rgb_width_logits"][:1].copy()),
+    exported = cast(
+        torch.jit.ScriptModule,
+        torch.jit.trace(
+            HeadExport(head),
+            (
+                torch.from_numpy(values["features"][:1].copy()),
+                torch.from_numpy(values["rgb_width_logits"][:1].copy()),
+            ),
         ),
     )
     export_path = bundle / "head.torchscript.pt"
@@ -168,6 +174,8 @@ def main() -> None:
             "files": files,
             "parent_binding": parent,
             "new_head_seed": 7,
+            "adapted_recipe": {**recipe, "seed": 7},
+            "data_receipt_sha256": file_sha(args.data / "COMPLETE.json"),
             "train_receipt": receipt,
             "recipe_sha256": file_sha(args.output / "RECIPE.json"),
             "independent_confirmation": False,
