@@ -1,0 +1,16 @@
+{
+  "binding_sha256": "39b96b395ac0cabdc0c375074a0186f396782a9676bceb79553204844cc858ca",
+  "eap_rows": 88744,
+  "evttc_recordings": 32,
+  "evttc_rows": 3571,
+  "evttc_sensor_eligible": 3828,
+  "independent_test": false,
+  "official_equivalence": "unverified",
+  "population_sha256": "d976c31c9110c06c75a0b8925aa5c0852acc53440424eb8a6880e8dd095856b8",
+  "role": "all_compatible_local_refit",
+  "rows": 92315,
+  "status": "COMPLETE",
+  "targets_sha256": "1ea975bfb5fc1d1fb7c0f0a5a55f08db28a81080aeb365d7b09426d09aaeaa8a",
+  "train40_restore_sha256": "008d8ab2cb60b352015eb89f5734e924f37eea0003b72de582647aaf7b0b5a10",
+  "training_npz_sha256": "96498f7c99181ecb45e8c53957b05482fd3eef6e93eac0eccb5a92c68fb43a86"
+}

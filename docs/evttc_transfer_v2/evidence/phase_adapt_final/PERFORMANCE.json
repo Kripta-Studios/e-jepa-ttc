@@ -1,0 +1,80 @@
+{
+  "new_sensor_states": 2228,
+  "migrated_shards": 1377,
+  "sensor_seconds_sum": 1180.6909881008905,
+  "median_sensor_seconds": 0.39672805002192035,
+  "p95_sensor_seconds": 1.3019742000033148,
+  "mean_sensor_seconds": 0.529933118537204,
+  "preprocess_fraction": 0.6965659926167197,
+  "raw_cache_stats": {
+    "bbox_cache_hits": 2165,
+    "bbox_validations": 2291,
+    "event_cache_hit_bytes": 205751630020,
+    "event_prepare_seconds": 695.4836587993195,
+    "event_read_bytes": 42452124345,
+    "event_unique_windows_encoded": 13368,
+    "frame_cache_hits": 13043,
+    "frame_read_bytes": 17646336000,
+    "rgb_crop_tasks": 15596,
+    "rgb_prepare_seconds": 120.05286479956703,
+    "source_opens": 22
+  },
+  "graphs": [
+    {
+      "producer": "E_A5_MATCHED",
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "setup_seconds": 1.0282707999576814,
+      "replays": 2228,
+      "initial_exact_parity": true
+    },
+    {
+      "producer": "E_C2F_MATCHED",
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "setup_seconds": 1.35803709999891,
+      "replays": 2228,
+      "initial_exact_parity": true
+    },
+    {
+      "producer": "R_A5",
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 0.6548467000247911,
+      "replays": 11140,
+      "initial_exact_parity": true
+    },
+    {
+      "producer": "R_C2F",
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "setup_seconds": 1.5851466999738477,
+      "replays": 11140,
+      "initial_exact_parity": true
+    }
+  ],
+  "training_rows": 92315,
+  "original_profile_scope": "single query during concurrent extraction, not paired throughput",
+  "parity_queries": 36,
+  "parity_recordings": 32
+}

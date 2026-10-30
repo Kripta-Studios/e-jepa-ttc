@@ -1,0 +1,56 @@
+{
+  "artifact_hashes_verified": 22,
+  "graph_validation": "passed",
+  "torchscript_cpu_exact": true,
+  "seeds": {
+    "7": {
+      "changed_state_coordinates": 1827,
+      "epochs": 2,
+      "updates": 1444,
+      "rows_per_epoch": 92315
+    },
+    "13": {
+      "changed_state_coordinates": 1827,
+      "epochs": 2,
+      "updates": 1444,
+      "rows_per_epoch": 92315
+    },
+    "21": {
+      "changed_state_coordinates": 1827,
+      "epochs": 2,
+      "updates": 1444,
+      "rows_per_epoch": 92315
+    }
+  },
+  "target_status_counts": {
+    "used": 3571,
+    "unsupported_local_target": 257
+  },
+  "raw_replay": {
+    "atol": 1e-05,
+    "cached_ttc": 4.667315483093262,
+    "prediction": {
+      "history_lengths": {
+        "event": 4,
+        "rgb": 5
+      },
+      "model_scope": "all_compatible_local_refit",
+      "optimizer_updates": 0,
+      "predictions": {
+        "E_CTX_TRAIN40": 5.4106831550598145,
+        "PHASE_ADAPT_FINAL_S7": 4.6673126220703125,
+        "R_CTX_TRAIN40": 4.977663993835449
+      },
+      "rgb_available": true,
+      "rgb_unavailable_reason": "",
+      "seconds": {
+        "preprocess": 5.283309299964458,
+        "total": 11.724297199980356
+      },
+      "targets_read": false
+    },
+    "query_id": "EXTENDED:CCRm-low-0-overlap-0:14350374",
+    "rtol": 1e-05
+  },
+  "final_head_sha256": "e2f21190e354f042a61851e028a6953e63b7f155fde0541595a33cee71312295"
+}

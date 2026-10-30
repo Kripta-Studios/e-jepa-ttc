@@ -93,6 +93,10 @@ def main() -> None:
         "`[B,340]` y logits `[B,2]`. Las columnas son TTC en segundos, fase puntual, "
         "q10 de fase y q90 de fase. El exportado requiere entradas válidas; las "
         "comprobaciones Python de forma/finitud no forman parte del trace.",
+        "En Windows, para rutas con caracteres Unicode, cargar TorchScript desde "
+        "un archivo binario abierto: `with open(path, 'rb') as stream: "
+        "head = torch.jit.load(stream)`. Esto evita el fopen nativo de rutas que "
+        "puede fallar aunque el archivo exista.",
         "",
         "```python",
         "from pathlib import Path",
