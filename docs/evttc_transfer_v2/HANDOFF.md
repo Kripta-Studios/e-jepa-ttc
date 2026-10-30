@@ -132,3 +132,20 @@ que la ejecución general haya terminado completamente en verde.
 La instrumentación final verificó 40/40 predicciones idénticas, 1.300 archivos de
 código y 13 componentes/recibos del candidato. La revisión independiente y las
 correcciones están documentadas en el ledger.
+
+## Continuación: refit completo y validación adicional
+
+La entrega entrenada F1 y la campaña local posterior están documentadas en
+[CAMPAIGN_RESULTS.md](CAMPAIGN_RESULTS.md), con el alcance de cada rama en
+[CAMPAIGN_DECISIONS.md](CAMPAIGN_DECISIONS.md), los comandos en
+[CAMPAIGN_REPRODUCTION.md](CAMPAIGN_REPRODUCTION.md) y la revisión independiente en
+[CAMPAIGN_REVIEW.md](CAMPAIGN_REVIEW.md). Las cifras de validación del apartado
+anterior corresponden a la iteración de auditoría previa; no son el resultado de
+la nueva batería general.
+
+Los 21 ajustes agrupados mejoran error relativo pero empeoran MAE e intervalos;
+Slider-500 externo no confirma una mejora relativa general. El modelo F1 completo
+permanece como candidato exploratorio, con sus tres semillas y sin reemplazar
+predicciones fallidas. El suplemento de revisión conserva comparaciones pareadas
+de carretera y la causa inferida de una ausencia geométrica, sin alterar los
+recibos originales.

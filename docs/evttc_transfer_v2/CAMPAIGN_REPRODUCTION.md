@@ -22,6 +22,8 @@ los probes y la reescala de intervalos se ejecutan en CPU.
 
 ```powershell
 $env:PYTHONPATH='src;.'
+$env:PYTHONUTF8='1'
+$env:UV_PROJECT_ENVIRONMENT=(Resolve-Path .venv-transfer).Path
 $env:OMP_NUM_THREADS='2'
 $env:MKL_NUM_THREADS='2'
 $env:CUBLAS_WORKSPACE_CONFIG=':4096:8'
@@ -36,6 +38,8 @@ $env:CUBLAS_WORKSPACE_CONFIG=':4096:8'
 .venv-transfer/Scripts/python.exe -X utf8 scripts/diagnose_phase_restarts.py --external "$env:PHASE_RUN/Slider500" --candidate "$env:PHASE_CANDIDATE" --output "$env:PHASE_RUN/restarts"
 .venv-transfer/Scripts/python.exe -X utf8 scripts/robustness_phase_campaign.py --data "$env:PHASE_DATA" --candidate "$env:PHASE_CANDIDATE" --adapted "$env:PHASE_MODELS/seed_7/checkpoint.pt" --protocol data/splits/evttc_transfer_v2.yaml --output "$env:PHASE_RUN/robustness"
 .venv-transfer/Scripts/python.exe -X utf8 scripts/report_phase_campaign.py --campaign "$env:PHASE_RUN" --output "$env:PHASE_RUN/report"
+.venv-transfer/Scripts/python.exe -X utf8 scripts/supplement_phase_review.py --campaign "$env:PHASE_RUN"
+.venv-transfer/Scripts/python.exe -X utf8 scripts/verify_phase_campaign.py --campaign "$env:PHASE_RUN"
 ```
 
 No ejecutar dos entrenamientos/inferencias GPU simultáneamente para interpretar

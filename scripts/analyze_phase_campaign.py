@@ -21,6 +21,7 @@ from operational.phase_adapt_training import load_head
 from operational.phase_campaign.data import load_data
 from operational.phase_campaign.evaluation import bbox_ttc, metrics, phase_interval_metrics
 from operational.phase_campaign.protocol import family_folds
+from operational.phase_campaign.review_controls import shared_scores
 from scripts.final_train40_transfer import HEAD, verify_candidate
 
 
@@ -130,6 +131,12 @@ def main() -> None:
         report["intervals"][name] = phase_interval_metrics(
             truth_phase, prediction["q10"].numpy(), prediction["q90"].numpy()
         )
+    eligible = ~np.isin(groups, list(excluded))
+    report["shared_eligible24"] = {
+        name: shared_scores(y[eligible], {"F0": predictions["F0"][eligible], name: pred[eligible]})
+        for name, pred in predictions.items()
+        if name != "F0"
+    }
     save_npz(
         args.output / "predictions.npz",
         {

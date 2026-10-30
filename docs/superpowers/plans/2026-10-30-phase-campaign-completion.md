@@ -127,3 +127,22 @@ remain scientifically unresolved, which the final claim matrix must disclose.
   heldout queries per seed, external seals/scores recomputed,3causal controls,
   432robustness attempts without failures. Await one independent whole-campaign
   review and final repository checks. Original F1 delivery remains byte-unchanged.
+- Final review: fresh read-only campaign_final_review,50b2bb68..c3d51251,
+  GO_CON_ALCANCE_LIMITADO; no Critical/Important primary-result defects. Two minor
+  audit gaps: road shared denominators and one missing STRTTC cause.
+- Final: Ruling: both minor audit gaps correspond to already requested comparator
+  completion criteria, so finish them in the existing single fix pass under the
+  user's instruction to complete all remaining work. Cost: a small supplementary
+  computation; no refit, hypothesis change or prediction replacement. Two focused
+  regression tests observed RED->GREEN; supplemental12paired comparisons and one
+  explicitly inferred cause saved without changing immutable source artifacts.
+- Final: Ruling: unresolved acquisition ancestry/extrinsics remain unresolved;
+  cost is limited transfer claims, not false certification.
+- Final: Ruling: official434-query equivalence/comparator reproduction remains
+  outside this local diagnostic result; cost is no official superiority claim.
+- Final: Ruling: no real-time/backlog/convergence claim from these measurements;
+  cost is a narrower efficiency/training conclusion.
+- Final: Ruling: benefits of unexecuted F2/P0/JEPA remain unmeasured; cost is
+  deferring possible gains until sufficient diagnostic/independent support exists.
+- Final: Ruling: broad-suite outcome is the executor's responsibility and will
+  be recorded from actual exit status, never inferred from review approval.

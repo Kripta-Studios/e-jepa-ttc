@@ -16,6 +16,7 @@ from operational.evttc_competition.readers import SensorSequence
 from operational.evttc_transfer_audit.common import file_sha
 from operational.phase_adapt_cache import atomic_receipt, save_npz
 from operational.phase_campaign.evaluation import metrics
+from operational.phase_campaign.review_controls import endpoint_result
 
 
 def main() -> None:
@@ -83,7 +84,9 @@ def main() -> None:
                 q = inverse_ttc_at_endpoint(
                     fitted.linear.inverse_ttc, end / 1e6 - fitted.absolute_reference_time_s
                 )
-                predictions["STRTTC_linear"][j] = 1 / q if q > 0 else np.nan
+                predictions["STRTTC_linear"][j], detail["failures"]["STRTTC_linear"] = (
+                    endpoint_result(q)
+                )
             except (ValueError, RuntimeError) as exc:
                 detail["failures"]["STRTTC_linear"] = str(exc)
             details.append(detail)
