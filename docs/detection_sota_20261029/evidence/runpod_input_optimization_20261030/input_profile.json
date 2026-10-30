@@ -1,0 +1,50 @@
+[
+  {
+    "handles": 2,
+    "samples": 96,
+    "seconds": 37.4016048850026,
+    "sample_bytes": {
+      "image": 2949120,
+      "raw_image": 2764800,
+      "target_tensors": 983295
+    },
+    "rss": 1198055424,
+    "first_pass": {
+      "shard_index": 16.687584488186985,
+      "labels": 5.023872537189163,
+      "raw_total": 23.20756054809317,
+      "prepare": 0.5618051650235429
+    },
+    "repeat_pass": {
+      "shard_index": 11.718707695021294,
+      "labels": 0.0058481068117544055,
+      "raw_total": 12.938704898115247,
+      "prepare": 0.6204668026184663
+    },
+    "image_and_png_hash_parity": "EXACT"
+  },
+  {
+    "handles": 128,
+    "samples": 96,
+    "seconds": 14.301575138000771,
+    "sample_bytes": {
+      "image": 2949120,
+      "raw_image": 2764800,
+      "target_tensors": 983295
+    },
+    "rss": 1332944896,
+    "first_pass": {
+      "shard_index": 6.743299055495299,
+      "labels": 4.236621961812489,
+      "raw_total": 12.071737010846846,
+      "prepare": 0.567060595843941
+    },
+    "repeat_pass": {
+      "shard_index": 0.00015677011106163263,
+      "labels": 0.0038118261145427823,
+      "raw_total": 1.0349389888579026,
+      "prepare": 0.5394545977469534
+    },
+    "image_and_png_hash_parity": "EXACT"
+  }
+]

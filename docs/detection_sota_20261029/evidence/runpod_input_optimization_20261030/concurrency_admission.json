@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "single_updates_per_second": 4.135244407071607,
+  "pair_aggregate_updates_per_second": 4.05199549646376,
+  "aggregate_speedup": 0.9798684424878286,
+  "recommended_jobs": 1,
+  "scope": "128 updates per worker over 64 images, with 12 GiB extra VRAM reserved per worker"
+}

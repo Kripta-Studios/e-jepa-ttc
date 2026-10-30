@@ -1,0 +1,24 @@
+{
+  "status": "PASS_EXACT_INPUT_AND_FORWARD",
+  "samples": 64,
+  "batch_inputs": "EXACT",
+  "forward_outputs": "EXACT",
+  "losses": "EXACT",
+  "baseline_repeat_gradient_max_abs": 7.066410034894943e-08,
+  "candidate_gradient_max_abs": 7.28759914636612e-08,
+  "label_free_evaluation": "PASS",
+  "resident_cache": {
+    "device": "cuda",
+    "capacity": 4096,
+    "resident_samples": 64,
+    "image_bytes": 188743680,
+    "peak_image_bytes": 188743680,
+    "maximum_image_bytes": 13958643712,
+    "hits": 144,
+    "misses": 64
+  },
+  "steady_cached_update_seconds_median": 0.24902798351831734,
+  "steady_input_seconds_median": 0.0013507054536603391,
+  "timing_scope": "32 updates over 64 resident training images; not full campaign ETA",
+  "cuda_peak_allocated_bytes": 4764795392
+}

@@ -1,0 +1,6 @@
+{
+  "status": "PAUSED_WITH_DURABLE_CHECKPOINT",
+  "pid": 7922,
+  "checkpoint": "/workspace/phase_release/cloud_runs/r0_seed7/checkpoints/last.pt",
+  "sha256": "a45f18a29edd04dc216a787e792cda96bf93b2794ef61273272b40d162a5431c"
+}

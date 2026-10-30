@@ -1,0 +1,12 @@
+{
+  "status": "PASS_BENCHMARK",
+  "tag": "single",
+  "updates": 128,
+  "steady_start": 1793387090.9525185,
+  "steady_end": 1793387121.9059489,
+  "steady_cached_update_seconds_median": 0.24055960058467463,
+  "steady_seconds": 30.937728896504268,
+  "cpu_peak_rss_bytes": 3785347072,
+  "padding_bytes": 12884901888,
+  "cuda_peak_allocated_bytes": 17642234368
+}
