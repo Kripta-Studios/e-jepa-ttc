@@ -114,3 +114,16 @@ remain scientifically unresolved, which the final claim matrix must disclose.
   test_recovery_preserves_declared_missing_predictions_and_rejects_changes RED->GREEN,
   four cache tests pass. Re-execution reused byte-verified same prediction arrays
   (NaN positions equal) and completed scoring after external targets existed.
+- Task3 complete within declared diagnostic scope: physical fixtures25-test pass,
+  three actual-producer clock/future controls,12restart controls and432raw conditions
+  on48fixed queries. Clean340D-state parity held; all perturbation outputs finite.
+  CMax4/12, STRTTC-linear10/12 coverage retained beside shared-population scores.
+  No official geometry reproduction, exact Slider extrinsics or streaming-backlog
+  certification is claimed.
+- Task4 closed conditionally: F1 tradeoffs confirmed across three seeds, T0 not
+  promoted, F2/Fcap and P0/JEPA not triggered by sufficient independent diagnostic
+  evidence. Full branch claim matrix in CAMPAIGN_DECISIONS.md; unknowns preserved.
+- Task6 report generated from receipts; artifact verifier PASS:21fits,2531matched
+  heldout queries per seed, external seals/scores recomputed,3causal controls,
+  432robustness attempts without failures. Await one independent whole-campaign
+  review and final repository checks. Original F1 delivery remains byte-unchanged.

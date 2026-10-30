@@ -61,6 +61,18 @@ def main() -> None:
         for key in ("mae_seconds", "relative_absolute_error_pct", "macro_recording_relative_error")
     }
     summary["baseline"] = baseline
+    clean_times = np.array(
+        [item["seconds"] for item in reports["robustness"]["details"] if item["variant"] == "clean"]
+    )
+    summary["instrumented_clean_runtime"] = {
+        "queries": len(clean_times),
+        "mean_seconds": float(clean_times.mean()),
+        "p50_seconds": float(np.quantile(clean_times, 0.5)),
+        "p95_seconds": float(np.quantile(clean_times, 0.95)),
+        "p99_seconds": float(np.quantile(clean_times, 0.99)),
+        "scope": "sensor preparation, F0/F1 and parity instrumentation; not deployment latency",
+        "streaming_backlog_benchmark": "not performed; no real-time claim",
+    }
     atomic_receipt(args.output / "SUMMARY.json", summary)
     table = [{"model": "F0", **baseline}] + [
         {"model": f"F1 seed {s}", **grouped["seeds"][str(s)]["models"]["F1"]} for s in (7, 13, 21)

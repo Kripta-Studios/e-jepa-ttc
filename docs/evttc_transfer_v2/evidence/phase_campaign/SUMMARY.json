@@ -1,0 +1,143 @@
+{
+  "baseline": {
+    "coverage": 1.0,
+    "finite": 2531,
+    "macro_recording_relative_error": 30.600394586722057,
+    "mae_seconds": 0.8494229316711426,
+    "population": 2531,
+    "relative_absolute_error_pct": 27.66410255432129,
+    "relative_rows": 2531,
+    "rmse_seconds": 1.5845656394958496,
+    "valid_targets": 2531,
+    "wrong_sign": 0
+  },
+  "claim": "exploratory head adaptation; no SOTA or certified independent transfer",
+  "inputs": {
+    "calibration": {
+      "path": "calibration/REPORT.json",
+      "sha256": "6ee570633b3f0e22f32e1a146aabed98aa0c5394a628ce20bce7159e8849d15a"
+    },
+    "external": {
+      "path": "Slider500/REPORT.json",
+      "sha256": "ea8ea896f5f7ece86f944bd12c6f07789668b9c28aaf7dee7c91374f1bacb125"
+    },
+    "geometry": {
+      "path": "geometry/REPORT.json",
+      "sha256": "aefb4ab0ce8de9975069b6c22c94c96a028038226bf5afe64c53ac42d87fbe63"
+    },
+    "grouped": {
+      "path": "F1_grouped/REPORT.json",
+      "sha256": "0eae406a9da75c0278e9d1b19a4b527d046c1861a0ec3294e7a822568a039e9f"
+    },
+    "probes": {
+      "path": "temporal_probes/PROBES.json",
+      "sha256": "a02a281cc7dae63232f0924b26c4910eff14a6e645049df67c16fbd2b514a55c"
+    },
+    "restarts": {
+      "path": "restarts/REPORT.json",
+      "sha256": "78655e209b8b4e92531e3473e5058ed72b55892f5088ea1b10125d5e9095352d"
+    },
+    "robustness": {
+      "path": "robustness/REPORT.json",
+      "sha256": "5160c8dd8bc124a4b151a7562938867f3a81caf515076f3c912d7ec869948608"
+    },
+    "temporal": {
+      "path": "temporal_probes/TEMPORAL.json",
+      "sha256": "de4b6eaef939c38d41416852d221d2f7886cc1b0edcbb72b2074c26b33d4bc81"
+    }
+  },
+  "instrumented_clean_runtime": {
+    "mean_seconds": 0.769473945835974,
+    "p50_seconds": 0.6282783999922685,
+    "p95_seconds": 1.4114708350040017,
+    "p99_seconds": 3.0597144689911544,
+    "queries": 48,
+    "scope": "sensor preparation, F0/F1 and parity instrumentation; not deployment latency",
+    "streaming_backlog_benchmark": "not performed; no real-time claim"
+  },
+  "mean_std_across_training_seeds": {
+    "macro_recording_relative_error": {
+      "mean": 25.86466469367345,
+      "std_ddof1": 0.36590547828198733
+    },
+    "mae_seconds": {
+      "mean": 0.8721108039220175,
+      "std_ddof1": 0.017982531179759467
+    },
+    "relative_absolute_error_pct": {
+      "mean": 25.128902435302734,
+      "std_ddof1": 0.40164315536371875
+    }
+  },
+  "seeds": {
+    "13": {
+      "coverage": 1.0,
+      "finite": 2531,
+      "macro_recording_relative_error": 26.188470244407654,
+      "mae_seconds": 0.8924957513809204,
+      "native_80_coverage": 0.6578427499012248,
+      "paired_family_bootstrap": {
+        "groups": 7,
+        "lower_95": -11.891038052737713,
+        "mean_difference": -4.411924342314403,
+        "repetitions": 2000,
+        "seed": 7,
+        "unit": "declared_group_not_individual_windows",
+        "upper_95": 1.810352233443587
+      },
+      "population": 2531,
+      "relative_absolute_error_pct": 25.500843048095703,
+      "relative_rows": 2531,
+      "rmse_seconds": 1.6375536918640137,
+      "train_scaled_80_coverage": 0.6862900039510075,
+      "valid_targets": 2531,
+      "wrong_sign": 0
+    },
+    "21": {
+      "coverage": 1.0,
+      "finite": 2531,
+      "macro_recording_relative_error": 25.937813599904377,
+      "mae_seconds": 0.8653405904769897,
+      "native_80_coverage": 0.6772026866851047,
+      "paired_family_bootstrap": {
+        "groups": 7,
+        "lower_95": -12.134632566826683,
+        "mean_difference": -4.6625809868176775,
+        "repetitions": 2000,
+        "seed": 7,
+        "unit": "declared_group_not_individual_windows",
+        "upper_95": 1.0432259445020131
+      },
+      "population": 2531,
+      "relative_absolute_error_pct": 25.18285369873047,
+      "relative_rows": 2531,
+      "rmse_seconds": 1.5932323932647705,
+      "train_scaled_80_coverage": 0.7001185302252074,
+      "valid_targets": 2531,
+      "wrong_sign": 0
+    },
+    "7": {
+      "coverage": 1.0,
+      "finite": 2531,
+      "macro_recording_relative_error": 25.467710236708324,
+      "mae_seconds": 0.8584960699081421,
+      "native_80_coverage": 0.6787830896878704,
+      "paired_family_bootstrap": {
+        "groups": 7,
+        "lower_95": -12.288812160491943,
+        "mean_difference": -5.132684350013733,
+        "repetitions": 2000,
+        "seed": 7,
+        "unit": "declared_group_not_individual_windows",
+        "upper_95": 0.7410411651929035
+      },
+      "population": 2531,
+      "relative_absolute_error_pct": 24.70301055908203,
+      "relative_rows": 2531,
+      "rmse_seconds": 1.6045794486999512,
+      "train_scaled_80_coverage": 0.7016989332279732,
+      "valid_targets": 2531,
+      "wrong_sign": 0
+    }
+  }
+}
