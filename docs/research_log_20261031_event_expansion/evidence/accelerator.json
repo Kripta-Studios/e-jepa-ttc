@@ -1,0 +1,5159 @@
+{
+  "rows": [
+    {
+      "name": "synthetic_7_expansion",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 3.408916784463655,
+        "translation": [
+          0.47158772766331636,
+          0.3246984782865609
+        ],
+        "ttc_seconds": 0.2933483165554409,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.6229587000561878,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 458,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3907022870828803,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.7002823186372618,
+          "contrast_best": 0.9771260726947396,
+          "contrast_gain": 0.27684375405747785,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0082913968321503,
+          "minimum_warp_scale": 1.0000409070014136,
+          "solutions": [
+            {
+              "parameters": [
+                3.408916784463655,
+                0.47158772766331636,
+                0.3246984782865609
+              ],
+              "objective": -0.9771260726947396,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.408916784463655,
+                0.47158772766331636,
+                0.3246984782865609
+              ],
+              "objective": -0.9771260726947396,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.408916804485098,
+                0.47158772705641316,
+                0.3246984783258471
+              ],
+              "objective": -0.9771260726947395,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 3.408916788975897,
+        "translation": [
+          0.4715877275303012,
+          0.32469847829572546
+        ],
+        "ttc_seconds": 0.2933483161671479,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.5527239000657573,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 461,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3907022870828803,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.417001000023447,
+          "cache_setup": {
+            "preload_seconds": 0.08040440001059324,
+            "capture_seconds": 0.009192600031383336,
+            "capture_warmup_seconds": 0.16562470002099872,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.7002823186372618,
+          "contrast_best": 0.9771260726947395,
+          "contrast_gain": 0.27684375405747774,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008291396945027896,
+          "minimum_warp_scale": 1.0000409070014677,
+          "graph_captures": 2,
+          "graph_replays": 381,
+          "solutions": [
+            {
+              "parameters": [
+                3.408916788975897,
+                0.4715877275303012,
+                0.32469847829572546
+              ],
+              "objective": -0.9771260726947395,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.4089167823431024,
+                0.4715877277313551,
+                0.3246984782827261
+              ],
+              "objective": -0.9771260726947395,
+              "success": true,
+              "evaluations": 129,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.408916812239614,
+                0.4715877268214906,
+                0.3246984783405499
+              ],
+              "objective": -0.9771260726947395,
+              "success": true,
+              "evaluations": 124,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 3.408916786446318,
+        "translation": [
+          0.4715877276068506,
+          0.3246984782906186
+        ],
+        "ttc_seconds": 0.29334831638482634,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.12417840003035963,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 459,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3907022870828803,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00018800003454089165,
+          "cache_setup": {
+            "preload_seconds": 0.00017110002227127552,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.7002823186372618,
+          "contrast_best": 0.9771260726947397,
+          "contrast_gain": 0.27684375405747796,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008291396881735968,
+          "minimum_warp_scale": 1.0000409070014373,
+          "graph_captures": 0,
+          "graph_replays": 379,
+          "solutions": [
+            {
+              "parameters": [
+                3.4089167404735785,
+                0.47158772899285734,
+                0.3246984782013528
+              ],
+              "objective": -0.9771260726947394,
+              "success": true,
+              "evaluations": 132,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.408916786446318,
+                0.4715877276068506,
+                0.3246984782906186
+              ],
+              "objective": -0.9771260726947397,
+              "success": true,
+              "evaluations": 124,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.40891678665702,
+                0.4715877276005796,
+                0.3246984782915123
+              ],
+              "objective": -0.9771260726947395,
+              "success": true,
+              "evaluations": 120,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.512242135490396e-09,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": 3.882930088572323e-10
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.9826629227281956e-09,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": 1.7061457802114433e-10
+      },
+      "wall_seconds": {
+        "cpu": 0.6229931999696419,
+        "cuda_cold": 0.5527485000202432,
+        "cuda_warm": 0.12419280002359301,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.6229931999696419,
+        "cuda_cold_including_shared": 0.5527485000202432,
+        "cuda_warm_including_shared": 0.12419280002359301
+      },
+      "capture_count": 2,
+      "replay_count": 760,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_7_receding",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": -3.4050945361086136,
+        "translation": [
+          0.4717201568305371,
+          0.32451716969527394
+        ],
+        "ttc_seconds": -0.2936776026027204,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.8584504999453202,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 621,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.391180977772343,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.6030565086079485,
+          "contrast_best": 0.9771532544779146,
+          "contrast_gain": 0.3740967458699661,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.013249628468541164,
+          "minimum_warp_scale": 0.863874535729986,
+          "solutions": [
+            {
+              "parameters": [
+                -3.4050945361086136,
+                0.4717201568305371,
+                0.32451716969527394
+              ],
+              "objective": -0.9771532544779146,
+              "success": true,
+              "evaluations": 149,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.4050945361086136,
+                0.4717201568305371,
+                0.32451716969527394
+              ],
+              "objective": -0.9771532544779146,
+              "success": true,
+              "evaluations": 149,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.377782294910101,
+                0.47122595997209066,
+                0.3233809296195827
+              ],
+              "objective": -0.9770997968579385,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -3.405094571728936,
+        "translation": [
+          0.4717201582648279,
+          0.3245171695802174
+        ],
+        "ttc_seconds": -0.2936775995305911,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.26034969999454916,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 618,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.391180977772343,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.08114399993792176,
+          "cache_setup": {
+            "preload_seconds": 0.001760800019837916,
+            "capture_seconds": 0.008732999907806516,
+            "capture_warmup_seconds": 0.020064800046384335,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.6030565086079485,
+          "contrast_best": 0.9771532544779143,
+          "contrast_gain": 0.3740967458699659,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.013249626717990126,
+          "minimum_warp_scale": 0.8638745343059924,
+          "graph_captures": 2,
+          "graph_replays": 538,
+          "solutions": [
+            {
+              "parameters": [
+                -3.405094571728936,
+                0.4717201582648279,
+                0.3245171695802174
+              ],
+              "objective": -0.9771532544779146,
+              "success": true,
+              "evaluations": 147,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.405094545477942,
+                0.4717201572057234,
+                0.3245171696493666
+              ],
+              "objective": -0.9771532544779145,
+              "success": true,
+              "evaluations": 148,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.3777822949422927,
+                0.4712259599720645,
+                0.32338092962306175
+              ],
+              "objective": -0.977099796858064,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -3.4050945351217705,
+        "translation": [
+          0.47172015679531076,
+          0.32451716967829014
+        ],
+        "ttc_seconds": -0.2936776026878322,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.177167100016959,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 625,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.391180977772343,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0002145000034943223,
+          "cache_setup": {
+            "preload_seconds": 0.0002031000331044197,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.6030565086079485,
+          "contrast_best": 0.9771532544779143,
+          "contrast_gain": 0.3740967458699659,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0132496285169601,
+          "minimum_warp_scale": 0.863874535769437,
+          "graph_captures": 0,
+          "graph_replays": 545,
+          "solutions": [
+            {
+              "parameters": [
+                -3.4050945351217705,
+                0.47172015679531076,
+                0.32451716967829014
+              ],
+              "objective": -0.9771532544779146,
+              "success": true,
+              "evaluations": 149,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.4050945577495195,
+                0.4717201577005768,
+                0.3245171695572596
+              ],
+              "objective": -0.9771532544779142,
+              "success": true,
+              "evaluations": 153,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.3777822949254928,
+                0.47122595997207467,
+                0.3233809296195243
+              ],
+              "objective": -0.9770997968579987,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 3.56203222473539e-08,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": 3.0721293287072626e-09
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 9.868430517201432e-10,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": 8.511180649151129e-11
+      },
+      "wall_seconds": {
+        "cpu": 0.8584827999584377,
+        "cuda_cold": 0.26036489999387413,
+        "cuda_warm": 0.17717899999115616,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.8584827999584377,
+        "cuda_cold_including_shared": 0.26036489999387413,
+        "cuda_warm_including_shared": 0.17717899999115616
+      },
+      "capture_count": 2,
+      "replay_count": 1083,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_7_translation",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.0020341037077861953,
+        "translation": [
+          0.471719867168059,
+          0.32496306004657716
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.7455254999222234,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 502,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.39091064245491786,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.8981949916548617,
+          "contrast_best": 0.9771397236472044,
+          "contrast_gain": 0.07894473199234264,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.010275025120332959,
+          "minimum_warp_scale": 1.0000000244092444,
+          "solutions": [
+            {
+              "parameters": [
+                0.0020341037077861953,
+                0.471719867168059,
+                0.32496306004657716
+              ],
+              "objective": -0.9771397236472044,
+              "success": true,
+              "evaluations": 147,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.00203411692771121,
+                0.4717198667101637,
+                0.3249630601093474
+              ],
+              "objective": -0.9771397236472041,
+              "success": true,
+              "evaluations": 136,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.0020341195672806045,
+                0.47171986662107684,
+                0.32496306019706006
+              ],
+              "objective": -0.9771397236472041,
+              "success": true,
+              "evaluations": 136,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.0020341181153247156,
+        "translation": [
+          0.47171986666892246,
+          0.3249630600365341
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.24949680001009256,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 503,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.39091064245491786,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.09336880000773817,
+          "cache_setup": {
+            "preload_seconds": 0.001881500007584691,
+            "capture_seconds": 0.00744509999640286,
+            "capture_warmup_seconds": 0.01649599988013506,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.8981949916548617,
+          "contrast_best": 0.9771397236472044,
+          "contrast_gain": 0.07894473199234264,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.01027502560506599,
+          "minimum_warp_scale": 1.0000000244094174,
+          "graph_captures": 2,
+          "graph_replays": 423,
+          "solutions": [
+            {
+              "parameters": [
+                0.002034119383452852,
+                0.4717198666269976,
+                0.32496306008602815
+              ],
+              "objective": -0.9771397236472043,
+              "success": true,
+              "evaluations": 136,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002034118378872667,
+                0.47171986666447596,
+                0.3249630601714889
+              ],
+              "objective": -0.9771397236472044,
+              "success": true,
+              "evaluations": 143,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.0020341181153247156,
+                0.47171986666892246,
+                0.3249630600365341
+              ],
+              "objective": -0.9771397236472045,
+              "success": true,
+              "evaluations": 141,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.0020341181025213804,
+        "translation": [
+          0.4717198666739843,
+          0.3249630601225818
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.1468624999979511,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 511,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.39091064245491786,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00017390004359185696,
+          "cache_setup": {
+            "preload_seconds": 0.00016060005873441696,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.8981949916548617,
+          "contrast_best": 0.9771397236472041,
+          "contrast_gain": 0.07894473199234242,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.010275025604647992,
+          "minimum_warp_scale": 1.0000000244094172,
+          "graph_captures": 0,
+          "graph_replays": 431,
+          "solutions": [
+            {
+              "parameters": [
+                0.0020341181025213804,
+                0.4717198666739843,
+                0.3249630601225818
+              ],
+              "objective": -0.9771397236472044,
+              "success": true,
+              "evaluations": 140,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002034145220239776,
+                0.47171986573307856,
+                0.3249630602083383
+              ],
+              "objective": -0.9771397236472044,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.0020341489874482884,
+                0.4717198656037468,
+                0.32496306027093247
+              ],
+              "objective": -0.9771397236472043,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.4407538520295332e-08,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.4394735185080387e-08,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.7455573999322951,
+        "cuda_cold": 0.2495174000505358,
+        "cuda_warm": 0.1468748999759555,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.7455573999322951,
+        "cuda_cold_including_shared": 0.2495174000505358,
+        "cuda_warm_including_shared": 0.1468748999759555
+      },
+      "capture_count": 2,
+      "replay_count": 854,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_7_stationary",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.002084663436038721,
+        "translation": [
+          -0.004944605896110444,
+          -0.005899126903870894
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.4639943999936804,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 322,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3906032452622306,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.9771210811022734,
+          "contrast_best": 0.9771397351770201,
+          "contrast_gain": 1.8654074746771165e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.010212746419809293,
+          "minimum_warp_scale": 1.0000000250159613,
+          "solutions": [
+            {
+              "parameters": [
+                0.0021031341283427986,
+                -0.004941879914696244,
+                -0.0058881678318878925
+              ],
+              "objective": -0.9771397351417987,
+              "success": true,
+              "evaluations": 76,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002103134115848276,
+                -0.004941879915186501,
+                -0.005888168661923008
+              ],
+              "objective": -0.9771397351417999,
+              "success": true,
+              "evaluations": 76,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002084663436038721,
+                -0.004944605896110444,
+                -0.005899126903870894
+              ],
+              "objective": -0.9771397351770201,
+              "success": true,
+              "evaluations": 87,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.002084665148534782,
+        "translation": [
+          -0.004944605903640864,
+          -0.005899126737637127
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.15336739993654191,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 322,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3906032452622306,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0733841999899596,
+          "cache_setup": {
+            "preload_seconds": 0.0017064999556168914,
+            "capture_seconds": 0.008719100034795702,
+            "capture_warmup_seconds": 0.01829939999151975,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.9771210811022734,
+          "contrast_best": 0.9771397351770211,
+          "contrast_gain": 1.8654074747770366e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.01021274647638093,
+          "minimum_warp_scale": 1.0000000250159817,
+          "graph_captures": 2,
+          "graph_replays": 242,
+          "solutions": [
+            {
+              "parameters": [
+                0.002103134127252039,
+                -0.004941879914772289,
+                -0.005888166681745291
+              ],
+              "objective": -0.9771397351417977,
+              "success": true,
+              "evaluations": 76,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002103134115478086,
+                -0.004941879915282324,
+                -0.0058881676972787535
+              ],
+              "objective": -0.9771397351417985,
+              "success": true,
+              "evaluations": 76,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002084665148534782,
+                -0.004944605903640864,
+                -0.005899126737637127
+              ],
+              "objective": -0.977139735177021,
+              "success": true,
+              "evaluations": 87,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.0020846632694852744,
+        "translation": [
+          -0.004944605911756816,
+          -0.005899126234448495
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.07861189998220652,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 322,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3906032452622306,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00015159999020397663,
+          "cache_setup": {
+            "preload_seconds": 0.00013689999468624592,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.9771210811022734,
+          "contrast_best": 0.9771397351770237,
+          "contrast_gain": 1.865407475032388e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.010212746417233909,
+          "minimum_warp_scale": 1.0000000250159593,
+          "graph_captures": 0,
+          "graph_replays": 242,
+          "solutions": [
+            {
+              "parameters": [
+                0.0021031341300850387,
+                -0.004941879914527074,
+                -0.0058881678250658955
+              ],
+              "objective": -0.9771397351417987,
+              "success": true,
+              "evaluations": 76,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.002103134119181626,
+                -0.004941879915104655,
+                -0.005888168721799385
+              ],
+              "objective": -0.9771397351417997,
+              "success": true,
+              "evaluations": 76,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.0020846632694852744,
+                -0.004944605911756816,
+                -0.005899126234448495
+              ],
+              "objective": -0.9771397351770239,
+              "success": true,
+              "evaluations": 87,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.712496061189589e-09,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 6.694223994574422e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.4640254999976605,
+        "cuda_cold": 0.15338270005304366,
+        "cuda_warm": 0.07862369995564222,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.4640254999976605,
+        "cuda_cold_including_shared": 0.15338270005304366,
+        "cuda_warm_including_shared": 0.07862369995564222
+      },
+      "capture_count": 2,
+      "replay_count": 484,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_7_noise",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": -4.220748434277654,
+        "translation": [
+          -1.337348289995359,
+          0.10994109943257745
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 1.1566796000115573,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.9667738537396015,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.703922357881638,
+          "contrast_best": 0.7241770871630843,
+          "contrast_gain": 0.020254729281446227,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0014848188497534887,
+          "minimum_warp_scale": 0.8312671398428823,
+          "solutions": [
+            {
+              "parameters": [
+                -4.220748434277654,
+                -1.337348289995359,
+                0.10994109943257745
+              ],
+              "objective": -0.7241770871630843,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -4.2207484407287525,
+                -1.3373484070961648,
+                0.10994093535203411
+              ],
+              "objective": -0.724177087159319,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -4.244620127003847,
+                -1.3307920969489946,
+                0.13754443660895305
+              ],
+              "objective": -0.7241725640527936,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -4.220748434292915,
+        "translation": [
+          -1.3373482902845473,
+          0.1099410990303241
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.3170395999914035,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.9667738537396015,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.08645070006605238,
+          "cache_setup": {
+            "preload_seconds": 0.001830599969252944,
+            "capture_seconds": 0.008749799919314682,
+            "capture_warmup_seconds": 0.016369800083339214,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.703922357881638,
+          "contrast_best": 0.7241770871630753,
+          "contrast_gain": 0.020254729281437234,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0014848188493044034,
+          "minimum_warp_scale": 0.8312671398422722,
+          "graph_captures": 2,
+          "graph_replays": 723,
+          "solutions": [
+            {
+              "parameters": [
+                -4.220748434292915,
+                -1.3373482902845473,
+                0.1099410990303241
+              ],
+              "objective": -0.7241770871630752,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -4.220748464569961,
+                -1.3373488426462363,
+                0.10994032505288456
+              ],
+              "objective": -0.7241770871451271,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -4.244620131889962,
+                -1.3307920810864309,
+                0.13754438621611298
+              ],
+              "objective": -0.7241725640416854,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -4.220748440679434,
+        "translation": [
+          -1.3373484060877456,
+          0.10994093675945837
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.22727749997284263,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.9667738537396015,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0001506999833509326,
+          "cache_setup": {
+            "preload_seconds": 0.00014129991177469492,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.703922357881638,
+          "contrast_best": 0.7241770871593511,
+          "contrast_gain": 0.0202547292777131,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0014848186646415629,
+          "minimum_warp_scale": 0.8312671395869583,
+          "graph_captures": 0,
+          "graph_replays": 723,
+          "solutions": [
+            {
+              "parameters": [
+                -4.220748464519922,
+                -1.3373488427792184,
+                0.10994032491255953
+              ],
+              "objective": -0.7241770871451256,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -4.220748440679434,
+                -1.3373484060877456,
+                0.10994093675945837
+              ],
+              "objective": -0.7241770871593511,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -4.244620131891666,
+                -1.330792081081828,
+                0.137544386217681
+              ],
+              "objective": -0.724172564041686,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.022533417469276e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.6267311907236515e-07,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 1.1567064000992104,
+        "cuda_cold": 0.31705389998387545,
+        "cuda_warm": 0.22728979995008558,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 1.1567064000992104,
+        "cuda_cold_including_shared": 0.31705389998387545,
+        "cuda_warm_including_shared": 0.22728979995008558
+      },
+      "capture_count": 2,
+      "replay_count": 1446,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_7_edge",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0006884000031277537,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 6.017044425593513e-06
+        }
+      },
+      "cuda_cold": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0004241000860929489,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 6.017044425593513e-06
+        }
+      },
+      "cuda_warm": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0003562000347301364,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 6.017044425593513e-06
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": null,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": null,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.0006974000716581941,
+        "cuda_cold": 0.000435899943113327,
+        "cuda_warm": 0.00036120007280260324,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.0006974000716581941,
+        "cuda_cold_including_shared": 0.000435899943113327,
+        "cuda_warm_including_shared": 0.00036120007280260324
+      },
+      "capture_count": 0,
+      "replay_count": 0,
+      "peak_allocated_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_31_expansion",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 4.615294701061622,
+        "translation": [
+          -0.5076487537009966,
+          0.20630165387142918
+        ],
+        "ttc_seconds": 0.2166708877268395,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.7804834999842569,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 539,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38153583228087745,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.5940422380963722,
+          "contrast_best": 0.9779662566043813,
+          "contrast_gain": 0.38392401850800906,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008048933228114064,
+          "minimum_warp_scale": 1.000004615294701,
+          "solutions": [
+            {
+              "parameters": [
+                4.615294701117139,
+                -0.5076487537035836,
+                0.20630165387156446
+              ],
+              "objective": -0.9779662566043806,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                4.615294701061622,
+                -0.5076487537009966,
+                0.20630165387142918
+              ],
+              "objective": -0.9779662566043813,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                4.615294701126267,
+                -0.507648753699647,
+                0.2063016538716634
+              ],
+              "objective": -0.9779662566043803,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 4.615294700941734,
+        "translation": [
+          -0.5076487536979513,
+          0.20630165386814434
+        ],
+        "ttc_seconds": 0.2166708877324678,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.24876880005467683,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 539,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38153583228087745,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.09149229992181063,
+          "cache_setup": {
+            "preload_seconds": 0.0023433000314980745,
+            "capture_seconds": 0.007557899923995137,
+            "capture_warmup_seconds": 0.017465800046920776,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.5940422380963722,
+          "contrast_best": 0.9779662566043829,
+          "contrast_gain": 0.3839240185080106,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008048933224619081,
+          "minimum_warp_scale": 1.0000046152947009,
+          "graph_captures": 2,
+          "graph_replays": 459,
+          "solutions": [
+            {
+              "parameters": [
+                4.615294700941734,
+                -0.5076487536979513,
+                0.20630165386814434
+              ],
+              "objective": -0.9779662566043831,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                4.615294701032803,
+                -0.5076487536976422,
+                0.20630165387110472
+              ],
+              "objective": -0.9779662566043817,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                4.615294701128509,
+                -0.5076487537030439,
+                0.2063016538717206
+              ],
+              "objective": -0.9779662566043809,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 4.6152947009275795,
+        "translation": [
+          -0.5076487536927231,
+          0.20630165386889404
+        ],
+        "ttc_seconds": 0.2166708877331323,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.1616312999976799,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 539,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38153583228087745,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00021109997760504484,
+          "cache_setup": {
+            "preload_seconds": 0.00019489997066557407,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.5940422380963722,
+          "contrast_best": 0.9779662566043826,
+          "contrast_gain": 0.3839240185080104,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008048933224245047,
+          "minimum_warp_scale": 1.0000046152947009,
+          "graph_captures": 0,
+          "graph_replays": 459,
+          "solutions": [
+            {
+              "parameters": [
+                4.6152947009275795,
+                -0.5076487536927231,
+                0.20630165386889404
+              ],
+              "objective": -0.9779662566043826,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                4.6152947010044745,
+                -0.5076487536972119,
+                0.2063016538707728
+              ],
+              "objective": -0.9779662566043821,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                4.615294700961664,
+                -0.5076487536963209,
+                0.20630165386901328
+              ],
+              "objective": -0.9779662566043824,
+              "success": true,
+              "evaluations": 152,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.198872112695426e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 5.628275623337231e-12
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.340421107443035e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 6.2927996147266185e-12
+      },
+      "wall_seconds": {
+        "cpu": 0.7805176000110805,
+        "cuda_cold": 0.24878699996042997,
+        "cuda_warm": 0.16164079995360225,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.7805176000110805,
+        "cuda_cold_including_shared": 0.24878699996042997,
+        "cuda_warm_including_shared": 0.16164079995360225
+      },
+      "capture_count": 2,
+      "replay_count": 918,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_31_receding",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": -4.570867477315685,
+        "translation": [
+          -0.5080908640218001,
+          0.2056432569460858
+        ],
+        "ttc_seconds": -0.21877685252587237,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.8265512000070885,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 611,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38432567434272114,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.43996372311877857,
+          "contrast_best": 0.9779685141708357,
+          "contrast_gain": 0.5380047910520571,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.01617845945715668,
+          "minimum_warp_scale": 0.8171927261122365,
+          "solutions": [
+            {
+              "parameters": [
+                -4.57086747731911,
+                -0.5080908640223034,
+                0.20564325694568442
+              ],
+              "objective": -0.9779685141708355,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.570867477315685,
+                -0.5080908640218001,
+                0.2056432569460858
+              ],
+              "objective": -0.9779685141708357,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.171774900021751,
+                -0.554307612431238,
+                0.21553859177731471
+              ],
+              "objective": -0.9673863686272002,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -4.570867477317697,
+        "translation": [
+          -0.5080908640244316,
+          0.20564325694567606
+        ],
+        "ttc_seconds": -0.21877685252577608,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.2548105000751093,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 611,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38432567434272114,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.07213919993955642,
+          "cache_setup": {
+            "preload_seconds": 0.0016386000206694007,
+            "capture_seconds": 0.007897600065916777,
+            "capture_warmup_seconds": 0.017952799913473427,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.43996372311877857,
+          "contrast_best": 0.9779685141708356,
+          "contrast_gain": 0.5380047910520571,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.016178459456944516,
+          "minimum_warp_scale": 0.817192726112156,
+          "graph_captures": 2,
+          "graph_replays": 531,
+          "solutions": [
+            {
+              "parameters": [
+                -4.570867477317697,
+                -0.5080908640244316,
+                0.20564325694567606
+              ],
+              "objective": -0.9779685141708356,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.570867477315741,
+                -0.5080908640225396,
+                0.2056432569460765
+              ],
+              "objective": -0.9779685141708354,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.171774903313559,
+                -0.5543076135268393,
+                0.21553859176907741
+              ],
+              "objective": -0.9673863687611068,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -4.570867477320945,
+        "translation": [
+          -0.5080908640245044,
+          0.20564325694657712
+        ],
+        "ttc_seconds": -0.21877685252562062,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.16857189999427646,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 611,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38432567434272114,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0001889999257400632,
+          "cache_setup": {
+            "preload_seconds": 0.000174800050444901,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.43996372311877857,
+          "contrast_best": 0.9779685141708356,
+          "contrast_gain": 0.5380047910520571,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.01617845945672336,
+          "minimum_warp_scale": 0.8171927261120261,
+          "graph_captures": 0,
+          "graph_replays": 531,
+          "solutions": [
+            {
+              "parameters": [
+                -4.570867477320945,
+                -0.5080908640245044,
+                0.20564325694657712
+              ],
+              "objective": -0.9779685141708357,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.570867477316207,
+                -0.5080908640225328,
+                0.2056432569460335
+              ],
+              "objective": -0.9779685141708353,
+              "success": true,
+              "evaluations": 144,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.171774899620118,
+                -0.5543076122990356,
+                0.21553859176968815
+              ],
+              "objective": -0.9673863686108389,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 2.631450612966546e-12,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 9.62840918106167e-14
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 5.259792601464142e-12,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 2.5174307083375425e-13
+      },
+      "wall_seconds": {
+        "cpu": 0.8265823000110686,
+        "cuda_cold": 0.2548281999770552,
+        "cuda_warm": 0.1685847999760881,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.8265823000110686,
+        "cuda_cold_including_shared": 0.2548281999770552,
+        "cuda_warm_including_shared": 0.1685847999760881
+      },
+      "capture_count": 2,
+      "replay_count": 1062,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_31_translation",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.022472977674097602,
+        "translation": [
+          -0.5079535887621486,
+          0.20591306061804188
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.6717335999710485,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 469,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38276203936480496,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.897997725686084,
+          "contrast_best": 0.9779671649201057,
+          "contrast_gain": 0.07996943923402167,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011092108612905327,
+          "minimum_warp_scale": 1.0000000224729777,
+          "solutions": [
+            {
+              "parameters": [
+                0.022472977674097602,
+                -0.5079535887621486,
+                0.20591306061804188
+              ],
+              "objective": -0.9779671649201057,
+              "success": true,
+              "evaluations": 136,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022472899281475986,
+                -0.5079535871587477,
+                0.2059130595657087
+              ],
+              "objective": -0.9779671649201057,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022472899281475986,
+                -0.5079535871587477,
+                0.2059130595657087
+              ],
+              "objective": -0.9779671649201057,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.022472954878450198,
+        "translation": [
+          -0.5079535882960596,
+          0.2059130603120118
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.2575626999605447,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 454,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38276203936480496,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.10078670002985746,
+          "cache_setup": {
+            "preload_seconds": 0.002487999969162047,
+            "capture_seconds": 0.008177199983038008,
+            "capture_warmup_seconds": 0.022202200023457408,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.897997725686084,
+          "contrast_best": 0.9779671649201058,
+          "contrast_gain": 0.07996943923402178,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011092107665483075,
+          "minimum_warp_scale": 1.0000000224729548,
+          "graph_captures": 2,
+          "graph_replays": 374,
+          "solutions": [
+            {
+              "parameters": [
+                0.02247298898307579,
+                -0.5079535889935719,
+                0.20591306076967336
+              ],
+              "objective": -0.9779671649201057,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022472932122231417,
+                -0.507953587830636,
+                0.205913060006518
+              ],
+              "objective": -0.9779671649201057,
+              "success": true,
+              "evaluations": 123,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022472954878450198,
+                -0.5079535882960596,
+                0.2059130603120118
+              ],
+              "objective": -0.9779671649201059,
+              "success": true,
+              "evaluations": 123,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.02247295493170632,
+        "translation": [
+          -0.5079535882971252,
+          0.20591306031260076
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.16078019991982728,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 455,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.38276203936480496,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00018880004063248634,
+          "cache_setup": {
+            "preload_seconds": 0.00017769995611160994,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.897997725686084,
+          "contrast_best": 0.9779671649201059,
+          "contrast_gain": 0.07996943923402189,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011092107667697415,
+          "minimum_warp_scale": 1.0000000224729548,
+          "graph_captures": 0,
+          "graph_replays": 375,
+          "solutions": [
+            {
+              "parameters": [
+                0.022472932120484106,
+                -0.5079535878306132,
+                0.2059130600065848
+              ],
+              "objective": -0.9779671649201058,
+              "success": true,
+              "evaluations": 124,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022472903147151474,
+                -0.5079535872381274,
+                0.20591305961757225
+              ],
+              "objective": -0.9779671649201058,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.02247295493170632,
+                -0.5079535882971252,
+                0.20591306031260076
+              ],
+              "objective": -0.9779671649201059,
+              "success": true,
+              "evaluations": 123,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 2.2795647404427744e-08,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 2.2742391282692953e-08,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.671762999962084,
+        "cuda_cold": 0.25757660006638616,
+        "cuda_warm": 0.16079019999597222,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.671762999962084,
+        "cuda_cold_including_shared": 0.25757660006638616,
+        "cuda_warm_including_shared": 0.16079019999597222
+      },
+      "capture_count": 2,
+      "replay_count": 749,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_31_stationary",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.02265094778361328,
+        "translation": [
+          0.01122819892001793,
+          -0.0015095785545875507
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.5030253999866545,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 324,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.3826065107760758,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.9779012295800544,
+          "contrast_best": 0.977967701593034,
+          "contrast_gain": 6.647201297960148e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0109617876013266,
+          "minimum_warp_scale": 1.0000000226509478,
+          "solutions": [
+            {
+              "parameters": [
+                0.022557675867195974,
+                0.011229413674483714,
+                -0.001509278579861824
+              ],
+              "objective": -0.9779677006967801,
+              "success": true,
+              "evaluations": 71,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.02265094778361328,
+                0.01122819892001793,
+                -0.0015095785545875507
+              ],
+              "objective": -0.977967701593034,
+              "success": true,
+              "evaluations": 99,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022557675867260114,
+                0.011229413673232186,
+                -0.0015092785815122114
+              ],
+              "objective": -0.97796770069678,
+              "success": true,
+              "evaluations": 71,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.02265094778760173,
+        "translation": [
+          0.011228198919742378,
+          -0.0015095785472203148
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.222113800002262,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 324,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.3826065107760758,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.10675610008183867,
+          "cache_setup": {
+            "preload_seconds": 0.0020365999080240726,
+            "capture_seconds": 0.009221099899150431,
+            "capture_warmup_seconds": 0.02180060010869056,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.9779012295800544,
+          "contrast_best": 0.9779677015930341,
+          "contrast_gain": 6.64720129797125e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.010961787601468709,
+          "minimum_warp_scale": 1.0000000226509478,
+          "graph_captures": 2,
+          "graph_replays": 244,
+          "solutions": [
+            {
+              "parameters": [
+                0.022557675865389967,
+                0.011229413677018223,
+                -0.0015092785849122746
+              ],
+              "objective": -0.9779677006967802,
+              "success": true,
+              "evaluations": 71,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.02265094778760173,
+                0.011228198919742378,
+                -0.0015095785472203148
+              ],
+              "objective": -0.9779677015930344,
+              "success": true,
+              "evaluations": 99,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.02255767586849103,
+                0.011229413674979202,
+                -0.001509278579900695
+              ],
+              "objective": -0.97796770069678,
+              "success": true,
+              "evaluations": 71,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.022650947757124573,
+        "translation": [
+          0.01122819892171208,
+          -0.0015095785497149163
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.11126919998787344,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 324,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.3826065107760758,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00024189997930079699,
+          "cache_setup": {
+            "preload_seconds": 0.00021660001948475838,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.9779012295800544,
+          "contrast_best": 0.977967701593034,
+          "contrast_gain": 6.647201297960148e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.01096178760025579,
+          "minimum_warp_scale": 1.0000000226509478,
+          "graph_captures": 0,
+          "graph_replays": 244,
+          "solutions": [
+            {
+              "parameters": [
+                0.022557675865371052,
+                0.01122941367742328,
+                -0.0015092785801716696
+              ],
+              "objective": -0.9779677006967801,
+              "success": true,
+              "evaluations": 71,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022650947757124573,
+                0.01122819892171208,
+                -0.0015095785497149163
+              ],
+              "objective": -0.977967701593034,
+              "success": true,
+              "evaluations": 99,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.022557675865580704,
+                0.011229413676842425,
+                -0.0015092785849843014
+              ],
+              "objective": -0.9779677006967801,
+              "success": true,
+              "evaluations": 71,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 7.367235944563677e-12,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 2.648870706112305e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.5030623999191448,
+        "cuda_cold": 0.222131900023669,
+        "cuda_warm": 0.11128409998491406,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.5030623999191448,
+        "cuda_cold_including_shared": 0.222131900023669,
+        "cuda_warm_including_shared": 0.11128409998491406
+      },
+      "capture_count": 2,
+      "replay_count": 488,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_31_noise",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": -3.705446125973089,
+        "translation": [
+          0.5673573571211932,
+          1.6214792644852756
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "weak_temporal_agreement",
+        "elapsed_seconds": 0.8915518999565393,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 612,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.9490395607971158,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.7188760763657728,
+          "contrast_best": 0.7248880506858775,
+          "contrast_gain": 0.006011974320104696,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.00034517528646715867,
+          "minimum_warp_scale": 0.8518043876378323,
+          "solutions": [
+            {
+              "parameters": [
+                -0.9882230370149648,
+                0.0621006778565709,
+                0.11669702712829622
+              ],
+              "objective": -0.7226977691669255,
+              "success": true,
+              "evaluations": 181,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -0.9882230370238694,
+                0.06210067798876205,
+                0.11669702642732076
+              ],
+              "objective": -0.7226977691669234,
+              "success": true,
+              "evaluations": 181,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.705446125973089,
+                0.5673573571211932,
+                1.6214792644852756
+              ],
+              "objective": -0.7248880506858775,
+              "success": true,
+              "evaluations": 167,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -3.705446125960843,
+        "translation": [
+          0.5673573571195343,
+          1.6214792644540739
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "weak_temporal_agreement",
+        "elapsed_seconds": 0.2550113999750465,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 612,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.9490395607971158,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.07936460000928491,
+          "cache_setup": {
+            "preload_seconds": 0.0022257999517023563,
+            "capture_seconds": 0.008047600043937564,
+            "capture_warmup_seconds": 0.02026969997677952,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.7188760763657728,
+          "contrast_best": 0.7248880506858849,
+          "contrast_gain": 0.0060119743201121345,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.00034517528650135354,
+          "minimum_warp_scale": 0.851804387638322,
+          "graph_captures": 2,
+          "graph_replays": 532,
+          "solutions": [
+            {
+              "parameters": [
+                -0.9882230370050532,
+                0.06210067785805401,
+                0.1166970271235108
+              ],
+              "objective": -0.7226977691669275,
+              "success": true,
+              "evaluations": 181,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -0.9882230370275246,
+                0.06210067798598549,
+                0.11669702644079273
+              ],
+              "objective": -0.7226977691669227,
+              "success": true,
+              "evaluations": 181,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.705446125960843,
+                0.5673573571195343,
+                1.6214792644540739
+              ],
+              "objective": -0.7248880506858849,
+              "success": true,
+              "evaluations": 167,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -3.7054461259903198,
+        "translation": [
+          0.5673573571198914,
+          1.6214792645090723
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "weak_temporal_agreement",
+        "elapsed_seconds": 0.1750426999060437,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 612,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 0.9490395607971158,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00031429994851350784,
+          "cache_setup": {
+            "preload_seconds": 0.00029030011501163244,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.7188760763657728,
+          "contrast_best": 0.7248880506858691,
+          "contrast_gain": 0.006011974320096369,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.00034517528644473217,
+          "minimum_warp_scale": 0.8518043876371432,
+          "graph_captures": 0,
+          "graph_replays": 532,
+          "solutions": [
+            {
+              "parameters": [
+                -0.9882230370248488,
+                0.06210067786212052,
+                0.11669702709616903
+              ],
+              "objective": -0.7226977691669236,
+              "success": true,
+              "evaluations": 181,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -0.988223037040553,
+                0.062100677982837256,
+                0.11669702645283352
+              ],
+              "objective": -0.7226977691669199,
+              "success": true,
+              "evaluations": 181,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.7054461259903198,
+                0.5673573571198914,
+                1.6214792645090723
+              ],
+              "objective": -0.7248880506858691,
+              "success": true,
+              "evaluations": 167,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 3.12017078840654e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 2.379674235442053e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.8915805000578985,
+        "cuda_cold": 0.2550285999896005,
+        "cuda_warm": 0.175052999984473,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.8915805000578985,
+        "cuda_cold_including_shared": 0.2550285999896005,
+        "cuda_warm_including_shared": 0.175052999984473
+      },
+      "capture_count": 2,
+      "replay_count": 1064,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_31_edge",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.00048749998677521944,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 5.86708866022422e-06
+        }
+      },
+      "cuda_cold": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0003980000037699938,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 5.86708866022422e-06
+        }
+      },
+      "cuda_warm": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.00031729997135698795,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993,
+          "spatial_eigen_ratio": 5.86708866022422e-06
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": null,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": null,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.0004946000408381224,
+        "cuda_cold": 0.0004075999604538083,
+        "cuda_warm": 0.0003206999972462654,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.0004946000408381224,
+        "cuda_cold_including_shared": 0.0004075999604538083,
+        "cuda_warm_including_shared": 0.0003206999972462654
+      },
+      "capture_count": 0,
+      "replay_count": 0,
+      "peak_allocated_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_47_expansion",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 3.908946978340784,
+        "translation": [
+          0.311627703273208,
+          -0.03818570794623593
+        ],
+        "ttc_seconds": 0.2558233727755668,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.6624227999709547,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 446,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.39717785756324864,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.6419473493981848,
+          "contrast_best": 0.9867333308436004,
+          "contrast_gain": 0.3447859814454156,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008696307641246404,
+          "minimum_warp_scale": 1.0000078178939567,
+          "solutions": [
+            {
+              "parameters": [
+                3.9089469783008006,
+                0.31162770327518735,
+                -0.03818570794608948
+              ],
+              "objective": -0.9867333308436,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.908946978340784,
+                0.311627703273208,
+                -0.03818570794623593
+              ],
+              "objective": -0.9867333308436004,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.9089469783582573,
+                0.3116277032736062,
+                -0.03818570794571937
+              ],
+              "objective": -0.9867333308436002,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 3.908946978268378,
+        "translation": [
+          0.31162770327067185,
+          -0.03818570794556106
+        ],
+        "ttc_seconds": 0.2558233727803055,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.24208969995379448,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 446,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.39717785756324864,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.09547689999453723,
+          "cache_setup": {
+            "preload_seconds": 0.0025463999481871724,
+            "capture_seconds": 0.009529900038614869,
+            "capture_warmup_seconds": 0.019328700029291213,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.6419473493981848,
+          "contrast_best": 0.9867333308436002,
+          "contrast_gain": 0.3447859814454154,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008696307639279532,
+          "minimum_warp_scale": 1.0000078178939564,
+          "graph_captures": 2,
+          "graph_replays": 366,
+          "solutions": [
+            {
+              "parameters": [
+                3.908946978346261,
+                0.31162770327240763,
+                -0.03818570794593146
+              ],
+              "objective": -0.9867333308436002,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.908946978268378,
+                0.31162770327067185,
+                -0.03818570794556106
+              ],
+              "objective": -0.9867333308436004,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.9089469782899395,
+                0.31162770327066364,
+                -0.038185707945902765
+              ],
+              "objective": -0.9867333308436,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 3.9089469783301887,
+        "translation": [
+          0.3116277032721813,
+          -0.038185707945940416
+        ],
+        "ttc_seconds": 0.25582337277626027,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.14667210006155074,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 446,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.39717785756324864,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0003288999432697892,
+          "cache_setup": {
+            "preload_seconds": 0.00031020003370940685,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.6419473493981848,
+          "contrast_best": 0.9867333308436005,
+          "contrast_gain": 0.3447859814454157,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.008696307640953527,
+          "minimum_warp_scale": 1.0000078178939567,
+          "graph_captures": 0,
+          "graph_replays": 366,
+          "solutions": [
+            {
+              "parameters": [
+                3.9089469783362265,
+                0.3116277032736085,
+                -0.038185707946052146
+              ],
+              "objective": -0.9867333308436004,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.9089469783301887,
+                0.3116277032721813,
+                -0.038185707945940416
+              ],
+              "objective": -0.9867333308436005,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                3.908946978283685,
+                0.31162770327071093,
+                -0.03818570794564125
+              ],
+              "objective": -0.9867333308436003,
+              "success": true,
+              "evaluations": 121,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 7.240608113079361e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 4.738653913705093e-12
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.0595524457812644e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 6.934453011808728e-13
+      },
+      "wall_seconds": {
+        "cpu": 0.6624489999376237,
+        "cuda_cold": 0.24211099999956787,
+        "cuda_warm": 0.1466810000129044,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.6624489999376237,
+        "cuda_cold_including_shared": 0.24211099999956787,
+        "cuda_warm_including_shared": 0.1466810000129044
+      },
+      "capture_count": 2,
+      "replay_count": 732,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_47_receding",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": -3.8978743015265787,
+        "translation": [
+          0.3116574577097109,
+          -0.03902945144387689
+        ],
+        "ttc_seconds": -0.2565500892648991,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.8683673000195995,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 577,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.3986541661673892,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.5002066637631901,
+          "contrast_best": 0.9867126921321738,
+          "contrast_gain": 0.4865060283689837,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.015087031841931609,
+          "minimum_warp_scale": 0.844100619436143,
+          "solutions": [
+            {
+              "parameters": [
+                -3.8978743015265787,
+                0.3116574577097109,
+                -0.03902945144387689
+              ],
+              "objective": -0.9867126921321738,
+              "success": true,
+              "evaluations": 127,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.8978743015089283,
+                0.31165745771384396,
+                -0.039029451444253356
+              ],
+              "objective": -0.9867126921321738,
+              "success": true,
+              "evaluations": 127,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.7295765884549925,
+                0.21026236093087652,
+                -0.05751770468494401
+              ],
+              "objective": -0.9816451455150003,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -3.897874301525092,
+        "translation": [
+          0.311657457712787,
+          -0.03902945144383856
+        ],
+        "ttc_seconds": -0.25655008926499695,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.44341460010036826,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 577,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.3986541661673892,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.21267080004327,
+          "cache_setup": {
+            "preload_seconds": 0.002370300004258752,
+            "capture_seconds": 0.008229600032791495,
+            "capture_warmup_seconds": 0.1445264999056235,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.5002066637631901,
+          "contrast_best": 0.9867126921321738,
+          "contrast_gain": 0.4865060283689837,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.015087031842060505,
+          "minimum_warp_scale": 0.8441006194362024,
+          "graph_captures": 2,
+          "graph_replays": 497,
+          "solutions": [
+            {
+              "parameters": [
+                -3.897874301525092,
+                0.311657457712787,
+                -0.03902945144383856
+              ],
+              "objective": -0.986712692132174,
+              "success": true,
+              "evaluations": 127,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.89787430150012,
+                0.31165745771734676,
+                -0.039029451444072216
+              ],
+              "objective": -0.9867126921321737,
+              "success": true,
+              "evaluations": 127,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.729569800398425,
+                0.21026245297081103,
+                -0.05751082445012272
+              ],
+              "objective": -0.9816451243490606,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -3.897874301512475,
+        "translation": [
+          0.3116574577227903,
+          -0.03902945144397025
+        ],
+        "ttc_seconds": -0.2565500892658274,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.1981965999584645,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 577,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.3986541661673892,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00017950008623301983,
+          "cache_setup": {
+            "preload_seconds": 0.0001653999788686633,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.5002066637631901,
+          "contrast_best": 0.9867126921321736,
+          "contrast_gain": 0.4865060283689835,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.015087031842927923,
+          "minimum_warp_scale": 0.8441006194367071,
+          "graph_captures": 0,
+          "graph_replays": 497,
+          "solutions": [
+            {
+              "parameters": [
+                -3.897874301512475,
+                0.3116574577227903,
+                -0.03902945144397025
+              ],
+              "objective": -0.9867126921321738,
+              "success": true,
+              "evaluations": 127,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.897874301534956,
+                0.3116574577147918,
+                -0.039029451443524696
+              ],
+              "objective": -0.9867126921321738,
+              "success": true,
+              "evaluations": 127,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -3.729576588349451,
+                0.21026236084065977,
+                -0.05751770472094806
+              ],
+              "objective": -0.9816451455097386,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 3.0761504454801525e-12,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 9.786615962070755e-14
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.4103829215628139e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 9.283129820403246e-13
+      },
+      "wall_seconds": {
+        "cpu": 0.8684001000365242,
+        "cuda_cold": 0.4434268999611959,
+        "cuda_warm": 0.19820770004298538,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.8684001000365242,
+        "cuda_cold_including_shared": 0.4434268999611959,
+        "cuda_warm_including_shared": 0.19820770004298538
+      },
+      "capture_count": 2,
+      "replay_count": 994,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_47_translation",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.005575029424713156,
+        "translation": [
+          0.3119687429108376,
+          -0.038457402046627856
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.7510548999998719,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 458,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.39790575395340105,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.9581601077044339,
+          "contrast_best": 0.986723072738985,
+          "contrast_gain": 0.028562965034551024,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011152310231867135,
+          "minimum_warp_scale": 1.0000000111500589,
+          "solutions": [
+            {
+              "parameters": [
+                0.005575029424713156,
+                0.3119687429108376,
+                -0.038457402046627856
+              ],
+              "objective": -0.986723072738985,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005575028558629871,
+                0.31196874286131254,
+                -0.03845740204388779
+              ],
+              "objective": -0.986723072738985,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005575029104164743,
+                0.31196874289219295,
+                -0.03845740204735097
+              ],
+              "objective": -0.986723072738985,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.0055750284991785675,
+        "translation": [
+          0.31196874286840004,
+          -0.03845740205171872
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.20394499995745718,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 458,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.39790575395340105,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.07501769997179508,
+          "cache_setup": {
+            "preload_seconds": 0.0016898000612854958,
+            "capture_seconds": 0.0068029999965801835,
+            "capture_warmup_seconds": 0.018927099998109043,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.9581601077044339,
+          "contrast_best": 0.9867230727389847,
+          "contrast_gain": 0.028562965034550802,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011152310196346882,
+          "minimum_warp_scale": 1.000000011150057,
+          "graph_captures": 2,
+          "graph_replays": 378,
+          "solutions": [
+            {
+              "parameters": [
+                0.005575027687571555,
+                0.31196874282614706,
+                -0.03845740204718194
+              ],
+              "objective": -0.9867230727389849,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.0055750284991785675,
+                0.31196874286840004,
+                -0.03845740205171872
+              ],
+              "objective": -0.986723072738985,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005575027946632489,
+                0.3119687428349226,
+                -0.03845740204749517
+              ],
+              "objective": -0.9867230727389847,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.005575028221756119,
+        "translation": [
+          0.31196874285354953,
+          -0.0384574020514655
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "unresolved_expansion",
+        "elapsed_seconds": 0.12747339997440577,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 458,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.39790575395340105,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00023290002718567848,
+          "cache_setup": {
+            "preload_seconds": 0.00022000004537403584,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.9581601077044339,
+          "contrast_best": 0.9867230727389852,
+          "contrast_gain": 0.028562965034551246,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011152310185677194,
+          "minimum_warp_scale": 1.0000000111500564,
+          "graph_captures": 0,
+          "graph_replays": 378,
+          "solutions": [
+            {
+              "parameters": [
+                0.005575029362389031,
+                0.31196874290642806,
+                -0.0384574020470096
+              ],
+              "objective": -0.9867230727389847,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005575028255960661,
+                0.3119687428528948,
+                -0.03845740204839361
+              ],
+              "objective": -0.9867230727389847,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005575028221756119,
+                0.31196874285354953,
+                -0.0384574020514655
+              ],
+              "objective": -0.986723072738985,
+              "success": true,
+              "evaluations": 125,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 9.255345882058785e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.202957036934571e-09,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.7510893000289798,
+        "cuda_cold": 0.20396190008614212,
+        "cuda_warm": 0.12748309993185103,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.7510893000289798,
+        "cuda_cold_including_shared": 0.20396190008614212,
+        "cuda_warm_including_shared": 0.12748309993185103
+      },
+      "capture_count": 2,
+      "replay_count": 756,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_47_stationary",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.00562120659066273,
+        "translation": [
+          0.007490647717922255,
+          0.003328436473131849
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.46074850007425994,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 290,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.3980057334574273,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.9867003589912103,
+          "contrast_best": 0.9867231038910736,
+          "contrast_gain": 2.274489986331396e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011217347599422833,
+          "minimum_warp_scale": 1.0000000112424132,
+          "solutions": [
+            {
+              "parameters": [
+                0.005611522879497252,
+                0.007489941935527171,
+                0.003328415728944309
+              ],
+              "objective": -0.9867231038864924,
+              "success": true,
+              "evaluations": 65,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005611522879574349,
+                0.007489941939016421,
+                0.0033284157288457823
+              ],
+              "objective": -0.9867231038864924,
+              "success": true,
+              "evaluations": 65,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.00562120659066273,
+                0.007490647717922255,
+                0.003328436473131849
+              ],
+              "objective": -0.9867231038910736,
+              "success": true,
+              "evaluations": 77,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.005621263020712657,
+        "translation": [
+          0.00749064788480416,
+          0.003328436547946674
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.1524587000021711,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 292,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.3980057334574273,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.07860550004988909,
+          "cache_setup": {
+            "preload_seconds": 0.0018154000863432884,
+            "capture_seconds": 0.009341000113636255,
+            "capture_warmup_seconds": 0.019536400097422302,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.9867003589912103,
+          "contrast_best": 0.9867231038910734,
+          "contrast_gain": 2.2744899863091916e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011217349763270046,
+          "minimum_warp_scale": 1.000000011242526,
+          "graph_captures": 2,
+          "graph_replays": 212,
+          "solutions": [
+            {
+              "parameters": [
+                0.005611522879967293,
+                0.007489941941219594,
+                0.003328415729493385
+              ],
+              "objective": -0.9867231038864925,
+              "success": true,
+              "evaluations": 65,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005611522879487226,
+                0.007489941940679965,
+                0.003328415729517108
+              ],
+              "objective": -0.9867231038864925,
+              "success": true,
+              "evaluations": 65,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005621263020712657,
+                0.00749064788480416,
+                0.003328436547946674
+              ],
+              "objective": -0.9867231038910734,
+              "success": true,
+              "evaluations": 79,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.005621202426711616,
+        "translation": [
+          0.007490647707802663,
+          0.003328436466368399
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.0773236999521032,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 290,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.3980057334574273,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0004381999606266618,
+          "cache_setup": {
+            "preload_seconds": 0.0004267999902367592,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.9867003589912103,
+          "contrast_best": 0.9867231038910735,
+          "contrast_gain": 2.274489986320294e-05,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.011217347439787306,
+          "minimum_warp_scale": 1.0000000112424048,
+          "graph_captures": 0,
+          "graph_replays": 210,
+          "solutions": [
+            {
+              "parameters": [
+                0.005611522877794625,
+                0.007489941937349349,
+                0.0033284157288945722
+              ],
+              "objective": -0.9867231038864925,
+              "success": true,
+              "evaluations": 65,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.0056115228803966495,
+                0.007489941933727495,
+                0.003328415728986446
+              ],
+              "objective": -0.9867231038864923,
+              "success": true,
+              "evaluations": 65,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.005621202426711616,
+                0.007490647707802663,
+                0.003328436466368399
+              ],
+              "objective": -0.9867231038910735,
+              "success": true,
+              "evaluations": 77,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 5.643004992710726e-08,
+        "numeric_pass": true,
+        "objective_count_matches": false,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.163951113599074e-09,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.460778700071387,
+        "cuda_cold": 0.15247249999083579,
+        "cuda_warm": 0.07733360002748668,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.460778700071387,
+        "cuda_cold_including_shared": 0.15247249999083579,
+        "cuda_warm_including_shared": 0.07733360002748668
+      },
+      "capture_count": 2,
+      "replay_count": 422,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_47_noise",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": -3.9187425372182365,
+        "translation": [
+          -0.2993023060946186,
+          0.9418294735350776
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 1.13767349999398,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.9747334606351572,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.7113633110850401,
+          "contrast_best": 0.7375532605377485,
+          "contrast_gain": 0.02618994945270836,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0007052133430415219,
+          "minimum_warp_scale": 0.8432659734814194,
+          "solutions": [
+            {
+              "parameters": [
+                -3.9353346326023586,
+                0.11364673237691689,
+                0.9360544965570063
+              ],
+              "objective": -0.7365983604648895,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.9353347776904206,
+                0.11364698022617739,
+                0.9360544794675464
+              ],
+              "objective": -0.736598360757535,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.9187425372182365,
+                -0.2993023060946186,
+                0.9418294735350776
+              ],
+              "objective": -0.7375532605377485,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -3.9187425372617857,
+        "translation": [
+          -0.29930230605812347,
+          0.9418294735331069
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.3215933999745175,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.9747334606351572,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.09004959999583662,
+          "cache_setup": {
+            "preload_seconds": 0.0019460000330582261,
+            "capture_seconds": 0.007446499890647829,
+            "capture_warmup_seconds": 0.019464600016362965,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.7113633110850401,
+          "contrast_best": 0.7375532605377576,
+          "contrast_gain": 0.026189949452717465,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0007052133428455676,
+          "minimum_warp_scale": 0.8432659734796777,
+          "graph_captures": 2,
+          "graph_replays": 723,
+          "solutions": [
+            {
+              "parameters": [
+                -3.935334632548177,
+                0.11364673229294715,
+                0.9360544965474329
+              ],
+              "objective": -0.7365983604648064,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.9353347776506755,
+                0.11364698013103372,
+                0.9360544794979574
+              ],
+              "objective": -0.7365983607573982,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.9187425372617857,
+                -0.29930230605812347,
+                0.9418294735331069
+              ],
+              "objective": -0.7375532605377576,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -3.9187425371835563,
+        "translation": [
+          -0.2993023061241521,
+          0.9418294735334827
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.24080230004619807,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 0.9747334606351572,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0002047000452876091,
+          "cache_setup": {
+            "preload_seconds": 0.00019010005053132772,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.7113633110850401,
+          "contrast_best": 0.7375532605377414,
+          "contrast_gain": 0.026189949452701256,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0007052133431995067,
+          "minimum_warp_scale": 0.8432659734828065,
+          "graph_captures": 0,
+          "graph_replays": 723,
+          "solutions": [
+            {
+              "parameters": [
+                -3.9353346325529257,
+                0.11364673229116454,
+                0.9360544965452594
+              ],
+              "objective": -0.7365983604648066,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.9353347777096537,
+                0.11364698024927905,
+                0.9360544795143289
+              ],
+              "objective": -0.736598360757512,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.9187425371835563,
+                -0.2993023061241521,
+                0.9418294735334827
+              ],
+              "objective": -0.7375532605377413,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.354916427473654e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 3.468025866482094e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 1.1377017999766394,
+        "cuda_cold": 0.3216077999677509,
+        "cuda_warm": 0.24081450002267957,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 1.1377017999766394,
+        "cuda_cold_including_shared": 0.3216077999677509,
+        "cuda_warm_including_shared": 0.24081450002267957
+      },
+      "capture_count": 2,
+      "replay_count": 1446,
+      "peak_allocated_bytes": 206834176,
+      "peak_reserved_bytes": 251658240,
+      "memory_pass": true
+    },
+    {
+      "name": "synthetic_47_edge",
+      "events_before_budget": 4096,
+      "labels_opened": false,
+      "cpu": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0007123000686988235,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 5.912216168090443e-06
+        }
+      },
+      "cuda_cold": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0003819999983534217,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 5.912216168090443e-06
+        }
+      },
+      "cuda_warm": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.00031029991805553436,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.039993999999999995,
+          "spatial_eigen_ratio": 5.912216168090443e-06
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": null,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": null,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.0007208999013528228,
+        "cuda_cold": 0.0003929000813513994,
+        "cuda_warm": 0.00031349994242191315,
+        "shared_read_undistort": 0.0,
+        "cpu_including_shared": 0.0007208999013528228,
+        "cuda_cold_including_shared": 0.0003929000813513994,
+        "cuda_warm_including_shared": 0.00031349994242191315
+      },
+      "capture_count": 0,
+      "replay_count": 0,
+      "peak_allocated_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "memory_pass": true
+    },
+    {
+      "name": "slider500_00",
+      "events_before_budget": 226,
+      "labels_opened": false,
+      "cpu": {
+        "q": -0.702172059352841,
+        "translation": [
+          0.33523738026655364,
+          0.26745193304394566
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.8074792000697926,
+        "diagnostics": {
+          "input_events": 226,
+          "roi_events": 226,
+          "used_events": 226,
+          "objective_evaluations": 803,
+          "reference_time_us": 40081,
+          "event_span_seconds": 0.040012,
+          "spatial_eigen_ratio": 0.4867597725365563,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.17601028967746227,
+          "contrast_best": 0.18670031119259958,
+          "contrast_gain": 0.010690021515137316,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0016495980419569123,
+          "minimum_warp_scale": 0.9719046915611741,
+          "solutions": [
+            {
+              "parameters": [
+                -0.702172059352841,
+                0.33523738026655364,
+                0.26745193304394566
+              ],
+              "objective": -0.18670031119259958,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -0.7021720588281434,
+                0.3352373803545179,
+                0.26745193305600357
+              ],
+              "objective": -0.1867003111922144,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                7.983391764047582,
+                1.8796646167940783,
+                0.18309626188832895
+              ],
+              "objective": -0.1773746321167788,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": -0.7021720588860823,
+        "translation": [
+          0.3352373803448698,
+          0.26745193305417586
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.3493311000056565,
+        "diagnostics": {
+          "input_events": 226,
+          "roi_events": 226,
+          "used_events": 226,
+          "objective_evaluations": 803,
+          "reference_time_us": 40081,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.040012,
+          "spatial_eigen_ratio": 0.4867597725365563,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.08609130000695586,
+          "cache_setup": {
+            "preload_seconds": 0.0019728000042960048,
+            "capture_seconds": 0.00729249999858439,
+            "capture_warmup_seconds": 0.016862899996340275,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.17601028967746227,
+          "contrast_best": 0.1867003111922575,
+          "contrast_gain": 0.010690021514795228,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0016495980410917432,
+          "minimum_warp_scale": 0.97190469157985,
+          "graph_captures": 2,
+          "graph_replays": 723,
+          "solutions": [
+            {
+              "parameters": [
+                -0.7021719992532182,
+                0.3352373903566198,
+                0.2674519342075314
+              ],
+              "objective": -0.18670031114869814,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -0.7021720588860823,
+                0.3352373803448698,
+                0.26745193305417586
+              ],
+              "objective": -0.18670031119225747,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                7.98339176009288,
+                1.8796646168181763,
+                0.18309626198444426
+              ],
+              "objective": -0.1773746321177457,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": -0.7021720585674438,
+        "translation": [
+          0.33523738039830203,
+          0.26745193306130255
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.25593109999317676,
+        "diagnostics": {
+          "input_events": 226,
+          "roi_events": 226,
+          "used_events": 226,
+          "objective_evaluations": 803,
+          "reference_time_us": 40081,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.040012,
+          "spatial_eigen_ratio": 0.4867597725365563,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00023230002261698246,
+          "cache_setup": {
+            "preload_seconds": 0.0002133999951183796,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.17601028967746227,
+          "contrast_best": 0.18670031119202396,
+          "contrast_gain": 0.010690021514561693,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0016495980404982458,
+          "minimum_warp_scale": 0.9719046915925994,
+          "graph_captures": 0,
+          "graph_replays": 723,
+          "solutions": [
+            {
+              "parameters": [
+                -0.7021719994358968,
+                0.3352373903259057,
+                0.26745193420352226
+              ],
+              "objective": -0.1867003111488318,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -0.7021720585674438,
+                0.33523738039830203,
+                0.26745193306130255
+              ],
+              "objective": -0.18670031119202396,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                7.983391760112095,
+                1.8796646168181008,
+                0.18309626198394707
+              ],
+              "objective": -0.17737463211774082,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.667587427675812e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 7.853971917270997e-10,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": null
+      },
+      "wall_seconds": {
+        "cpu": 0.8075071000494063,
+        "cuda_cold": 0.3493440999882296,
+        "cuda_warm": 0.2559405999490991,
+        "shared_read_undistort": 0.001535200048238039,
+        "cpu_including_shared": 0.8090423000976443,
+        "cuda_cold_including_shared": 0.3508793000364676,
+        "cuda_warm_including_shared": 0.25747579999733716
+      },
+      "capture_count": 2,
+      "replay_count": 1446,
+      "peak_allocated_bytes": 173800960,
+      "peak_reserved_bytes": 190840832,
+      "memory_pass": true
+    },
+    {
+      "name": "slider500_10",
+      "events_before_budget": 1376,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.1713288374099042,
+        "translation": [
+          -0.09311423636486078,
+          -0.13870674891247092
+        ],
+        "ttc_seconds": 5.836729035915304,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.7666771999793127,
+        "diagnostics": {
+          "input_events": 1376,
+          "roi_events": 1376,
+          "used_events": 1376,
+          "objective_evaluations": 641,
+          "reference_time_us": 440901,
+          "event_span_seconds": 0.099545,
+          "spatial_eigen_ratio": 0.8013455112149431,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.7872986487356258,
+          "contrast_best": 0.8195400539570864,
+          "contrast_gain": 0.03224140522146057,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.021947157586876265,
+          "minimum_warp_scale": 1.0000263846409612,
+          "solutions": [
+            {
+              "parameters": [
+                0.1713288374099042,
+                -0.09311423636486078,
+                -0.13870674891247092
+              ],
+              "objective": -0.8195400539570864,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.17132882830076882,
+                -0.0931142358265048,
+                -0.13870674545100092
+              ],
+              "objective": -0.8195400539480793,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.1713288246359522,
+                -0.09311423561046012,
+                -0.1387067440585942
+              ],
+              "objective": -0.8195400539444546,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.1713288374098789,
+        "translation": [
+          -0.09311423636532873,
+          -0.1387067489122474
+        ],
+        "ttc_seconds": 5.836729035916166,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.2618058000225574,
+        "diagnostics": {
+          "input_events": 1376,
+          "roi_events": 1376,
+          "used_events": 1376,
+          "objective_evaluations": 641,
+          "reference_time_us": 440901,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.099545,
+          "spatial_eigen_ratio": 0.8013455112149431,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.07748950005043298,
+          "cache_setup": {
+            "preload_seconds": 0.0019974999595433474,
+            "capture_seconds": 0.008127799956128001,
+            "capture_warmup_seconds": 0.01992729993071407,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.7872986487356258,
+          "contrast_best": 0.8195400539570847,
+          "contrast_gain": 0.03224140522145891,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0219471575868605,
+          "minimum_warp_scale": 1.0000263846409612,
+          "graph_captures": 2,
+          "graph_replays": 561,
+          "solutions": [
+            {
+              "parameters": [
+                0.1713288374098789,
+                -0.09311423636532873,
+                -0.1387067489122474
+              ],
+              "objective": -0.8195400539570847,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.17132882829860674,
+                -0.09311423582707946,
+                -0.1387067454503237
+              ],
+              "objective": -0.8195400539480758,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.17132882463649524,
+                -0.09311423561052545,
+                -0.13870674405857317
+              ],
+              "objective": -0.8195400539444544,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.17132883740897586,
+        "translation": [
+          -0.09311423636515354,
+          -0.13870674891163456
+        ],
+        "ttc_seconds": 5.83672903594693,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.17289189994335175,
+        "diagnostics": {
+          "input_events": 1376,
+          "roi_events": 1376,
+          "used_events": 1376,
+          "objective_evaluations": 641,
+          "reference_time_us": 440901,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.099545,
+          "spatial_eigen_ratio": 0.8013455112149431,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.000377100077457726,
+          "cache_setup": {
+            "preload_seconds": 0.0003554000286385417,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.7872986487356258,
+          "contrast_best": 0.8195400539570835,
+          "contrast_gain": 0.032241405221457686,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0219471575867205,
+          "minimum_warp_scale": 1.000026384640961,
+          "graph_captures": 0,
+          "graph_replays": 561,
+          "solutions": [
+            {
+              "parameters": [
+                0.17132883740897586,
+                -0.09311423636515354,
+                -0.13870674891163456
+              ],
+              "objective": -0.8195400539570835,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.17132882830049112,
+                -0.09311423582716628,
+                -0.13870674545157488
+              ],
+              "objective": -0.8195400539480786,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.17132882463499155,
+                -0.09311423561105968,
+                -0.13870674405877922
+              ],
+              "objective": -0.8195400539444535,
+              "success": true,
+              "evaluations": 186,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.679451270916957e-13,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 8.624212455288216e-13
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 9.283407376159403e-13,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 3.162625716868206e-11
+      },
+      "wall_seconds": {
+        "cpu": 0.7667080999817699,
+        "cuda_cold": 0.26182480005081743,
+        "cuda_warm": 0.17290170001797378,
+        "shared_read_undistort": 0.002349700080230832,
+        "cpu_including_shared": 0.7690578000620008,
+        "cuda_cold_including_shared": 0.26417450013104826,
+        "cuda_warm_including_shared": 0.1752514000982046
+      },
+      "capture_count": 2,
+      "replay_count": 1122,
+      "peak_allocated_bytes": 183614976,
+      "peak_reserved_bytes": 216006656,
+      "memory_pass": true
+    },
+    {
+      "name": "slider500_30",
+      "events_before_budget": 4729,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.45355907667358497,
+        "translation": [
+          0.0029893538856477445,
+          0.03245368553746261
+        ],
+        "ttc_seconds": 2.2047844513090293,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.788138100062497,
+        "diagnostics": {
+          "input_events": 4729,
+          "roi_events": 4729,
+          "used_events": 4729,
+          "objective_evaluations": 499,
+          "reference_time_us": 1242542,
+          "event_span_seconds": 0.099735,
+          "spatial_eigen_ratio": 0.6469007709943011,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.905992712123432,
+          "contrast_best": 0.9547472005656541,
+          "contrast_gain": 0.04875448844222208,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.055466001933018205,
+          "minimum_warp_scale": 1.0001174718008585,
+          "solutions": [
+            {
+              "parameters": [
+                0.45355907667358497,
+                0.0029893538856477445,
+                0.03245368553746261
+              ],
+              "objective": -0.9547472005656541,
+              "success": true,
+              "evaluations": 88,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -7.298940650475706,
+                -0.13544600951577895,
+                2.579213553232751
+              ],
+              "objective": -0.6046046436548942,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                0.4535590760215249,
+                0.0029893539789126343,
+                0.03245368553721229
+              ],
+              "objective": -0.9547472005656532,
+              "success": true,
+              "evaluations": 88,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.4535590766899255,
+        "translation": [
+          0.0029893538854516856,
+          0.03245368553747455
+        ],
+        "ttc_seconds": 2.204784451229597,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.25478319998364896,
+        "diagnostics": {
+          "input_events": 4729,
+          "roi_events": 4729,
+          "used_events": 4729,
+          "objective_evaluations": 499,
+          "reference_time_us": 1242542,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.099735,
+          "spatial_eigen_ratio": 0.6469007709943011,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.08768779993988574,
+          "cache_setup": {
+            "preload_seconds": 0.002228999976068735,
+            "capture_seconds": 0.009387800004333258,
+            "capture_warmup_seconds": 0.01992759993299842,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.905992712123432,
+          "contrast_best": 0.9547472005656541,
+          "contrast_gain": 0.04875448844222208,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.05546600193643825,
+          "minimum_warp_scale": 1.0001174718008627,
+          "graph_captures": 2,
+          "graph_replays": 419,
+          "solutions": [
+            {
+              "parameters": [
+                0.4535590766899255,
+                0.0029893538854516856,
+                0.03245368553747455
+              ],
+              "objective": -0.9547472005656542,
+              "success": true,
+              "evaluations": 88,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -7.298940650471907,
+                -0.13544600951455757,
+                2.57921355323131
+              ],
+              "objective": -0.6046046436548946,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                0.45355907598880835,
+                0.002989353979369647,
+                0.03245368553724656
+              ],
+              "objective": -0.954747200565653,
+              "success": true,
+              "evaluations": 88,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.45355907667764206,
+        "translation": [
+          0.0029893538856161617,
+          0.03245368553747325
+        ],
+        "ttc_seconds": 2.2047844512893073,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.16759620001539588,
+        "diagnostics": {
+          "input_events": 4729,
+          "roi_events": 4729,
+          "used_events": 4729,
+          "objective_evaluations": 499,
+          "reference_time_us": 1242542,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.099735,
+          "spatial_eigen_ratio": 0.6469007709943011,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00028719997499138117,
+          "cache_setup": {
+            "preload_seconds": 0.0002764000091701746,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.905992712123432,
+          "contrast_best": 0.9547472005656541,
+          "contrast_gain": 0.04875448844222208,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.05546600193386764,
+          "minimum_warp_scale": 1.0001174718008594,
+          "graph_captures": 0,
+          "graph_replays": 419,
+          "solutions": [
+            {
+              "parameters": [
+                0.45355907667764206,
+                0.0029893538856161617,
+                0.03245368553747325
+              ],
+              "objective": -0.9547472005656541,
+              "success": true,
+              "evaluations": 88,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -7.2989406504798975,
+                -0.1354460095193845,
+                2.5792135532337004
+              ],
+              "objective": -0.604604643654891,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                0.4535590759861666,
+                0.002989353979374898,
+                0.03245368553723247
+              ],
+              "objective": -0.9547472005656531,
+              "success": true,
+              "evaluations": 88,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.634054003218921e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 7.94324606090413e-11
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.0570879988877095e-12,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 1.972200180944128e-11
+      },
+      "wall_seconds": {
+        "cpu": 0.7881645000306889,
+        "cuda_cold": 0.2547970999730751,
+        "cuda_warm": 0.16760859999340028,
+        "shared_read_undistort": 0.0024386000586673617,
+        "cpu_including_shared": 0.7906031000893563,
+        "cuda_cold_including_shared": 0.25723570003174245,
+        "cuda_warm_including_shared": 0.17004720005206764
+      },
+      "capture_count": 2,
+      "replay_count": 838,
+      "peak_allocated_bytes": 212241920,
+      "peak_reserved_bytes": 253755392,
+      "memory_pass": true
+    },
+    {
+      "name": "slider500_50",
+      "events_before_budget": 20000,
+      "labels_opened": false,
+      "cpu": {
+        "q": 0.6659250964340717,
+        "translation": [
+          -0.06344514996115516,
+          -0.05423416784905209
+        ],
+        "ttc_seconds": 1.5016703910918043,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 2.253377399989404,
+        "diagnostics": {
+          "input_events": 20000,
+          "roi_events": 20000,
+          "used_events": 20000,
+          "objective_evaluations": 741,
+          "reference_time_us": 2044181,
+          "event_span_seconds": 0.09997800000000001,
+          "spatial_eigen_ratio": 0.8886477024698655,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.830623390749976,
+          "contrast_best": 0.9579851034736045,
+          "contrast_gain": 0.1273617127236285,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.056769164966253616,
+          "minimum_warp_scale": 1.000013984427025,
+          "solutions": [
+            {
+              "parameters": [
+                0.6659250964340717,
+                -0.06344514996115516,
+                -0.05423416784905209
+              ],
+              "objective": -0.9579851034736045,
+              "success": true,
+              "evaluations": 178,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.6526159121771926,
+                -0.06495072182175264,
+                -0.05749897815878478
+              ],
+              "objective": -0.9579599436930215,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                0.7366661975979576,
+                -0.004517609870651274,
+                -0.03077099871436903
+              ],
+              "objective": -0.9555748628620478,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 0.665925096459713,
+        "translation": [
+          -0.06344514995521786,
+          -0.05423416784315289
+        ],
+        "ttc_seconds": 1.501670391033983,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.39843419997487217,
+        "diagnostics": {
+          "input_events": 20000,
+          "roi_events": 20000,
+          "used_events": 20000,
+          "objective_evaluations": 741,
+          "reference_time_us": 2044181,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.09997800000000001,
+          "spatial_eigen_ratio": 0.8886477024698655,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.16184080007951707,
+          "cache_setup": {
+            "preload_seconds": 0.0023264000192284584,
+            "capture_seconds": 0.012233300134539604,
+            "capture_warmup_seconds": 0.08704730006866157,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.830623390749976,
+          "contrast_best": 0.9579851034736048,
+          "contrast_gain": 0.12736171272362873,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.05676916496329798,
+          "minimum_warp_scale": 1.0000139844270257,
+          "graph_captures": 2,
+          "graph_replays": 661,
+          "solutions": [
+            {
+              "parameters": [
+                0.665925096459713,
+                -0.06344514995521786,
+                -0.05423416784315289
+              ],
+              "objective": -0.9579851034736048,
+              "success": true,
+              "evaluations": 178,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.6526159121974231,
+                -0.06495072181973553,
+                -0.05749897815389629
+              ],
+              "objective": -0.9579599436930991,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                0.7366662043271632,
+                -0.004517604481385502,
+                -0.030770998372550526
+              ],
+              "objective": -0.9555748624489689,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 0.6659250964767562,
+        "translation": [
+          -0.06344514995591383,
+          -0.054234167837758
+        ],
+        "ttc_seconds": 1.5016703909955502,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.24043679994065315,
+        "diagnostics": {
+          "input_events": 20000,
+          "roi_events": 20000,
+          "used_events": 20000,
+          "objective_evaluations": 741,
+          "reference_time_us": 2044181,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.09997800000000001,
+          "spatial_eigen_ratio": 0.8886477024698655,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.0005241000326350331,
+          "cache_setup": {
+            "preload_seconds": 0.0005007999716326594,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.830623390749976,
+          "contrast_best": 0.9579851034736045,
+          "contrast_gain": 0.1273617127236285,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.05676916496164608,
+          "minimum_warp_scale": 1.000013984427026,
+          "graph_captures": 0,
+          "graph_replays": 661,
+          "solutions": [
+            {
+              "parameters": [
+                0.6659250964767562,
+                -0.06344514995591383,
+                -0.054234167837758
+              ],
+              "objective": -0.9579851034736045,
+              "success": true,
+              "evaluations": 178,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.6526159121335233,
+                -0.06495072182606734,
+                -0.05749897816946232
+              ],
+              "objective": -0.957959943692854,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                0.7366661984786155,
+                -0.004517609187652597,
+                -0.030770998918562685
+              ],
+              "objective": -0.9555748628147966,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 2.5641266887532765e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 5.782130330089785e-11
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 4.268452258315847e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 9.625411578895182e-11
+      },
+      "wall_seconds": {
+        "cpu": 2.2534074999857694,
+        "cuda_cold": 0.3984488000860438,
+        "cuda_warm": 0.24044879991561174,
+        "shared_read_undistort": 0.005714499973692,
+        "cpu_including_shared": 2.2591219999594614,
+        "cuda_cold_including_shared": 0.4041633000597358,
+        "cuda_warm_including_shared": 0.24616329988930374
+      },
+      "capture_count": 2,
+      "replay_count": 1322,
+      "peak_allocated_bytes": 342608384,
+      "peak_reserved_bytes": 429916160,
+      "memory_pass": true
+    },
+    {
+      "name": "slider500_76",
+      "events_before_budget": 20000,
+      "labels_opened": false,
+      "cpu": {
+        "q": 2.5476259147589677,
+        "translation": [
+          -0.1067425584838665,
+          0.018462954988618347
+        ],
+        "ttc_seconds": 0.39252230643705416,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 2.0846975999884307,
+        "diagnostics": {
+          "input_events": 20000,
+          "roi_events": 20000,
+          "used_events": 20000,
+          "objective_evaluations": 647,
+          "reference_time_us": 3086313,
+          "event_span_seconds": 0.099737,
+          "spatial_eigen_ratio": 0.8836960647794345,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "contrast_baseline": 0.5544105190131408,
+          "contrast_best": 0.9265969505158552,
+          "contrast_gain": 0.37218643150271447,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.022578670930481493,
+          "minimum_warp_scale": 1.0006700256155816,
+          "solutions": [
+            {
+              "parameters": [
+                2.5476259140092483,
+                -0.10674255805660485,
+                0.0184629535644073
+              ],
+              "objective": -0.9265969505155202,
+              "success": true,
+              "evaluations": 162,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.314984856028691,
+                1.1869671158430293,
+                1.7504077787662564
+              ],
+              "objective": -0.73008491097687,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                2.5476259147589677,
+                -0.1067425584838665,
+                0.018462954988618347
+              ],
+              "objective": -0.9265969505158552,
+              "success": true,
+              "evaluations": 162,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_cold": {
+        "q": 2.5476259147443168,
+        "translation": [
+          -0.10674255848172044,
+          0.018462954982860696
+        ],
+        "ttc_seconds": 0.3925223064393115,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.30272359994705766,
+        "diagnostics": {
+          "input_events": 20000,
+          "roi_events": 20000,
+          "used_events": 20000,
+          "objective_evaluations": 647,
+          "reference_time_us": 3086313,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.099737,
+          "spatial_eigen_ratio": 0.8836960647794345,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.09903759998269379,
+          "cache_setup": {
+            "preload_seconds": 0.0018872999353334308,
+            "capture_seconds": 0.0112572000361979,
+            "capture_warmup_seconds": 0.030362999998033047,
+            "reused_graphs": false
+          },
+          "contrast_baseline": 0.5544105190131408,
+          "contrast_best": 0.9265969505158536,
+          "contrast_gain": 0.3721864315027128,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.022578670928433797,
+          "minimum_warp_scale": 1.0006700256155778,
+          "graph_captures": 2,
+          "graph_replays": 567,
+          "solutions": [
+            {
+              "parameters": [
+                2.5476259140119284,
+                -0.10674255805550617,
+                0.018462953560749194
+              ],
+              "objective": -0.9265969505155196,
+              "success": true,
+              "evaluations": 162,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.314984856187435,
+                1.1869671159274255,
+                1.7504077788028212
+              ],
+              "objective": -0.7300849109729999,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                2.5476259147443168,
+                -0.10674255848172044,
+                0.018462954982860696
+              ],
+              "objective": -0.9265969505158536,
+              "success": true,
+              "evaluations": 162,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cuda_warm": {
+        "q": 2.5476259147052778,
+        "translation": [
+          -0.10674255848182045,
+          0.018462954987405078
+        ],
+        "ttc_seconds": 0.3925223064453264,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.2127258999971673,
+        "diagnostics": {
+          "input_events": 20000,
+          "roi_events": 20000,
+          "used_events": 20000,
+          "objective_evaluations": 647,
+          "reference_time_us": 3086313,
+          "execution_backend": "cuda_graph_float64",
+          "event_span_seconds": 0.099737,
+          "spatial_eigen_ratio": 0.8836960647794345,
+          "internal_reference_seconds_before_query": 0.0,
+          "objective": "temporal_ncc",
+          "cache_setup_wall_seconds": 0.00031569995917379856,
+          "cache_setup": {
+            "preload_seconds": 0.0003016999689862132,
+            "capture_seconds": 0.0,
+            "capture_warmup_seconds": 0.0,
+            "reused_graphs": true
+          },
+          "contrast_baseline": 0.5544105190131408,
+          "contrast_best": 0.9265969505158532,
+          "contrast_gain": 0.37218643150271247,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.02257867092538024,
+          "minimum_warp_scale": 1.0006700256155674,
+          "graph_captures": 0,
+          "graph_replays": 567,
+          "solutions": [
+            {
+              "parameters": [
+                2.5476259140059585,
+                -0.10674255805630097,
+                0.018462953563048883
+              ],
+              "objective": -0.9265969505155198,
+              "success": true,
+              "evaluations": 162,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                -4.314984856234063,
+                1.1869671159553448,
+                1.750407778814083
+              ],
+              "objective": -0.7300849109717906,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                2.5476259147052778,
+                -0.10674255848182045,
+                0.018462954987405078
+              ],
+              "objective": -0.9265969505158532,
+              "success": true,
+              "evaluations": 162,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "cold_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 1.4650947122163416e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 2.2573609648190995e-12
+      },
+      "warm_parity": {
+        "passed": true,
+        "validity_reason_match": true,
+        "maximum_q_b_error": 5.368994138166272e-11,
+        "numeric_pass": true,
+        "objective_count_matches": true,
+        "ttc_absolute_error": 8.27221624533081e-12
+      },
+      "wall_seconds": {
+        "cpu": 2.0847290999954566,
+        "cuda_cold": 0.30273900006432086,
+        "cuda_warm": 0.2127360999584198,
+        "shared_read_undistort": 0.007654199958778918,
+        "cpu_including_shared": 2.0923832999542356,
+        "cuda_cold_including_shared": 0.3103932000230998,
+        "cuda_warm_including_shared": 0.22039029991719872
+      },
+      "capture_count": 2,
+      "replay_count": 1134,
+      "peak_allocated_bytes": 342608384,
+      "peak_reserved_bytes": 429916160,
+      "memory_pass": true
+    }
+  ],
+  "labels_opened": false,
+  "production_integrated": false,
+  "all_parity_pass": true,
+  "all_memory_pass": true,
+  "optimizer_count_divergences": [
+    "synthetic_7_expansion",
+    "synthetic_7_receding",
+    "synthetic_7_translation",
+    "synthetic_31_translation",
+    "synthetic_47_stationary"
+  ]
+}

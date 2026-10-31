@@ -1,0 +1,7 @@
+{
+  "coordination": "Parent reserved 60 seconds without task CPU/GPU tools or benchmarks; other agents requested to hold tests and GPU. Parent authoring only.",
+  "background_system_processes": "Unknown; no claim of operating-system isolation.",
+  "inference_scope": "Single preregistered 77-query pass; no repeated latency distribution and no concurrent CPU baseline timing.",
+  "original_gpu_only_run": "all77_cuda_v1 remains rejected 76/77, unchanged.",
+  "comparability": "Observed hybrid runtime includes GPU attempts and all CPU fallbacks; historical CPU timings are not a simultaneously controlled speed comparison."
+}

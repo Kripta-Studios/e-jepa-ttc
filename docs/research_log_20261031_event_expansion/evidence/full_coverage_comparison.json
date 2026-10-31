@@ -1,0 +1,41 @@
+{
+  "scope": "postfreeze Slider500 development; current adapter fitted Slider500",
+  "current_adapted": {
+    "population": 77,
+    "valid_targets": 77,
+    "finite": 77,
+    "coverage": 1.0,
+    "mae_seconds": 0.20504429936408997,
+    "rmse_seconds": 0.3003113269805908,
+    "relative_rows": 77,
+    "relative_absolute_error_pct": 13.57790756225586,
+    "wrong_sign": 0
+  },
+  "event_then_current": {
+    "population": 77,
+    "valid_targets": 77,
+    "finite": 77,
+    "coverage": 1.0,
+    "mae_seconds": 0.2561192573548293,
+    "rmse_seconds": 0.5533245165730178,
+    "relative_rows": 77,
+    "relative_absolute_error_pct": 13.876810482260064,
+    "wrong_sign": 0
+  },
+  "event_then_geometry_then_F0": {
+    "population": 77,
+    "valid_targets": 77,
+    "finite": 77,
+    "coverage": 1.0,
+    "mae_seconds": 0.47485121649961964,
+    "rmse_seconds": 0.8920973530114861,
+    "relative_rows": 77,
+    "relative_absolute_error_pct": 20.712789935734023,
+    "wrong_sign": 0
+  },
+  "shared": 62,
+  "event_better_than_geometry": 36,
+  "first10_event_valid": 0,
+  "prediction_sha256": "02358b2d859c21782f219a6bb6d79bd2881a19e4b6078a0a56062fb79053d253",
+  "population_sha256": "1c200903e5cbaf4cc2115c6b53dc252613e51d2f0dc0d9dcb595cdbe523e804e"
+}

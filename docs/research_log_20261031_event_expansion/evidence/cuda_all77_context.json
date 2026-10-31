@@ -1,0 +1,7 @@
+{
+  "timing_isolation": "non-isolated CPU background during initial seconds",
+  "background_activity": "Parent Ruff/Pyright/report command overlapped the beginning of the run; reported fewer than 10 seconds and a few CPU threads. No competing GPU benchmark reported.",
+  "source": "Parent session disclosure after run completion",
+  "interpretation": "Wall times are observed runtime only; no clean benchmark speedup or runtime promotion claim. Numerical parity acceptance remains unchanged and failed one of 77 cases.",
+  "summary_unchanged": true
+}
