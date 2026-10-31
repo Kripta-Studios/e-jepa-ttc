@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 from pathlib import Path
 
 import numpy as np
@@ -69,7 +68,8 @@ def main() -> None:
     evidence = args.output / "evidence"
     evidence.mkdir(exist_ok=True)
     for name, path in receipts.items():
-        shutil.copyfile(path, evidence / name)
+        # Git text normalization must not invalidate the published hash inventory.
+        (evidence / name).write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
     v1, v2 = read(receipts["campaign_v1.json"]), read(receipts["campaign_v2.json"])
     audit = read(receipts["evaluator_audit.json"])
     lines = [
@@ -237,12 +237,13 @@ def main() -> None:
         "campañas completadas no se sobreescriben.",
         "",
     ]
-    (args.output / "README.md").write_text("\n".join(lines), encoding="utf-8")
+    (args.output / "README.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     manifest = {name: file_sha(evidence / name) for name in receipts}
     (args.output / "evidence_manifest.json").write_text(
         json.dumps({"generator_sha256": file_sha(Path(__file__)), "receipts": manifest}, indent=2)
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(f"REPORT {args.output}", flush=True)
 
