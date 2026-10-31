@@ -1,0 +1,18 @@
+{
+  "accuracy_evaluated": false,
+  "checkpoint_promoted": false,
+  "complete_sha256": "c39af791d18220a6251ea9af77565fd28106795f8ddb134f605e45c6f74e6ef3",
+  "freeze_sha256": "55d9e847dffad3f1a0865b8f73591e4156d5505e772c345f5d20ca901770532e",
+  "identity_arrays": {
+    "road": {
+      "context": 30,
+      "producer": 120
+    },
+    "slider500": {
+      "context": 30,
+      "producer": 220
+    }
+  },
+  "status": "PASS",
+  "verified_artifacts": 122
+}
