@@ -76,3 +76,31 @@ grabación. Ruff y Pyright pasan en los archivos nuevos/cambiados. Las 49 prueba
 del screen y su salvedad de formato heredado están en VALIDATION.md.
 
 El entregable sigue intacto. No hay nueva entrega oficial ni correo enviado.
+
+## Avance posterior mientras continúa la extracción
+
+Se verificó vivo el worker 77708 al alcanzar 338/2608, 330 consultas nuevas,
+830.2 s transcurridos y ETA móvil de 75.0 minutos. El ETA varía con la escena;
+no es una hora de finalización garantizada. La sesión sigue siendo 59503.
+Los 55 hashes de fuentes del FREEZE continúan intactos.
+
+Ya está preparado `scripts/report_phase_canonical_population.py`, específico
+para 2608: valida sellos y ámbito antes de publicar, conserva F0 primario y
+router diagnóstico, e incluye denominadores, grabaciones y bootstrap. Tras
+ejecutar el evaluador indicado arriba, usar:
+
+```powershell
+.venv-transfer/Scripts/python.exe scripts/report_phase_canonical_population.py --screen output/phase_timewarp/population2608_v1 --evaluation output/phase_timewarp/population2608_evaluation_v1 --output docs/research_log_canonical_population2608
+```
+
+No se ha generado ese informe ni abierto targets de la población en curso.
+El generador rechaza tanto el screen de149 como el run incompleto de2608;
+recibo en `output/phase_timewarp/report_population_validation_v1/VERIFICATION.json`.
+Ruff, formato y Pyright pasan en ambos scripts nuevos.
+
+Nueva evidencia de eAP: [EAP_EVENT_CADENCE.md](EAP_EVENT_CADENCE.md). Los 88.744
+deltas del índice de históricos son exactamente float32(0.1), idénticos a los
+de las consultas actuales. La ruta inspeccionada repite ese delta en sus
+históricos: se cumple la precondición de la rama de identidad de CanonicalPair.
+Es evidencia estructural; no una validación ejecutada de contextos/cabeza ni
+un motivo para omitir la comprobación de genealogía de despliegue y RGB.

@@ -660,3 +660,11 @@ Results, small evidence, limitations and regeneration command:
 docs/research_log_20261031_canonical_screen149/README.md. Validation: 49 tests,
 Ruff check and Pyright pass; changed-file formatting passes, while an unchanged
 historical test has a preserved broader-format failure (see VALIDATION.md).
+
+The 2608-query expansion is running with frozen runtime sources unchanged.
+A dedicated population report generator is ready and rejects incomplete or
+149-query evidence. A target-free eAP index audit establishes the identity-clock
+precondition for all 88,744 TRAIN40 event-history queries in the inspected
+materialization path. This is structural evidence only; deployment ancestry,
+RGB history and complete context/head preservation remain unverified. See
+docs/research_log_20261031_canonical_screen149/EAP_EVENT_CADENCE.md.
