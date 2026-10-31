@@ -1,0 +1,225 @@
+{
+  "parallax": {
+    "calibration_sha256": "5926ebcfe420547df9638c47c3b2c0f477fd4bd0c75230e63edab2b2ce72ba08",
+    "grid": "10/50/90 percent of each nominal event pinhole image axis",
+    "metadata": {
+      "camera_role_rule": "smaller image is DVS/event; larger image is APS/RGB",
+      "event_group": "#refs#/d",
+      "event_pose_count": 15,
+      "matched_pose_count": 12,
+      "matched_pose_indices": [
+        {
+          "event": 12,
+          "rgb": 15
+        },
+        {
+          "event": 14,
+          "rgb": 17
+        },
+        {
+          "event": 0,
+          "rgb": 0
+        },
+        {
+          "event": 4,
+          "rgb": 4
+        },
+        {
+          "event": 11,
+          "rgb": 10
+        },
+        {
+          "event": 13,
+          "rgb": 16
+        },
+        {
+          "event": 9,
+          "rgb": 8
+        },
+        {
+          "event": 6,
+          "rgb": 6
+        },
+        {
+          "event": 1,
+          "rgb": 1
+        },
+        {
+          "event": 5,
+          "rgb": 5
+        },
+        {
+          "event": 8,
+          "rgb": 7
+        },
+        {
+          "event": 10,
+          "rgb": 9
+        }
+      ],
+      "matlab_K_transposed_to_conventional_form": true,
+      "pose_pairing": "deterministic all-pairs 1deg/20mm consensus",
+      "projection_model": "rotation_only_radtan_perimeter_envelope",
+      "rgb_group": "#refs#/c",
+      "rgb_pose_count": 18,
+      "rotation_residual_deg_max": 0.32315407283822356,
+      "status": "candidate_only_no_authoritative_intercamera_extrinsic",
+      "translation_candidate_mm_median": [
+        -3.193660072615625,
+        0.3271304084718061,
+        23.848785651155254
+      ],
+      "translation_residual_mm_max": 6.257839858336559,
+      "translation_used_for_projection": false
+    },
+    "normalized_event_rays": [
+      [
+        -0.1390491105876077,
+        -0.10294329363137415,
+        1.0
+      ],
+      [
+        -0.1390491105876077,
+        0.001101875276358035,
+        1.0
+      ],
+      [
+        -0.1390491105876077,
+        0.10514704418409021,
+        1.0
+      ],
+      [
+        -0.0004264527127105277,
+        -0.10294329363137415,
+        1.0
+      ],
+      [
+        -0.0004264527127105277,
+        0.001101875276358035,
+        1.0
+      ],
+      [
+        -0.0004264527127105277,
+        0.10514704418409021,
+        1.0
+      ],
+      [
+        0.13819620516218661,
+        -0.10294329363137415,
+        1.0
+      ],
+      [
+        0.13819620516218661,
+        0.001101875276358035,
+        1.0
+      ],
+      [
+        0.13819620516218661,
+        0.10514704418409021,
+        1.0
+      ]
+    ],
+    "scope": "candidate extrinsic, synthetic depths/rays, undistorted pinhole; not measured real correspondence error; no GT depth used in inference; no adapter change",
+    "synthetic_pinhole_residuals": [
+      {
+        "max_pixels": 146.7776135004891,
+        "median_pixels": 79.52150552242895,
+        "synthetic_depth_m": 0.25
+      },
+      {
+        "max_pixels": 69.69794783564762,
+        "median_pixels": 37.77248674841016,
+        "synthetic_depth_m": 0.5
+      },
+      {
+        "max_pixels": 33.994159324542565,
+        "median_pixels": 18.425551666901633,
+        "synthetic_depth_m": 1.0
+      },
+      {
+        "max_pixels": 16.791143689840577,
+        "median_pixels": 9.101766244419833,
+        "synthetic_depth_m": 2.0
+      },
+      {
+        "max_pixels": 6.667984050843895,
+        "median_pixels": 3.614574152957019,
+        "synthetic_depth_m": 5.0
+      },
+      {
+        "max_pixels": 3.325990676472106,
+        "median_pixels": 1.8029732691462315,
+        "synthetic_depth_m": 10.0
+      },
+      {
+        "max_pixels": 1.106892582022975,
+        "median_pixels": 0.6000362733650241,
+        "synthetic_depth_m": 30.0
+      }
+    ]
+  },
+  "pdf_sha256": "2e88892833c5e5ef0d7f1138ff1d0ae5eb9975e882465f6d9130dd66ef8f51be",
+  "score_status": "unreconciled Slider750: PDF has aggregate/formula only, no aligned per-query targets/evaluator; no fitted shift, clipping or denominator change",
+  "scores": {
+    "1000": {
+      "fresh_on_public_targets": {
+        "coverage": 1.0,
+        "finite": 18,
+        "mae_seconds": 0.821169869767295,
+        "population": 18,
+        "relative_absolute_error_pct": 156.8755733726323,
+        "relative_rows": 18,
+        "rmse_seconds": 0.8249250224261444,
+        "valid_targets": 18,
+        "wrong_sign": 0
+      },
+      "official_pdf_relative_error_pct": 156.88,
+      "prediction_max_abs_difference_seconds": 0.00012600421905517578,
+      "public_bbox_sha256": "d017fbfe131c8c19323e9266c5096fb8394fa3251f678f46a61f204bbbc94d4b",
+      "public_gt_sha256": "1d71a51e4fbd21280f53425e05c63367f08ea3662e32017cde913128b8e60f78",
+      "rows": 18,
+      "submitted_on_public_targets": {
+        "coverage": 1.0,
+        "finite": 18,
+        "mae_seconds": 0.8212042351563772,
+        "population": 18,
+        "relative_absolute_error_pct": 156.88134149168354,
+        "relative_rows": 18,
+        "rmse_seconds": 0.824960879334301,
+        "valid_targets": 18,
+        "wrong_sign": 0
+      }
+    },
+    "750": {
+      "fresh_on_public_targets": {
+        "coverage": 1.0,
+        "finite": 51,
+        "mae_seconds": 4.539549927208938,
+        "population": 51,
+        "relative_absolute_error_pct": 282.47636288250044,
+        "relative_rows": 51,
+        "rmse_seconds": 10.9078630432022,
+        "valid_targets": 51,
+        "wrong_sign": 2
+      },
+      "official_pdf_relative_error_pct": 132.0,
+      "prediction_max_abs_difference_seconds": 0.1042938232421875,
+      "public_bbox_sha256": "5412a0d3bc2760f7321e75c8fe0be1deba199e703889f0504cb21bf4456ac45f",
+      "public_gt_sha256": "4fb29e203ff057a262d0d118641769ee22306e57a6361f23b53313a0e03c2641",
+      "rows": 51,
+      "submitted_on_public_targets": {
+        "coverage": 1.0,
+        "finite": 51,
+        "mae_seconds": 4.539982888336275,
+        "population": 51,
+        "relative_absolute_error_pct": 282.498227597849,
+        "relative_rows": 51,
+        "rmse_seconds": 10.902295610502481,
+        "valid_targets": 51,
+        "wrong_sign": 2
+      }
+    }
+  },
+  "source_sha256": "bc42539e04790ee30a2fa36726dbb8052274e08bb487e0c9a6ad548f42449d4b",
+  "submitted_sha256": "bbbe78bf3dfe586cc238c4e2bb66c87b0722c44e1b8e1a20f2746738cc20ba9a"
+}

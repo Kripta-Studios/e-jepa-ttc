@@ -30,6 +30,16 @@ separate EvTTC competition queries with unverified TTC labels, and a 250-update
 paced replay. Fusion has a mixed error profile against RGB alone, and the
 replay's 29.14 ms p95 response exceeds the 20 ms target.
 
+**Local transfer research, 31 October 2026:** the
+[startup-router report](docs/evttc_transfer_v2/evidence/phase_startup/REPORT.md)
+documents grouped experiments, three-seed all-eligible-data refitting, raw-sensor
+robustness and portable inference. The new inverse-rate router is an additional
+research candidate; the previous robust fusion remains the default because
+confirmation and robustness results are mixed. All-data fit metrics are
+resubstitution on historically exposed data, not a new official benchmark result.
+The [independent review](docs/evttc_transfer_v2/evidence/phase_startup/REVIEW.md)
+records verification and limitations.
+
 **Author:** Álvaro Schwiedop Souto
 
 [Email](mailto:alvaro.schwiedop@evocon-solutions.com) ·

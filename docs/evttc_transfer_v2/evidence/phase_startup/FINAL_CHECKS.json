@@ -1,0 +1,193 @@
+{
+  "artifact_hashes": {
+    "AUDIT.json": "a6dddcea0b7ee52a25cc02554197cd5093a7b78938348ea56d63e4ff93dd37e3",
+    "NATIVE_REPLAY_FINAL.json": "8c569a1e4d4f39032b33add22d6ef5fcfa0865f8443f332e267348b97d37b6cd",
+    "SLIDER_STARTUP_REPLAY_FINAL.json": "b6e72bbc2b6dc5b0ae6f343e99878cf8ad51a136e21bf4c6322cbb25ac80a913",
+    "all_data_refit/FINAL_FREEZE.json": "9d82520f2eb0da0da8f939eec68d2bd4140ce8a5f6f3ce32dffeeb0977b491f6",
+    "raw_robustness/REPORT.json": "07d954fee361431c6e150d4c0743d7c09028a0af7d9a0195396a8993db3bf44d",
+    "report/REPORT.md": "3b7a2cd9db609e1d10b4816003b61f46f251a0fd0e3855144e5d6e91b3c4a516",
+    "report/RESULTS.json": "9f59b704ca866b42aaffe06edae071002c67fadc028d091a6e80dd7ee07bbdd7",
+    "report/metrics.csv": "e09a61ab2f1ed73c1c8b90b127998b92f5a1027170bbfca53f229d0561795d06",
+    "training/FINAL_FREEZE.json": "1542689fb2e258a1f6c158ab48d23f53848725deb0548e92e0ca4e44e80bd9e1",
+    "training_rate/FINAL_FREEZE.json": "cb4440e3cd17ff6af2760aa41ed268c7b2e850e7eddd6465b6c404b51b4e7e2c",
+    "validation_v2/VALIDATION.json": "c3bd5767497c7e4fcbc0fcd32997ee618c232304a1495ebac3ef309d6477447e"
+  },
+  "binding_sha256": "5f9019469636325e03ceef3f385730800f307e1ad79a62f240ddabd9db86f34d",
+  "bound_upstream_verified": true,
+  "bound_variants_verified": true,
+  "export": {
+    "all_data_refit": {
+      "bitwise_equal": true,
+      "rows": 2677,
+      "sha256": "3a1c0d763af5939f08c6ebb52e534507cc0c79af2ac66b14d1aa474810dbc973"
+    },
+    "evaluated": {
+      "bitwise_equal": true,
+      "rows": 2677,
+      "sha256": "c047a0fcb6275a01e06063a80728c6750f2f8e035087b4200ff5ebd945a5ed43"
+    }
+  },
+  "focused_final": {
+    "passed": 11,
+    "seconds": 6.12,
+    "sha256": "b9480a3f9bbf28ba470c6569db33fe6d91c4487487211a1d4035a5336211a302",
+    "skipped": 0,
+    "xml_reported_tests": 11
+  },
+  "full_suite": {
+    "passed": 7320,
+    "seconds": 952.74,
+    "sha256": "9f94b8824bf13a70324ce401271236aa64fe94980667f914ae55cebaf470863e",
+    "skipped": 46,
+    "xml_reported_tests": 7383
+  },
+  "performance": {
+    "cache_compressed_bytes": 244897,
+    "optimizer_seconds_median": 1.3048615999286994,
+    "optimizer_seconds_p95": 1.4819018599577247,
+    "research_fits": 117,
+    "scope": "optimizer timers exclude setup/I/O/evaluation; cached CPU heads, not end-to-end latency",
+    "summed_optimizer_seconds": 137.70275219983887,
+    "uncompressed_array_bytes": 1638324
+  },
+  "pyright": "0errors0warnings",
+  "reproduction": {
+    "executed_source_snapshots_valid": true,
+    "native_fresh_replay_abs_seconds": 9.5367431640625e-07,
+    "population_arrays_exact": [
+      "native",
+      "target",
+      "group",
+      "family",
+      "token",
+      "geometry",
+      "quality",
+      "clocks",
+      "geometry_reason",
+      "previous_quality_frozen",
+      "previous_quality_oof"
+    ],
+    "raw_cache_current_router_max_abs_seconds": 9.5367431640625e-07,
+    "reproduced_fit": "QA inverse seed7 CPLA held out; all tensors bitwise equal",
+    "rows": 2677,
+    "sensor_replay_scope": "fresh CLI disables TF32; old Slider cache inherited configure_cuda TF32. Measured difference, not bitwise sensor parity",
+    "slider_fresh_replay_max_abs_seconds": 0.003544449806213379,
+    "startup_first_two": {
+      "Slider-1000": {
+        "F0": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 0.9793363809585571,
+          "population": 2,
+          "relative_absolute_error_pct": 104.1838607788086,
+          "relative_rows": 2,
+          "rmse_seconds": 0.9793999791145325,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        },
+        "candidate_fit": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 0.844285786151886,
+          "population": 2,
+          "relative_absolute_error_pct": 89.36537170410156,
+          "relative_rows": 2,
+          "rmse_seconds": 0.9379350543022156,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        },
+        "previous_quality": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 0.9793363809585571,
+          "population": 2,
+          "relative_absolute_error_pct": 104.1838607788086,
+          "relative_rows": 2,
+          "rmse_seconds": 0.9793999791145325,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        }
+      },
+      "Slider-500": {
+        "F0": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 1.9982227087020874,
+          "population": 2,
+          "relative_absolute_error_pct": 59.714134216308594,
+          "relative_rows": 2,
+          "rmse_seconds": 2.01116943359375,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        },
+        "candidate_fit": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 0.6653425693511963,
+          "population": 2,
+          "relative_absolute_error_pct": 19.71889877319336,
+          "relative_rows": 2,
+          "rmse_seconds": 0.8552600741386414,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        },
+        "previous_quality": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 1.9982227087020874,
+          "population": 2,
+          "relative_absolute_error_pct": 59.714134216308594,
+          "relative_rows": 2,
+          "rmse_seconds": 2.01116943359375,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        }
+      },
+      "Slider-750": {
+        "F0": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 27.12006950378418,
+          "population": 2,
+          "relative_absolute_error_pct": 1245.63623046875,
+          "relative_rows": 2,
+          "rmse_seconds": 32.20899200439453,
+          "valid_targets": 2,
+          "wrong_sign": 1
+        },
+        "candidate_fit": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 1.7490638494491577,
+          "population": 2,
+          "relative_absolute_error_pct": 79.07862091064453,
+          "relative_rows": 2,
+          "rmse_seconds": 1.967127799987793,
+          "valid_targets": 2,
+          "wrong_sign": 0
+        },
+        "previous_quality": {
+          "coverage": 1.0,
+          "finite": 2,
+          "mae_seconds": 27.12006950378418,
+          "population": 2,
+          "relative_absolute_error_pct": 1245.63623046875,
+          "relative_rows": 2,
+          "rmse_seconds": 32.20899200439453,
+          "valid_targets": 2,
+          "wrong_sign": 1
+        }
+      }
+    },
+    "startup_scope": "historically exposed and fitted Slider rows; diagnostic only"
+  },
+  "review": {
+    "both_minor_fixed": true,
+    "critical": 0,
+    "important": 0,
+    "minor": 2
+  },
+  "ruff": "passed",
+  "status": "passed",
+  "suite_scope": "full suite plus final focused regressions after interval/report review corrections"
+}
