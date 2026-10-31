@@ -167,3 +167,24 @@ Esta finalización solo corresponde a los medios eAP: no hubo inferencia ni
 evaluación del candidato. La extracción EvTTC sigue viva (worker 77708, sesión
 59503), último avance observado 595/2608, 583 nuevas, 1902.0 s y ETA móvil
 110.1 min. Esperar su propio COMPLETE.json para evaluar.
+
+## Replay original de contextos eAP terminado
+
+`eap_original_context_replay_v1` completó las 5.805 consultas físicas en CPU,
+batch1, con cero fallos de paridad en los 22 campos comparados. Recalculó ambos
+contextos, el estado de cabeza y la salida final desde las entradas archivadas;
+no ejecutó productores ni el candidato. La sesión 23855 terminó con exit 0.
+Ver [EAP_ORIGINAL_CONTEXT_REPLAY.md](EAP_ORIGINAL_CONTEXT_REPLAY.md), su protocolo
+fijado antes de ejecutar y los recibos publicados. No repetir este replay para
+obtener el mismo resultado.
+
+La diferencia máxima de TTC frente al archivo fue 0.0001049042 s: comparar el
+candidato contra un original emparejado en la misma plataforma, evitando
+atribuir esta variación numérica al cambio de PAIR. El entregable sigue intacto.
+
+EvTTC sigue ejecutándose en sesión 59503/worker 77708; última observación
+703/2608, 687 nuevas, 2240.0 s, ETA móvil 70.8 min. Sigue pendiente su sello
+completo y la evaluación de los criterios fijos.
+
+También apareció `operational/release_research/` como trabajo concurrente;
+no lo creó ni lo añadió esta ejecución. Preservarlo.

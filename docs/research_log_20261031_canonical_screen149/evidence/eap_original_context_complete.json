@@ -1,0 +1,125 @@
+{
+  "candidate_evaluated": false,
+  "elapsed_seconds": 117.91010870004538,
+  "failed_queries": 0,
+  "fields": {
+    "E_CTX_MATCHED.output_expert_index": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 0.0
+    },
+    "E_CTX_MATCHED.output_point_phase": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.4901161193847656e-08
+    },
+    "E_CTX_MATCHED.output_q10": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 7.450580596923828e-09
+    },
+    "E_CTX_MATCHED.output_q90": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.4901161193847656e-08
+    },
+    "E_CTX_MATCHED.output_raw_location": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 7.683411240577698e-09
+    },
+    "E_CTX_MATCHED.output_raw_residual": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 7.683411240577698e-09
+    },
+    "E_CTX_MATCHED.output_relative_cost": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 3.5762786865234375e-07
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 8.940696716308594e-07
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 7.152557373046875e-07
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 7.748603820800781e-07
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 2.2351741790771484e-08
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.4901161193847656e-08
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 2.9802322387695312e-08
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.6763806343078613e-08
+    },
+    "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 0.0001049041748046875
+    },
+    "R_CTX.output_expert_index": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 0.0
+    },
+    "R_CTX.output_point_phase": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 2.2351741790771484e-08
+    },
+    "R_CTX.output_q10": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.4901161193847656e-08
+    },
+    "R_CTX.output_q90": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.862645149230957e-08
+    },
+    "R_CTX.output_raw_location": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.4901161193847656e-08
+    },
+    "R_CTX.output_raw_residual": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 1.4901161193847656e-08
+    },
+    "R_CTX.output_relative_cost": {
+      "comparisons": 5805,
+      "failed_queries": 0,
+      "max_abs": 9.5367431640625e-07
+    }
+  },
+  "freeze_sha256": "c909b3368c0e7496061c197b74c1ce524237aa31c5289240dd5d3ed98808b47e",
+  "parity_status": "PASS",
+  "physical_queries": 5805,
+  "producer_calls": 0,
+  "results_sha256": "830d64bcf7d952cd4a94923a89bad013838ca83330117f9ea4a140152f16b253",
+  "scope": "Original contexts/head from saved inputs; no sensor producer replay",
+  "status": "COMPLETE",
+  "targets_read": false
+}
