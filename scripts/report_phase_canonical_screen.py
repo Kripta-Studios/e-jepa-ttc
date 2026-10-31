@@ -18,6 +18,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--screen", type=Path, required=True)
     parser.add_argument("--evaluation", type=Path, required=True)
+    parser.add_argument("--compact-audit", type=Path)
     parser.add_argument(
         "--output", type=Path, default=Path("docs/research_log_20261031_canonical_screen149")
     )
@@ -38,6 +39,17 @@ def main() -> None:
         (args.evaluation / "REPORT.json", "report.json"),
     ):
         (evidence / name).write_bytes(source.read_bytes().replace(b"\r\n", b"\n"))
+    compact = None
+    if args.compact_audit:
+        compact = read(args.compact_audit)
+        if (
+            compact["status"] != "PASS"
+            or compact["screen_complete_sha256"] != report["screen_complete_sha256"]
+        ):
+            raise ValueError("Compact parity audit differs")
+        (evidence / "compact_parity.json").write_bytes(
+            args.compact_audit.read_bytes().replace(b"\r\n", b"\n")
+        )
     lines = [
         "# PHASE-TTC: screen fijo de PAIR canónico, 149 consultas",
         "",
@@ -75,6 +87,31 @@ def main() -> None:
                 f"{number(old['relative_error_pct'])} → {number(new['relative_error_pct'])} | "
                 f"{metric['nonworsening']} |"
             )
+    lines += [
+        "",
+        "## Rechazos y comprobaciones",
+        "",
+    ]
+    for name, data in report["producer_counts"].items():
+        accepted = data["accepted_observations"]
+        lines.append(
+            f"- {name}: {accepted['event']} observaciones de eventos y "
+            f"{accepted['rgb']} RGB aceptadas; {data['rejected_calls']} lotes rechazados."
+        )
+    for route, data in report["routes"].items():
+        for domain, metric in data["domains"].items():
+            lines.append(
+                f"- {route}/{domain}: {metric['newly_missing']} nuevas ausencias; "
+                f"{metric['sign_changes']} cambios de signo."
+            )
+    if compact is not None:
+        lines += [
+            "",
+            "En las dos consultas comunes, el replay compacto reproduce exactamente "
+            "los raw17/expert3 y los contextos/cabeza canónicos del piloto anterior, "
+            "que sí ejecutaba los productores completos. La auditoría compara "
+            "artefactos sellados; no repite los pilotos ni abre targets.",
+        ]
     lines += [
         "",
         "## Criterio fijado y resultado",
@@ -128,7 +165,8 @@ def main() -> None:
         "",
         "```powershell",
         ".venv-transfer/Scripts/python.exe scripts/report_phase_canonical_screen.py "
-        f"--screen {args.screen} --evaluation {args.evaluation}",
+        f"--screen {args.screen} --evaluation {args.evaluation}"
+        + (f" --compact-audit {args.compact_audit}" if args.compact_audit else ""),
         "```",
         "",
     ]

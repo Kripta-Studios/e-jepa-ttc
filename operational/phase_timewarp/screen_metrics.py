@@ -41,6 +41,7 @@ def compare_screen(
         "canonical_available": int(new.sum()),
         "newly_missing": int((old & ~new).sum()),
         "newly_available": int((~old & new).sum()),
+        "sign_changes": int((old & new & (np.sign(original) != np.sign(canonical))).sum()),
         "by_recording": by_recording,
     }
     complete_groups = all(row["paired"] > 0 for row in by_recording.values())

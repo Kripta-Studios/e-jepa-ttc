@@ -67,6 +67,18 @@ def main() -> None:
             for p in (Path(__file__), Path("operational/phase_timewarp/screen_metrics.py"))
         },
         "routes": {},
+        "producer_counts": {
+            name: {
+                "accepted_observations": {
+                    modality: sum(
+                        r["results"][name]["accepted_observations"][modality] for r in records
+                    )
+                    for modality in ("event", "rgb")
+                },
+                "rejected_calls": sum(len(r["results"][name]["rejected_calls"]) for r in records),
+            }
+            for name in ("original", "canonical")
+        },
     }
     for route in ("F0", "router"):
         for name in ("original", "canonical"):
