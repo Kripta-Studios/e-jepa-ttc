@@ -1,0 +1,20 @@
+{
+  "artifact_count_verified": 39401,
+  "complete_sha256": "2a6fc0fd462a0520648835801896951faa97edcc8b8639bcc1d3a27740d31bfd",
+  "complete_summary": {
+    "baseline_exact": true,
+    "elapsed_seconds": 13243.949087699992,
+    "end_time": "2026-10-31T22:00:01.102673+00:00",
+    "freeze_sha256": "a847ace2866628af3b0e9e0ccb91038fc4da93593ffd56d0f6f5d746229623f1",
+    "optimizer_updates": 0,
+    "primary_route": "F0",
+    "queries": 2608,
+    "reused_screen_sha256": "e9d03b2ee1fe72a9acad3b159943f01370e539ce73fc3651c623df400dfd4aa9",
+    "status": "COMPLETE",
+    "targets_read": false
+  },
+  "generator_sha256": "b3880f445e1b02ada2e3531d4029e6c54e1ed8a702a6a06f2b65700f4eb314f1",
+  "predictions_sha256": "238fa032c95c9ebb7fbc1ea0a4e2f054d369e785d36e24aca7bfa83343b4b15a",
+  "report_sha256": "fba7639355b437f74980c329f0fc107b3466a2ad457e5594a2004ec1cb1469e9",
+  "status": "VERIFIED"
+}

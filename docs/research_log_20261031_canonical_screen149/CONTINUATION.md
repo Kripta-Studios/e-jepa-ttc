@@ -1,5 +1,19 @@
 # Continuación activa tras el screen
 
+**Actualización posterior: población terminada.** La sesión 59503 terminó con
+exit 0; no reiniciarla. Se verificaron los sellos antes de unir targets y se
+publicó el [informe completo de 2608 consultas](../research_log_canonical_population2608/README.md).
+F0 cumple los criterios fijados y es elegible para validar eAP completo. El router
+sigue siendo diagnóstico por su fallo en el screen previo, aunque los agregados
+de la población completa mejoren. En carretera, los IC descriptivos de ambos
+cambios de F0 incluyen cero. No hay evidencia de SOTA ni promoción del entregable.
+
+Siguiente acción: recapturar los PAIR133 RGB de despliegue Test12 con los medios
+ya verificados, reproducir primero el original y comparar original/canónico en
+la misma plataforma, recalculando todas las historias, contextos y cabeza.
+El replay original de contextos ya terminado no necesita repetirse aisladamente.
+Los estados de ejecución que siguen son un registro histórico, no jobs pendientes.
+
 Registro a 2026-10-31T18:26:55.968736+00:00. No es una pausa ni un cierre del
 objetivo: continúa la investigación hacia evidencia reproducible bajo protocolo
 comparable, preservando eAP. SOTA sigue sin acreditarse.
