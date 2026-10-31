@@ -1,0 +1,90 @@
+{
+  "artifacts": {
+    "DEVELOPMENT.npz": "a2bce98d9dd5c2b7ea5d300ceb472be0689031b39c52ea6f02e0c7d09fb2bd41",
+    "FREEZE.json": "da537965f1106256df7900ba7b2355d80a3902973b6fef57c50166f5a99725f0",
+    "RESTARTS.npz": "8fad8e941e4b1c59c135c93d76fa4de8d885b618bb61213c0dcfd65b7e2d4b60",
+    "SOURCE_TRAIN40.npz": "b6740a0fa6e68b30d71ca370e64f331bce4c2562e460d408bd54f9f5d848d1a6",
+    "TEST12.npz": "b7c745ce0eb3eb293ee2f6e83bbac8b1175e3d5f4bf2fe2741e651c1070ba39f",
+    "executed_source\\docs\\superpowers\\plans\\2026-10-31-phase-native-support-fusion.md": "c6a982b94cf8ac8464405feeb11f33653bc0ef28ef60cc6ada643901e615bafb",
+    "executed_source\\operational\\final_refit\\features.py": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+    "executed_source\\operational\\phase_adapt_cache.py": "06d0588bbe68018226a6d1eeb90bb84ad12ad5fca41d1fcc4a5f1986f520edf8",
+    "executed_source\\operational\\phase_campaign\\data.py": "1cd88387ab589d8c71dd95c51c2847867280b9d2e96cfeaeeedcb543de83d179",
+    "executed_source\\operational\\phase_native_support\\features.py": "26a1df4f1d955ad60a06ae4cf3b3a87dbe3d15d7d07968971db4c735a560122a",
+    "executed_source\\operational\\phase_observation_cache\\integrity.py": "73cf1b97c7e1c53c1cde7ffb83cba062eb6cb2c9cf5ca6ab4fbed4567e896c8c",
+    "executed_source\\operational\\rgb_port\\infer_experts.py": "b6d12889078b8ffed23134a52ec653e7ac4aae56700c17384b866eac1231cc9f",
+    "executed_source\\scripts\\audit_phase_native_source_closure.py": "ce86dea67258bd9584d302363ce0e23c051a67c6e35ad06557baae5e853cef09",
+    "executed_source\\scripts\\build_phase_native_context_augmentations.py": "ddb23291bfefbad5fe4efd3956b2e907dfd77f3b2d7a1701fd3378a50da59418",
+    "executed_source\\scripts\\build_phase_native_support_cache.py": "e18a963d729cbb63f81e5ca02527d39f345e890e119d04fb762b3e8c42baca9e",
+    "executed_source\\scripts\\train_phase_native_context_fusion.py": "7e12a50c31b3571feec33737cd7256164081f559dec779d0843bbaa15494bfdd",
+    "executed_source\\tests\\unit\\test_phase_native_support_cache.py": "4d1c2d9a90f37ab79bdceb65aafa33c4cae4dbc776eaf4f0cb6bf942801b04e8"
+  },
+  "counts": {
+    "DEVELOPMENT": 2608,
+    "RESTARTS": 447,
+    "SOURCE_TRAIN40": 88744,
+    "TEST12": 6762
+  },
+  "elapsed_seconds": 2.2095037000253797,
+  "feature_indices": [
+    165,
+    166,
+    167,
+    168,
+    169,
+    335,
+    336,
+    337,
+    338,
+    339
+  ],
+  "freeze_sha256": "da537965f1106256df7900ba7b2355d80a3902973b6fef57c50166f5a99725f0",
+  "inputs": {
+    "output\\phase_adapt_final\\data_v3\\COMPLETE.json": "e0a1e214e3a46d553dd5d3408317d3fdaa3b130454b39bf8681f10ab029ed130",
+    "output\\phase_adapt_final\\data_v3\\TRAIN40_RESTORE.json": "008d8ab2cb60b352015eb89f5734e924f37eea0003b72de582647aaf7b0b5a10",
+    "output\\phase_adapt_final\\data_v3\\training.npz": "96498f7c99181ecb45e8c53957b05482fd3eef6e93eac0eccb5a92c68fb43a86",
+    "output\\phase_campaign\\Slider500\\DIAGNOSTICS.json": "1180a6987f886d1733284b16251c1670a649bb75cfdfaf0d8afcd025f3fb0e2b",
+    "output\\phase_campaign\\Slider500\\FREEZE.json": "6c67b96d037c48fdf884a159048638980f27a05046f0ae9faded08dd0a655bea",
+    "output\\phase_campaign\\Slider500\\PREDICTIONS_SEALED.json": "555641f3291c90b8ca224b624a42520efbf9831ae3687d28cae3570ff179fcda",
+    "output\\phase_observation_cache\\expanded149\\AUGMENTATIONS.npz": "dc900f623132a2c8c8d179719bd5704b9c94b243cfc7c26186d16281c68f9a18",
+    "output\\phase_observation_cache\\expanded149\\COMPLETE.json": "5d16a5c90158f97e1e17f18ecd6f9bba53f8faf7907cbfac7fcedb1bd1a22f60",
+    "output\\phase_observation_cache\\expanded149\\FREEZE.json": "33a9e2cc148ad858abfbfbd5381dec4514e4616d8bd08f46d858fb61d9c47d0a",
+    "output\\phase_observation_cache\\expanded149_sourceclosure\\SNAPSHOT.json": "7950d688ad82f85be792cfcfefa476c5ca1f2c2670e581e130d54a338dcd5a5c",
+    "output\\phase_observation_cache\\expanded149_sourceclosure\\SOURCE_CLOSURE.json": "3369ebf75c85f8d73f9f48d7e5a20ea5abcd47bb0f932ff8e26c90c8abb1528a",
+    "output\\phase_safe_fusion\\source_audit\\COMPLETE.json": "52e675ac8c1c03e92f834c157387fe37ded111df7c742b696d818f6494daafe7",
+    "output\\phase_safe_fusion\\source_audit\\POPULATION.npz": "7ffd2d102322651f530d31efce0f47f2b8dcd53bfa66bb41264a6fdd9392a35a",
+    "output\\phase_safe_fusion\\test12_audit\\COMPLETE.json": "3ddbd9f0fa1c95c6cf81164f1bd03249af67f77d596ca8f40d8ffbfaa751b1cd",
+    "output\\phase_safe_fusion\\test12_audit\\POPULATION.npz": "14671c45a9b9084644f50bfd6973a89b4516d585560cd2732a87fc4b47755a31",
+    "output\\phase_submission\\training\\CONFIG.json": "e1286706ab164886d2059d9fb02c58cd9c5492b19478edecaaa861a13dd40e5d",
+    "output\\phase_submission\\training\\POPULATION.npz": "1c200903e5cbaf4cc2115c6b53dc252613e51d2f0dc0d9dcb595cdbe523e804e"
+  },
+  "known_context_counts": {
+    "DEVELOPMENT": [
+      2607,
+      2607
+    ],
+    "RESTARTS": [
+      444,
+      444
+    ],
+    "SOURCE_TRAIN40": [
+      88744,
+      88744
+    ],
+    "TEST12": [
+      6762,
+      6762
+    ]
+  },
+  "optimizer_updates": 0,
+  "parity": {
+    "restart_rows": 447,
+    "road_reextracted_exact": 72,
+    "slider_historical_available_exact": 76,
+    "slider_unavailable_explicit": 1
+  },
+  "producer_calls": 0,
+  "schema": "phase_native_support_cache_v1",
+  "source_closure_sha256": "3369ebf75c85f8d73f9f48d7e5a20ea5abcd47bb0f932ff8e26c90c8abb1528a",
+  "status": "COMPLETE",
+  "targets_read": false
+}
