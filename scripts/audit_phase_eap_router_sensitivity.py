@@ -201,6 +201,13 @@ def main() -> None:
                     np.testing.assert_array_equal(np.float32(value), native[0])
                 row[name] = value if np.isfinite(value) else None
             predictions[token] = row
+            if len(predictions) % 500 == 0:
+                elapsed = time.perf_counter() - started
+                print(
+                    f"ROUTER {len(predictions)}/5805 elapsed={elapsed:.1f}s "
+                    f"eta={elapsed / len(predictions) * (5805 - len(predictions)):.1f}s",
+                    flush=True,
+                )
         for path, digest in {**pins, **freeze["parents"]}.items():
             if file_sha(Path(path)) != digest:
                 raise ValueError("Router audit source/input changed during execution")

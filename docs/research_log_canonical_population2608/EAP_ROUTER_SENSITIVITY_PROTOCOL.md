@@ -32,6 +32,11 @@ El runner `scripts/audit_phase_eap_router_sensitivity.py` requiere directorio
 nuevo. No hay resultado de esta extensión al fijar el protocolo. Su ejecución
 debe esperar a que las tres etapas padre terminen y pasen sus guardas.
 
+Actualización operativa previa a ejecutarlo: la captura v1 fue interrumpida.
+Consumir su recuperación v2 completa. Esperar también el fin del coordinador
+de latencia concurrente para no introducir carga de este diagnóstico en sus
+mediciones. No se modifica el control ni el criterio científico del protocolo.
+
 Validación previa: ocho pruebas de cobertura, signos, ausencias, igualdad exacta
 de F0 y rechazo de padres incompletos/alterados; Ruff check/format y Pyright
 scoped pasan. Esto valida el runner, no constituye un resultado eAP.
@@ -39,5 +44,5 @@ scoped pasan. Esto valida el runner, no constituye un resultado eAP.
 ```powershell
 $env:PYTHONPATH='src;.'
 $env:PYTHONUTF8='1'
-.venv-transfer/Scripts/python.exe scripts/audit_phase_eap_router_sensitivity.py --capture output/release_research_20261031/native_platform_followup_v1/capture --original output/release_research_20261031/native_platform_followup_v1/original_replay --paired output/release_research_20261031/native_platform_followup_v1/paired_replay --inputs artifacts/runpod_event_authority_supplement_20261026/payload/workspace/e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/INPUTS.json --output output/phase_timewarp/eap_router_sensitivity_v1
+.venv-transfer/Scripts/python.exe scripts/audit_phase_eap_router_sensitivity.py --capture output/release_research_20261031/native_platform_followup_v2/capture --original output/release_research_20261031/native_platform_followup_v2/original_replay --paired output/release_research_20261031/native_platform_followup_v2/paired_replay --inputs artifacts/runpod_event_authority_supplement_20261026/payload/workspace/e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/INPUTS.json --output output/phase_timewarp/eap_router_sensitivity_v1
 ```

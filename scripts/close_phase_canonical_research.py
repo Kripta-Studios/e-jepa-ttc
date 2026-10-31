@@ -75,7 +75,11 @@ def main() -> None:
     audit_path = args.official_audit / "AUDIT.json"
     audit = read(audit_path)
     manifest = read(Path("docs/research_log_20261031_sign_safe/evidence_manifest.json"))
-    if file_sha(audit_path) != manifest["receipts"]["evaluator_audit.json"]:
+    published_audit = Path("docs/research_log_20261031_sign_safe/evidence/evaluator_audit.json")
+    if (
+        file_sha(published_audit) != manifest["receipts"]["evaluator_audit.json"]
+        or audit_path.read_bytes().replace(b"\r\n", b"\n") != published_audit.read_bytes()
+    ):
         raise ValueError("Evaluator audit differs from published evidence")
     verify_artifacts(Path.cwd(), audit["input_sha256"])
     verify_artifacts(args.official_audit, audit["output_sha256"])
@@ -137,6 +141,8 @@ def main() -> None:
             name: {"path": str(path), "sha256": file_sha(path)} for name, path in sources.items()
         },
         "generator_sha256": file_sha(Path(__file__)),
+        "prior_published_evaluator_sha256": file_sha(published_audit),
+        "prior_evaluator_publication_normalized_crlf_to_lf": True,
     }
     evidence = args.output / "evidence"
     evidence.mkdir(parents=True)

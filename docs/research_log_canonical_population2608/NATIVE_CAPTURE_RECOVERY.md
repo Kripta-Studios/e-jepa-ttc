@@ -8,6 +8,10 @@ archivos escritos: las 5805 observaciones de eventos y 1475 RGB. Los 63 hashes
 de fuentes/entradas del FREEZE original siguen coincidiendo. No se infiere una
 finalización por un estado obsoleto ni se atribuye una causa no comprobada.
 
+El inventario detallado de recuperación admite 7279 fragmentos, porque uno de
+los 7280 directorios con ambos nombres no estaba completo. Ese fragmento se
+recaptura; el conteo de nombres anterior no se presenta como validación de bytes.
+
 Al reanudar se encontró ya viva la recuperación concurrente
 `scripts/resume_release_native_research.py all`, coordinador 35860 y worker 3836,
 con salida `output/release_research_20261031/native_platform_followup_v2`.
@@ -34,3 +38,9 @@ decisión del candidato según controles fijados y comparabilidad/SOTA. Después
 se detendrá el trabajo. No abrir nuevas líneas ni declarar completos requisitos
 que necesiten datos/evaluador ausentes. El objetivo SOTA no se dará por logrado
 por cerrar este informe.
+
+Actualización posterior del usuario: solicita resolver los tres requisitos,
+no limitarse a publicar un cierre de comprobaciones disponibles. El cierre
+acotado preparado no se ha ejecutado. Se continúa con las dependencias externas
+y el protocolo nuevo `CANONICAL_ROUTER_REFIT_PROTOCOL.md`, conservando todos
+los resultados negativos y sin declarar alcanzado el objetivo SOTA.

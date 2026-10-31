@@ -1,5 +1,20 @@
 # Continuación activa tras el screen
 
+**Actualización 1 de noviembre:** el usuario ha solicitado resolver los tres
+requisitos (eAP completo, candidato aprobado y comparación SOTA equivalente).
+El cierre acotado preparado no se ha ejecutado y no sustituye esos requisitos.
+La captura v1 quedó interrumpida; la recuperación concurrente v2 está activa en
+`output/release_research_20261031/native_platform_followup_v2` (comprobar recibos
+y procesos, no confiar en los PID históricos de abajo). Se conserva v1.
+El diagnóstico del router consumirá exclusivamente los padres completos de v2.
+Se ha fijado además el [único reajuste emparejado nuevo](../research_log_canonical_population2608/CANONICAL_ROUTER_REFIT_PROTOCOL.md):
+misma receta, estados originales/canónicos, ocho folds y tres semillas, sin
+repetir la búsqueda de fusión anterior. No constituye todavía un resultado.
+La revisión pública actual de GarlTTC confirma que Test12 no distribuye targets
+y requiere evaluación oficial en CodaBench. Slider-750 sigue sin equivalencia.
+Las notas de ejecución siguientes son históricas y quedan subordinadas a esta
+actualización; no reiniciar trabajos antiguos a partir de ellas.
+
 **Actualización posterior: población terminada.** La sesión 59503 terminó con
 exit 0; no reiniciarla. Se verificaron los sellos antes de unir targets y se
 publicó el [informe completo de 2608 consultas](../research_log_canonical_population2608/README.md).
