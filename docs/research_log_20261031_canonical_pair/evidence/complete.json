@@ -1,0 +1,2055 @@
+{
+  "artifacts": {
+    "FREEZE.json": "9d3165f0d461b72a33816b9a0e13815e15fd00e46097fbac98d0e0c76f2159f0",
+    "executed_source\\docs\\superpowers\\plans\\2026-10-31-phase-canonical-pair-pilot.md": "86e58ed8bf5026ebdc2673376fd8ebc0d43252f6221fab565b02c60c6a412f76",
+    "executed_source\\docs\\superpowers\\plans\\2026-10-31-phase-producer-timewarp-pilot.md": "b0e033d6cf4641f342d03afbbbfa67b352a890d98e0ea7500ff6e54916ad5254",
+    "executed_source\\operational\\evttc_competition\\geometry.py": "0c790f966c7aa3ac01d3b8cf8978e9dbc2c251309130db49fe184267fde5db24",
+    "executed_source\\operational\\evttc_competition\\prepare.py": "032a1a57eddc860f78def259dae64e33b2af0fcce4a029763905df11c6f017c3",
+    "executed_source\\operational\\evttc_competition\\readers.py": "8101a73fd15121bfb22299c3df0a321f570c747565c16f0b12a6d48ee80ace9e",
+    "executed_source\\operational\\evttc_competition\\runtime.py": "9d1d3d54bc4812671b5f8e00e48f7c2124033a5fbc25a601564c0b8a40d0e13b",
+    "executed_source\\operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "executed_source\\operational\\evttc_transfer\\inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "executed_source\\operational\\final_refit\\features.py": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+    "executed_source\\operational\\final_refit\\recipe.py": "2753b5bb9c0faf15d23622489e6316bbf594830d0bff515bd595699dae22ea4d",
+    "executed_source\\operational\\final_refit\\test12.py": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6",
+    "executed_source\\operational\\final_refit\\training.py": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+    "executed_source\\operational\\phase_observation_cache\\capture.py": "f7adfb61289d4d447e1e9dd2a2c641abcc26cf3c805977f1349211e92c25a3be",
+    "executed_source\\operational\\phase_observation_cache\\replay.py": "bcb48e45e2c40debbfefa70fe97cc552018fc952c8f55fd89d80011b74e41c39",
+    "executed_source\\operational\\phase_robust\\cache.py": "ef0f1827070ea8e5abf54c4f59d6e70939b37029b3f11c72536940d75b76b2c0",
+    "executed_source\\operational\\phase_timewarp\\canonical_pair.py": "f5788577e8eef1d95b299da234f0e32352d40b914b5669e440fc917c9c6dd82d",
+    "executed_source\\operational\\phase_timewarp\\capture.py": "b93a0b5f9c123e8fb222a72f942312c5fa2aea0532efc0fbfc3b256ac602c31d",
+    "executed_source\\operational\\phase_timewarp\\pilot.py": "95c559fb4aff7e42b976d1a4086a589e891d4fc6b8d681780535a6508c37de17",
+    "executed_source\\operational\\phase_timewarp\\warp.py": "a635e2240416d03acf27e65c17105c77ce466e323c4c6704dad96eda4c885018",
+    "executed_source\\operational\\rgb_port\\infer_experts.py": "b6d12889078b8ffed23134a52ec653e7ac4aae56700c17384b866eac1231cc9f",
+    "executed_source\\operational\\rgb_port\\train_heads.py": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+    "executed_source\\operational\\rgb_port\\train_producers.py": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc",
+    "executed_source\\operational\\rgb_port\\transfer.py": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73",
+    "executed_source\\operational\\rgb_port_revision\\transfer_inputs.py": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+    "executed_source\\operational\\rgb_port_streaming\\contracts.py": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c",
+    "executed_source\\scripts\\build_phase_native_context_augmentations.py": "ddb23291bfefbad5fe4efd3956b2e907dfd77f3b2d7a1701fd3378a50da59418",
+    "executed_source\\scripts\\final_train40_transfer.py": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730",
+    "executed_source\\scripts\\pilot_phase_canonical_pair.py": "9a7ce88e38ee03aabf34dd3c60afff815f9062efc8f087c40e36e087460a2864",
+    "executed_source\\scripts\\pilot_phase_observation_cache.py": "feb2f081366eb6900a112ea035e24a01c5ef77d2d6e54b2bbebfc8df1067331d",
+    "executed_source\\scripts\\pilot_phase_producer_timewarp.py": "46ffaf9d7aab9c465b4f38e11b30c3e8b094af4e7d51b26097a3ce1a0a8a1a70",
+    "executed_source\\src\\e_jepa_ttc\\data\\eap_representation.py": "1698434a1a5c1e41557e12221c96e545cb5208b57c35541a15599ac5c7fcaa14",
+    "executed_source\\src\\e_jepa_ttc\\data\\event_v4_geometry.py": "4476f01232c08dd4c120258ae5761643701e08fcdecdd24311e3c39483ebf68b",
+    "executed_source\\src\\e_jepa_ttc\\data\\stage61_pair_feature_cache.py": "83c0801435d57a854dd17a7ce302eeaa156290c0f065078439119a15ac611cf1",
+    "executed_source\\src\\e_jepa_ttc\\data\\types.py": "79121bf50fc8a060bd8fa8c73bc4c572ed28ad960d6bf8e7476af6b5c450bd48",
+    "executed_source\\src\\e_jepa_ttc\\efficient_context\\mapped_union.py": "48a4ea70aefec43924ad9729ef8e354befaadf4b48195bd6182d61069a25937a",
+    "executed_source\\src\\e_jepa_ttc\\models\\causal_scale_ttc.py": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+    "executed_source\\src\\e_jepa_ttc\\models\\collision_clock_math.py": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f",
+    "executed_source\\src\\e_jepa_ttc\\models\\local_transport.py": "bb4f41ebff0cd0c0b8a9d9e3598ae2e83d3263eb81b74de26325efbb8c46be05",
+    "executed_source\\src\\e_jepa_ttc\\representations\\voxel_grid.py": "2669d0eda1b56ad2c404c162577c0ccc6870ba61c68984781f79fb0c445edf08",
+    "executed_source\\src\\e_jepa_ttc\\rgb_port\\data.py": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec",
+    "executed_source\\src\\e_jepa_ttc\\rgb_port\\features.py": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114",
+    "executed_source\\src\\e_jepa_ttc\\rgb_port\\normalization.py": "4fafd5e75ebc9f2ee200d690664a308b742d41f80e4651e213929cb7b1033faa",
+    "executed_source\\src\\e_jepa_ttc\\simplex_t\\model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+    "executed_source\\src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+    "executed_source\\src\\e_jepa_ttc\\training\\stage61_pair_head.py": "0c1cca4ecb1b2975709ba95e77cba616b363d5bb2e0d005605b075ef1265bdb3",
+    "executed_source\\tests\\unit\\test_phase_canonical_pair.py": "2a454ec822e3658a0ac9130f00884a2c6f5eb50a02dc809d3f344a69dc79eec4",
+    "executed_source\\tests\\unit\\test_phase_canonical_pilot.py": "43dde8fb8ef20f679d20444a2d86b75f5f4f1dc285a0ead996be4a07e6b63a5b",
+    "executed_source\\tests\\unit\\test_phase_timewarp.py": "a00da3239f874b57645cc16f41cb8204e84d3de35a395858c7d4b40515e81fb7",
+    "executed_source\\tests\\unit\\test_phase_timewarp_capture_pilot.py": "86639448d663fea4f700166cd2efea33cec5888a4cf0b6786abe1bbb15695dc6",
+    "road\\COMPLETE.json": "f182d5aed7cd52a61e001dd497ac1b1e167b2aed4e4db48cb451a794f3ac8e9d",
+    "road\\a0p5\\CALLS.json": "04e78e649b8def0a995462475a0ddc9a0ee3665aa76b6d70ad6a263d2f9e28c3",
+    "road\\a0p5\\CANONICAL_TRACES.npz": "b967b38efbe3fda08e4d096329e54545442763a879b872afd17b6717c007ec14",
+    "road\\a0p5\\CONTEXT.npz": "d361880e7107abed580c01d116bd49c9d0a93b48e2d96439ae32006a0b6992a4",
+    "road\\a0p5\\OBSERVATIONS.json": "50b04b57ddf4dcfb0d042a1cdbb5c89c17011eea6eb169de208e689c49fe93b0",
+    "road\\a0p5\\OBSERVATIONS.npz": "4f706025b2fc07b5259422fb6e7a6bb5261a108928488b7c70f47ce58143a92c",
+    "road\\a0p5\\PRODUCERS.npz": "d66fc2727a81101586062925cb37cc4977fedbab18066c13dbc3c0cc71d8f12e",
+    "road\\a0p5\\RESULT.json": "988ac4d867d2ae17e4437a86e052340a12b2af5eb4856adff061b47cc57eace9",
+    "road\\a0p5\\SELECTION.json": "4493b290b7ac551c9536c30ffcecb3c7088609fa6955fd23f3933fed8b4dd7fd",
+    "road\\a0p5_matched_clean\\CALLS.json": "e2b4e9e0fe1f8ac913698091e682859d01745df89ca3faa5f575bade67da35af",
+    "road\\a0p5_matched_clean\\CANONICAL_TRACES.npz": "4a6ef8814788bf36a71bc3730315ec7f1cc58b340e15f08f84fd1ef90b226d93",
+    "road\\a0p5_matched_clean\\CONTEXT.npz": "16568260dd9115654a613a4b56040b3b867746adfb7bba7fac29dd6d0e25a209",
+    "road\\a0p5_matched_clean\\OBSERVATIONS.json": "8cb2b90b62b57fb24a25e41e708c04a9895ca754c044306eb3bbf65322ebfc6b",
+    "road\\a0p5_matched_clean\\OBSERVATIONS.npz": "01fafc710dbda773b7fa7c32a820783b7aa46ebc92dc0656bf9a799c75647569",
+    "road\\a0p5_matched_clean\\PRODUCERS.npz": "abad11caff6e1df12b3ffc343fa7b096fb8dcf28f809cc0ba5947948945059f2",
+    "road\\a0p5_matched_clean\\RESULT.json": "d2ad788ffbc3cc1ea32e81b88a4aa07998e8ff11d5a7cdf1f8aab8e55c1b3cde",
+    "road\\a0p5_matched_clean\\SELECTION.json": "711a5376116b4130100e2f84a27d05c7a46a3c60ab313069be1778e82ea39976",
+    "road\\a1\\CALLS.json": "e31199f44efc2427b8ba4839acc317aa7bc10fc8a9d83e806ed4a36e97a1c51c",
+    "road\\a1\\CANONICAL_TRACES.npz": "c313258454d98269ee6f5c7300db80ef4aa61ba7f36af8e26d6d245ef278d31a",
+    "road\\a1\\CONTEXT.npz": "298d4c7e43982cb2f137ba326652eafd8cc5cc7ae7dba5b52d4ebae0d833bfec",
+    "road\\a1\\OBSERVATIONS.json": "7f63eb43b4f65b6adce5c16e64a0d4a35a349f5e4b984ca1b8e9b15893d2af90",
+    "road\\a1\\OBSERVATIONS.npz": "cab0dc542664d0ebf509b0abee899641b114a566b5c62cdcfc3f228be304879c",
+    "road\\a1\\PRODUCERS.npz": "313a9a3abdc641fba65de794ddac6450d540ed22f528cc801663bee5d35494a0",
+    "road\\a1\\RESULT.json": "f72c0486413bbf8fddcd495ea76ae068d799008c1ba01b3444ab5a82aaaae6cb",
+    "road\\a1\\SELECTION.json": "a89ed4dea39f0a61a6fa00a3d00bda9b01389156178498576942c979deb330ee",
+    "road\\a2\\CALLS.json": "ea29c2022339b1863862396b86e0b7f9f99b8bebe23dbe1d4692f4a3c0612a72",
+    "road\\a2\\CANONICAL_TRACES.npz": "0174ef81be47b4b934ad8d8f87fa8fe7c362f19650b07f177ec99138b1e8ad16",
+    "road\\a2\\CONTEXT.npz": "943f35c2253b0350d61f226252e5816723fc0aadb0405443a4c891cfec8be9f6",
+    "road\\a2\\OBSERVATIONS.json": "c6bfdc2904474912f5a162f5fde0c75751f0729c8a58471ce345285ca6459ae8",
+    "road\\a2\\OBSERVATIONS.npz": "f9fd09ccda05b3f3b16e4d4fb88cc0093e6d8cf7e6cd8895d8c391300c74a52e",
+    "road\\a2\\PRODUCERS.npz": "bfa04d1595f3551f36d14e96205c711d8e3cec1d2bd20f71c25ed1232650236f",
+    "road\\a2\\RESULT.json": "0adf1b3d67d446dd0e4995722389c251e11efc5a7277b23ae819ddea89b9d0b3",
+    "road\\a2\\SELECTION.json": "a89ed4dea39f0a61a6fa00a3d00bda9b01389156178498576942c979deb330ee",
+    "slider500\\COMPLETE.json": "be7da548021f98930bbf35463441efdd1566a0766a1e2e808a6059100a8c8753",
+    "slider500\\a0p5\\CALLS.json": "cc0fe20486b4f81c5c34ce1d9aea037c5d36afd7bef5ef64d374fca346835901",
+    "slider500\\a0p5\\CANONICAL_TRACES.npz": "74efeaadf3986c006577dcfc3b98465a305e0ca438a724ca3900760814936c56",
+    "slider500\\a0p5\\CONTEXT.npz": "144a887f74668188ffc007165b6c85a92ecca30626ef23e149a724e0e8b21a62",
+    "slider500\\a0p5\\OBSERVATIONS.json": "9e97a8b2a84ba3491532bed260aaf280b78acc7e3ab6f3645cdcaf16fade6539",
+    "slider500\\a0p5\\OBSERVATIONS.npz": "7f050a4b4e497b94c2e776cf81b1beedab8867bc3f91d1bc9ace3d2648255c85",
+    "slider500\\a0p5\\PRODUCERS.npz": "d4855386ed5eebef1dfc50d9524f65d83417ef31be8d1ab8c29801f28bdae9e1",
+    "slider500\\a0p5\\RESULT.json": "190daf11b6c930dcccd4f32dc35e7402522c5d64204f16b05342772e3763955f",
+    "slider500\\a0p5\\SELECTION.json": "7d31c0fe3eefb1cc8d6002f127cb95b86d184acbcf30a26e6925c2c5790c6653",
+    "slider500\\a0p5_matched_clean\\CALLS.json": "97fe0d7ded78088067fd18db2d49dbee0471a41bf45dbbbf2a28f40ef2f31d9b",
+    "slider500\\a0p5_matched_clean\\CANONICAL_TRACES.npz": "3a3e17da4558c537c58449fad6994b3afef454ae9b97f719ec35db4915d0f0b4",
+    "slider500\\a0p5_matched_clean\\CONTEXT.npz": "6a49020c57f88898398f97dbd94c52f497e5e03e7065ed0f59f70fba77fdbc0a",
+    "slider500\\a0p5_matched_clean\\OBSERVATIONS.json": "bbf23e8d19b9109d4bcfdb84dfab43fa3a200760554f723fd5a3971b70f5eea5",
+    "slider500\\a0p5_matched_clean\\OBSERVATIONS.npz": "cef9efc33879838faa8e3faa4d21f477ce660d6854b157203f0562f2eeb3684b",
+    "slider500\\a0p5_matched_clean\\PRODUCERS.npz": "c3cd26e68c5f93ab631313735eb495f8b75af3c3140dab095c742f16380eadda",
+    "slider500\\a0p5_matched_clean\\RESULT.json": "a208b10880f0d24f196430d2d35060ec744942948ce59bd10c60aed57a5b26ea",
+    "slider500\\a0p5_matched_clean\\SELECTION.json": "72df9d8842b8e753e0dd84096dcc83f8f5b8201eac51e8e4fcd0692bccd56469",
+    "slider500\\a1\\CALLS.json": "055736acaf54058630aa90287208a02a67f319706ce8577d1bf54770fe53f486",
+    "slider500\\a1\\CANONICAL_TRACES.npz": "ef33ceebfc7669f1661b842d9f364ad06fa09001d18a59ca0b42a2dcb6d4f1d0",
+    "slider500\\a1\\CONTEXT.npz": "b035af2827e01cabe636d2d057cc3229323cb4ca0aa8aa3b888073b307353a1f",
+    "slider500\\a1\\OBSERVATIONS.json": "8e8ea385560f6ec7c28749a3ed4575f0b7b97383c9fea55446513fd68046f63a",
+    "slider500\\a1\\OBSERVATIONS.npz": "ade770510a5e72e424368e9dc76595cf2f6d6596ddb2dc6bc9ace5f2de04c7dc",
+    "slider500\\a1\\PRODUCERS.npz": "402bb15ec61246309f96a5a8d1d4e81749e1114e6aa53fa81f99c04b965773b9",
+    "slider500\\a1\\RESULT.json": "437a6a56ed7a87b5af639e4f97a1de4664084190d462e97e8b7f25b8fba967e6",
+    "slider500\\a1\\SELECTION.json": "ca5a3773ed063d2b4df6eb1eb695b38d83bc3474c6e87ce4b02b9780d8a6a1d7",
+    "slider500\\a2\\CALLS.json": "0d910d4ec1090f180af5a4f51e2d8137d3901b5318a0df36807e0fda026d6ac6",
+    "slider500\\a2\\CANONICAL_TRACES.npz": "51dc5ca2ff9e8569cf2845ca7a1db602c2b41c58dfce14497a9b4b0f6166b33c",
+    "slider500\\a2\\CONTEXT.npz": "88b7ddd67e5ce8c46a72f63da8670b6b4163bbb7374150c2a7b4a9813a58e1d6",
+    "slider500\\a2\\OBSERVATIONS.json": "a4d9b8378615d9c5cbd738d1ea8cdbfbb6ef72830a707f0db4e08e7937cd53da",
+    "slider500\\a2\\OBSERVATIONS.npz": "b038464dbe9f68df679abc389fa2916037ce2aeaf94d2009876cebdcb90b3d1b",
+    "slider500\\a2\\PRODUCERS.npz": "6cbc922b343a6d54cdf85d8263548a6de11fc544c7f573367f58fa948ff6198f",
+    "slider500\\a2\\RESULT.json": "9d87306cb12cfae949468b7c633d3b7623fca77b6255961c41c2f270460cb070",
+    "slider500\\a2\\SELECTION.json": "ca5a3773ed063d2b4df6eb1eb695b38d83bc3474c6e87ce4b02b9780d8a6a1d7"
+  },
+  "elapsed_seconds": 9.793397499946877,
+  "freeze_sha256": "9d3165f0d461b72a33816b9a0e13815e15fd00e46097fbac98d0e0c76f2159f0",
+  "optimizer_updates": 0,
+  "reports": {
+    "road": {
+      "baseline_exact": true,
+      "clean_accepted_ids": [
+        "event:16700441",
+        "event:16800441",
+        "event:16900441",
+        "event:17000441",
+        "rgb:16600430",
+        "rgb:16700429",
+        "rgb:16800436",
+        "rgb:16900434",
+        "rgb:17000441"
+      ],
+      "clean_native_seconds": [
+        2.790883779525757,
+        3.015897035598755,
+        2.831587553024292
+      ],
+      "factors": {
+        "a0p5": {
+          "accepted_ids": [
+            "event:17000441",
+            "rgb:16900434",
+            "rgb:17000441"
+          ],
+          "control_accepted_ids": [
+            "event:17000441",
+            "rgb:16900434",
+            "rgb:17000441"
+          ],
+          "head_comparison_isolating": true,
+          "matched_batch_groups_exact": true,
+          "native_ttc_ratio_against_matched_control": [
+            1.0654658079147339,
+            1.0692301988601685,
+            1.8914321660995483
+          ],
+          "original_native_ttc_ratio": [
+            0.6735566854476929,
+            0.7108137011528015,
+            0.6737899780273438
+          ],
+          "retained_ids": [
+            "event:17000441",
+            "rgb:16900434",
+            "rgb:17000441"
+          ],
+          "speed": 0.5,
+          "stage_by_observation": {
+            "event:17000441": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.9904506802558899
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0032923221588135,
+                  0.9848427176475525
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0032923221588135,
+                  0.9848427772521973
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0004166252911090851,
+                "sensor_support": [
+                  0.3486684262752533,
+                  0.356109619140625,
+                  0.30462646484375
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.009641408920288
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  1.0026968717575073
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.000768780708313,
+                  1.0035055875778198
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.000768780708313,
+                  1.0035055875778198
+                ],
+                "pair_log_ratio_max_abs_difference": 0.00010944902896881104,
+                "sensor_support": [
+                  0.3486684262752533,
+                  0.356109619140625,
+                  0.30462646484375
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9973103404045105
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.014989757910370827,
+                "raw_phase": 0.014989757910370827,
+                "ttc_ratio": [
+                  1.0056202411651611
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            },
+            "rgb:16900434": {
+              "PAIR_R": {
+                "emitted_phase": 0.018935158848762512,
+                "raw_phase": 0.018935158848762512,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9250398874282837,
+                  0.92080157995224,
+                  0.9190706014633179
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9250398874282837,
+                  0.92080157995224,
+                  0.9190706014633179
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            },
+            "rgb:17000441": {
+              "PAIR_R": {
+                "emitted_phase": 0.015436099842190742,
+                "raw_phase": 0.015436099842190742,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.92080157995224,
+                  0.9190706014633179,
+                  0.9200166463851929
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.92080157995224,
+                  0.9190706014633179,
+                  0.9200166463851929
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            }
+          }
+        },
+        "a2": {
+          "accepted_ids": [
+            "event:16700441",
+            "event:16800441",
+            "event:16900441",
+            "event:17000441",
+            "rgb:16600430",
+            "rgb:16700429",
+            "rgb:16800436",
+            "rgb:16900434",
+            "rgb:17000441"
+          ],
+          "control_accepted_ids": [
+            "event:16700441",
+            "event:16800441",
+            "event:16900441",
+            "event:17000441",
+            "rgb:16600430",
+            "rgb:16700429",
+            "rgb:16800436",
+            "rgb:16900434",
+            "rgb:17000441"
+          ],
+          "head_comparison_isolating": true,
+          "matched_batch_groups_exact": true,
+          "native_ttc_ratio_against_matched_control": [
+            0.9667220115661621,
+            0.9464423656463623,
+            1.0539573431015015
+          ],
+          "original_native_ttc_ratio": [
+            1.1805133819580078,
+            1.1853156089782715,
+            1.1151865720748901
+          ],
+          "retained_ids": [
+            "event:16700441",
+            "event:16800441",
+            "event:16900441",
+            "event:17000441",
+            "rgb:16600430",
+            "rgb:16700429",
+            "rgb:16800436",
+            "rgb:16900434",
+            "rgb:17000441"
+          ],
+          "speed": 2.0,
+          "stage_by_observation": {
+            "event:16700441": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.9783692359924316
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0196958780288696,
+                  0.9648116827011108
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0196958780288696,
+                  0.9648116827011108
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0009353756904602051,
+                "sensor_support": [
+                  0.2807362973690033,
+                  0.2537129819393158,
+                  0.3057963252067566
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.022109031677246
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.9932518601417542
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.003859043121338,
+                  0.9897392392158508
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.003859043121338,
+                  0.9897392988204956
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0002561435103416443,
+                "sensor_support": [
+                  0.2807362973690033,
+                  0.2537129819393158,
+                  0.3057963252067566
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0067939758300781
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.050365228205919266,
+                "raw_phase": 0.050365231931209564,
+                "ttc_ratio": [
+                  1.0220084190368652
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "event:16800441": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.9822302460670471
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9657006859779358,
+                  0.9869197607040405
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9657006859779358,
+                  0.9869197607040405
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0009095016866922379,
+                "sensor_support": [
+                  0.2537129819393158,
+                  0.3057963252067566,
+                  0.3486684262752533
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0180912017822266
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.9865776896476746
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9903198480606079,
+                  0.9856994152069092
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9903197884559631,
+                  0.9856994152069092
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0004841908812522888,
+                "sensor_support": [
+                  0.2537129819393158,
+                  0.3057963252067566,
+                  0.3486684262752533
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0136048793792725
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.06401865929365158,
+                "raw_phase": 0.06401865929365158,
+                "ttc_ratio": [
+                  1.0120124816894531
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "event:16900441": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.9945859909057617
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9871281385421753,
+                  0.9971671104431152
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9871281981468201,
+                  0.9971671104431152
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0004253201186656952,
+                "sensor_support": [
+                  0.3057963252067566,
+                  0.3486684262752533,
+                  0.356109619140625
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0054434537887573
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.9953720569610596
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9871575832366943,
+                  0.9979487061500549
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9871575832366943,
+                  0.9979487061500549
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0004285052418708801,
+                "sensor_support": [
+                  0.3057963252067566,
+                  0.3486684262752533,
+                  0.356109619140625
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0046495199203491
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.07169662415981293,
+                "raw_phase": 0.07169662415981293,
+                "ttc_ratio": [
+                  1.0087448358535767
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "event:17000441": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  1.0103085041046143
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.998198390007019,
+                  1.0155760049819946
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.998198390007019,
+                  1.0155761241912842
+                ],
+                "pair_log_ratio_max_abs_difference": 0.000427955761551857,
+                "sensor_support": [
+                  0.3486684262752533,
+                  0.356109619140625,
+                  0.30462646484375
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9897966980934143
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.9987162947654724
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9995664954185486,
+                  0.9983614683151245
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9995664954185486,
+                  0.9983614683151245
+                ],
+                "pair_log_ratio_max_abs_difference": 5.116313695907593e-05,
+                "sensor_support": [
+                  0.3486684262752533,
+                  0.356109619140625,
+                  0.30462646484375
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.001285433769226
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.0621027834713459,
+                "raw_phase": 0.0621027834713459,
+                "ttc_ratio": [
+                  0.9938991665840149
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "rgb:16600430": {
+              "PAIR_R": {
+                "emitted_phase": 0.0630972608923912,
+                "raw_phase": 0.0630972608923912,
+                "ttc_ratio": [
+                  0.9999899864196777
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0000052452087402
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999900460243225,
+                  1.0000100135803223
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9314485192298889,
+                  0.9320260286331177,
+                  0.9307502508163452
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999947547912598
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0000044107437134
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999899864196777,
+                  1.0000100135803223
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9314485192298889,
+                  0.9320260286331177,
+                  0.9307502508163452
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999955892562866
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                1.9999799728393555,
+                2.0000200271606445
+              ]
+            },
+            "rgb:16700429": {
+              "PAIR_R": {
+                "emitted_phase": 0.06323706358671188,
+                "raw_phase": 0.06323706358671188,
+                "ttc_ratio": [
+                  1.0000098943710327
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  0.9999955296516418
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0000100135803223,
+                  0.9999899864196777
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  0.9999999403953552
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9320260286331177,
+                  0.9307502508163452,
+                  0.9250398874282837
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.000004529953003
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  0.9999953508377075
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0000098943710327,
+                  0.9999899864196777
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  0.9999999403953552
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9320260286331177,
+                  0.9307502508163452,
+                  0.9250398874282837
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000046491622925
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0000200271606445,
+                1.999980092048645
+              ]
+            },
+            "rgb:16800436": {
+              "PAIR_R": {
+                "emitted_phase": 0.07183916121721268,
+                "raw_phase": 0.07183916121721268,
+                "ttc_ratio": [
+                  1.0000102519989014
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  0.9999900460243225
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999899864196777,
+                  0.9999899864196777
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9999999403953552,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9307502508163452,
+                  0.9250398874282837,
+                  0.92080157995224
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000100135803223
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  0.9999900460243225
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999901056289673,
+                  0.9999899864196777
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0000001192092896,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9307502508163452,
+                  0.9250398874282837,
+                  0.92080157995224
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000098943710327
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                1.999980092048645,
+                1.999979853630066
+              ]
+            },
+            "rgb:16900434": {
+              "PAIR_R": {
+                "emitted_phase": 0.0779934972524643,
+                "raw_phase": 0.0779934972524643,
+                "ttc_ratio": [
+                  0.9999800324440002
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0000121593475342
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999899864196777,
+                  1.000019907951355
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9250398874282837,
+                  0.92080157995224,
+                  0.9190706014633179
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999879002571106
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0000107288360596
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999898672103882,
+                  1.000019907951355
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9250398874282837,
+                  0.92080157995224,
+                  0.9190706014633179
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999892115592957
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                1.999979853630066,
+                2.000040054321289
+              ]
+            },
+            "rgb:17000441": {
+              "PAIR_R": {
+                "emitted_phase": 0.06322704255580902,
+                "raw_phase": 0.06322704255580902,
+                "ttc_ratio": [
+                  1.0000100135803223
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  0.9999986886978149
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.000019907951355,
+                  0.999989926815033
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.92080157995224,
+                  0.9190706014633179,
+                  0.9200166463851929
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.000001311302185
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  0.999998152256012
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.000019907951355,
+                  0.9999898672103882
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.92080157995224,
+                  0.9190706014633179,
+                  0.9200166463851929
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000017881393433
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.000040054321289,
+                1.999979853630066
+              ]
+            }
+          }
+        }
+      },
+      "original_clean_native_seconds": [
+        2.790874481201172,
+        3.0159075260162354,
+        2.831587553024292
+      ]
+    },
+    "slider500": {
+      "baseline_exact": true,
+      "clean_accepted_ids": [
+        "event:1263198",
+        "event:1363198",
+        "event:1463198",
+        "event:1563198",
+        "rgb:1082214",
+        "rgb:1162378",
+        "rgb:1242542",
+        "rgb:1322705",
+        "rgb:1402869",
+        "rgb:1483034",
+        "rgb:1563198"
+      ],
+      "clean_native_seconds": [
+        2.7155847549438477,
+        3.00608491897583,
+        2.921912670135498
+      ],
+      "factors": {
+        "a0p5": {
+          "accepted_ids": [
+            "event:1563198",
+            "rgb:1402869",
+            "rgb:1483034",
+            "rgb:1563198"
+          ],
+          "control_accepted_ids": [
+            "event:1563198",
+            "rgb:1402869",
+            "rgb:1483034",
+            "rgb:1563198"
+          ],
+          "head_comparison_isolating": true,
+          "matched_batch_groups_exact": true,
+          "native_ttc_ratio_against_matched_control": [
+            0.9388898015022278,
+            0.9611320495605469,
+            1.0730105638504028
+          ],
+          "original_native_ttc_ratio": [
+            0.6546397805213928,
+            1.2398217916488647,
+            0.7959229946136475
+          ],
+          "retained_ids": [
+            "event:1563198",
+            "rgb:1402869",
+            "rgb:1483034",
+            "rgb:1563198"
+          ],
+          "speed": 0.5,
+          "stage_by_observation": {
+            "event:1563198": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  1.0203073024749756
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0234577655792236,
+                  1.0185959339141846
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0234577655792236,
+                  1.0185959339141846
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0008021816611289978,
+                "sensor_support": [
+                  0.221466064453125,
+                  0.2330271452665329,
+                  0.2460378110408783
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9800968766212463
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  1.0161540508270264
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0191824436187744,
+                  1.0146260261535645
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.019182562828064,
+                  1.0146260261535645
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0006445348262786865,
+                "sensor_support": [
+                  0.221466064453125,
+                  0.2330271452665329,
+                  0.2460378110408783
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9841027855873108
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.014987001195549965,
+                "raw_phase": 0.014987001195549965,
+                "ttc_ratio": [
+                  0.9861741662025452
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            },
+            "rgb:1402869": {
+              "PAIR_R": {
+                "emitted_phase": 0.014429482631385326,
+                "raw_phase": 0.014429482631385326,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9756783246994019,
+                  0.9744505286216736,
+                  0.9739483594894409
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9756783246994019,
+                  0.9744505286216736,
+                  0.9739483594894409
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            },
+            "rgb:1483034": {
+              "PAIR_R": {
+                "emitted_phase": 0.015928227454423904,
+                "raw_phase": 0.015928227454423904,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9744505286216736,
+                  0.9739483594894409,
+                  0.973780632019043
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9744505286216736,
+                  0.9739483594894409,
+                  0.973780632019043
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            },
+            "rgb:1563198": {
+              "PAIR_R": {
+                "emitted_phase": 0.019148467108607292,
+                "raw_phase": 0.019148467108607292,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9739483594894409,
+                  0.973780632019043,
+                  0.9741167426109314
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9739483594894409,
+                  0.973780632019043,
+                  0.9741167426109314
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                0.5,
+                0.5
+              ]
+            }
+          }
+        },
+        "a2": {
+          "accepted_ids": [
+            "event:1263198",
+            "event:1363198",
+            "event:1463198",
+            "event:1563198",
+            "rgb:1082214",
+            "rgb:1162378",
+            "rgb:1242542",
+            "rgb:1322705",
+            "rgb:1402869",
+            "rgb:1483034",
+            "rgb:1563198"
+          ],
+          "control_accepted_ids": [
+            "event:1263198",
+            "event:1363198",
+            "event:1463198",
+            "event:1563198",
+            "rgb:1082214",
+            "rgb:1162378",
+            "rgb:1242542",
+            "rgb:1322705",
+            "rgb:1402869",
+            "rgb:1483034",
+            "rgb:1563198"
+          ],
+          "head_comparison_isolating": true,
+          "matched_batch_groups_exact": true,
+          "native_ttc_ratio_against_matched_control": [
+            0.9409219622612,
+            0.8955262899398804,
+            1.0663615465164185
+          ],
+          "original_native_ttc_ratio": [
+            1.2196693420410156,
+            1.2420942783355713,
+            1.0963363647460938
+          ],
+          "retained_ids": [
+            "event:1263198",
+            "event:1363198",
+            "event:1463198",
+            "event:1563198",
+            "rgb:1082214",
+            "rgb:1162378",
+            "rgb:1242542",
+            "rgb:1322705",
+            "rgb:1402869",
+            "rgb:1483034",
+            "rgb:1563198"
+          ],
+          "speed": 2.0,
+          "stage_by_observation": {
+            "event:1263198": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.978592038154602
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9766330718994141,
+                  0.9795779585838318
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9766331315040588,
+                  0.9795779585838318
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0006087180227041245,
+                "sensor_support": [
+                  0.2039540708065033,
+                  0.2120412290096283,
+                  0.2114054411649704
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0218762159347534
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.984622061252594
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.97360759973526,
+                  0.9886114001274109
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.97360759973526,
+                  0.9886114597320557
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0007014330476522446,
+                "sensor_support": [
+                  0.2039540708065033,
+                  0.2120412290096283,
+                  0.2114054411649704
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.015618085861206
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.047706060111522675,
+                "raw_phase": 0.047706056386232376,
+                "ttc_ratio": [
+                  1.0186256170272827
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "event:1363198": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.9985477328300476
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9804261326789856,
+                  1.0044173002243042
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9804261326789856,
+                  1.0044173002243042
+                ],
+                "pair_log_ratio_max_abs_difference": 0.00045321322977542877,
+                "sensor_support": [
+                  0.2120412290096283,
+                  0.2114054411649704,
+                  0.221466064453125
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0014543533325195
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.9998646378517151
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9895046353340149,
+                  1.0033067464828491
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9895045757293701,
+                  1.0033067464828491
+                ],
+                "pair_log_ratio_max_abs_difference": 0.000278739258646965,
+                "sensor_support": [
+                  0.2120412290096283,
+                  0.2114054411649704,
+                  0.221466064453125
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0001354217529297
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.05197814851999283,
+                "raw_phase": 0.05197814851999283,
+                "ttc_ratio": [
+                  1.0004839897155762
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "event:1463198": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.981968104839325
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0041488409042358,
+                  0.9764979481697083
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0041488409042358,
+                  0.976498007774353
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0008058212697505951,
+                "sensor_support": [
+                  0.2114054411649704,
+                  0.221466064453125,
+                  0.2330271452665329
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0183629989624023
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.9859597682952881
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.003211259841919,
+                  0.9810122847557068
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0032113790512085,
+                  0.981012225151062
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0006369687616825104,
+                "sensor_support": [
+                  0.2114054411649704,
+                  0.221466064453125,
+                  0.2330271452665329
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0142401456832886
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.06286533176898956,
+                "raw_phase": 0.06286533176898956,
+                "ttc_ratio": [
+                  1.014235019683838
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "event:1563198": {
+              "E_A5_MATCHED": {
+                "inverse_ratio": [
+                  0.9843448400497437
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.97635418176651,
+                  0.9880953431129456
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.97635418176651,
+                  0.9880953431129456
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0008092634379863739,
+                "sensor_support": [
+                  0.221466064453125,
+                  0.2330271452665329,
+                  0.2460378110408783
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0159040689468384
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "E_C2F_MATCHED": {
+                "inverse_ratio": [
+                  0.988093376159668
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9813668131828308,
+                  0.9911158680915833
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9813668131828308,
+                  0.9911158680915833
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0006264746189117432,
+                "sensor_support": [
+                  0.221466064453125,
+                  0.2330271452665329,
+                  0.2460378110408783
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0120501518249512
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "PAIR_E_MATCHED": {
+                "emitted_phase": 0.059875283390283585,
+                "raw_phase": 0.059875283390283585,
+                "ttc_ratio": [
+                  1.0096417665481567
+                ]
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "rgb:1082214": {
+              "PAIR_R": {
+                "emitted_phase": 0.06413940340280533,
+                "raw_phase": 0.06413939595222473,
+                "ttc_ratio": [
+                  0.9999998807907104
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0000030994415283
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0000125169754028,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0000001192092896,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9783066511154175,
+                  0.978034496307373,
+                  0.9775736927986145
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999969005584717
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0000030994415283
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0000125169754028,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9783066511154175,
+                  0.978034496307373,
+                  0.9775736927986145
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999969005584717
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0000247955322266,
+                2.0
+              ]
+            },
+            "rgb:1162378": {
+              "PAIR_R": {
+                "emitted_phase": 0.0589635893702507,
+                "raw_phase": 0.0589635893702507,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.978034496307373,
+                  0.9775736927986145,
+                  0.9769044518470764
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.978034496307373,
+                  0.9775736927986145,
+                  0.9769044518470764
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "rgb:1242542": {
+              "PAIR_R": {
+                "emitted_phase": 0.06595969945192337,
+                "raw_phase": 0.06595969945192337,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9775736927986145,
+                  0.9769044518470764,
+                  0.9756783246994019
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9775736927986145,
+                  0.9769044518470764,
+                  0.9756783246994019
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0
+              ]
+            },
+            "rgb:1322705": {
+              "PAIR_R": {
+                "emitted_phase": 0.06641466170549393,
+                "raw_phase": 0.06641466170549393,
+                "ttc_ratio": [
+                  1.0000123977661133
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  0.9999908208847046
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  0.9999874830245972
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  0.9999999403953552
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9769044518470764,
+                  0.9756783246994019,
+                  0.9744505286216736
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000091791152954
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  0.999991238117218
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  0.9999875426292419
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9769044518470764,
+                  0.9756783246994019,
+                  0.9744505286216736
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000088214874268
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                1.9999750852584839
+              ]
+            },
+            "rgb:1402869": {
+              "PAIR_R": {
+                "emitted_phase": 0.05901090055704117,
+                "raw_phase": 0.05901090055704117,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  0.9999960064888
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999875426292419,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0000001192092896,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9756783246994019,
+                  0.9744505286216736,
+                  0.9739483594894409
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000039339065552
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  0.9999969601631165
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  0.9999874830245972,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  0.9999999403953552,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9756783246994019,
+                  0.9744505286216736,
+                  0.9739483594894409
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  1.0000029802322388
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                1.9999750852584839,
+                2.0
+              ]
+            },
+            "rgb:1483034": {
+              "PAIR_R": {
+                "emitted_phase": 0.0652950331568718,
+                "raw_phase": 0.0652950331568718,
+                "ttc_ratio": [
+                  0.9999875426292419
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0000098943710327
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0000125169754028
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9744505286216736,
+                  0.9739483594894409,
+                  0.973780632019043
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999901056289673
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0000090599060059
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0,
+                  1.0000123977661133
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  0.9999999403953552
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9744505286216736,
+                  0.9739483594894409,
+                  0.973780632019043
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999908804893494
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0,
+                2.0000247955322266
+              ]
+            },
+            "rgb:1563198": {
+              "PAIR_R": {
+                "emitted_phase": 0.07889733463525772,
+                "raw_phase": 0.07889733463525772,
+                "ttc_ratio": [
+                  1.0
+                ]
+              },
+              "R_A5": {
+                "inverse_ratio": [
+                  1.0000033378601074
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0000123977661133,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9739483594894409,
+                  0.973780632019043,
+                  0.9741167426109314
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.999996542930603
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "R_C2F": {
+                "inverse_ratio": [
+                  1.0000029802322388
+                ],
+                "known": true,
+                "pair_inverse_ratio": [
+                  1.0000123977661133,
+                  1.0
+                ],
+                "pair_inverse_ratio_measured_dt": [
+                  1.0,
+                  1.0
+                ],
+                "pair_log_ratio_max_abs_difference": 0.0,
+                "sensor_support": [
+                  0.9739483594894409,
+                  0.973780632019043,
+                  0.9741167426109314
+                ],
+                "ttc_at_cap60": false,
+                "ttc_ratio": [
+                  0.9999969601631165
+                ],
+                "undefined_diagnostic_policy": "Nonfinite values are null; original traces in NPZ"
+              },
+              "measured_dt_control_over_warp": [
+                2.0000247955322266,
+                2.0
+              ]
+            }
+          }
+        }
+      },
+      "original_clean_native_seconds": [
+        2.744687557220459,
+        2.981079578399658,
+        2.921912670135498
+      ]
+    }
+  },
+  "status": "COMPLETE",
+  "targets_read": false
+}

@@ -1,0 +1,54 @@
+{
+  "artifacts": {
+    "EVENT_CANONICAL.npz": "45152e762da584e7fa328078b963b8451c7862da595af6929c0e4c3542826974",
+    "RGB_CANONICAL.npz": "7dcf2930c9cd28a0822e88a50dab41535e1569edf071ddbf0b41f70a228bbe88"
+  },
+  "elapsed_seconds": 1.9811776999849826,
+  "freeze_sha256": "df183e1ac298e8f4be410011440750924cdb002127b42885e4cd63609910c8dd",
+  "modalities": {
+    "event": {
+      "domain_valid_rows": 88744,
+      "emitted_identity_exact": true,
+      "identity_rows": 88744,
+      "raw_identity_exact": true,
+      "rejected_batches": [],
+      "rows": 88744,
+      "sign_changes": 0,
+      "ttc_abs_drift_max": 0.0,
+      "ttc_abs_drift_mean": 0.0,
+      "ttc_abs_drift_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "ttc_identity_exact": true,
+      "ttc_unchanged_rows": 88744
+    },
+    "rgb": {
+      "domain_valid_rows": 88744,
+      "emitted_identity_exact": true,
+      "identity_rows": 24,
+      "raw_identity_exact": true,
+      "rejected_batches": [],
+      "rows": 88744,
+      "sign_changes": 0,
+      "ttc_abs_drift_max": 0.0069580078125,
+      "ttc_abs_drift_mean": 9.167075040750206e-05,
+      "ttc_abs_drift_quantiles": [
+        0.0,
+        7.152557373046875e-05,
+        0.00016307830810546875,
+        0.000370025634765625,
+        0.0069580078125
+      ],
+      "ttc_identity_exact": true,
+      "ttc_unchanged_rows": 396
+    }
+  },
+  "optimizer_updates": 0,
+  "scope": "Current-query PAIR only; no context/head accuracy or eAP preservation claim",
+  "status": "COMPLETE",
+  "targets_read": false
+}
