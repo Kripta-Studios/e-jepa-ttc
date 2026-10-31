@@ -4,7 +4,7 @@ Documento regenerado desde recibos de ejecución. Objetivo: mejorar EvTTC sin at
 
 ## Resultado ejecutivo
 
-Se completaron 144 entrenamientos agrupados: 96 en v1b y 48 en v2. Ninguno de los candidatos nuevos pasó todos los criterios registrados. La versión congelada PHASE-TTC-Adapt-20261031 permanece como referencia. Otros seis ajustes del primer lanzamiento quedaron preservados tras un fallo de escritura de progreso; no se contabilizan como una campaña completa.
+Se completaron 168 entrenamientos agrupados: 96 en v1b, 48 en v2 y 24 con perturbaciones correlacionadas de expertos. Ninguno de los candidatos nuevos pasó todos los criterios registrados. La versión congelada PHASE-TTC-Adapt-20261031 permanece como referencia. Otros seis ajustes del primer lanzamiento quedaron preservados tras un fallo de escritura de progreso; no se contabilizan como una campaña completa.
 
 El trabajo produjo además una corrección verificable de las fuentes del evaluador, la evaluación activa de eAP TRAIN40, una caché Test12 de despliegue sin etiquetas y cuatro aumentos causales del canal geométrico. No se envió correo al benchmark.
 
@@ -20,6 +20,8 @@ IQ reproduce la fusión inversa QA anterior bajo los mismos folds. LG selecciona
 
 SG añade supervisión de fiabilidad exclusivamente durante entrenamiento: coste esperado de cada experto, limitado a 10, ponderado por 0,5. SGA añade aumentos del canal geométrico. Ambos usan mediana de tres semillas y reaplican el retorno exacto a F0 cuando no existe historia válida. Se conservan predicciones OOF de cada semilla. Es una comparación de sistemas; cambia también la agregación respecto a IQ.
 
+QAc conserva la arquitectura IQ de 688 parámetros y simula fallos compartidos: en el 25 % de las filas aplica el mismo factor elegido entre -3,-1,0,25,4 a un experto, F0+RGB, F0+eventos o los tres. La pérdida mezcla por igual filas limpias y perturbadas. Se realizaron 24 ajustes, sin búsqueda posterior. Falló los cuatro criterios; no se evaluó en las consultas del benchmark ni se exportó un candidato. Un preflight inicial abortó antes de entrenar por rechazar una fila con geometría válida y expertos no finitos; ese fallo se conserva y la ejecución completa usa la admisión original de IQ.
+
 | Campaña/control | RAE carretera macro (%) | MAE carretera macro (s) | RAE Slider-500 (%) | MAE Slider-500 (s) |
 |---|---:|---:|---:|---:|
 | v1b/F0 | 30.6004 | 0.810620 | 83.8874 | 1.178208 |
@@ -30,6 +32,8 @@ SG añade supervisión de fiabilidad exclusivamente durante entrenamiento: coste
 | v1b/geometry_F0 | 35.1905 | 1.129698 | 19.9217 | 0.425228 |
 | v2/SG | 17.6366 | 0.562741 | 22.4804 | 0.423939 |
 | v2/SGA | 21.7806 | 0.672036 | 20.9875 | 0.384191 |
+| correlated/IQ | 17.7489 | 0.543418 | 20.8519 | 0.317744 |
+| correlated/QAc | 17.8029 | 0.552129 | 36.2071 | 0.366154 |
 
 Selección v1b: `None`. Selección v2: `None`.
 

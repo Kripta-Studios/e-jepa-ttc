@@ -55,6 +55,7 @@ def main() -> None:
     receipts = {
         "campaign_v1.json": args.research / "campaign_v1b/SELECTION.json",
         "campaign_v2.json": args.research / "campaign_v2/SELECTION.json",
+        "campaign_correlated.json": args.research / "correlated_v1/campaign/SELECTION.json",
         "evaluator_audit.json": args.research / "evaluator_audit/AUDIT.json",
         "source_audit.json": args.research / "source_audit/COMPLETE.json",
         "active_source_reference.json": args.research / "source_audit/ACTIVE_SOURCE_REFERENCE.json",
@@ -71,6 +72,7 @@ def main() -> None:
         # Git text normalization must not invalidate the published hash inventory.
         (evidence / name).write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
     v1, v2 = read(receipts["campaign_v1.json"]), read(receipts["campaign_v2.json"])
+    correlated = read(receipts["campaign_correlated.json"])
     audit = read(receipts["evaluator_audit.json"])
     lines = [
         "# PHASE-TTC: continuación experimental del 31 de octubre de 2026",
@@ -81,7 +83,8 @@ def main() -> None:
         "",
         "## Resultado ejecutivo",
         "",
-        "Se completaron 144 entrenamientos agrupados: 96 en v1b y 48 en v2. "
+        "Se completaron 168 entrenamientos agrupados: 96 en v1b, 48 en v2 y 24 con "
+        "perturbaciones correlacionadas de expertos. "
         "Ninguno de los candidatos nuevos pasó todos los criterios registrados. "
         "La versión congelada PHASE-TTC-Adapt-20261031 permanece como referencia. "
         "Otros seis ajustes del primer lanzamiento quedaron preservados tras un fallo "
@@ -119,11 +122,20 @@ def main() -> None:
         "a F0 cuando no existe historia válida. Se conservan predicciones OOF de cada semilla. "
         "Es una comparación de sistemas; cambia también la agregación respecto a IQ.",
         "",
+        "QAc conserva la arquitectura IQ de 688 parámetros y simula fallos compartidos: "
+        "en el 25 % de las filas aplica el mismo factor elegido entre -3,-1,0,25,4 "
+        "a un experto, F0+RGB, F0+eventos o los tres. La pérdida mezcla por igual filas "
+        "limpias y perturbadas. Se realizaron 24 ajustes, sin búsqueda posterior. "
+        "Falló los cuatro criterios; no se evaluó en las consultas del benchmark ni "
+        "se exportó un candidato. Un preflight inicial abortó antes de entrenar por "
+        "rechazar una fila con geometría válida y expertos no finitos; ese fallo "
+        "se conserva y la ejecución completa usa la admisión original de IQ.",
+        "",
         "| Campaña/control | RAE carretera macro (%) | MAE carretera macro (s) | "
         "RAE Slider-500 (%) | MAE Slider-500 (s) |",
         "|---|---:|---:|---:|---:|",
     ]
-    for campaign, receipt in (("v1b", v1), ("v2", v2)):
+    for campaign, receipt in (("v1b", v1), ("v2", v2), ("correlated", correlated)):
         for mode, result in receipt["report"].items():
             road, slider = result["road"], result["slider"]
             lines.append(

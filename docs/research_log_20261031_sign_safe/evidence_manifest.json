@@ -1,8 +1,9 @@
 {
-  "generator_sha256": "ccc9f9917a3f6e7b6439976117cde0a4216adafd6dafb05de84ea33597982fd6",
+  "generator_sha256": "a45060b44a912852ff03d45d74a898f6f012499923e47efff77793cac1227e74",
   "receipts": {
     "campaign_v1.json": "fa8d3f34d9c51b548c8062a23f3831616f38888c7b2c08d54376b1928aa15028",
     "campaign_v2.json": "6df82d999cd50e83570fd354928ba36b066483fd285c86be91c78307f9a75ea8",
+    "campaign_correlated.json": "b8c183951f91469cdab058a2e4b49cd8ecba0f7edce234a6320c8699184214f0",
     "evaluator_audit.json": "147b13e82ffd47224de3537da41cb36560d0a58f49c3579068c65867760ec61a",
     "source_audit.json": "52e675ac8c1c03e92f834c157387fe37ded111df7c742b696d818f6494daafe7",
     "active_source_reference.json": "d8ad5e3f32303d9feb24161d7c9cac45efb473191499e1b03b6432fc4fa50b63",
