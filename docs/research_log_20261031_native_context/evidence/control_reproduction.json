@@ -1,0 +1,9 @@
+{
+  "allclose_rtol1e-6_atol1e-6": true,
+  "exact": true,
+  "historical_oof_sha256": "fdaeffb4b01a575c643cc4e6d151404dc3d395ee55731fd6385fbcfc5ed859a7",
+  "identity": "Exact population/config hashes and shape; tokens checked when present",
+  "informational_only": true,
+  "maximum_absolute_difference_seconds": 0.0,
+  "used_for_selection": false
+}

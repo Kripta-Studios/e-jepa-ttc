@@ -1,0 +1,10 @@
+{
+  "generator_sha256": "5221c6612a6eb5f4b0f9a9b193d82ea0525c72da5c34133d81ff77b9e1730a21",
+  "receipts": {
+    "extraction.json": "5d16a5c90158f97e1e17f18ecd6f9bba53f8faf7907cbfac7fcedb1bd1a22f60",
+    "selection.json": "fef5cb881b745dd2e3898eedd83586a3ec689cf89c6356e9a17d2d6c778a0de3",
+    "training_config.json": "b3f46307b903e8d8e41cdd8d016bc2e5856df313c7e771a846cb9008961d0749",
+    "control_reproduction.json": "89fc5b29b6608f41e9b41e0d7409d4bb72c114603827d66c9db1c5e57e5e4a4c",
+    "source_closure.json": "2c49b4655a7e84350b79fade7cb2d51e9b0ea7c8f15224d2d17bbe9187f6ab17"
+  }
+}

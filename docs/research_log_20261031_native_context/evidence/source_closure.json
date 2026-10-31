@@ -1,0 +1,166 @@
+{
+  "all_frozen_bytes_match": false,
+  "audit_source_sha256": "ce86dea67258bd9584d302363ce0e23c051a67c6e35ad06557baae5e853cef09",
+  "chronology": "Supplemental observation during extraction, not a retroactive pre-run seal. Historical frozen-archive equality and final unchanged bytes support provenance; no claim of continuous filesystem monitoring or process-memory attestation.",
+  "created_utc": "2026-10-31T16:38:50.981717+00:00",
+  "dependency_equivalence": {
+    "operational/evttc_rgb_transfer/inputs.py": {
+      "current_sha256": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f"
+    },
+    "operational/evttc_transfer/inputs.py": {
+      "current_sha256": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417"
+    },
+    "operational/final_refit/features.py": {
+      "current_sha256": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09"
+    },
+    "operational/final_refit/recipe.py": {
+      "current_sha256": "2753b5bb9c0faf15d23622489e6316bbf594830d0bff515bd595699dae22ea4d",
+      "equivalence": "ast_and_lexical_tokens_identical_line_wrapping_only",
+      "frozen_sha256": "7f1d168595997206cdae3388a4f54e7ea55f9e9af107d2c6496d49263731991e"
+    },
+    "operational/final_refit/test12.py": {
+      "current_sha256": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6"
+    },
+    "operational/final_refit/training.py": {
+      "current_sha256": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4"
+    },
+    "operational/rgb_port/infer_experts.py": {
+      "current_sha256": "b6d12889078b8ffed23134a52ec653e7ac4aae56700c17384b866eac1231cc9f",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "b6d12889078b8ffed23134a52ec653e7ac4aae56700c17384b866eac1231cc9f"
+    },
+    "operational/rgb_port/train_heads.py": {
+      "current_sha256": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060"
+    },
+    "operational/rgb_port/train_producers.py": {
+      "current_sha256": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc"
+    },
+    "operational/rgb_port/transfer.py": {
+      "current_sha256": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73"
+    },
+    "operational/rgb_port_revision/transfer_inputs.py": {
+      "current_sha256": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad"
+    },
+    "operational/rgb_port_streaming/contracts.py": {
+      "current_sha256": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c"
+    },
+    "src/e_jepa_ttc/data/event_v4_geometry.py": {
+      "current_sha256": "4476f01232c08dd4c120258ae5761643701e08fcdecdd24311e3c39483ebf68b",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "4476f01232c08dd4c120258ae5761643701e08fcdecdd24311e3c39483ebf68b"
+    },
+    "src/e_jepa_ttc/data/stage61_pair_feature_cache.py": {
+      "current_sha256": "83c0801435d57a854dd17a7ce302eeaa156290c0f065078439119a15ac611cf1",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "83c0801435d57a854dd17a7ce302eeaa156290c0f065078439119a15ac611cf1"
+    },
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": {
+      "current_sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934"
+    },
+    "src/e_jepa_ttc/models/collision_clock_math.py": {
+      "current_sha256": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f"
+    },
+    "src/e_jepa_ttc/models/local_transport.py": {
+      "current_sha256": "bb4f41ebff0cd0c0b8a9d9e3598ae2e83d3263eb81b74de26325efbb8c46be05",
+      "equivalence": "ast_and_lexical_tokens_identical_line_wrapping_only",
+      "frozen_sha256": "1e6b9a63501ae59044d3460af1698f45a68532b8d7fd81c9516d68134b2b368d"
+    },
+    "src/e_jepa_ttc/rgb_port/data.py": {
+      "current_sha256": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec"
+    },
+    "src/e_jepa_ttc/rgb_port/features.py": {
+      "current_sha256": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114"
+    },
+    "src/e_jepa_ttc/rgb_port/normalization.py": {
+      "current_sha256": "4fafd5e75ebc9f2ee200d690664a308b742d41f80e4651e213929cb7b1033faa",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "4fafd5e75ebc9f2ee200d690664a308b742d41f80e4651e213929cb7b1033faa"
+    },
+    "src/e_jepa_ttc/simplex_t/model.py": {
+      "current_sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd"
+    },
+    "src/e_jepa_ttc/simplex_t/phase.py": {
+      "current_sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+    },
+    "src/e_jepa_ttc/training/stage61_pair_head.py": {
+      "current_sha256": "0c1cca4ecb1b2975709ba95e77cba616b363d5bb2e0d005605b075ef1265bdb3",
+      "equivalence": "byte_identical",
+      "frozen_sha256": "0c1cca4ecb1b2975709ba95e77cba616b363d5bb2e0d005605b075ef1265bdb3"
+    }
+  },
+  "dependency_sha256": {
+    "operational/evttc_rgb_transfer/inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "operational/evttc_transfer/inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "operational/final_refit/features.py": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+    "operational/final_refit/recipe.py": "2753b5bb9c0faf15d23622489e6316bbf594830d0bff515bd595699dae22ea4d",
+    "operational/final_refit/test12.py": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6",
+    "operational/final_refit/training.py": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+    "operational/rgb_port/infer_experts.py": "b6d12889078b8ffed23134a52ec653e7ac4aae56700c17384b866eac1231cc9f",
+    "operational/rgb_port/train_heads.py": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+    "operational/rgb_port/train_producers.py": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc",
+    "operational/rgb_port/transfer.py": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73",
+    "operational/rgb_port_revision/transfer_inputs.py": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+    "operational/rgb_port_streaming/contracts.py": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c",
+    "src/e_jepa_ttc/data/event_v4_geometry.py": "4476f01232c08dd4c120258ae5761643701e08fcdecdd24311e3c39483ebf68b",
+    "src/e_jepa_ttc/data/stage61_pair_feature_cache.py": "83c0801435d57a854dd17a7ce302eeaa156290c0f065078439119a15ac611cf1",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+    "src/e_jepa_ttc/models/collision_clock_math.py": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f",
+    "src/e_jepa_ttc/models/local_transport.py": "bb4f41ebff0cd0c0b8a9d9e3598ae2e83d3263eb81b74de26325efbb8c46be05",
+    "src/e_jepa_ttc/rgb_port/data.py": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec",
+    "src/e_jepa_ttc/rgb_port/features.py": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114",
+    "src/e_jepa_ttc/rgb_port/normalization.py": "4fafd5e75ebc9f2ee200d690664a308b742d41f80e4651e213929cb7b1033faa",
+    "src/e_jepa_ttc/simplex_t/model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+    "src/e_jepa_ttc/training/stage61_pair_head.py": "0c1cca4ecb1b2975709ba95e77cba616b363d5bb2e0d005605b075ef1265bdb3"
+  },
+  "expanded_complete_sha256": "5d16a5c90158f97e1e17f18ecd6f9bba53f8faf7907cbfac7fcedb1bd1a22f60",
+  "expanded_freeze_sha256": "33a9e2cc148ad858abfbfbd5381dec4514e4616d8bd08f46d858fb61d9c47d0a",
+  "extraction_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_observation_cache\\expanded149",
+  "final_audit_source_sha256": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\audit_phase_native_source_closure.py": "ce86dea67258bd9584d302363ce0e23c051a67c6e35ad06557baae5e853cef09",
+    "tests\\unit\\test_phase_native_source_closure.py": "dcf89ed45fdddcc42f768cea2c1d096a46b1aaa3073de91d1960744caa2c0295"
+  },
+  "frozen_archive_sha256": "91972eaa97dcf9b02314ac32fde8d9fa1bb6155289de225212b46b003c4a721a",
+  "frozen_numerical_sources_match": true,
+  "initial_strict_byte_check_pass": false,
+  "labels_opened": false,
+  "original_artifacts_verified": 2109,
+  "preservation_sha256": "dd3b63b7eeee75b8444b1d4466004e18a733263268ea83379932cb47ea4414f6",
+  "producer_calls": 0,
+  "schema": "phase_native_source_closure_v1",
+  "snapshot_sha256": "7950d688ad82f85be792cfcfefa476c5ca1f2c2670e581e130d54a338dcd5a5c",
+  "snapshot_to_completion_unchanged": true,
+  "status": "PASS"
+}
