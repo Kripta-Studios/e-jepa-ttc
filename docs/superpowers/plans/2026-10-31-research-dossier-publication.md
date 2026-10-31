@@ -14,10 +14,10 @@ Se preservan los documentos anteriores como fotografías de cada iteración.
   identidad de los ZIP y delimitar el material publicable del proyecto.
 - [x] Redactar el dossier, copiar evidencia final pequeña que todavía era local,
   enlazarlo desde README y registrar los paquetes con tamaño, SHA-256 y función.
-- [ ] Validar enlaces locales, cifras/tablas y diff; una revisión independiente
+- [x] Validar enlaces locales, cifras/tablas y diff; una revisión independiente
   de documentación/evidencia, resolver problemas importantes, commit y push de
   la rama actual; publicar los ZIP propios como adjuntos de una prerelease.
-- [ ] Verificar commit remoto y los hashes de los adjuntos publicados; registrar
+- [x] Verificar commit remoto y los hashes de los adjuntos publicados; registrar
   los recibos de publicación y subir el cierre documental.
 
 Reglas: no subir sensores crudos, entornos, cachés, código fuente de artículos
@@ -33,3 +33,5 @@ Ruling: «todo a gh» comprende código, documentación, evidencia y entregas pr
 los archivos de trabajo no publicables permanecen locales. Los binarios van a
 GitHub Releases y el repositorio conserva su inventario verificable. Si un
 artefacto no cabe o falla su hash, no se sustituye silenciosamente.
+
+Resultado: dossier de diez Markdown principales y notas de release (~11.400 palabras), treinta enlaces locales verificados, trece filas de métricas exactas, diez ZIP (200.240.822 bytes) y SHA256SUMS publicados. Revisión independiente: cero Critical, una Important corregida (micro frente a macro), una Minor de redacción conservada en REVIEW.json. Primera publicación53ffc341; tag fijado; PUBLICATION.json verifica onceassets por tamaño y digestGitHub. El commitde recibos se sube sin mover eltag. Sin cambios en código/modelo; no se repitió entrenamiento ni suite completa.
