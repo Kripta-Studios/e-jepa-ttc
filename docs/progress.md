@@ -655,3 +655,20 @@ provenance is preserved, and a real strict-loader 4096-to-4097 smoke passed.
 The interrupted full evaluation is repeated with prefetch, followed automatically
 by the remaining training and five pending replicas. The original checkpoints
 and aborted evaluation evidence remain available.
+
+## 2026-10-31 — Verified R0/R2 completion and rare-sampling continuation
+
+R0 and R2 seed 7 completed and were compared on the same 23,958-frame development
+population: final AP 0.09400020 and 0.11645298. The four extra-seed runs were deferred
+by the user. See [the decision](detection_sota_20261029/R0_R2_SEED7_DECISION.md).
+Before stopping the pod, important missing artifacts were downloaded and verified
+at `D:/PHASE_TTC_POD_BACKUP_20261031`, including five complete training states.
+
+The user's new pod retains the same network volume. CUDA and historical checkpoint
+hashes passed admission. A separate `R2-rare-v1` producer now executes an identity-
+capped train-only sampling intervention, keeping 4,096 unique frames and the same
+32,768-exposure budget. Twenty tests and an eight-update GPU smoke passed; its strict
+continuation began at update 9 with the expected batch. A detached single-child
+controller verifies final artifacts and compares full-selection results automatically.
+No gain from the intervention is claimed yet. Seeds 13 and 23 remain deferred.
+See [the registered campaign](detection_sota_20261029/R2_RARE_SAMPLING_CAMPAIGN.md).

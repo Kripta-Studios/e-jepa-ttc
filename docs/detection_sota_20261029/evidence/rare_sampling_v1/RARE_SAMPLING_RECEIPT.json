@@ -1,0 +1,7 @@
+{
+  "parent_runner_sha256": "e8c7291de32f39e7326857c0722bb04068f81f605f0ab22ebdb5240f317519db",
+  "runner_sha256": "fae191dce3ad8557f5b4b1c18bb4cfb5f4c3400f197679921bc087678de91c57",
+  "module_sha256": "636e96b30212ab67d955e4d3613f434077c490d4d5935df0ce84be80568f6bfb",
+  "plan_sha256": "034871ec7dab86aa87f8c75a719103b202408e63e5bb105c1ef49f57cd20fb89",
+  "intervention": "R2-rare-v1; sampler only; new cold recipe, same 8192-update budget"
+}

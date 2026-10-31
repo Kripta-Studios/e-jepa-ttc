@@ -1,0 +1,12 @@
+{
+  "status": "RUNNING_VERIFIED",
+  "updated_at": "2026-10-31T10:16:07.803946+00:00",
+  "child_pid": 975,
+  "first_resumed_update": 9,
+  "first_resumed_batch_matches": true,
+  "observed_update": 32,
+  "observed_steps": 24,
+  "step_median_seconds": 0.2612367325928062,
+  "cold_preparation_median_seconds": 5.733848868054338,
+  "note": "Early cold-cache sample; not a steady-state throughput or whole-run ETA."
+}

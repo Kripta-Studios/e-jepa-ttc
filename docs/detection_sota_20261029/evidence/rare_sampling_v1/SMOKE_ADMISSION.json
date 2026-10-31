@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "update": 8,
+  "checkpoint_sha256": "c00b89f9a806b4c3e8d471c569a23e7003fdb4dc2980622f8a86e8af55c5bd16",
+  "sampling": {
+    "baseline_rare_frame_exposures": 600,
+    "exposures": 32768,
+    "maximum_multiplier": 4,
+    "rare_frame_exposures": 2400,
+    "rare_frames": 75,
+    "rare_identities": 75,
+    "replaced_common_exposures": 1800,
+    "target_classes": [
+      "bicycle",
+      "other_vehicle"
+    ],
+    "train_labels_only": true,
+    "unique_frames": 4096,
+    "sampling_plan_sha256": "034871ec7dab86aa87f8c75a719103b202408e63e5bb105c1ef49f57cd20fb89"
+  },
+  "strict_resume_next_update": 9,
+  "next_tokens": [
+    "Po6ePjWYAz:000000863_000730665",
+    "L36QTEoVkB:000000953_000049013",
+    "Po6ePjWYAz:000000707_000028059",
+    "ClXqVoZOFu:000000590_000907723"
+  ]
+}

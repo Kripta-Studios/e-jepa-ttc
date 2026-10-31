@@ -1,0 +1,25 @@
+{
+  "audit": {
+    "baseline_rare_frame_exposures": 600,
+    "exposures": 32768,
+    "maximum_multiplier": 4,
+    "rare_frame_exposures": 2400,
+    "rare_frames": 75,
+    "rare_identities": 75,
+    "replaced_common_exposures": 1800,
+    "target_classes": [
+      "bicycle",
+      "other_vehicle"
+    ],
+    "train_labels_only": true,
+    "unique_frames": 4096
+  },
+  "baseline_indices_sha256": "030de8c310818738c76aef77e68d3233eec6d297b8277e12dfd61a87d524c541",
+  "batch_size": 4,
+  "manifest_sha256": "9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1",
+  "population_file_sha256": "46110db969f98093aac73a997ef7347da91a734e8c0bdf0ac87095fe332c96ab",
+  "schema": "phase_detection_capped_rare_schedule_v1",
+  "seed": 7,
+  "split_sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+  "updates": 8192
+}
