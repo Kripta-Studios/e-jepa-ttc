@@ -1,0 +1,122 @@
+{
+  "CV_family_bootstrap_relative_pp": {
+    "groups": 5,
+    "lower_95": -25.51627217409241,
+    "mean_difference": -14.365745544433594,
+    "repetitions": 2000,
+    "seed": 7,
+    "unit": "declared_group_not_individual_windows",
+    "upper_95": -5.277961707228268
+  },
+  "fits": 42,
+  "metrics": {
+    "road_all": {
+      "F0": {
+        "coverage": 1.0,
+        "finite": 1747,
+        "mae_seconds": 0.6962953805923462,
+        "population": 1747,
+        "relative_absolute_error_pct": 27.199377059936523,
+        "relative_rows": 1747,
+        "rmse_seconds": 1.0652483701705933,
+        "valid_targets": 1747,
+        "wrong_sign": 0
+      },
+      "native": {
+        "coverage": 1.0,
+        "finite": 1747,
+        "mae_seconds": 0.754429042339325,
+        "population": 1747,
+        "relative_absolute_error_pct": 22.081008911132812,
+        "relative_rows": 1747,
+        "rmse_seconds": 2.4663949012756348,
+        "valid_targets": 1747,
+        "wrong_sign": 0
+      },
+      "quality": {
+        "coverage": 1.0,
+        "finite": 1747,
+        "mae_seconds": 0.42235860228538513,
+        "population": 1747,
+        "relative_absolute_error_pct": 12.833632469177246,
+        "relative_rows": 1747,
+        "rmse_seconds": 0.8231577277183533,
+        "valid_targets": 1747,
+        "wrong_sign": 0
+      }
+    },
+    "road_over4": {
+      "F0": {
+        "coverage": 1.0,
+        "finite": 439,
+        "mae_seconds": 0.8947471380233765,
+        "population": 439,
+        "relative_absolute_error_pct": 15.732990264892578,
+        "relative_rows": 439,
+        "rmse_seconds": 1.2274940013885498,
+        "valid_targets": 439,
+        "wrong_sign": 0
+      },
+      "native": {
+        "coverage": 1.0,
+        "finite": 439,
+        "mae_seconds": 1.5970464944839478,
+        "population": 439,
+        "relative_absolute_error_pct": 29.075084686279297,
+        "relative_rows": 439,
+        "rmse_seconds": 3.962268590927124,
+        "valid_targets": 439,
+        "wrong_sign": 0
+      },
+      "quality": {
+        "coverage": 1.0,
+        "finite": 439,
+        "mae_seconds": 0.8825212121009827,
+        "population": 439,
+        "relative_absolute_error_pct": 15.134024620056152,
+        "relative_rows": 439,
+        "rmse_seconds": 1.4351085424423218,
+        "valid_targets": 439,
+        "wrong_sign": 0
+      }
+    },
+    "road_under1": {
+      "F0": {
+        "coverage": 1.0,
+        "finite": 68,
+        "mae_seconds": 0.36295726895332336,
+        "population": 68,
+        "relative_absolute_error_pct": 47.04854965209961,
+        "relative_rows": 68,
+        "rmse_seconds": 0.43994879722595215,
+        "valid_targets": 68,
+        "wrong_sign": 0
+      },
+      "native": {
+        "coverage": 1.0,
+        "finite": 68,
+        "mae_seconds": 0.13575784862041473,
+        "population": 68,
+        "relative_absolute_error_pct": 15.74625015258789,
+        "relative_rows": 68,
+        "rmse_seconds": 0.15405668318271637,
+        "valid_targets": 68,
+        "wrong_sign": 0
+      },
+      "quality": {
+        "coverage": 1.0,
+        "finite": 68,
+        "mae_seconds": 0.11943728476762772,
+        "population": 68,
+        "relative_absolute_error_pct": 15.525850296020508,
+        "relative_rows": 68,
+        "rmse_seconds": 0.17976093292236328,
+        "valid_targets": 68,
+        "wrong_sign": 0
+      }
+    }
+  },
+  "source_note": "Original CV/training and external source snapshots retained. Post-run changes are typing/formatting, exact fallback rounding, new deployment adapters and variant binding; trained weights unchanged.",
+  "total_fit_loop_seconds": 14.980478000245057,
+  "type_annotation_refactor_preserves_seeded_initial_state": true
+}

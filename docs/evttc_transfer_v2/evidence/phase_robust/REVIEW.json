@@ -1,0 +1,20 @@
+{
+  "additional_substantive_scientific_findings": 0,
+  "critical_findings": 0,
+  "fresh_review_count": 1,
+  "important_findings": [
+    {
+      "evidence": "NATIVE_PARITY.json; review_green.log; separate native road CLI",
+      "id": "road_adapter_contract",
+      "status": "fixed_and_parent_verified"
+    },
+    {
+      "evidence": "FINAL_MODEL/FUSION_BINDING.json; substitution regression test",
+      "id": "variant_identity_binding",
+      "status": "fixed_and_parent_verified"
+    }
+  ],
+  "review_scope": "read-only code, tests, upstream adapters and actual numerical artifacts; full suite executed by parent",
+  "reviewer": "robust_fusion_final_review",
+  "weights_changed_for_fixes": false
+}

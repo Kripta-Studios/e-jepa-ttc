@@ -1,0 +1,120 @@
+{
+  "bbox_robustness": {
+    "bbox_missing": {
+      "coverage": 1.0,
+      "finite": 24,
+      "mae_seconds": 0.6388531674941381,
+      "population": 24,
+      "relative_absolute_error_pct": 28.28807478240689,
+      "relative_rows": 24,
+      "rmse_seconds": 0.9264434783864517,
+      "valid_targets": 24,
+      "wrong_sign": 0
+    },
+    "box_dropout_50": {
+      "coverage": 1.0,
+      "finite": 24,
+      "mae_seconds": 0.6388531674941381,
+      "population": 24,
+      "relative_absolute_error_pct": 28.28807478240689,
+      "relative_rows": 24,
+      "rmse_seconds": 0.9264434783864517,
+      "valid_targets": 24,
+      "wrong_sign": 0
+    },
+    "box_quantize_4": {
+      "coverage": 1.0,
+      "finite": 24,
+      "mae_seconds": 0.3547315299510956,
+      "population": 24,
+      "relative_absolute_error_pct": 12.697190087575578,
+      "relative_rows": 24,
+      "rmse_seconds": 0.6085334193043431,
+      "valid_targets": 24,
+      "wrong_sign": 0
+    },
+    "clean": {
+      "coverage": 1.0,
+      "finite": 24,
+      "mae_seconds": 0.34247897068659466,
+      "population": 24,
+      "relative_absolute_error_pct": 12.377607467845328,
+      "relative_rows": 24,
+      "rmse_seconds": 0.6035694066139392,
+      "valid_targets": 24,
+      "wrong_sign": 0
+    },
+    "pixel_jitter_1": {
+      "coverage": 1.0,
+      "finite": 24,
+      "mae_seconds": 0.33135000864664715,
+      "population": 24,
+      "relative_absolute_error_pct": 12.222308556049216,
+      "relative_rows": 24,
+      "rmse_seconds": 0.5839755124290961,
+      "valid_targets": 24,
+      "wrong_sign": 0
+    },
+    "pixel_jitter_3": {
+      "coverage": 1.0,
+      "finite": 24,
+      "mae_seconds": 0.33486349880695343,
+      "population": 24,
+      "relative_absolute_error_pct": 12.088246987466931,
+      "relative_rows": 24,
+      "rmse_seconds": 0.5839400156164904,
+      "valid_targets": 24,
+      "wrong_sign": 0
+    }
+  },
+  "clock_shift_and_future_append_exact_queries": 24,
+  "export_exact": true,
+  "export_parity_rows": 2608,
+  "feature_contract": "native[B,3]=F0,RGBcontext,eventcontext in seconds; geometry[B] signed TTC or NaN; quality[B,20] per geometry.py; bbox history <=650ms",
+  "fusion_sha256": "92eb7854ed4f79911f886f62f4c3038cabde644dcb5d66e9bd39670dc152b94a",
+  "gate_cpu_batch1_ms": {
+    "median": 1.2734999763779342,
+    "p95": 3.0749899800866825
+  },
+  "geometry_and_gate_cpu_ms": {
+    "median": 9.023350023198873,
+    "p95": 15.149614994879812
+  },
+  "interval_claim": "descriptive calibration on separate CPNAO; not certified safety coverage",
+  "interval_radius_seconds_80": 1.131831407546997,
+  "native_reference": {
+    "coverage": 1.0,
+    "finite": 24,
+    "mae_seconds": 0.638853132724762,
+    "population": 24,
+    "relative_absolute_error_pct": 28.288076400756836,
+    "relative_rows": 24,
+    "rmse_seconds": 0.9264434576034546,
+    "valid_targets": 24,
+    "wrong_sign": 0
+  },
+  "original_parent": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+    },
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3"
+  },
+  "source_fallback_bitwise_equal": true,
+  "source_fallback_rows": 88744,
+  "source_scope": "F0 native predictions preserved when bbox history absent; eAP with geometry not evaluated"
+}

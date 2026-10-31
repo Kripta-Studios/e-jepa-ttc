@@ -4,7 +4,7 @@
 
 - completados 15 runs: SOFT, C2F, T20, CAP-S y partial-freeze, tres folds seed 7;
 - integridad OOF: 8.192 tokens únicos, nueve secuencias y 100% de puntos finitos;
-- MiD puntual: A5 158.449; SOFT 165.116; C2F 158.573; T20 165.260;
+- MiD puntual: A5 158.449; SOFT 165.116; C2F158.573; T20 165.260;
   CAP-S 167.025; partial-freeze 167.826;
 - todos los brazos fallan mecanismo, geometría y candidatura; V7 cierra negativo;
 - partial-freeze congela 9.664 parámetros, pero solo retiene ~19% de slopes y
@@ -603,3 +603,37 @@ on the integration pull request; merging requires those checks to pass.
 
 No new training, model selection, benchmark submission, or scientific-result
 change is part of this integration.
+
+## 2026-10-31 — Native quality fusion and final eligible-data refit
+
+The later local research iteration is documented in
+`docs/superpowers/plans/2026-10-31-phase-robust-fusion.md` and generated results
+under `output/phase_robust/report/REPORT.md`. It preserves the original candidate
+and the previously delivered F1 campaign. The new component is a three-seed
+ensemble of 401-parameter gates combining frozen F0 with causal inverse-box-scale
+geometry and observation quality; the original upstream graph remains frozen.
+
+The evaluated candidate improves grouped-development road RAE 27.199->12.834%
+and MAE 0.6963->0.4224s. CCRm, excluded from this gate's fit/selection but
+historically exposed, improves 16.749->15.662% and 1.0830->1.0197s; its four-record
+bootstrap includes zero. Slider 750/1000 public targets were joined after sealing
+predictions by exact frame and <=2us clock. Local scores and explicit startup
+failures are retained; they are not substituted into old official aggregates.
+
+A supplementary fixed all-data refit trains on 2677queries from 27recordings:
+24eligible road recordings and 3Slider. The 8original overlap road recordings stay
+excluded. Its metrics are resubstitution only and its uncertainty has not been
+independently recalibrated. `FINAL_MODEL` delivers both variants, with the evaluated
+weights as default and outer bindings protecting their distinct identities.
+
+Validation covers 144raw-sensor perturbations,144bbox perturbations,88744bitwise
+source predictions in absent-history fallback, exact TorchScript reloads, strict
+sensor-cache parity and a native-road raw replay equal to the cached candidate.
+The competition CLI is restricted to Slider; a separate sensor-only native-road
+manifest CLI preserves the evaluated RGB/history contract. Neither reads targets.
+
+No independent SOTA, end-to-end encoder improvement or JEPA benefit is claimed.
+Provided boxes remain an oracle-input condition, Slider extrinsics remain
+provisional, and early Slider 750 predictions can still be extreme or have the
+wrong sign. Further independent acquisition is needed for a stronger external
+generalization claim. Final verification and review receipts accompany delivery.

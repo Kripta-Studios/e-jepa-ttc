@@ -1,0 +1,75 @@
+{
+  "extrinsics": "provisional rotation only, unchanged",
+  "full": {
+    "F0": {
+      "coverage": 1.0,
+      "finite": 18,
+      "mae_seconds": 0.821169869767295,
+      "population": 18,
+      "relative_absolute_error_pct": 156.8755733726323,
+      "relative_rows": 18,
+      "rmse_seconds": 0.8249250224261444,
+      "valid_targets": 18,
+      "wrong_sign": 0
+    },
+    "candidate": {
+      "coverage": 1.0,
+      "finite": 18,
+      "mae_seconds": 0.27565281755394416,
+      "population": 18,
+      "relative_absolute_error_pct": 38.41933774659387,
+      "relative_rows": 18,
+      "rmse_seconds": 0.393184146894121,
+      "valid_targets": 18,
+      "wrong_sign": 0
+    },
+    "geometry": {
+      "coverage": 0.8888888888888888,
+      "finite": 16,
+      "mae_seconds": 0.03737801988495422,
+      "population": 18,
+      "relative_absolute_error_pct": 7.6940648793955475,
+      "relative_rows": 16,
+      "rmse_seconds": 0.04003685253308297,
+      "valid_targets": 18,
+      "wrong_sign": 0
+    }
+  },
+  "official_equivalence": false,
+  "shared": {
+    "F0": {
+      "coverage": 1.0,
+      "finite": 16,
+      "mae_seconds": 0.8013990558683873,
+      "population": 16,
+      "relative_absolute_error_pct": 163.4620375707382,
+      "relative_rows": 16,
+      "rmse_seconds": 0.8035302800279779,
+      "valid_targets": 16,
+      "wrong_sign": 0
+    },
+    "candidate": {
+      "coverage": 1.0,
+      "finite": 16,
+      "mae_seconds": 0.18769237212836754,
+      "population": 16,
+      "relative_absolute_error_pct": 30.198772491444995,
+      "relative_rows": 16,
+      "rmse_seconds": 0.23241116960880748,
+      "valid_targets": 16,
+      "wrong_sign": 0
+    },
+    "geometry": {
+      "coverage": 1.0,
+      "finite": 16,
+      "mae_seconds": 0.03737801988495422,
+      "population": 16,
+      "relative_absolute_error_pct": 7.6940648793955475,
+      "relative_rows": 16,
+      "rmse_seconds": 0.04003685253308297,
+      "valid_targets": 16,
+      "wrong_sign": 0
+    }
+  },
+  "target_sha256": "1d71a51e4fbd21280f53425e05c63367f08ea3662e32017cde913128b8e60f78"
+}

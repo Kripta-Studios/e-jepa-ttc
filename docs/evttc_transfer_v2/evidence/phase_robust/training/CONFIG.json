@@ -1,0 +1,72 @@
+{
+  "calibration_groups": [
+    "CPNAO-high",
+    "CPNAO-low",
+    "CPNAO-medium"
+  ],
+  "confirmation_groups": [
+    "CCRm-low-0-overlap-0",
+    "CCRm-low-50-overlap-50",
+    "CCRm-medium-0-overlap-0",
+    "CCRm-medium-50-overlap-50"
+  ],
+  "controls": "quality23->16->1 versus native3->80->1; 401 parameters each; BOTH outputs use geometry",
+  "development_groups": [
+    "CCRs-1-high-0-overlap-0",
+    "CCRs-1-high-50-overlap-50",
+    "CCRs-1-low-0-overlap-0",
+    "CCRs-1-low-50-overlap-50",
+    "CCRs-1-medium-0-overlap-0",
+    "CCRs-1-medium-50-overlap-50",
+    "CCRs-3-low-100-overlap-100",
+    "CCRs-3-medium-100-overlap-100",
+    "CCRs-side-high",
+    "CCRs-side-low",
+    "CCRs-side-medium",
+    "CPLA-high",
+    "CPLA-low",
+    "CPLA-medium",
+    "CPNA-high",
+    "CPNA-low",
+    "CPNA-medium",
+    "Slider-500"
+  ],
+  "device": "cpu",
+  "epochs": 200,
+  "exposure": "All datasets historically exposed, including current geometry diagnostic. Reserves exclude fitting/selection in this gate experiment only.",
+  "external_reserve": "public Slider750/1000 if exact sensor/label contract passes; FCWD full fusion unavailable without audited RGB mapping",
+  "geometry_clip_seconds": [
+    -60,
+    60
+  ],
+  "git_commit": "73a74f4d2eb94951470048f400653cdd99f9027f",
+  "history_us": 650000,
+  "host": "DESKTOP-2N393IP",
+  "inputs": {
+    "output\\phase_robust\\diagnosis\\road.npz": "d264fcca3d59aaed24fd2b12f3b90604c45ef02161b3aaf07c1888cd7827924c",
+    "output\\phase_robust\\diagnosis\\slider500.npz": "1714c27714adb35515ef96732f18273f22963901b800a247b70a7a1833c860de"
+  },
+  "loss": "family-balanced absolute_relative_error(floor .2s) + absolute_error/train_median_abs_TTC",
+  "lr": 0.01,
+  "optimizer": "AdamW",
+  "python": "3.11.15",
+  "schema": "phase_robust_quality_v1",
+  "seeds": [
+    7,
+    13,
+    21
+  ],
+  "selection": "CV road macro RAE and macro MAE both below F0; Slider RAE and MAE both below F0; select lowest road macro RAE among passing controls; otherwise retain F0",
+  "source_hashes": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\train_phase_robust.py": "bb85bd26d7e96b901ca3d01f57aa088e637cf1131a63ad6556376ead14dc8aea",
+    "operational\\phase_robust\\__init__.py": "0beae907443c9e06e430d684d18519fa201b7fa0656066965a70e5e9e796b63a",
+    "operational\\phase_robust\\data.py": "4e3fcf7ac2ee0fa1a9a224130b9b1c7d03efba5aa63f46856d8082b08fc55c65",
+    "operational\\phase_robust\\geometry.py": "05dee20ccd32991791078a60506d95a0cb747abe46030f2b08944a8b3a62896f",
+    "operational\\phase_robust\\model.py": "f9e87f82929405c669ff930ae2bcb4bc737fe1d7809ef1459b46279c3cc1eee5"
+  },
+  "source_protection": "exact F0 fallback for absent bbox history; no claim about source eAP full-history behavior",
+  "start_utc": "2026-10-30T23:35:07.691955+00:00",
+  "torch": "2.11.0+cu128",
+  "upstream": "original F0 frozen, no all-data F1 predictions used as model inputs",
+  "weight_decay": 0.01
+}
