@@ -1,0 +1,21 @@
+Provenance: message supplied by the user in this conversation. No date headers or sender address were supplied. The attached PDF is separately hash-identified by HISTORICAL_AUDIT.json.
+
+Dear Álvaro,
+
+Thank you very much for your interest in the EvTTC Benchmark and for introducing PHASE-TTC and its experimental background.
+
+We have completed the evaluation of all 434 predictions across the ten sequences you submitted, following the processing procedures used for other methods in our benchmark. Ground-truth TTC values were matched or interpolated to the bounding-box reference timestamps, and the two negative TTC predictions were replaced through linear interpolation between the surrounding valid predictions.
+
+Please find the evaluation metrics, per-sequence results, and mean reported execution times in the attached PDF, PHASE-TTC_EvTTC_Evaluation.pdf.
+
+Regarding your submission questions, predictions are required at all supplied bounding-box timestamps, and your submission covers all of them. Negative estimates may be retained in the original prediction files and noted in the submission so that we can process them consistently; there is no need to remove the corresponding frames.
+
+To document your experimental setup accurately and complete the leaderboard entry, could you please provide the following information?
+
+    Computing platform and programming language: The CPU and GPU models, and the programming language used for your implementation.
+    Cameras and focal lengths: Which RGB and event-camera pair was used for each sequence, particularly whether the road sequences used the 8 mm or 16 mm cameras.
+    Public listing information: Your preferred method name, author names and affiliations, and any project, paper, or code links, if available.
+
+Please review the attached results and provide the additional information. Once you confirm that everything is in order, we will add PHASE-TTC to the leaderboard on the EvTTC website.
+
+Thank you again for your participation and support

@@ -1,0 +1,32 @@
+Subject: Re: PHASE-TTC EvTTC evaluation — implementation and public listing details
+
+Dear EvTTC team,
+
+Thank you for evaluating all 434 predictions and for clarifying the required timestamps and treatment of negative estimates. The following details refer specifically to PHASE_TTC_EvTTC_results_2026-10-28.zip, which you have already evaluated.
+
+Computing platform and language:
+- CPU: AMD Ryzen 9 9955HX, 16 cores / 32 logical processors.
+- GPU: NVIDIA GeForce RTX 5070 Ti Laptop GPU.
+- Implementation: Python 3.11.15, PyTorch 2.11.0+cu128, CUDA runtime 12.8, on Windows.
+- The GPU, software versions and machine identity are recorded in the original execution log. The CPU model was checked on that same laptop when preparing this reply.
+- Reported query costs include preparation and model execution, with CUDA synchronization; one-time model loading and indexing are outside those query costs.
+
+Cameras:
+- CCRs1-low, CCRs1-medium, CCRs1-high, CCRs2-low, CCRs2-medium, CCRs2-high, CCRm-low and CCRm-medium: the right Prophesee EVK-v4 event camera and right FLIR Blackfly-S RGB camera, using the supplied HDF5 calibration. The exact groups are /prophesee/event_cam_right and /blackflys/right. Their calibrated horizontal fields of view are approximately 22 and 23 degrees, respectively, matching the 16 mm camera pair in Table II of the EvTTC paper. This is how I identified the nominal lens; please let me know if your right-camera naming uses a different designation.
+- Slider-750 and Slider-1000: the separate small-scale beam-splitter testbed, using the DVXplorer event camera and DAHENG MER2 RGB camera with the supplied calibration. I have not assigned these the road cameras' 8 mm / 16 mm labels. The focal lengths used by the adapter are fx=1846.739948, fy=1845.352379 pixels for events and fx=4672.479462, fy=4676.997356 pixels for RGB. Please use your testbed's nominal lens designation if your listing requires focal length in millimetres.
+
+Public listing:
+- Method: PHASE-TTC.
+- Full title: PHASE-TTC: Causal Event–RGB Fusion for Time-to-Contact Estimation.
+- Sole author: Álvaro Schwiedop Souto.
+- Affiliation: none (independent researcher).
+- Project and code: https://github.com/Kripta-Studios/phase-ttc
+
+I have verified that the original ZIP contains exactly the 434 supplied queries. I will retain signed estimates in the original files and let your evaluator apply the interpolation rule consistently.
+
+I have a reproducibility question about target alignment. Applying the stated interpolation of the two negative outputs to the public Slider-750 target CSV gives approximately 283.93% relative error locally, while the PDF reports 132.00%. Slider-1000 reproduces the reported 156.88%. Six road sequences also reproduce the rounded reported scores, but my local alignment differs for CCRs1-low and CCRs1-medium, with 11 CCRs1-medium queries outside local target support. Could you share the aligned targets, or the target sources and clock mappings used for these three sequences? This is a request to reconcile my local evaluator with yours, not a request to change the submitted predictions or replace your results with my local calculation.
+
+Thank you again for your time and support.
+
+Best regards,
+Álvaro Schwiedop Souto

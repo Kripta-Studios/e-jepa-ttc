@@ -1,0 +1,11 @@
+{
+  "installation_command": "uv sync --group dev --no-editable",
+  "execution_command": "uv run --no-sync python",
+  "metadata_build_passed": true,
+  "installed_runtime": "torch2.11.0+cu128 Python3.11.15",
+  "fresh_environment_evaluation_byte_identical": true,
+  "evaluation_sha256": "cb9b32e4a0927b5d74af625415b44d6f457c72930412463f53e9a037407faac3",
+  "local_cache_repair": "the cached torch installation lacked __init__.py; reinstalled official locked wheel using --reinstall-package torch --no-cache",
+  "windows_editable_issue": "Python3.11 pth locale decoding with accented paths; documented --no-editable and --no-sync",
+  "model_sha256": "fe1460c407ccd08fc670c1955435b0fe9b4719737e22e3dec7534a57e66bb005"
+}
