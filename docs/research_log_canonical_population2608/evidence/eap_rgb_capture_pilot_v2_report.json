@@ -1,0 +1,51 @@
+{
+  "atol": 1e-06,
+  "candidate_evaluated": false,
+  "capture": "output\\phase_timewarp\\eap_rgb_capture_pilot_v2",
+  "capture_complete_sha256": "1584fa8c399241265a8b7c2627b17dc72cbf3bedd37f41ce647d66bf45d55e00",
+  "failed_observations": 24,
+  "fields": {
+    "expert3": {
+      "exact": 0,
+      "failed": 18,
+      "max_abs": 1.101754605770111e-05,
+      "max_abs_by_column": [
+        1.101754605770111e-05,
+        8.112750947475433e-06,
+        5.4817646741867065e-06
+      ]
+    },
+    "raw17": {
+      "exact": 0,
+      "failed": 24,
+      "max_abs": 0.005328178405761719,
+      "max_abs_by_column": [
+        0.0,
+        0.0,
+        9.257346391677856e-07,
+        0.005328178405761719,
+        0.0037822723388671875,
+        1.780688762664795e-06,
+        0.003949165344238281,
+        0.0019559860229492188,
+        1.101754605770111e-05,
+        8.112750947475433e-06,
+        5.4817646741867065e-06,
+        6.759539246559143e-06,
+        1.210533082485199e-05,
+        1.4699995517730713e-05,
+        6.759539246559143e-06,
+        1.210533082485199e-05,
+        1.4699995517730713e-05
+      ]
+    }
+  },
+  "full_capture_admitted": false,
+  "mode": "pilot",
+  "observations": 24,
+  "reporter_sha256": "77971b40d76d12ce900e42c92c332d1ca6c524e228305a5828b17bc6ce2ce16c",
+  "rtol": 1e-05,
+  "schema": "phase_eap_rgb_original_parity_report_v1",
+  "scope": "Original RGB raw17 and phase experts; these differences are not TTC seconds",
+  "targets_read": false
+}

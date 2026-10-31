@@ -1,0 +1,362 @@
+{
+  "0289612d4c5d174a2c45ad210a8f1e136be5d591c24600d88fe1c30f4d6e5049": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.5033950805664062e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0005474090576171875,
+        "pass": false
+      }
+    },
+    "sha256": "2305db2bedcbbf2250a9adc0a581d0122151a20947ef644e1cc7141c83963922"
+  },
+  "08d30b04e52db349dd8708f33f843644dc42c135fa65437da50ba4af6eb80fbd": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 3.734603524208069e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0018062591552734375,
+        "pass": false
+      }
+    },
+    "sha256": "12de500149316c60feecf64d0ef4aa270396da702fdb340f518436a38fcfe11e"
+  },
+  "0ec14b88156bca2f7b7da4d353b9c6537b1959cf6d61badf2352607d85c5420e": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 3.443099558353424e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0016760826110839844,
+        "pass": false
+      }
+    },
+    "sha256": "c70a45ef1d55660cc386d48385536ae8869fcd354b000a8af21e49579ce3d89d"
+  },
+  "2304f133b066ddb6e0407df6be38849e43aee5bb7cacac28a009c34f9b603c0f": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 7.16187059879303e-07,
+        "pass": true
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 5.7220458984375e-05,
+        "pass": false
+      }
+    },
+    "sha256": "4e7d5ee15aba3d640d6720d9d25390a22de4d64cc39c3fa76e287fc7d9d6f2df"
+  },
+  "4647cbdae078830fa04c65affac1690997e1fe32d46751fb09004bc72bc57319": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 6.418675184249878e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0029201507568359375,
+        "pass": false
+      }
+    },
+    "sha256": "a070730faa3abceb985f76a6e8e2ce7439bd15cbf564dd0b0dabf5e3de1b9ca8"
+  },
+  "4fc20dd19af0b7152b5c2fd9c3350c2d8b4a82fa5cc4fce500e1cc3cb978e8b4": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 1.7881393432617188e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0007510185241699219,
+        "pass": false
+      }
+    },
+    "sha256": "dde5fc56cff50eb52bb1f69a5c1e1f1f0f3e539eb492f3e4062143336baec799"
+  },
+  "58a77191c49647fb9a7fd2706804d3277644331a5bb0fd5436cac7ae431a5234": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.5387853384017944e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0013041496276855469,
+        "pass": false
+      }
+    },
+    "sha256": "40991b7cc7baffe9df92986593a8ba171a5997b83965c1208a6f2d9e00973944"
+  },
+  "6e17f2b57a7fc978b6cb03b3903ee98f98f86063b0cb15cccbb52814ac58998b": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 1.430511474609375e-06,
+        "pass": true
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.00029754638671875,
+        "pass": false
+      }
+    },
+    "sha256": "4cc9d3dd6cc37fa45f16434c107c27d7bd5fb8ce7551b3c2a2c047e7c56502bb"
+  },
+  "73902cb929d5bdbf82a35e3b3e8c294c44ad7b7202796ad8ddb3da8468b28c03": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 1.0998919606208801e-06,
+        "pass": true
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0005364418029785156,
+        "pass": false
+      }
+    },
+    "sha256": "6889bc36a793aa5af537926721e187436f9c587260945fdd0f7c9340d3ea0aeb"
+  },
+  "83b776e7d05dc5377b9de75b88b803e636a0083ca54c646c9741c5176de504fb": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 3.992579877376556e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.00194549560546875,
+        "pass": false
+      }
+    },
+    "sha256": "4bd978dda21e429010b4943c67df91cdd089d031c17d21e735d06c017803ea41"
+  },
+  "8d55630623d39ec45339aa9109ff681d3b0a069f8d0d5d97b2253b582e303474": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 6.386078894138336e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0031290054321289062,
+        "pass": false
+      }
+    },
+    "sha256": "58bb236988c0ea2d7bfca0cc1e1752174f901ce3ff1bd12dbd2cce058713a9b7"
+  },
+  "9096bae009efad84cacee42314d6e78279a68f886d7458642278b30322d6adfb": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 1.0728836059570312e-06,
+        "pass": true
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.00113677978515625,
+        "pass": false
+      }
+    },
+    "sha256": "13d2c96285acd82193f59929bff13c89f560c2a0a486f13dc36c2ac15bd6cea2"
+  },
+  "971b8dcd801c8dd920e0e9baf48fb7784b7b1452819accdd661cef4ef836f775": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 8.112750947475433e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.003949165344238281,
+        "pass": false
+      }
+    },
+    "sha256": "e55a2cdfc200d6467bba3522b925e3ccf019cecd5ea54d8d613418085132a3ea"
+  },
+  "995a2983f45395dadfeda0dc9c0489babc93def5ca15b880d1766db27d54060a": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.3599714040756226e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.001125335693359375,
+        "pass": false
+      }
+    },
+    "sha256": "07d1f3072615caed0d9a2aadefa5c2a4b42edebfbc1f23b86bea949d7dca06fe"
+  },
+  "9ddd5dc2d8422e773a5e522b6cc6489251bdbe99c866ad43c388de929cd202b2": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 1.0672956705093384e-06,
+        "pass": true
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.000514984130859375,
+        "pass": false
+      }
+    },
+    "sha256": "c66cd876d173466dd565e4af3937fdef93cc330bdb2dc53aad92ef24c1b4457c"
+  },
+  "a200231ff025c71549b9b1a76643731d39417e080c3695d52e60d1278e2bdd78": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.3832544684410095e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0011615753173828125,
+        "pass": false
+      }
+    },
+    "sha256": "9e5e6800c7b321e58c635193e743bda981f56ca6b5457cc57a2f8de8f8b8d031"
+  },
+  "a33b456127e00484ab7ef5d13da3f9db34c27c0fe93ebd80ba69e805f44004da": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 1.101754605770111e-05,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.005328178405761719,
+        "pass": false
+      }
+    },
+    "sha256": "a14ff2c07ab1131fc70e07a91377364b63888210d14f31d331e1346015f98bab"
+  },
+  "bbf02dd55fa8838f38f73c3676b01fd57509f42da25bc07faeb7017406162dfa": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 3.5744160413742065e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0011396408081054688,
+        "pass": false
+      }
+    },
+    "sha256": "be271dda7497f5c8587e85c85e85971a0852cc0524b7971a817a291d4f41a5c3"
+  },
+  "bd9ac9b5f737891040bb1883e061a67970f037221aafa578d9f2d1f2db6740cc": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.4847686290740967e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0012989044189453125,
+        "pass": false
+      }
+    },
+    "sha256": "1a247ae32ffe06c97c06f3fed65c0fa29e29374412653cd99bb4042f986e6508"
+  },
+  "c8b7508263ccea35563f37fad548bca9744ed5bc21c8f546f452a2d8dd93941a": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.080574631690979e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.001018524169921875,
+        "pass": false
+      }
+    },
+    "sha256": "58312e4cf5a603f0952422de686d456a8062e33ddcc40f963109c068077b8067"
+  },
+  "c98bb64df8e59e1fae0dd5e72ba9884bc271de3accad2d13f06b56bc4b5caf7d": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 2.4028122425079346e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0011434555053710938,
+        "pass": false
+      }
+    },
+    "sha256": "9aa567b90dcab40019d3399abe27c921295631f8189608bcd24f65767a4fc8c6"
+  },
+  "eaccc963db64aafaf1f6a9ae359ddd236299213895a3eaa1ffa2778d3ec5530c": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 4.274770617485046e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0020842552185058594,
+        "pass": false
+      }
+    },
+    "sha256": "3f7cdfeb9172ee80af52a6a5530580b902b3df8cd7d0b027ccc65b346879c990"
+  },
+  "f7732b7412bc66d858466b09b4fe84c36bdf83050b879af77efa9fa58836eb75": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 8.810311555862427e-07,
+        "pass": true
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0004291534423828125,
+        "pass": false
+      }
+    },
+    "sha256": "83891b71aaaf4963c9437ccaba72258a1bd61028c56019990141c629a436c90f"
+  },
+  "f9ad6be632450d5e7d7687fe62f6cc7b321e96d85fb409c7e3d992d524cc745d": {
+    "checks": {
+      "expert3": {
+        "exact": false,
+        "max_abs": 5.686655640602112e-06,
+        "pass": false
+      },
+      "raw17": {
+        "exact": false,
+        "max_abs": 0.0037822723388671875,
+        "pass": false
+      }
+    },
+    "sha256": "d8155f76b978fffd989ac65fea6a60df070860a74fab599884abbec94bfab30e"
+  }
+}

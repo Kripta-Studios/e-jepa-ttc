@@ -8,9 +8,14 @@ sigue siendo diagnóstico por su fallo en el screen previo, aunque los agregados
 de la población completa mejoren. En carretera, los IC descriptivos de ambos
 cambios de F0 incluyen cero. No hay evidencia de SOTA ni promoción del entregable.
 
-Siguiente acción: recapturar los PAIR133 RGB de despliegue Test12 con los medios
-ya verificados, reproducir primero el original y comparar original/canónico en
-la misma plataforma, recalculando todas las historias, contextos y cabeza.
+**Actualización eAP:** el piloto original RGB corregido terminó con 24/24
+observaciones y 24 fallos de paridad histórica. No ejecutar su expansión completa
+ni relajar tolerancias. El candidato eAP no se ejecutó. Ver
+[resultado y continuidad](../research_log_canonical_population2608/EAP_RGB_CAPTURE_RESULT.md).
+Se verificó también el diagnóstico concurrente de cuatro políticas TF32: ninguna
+recupera paridad en sus dos consultas. No duplicar ese experimento. Inspeccionar
+el estado del diagnóstico concurrente emparejado en plataforma local antes de
+iniciar otra captura; no confundir sensibilidad local con conservación histórica.
 El replay original de contextos ya terminado no necesita repetirse aisladamente.
 Los estados de ejecución que siguen son un registro histórico, no jobs pendientes.
 
