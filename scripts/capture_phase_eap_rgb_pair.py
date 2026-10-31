@@ -9,6 +9,7 @@ import subprocess
 import tarfile
 import time
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -22,7 +23,25 @@ from operational.phase_campaign.data import read
 from operational.phase_robust.bundle import verified_upstream_paths
 from operational.phase_timewarp.compact_capture import capture_compact
 from operational.rgb_port import transfer as engine
+from operational.rgb_port_streaming.contracts import NativeObservation
 from scripts.final_train40_transfer import load_models
+
+BOUNDARY = Path("operational/rgb_port_streaming/contracts.py")
+
+
+def validate_boundary(admission: dict) -> None:
+    """Require the exact mask ABI adapter recorded by the original deployment."""
+    boundary = admission.get("producer_observation_boundary", {})
+    if any(
+        boundary.get(key) != expected
+        for key, expected in {
+            "implementation": "operational.rgb_port_streaming.contracts.NativeObservation",
+            "source_sha256": file_sha(BOUNDARY),
+            "known_semantics": "AGGREGATE_CURRENT_QUERY_BOOL_PRESERVED_UNCHANGED",
+            "pair_input_operator": "UNCHANGED_ProducerObservation.pair_input",
+        }.items()
+    ):
+        raise ValueError("Archived producer boundary differs from local native adapter")
 
 
 def select_observations(inputs: dict, mode: str) -> list[str]:
@@ -66,6 +85,7 @@ def reference_observations(baseline: dict, inputs: dict, selected: list[str]) ->
                 return stream.read()
 
             admission = json.loads(member(next(n for n in names if n.endswith(".admission.json"))))
+            validate_boundary(admission)
             if (
                 admission["model_seal_sha256"] != baseline["parent"]["model_seal_sha256"]
                 or admission["inputs_sha256"] != TRUSTED_INPUTS_SHA256
@@ -160,7 +180,10 @@ def main() -> None:
         raise ValueError("Unexpected fixed selection cardinality")
     sources = {
         **read(args.population_freeze)["source_hashes"],
-        **{str(p): file_sha(p) for p in (Path(__file__), Path("src/e_jepa_ttc/rgb_port/data.py"))},
+        **{
+            str(p): file_sha(p)
+            for p in (Path(__file__), Path("src/e_jepa_ttc/rgb_port/data.py"), BOUNDARY)
+        },
     }
     for path, digest in sources.items():
         if file_sha(Path(path)) != digest:
@@ -217,7 +240,11 @@ def main() -> None:
                             raise ValueError("RGB shard differs from trusted inputs")
                         verified_shards[relative] = (stat.st_size, stat.st_mtime_ns)
                 decoded = decode_query(item, eap_root=args.media_root, reader=reader)
-                with capture_compact(models) as (calls, arrays), torch.inference_mode():
+                with (
+                    patch.object(engine, "ProducerObservation", NativeObservation),
+                    capture_compact(models) as (calls, arrays),
+                    torch.inference_mode(),
+                ):
                     engine._expert_block(
                         models,
                         "R",

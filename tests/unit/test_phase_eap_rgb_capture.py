@@ -6,6 +6,31 @@ import pytest
 from scripts.capture_phase_eap_rgb_pair import parity, select_observations
 
 
+def test_archived_boundary_requires_the_exact_native_adapter():
+    from operational.evttc_transfer_audit.common import file_sha
+    from scripts.capture_phase_eap_rgb_pair import BOUNDARY, validate_boundary
+
+    admission = {
+        "producer_observation_boundary": {
+            "implementation": "operational.rgb_port_streaming.contracts.NativeObservation",
+            "source_sha256": file_sha(BOUNDARY),
+            "known_semantics": "AGGREGATE_CURRENT_QUERY_BOOL_PRESERVED_UNCHANGED",
+            "pair_input_operator": "UNCHANGED_ProducerObservation.pair_input",
+        }
+    }
+    validate_boundary(admission)
+    admission["producer_observation_boundary"]["source_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="boundary"):
+        validate_boundary(admission)
+
+
+def test_missing_archived_boundary_is_not_silently_assumed():
+    from scripts.capture_phase_eap_rgb_pair import validate_boundary
+
+    with pytest.raises(ValueError, match="boundary"):
+        validate_boundary({})
+
+
 def inventory():
     queries = [
         {
