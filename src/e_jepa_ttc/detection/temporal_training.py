@@ -50,6 +50,10 @@ TRAINING_CODE_PATHS = (
     "src/e_jepa_ttc/detection/campaign_training.py",
     "src/e_jepa_ttc/detection/development_metrics.py",
     "src/e_jepa_ttc/detection/eap_rgb_data.py",
+    "src/e_jepa_ttc/detection/event_campaign.py",
+    "src/e_jepa_ttc/detection/event_detector.py",
+    "src/e_jepa_ttc/detection/event_fusion.py",
+    "src/e_jepa_ttc/detection/event_panel_cache.py",
     "src/e_jepa_ttc/detection/evaluation_ap_fast.py",
     "src/e_jepa_ttc/detection/evaluation_ground_truth.py",
     "src/e_jepa_ttc/detection/evaluation_protocol.py",
@@ -577,6 +581,8 @@ def temporal_train_step(
     scheduler: UpdateLRScheduler,
     update: int,
     gradient_clip_norm: float,
+    *,
+    sensor_kwargs: Mapping[str, Any] | None = None,
 ) -> dict[str, float]:
     """Execute one update; histories remain detached inside the adapter."""
     if batch.targets is None:
@@ -589,6 +595,7 @@ def temporal_train_step(
         batch.targets,
         batch.image_sizes,
         **batch.detector_kwargs(),
+        **dict(sensor_kwargs or {}),
     )
     losses = cast(Mapping[str, torch.Tensor], criterion(outputs, batch.targets))
     weight_dict = cast(Mapping[str, float], criterion.weight_dict)  # type: ignore[attr-defined]
@@ -605,7 +612,10 @@ def temporal_train_step(
 
 
 def temporal_eval_forward(
-    adapter: TemporalDetectorAdapter, batch: TemporalCampaignBatch
+    adapter: TemporalDetectorAdapter,
+    batch: TemporalCampaignBatch,
+    *,
+    sensor_kwargs: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run label-free model inference; GT must be produced by a separate reader."""
     if batch.targets is not None:
@@ -617,6 +627,7 @@ def temporal_eval_forward(
             None,
             batch.image_sizes,
             **batch.detector_kwargs(),
+            **dict(sensor_kwargs or {}),
         )
 
 

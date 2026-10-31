@@ -84,7 +84,6 @@ def main() -> None:
             "A temporal arm must exceed both controls by at least 0.005 AP to pass this screen.",
             "Exact zero-update output parity was verified against the frozen parent "
             "before training.",
-            "No temporal outcome is implied by this report until all arms finish.",
             "",
             "The event-input cache is prepared locally from public TRAIN/selection streams:",
             "50 ms windows ending at RGB exposure end, five bins per polarity, 160x96, FP32",
@@ -95,6 +94,41 @@ def main() -> None:
             "",
         ]
     )
+    temporal_path = args.evidence / "temporal_screen.json"
+    if temporal_path.exists():
+        temporal = json.loads(temporal_path.read_text())
+        rows.extend(
+            ["## Completed temporal screen", "", "| Arm | Final-update panel AP |", "|---|---:|"]
+        )
+        for name, result in temporal["variants"].items():
+            rows.append(f"| {name} | {result['AP']:.8f} |")
+        rows.extend(
+            [
+                "",
+                f"Temporal gate passed: **{temporal['screening_pass']}**.",
+                "Best temporal gain over the strongest control: "
+                f"{temporal['gain_over_strongest_control']:.8f}.",
+                "The monocular detector remains the base. This short, single-seed screen",
+                "does not establish convergence or rule out other temporal recipes.",
+                "",
+            ]
+        )
+    smoke_path = args.evidence / "event_gpu_smoke.json"
+    if smoke_path.exists():
+        smoke = json.loads(smoke_path.read_text())
+        rows.extend(
+            [
+                "## Event adapter engineering gate",
+                "",
+                f"GPU admission: **{smoke['status']}**; optimizer updates: "
+                f"{smoke['optimizer_updates']}; finite gradient tensors: "
+                f"{smoke['gradient_tensors']}.",
+                "Nonzero synthetic event inputs with real label-free RGB preserve the",
+                "initial detector outputs exactly for F01 and F11. Model state is unchanged.",
+                "This validates integration and gradients, not real-event accuracy.",
+                "",
+            ]
+        )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text("\n".join(rows), encoding="utf-8")
 

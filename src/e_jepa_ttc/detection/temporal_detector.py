@@ -108,9 +108,7 @@ class TemporalBatchContext:
     producer_version: str
     control: TemporalDetectorControl
     current: tuple[TemporalFrameIdentity, ...]
-    history: tuple[
-        tuple[TemporalFrameIdentity | None, TemporalFrameIdentity | None], ...
-    ]
+    history: tuple[tuple[TemporalFrameIdentity | None, TemporalFrameIdentity | None], ...]
 
     def validate(
         self,
@@ -230,6 +228,29 @@ class TemporalDetectorAdapter(nn.Module):
         dn_args: object | None = None,
     ) -> dict[str, Any]:
         """Run one stateless current/history request without a feature cache."""
+        current_state, fused = self.project_temporal(
+            current_images,
+            temporal_context=temporal_context,
+            history_images=history_images,
+            history_ages_us=history_ages_us,
+            history_mask=history_mask,
+            history_limit=history_limit,
+        )
+        return self.backend.decode_projected_features(
+            current_state, fused, calibs, targets, image_sizes, dn_args
+        )
+
+    def project_temporal(
+        self,
+        current_images: torch.Tensor,
+        *,
+        temporal_context: TemporalBatchContext,
+        history_images: torch.Tensor | None = None,
+        history_ages_us: torch.Tensor | None = None,
+        history_mask: torch.Tensor | None = None,
+        history_limit: int = 0,
+    ) -> tuple[ProjectedFeatureState, tuple[torch.Tensor, ...]]:
+        """Expose causal fused features before decoding, without accepting targets."""
         if current_images.ndim != 4 or not current_images.is_floating_point():
             raise ValueError("current_images must be floating point [B,C,H,W]")
         if current_images.shape[0] <= 0 or not torch.isfinite(current_images).all():
@@ -265,8 +286,7 @@ class TemporalDetectorAdapter(nn.Module):
                 flat = history_images.reshape(batch * 2, *history_images.shape[2:])
                 history_state = self.backend.extract_projected_features(flat)
             history_features = tuple(
-                feature.reshape(batch, 2, *feature.shape[1:])
-                for feature in history_state.features
+                feature.reshape(batch, 2, *feature.shape[1:]) for feature in history_state.features
             )
             fused = self.fusion(
                 current_state.features,
@@ -275,11 +295,4 @@ class TemporalDetectorAdapter(nn.Module):
                 history_mask,
                 history_limit=history_limit,
             )
-        return self.backend.decode_projected_features(
-            current_state,
-            fused,
-            calibs,
-            targets,
-            image_sizes,
-            dn_args,
-        )
+        return current_state, fused

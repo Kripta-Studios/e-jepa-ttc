@@ -60,7 +60,6 @@ current only, repeated current, one past frame, and two past frames. Each receiv
 1,024 updates, batch four, LR 2e-5 with the same schedule and selection panel.
 A temporal arm must exceed both controls by at least 0.005 AP to pass this screen.
 Exact zero-update output parity was verified against the frozen parent before training.
-No temporal outcome is implied by this report until all arms finish.
 
 The event-input cache is prepared locally from public TRAIN/selection streams:
 50 ms windows ending at RGB exposure end, five bins per polarity, 160x96, FP32
@@ -68,3 +67,24 @@ with lossless compression and per-window normalization. It reads no object label
 and performs no GPU training. HDF5 source hashes and output hashes are verified.
 S4 training, independent TTC producers, end-to-end TTC evaluation and official
 benchmark comparison remain separate gates.
+
+## Completed temporal screen
+
+| Arm | Final-update panel AP |
+|---|---:|
+| current_only | 0.16910427 |
+| correct_past_2 | 0.16884845 |
+| current_repeated | 0.16817067 |
+| correct_past_1 | 0.16788419 |
+
+Temporal gate passed: **False**.
+Best temporal gain over the strongest control: -0.00025582.
+The monocular detector remains the base. This short, single-seed screen
+does not establish convergence or rule out other temporal recipes.
+
+## Event adapter engineering gate
+
+GPU admission: **PASS**; optimizer updates: 0; finite gradient tensors: 386.
+Nonzero synthetic event inputs with real label-free RGB preserve the
+initial detector outputs exactly for F01 and F11. Model state is unchanged.
+This validates integration and gradients, not real-event accuracy.

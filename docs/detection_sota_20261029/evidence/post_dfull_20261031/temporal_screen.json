@@ -1,0 +1,93 @@
+{
+  "schema": "dfull_temporal_screen_comparison_v1",
+  "variants": {
+    "current_only": {
+      "final_update": 1024,
+      "AP": 0.169104272061326,
+      "per_class": {
+        "car": 0.5835578151853804,
+        "bicycle": 0.006600660066006602,
+        "truck": 0.2681532182317169,
+        "pedestrian": 0.031883531623363964,
+        "motorcycle": 0.18389952243497745,
+        "bus": 0.19138613196557602,
+        "tricycle": 0.0868192186794908,
+        "other_vehicle": 0.0005340783040959698
+      },
+      "checkpoint": "/workspace/phase_release/post_dfull_v1/temporal_runs/current_only/checkpoints/last.pt",
+      "selected_lineage": {
+        "path": "/workspace/phase_release/post_dfull_v1/temporal_runs/current_only/checkpoints/selected_update_001024_3bc7116f9b817ea5ae5a31b69c61972ef1b83fa1ad14e56e326b182ccb826544.pt",
+        "sha256": "3bc7116f9b817ea5ae5a31b69c61972ef1b83fa1ad14e56e326b182ccb826544",
+        "update": 1024,
+        "best_metric": 0.169104272061326
+      }
+    },
+    "correct_past_2": {
+      "final_update": 1024,
+      "AP": 0.16884845107406019,
+      "per_class": {
+        "car": 0.5843425540440483,
+        "bicycle": 0.009032482195587981,
+        "truck": 0.2656202694901246,
+        "pedestrian": 0.0343575022555308,
+        "motorcycle": 0.18215475602138875,
+        "bus": 0.1919761651945489,
+        "tricycle": 0.08304012350746703,
+        "other_vehicle": 0.0002637558837850999
+      },
+      "checkpoint": "/workspace/phase_release/post_dfull_v1/temporal_runs/correct_past_2/checkpoints/last.pt",
+      "selected_lineage": {
+        "path": "/workspace/phase_release/post_dfull_v1/temporal_runs/correct_past_2/checkpoints/selected_update_001024_e859a0d65388d0b548753f2cd131bcf56d7b8adaa63368735a2a4a9ce6383a6e.pt",
+        "sha256": "e859a0d65388d0b548753f2cd131bcf56d7b8adaa63368735a2a4a9ce6383a6e",
+        "update": 1024,
+        "best_metric": 0.16884845107406019
+      }
+    },
+    "current_repeated": {
+      "final_update": 1024,
+      "AP": 0.16817067232848132,
+      "per_class": {
+        "car": 0.582655754795406,
+        "bicycle": 0.005211047420531528,
+        "truck": 0.27226237340282433,
+        "pedestrian": 0.03505783840420011,
+        "motorcycle": 0.1821193848116784,
+        "bus": 0.18971514440005444,
+        "tricycle": 0.07781847673484121,
+        "other_vehicle": 0.0005253586583148107
+      },
+      "checkpoint": "/workspace/phase_release/post_dfull_v1/temporal_runs/current_repeated/checkpoints/last.pt",
+      "selected_lineage": {
+        "path": "/workspace/phase_release/post_dfull_v1/temporal_runs/current_repeated/checkpoints/selected_update_001024_4ea0ef3cc75875fba1db9a7bea59e573b2e88a422d314ae0f829f3f0a1ce706f.pt",
+        "sha256": "4ea0ef3cc75875fba1db9a7bea59e573b2e88a422d314ae0f829f3f0a1ce706f",
+        "update": 1024,
+        "best_metric": 0.16817067232848132
+      }
+    },
+    "correct_past_1": {
+      "final_update": 1024,
+      "AP": 0.1678841926036423,
+      "per_class": {
+        "car": 0.5798131304637614,
+        "bicycle": 0.0025244629726130507,
+        "truck": 0.2638151860908101,
+        "pedestrian": 0.03383894696313487,
+        "motorcycle": 0.18470089374802623,
+        "bus": 0.19236778642917352,
+        "tricycle": 0.08548126279266424,
+        "other_vehicle": 0.0005318713689550774
+      },
+      "checkpoint": "/workspace/phase_release/post_dfull_v1/temporal_runs/correct_past_1/checkpoints/last.pt",
+      "selected_lineage": {
+        "path": "/workspace/phase_release/post_dfull_v1/temporal_runs/correct_past_1/checkpoints/selected_update_000512_5454c84d8c4b4da149ed4ae8226fab85838f36747002747c6d2d47d00ff8d0a7.pt",
+        "sha256": "5454c84d8c4b4da149ed4ae8226fab85838f36747002747c6d2d47d00ff8d0a7",
+        "update": 512,
+        "best_metric": 0.16856936718101972
+      }
+    }
+  },
+  "winner": "correct_past_2",
+  "gain_over_strongest_control": -0.0002558209872658146,
+  "screening_pass": false,
+  "scope": "One seed; matched 1024-update budgets and fixed selection panel. Full-selection confirmation and broader causal controls still required."
+}

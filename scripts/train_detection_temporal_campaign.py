@@ -32,6 +32,7 @@ from e_jepa_ttc.detection.eap_rgb_data import EAPRGBDataset
 from e_jepa_ttc.detection.evaluation_ground_truth import build_evaluation_ground_truth
 from e_jepa_ttc.detection.evaluation_protocol import EvaluationProtocol
 from e_jepa_ttc.detection.evaluation_v2 import evaluate_detections_v2
+from e_jepa_ttc.detection.event_campaign import EventCampaignExtension
 from e_jepa_ttc.detection.monodgp_eap_adapter import decode_eap, prepare_sample
 from e_jepa_ttc.detection.temporal_campaign import (
     TemporalCampaignBatch,
@@ -88,6 +89,7 @@ def _evaluate(
     config: Any,
     protocol: EvaluationProtocol,
     device: torch.device,
+    event_extension: EventCampaignExtension | None = None,
 ) -> dict[str, object]:
     """Label-free temporal forward plus independent raw-label scoring."""
     adapter.eval()
@@ -97,7 +99,10 @@ def _evaluate(
     with EAPRGBDataset(config.baseline.data.root, dataset.current_tokens) as truth_reader:
         for index, token in enumerate(dataset.current_tokens):
             batch = _device_batch(dataset.collate([index]), device)
-            outputs = temporal_eval_forward(adapter, batch)
+            sensor_kwargs = (
+                event_extension.model_inputs(batch, role="selection") if event_extension else None
+            )
+            outputs = temporal_eval_forward(adapter, batch, sensor_kwargs=sensor_kwargs)
             require_finite(outputs)
             raw = truth_reader[index]
             if raw.sample_token != token:
@@ -132,11 +137,21 @@ def _evaluate(
     }
 
 
-def run(config_path: Path, output: Path, resume: Path | None) -> None:
+def run(
+    config_path: Path,
+    output: Path,
+    resume: Path | None,
+    event_config_path: Path | None = None,
+) -> None:
     if output.exists() and resume is None:
         raise FileExistsError("Use a new temporal output directory")
     config = load_temporal_training_config(config_path)
     runtime = validate_temporal_runtime(config)
+    event_extension = (
+        EventCampaignExtension(event_config_path, config) if event_config_path else None
+    )
+    if event_extension is not None:
+        runtime["sensor_extension"] = event_extension.provenance
     if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
         raise RuntimeError("Temporal runner requires exactly one visible CUDA device")
     torch.set_float32_matmul_precision("highest")
@@ -181,11 +196,15 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
         velocity_loss_coef=config.baseline.model.velocity_loss_coef,
     )
     load_parent_model_only(backend, config)
-    adapter = TemporalDetectorAdapter(
-        backend,
-        seeded_fusion(config.baseline.seed),
-        producer_version=config.temporal.producer_version,
-        maximum_history_age_us=config.temporal.maximum_history_age_us,
+    adapter = (
+        event_extension.build_adapter(backend)
+        if event_extension
+        else TemporalDetectorAdapter(
+            backend,
+            seeded_fusion(config.baseline.seed),
+            producer_version=config.temporal.producer_version,
+            maximum_history_age_us=config.temporal.maximum_history_age_us,
+        )
     ).to(device)
     criterion = criterion.to(device)
     groups, parameter_ledger = temporal_optimizer_parameter_groups(adapter, config.baseline)
@@ -235,14 +254,19 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
         adapter.train()
         criterion.train()
         _, cpu_batch = sampler.next_batch(optimization.batch_size)
+        device_batch = _device_batch(cpu_batch, device)
+        sensor_kwargs = (
+            event_extension.model_inputs(device_batch, role="train") if event_extension else None
+        )
         losses = temporal_train_step(
             adapter,
             criterion,
-            _device_batch(cpu_batch, device),
+            device_batch,
             optimizer,
             scheduler,
             update,
             optimization.gradient_clip_norm,
+            sensor_kwargs=sensor_kwargs,
         )
         with (output / "metrics.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(
@@ -286,7 +310,7 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
         monitor_complete = False
         full_complete = False
         if monitor_due:
-            result = _evaluate(adapter, monitor_data, config, protocol, device)
+            result = _evaluate(adapter, monitor_data, config, protocol, device, event_extension)
             _write(output / f"evaluation/monitor_update_{update:06d}.json", result)
             metrics = cast(Mapping[str, object], result["metrics_v2"])
             value = float(cast(float, metrics[config.baseline.evaluation.selection_metric]))
@@ -308,7 +332,7 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
             )
             _write(
                 output / f"evaluation/full_selection_update_{update:06d}.json",
-                _evaluate(adapter, full, config, protocol, device),
+                _evaluate(adapter, full, config, protocol, device, event_extension),
             )
             full_complete = True
         if monitor_due:
@@ -367,8 +391,9 @@ def main() -> None:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--resume", type=Path)
+    parser.add_argument("--event-config", type=Path)
     args = parser.parse_args()
-    run(args.config, args.output, args.resume)
+    run(args.config, args.output, args.resume, args.event_config)
 
 
 if __name__ == "__main__":

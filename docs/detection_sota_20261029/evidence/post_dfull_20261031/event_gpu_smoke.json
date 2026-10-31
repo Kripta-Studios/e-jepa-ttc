@@ -1,0 +1,28 @@
+{
+  "schema": "event_detector_gpu_engineering_v1",
+  "status": "PASS",
+  "checkpoint_sha256": "c58c13297fd15638d89364a25b88245cd8be669ab8bfdbcb741f03df0e9215b3",
+  "checks": {
+    "F01": {
+      "maximum_absolute_difference": 0.0,
+      "tensor_count": 29
+    },
+    "F11": {
+      "maximum_absolute_difference": 0.0,
+      "tensor_count": 29
+    }
+  },
+  "gradient_tensors": 386,
+  "state_before_sha256": "41f11f912b90b486d4ba90f269185892be8cdad9f060888a756f4c3df6abc378",
+  "state_after_sha256": "41f11f912b90b486d4ba90f269185892be8cdad9f060888a756f4c3df6abc378",
+  "optimizer_updates": 0,
+  "labels_read": false,
+  "event_input": "synthetic nonzero tensor; not detection quality or real-event performance",
+  "rgb_token": "2Y46OkK3ff:000000257_000448571",
+  "code_hashes": {
+    "src/e_jepa_ttc/detection/event_detector.py": "7d7bf25504cd069734efb32cb6de76922b0009d08b39da37b56befb4cb87c236",
+    "src/e_jepa_ttc/detection/event_fusion.py": "bd2663f322725644b61bc8806fb9cc4a83df467c39968b6844f547f431e78ffc",
+    "src/e_jepa_ttc/detection/temporal_detector.py": "fe1edbcf53b292c6566d477d585321ac4bfaaeaa1c22b324937f4b218549056b"
+  },
+  "script_sha256": "fbf7e41559a78e012b85d1fcc79c471ae017e41281ddc0a5cdf4215cc5a23c59"
+}
