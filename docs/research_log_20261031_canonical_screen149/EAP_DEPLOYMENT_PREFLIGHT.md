@@ -10,9 +10,16 @@ del inventario.
 Se localizaron las 5.805 entradas de eventos en
 `E:/EJEPA_GARLTTC_TEST12_20261010/inputs`. Los 36 shards RGB de
 `E:/eAP_dataset/data/test` están presentes y tienen los tamaños esperados.
-**No se verificaron aún los hashes del contenido de estos medios**: deben
-comprobarse contra el inventario antes de cualquier inferencia. No hacen falta
-descargas para intentar esa verificación local.
+En el preflight solo se comprobó disponibilidad/tamaño. La verificación posterior
+`eap_media_verified_v1` completó los hashes de los 5.841 archivos: todos coinciden
+con el inventario. Se leyeron 55.130.168.689 bytes en 415,994 s, sin decodificar
+arrays ni ejecutar productores. No hicieron falta descargas.
+
+Recibo compacto: [eap_media_complete.json](evidence/eap_media_complete.json).
+Se verificaron además los hashes de FREEZE/FILES y la correspondencia ordenada de
+las 5.841 identidades del recibo. Los manifiestos completos y medios permanecen
+locales en `output/phase_timewarp/eap_media_verified_v1` y sus rutas originales.
+Esto permite preparar el replay; no demuestra conservación de las predicciones.
 
 Los hashes de los 12 archivos de diagnósticos de despliegue coinciden con el
 recibo de `output/phase_safe_fusion/test12_audit`. Ese recibo pertenece al mismo
@@ -47,4 +54,5 @@ Salida local: `output/phase_timewarp/eap_deployment_preflight_v1/REPORT.json`.
 ```powershell
 $env:PYTHONPATH='src;.'
 .venv-transfer/Scripts/python.exe scripts/preflight_phase_eap_deployment.py --inputs artifacts/runpod_event_authority_supplement_20261026/payload/workspace/e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/INPUTS.json --baseline-audit output/phase_safe_fusion/test12_audit --upstream output/phase_submission/FINAL_MODEL/upstream --media-root E:/eAP_dataset --output output/phase_timewarp/eap_deployment_preflight_new/REPORT.json
+.venv-transfer/Scripts/python.exe scripts/verify_phase_eap_media.py --inputs artifacts/runpod_event_authority_supplement_20261026/payload/workspace/e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/INPUTS.json --media-root E:/eAP_dataset --output output/phase_timewarp/eap_media_verified_new
 ```

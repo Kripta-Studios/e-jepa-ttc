@@ -1,0 +1,15 @@
+{
+  "elapsed_seconds": 415.9941905000014,
+  "end_time": "2026-10-31T18:50:50.235056+00:00",
+  "event_tensors": 5805,
+  "files_sha256": "fd6ba4de2af9fe6f15db4cb6f0b2469c255c644e3aa0567d4129c6eeee04998f",
+  "freeze_sha256": "a2c5a3360ec9ac9fcf3c174a3b2aaba5347587e905b1d06bd7f0245770108d65",
+  "inputs_sha256": "b78730abe68de7fbe06c6c98b25d5fa025c04d9303720b680ce0c0f575d2e526",
+  "npz_arrays_decoded": false,
+  "producer_calls": 0,
+  "rgb_shards": 36,
+  "scope": "Byte verification only; no candidate inference or accuracy claim",
+  "status": "COMPLETE",
+  "targets_read": false,
+  "verified_bytes": 55130168689
+}

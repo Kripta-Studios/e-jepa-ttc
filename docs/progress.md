@@ -668,3 +668,10 @@ precondition for all 88,744 TRAIN40 event-history queries in the inspected
 materialization path. This is structural evidence only; deployment ancestry,
 RGB history and complete context/head preservation remain unverified. See
 docs/research_log_20261031_canonical_screen149/EAP_EVENT_CADENCE.md.
+
+The eAP deployment-media verification is now complete: all 5,805 physical event
+tensors and 36 RGB shards match the frozen public inventory (55,130,168,689
+bytes; 415.994 s). No arrays were decoded and no candidate was executed. This
+closes local input-byte availability, not prediction or accuracy preservation.
+Small completion evidence and reproduction commands are in
+docs/research_log_20261031_canonical_screen149/EAP_DEPLOYMENT_PREFLIGHT.md.

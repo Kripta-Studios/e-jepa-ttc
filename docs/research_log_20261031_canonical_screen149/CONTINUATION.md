@@ -152,3 +152,18 @@ $env:PYTHONPATH='src;.'
 En la misma observación, EvTTC llegó a 516/2608 (505 nuevas), 1597.4 s,
 ETA móvil 237.2 min. Sigue vivo el worker 77708, sesión 59503. Mantener el
 protocolo y las fuentes intactos; evaluar solo tras el sello completo.
+
+## Actualización: verificación de medios terminada
+
+La sesión 3801 terminó con exit 0. Su COMPLETE.json confirma los 5.805 tensores
+de eventos y 36 shards RGB: 55.130.168.689 bytes verificados en 415.994 s.
+Todos los hashes coinciden. Se comprobaron los hashes de FREEZE/FILES, las
+5.841 identidades y el hash del verificador. El recibo compacto está publicado
+en `evidence/eap_media_complete.json`. No reiniciar esta verificación para
+obtener el mismo resultado; durante la futura inferencia seguir comprobando
+los archivos usados contra sus identidades selladas.
+
+Esta finalización solo corresponde a los medios eAP: no hubo inferencia ni
+evaluación del candidato. La extracción EvTTC sigue viva (worker 77708, sesión
+59503), último avance observado 595/2608, 583 nuevas, 1902.0 s y ETA móvil
+110.1 min. Esperar su propio COMPLETE.json para evaluar.
