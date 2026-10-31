@@ -1,0 +1,150 @@
+{
+  "schema": "phase_detection_full_train_readiness_v1",
+  "status": "MEDIA_AUDITED_CANDIDATE_NOT_TRAINING_RELEASE",
+  "sources": {
+    "manifest": {
+      "path": "output\\campaign_data\\d4096_v5_readable\\d4096_manifest.json",
+      "sha256": "9beeb6a3c5b76bf994808eee0b3f0dfa2f7339f139bd120dbfa6318e414945f1"
+    },
+    "admission": {
+      "path": "output\\campaign_data\\d4096_v5_readable\\media_admission.json",
+      "sha256": "c625eec068727b5df15f527483b9bf343f6b566fc19eba20449066de2390eae8"
+    },
+    "frames": {
+      "path": "output\\campaign_data\\d4096_v4_final\\frame_population.jsonl",
+      "sha256": "46110db969f98093aac73a997ef7347da91a734e8c0bdf0ac87095fe332c96ab"
+    },
+    "preflight_summary": {
+      "path": "output\\campaign_data\\dfull_readiness_20261031\\preflight\\summary.json",
+      "sha256": "9ed70f1879c66a9a05832a703504d67d4ffce4a8812d116fae840ca82723a8a0"
+    },
+    "token_ledger": {
+      "path": "output\\campaign_data\\dfull_readiness_20261031\\preflight\\token_status.jsonl",
+      "sha256": "56224af903a2799d50394feae01bba53ecea15788fd70967f2baf73fac4a8f56"
+    },
+    "shard_ledger": {
+      "path": "output\\campaign_data\\dfull_readiness_20261031\\preflight\\shard_status.jsonl",
+      "sha256": "93957e98b563c32f636085c71323b5927ee456f2ecdaf578c4024abafd1a3ed3"
+    },
+    "implementation": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-s0-evaluation\\scripts\\summarize_detection_scale_readiness.py",
+      "sha256": "1db65faff4094080a3cb31a66a3a353bc40c5ffe94edb483aee29191245aecd5"
+    }
+  },
+  "d4096": {
+    "frames": 4096,
+    "sequences": 24,
+    "trainable_annotations": {
+      "bicycle": 162,
+      "bus": 110,
+      "car": 10455,
+      "motorcycle": 693,
+      "other_vehicle": 7,
+      "pedestrian": 245,
+      "tricycle": 97,
+      "truck": 1994
+    },
+    "trainable_sequence_track_identities": {
+      "bicycle": 69,
+      "bus": 24,
+      "car": 1548,
+      "motorcycle": 362,
+      "other_vehicle": 6,
+      "pedestrian": 130,
+      "tricycle": 51,
+      "truck": 388
+    }
+  },
+  "full_train_raw": {
+    "frames": 70282,
+    "sequences": 24,
+    "trainable_annotations": {
+      "bicycle": 655,
+      "bus": 1958,
+      "car": 181954,
+      "motorcycle": 10338,
+      "other_vehicle": 53,
+      "pedestrian": 3856,
+      "tricycle": 1200,
+      "truck": 34417
+    },
+    "trainable_sequence_track_identities": {
+      "bicycle": 69,
+      "bus": 35,
+      "car": 2235,
+      "motorcycle": 682,
+      "other_vehicle": 6,
+      "pedestrian": 255,
+      "tricycle": 51,
+      "truck": 612
+    }
+  },
+  "full_train_readable": {
+    "frames": 70279,
+    "sequences": 24,
+    "trainable_annotations": {
+      "bicycle": 655,
+      "bus": 1958,
+      "car": 181954,
+      "motorcycle": 10338,
+      "other_vehicle": 53,
+      "pedestrian": 3856,
+      "tricycle": 1200,
+      "truck": 34417
+    },
+    "trainable_sequence_track_identities": {
+      "bicycle": 69,
+      "bus": 35,
+      "car": 2235,
+      "motorcycle": 682,
+      "other_vehicle": 6,
+      "pedestrian": 255,
+      "tricycle": 51,
+      "truck": 612
+    }
+  },
+  "excluded_media": [
+    {
+      "checked_at_utc": "2026-10-31T12:09:09.784027+00:00",
+      "error": "image file is truncated",
+      "error_type": "OSError",
+      "rgb_member_path": "rgb/000000661_000000160.png",
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "OYgB6RGWcq:000000661_000000160",
+      "sequence_id": "OYgB6RGWcq",
+      "status": "FAIL"
+    },
+    {
+      "checked_at_utc": "2026-10-31T12:11:39.822074+00:00",
+      "error": "image file is truncated",
+      "error_type": "OSError",
+      "rgb_member_path": "rgb/000000517_000203059.png",
+      "rgb_shard_path": "data/train/mHGFBekt7X/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "mHGFBekt7X:000000517_000203059",
+      "sequence_id": "mHGFBekt7X",
+      "status": "FAIL"
+    },
+    {
+      "checked_at_utc": "2026-10-31T12:11:46.925298+00:00",
+      "error": "RGB member is not a bounded regular file",
+      "error_type": "ValueError",
+      "rgb_member_path": "rgb/000000570_000103749.png",
+      "rgb_shard_path": "data/train/mHGFBekt7X/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "mHGFBekt7X:000000570_000103749",
+      "sequence_id": "mHGFBekt7X",
+      "status": "FAIL"
+    }
+  ],
+  "candidate_split_sha256": "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903",
+  "selection_and_calibration_unchanged": true,
+  "remaining_gates": [
+    "Materialize versioned training manifest/config and admission bindings.",
+    "Profile bounded input cache and actual throughput for enlarged population.",
+    "Set exposure budget and validation schedule before launching.",
+    "Acquisition-level independence is still unverified."
+  ],
+  "candidate_tokens_sha256": "2704a8aef6144888878afd7c41733ca48291bde83a2546a4acb572cf9c533412"
+}

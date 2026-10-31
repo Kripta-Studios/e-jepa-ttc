@@ -1,0 +1,58 @@
+{
+  "schema": "phase_dfull_launch_v2",
+  "status": "LAUNCHED",
+  "controller_pid": 7705,
+  "training_pid": 7818,
+  "started_utc": "2026-10-31T13:40:06.849372+00:00",
+  "warm_start": {
+    "schema": "phase_model_only_warm_start_v1",
+    "checkpoint": "/workspace/phase_release/cloud_runs_eval_v1/r2_seed7/checkpoints/selected.pt",
+    "checkpoint_sha256": "8a67330e1ca98b7a665eb5d543ce50a7eeaefd0dd06919245bda78a9fccfa649",
+    "source_update": 8192,
+    "recipe": "R2; rare intervention rejected by registered screening"
+  },
+  "configuration_sha256": "9b18ea21b91f3e9e99b6a93e3fe236f2a94eae53f4f4339bb7b98fa49baa20c5",
+  "producer": {
+    "schema": "phase_dfull_producer_v1",
+    "parent_runner_sha256": "e8c7291de32f39e7326857c0722bb04068f81f605f0ab22ebdb5240f317519db",
+    "runner_sha256": "2a3effc4f92f105b42560d38547ef9fc5fab85fd7ca53cde375fc945b7bd761b",
+    "module_sha256": {
+      "compact_training_cache.py": "4483e7cc12502046feb3563b2e4784735c85f9be7b88d68bff6c3554fda2e820",
+      "model_warm_start.py": "e4ce1464a423c997facd0d965081851f59b6b3b6073db94ee9f2f31f3995bef1"
+    },
+    "warm_start_sha256": "ecea2b93d9ffb4909ba278cdec7a6a6a164c1ef9ac871ceacab67d93e2f21ce7",
+    "training_sampling": "resumable uniform permutation",
+    "sampling_plan_sha256": null,
+    "detector_loss_decoder_evaluation": "unchanged parent algorithms"
+  },
+  "budget": {
+    "updates": 70279,
+    "batch_size": 4,
+    "unique_train_frames": 70279,
+    "passes": 4,
+    "exposures": 281116,
+    "wall_limit_seconds": 43200
+  },
+  "selection_minimum_update": 17570,
+  "optimization": {
+    "lossless_compact_cache": true,
+    "gpu_cache_gib": 28,
+    "cpu_cache_allocated_bytes": 21751234560,
+    "cpu_prefetch_workers": 1,
+    "pending_preparations_max": 8,
+    "detector_math": "unchanged",
+    "rng_parity": "PASS"
+  },
+  "profile64": {
+    "median_prepare_last16_seconds": 0.18125344847794622,
+    "median_compute_last16_seconds": 0.24853443598840386,
+    "scope": "memory/initialization profile; not part of main training ledger"
+  },
+  "local_backup": "D:/PHASE_TTC_DFULL_20261031; periodic 1800 seconds, requires local host awake",
+  "controller_sha256": "ac4367fdd5ea480fd3f50c7101d24234fff93335581f6c7eebffcbdcba8dfe9b",
+  "evaluator_sha256": "edb9ac4b601def71b46466fa9e1fc73914cd3ff865605b501cec15bd279b0774",
+  "evaluator_smoke": {
+    "scope": "one-frame plumbing test only; not full selection or quality comparison",
+    "status": "PASS"
+  }
+}

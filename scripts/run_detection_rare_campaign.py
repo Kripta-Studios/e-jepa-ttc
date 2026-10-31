@@ -35,6 +35,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("project", "producer", "campaign", "baseline", "verifier", "root"):
         parser.add_argument(f"--{name}", type=Path, required=True)
+    parser.add_argument("--resume-run", type=Path)
+    parser.add_argument("--output-name", default="r2_rare_seed7")
     args = parser.parse_args()
     os.chdir(args.project)
     sys.path.insert(0, str(args.producer / "src"))
@@ -43,7 +45,9 @@ def main() -> None:
     from e_jepa_ttc.detection.campaign_training import load_campaign_config
     from e_jepa_ttc.detection.rare_sampling import load_schedule
 
-    owner = args.campaign / "CONTROLLER_OWNER.json"
+    if Path(args.output_name).name != args.output_name or args.output_name in {".", ".."}:
+        raise ValueError("Output name must be a single path component")
+    owner = args.campaign / f"CONTROLLER_OWNER_{args.output_name}.json"
     with owner.open("x") as stream:
         json.dump({"pid": os.getpid(), "started_at": datetime.now(UTC).isoformat()}, stream)
     state: dict[str, Any] = {
@@ -82,43 +86,73 @@ def main() -> None:
             batch_size=config.optimization.batch_size,
             manifest_sha256=config.data.expected_manifest_sha256,
         )
-        smoke = args.campaign / "smoke8"
-        summary = read(smoke / "summary.json")
+        smoke = args.resume_run or args.campaign / "smoke8"
         checkpoint = smoke / "checkpoints/last.pt"
         sha = digest(checkpoint)
-        if (
-            summary["status"] != "BUDGET_STOPPED"
-            or summary["final_update"] != 8
-            or summary["config_sha256"] != config.sha256
-            or summary["last_checkpoint_sha256"] != sha
-        ):
-            raise ValueError("Smoke completion or identity failed")
         payload = torch.load(checkpoint, map_location="cpu", weights_only=True, mmap=True)
+        start_update = payload["update"]
+        if args.resume_run is None:
+            summary = read(smoke / "summary.json")
+            if (
+                summary["status"] != "BUDGET_STOPPED"
+                or summary["final_update"] != 8
+                or summary["config_sha256"] != config.sha256
+                or summary["last_checkpoint_sha256"] != sha
+                or start_update != 8
+            ):
+                raise ValueError("Smoke completion or identity failed")
+        else:
+            registered = read(smoke / "preregistration.json")
+            if (
+                payload["config_sha256"] != config.sha256
+                or payload["runtime_provenance"] != registered["runtime_provenance"]
+                or type(start_update) is not int
+                or not 0 < start_update < config.optimization.updates
+            ):
+                raise ValueError(
+                    "Interrupted checkpoint identity differs from its registered producer"
+                )
+            runtime = read(smoke / "runtime_preregistration.json")
+            for relative, expected_sha in runtime["code_sha256"].items():
+                source = (
+                    smoke / "code" / relative
+                    if relative.startswith("data/admission/")
+                    else args.producer / relative
+                )
+                if digest(source) != expected_sha:
+                    raise ValueError(f"Interrupted producer source differs: {relative}")
         sampler.load_state_dict(payload["sampler"])
-        if sampler.cursor != 8 * config.optimization.batch_size:
-            raise ValueError("Smoke resume cursor differs from completed updates")
+        if sampler.cursor != start_update * config.optimization.batch_size:
+            raise ValueError("Resume cursor differs from completed updates")
         rows = [json.loads(line) for line in (smoke / "metrics.jsonl").read_text().splitlines()]
         expected_tokens = manifest["roles"]["train"]["sample_tokens"]
         schedule = read(args.producer / "sampling_plan.json")["indices"]
-        if len(rows) != 8:
-            raise ValueError("Smoke training ledger is incomplete")
-        for update, row in enumerate(rows, 1):
+        committed_rows = [row for row in rows if row["update"] <= start_update]
+        registered_start = read(smoke / "preregistration.json")["start_update"]
+        if [row["update"] for row in committed_rows] != list(
+            range(registered_start + 1, start_update + 1)
+        ):
+            raise ValueError("Committed training ledger is incomplete")
+        for row in committed_rows:
+            update = row["update"]
             expected = [expected_tokens[i] for i in schedule[(update - 1) * 4 : update * 4]]
-            if row["update"] != update or row["sample_tokens"] != expected:
-                raise ValueError("Smoke did not execute the registered calendar")
+            if row["sample_tokens"] != expected:
+                raise ValueError("Run did not execute the registered calendar")
         write(
-            args.campaign / "SMOKE_ADMISSION.json",
+            args.campaign / f"RESUME_ADMISSION_{args.output_name}.json",
             {
                 "status": "PASS",
-                "update": 8,
+                "update": start_update,
+                "last_logged_update": rows[-1]["update"],
+                "discarded_uncheckpointed_updates": rows[-1]["update"] - start_update,
                 "checkpoint_sha256": sha,
                 "sampling": sampling_receipt,
-                "strict_resume_next_update": 9,
+                "strict_resume_next_update": start_update + 1,
                 "next_tokens": [expected_tokens[i] for i in sampler.next_batch(4)],
             },
         )
         del payload
-        output = args.campaign / "r2_rare_seed7"
+        output = args.campaign / args.output_name
         command = [
             sys.executable,
             str(args.producer / "scripts/train_detection_campaign.py"),
@@ -129,13 +163,13 @@ def main() -> None:
             "--resume",
             str(checkpoint),
         ]
-        with (args.campaign / "training.log").open("x") as log:
+        with (args.campaign / f"training_{args.output_name}.log").open("x") as log:
             child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT)
             status(
                 status="RUNNING",
                 child_pid=child.pid,
                 output=str(output),
-                start_update=8,
+                start_update=start_update,
                 target_update=config.optimization.updates,
                 sampling=sampling_receipt,
             )
@@ -152,7 +186,7 @@ def main() -> None:
             config,
             expected_status="COMPLETED",
             expected_final_update=8192,
-            expected_start_update=8,
+            expected_start_update=start_update,
             resume_sha256=sha,
         )
         compact = {}

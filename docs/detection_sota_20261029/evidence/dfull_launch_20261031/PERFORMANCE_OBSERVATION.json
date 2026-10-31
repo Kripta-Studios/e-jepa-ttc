@@ -1,0 +1,23 @@
+{
+  "schema": "phase_dfull_runtime_observation_v1",
+  "observed_unix": 1793454380.8085263,
+  "update": 282,
+  "window_updates": 100,
+  "median_prepare_seconds": 0.0019871130352839828,
+  "median_compute_seconds": 0.3006179055082612,
+  "mean_prepare_plus_compute_seconds": 0.3047713082283735,
+  "cache": {
+    "schema": "phase_lossless_compact_training_cache_v1",
+    "device": "cuda",
+    "capacity": 70279,
+    "resident_samples": 1128,
+    "gpu_image_bytes": 30064066560,
+    "cpu_image_bytes": 21751234560,
+    "target_metadata_payload_bytes": 36751229,
+    "hits": 0,
+    "misses": 1128,
+    "raw_images_retained": 0,
+    "pending_cpu_preparations": 4
+  },
+  "scope": "logged stage times; excludes checkpoint and validation pauses"
+}

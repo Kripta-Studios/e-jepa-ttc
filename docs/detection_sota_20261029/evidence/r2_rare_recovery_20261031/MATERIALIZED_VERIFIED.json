@@ -1,0 +1,9 @@
+{
+  "status": "VERIFIED_MATERIALIZED",
+  "campaign_status": "COMPLETED_VERIFIED",
+  "files": 89,
+  "frozen_code_files": 87,
+  "distinct_verified_hashes": 169,
+  "mirror": "D:\\PHASE_TTC_RARE_RECOVERY_20261031\\campaign",
+  "source_receipt_sha256": "1e2f5e53439ea79cd6043e8beb77ecd5869dcf09babc49f577f15cab145de679"
+}

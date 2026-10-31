@@ -1,0 +1,101 @@
+{
+  "schema": "eap_rgb_full_preflight_v1",
+  "status": "FAIL",
+  "created_at_utc": "2026-10-31T12:17:53.273204+00:00",
+  "population": {
+    "train_tokens": 66186,
+    "full_selection_tokens": 0,
+    "total_unique_tokens": 66186,
+    "used_shards": 78
+  },
+  "token_status_counts": {
+    "FAIL": 3,
+    "PASS": 66183
+  },
+  "shard_status_counts": {
+    "FAIL": 2,
+    "PASS": 76
+  },
+  "bad_tokens": [
+    {
+      "checked_at_utc": "2026-10-31T12:09:09.784027+00:00",
+      "error": "image file is truncated",
+      "error_type": "OSError",
+      "rgb_member_path": "rgb/000000661_000000160.png",
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "OYgB6RGWcq:000000661_000000160",
+      "sequence_id": "OYgB6RGWcq",
+      "status": "FAIL"
+    },
+    {
+      "checked_at_utc": "2026-10-31T12:11:39.822074+00:00",
+      "error": "image file is truncated",
+      "error_type": "OSError",
+      "rgb_member_path": "rgb/000000517_000203059.png",
+      "rgb_shard_path": "data/train/mHGFBekt7X/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "mHGFBekt7X:000000517_000203059",
+      "sequence_id": "mHGFBekt7X",
+      "status": "FAIL"
+    },
+    {
+      "checked_at_utc": "2026-10-31T12:11:46.925298+00:00",
+      "error": "RGB member is not a bounded regular file",
+      "error_type": "ValueError",
+      "rgb_member_path": "rgb/000000570_000103749.png",
+      "rgb_shard_path": "data/train/mHGFBekt7X/rgb_shards/rgb-00000.tar",
+      "role": "train",
+      "sample_token": "mHGFBekt7X:000000570_000103749",
+      "sequence_id": "mHGFBekt7X",
+      "status": "FAIL"
+    }
+  ],
+  "bad_shards": [
+    {
+      "expected_sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+      "expected_size_bytes": 1075773440,
+      "finished_at_utc": "2026-10-31T12:09:26.259994+00:00",
+      "observed_sha256": "d1f9956ad10e2cbd436625edc734b90de7de0bd7368204bd7e2273208f3d3aa5",
+      "observed_size_bytes": 1075773440,
+      "requested_token_count": 1214,
+      "rgb_shard_path": "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+      "sha256_matches_pinned": true,
+      "shard_failure_count": 0,
+      "size_matches_pinned": true,
+      "stable_during_audit": true,
+      "started_at_utc": "2026-10-31T12:09:05.793400+00:00",
+      "status": "FAIL",
+      "token_failure_count": 1
+    },
+    {
+      "expected_sha256": "864934bdfa47018e41b65968f00b1416e1fe5e467a6b45b81c38f8f542d00cee",
+      "expected_size_bytes": 1075230720,
+      "finished_at_utc": "2026-10-31T12:11:49.873076+00:00",
+      "observed_sha256": "864934bdfa47018e41b65968f00b1416e1fe5e467a6b45b81c38f8f542d00cee",
+      "observed_size_bytes": 1075230720,
+      "requested_token_count": 1109,
+      "rgb_shard_path": "data/train/mHGFBekt7X/rgb_shards/rgb-00000.tar",
+      "sha256_matches_pinned": true,
+      "shard_failure_count": 0,
+      "size_matches_pinned": true,
+      "stable_during_audit": true,
+      "started_at_utc": "2026-10-31T12:11:32.173140+00:00",
+      "status": "FAIL",
+      "token_failure_count": 2
+    }
+  ],
+  "progress_files": {
+    "run_manifest": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-s0-evaluation\\output\\campaign_data\\dfull_readiness_20261031\\preflight\\run_manifest.json",
+    "token_status_jsonl": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-s0-evaluation\\output\\campaign_data\\dfull_readiness_20261031\\preflight\\token_status.jsonl",
+    "shard_status_jsonl": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\phase-ttc-s0-evaluation\\output\\campaign_data\\dfull_readiness_20261031\\preflight\\shard_status.jsonl",
+    "token_status_sha256": "56224af903a2799d50394feae01bba53ecea15788fd70967f2baf73fac4a8f56",
+    "shard_status_sha256": "93957e98b563c32f636085c71323b5927ee456f2ecdaf578c4024abafd1a3ed3"
+  },
+  "source_receipt_sha256": "7d7ce3c3fff5d3c3bc52cd274a9e23d1b157aa269d228a40c5d112c3645af7b3",
+  "limitations": [
+    "Member SHA-256 values are observed from local TAR bytes; no public per-member hash exists.",
+    "Full TAR SHA-256 is compared with the pinned public inventory.",
+    "No labels, annotations, test media, GPU, repair, overwrite, resampling or manifest mutation."
+  ]
+}

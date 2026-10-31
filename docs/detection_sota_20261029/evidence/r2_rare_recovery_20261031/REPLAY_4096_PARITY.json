@@ -1,0 +1,35 @@
+{
+  "schema": "phase_replayed_update_parity_v1",
+  "update": 4096,
+  "panels": 1024,
+  "fields_equal": {
+    "predictions": false,
+    "metrics_v2": false,
+    "ground_truth_v2": true
+  },
+  "source_paths": [
+    "/workspace/phase_release/rare_sampling_campaign_v1/r2_rare_seed7/evaluation/selection_update_004096.json",
+    "/workspace/phase_release/rare_sampling_campaign_v1/r2_rare_seed7_resumed_v2/evaluation/selection_update_004096.json"
+  ],
+  "status": "DIFFERS",
+  "original_monitor_AP": 0.10081028828072516,
+  "resumed_monitor_AP": 0.11336509440258065,
+  "monitor_AP_delta": 0.012554806121855486,
+  "same_consumed_tokens": true,
+  "same_learning_rates": true,
+  "first_resumed_loss": {
+    "original": 20.92072105407715,
+    "resumed": 20.92072105407715
+  },
+  "second_resumed_loss": {
+    "original": 15.59841537475586,
+    "resumed": 15.598377227783203
+  },
+  "maximum_replayed_loss_absolute_difference": 2.654170036315918,
+  "source_sha256": {
+    "/workspace/phase_release/rare_sampling_campaign_v1/r2_rare_seed7/evaluation/selection_update_004096.json": "87ae46f1c7d667bedf3d1bcf09e2a93b3f27c1f6f7be61833df1db774d6a94fa",
+    "/workspace/phase_release/rare_sampling_campaign_v1/r2_rare_seed7_resumed_v2/evaluation/selection_update_004096.json": "6336808378b2d610c5ed83043c13ea2143c6fab679e8ccc27285caa124f3bafa"
+  },
+  "cuda_grid_sample_deterministic_probe": "grid_sampler_2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True)'. You can turn off determinism just for this operation, or you can use the 'warn_only=True' option, if that's acceptable for your application. You can also file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation.",
+  "interpretation": "Same checkpoint, configuration, committed calendar and restored RNG; replay is not bitwise identical. CUDA grid_sample backward is present in the portable producer and the strict probe rejects it. This establishes an available nondeterministic operation, not exclusive causal attribution of the observed drift. Report resumed lineage; do not splice uncommitted historical monitor results."
+}
