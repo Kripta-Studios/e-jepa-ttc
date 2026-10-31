@@ -1,0 +1,67 @@
+{
+  "status": "LAUNCHED",
+  "source_update": 7168,
+  "controller_pid": 12328,
+  "plan": {
+    "schema": "phase_batch8_exposure_plan_v1",
+    "source_update": 7168,
+    "source_batch_size": 4,
+    "batch_size": 8,
+    "original_total_updates": 70279,
+    "total_exposures": 281116,
+    "total_updates": 38726,
+    "segments": [
+      {
+        "start_update": 7168,
+        "end_update": 12369,
+        "start_units": 7168,
+        "end_units": 17570
+      },
+      {
+        "start_update": 12369,
+        "end_update": 16762,
+        "start_units": 17570,
+        "end_units": 26355
+      },
+      {
+        "start_update": 16762,
+        "end_update": 21155,
+        "start_units": 26355,
+        "end_units": 35140
+      },
+      {
+        "start_update": 21155,
+        "end_update": 25547,
+        "start_units": 35140,
+        "end_units": 43924
+      },
+      {
+        "start_update": 25547,
+        "end_update": 29940,
+        "start_units": 43924,
+        "end_units": 52709
+      },
+      {
+        "start_update": 29940,
+        "end_update": 34333,
+        "start_units": 52709,
+        "end_units": 61494
+      },
+      {
+        "start_update": 34333,
+        "end_update": 38726,
+        "start_units": 61494,
+        "end_units": 70279
+      }
+    ],
+    "selection_update_map": {
+      "17570": 12369,
+      "26355": 16762,
+      "35140": 21155,
+      "43924": 25547,
+      "52709": 29940,
+      "61494": 34333,
+      "70279": 38726
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "status": "MIGRATED_AT_CHECKPOINT",
+  "update": 7168,
+  "controller_pid": 7705,
+  "trainer_pid": 7818,
+  "checkpoint": "/workspace/phase_release/dfull_campaign_v1/r2_dfull_seed7_v2/checkpoints/batch8_transition_007168.pt"
+}

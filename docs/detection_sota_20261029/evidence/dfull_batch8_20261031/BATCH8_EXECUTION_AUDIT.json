@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "observed_utc": "2026-10-31T14:36:12.256213+00:00",
+  "source_update": 7168,
+  "verified_new_updates": 504,
+  "last_update": 7672,
+  "cumulative_exposures": 32704,
+  "total_exposures": 281116,
+  "progress_fraction": 0.11633631668065852,
+  "ordered_tokens_exact": true,
+  "learning_rates_by_exposure_exact": true,
+  "recent_window_steps": 200,
+  "recent_stage_images_per_second": 18.158573779499218,
+  "recent_prepare_median_seconds": 0.0034410179941914976,
+  "recent_compute_median_seconds": 0.43469929904676974,
+  "timing_scope": "Stage times only; excludes checkpoint, evaluation and launch overhead."
+}

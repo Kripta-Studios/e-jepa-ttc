@@ -1,0 +1,77 @@
+{
+  "schema": "phase_dfull_batch_transition_v1",
+  "status": "ADMITTED",
+  "authorized_change": "User requested batch 8 after measured throughput gain",
+  "source_run": "/workspace/phase_release/dfull_campaign_v1/r2_dfull_seed7_v2",
+  "source_checkpoint": "/workspace/phase_release/dfull_campaign_v1/r2_dfull_seed7_v2/checkpoints/batch8_transition_007168.pt",
+  "source_checkpoint_sha256": "32254d4094797ec91db46f4345cc462f265d8ea79d9771d15b100cb5be43e74d",
+  "source_config": "/workspace/phase_release/dfull_campaign_v1/config_v2.yaml",
+  "source_config_sha256": "31d413f21a2c084524089376bc2e4fd9b296f8fcb20c06fbc3463a6d718b4e6f",
+  "source_ledger_sha256": "8dd765765afd0433fb0a34a46361f54e0872055a84e1336a55aa9cce569249ca",
+  "experiment_id": "cloud-rgb-dfull-r2-warmstart-seed7-batch8-v1",
+  "plan": {
+    "schema": "phase_batch8_exposure_plan_v1",
+    "source_update": 7168,
+    "source_batch_size": 4,
+    "batch_size": 8,
+    "original_total_updates": 70279,
+    "total_exposures": 281116,
+    "total_updates": 38726,
+    "segments": [
+      {
+        "start_update": 7168,
+        "end_update": 12369,
+        "start_units": 7168,
+        "end_units": 17570
+      },
+      {
+        "start_update": 12369,
+        "end_update": 16762,
+        "start_units": 17570,
+        "end_units": 26355
+      },
+      {
+        "start_update": 16762,
+        "end_update": 21155,
+        "start_units": 26355,
+        "end_units": 35140
+      },
+      {
+        "start_update": 21155,
+        "end_update": 25547,
+        "start_units": 35140,
+        "end_units": 43924
+      },
+      {
+        "start_update": 25547,
+        "end_update": 29940,
+        "start_units": 43924,
+        "end_units": 52709
+      },
+      {
+        "start_update": 29940,
+        "end_update": 34333,
+        "start_units": 52709,
+        "end_units": 61494
+      },
+      {
+        "start_update": 34333,
+        "end_update": 38726,
+        "start_units": 61494,
+        "end_units": 70279
+      }
+    ],
+    "selection_update_map": {
+      "17570": 12369,
+      "26355": 16762,
+      "35140": 21155,
+      "43924": 25547,
+      "52709": 29940,
+      "61494": 34333,
+      "70279": 38726
+    }
+  },
+  "state_policy": "Preserve model/AdamW/sampler/RNG; map old LR clock by consumed images",
+  "precision": "FP32 highest unchanged",
+  "created_utc": "2026-10-31T14:27:44.585912+00:00"
+}

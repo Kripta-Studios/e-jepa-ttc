@@ -34,6 +34,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("project", "producer", "campaign", "verifier", "root"):
         parser.add_argument(f"--{name}", type=Path, required=True)
+    parser.add_argument("--batch-transition", type=Path)
     args = parser.parse_args()
     os.chdir(args.project)
     sys.path.insert(0, str(args.producer / "src"))
@@ -44,7 +45,14 @@ def main() -> None:
         load_campaign_config,
     )
 
-    with (args.campaign / "CONTROLLER_OWNER.json").open("x") as stream:
+    transition = read(args.batch_transition) if args.batch_transition else None
+    plan = transition["plan"] if transition else None
+    owner_name = "CONTROLLER_OWNER_BATCH8.json" if transition else "CONTROLLER_OWNER.json"
+    config_name = "config_batch8.yaml" if transition else "config_v2.yaml"
+    output_name = "r2_dfull_seed7_batch8_v1" if transition else "r2_dfull_seed7_v2"
+    log_name = "training_batch8.log" if transition else "training_v2.log"
+    start_update = plan["source_update"] if plan else 0
+    with (args.campaign / owner_name).open("x") as stream:
         json.dump({"pid": os.getpid(), "started_at": datetime.now(UTC).isoformat()}, stream)
     state: dict[str, Any] = {"status": "ADMISSION", "controller_pid": os.getpid(), "pending": []}
 
@@ -57,13 +65,27 @@ def main() -> None:
         )
 
     try:
-        config = load_campaign_config(args.campaign / "config_v2.yaml")
+        config = load_campaign_config(args.campaign / config_name)
         tokens = read(Path(config.data.manifest))["roles"]["train"]["sample_tokens"]
-        if config.optimization.updates * config.optimization.batch_size != 4 * len(tokens):
+        exposures = (
+            plan["total_exposures"]
+            if plan
+            else (config.optimization.updates * config.optimization.batch_size)
+        )
+        if exposures != 4 * len(tokens):
             raise ValueError("Dfull budget must be exactly four complete uniform passes")
         first_full_pass = (
             len(tokens) + config.optimization.batch_size - 1
         ) // config.optimization.batch_size
+        if plan:
+            assert transition is not None
+            first_full_pass = plan["selection_update_map"][str((len(tokens) + 3) // 4)]
+            if (
+                digest(Path(transition["source_checkpoint"]))
+                != transition["source_checkpoint_sha256"]
+            ):
+                raise ValueError("Transition source checkpoint differs")
+            from e_jepa_ttc.detection.batch_transition import batch_size_at
         if min(config.evaluation.updates) < first_full_pass:
             raise ValueError(
                 "Selected release candidates must have consumed the full train population"
@@ -79,16 +101,18 @@ def main() -> None:
             != read(args.producer / "WARM_START.json")["checkpoint_sha256"]
         ):
             raise ValueError("Profile warm-start identity differs")
-        output = args.campaign / "r2_dfull_seed7_v2"
+        output = args.campaign / output_name
         command = [
             sys.executable,
             str(args.producer / "scripts/train_detection_campaign.py"),
             "--config",
-            str(args.campaign / "config_v2.yaml"),
+            str(args.campaign / config_name),
             "--output",
             str(output),
         ]
-        with (args.campaign / "training_v2.log").open("x") as log:
+        if transition:
+            command += ["--resume", transition["source_checkpoint"]]
+        with (args.campaign / log_name).open("x") as log:
             child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT)
             status(
                 status="RUNNING",
@@ -98,6 +122,8 @@ def main() -> None:
                 unique_train_frames=len(tokens),
                 exposures=4 * len(tokens),
                 effective_passes=4,
+                batch_size=config.optimization.batch_size,
+                start_update=start_update,
             )
             code = child.wait()
         if code:
@@ -110,16 +136,29 @@ def main() -> None:
         sampler = ResumablePermutationSampler(len(tokens), config.seed)
         observed = set()
         updates = 0
-        with (output / "metrics.jsonl").open() as stream:
-            for line in stream:
-                row = json.loads(line)
-                updates += 1
-                expected = [tokens[i] for i in sampler.next_batch(config.optimization.batch_size)]
-                if row["update"] != updates or row["sample_tokens"] != expected:
-                    raise ValueError("Executed Dfull ledger differs from registered permutation")
-                observed.update(expected)
+        ledgers: list[tuple[Path, int | None]] = [(output / "metrics.jsonl", None)]
+        if transition:
+            ledgers.insert(0, (Path(transition["source_run"]) / "metrics.jsonl", start_update))
+        consumed_exposures = 0
+        for ledger, limit in ledgers:
+            with ledger.open() as stream:
+                for line in stream:
+                    row = json.loads(line)
+                    if limit is not None and row["update"] > limit:
+                        break
+                    updates += 1
+                    size = batch_size_at(plan, updates) if plan else config.optimization.batch_size
+                    expected = [tokens[i] for i in sampler.next_batch(size)]
+                    if row["update"] != updates or row["sample_tokens"] != expected:
+                        raise ValueError(
+                            "Executed Dfull ledger differs from registered permutation"
+                        )
+                    observed.update(expected)
+                    consumed_exposures += size
         if updates != config.optimization.updates or observed != set(tokens):
             raise ValueError("Dfull training coverage/budget is incomplete")
+        if consumed_exposures != exposures:
+            raise ValueError("Dfull exposure budget differs")
         spec = importlib.util.spec_from_file_location("frozen_verifier", args.verifier)
         assert spec is not None and spec.loader is not None
         helper: Any = importlib.util.module_from_spec(spec)
@@ -129,8 +168,8 @@ def main() -> None:
             config,
             expected_status="COMPLETED",
             expected_final_update=config.optimization.updates,
-            expected_start_update=0,
-            resume_sha256=None,
+            expected_start_update=start_update,
+            resume_sha256=transition["source_checkpoint_sha256"] if transition else None,
         )
         evaluations = {}
         compact = {}
@@ -205,7 +244,8 @@ def main() -> None:
             "checkpoint_update": selected_update,
             "unique_train_frames": len(tokens),
             "run_updates": updates,
-            "run_exposures": updates * config.optimization.batch_size,
+            "run_exposures": consumed_exposures,
+            "batch_transition": transition,
             "selected_evaluation": selected_evaluation,
             "full_evaluations": evaluations,
             "completion": completion,

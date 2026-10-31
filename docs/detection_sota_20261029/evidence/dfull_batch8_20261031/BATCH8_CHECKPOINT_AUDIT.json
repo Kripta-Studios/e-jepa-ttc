@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checked_utc": "2026-10-31T14:38:01.434679+00:00",
+  "source_update": 7168,
+  "new_checkpoint_update": 7680,
+  "all_adam_step_increments": [
+    512
+  ],
+  "optimizer_state_count": 414,
+  "scheduler_physical_update": 7680,
+  "scheduler_original_exposure_units": 8192,
+  "cumulative_image_exposures": 32768,
+  "sampler_position": 32768,
+  "sampler_epoch": 0
+}
