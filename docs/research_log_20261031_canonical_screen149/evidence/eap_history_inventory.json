@@ -1,0 +1,539 @@
+{
+  "archive": "D:\\E_JEPA_POD2_RETURN_20261027\\final_generated_fd84565b0df06d79.tar",
+  "archive_sha256": "fd84565b0df06d79f6bcc7e7f4e9efaf9c09b7b3b3f4b0a889fc2922a73cf162",
+  "input_freeze_sha256": "7003da721c2a7fcf506974b7ac25d2938892e101e03b04a386e31dd4c4191f76",
+  "npz_arrays_read": [],
+  "producer_calls": 0,
+  "records": [
+    {
+      "member": "workspace/ejepa_final_runs/final/cache/E_CTX_MATCHED.json",
+      "receipt": {
+        "compression": "np.savez_compressed",
+        "deployment_parent_checkpoints": [],
+        "group_ids": [
+          "2JkLL5W891",
+          "2Y46OkK3ff",
+          "2cyv0Oedzg",
+          "34K84TaN11",
+          "5ilM1PX2vz",
+          "6WCDpro5rE",
+          "6h5yRW2LGc",
+          "8SdieOgbva",
+          "8mNnrXjpVB",
+          "9ITOs4twfk",
+          "A1Nhv0KtmL",
+          "ClXqVoZOFu",
+          "CzyQ8HKP6X",
+          "DGqicHUGWb",
+          "EllUE6bwVp",
+          "EuFGqTcqIz",
+          "GjMYZjmSQb",
+          "JaGC4Q9pgU",
+          "L36QTEoVkB",
+          "LMHPShQkaU",
+          "OBneIVg4Cw",
+          "OYgB6RGWcq",
+          "Po6ePjWYAz",
+          "VLA3oBKFyX",
+          "WbCh1DRerJ",
+          "Z30i8WuL2N",
+          "eX8t2nGd6O",
+          "mHGFBekt7X",
+          "nRcwUlHyAd",
+          "pBqGOb2vYq",
+          "pakWgyPNTL",
+          "pzJcg1OCfc",
+          "q2k6O0X6JY",
+          "qGsgzl4Q8B",
+          "qoohcdtLDH",
+          "rhYxPcU29n",
+          "t79dBxj1WS",
+          "vWp9XNYQ9V",
+          "wE9MZUmiJP",
+          "xkiVthsGwf"
+        ],
+        "groups": 40,
+        "native_train40_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c",
+        "normalizers": {
+          "event": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f"
+        },
+        "ordered_row_identity_sha256": "5001910f49ec7806e19a9541650115921f6616a8492c9f12ddc7075b5a5b7623",
+        "output": "/workspace/ejepa_final_runs/final/cache/E_CTX_MATCHED.npz",
+        "output_sha256": "ab3f2e06c268bd78e33c88b8b63085fb09324cd1f038dfe58b2a92138d436e7c",
+        "parents": {
+          "OOF_AUTHORITY": "4f8549cb0ce0c8057073075267f30478b9ff54b1f8eb29f23b10d2e1ba039b34"
+        },
+        "receipt_payload_sha256": "2e1189e3bc6bd92c05baed01fcc5e7fa9cd076fdb2699e348f419b35547c0f15",
+        "role": "TRAIN",
+        "rows": 88744,
+        "schema": "final_refit_context_cache_v1",
+        "status": "COMPLETE",
+        "targets_used_for_feature_construction": false,
+        "training_feature_domain": "FIVE_FOLD_PHYSICAL_OOF"
+      },
+      "sha256": "a0e9167475b2504f505427eb4e5ad41c6041c7309b1133ace8710c8365abf519"
+    },
+    {
+      "member": "workspace/ejepa_final_runs/final/cache/R_CTX.json",
+      "receipt": {
+        "compression": "np.savez_compressed",
+        "deployment_parent_checkpoints": [],
+        "group_ids": [
+          "2JkLL5W891",
+          "2Y46OkK3ff",
+          "2cyv0Oedzg",
+          "34K84TaN11",
+          "5ilM1PX2vz",
+          "6WCDpro5rE",
+          "6h5yRW2LGc",
+          "8SdieOgbva",
+          "8mNnrXjpVB",
+          "9ITOs4twfk",
+          "A1Nhv0KtmL",
+          "ClXqVoZOFu",
+          "CzyQ8HKP6X",
+          "DGqicHUGWb",
+          "EllUE6bwVp",
+          "EuFGqTcqIz",
+          "GjMYZjmSQb",
+          "JaGC4Q9pgU",
+          "L36QTEoVkB",
+          "LMHPShQkaU",
+          "OBneIVg4Cw",
+          "OYgB6RGWcq",
+          "Po6ePjWYAz",
+          "VLA3oBKFyX",
+          "WbCh1DRerJ",
+          "Z30i8WuL2N",
+          "eX8t2nGd6O",
+          "mHGFBekt7X",
+          "nRcwUlHyAd",
+          "pBqGOb2vYq",
+          "pakWgyPNTL",
+          "pzJcg1OCfc",
+          "q2k6O0X6JY",
+          "qGsgzl4Q8B",
+          "qoohcdtLDH",
+          "rhYxPcU29n",
+          "t79dBxj1WS",
+          "vWp9XNYQ9V",
+          "wE9MZUmiJP",
+          "xkiVthsGwf"
+        ],
+        "groups": 40,
+        "native_train40_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c",
+        "normalizers": {
+          "rgb": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+        },
+        "ordered_row_identity_sha256": "5001910f49ec7806e19a9541650115921f6616a8492c9f12ddc7075b5a5b7623",
+        "output": "/workspace/ejepa_final_runs/final/cache/R_CTX.npz",
+        "output_sha256": "c89f461d1028abb47654d4eed2030307d1974bde954ebb58c71f51c94c5c49e7",
+        "parents": {
+          "OOF_AUTHORITY": "b100d48f4820ddbaf472ceb1c4cb3f0dba210a481b4f23c31aee75824cade4b4"
+        },
+        "receipt_payload_sha256": "df9c1a50223df28b7c06b255df44ad0d0fec637f632630738e500d68bcb00829",
+        "role": "TRAIN",
+        "rows": 88744,
+        "schema": "final_refit_context_cache_v1",
+        "status": "COMPLETE",
+        "targets_used_for_feature_construction": false,
+        "training_feature_domain": "FIVE_FOLD_PHYSICAL_OOF"
+      },
+      "sha256": "2191c652f26c491c270726698038159c2714179e0f0492bdff12796c0961ec5e"
+    },
+    {
+      "member": "workspace/ejepa_final_runs/final/oof/PHASE17_RAW_EVENT.json",
+      "receipt": {
+        "blind_validation_claim": false,
+        "cross_fold_learned_coordinates": false,
+        "feature_semantics": "physical_phase_clock_coordinates",
+        "fold_contract_sha256": "21c30e8bfd9e747aa05d975182a5550b4720771528d68885d9de3d5fa9407ad3",
+        "fragments": [
+          {
+            "endpoint_lineages": {
+              "E_A5": {
+                "file_sha256": "1086941f6d3099a502dd17e3a6e21f621085c8365aaf6d113fb856163e418355",
+                "lineage_sha256": "dfce87ab63c4972596d75398d8bc794a0ef35f4b4d79f8ad81992190e7735bec",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/0/fits/E_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "E_C2F": {
+                "file_sha256": "f0169506399aaacb8d3569661a879849f5bb7aafe420883d254c6df7c139568d",
+                "lineage_sha256": "96de27055c749bb96f207f3116f103454f19531858f5bd1abcf2cfc121e61be1",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/0/fits/E_C2F/STRUCTURAL_LINEAGE.json"
+              },
+              "PAIR_E": {
+                "file_sha256": "8cd87b8b4810a3f7d5f3852e792faaee9291fac56e4ca5288c47f7f8a31ba767",
+                "lineage_sha256": "aa46ba8cb7385798f5ae50a7ab810404d8fa1efd6f39c324653b2a311f0c2d4f",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/0/fits/PAIR_E/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "405cc09752de94b2f312897cfcd392040a95f550e85332c88a154f75777abde7",
+            "group_ids": [
+              "2cyv0Oedzg",
+              "5ilM1PX2vz",
+              "6h5yRW2LGc",
+              "WbCh1DRerJ",
+              "Z30i8WuL2N",
+              "pzJcg1OCfc",
+              "rhYxPcU29n",
+              "t79dBxj1WS"
+            ],
+            "ordered_sample_token_sha256": "957bfd54fd112015cbd33fb3d10d2c8fdbdda0020a1adc0f0933a055f945c2dc",
+            "payload_sha256": "346911a70fe92e6dff4637097b97e27c8129bbc31f91e034669899598d6c0e6f",
+            "rotation": 0
+          },
+          {
+            "endpoint_lineages": {
+              "E_A5": {
+                "file_sha256": "eee957de1811660ca4153848c8d4d6d59978fd0c1d9f08cc74434755260f1225",
+                "lineage_sha256": "bb871de68b2c96b6c7fe0b1ca1a0d664e0d929190e882800ad6688c7c32dfaad",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/1/fits/E_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "E_C2F": {
+                "file_sha256": "a99aeb2810a1603381e15b20e8a86944ea15fbdd507054be13780b22c73f167e",
+                "lineage_sha256": "81aadbdf006c943d842bec712328addfe29dc1526c0094175d24e7511eb63f5f",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/1/fits/E_C2F/STRUCTURAL_LINEAGE.json"
+              },
+              "PAIR_E": {
+                "file_sha256": "b7cc7f87c5e2884e3661af567aa5244770c665d7234720c8d35566e8cd479223",
+                "lineage_sha256": "c2fb52b86468b6bc237db9a3dcbd82fc42d53d5b70c9a05024a77e8d2dbbac0e",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/1/fits/PAIR_E/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "68db3f9fa3cf065b7a6b9cc6efc16e3dedf6062c3eee7ef26fb5b237ce56e9f8",
+            "group_ids": [
+              "2JkLL5W891",
+              "34K84TaN11",
+              "CzyQ8HKP6X",
+              "JaGC4Q9pgU",
+              "L36QTEoVkB",
+              "mHGFBekt7X",
+              "pBqGOb2vYq",
+              "qGsgzl4Q8B"
+            ],
+            "ordered_sample_token_sha256": "fbd79fc39f471be8a2070086cb56b9e63a7e8af5f6a71dc307e2dece36282bad",
+            "payload_sha256": "8966bae10222e5f6f55928034aa69b2e2d10227aab249ca8a941da7ecb63799a",
+            "rotation": 1
+          },
+          {
+            "endpoint_lineages": {
+              "E_A5": {
+                "file_sha256": "7c9253873ce2b71830121d9d4100aa885d3b590dbc829b42019f6b2b0f327f1d",
+                "lineage_sha256": "5cd69f500d3a6d26ba1f5859d90848a94f121640716f7054961a0dd5a96affae",
+                "path": "/workspace/ejepa_event_runs/rotations/2/fits/E_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "E_C2F": {
+                "file_sha256": "71c659e164b2d9556b8aa776ef6f9ff441b4b95a568afe48afe382fe008f4f2a",
+                "lineage_sha256": "ebbd3b1101748f216bf018be205e5d08bb4fc7bf24a45a5484fa4e4c0a37b82e",
+                "path": "/workspace/ejepa_event_runs/rotations/2/fits/E_C2F/STRUCTURAL_LINEAGE.json"
+              },
+              "PAIR_E": {
+                "file_sha256": "c633181ce438eae29c00874ea821df34ae1148be062b28736534124265daea9c",
+                "lineage_sha256": "e823ad7309c8e9bdd402a8617167e7c7e4eaed2e74542637a05a19c5dd4ef063",
+                "path": "/workspace/ejepa_event_runs/rotations/2/fits/PAIR_E/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "914d0042303a6c34bebf9fdcc82338d4440d5249b622536d0d32503a06e1c078",
+            "group_ids": [
+              "9ITOs4twfk",
+              "EllUE6bwVp",
+              "EuFGqTcqIz",
+              "LMHPShQkaU",
+              "OBneIVg4Cw",
+              "q2k6O0X6JY",
+              "vWp9XNYQ9V",
+              "wE9MZUmiJP"
+            ],
+            "ordered_sample_token_sha256": "7c451bcd7e37d643179b4cb6ddfbb250818f186facbea19d917e53edf61396d3",
+            "payload_sha256": "b8b6129b344dc5967e604f791d46542668a55a04062f14627380f69a05955fe7",
+            "rotation": 2
+          },
+          {
+            "endpoint_lineages": {
+              "E_A5": {
+                "file_sha256": "f61cd32ba05c7493e6f1dcd218150975d15a9c7a5d2f9dc21af86f1c3f3a0a4f",
+                "lineage_sha256": "7c5adc78bb64a5780f34417756e384b28ce35f4b0d4b99d67c4e1a0a2643da6f",
+                "path": "/workspace/ejepa_event_runs/rotations/3/fits/E_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "E_C2F": {
+                "file_sha256": "b96e36e0ec661517480e16f307ca1b319fc3c016be075dff49a44ac5f301bfd2",
+                "lineage_sha256": "a444d47de555ad5c351d6410d376a68c28fba81ea56c0ca06d773382e6a1bd9d",
+                "path": "/workspace/ejepa_event_runs/rotations/3/fits/E_C2F/STRUCTURAL_LINEAGE.json"
+              },
+              "PAIR_E": {
+                "file_sha256": "6a1b830bd14a4303ee058e8755af03619323530631d47cf334f2a1b70cd94e5c",
+                "lineage_sha256": "5a9e50cd817417489bdf5df31a53bc65cd3554592ebb97b0f963c64234f19523",
+                "path": "/workspace/ejepa_event_runs/rotations/3/fits/PAIR_E/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "b2b0ee9fbc707c11cc41370d8037f5bda2734e6fcee585ea4f17e8deead5d470",
+            "group_ids": [
+              "2Y46OkK3ff",
+              "8mNnrXjpVB",
+              "A1Nhv0KtmL",
+              "GjMYZjmSQb",
+              "eX8t2nGd6O",
+              "pakWgyPNTL",
+              "qoohcdtLDH",
+              "xkiVthsGwf"
+            ],
+            "ordered_sample_token_sha256": "37a87f17099f19e8a97406fdf62859549b0c7f0d43d597318cda74023ce7e9e7",
+            "payload_sha256": "fda5fa870bfe47b43480d061dc937765fea2f6d46867431131e41e6429211786",
+            "rotation": 3
+          },
+          {
+            "endpoint_lineages": {
+              "E_A5": {
+                "file_sha256": "7a78125e9a5ab1571d62e4ffa1a135ec3e3be301cf750145b0abe7c5d3af01c0",
+                "lineage_sha256": "5916ce0398d927c91c380633e5c8d239a424a8f66a4ccc2c14733b0c69fcd5ca",
+                "path": "/workspace/ejepa_event_runs/rotations/4/fits/E_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "E_C2F": {
+                "file_sha256": "23b7cbf1eb1832a1f7f9cbeb14649f008e4a67aa9b8baa5f5ad036e7befb7134",
+                "lineage_sha256": "c2707dfad08a7e43e80c8afe41773ccaf00efffd7d8c830d3f76f6034a83b664",
+                "path": "/workspace/ejepa_event_runs/rotations/4/fits/E_C2F/STRUCTURAL_LINEAGE.json"
+              },
+              "PAIR_E": {
+                "file_sha256": "410892189cde967f33fa2e1ede3d226990debec5f16d31159511b7c9b8a206bd",
+                "lineage_sha256": "890676a7e32f448b659d24d020af787ed18cc29aa4bee93389d8b8f5e145a2c4",
+                "path": "/workspace/ejepa_event_runs/rotations/4/fits/PAIR_E/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "b617ca2738d40e0b3b3cd3be0743bc5b7d6b05df1784e5acd6a3601958c68d13",
+            "group_ids": [
+              "6WCDpro5rE",
+              "8SdieOgbva",
+              "ClXqVoZOFu",
+              "DGqicHUGWb",
+              "OYgB6RGWcq",
+              "Po6ePjWYAz",
+              "VLA3oBKFyX",
+              "nRcwUlHyAd"
+            ],
+            "ordered_sample_token_sha256": "2a8d664351c04ce4f66fe1e636f8d9f4027ddddcca18f24bbacf5dea7ac595e2",
+            "payload_sha256": "cb97661aed81dc357ebee0bdcda1998818a9ddb73bee69e9c7b635582b95d4e5",
+            "rotation": 4
+          }
+        ],
+        "groups": 40,
+        "head_adapter_required": false,
+        "head_adapter_status": "NOT_APPLICABLE",
+        "integration_scope": "LINEAGE_BOUND_TRAINING_FEATURES_NOT_SCIENTIFICALLY_ADMITTED",
+        "interface": "PHASE17_RAW_EVENT",
+        "lineage_authority_sha256": "37b68838315e25fc85821640c22c67c53ddde9b9044c4cdec4985c5a199a64a5",
+        "lineage_authority_status": "VERIFIED_STRUCTURAL_OOF_STITCH_NOT_SCIENTIFICALLY_ADMITTED",
+        "lineage_authority_verified": true,
+        "ordered_row_identity_sha256": "5001910f49ec7806e19a9541650115921f6616a8492c9f12ddc7075b5a5b7623",
+        "output": "/workspace/ejepa_final_runs/final/oof/PHASE17_RAW_EVENT.npz",
+        "output_sha256": "562c8ecc641c6fe49ff1ff5df5341684d9c8f249b5caa1b1c8187a46c9130f9e",
+        "payload_sha256": "7971e2b11f1d8a9a3a3d85871657a40792218d179614b03421ae9f74ee07d530",
+        "population": 88744,
+        "schema": "final_refit_oof_stitch_v1",
+        "scientific_launch_authorized": false,
+        "status": "LINEAGE_VERIFIED_NOT_SCIENTIFICALLY_ADMITTED",
+        "token_set_sha256": "7f138361b36032bd06e288b28d8d6f6c6b98a9f0052d8ce990afd7ab5108580d",
+        "width": 17
+      },
+      "sha256": "4f8549cb0ce0c8057073075267f30478b9ff54b1f8eb29f23b10d2e1ba039b34"
+    },
+    {
+      "member": "workspace/ejepa_final_runs/final/oof/PHASE17_RAW_RGB.json",
+      "receipt": {
+        "blind_validation_claim": false,
+        "cross_fold_learned_coordinates": false,
+        "feature_semantics": "physical_phase_clock_coordinates",
+        "fold_contract_sha256": "21c30e8bfd9e747aa05d975182a5550b4720771528d68885d9de3d5fa9407ad3",
+        "fragments": [
+          {
+            "endpoint_lineages": {
+              "PAIR_R": {
+                "file_sha256": "4b81f5df9a8a451c1abb7b017f6e89b91d3f810ab690c6bbfdcaa4b70f1530e4",
+                "lineage_sha256": "708a8b259d09c886494e7d32ec8d563201d9dc25d162e332ee9e697cd65d3309",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/0/fits/PAIR_R/STRUCTURAL_LINEAGE.json"
+              },
+              "R_A5": {
+                "file_sha256": "0cf00609ced12e268d0f7ed98a358ef8b7c1c75009d29bd3797f4f77c9d322e6",
+                "lineage_sha256": "0f5aa4e1b2107ed83f6cc2cb42bcbada3c3f488fa4f5c8395cd614e5827b1729",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/0/fits/R_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "R_C2F": {
+                "file_sha256": "809b558deb8716a1cac032c586b387fc467ae9e6a9855d5b801e94a6e40a12e1",
+                "lineage_sha256": "11db0b2f5c2c31f7f43be390bfcd47bc8513ae68bb6082cd45d7241860815774",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/0/fits/R_C2F/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "405cc09752de94b2f312897cfcd392040a95f550e85332c88a154f75777abde7",
+            "group_ids": [
+              "2cyv0Oedzg",
+              "5ilM1PX2vz",
+              "6h5yRW2LGc",
+              "WbCh1DRerJ",
+              "Z30i8WuL2N",
+              "pzJcg1OCfc",
+              "rhYxPcU29n",
+              "t79dBxj1WS"
+            ],
+            "ordered_sample_token_sha256": "957bfd54fd112015cbd33fb3d10d2c8fdbdda0020a1adc0f0933a055f945c2dc",
+            "payload_sha256": "a396eb1be59d906b0ce616057b091d2ba02558aa245899fade691791a073dac9",
+            "rotation": 0
+          },
+          {
+            "endpoint_lineages": {
+              "PAIR_R": {
+                "file_sha256": "8d579fc099dcccebddca9f57bb54386e3d0e61ca3f6e08d9a6da86908780e34d",
+                "lineage_sha256": "e33a75bd1567dc96c0ef1ef565d28439e18ec9aa02a5b01b2334b9568f0037c0",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/1/fits/PAIR_R/STRUCTURAL_LINEAGE.json"
+              },
+              "R_A5": {
+                "file_sha256": "798a8335d1c4b24ffb99e93fa832851e63c4df7e78b98ad08eeaf3c1a136bed1",
+                "lineage_sha256": "9f342298fb7b99c3b9c8b94123479298976229ced2b2caa19d2a7f0e8f2c5069",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/1/fits/R_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "R_C2F": {
+                "file_sha256": "3980ccbba297552a05edd37a01848bc55cca04303974b52b13af7df4fac552ea",
+                "lineage_sha256": "d0aa12c92d68aa96790d354a9834b2cf31d2bbce2987a5cedf4922f99f4026cd",
+                "path": "/workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v18-joint-measurement/artifacts/final_refit_20261019_scientific_oof/rotations/1/fits/R_C2F/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "68db3f9fa3cf065b7a6b9cc6efc16e3dedf6062c3eee7ef26fb5b237ce56e9f8",
+            "group_ids": [
+              "2JkLL5W891",
+              "34K84TaN11",
+              "CzyQ8HKP6X",
+              "JaGC4Q9pgU",
+              "L36QTEoVkB",
+              "mHGFBekt7X",
+              "pBqGOb2vYq",
+              "qGsgzl4Q8B"
+            ],
+            "ordered_sample_token_sha256": "fbd79fc39f471be8a2070086cb56b9e63a7e8af5f6a71dc307e2dece36282bad",
+            "payload_sha256": "6c4204e4a62a2a60ccbfed981372b99422bd05b5f69e8c0e8d57c10a7a2c99cc",
+            "rotation": 1
+          },
+          {
+            "endpoint_lineages": {
+              "PAIR_R": {
+                "file_sha256": "f9d1a1aaf7509509a83328b459d508209a88145568cfa49ad42f411d30bc1d4a",
+                "lineage_sha256": "c7990edc6e5160f50cbc9dd70d0397fd206da07904ca1526e98e0310ec989cad",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r2_downstream/rotations/2/fits/PAIR_R/STRUCTURAL_LINEAGE.json"
+              },
+              "R_A5": {
+                "file_sha256": "972f6b8bd524aa66c25791d240410d347a55194423e8ed15eb75c5080b66a4fc",
+                "lineage_sha256": "d6ad4271067b1412094f7f63a4d1eab8cf2f5480bdd68c5fdd26ca6e4f0d0d30",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r2_a5/rotations/2/fits/R_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "R_C2F": {
+                "file_sha256": "a3e61a933c12e581535c2508a8b8bd74846ac0b453fb73bf575cfd37833deb66",
+                "lineage_sha256": "9d67132f1d542aa70f20d1e6990fa40302f3c11eb9c2848d16c801da0001b141",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r2_c2f/rotations/2/fits/R_C2F/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "914d0042303a6c34bebf9fdcc82338d4440d5249b622536d0d32503a06e1c078",
+            "group_ids": [
+              "9ITOs4twfk",
+              "EllUE6bwVp",
+              "EuFGqTcqIz",
+              "LMHPShQkaU",
+              "OBneIVg4Cw",
+              "q2k6O0X6JY",
+              "vWp9XNYQ9V",
+              "wE9MZUmiJP"
+            ],
+            "ordered_sample_token_sha256": "7c451bcd7e37d643179b4cb6ddfbb250818f186facbea19d917e53edf61396d3",
+            "payload_sha256": "0ad55f6938785c6120ad6ec2c7b11ddbfcb68c90b260114a6f19d8df12062b00",
+            "rotation": 2
+          },
+          {
+            "endpoint_lineages": {
+              "PAIR_R": {
+                "file_sha256": "e1f51865c09eefe8cf893110bdc96ed2f2aca08e4ef720afb53070b75f815e87",
+                "lineage_sha256": "36f436bd3bd9272b7116bbf2c15f0dba55dd4ed0871d5cc85a7c92ba2dd2e54d",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r3_downstream/rotations/3/fits/PAIR_R/STRUCTURAL_LINEAGE.json"
+              },
+              "R_A5": {
+                "file_sha256": "ac0f6b8f3a253682ce36f38bf992a3fdaae6eab5c04527ef27f0a1deb25709e0",
+                "lineage_sha256": "fa82a141565f8b0c23ec20698689d5952d54579c987e713aa5bedb5ed420fbaf",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r3_a5/rotations/3/fits/R_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "R_C2F": {
+                "file_sha256": "419e39af9b981ca9905f12c18b9981000202cacf5a8856440c7f003d751e1bcd",
+                "lineage_sha256": "716d82b2a3215926f9912815d2d5042f50f98309ce13d3ccbcd39a43c76701a5",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r3_c2f/rotations/3/fits/R_C2F/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "b2b0ee9fbc707c11cc41370d8037f5bda2734e6fcee585ea4f17e8deead5d470",
+            "group_ids": [
+              "2Y46OkK3ff",
+              "8mNnrXjpVB",
+              "A1Nhv0KtmL",
+              "GjMYZjmSQb",
+              "eX8t2nGd6O",
+              "pakWgyPNTL",
+              "qoohcdtLDH",
+              "xkiVthsGwf"
+            ],
+            "ordered_sample_token_sha256": "37a87f17099f19e8a97406fdf62859549b0c7f0d43d597318cda74023ce7e9e7",
+            "payload_sha256": "405f8b81d2dcf45a34f17f37dd52504df2b5b7d7a16b83de2292c86dbf5b51c6",
+            "rotation": 3
+          },
+          {
+            "endpoint_lineages": {
+              "PAIR_R": {
+                "file_sha256": "067d1611f747da16cb7ef3d57e59f826d97ee3cdc00cf627643fb1a30340e5da",
+                "lineage_sha256": "55115c91079e34606f9264a4aa65b095e2ffe8414fd5ef71a85c45d816b08b9f",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r4_downstream/rotations/4/fits/PAIR_R/STRUCTURAL_LINEAGE.json"
+              },
+              "R_A5": {
+                "file_sha256": "c9b3f31295cec2b186598303ace46f23f552771742f2aeaaed93352822709879",
+                "lineage_sha256": "5d35e6bf70ee65197df2857c9880f24fb8edd27d31f1340f4e031e416f0b9733",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r4_a5/rotations/4/fits/R_A5/STRUCTURAL_LINEAGE.json"
+              },
+              "R_C2F": {
+                "file_sha256": "b931d4dc30c1eb8dd08201870722ec44d97ac9c63c68ffdb0ab9d214b176c0a2",
+                "lineage_sha256": "1e52f2c0a258f16755f8f441223ea9133235ed2cf9e37b8f389373dbdb00209a",
+                "path": "/workspace/ejepa_rgb_handoff/extracted_v10/roots/r4_c2f/rotations/4/fits/R_C2F/STRUCTURAL_LINEAGE.json"
+              }
+            },
+            "generation_manifest_sha256": "b617ca2738d40e0b3b3cd3be0743bc5b7d6b05df1784e5acd6a3601958c68d13",
+            "group_ids": [
+              "6WCDpro5rE",
+              "8SdieOgbva",
+              "ClXqVoZOFu",
+              "DGqicHUGWb",
+              "OYgB6RGWcq",
+              "Po6ePjWYAz",
+              "VLA3oBKFyX",
+              "nRcwUlHyAd"
+            ],
+            "ordered_sample_token_sha256": "2a8d664351c04ce4f66fe1e636f8d9f4027ddddcca18f24bbacf5dea7ac595e2",
+            "payload_sha256": "fcee6ee3b1980c0fb21ea687fb7bcd71b00a4e00d83dfdfe9b9c52a3ee6ad010",
+            "rotation": 4
+          }
+        ],
+        "groups": 40,
+        "head_adapter_required": false,
+        "head_adapter_status": "NOT_APPLICABLE",
+        "integration_scope": "LINEAGE_BOUND_TRAINING_FEATURES_NOT_SCIENTIFICALLY_ADMITTED",
+        "interface": "PHASE17_RAW_RGB",
+        "lineage_authority_sha256": "1c97df4d41d8ef016df26ca7e92549666d3b9f83cb99ba3029791c4cf5cdaa80",
+        "lineage_authority_status": "VERIFIED_STRUCTURAL_OOF_STITCH_NOT_SCIENTIFICALLY_ADMITTED",
+        "lineage_authority_verified": true,
+        "ordered_row_identity_sha256": "5001910f49ec7806e19a9541650115921f6616a8492c9f12ddc7075b5a5b7623",
+        "output": "/workspace/ejepa_final_runs/final/oof/PHASE17_RAW_RGB.npz",
+        "output_sha256": "5eb6d5ab29bd2215f050a42227beea778fcaf98534f317c8745c51c8cff2128b",
+        "payload_sha256": "d55d1a647d0eeefd5bb8bb130cdc5a338440150c85c58fff90f1de65943715e1",
+        "population": 88744,
+        "schema": "final_refit_oof_stitch_v1",
+        "scientific_launch_authorized": false,
+        "status": "LINEAGE_VERIFIED_NOT_SCIENTIFICALLY_ADMITTED",
+        "token_set_sha256": "7f138361b36032bd06e288b28d8d6f6c6b98a9f0052d8ce990afd7ab5108580d",
+        "width": 17
+      },
+      "sha256": "b100d48f4820ddbaf472ceb1c4cb3f0dba210a481b4f23c31aee75824cade4b4"
+    }
+  ],
+  "scope": "OOF context ancestry inventory, not deployment-history preservation",
+  "source_sha256": "50d539826b7956bd0575784fcd98d30ad865019f06dc179a9ab60b0b858619c3",
+  "status": "INVENTORIED",
+  "targets_read": false
+}

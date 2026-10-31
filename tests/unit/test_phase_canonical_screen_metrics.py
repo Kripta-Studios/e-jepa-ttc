@@ -47,7 +47,7 @@ def test_incomplete_or_tampered_predictions_stop_before_target_access(
     tmp_path, monkeypatch, tampered
 ):
     screen = tmp_path / "screen"
-    atomic_receipt(screen / "FREEZE.json", {})
+    atomic_receipt(screen / "FREEZE.json", {"schema": "phase_canonical_screen149_v1"})
     atomic_receipt(screen / "PREDICTIONS.json", {"records": []})
     atomic_receipt(
         screen / "COMPLETE.json",
@@ -69,3 +69,25 @@ def test_incomplete_or_tampered_predictions_stop_before_target_access(
     with pytest.raises(ValueError):
         evaluator.main()
     assert opened == []
+
+
+def test_bootstrap_resamples_recordings_equally_and_is_deterministic():
+    result = evaluator.group_bootstrap(
+        {
+            "by_recording": {
+                "large": {
+                    "paired": 1000,
+                    "original": {"mae_seconds": 4.0, "relative_error_pct": 40.0},
+                    "canonical": {"mae_seconds": 3.0, "relative_error_pct": 30.0},
+                },
+                "small": {
+                    "paired": 1,
+                    "original": {"mae_seconds": 4.0, "relative_error_pct": 40.0},
+                    "canonical": {"mae_seconds": 1.0, "relative_error_pct": 10.0},
+                },
+            }
+        }
+    )
+    assert result["mae_seconds"]["mean_change"] == -2
+    assert result["mae_seconds"]["ci95"] == [-3.0, -1.0]
+    assert result["recordings"] == 2

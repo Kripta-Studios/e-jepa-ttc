@@ -20,6 +20,7 @@ def main() -> None:
         "--population", type=Path, default=Path("output/phase_submission/training/POPULATION.npz")
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--expected-queries", type=int, choices=(149, 2608), default=149)
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError("Use a fresh evaluation directory")
@@ -29,7 +30,13 @@ def main() -> None:
         or not complete["baseline_exact"]
         or complete["targets_read"]
         or complete["optimizer_updates"] != 0
-        or complete["queries"] != 149
+        or complete["queries"] != args.expected_queries
+        or freeze.get("schema")
+        != (
+            "phase_canonical_screen149_v1"
+            if args.expected_queries == 149
+            else "phase_canonical_population2608_v1"
+        )
         or file_sha(args.screen / "FREEZE.json") != complete["freeze_sha256"]
     ):
         raise ValueError("Require a complete target-blind identity-verified screen")
@@ -40,7 +47,7 @@ def main() -> None:
     if (
         [r["token"] for r in records] != freeze["tokens"]
         or [r["group"] for r in records] != freeze["groups"]
-        or len(set(freeze["tokens"])) != 149
+        or len(set(freeze["tokens"])) != args.expected_queries
     ):
         raise ValueError("Prediction identity/order differs")
     # This is the first target access; all prediction artifacts already passed hashes.
@@ -60,6 +67,9 @@ def main() -> None:
     }
     report = {
         "scope": "historically exposed development screen, not official or confirmation",
+        "population_size": args.expected_queries,
+        "primary_route": "F0" if args.expected_queries == 2608 else "separate_F0_and_router",
+        "router_prior_screen": "failed; diagnostic only" if args.expected_queries == 2608 else None,
         "screen_complete_sha256": file_sha(args.screen / "COMPLETE.json"),
         "population_sha256": file_sha(args.population),
         "evaluator_sources": {
@@ -100,15 +110,48 @@ def main() -> None:
                 arrays[route + "_canonical"][mask],
                 selected_groups[mask],
             )
+        passes = all(v["nonworsening"] for v in domains.values()) and any(
+            v["any_strict_improvement"] for v in domains.values()
+        )
         report["routes"][route] = {
             "domains": domains,
-            "continue_full_population": all(v["nonworsening"] for v in domains.values())
-            and any(v["any_strict_improvement"] for v in domains.values()),
+            "continue_full_population": passes if args.expected_queries == 149 else False,
+            "passes_fixed_criteria": passes,
+            "eligible_for_eap_validation": args.expected_queries == 2608
+            and route == "F0"
+            and passes,
         }
+        if args.expected_queries == 2608:
+            report["routes"][route]["road_bootstrap"] = group_bootstrap(domains["road"])
     save_npz(args.output / "SCORED.npz", arrays)
     report["scored_sha256"] = file_sha(args.output / "SCORED.npz")
     atomic_receipt(args.output / "REPORT.json", report)
-    print({route: data["continue_full_population"] for route, data in report["routes"].items()})
+    print({route: data["passes_fixed_criteria"] for route, data in report["routes"].items()})
+
+
+def group_bootstrap(domain: dict) -> dict:
+    """Describe paired changes by resampling whole recordings, never individual windows."""
+    rows = list(domain["by_recording"].values())
+    if len(rows) < 2 or any(row["paired"] == 0 for row in rows):
+        return {"available": False, "reason": "need at least two fully represented recordings"}
+    rng = np.random.default_rng(7)
+    indices = rng.integers(0, len(rows), size=(10000, len(rows)))
+    result: dict = {
+        "available": True,
+        "seed": 7,
+        "resamples": 10000,
+        "recordings": len(rows),
+        "difference": "canonical minus original; negative is better",
+        "scope": "descriptive historically exposed development, not independent confirmation",
+    }
+    for metric in ("mae_seconds", "relative_error_pct"):
+        changes = np.asarray([r["canonical"][metric] - r["original"][metric] for r in rows])
+        distribution = changes[indices].mean(1)
+        result[metric] = {
+            "mean_change": float(changes.mean()),
+            "ci95": np.quantile(distribution, [0.025, 0.975]).tolist(),
+        }
+    return result
 
 
 if __name__ == "__main__":

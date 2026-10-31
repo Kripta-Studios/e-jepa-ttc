@@ -46,3 +46,12 @@ fechados posteriores prevalecen para conocer el estado actual.
 
 No hay autorización para reiniciar trabajo automáticamente mientras siga la
 pausa. El prompt del documento 04 expresa la instrucción posterior de reanudar.
+
+## Reanudación posterior
+
+El usuario reanudó el objetivo después de este cierre. El screen de 149 consultas
+ya terminó: F0 supera su gate de desarrollo y el router falla el de carretera.
+La ampliación fija a 2608 consultas está en marcha. Consultar el
+[registro de continuación activa](../research_log_20261031_canonical_screen149/CONTINUATION.md)
+y comprobar el estado real del proceso antes de lanzar nada. Este documento
+conserva arriba el estado histórico de la pausa, no una orden de volver a parar.
