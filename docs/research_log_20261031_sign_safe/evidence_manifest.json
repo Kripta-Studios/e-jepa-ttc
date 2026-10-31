@@ -1,0 +1,14 @@
+{
+  "generator_sha256": "633824518b08d68b292c70bade1158f94b7c12b5725067ccce3281eefa00b0b2",
+  "receipts": {
+    "campaign_v1.json": "fa8d3f34d9c51b548c8062a23f3831616f38888c7b2c08d54376b1928aa15028",
+    "campaign_v2.json": "6df82d999cd50e83570fd354928ba36b066483fd285c86be91c78307f9a75ea8",
+    "evaluator_audit.json": "af97200329206304d21aa7d16c740ef28340899d495cca533744c76f65437733",
+    "source_audit.json": "52e675ac8c1c03e92f834c157387fe37ded111df7c742b696d818f6494daafe7",
+    "active_source_reference.json": "d8ad5e3f32303d9feb24161d7c9cac45efb473191499e1b03b6432fc4fa50b63",
+    "test12_audit.json": "3ddbd9f0fa1c95c6cf81164f1bd03249af67f77d596ca8f40d8ffbfaa751b1cd",
+    "augmentation.json": "9cec832c02c8e41940d7fe9112a6b29b9aa84afaed62f2405dc1726aa3a44b36",
+    "augmentation_clean_parity.json": "af2d486853bbee421dd00e0b8414c1d086782acf08724b2d7728552d89e78ba6",
+    "slider750_investigation.json": "a7c9ebdbb3d7dd5a09eb9d6b16ae4958da6a07ff01a23504d24671efc78af41f"
+  }
+}

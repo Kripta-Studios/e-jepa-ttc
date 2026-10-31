@@ -1,0 +1,34 @@
+Subject: PHASE-TTC — clarification of Slider-750 target alignment
+
+Dear EvTTC team,
+
+Thank you again for evaluating our original PHASE-TTC submission of 28 October.
+We have been auditing our local evaluation against the PDF you supplied.
+
+We corrected a local assignment of the CCRs1-low and CCRs1-medium ground-truth
+files using the sequence-to-download mapping on your official website. Without
+changing the sensor clock offsets, our local evaluator now reproduces the
+reported rounded errors for all eight road sequences and Slider-1000. Predictions
+remain at the supplied bounding-box timestamps, and the original negative TTC
+estimates are handled separately from the preserved raw files.
+
+One discrepancy remains for Slider-750. Using the public GT file, its 51 supplied
+reference timestamps and linear interpolation of the two original interior
+negative predictions, our local mean absolute relative error is 283.931058%,
+whereas the evaluation PDF reports 132.00%.
+
+Could you please share the aligned ground-truth TTC vector for those 51 queries,
+or the evaluator/version and target-matching procedure needed to reproduce it?
+Could you also confirm that the evaluated input was
+PHASE_TTC_EvTTC_results_2026-10-28.zip? We have preserved the submitted predictions
+and can provide their hashes and the per-query comparison if helpful.
+
+We have not adjusted clock offsets or transformed targets to fit the reported
+score. We would like to resolve this discrepancy before making a comparable
+claim about a subsequent adapted model.
+
+Best regards,
+Álvaro Schwiedop Souto
+Sole author; no institutional affiliation
+
+[Draft only. This message has not been sent.]
