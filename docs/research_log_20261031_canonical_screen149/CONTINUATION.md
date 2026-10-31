@@ -19,6 +19,13 @@ iniciar otra captura; no confundir sensibilidad local con conservación históri
 El replay original de contextos ya terminado no necesita repetirse aisladamente.
 Los estados de ejecución que siguen son un registro histórico, no jobs pendientes.
 
+La captura concurrente `output/release_research_20261031/native_platform_followup_v1`
+está viva (coordinador 44880, worker de captura 63932, ambos comprobados; revalidar
+antes de actuar). No iniciar otra. Está preparado, con ocho pruebas, Ruff y
+Pyright, el [diagnóstico posterior del router](../research_log_canonical_population2608/EAP_ROUTER_SENSITIVITY_PROTOCOL.md).
+Solo consumir los tres padres completos; todavía no se ha ejecutado esta extensión.
+No modifica fuentes de la captura ni promueve el router que falló el screen.
+
 Registro a 2026-10-31T18:26:55.968736+00:00. No es una pausa ni un cierre del
 objetivo: continúa la investigación hacia evidencia reproducible bajo protocolo
 comparable, preservando eAP. SOTA sigue sin acreditarse.
