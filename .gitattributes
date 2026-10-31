@@ -1,5 +1,8 @@
 * text=auto eol=lf
 
+# JEPA closure evidence and retention receipts preserve their verified SHA-256 bytes.
+docs/jepa_closure_20261031/** -text whitespace=cr-at-eol
+
 # TRAIN40 runtime receipts and source snapshots are bound by byte-level SHA-256.
 docs/train40_runtime_handoff_20261027/evidence/** -text -whitespace
 docs/train40_runtime_resume_20261027/evidence/** -text -whitespace

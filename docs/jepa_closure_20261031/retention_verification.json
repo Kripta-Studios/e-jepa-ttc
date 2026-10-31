@@ -1,0 +1,47 @@
+{
+  "status": "VERIFIED_COMPLETE",
+  "verified_utc": "2026-10-31T15:22:18.492830+00:00",
+  "scope": "/workspace/jepa_research_20261031",
+  "jepa_requires_pod_for_retained_results": false,
+  "pod_wide_safe_to_delete": false,
+  "pod_wide_blocker": "Separate DFULL campaign remains RUNNING; its existing D-drive backup watcher must finish final retention.",
+  "summary": {
+    "remote_files": 12868,
+    "remote_bytes": 58688410975,
+    "new_unique_files": 664,
+    "new_unique_bytes": 3903906599,
+    "existing_local_mappings": 12195
+  },
+  "existing": {
+    "status": "all_referenced_content_sha256_verified",
+    "remote_paths": 12195,
+    "remote_bytes": 54783609472,
+    "unique_regular_files": 9730,
+    "archives": 3,
+    "archive_members": 1954
+  },
+  "new": {
+    "status": "all_referenced_content_sha256_verified",
+    "remote_paths": 673,
+    "remote_bytes": 3904801503,
+    "unique_regular_files": 0,
+    "archives": 1,
+    "archive_members": 664
+  },
+  "payload": {
+    "archive": "unique_payload.tar",
+    "bytes": 3905105920,
+    "sha256": "7c854524efb7b2b995f54b08b2f3c736a068d5ee928c2f547c9cb8f48b932895",
+    "unique_members": 664,
+    "created_epoch": 1793459711.867524
+  },
+  "manifest_sha256": "edcbdea7b6618fa4d208286f9c45de83a3ad2bf83c79f3649946ea5f3e628772",
+  "remote_inventory_sha256": "e4d388e3d658cdf4144fcfe504a09dea84a2062b8a1976bff8ba8cae88855af3",
+  "local_inventory_sha256": "1f112d151a80df09a941c573e075a21f6e90cb90cdde6d9364588f147c2cff91",
+  "restore_script_sha256": "f0cba6977f568ebd345cd88b02d899bd2527baeb536bf425deafda25683e0f77",
+  "restore_smoke": "passed; restored content hash verified; temporary test file removed",
+  "excluded_files": 4499,
+  "excluded_reason": "Reconstructible installed environments, caches and git databases; source trees, package inventory and results retained.",
+  "scientific_training_started": false,
+  "pod_deleted": false
+}
