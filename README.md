@@ -42,6 +42,17 @@ records verification and limitations.
 
 **Author:** Álvaro Schwiedop Souto
 
+**Detailed research log, 29–31 October 2026:** the
+[Spanish technical dossier](docs/research_log_20261029_31/README.md) reconstructs
+the data audit, trained models, grouped experiments, rejected trials, CUDA Graphs
+and cache optimization, test evidence, and the final adapted EvTTC submission.
+The [final submission report](docs/evttc_submission_20261031/REPORT.md) distinguishes
+423 locally scored targets from all 434 delivered predictions. Its local scores
+are not official leaderboard results. The
+[research release and artifact inventory](docs/research_log_20261029_31/09_PUBLICACION_E_INVENTARIO.md)
+provide the versioned model packages and checksums. The sole author has no
+institutional affiliation.
+
 [Email](mailto:alvaro.schwiedop@evocon-solutions.com) ·
 [LinkedIn](https://www.linkedin.com/in/%C3%A1lvaro-schwiedop-souto-92718b339/) ·
 [GitHub](https://github.com/Kripta-Studios/phase-ttc)

@@ -1,0 +1,47 @@
+{
+  "focused_passed": 7,
+  "format": "passed",
+  "fresh_install_all_three_checkpoints_byte_identical": true,
+  "fresh_install_evaluation_identical": true,
+  "full_pytest": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 7329,
+    "seconds": 896.729,
+    "skipped": 46,
+    "subtests": 17
+  },
+  "git_commit": "e482c220d6326c6939c5264c1b0f3aefa918c083",
+  "independent_review": {
+    "critical": 0,
+    "important_fixed": 4,
+    "minor_deferred": 2
+  },
+  "logs": {
+    "phase_submission_evaluation.log": "eabfa6ea0a853d50eb4140deb4843fb5ae15bc12eba3f9b761fc83673cfaf07f",
+    "phase_submission_focused.log": "c7e4112ee00157f6cd73b78553233801e1ebd66836f258ef8f46fb8e60480444",
+    "phase_submission_focused_final.log": "bfce81a920a305e888c2d21f12eb35beb7c515e88d5d692d6df4756a46f89a0e",
+    "phase_submission_format.log": "689ce80a1676de4e0ad2502483bf02ffa7a507b60a05443f2d580753716ea2e1",
+    "phase_submission_full.log": "72d9d2f2d252ed05d4b420c815f0adf9ce8e79a7f6d23cd7ee20ffe3efce6b5e",
+    "phase_submission_full.xml": "849d0d0ebdd5c464f6757844872851fb0c1ef45edcf713d57875e03eac402a05",
+    "phase_submission_install.log": "be530c4cb089878244ac645236b16ab03f489684c1d829e0015671003437d252",
+    "phase_submission_install_import.log": "91611bd21350996f2e2ba66032ec24a8d9e6db74d17a91125f234269b9b4db8e",
+    "phase_submission_install_torch.log": "95e7ac77298dc290e526be728cec07f18b84572f792914d4fd935d859f58f8f5",
+    "phase_submission_installed_evaluation.log": "eabfa6ea0a853d50eb4140deb4843fb5ae15bc12eba3f9b761fc83673cfaf07f",
+    "phase_submission_pyright.log": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+    "phase_submission_red.log": "6516a6f435f12cef7164df9ef1e7bc48fde9056ebd4f5b33022ee17d3237b393",
+    "phase_submission_replay.log": "b1ea41de4f440f00598513d1fbd77cd382455dac488d896ff6bff6e9d7a71173",
+    "phase_submission_reproduced_fit.log": "acb953280f96bd5c81ff92fa5aec6b2e08b5635e59d1cc8d4e0f717e496410bc",
+    "phase_submission_review_green.log": "bfce81a920a305e888c2d21f12eb35beb7c515e88d5d692d6df4756a46f89a0e",
+    "phase_submission_review_red.log": "53d8aa4bce4b8deb8b13014a164a6a5f768aee103cbe67ab8cf9c28cfaff2d62",
+    "phase_submission_ruff.log": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+    "phase_submission_training.log": "acb953280f96bd5c81ff92fa5aec6b2e08b5635e59d1cc8d4e0f717e496410bc",
+    "phase_submission_validation.log": "f7c6bb0e9b18b81995bc29ee8e3789bc997f4ec84c20f9519a6e2049c0f5c5e3",
+    "phase_submission_verify_red.log": "fbaeb4c12a68179dbb5fda6657a1e596c772abb66357aa276402b75d960e8428"
+  },
+  "model_sha256": "fe1460c407ccd08fc670c1955435b0fe9b4719737e22e3dec7534a57e66bb005",
+  "pyright": "0errors0warnings",
+  "results_zip_sha256": "e7e41820003f18a28f2ef23e634992b05d7789ecf48364b2debe659cbb9a20e7",
+  "ruff": "passed",
+  "status": "passed"
+}

@@ -1,0 +1,17 @@
+{
+  "local_links_checked": 30,
+  "missing_links": [],
+  "pending_publication_receipt": [
+    [
+      "09_PUBLICACION_E_INVENTARIO.md",
+      "evidence/PUBLICATION.json"
+    ]
+  ],
+  "final_metric_rows_exact": 13,
+  "assets_hash_verified": 10,
+  "source_model_commit": "e482c220d6326c6939c5264c1b0f3aefa918c083",
+  "model_code_changed": false,
+  "full_model_test_evidence": "docs/research_log_20261029_31/evidence/FINAL_CHECKS.json",
+  "aggregation_label_verified": "pooled-query micro, whole-family bootstrap",
+  "archival_markdown_hardbreak_lines_preserved": 20
+}

@@ -68,3 +68,11 @@ pytest_tmp/
 # Local dataset roots are machine-specific; keep only the example template.
 configs/local/*.yaml
 !configs/local/paths.example.yaml
+
+# Research execution caches and agent scratch are not release source.
+/output/
+/.superpowers/
+# Deliverable ZIPs are published as GitHub Release assets with checksums.
+/*.zip
+# Third-party paper source archives are local reference material.
+/arXiv-*.tar.gz

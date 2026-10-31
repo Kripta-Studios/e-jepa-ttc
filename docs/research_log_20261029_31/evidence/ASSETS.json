@@ -1,0 +1,78 @@
+{
+  "repository": "Kripta-Studios/phase-ttc",
+  "branch": "research/evttc-transfer-v2",
+  "release_tag": "phase-ttc-research-20261031",
+  "model_commit": "e482c220d6326c6939c5264c1b0f3aefa918c083",
+  "assets": [
+    {
+      "name": "PHASE_TTC_ADAPT_F1_S7_2026-10-30.zip",
+      "source_path": "output/phase_adapt_final/PHASE_TTC_ADAPT_F1_S7_2026-10-30.zip",
+      "bytes": 27483815,
+      "sha256": "da7014d0aac586d46e338d8666e49287c71ba07f7e95f347b938d418a5392d29",
+      "zip_members": 24
+    },
+    {
+      "name": "PHASE_TTC_ADAPT_FINAL_2026-10-31.zip",
+      "source_path": "output/PHASE_TTC_ADAPT_FINAL_2026-10-31.zip",
+      "bytes": 36023481,
+      "sha256": "4805fc06131988a93cb60e0a399a28582fef5235dba42974ebd237e42b5726c9",
+      "zip_members": 2589
+    },
+    {
+      "name": "PHASE_TTC_Adapt_EvTTC_results_2026-10-31.zip",
+      "source_path": "output/PHASE_TTC_Adapt_EvTTC_results_2026-10-31.zip",
+      "bytes": 13504,
+      "sha256": "e7e41820003f18a28f2ef23e634992b05d7789ecf48364b2debe659cbb9a20e7",
+      "zip_members": 10
+    },
+    {
+      "name": "PHASE_TTC_CAMPAIGN_FINAL_2026-10-30.zip",
+      "source_path": "output/PHASE_TTC_CAMPAIGN_FINAL_2026-10-30.zip",
+      "bytes": 34963401,
+      "sha256": "3f565fabe930aa5ec5ea1ef58bbdcf92e710b621a70ab1fe770f48375d9218d1",
+      "zip_members": 298
+    },
+    {
+      "name": "PHASE_TTC_EvTTC_results_2026-10-28.zip",
+      "source_path": "PHASE_TTC_EvTTC_results_2026-10-28.zip",
+      "bytes": 13538,
+      "sha256": "2c79847516993924229799696b05d84185e1dc32d90cbc1ac6016532e9552733",
+      "zip_members": 10
+    },
+    {
+      "name": "PHASE_TTC_Plan_SOTA_2026-10-30.zip",
+      "source_path": "PHASE_TTC_Plan_SOTA_2026-10-30.zip",
+      "bytes": 85267,
+      "sha256": "4247a62948500cdedc8753920b805b8d7b060e77f9c1196cfc96937319594cd2",
+      "zip_members": 21
+    },
+    {
+      "name": "PHASE_TTC_ROBUST_FINAL_2026-10-31.zip",
+      "source_path": "output/PHASE_TTC_ROBUST_FINAL_2026-10-31.zip",
+      "bytes": 35864173,
+      "sha256": "0cc72d25174a99af07dc31bcf6661b009cc7d6d0d010204e29ee006652e8df2a",
+      "zip_members": 2598
+    },
+    {
+      "name": "PHASE_TTC_SOTA_PLAN_AND_AUDIT_20261029.zip",
+      "source_path": "PHASE_TTC_SOTA_PLAN_AND_AUDIT_20261029.zip",
+      "bytes": 83978,
+      "sha256": "8237f47f3bdd61e5f2d8a29d59353c231df5ec191c292bf721cff1626b956369",
+      "zip_members": 13
+    },
+    {
+      "name": "PHASE_TTC_STARTUP_FINAL_2026-10-31.zip",
+      "source_path": "output/PHASE_TTC_STARTUP_FINAL_2026-10-31.zip",
+      "bytes": 65421612,
+      "sha256": "c499dc7549fba5288025ab11475b3d7f0773810c4090ce4afb9b3683b4553716",
+      "zip_members": 2793
+    },
+    {
+      "name": "phase_ttc_g0_g1_review_bundle.zip",
+      "source_path": "phase_ttc_g0_g1_review_bundle.zip",
+      "bytes": 288053,
+      "sha256": "75ec2ebd7fabb814f1150ad8fcf64ff3cdcdbf5d31903327cdbe9d02936bf55d",
+      "zip_members": 46
+    }
+  ]
+}
