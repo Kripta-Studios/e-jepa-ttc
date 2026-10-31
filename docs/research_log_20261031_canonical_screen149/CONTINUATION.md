@@ -127,3 +127,28 @@ abrir targets. No reiniciar por un cambio de velocidad.
 
 Apareció además `docs/release_research_plan_20261031/`, trabajo concurrente no
 creado ni añadido por esta ejecución. Preservarlo igual que physics_review.
+
+## Verificación de medios eAP en marcha
+
+Código publicado en `381c9a2b`: `scripts/verify_phase_eap_media.py`.
+Se está verificando SHA-256 de los 5.805 tensores de eventos y 36 shards RGB
+contra el inventario público congelado, sin decodificar arrays ni ejecutar
+modelos. Run: `output/phase_timewarp/eap_media_verified_v1`; log:
+`output/phase_timewarp/eap_media_verified_v1.stdout.log`.
+
+Sesión 3801; PID worker observado 71148, launcher 77168. Revalidar el comando
+antes de actuar; no iniciar otra copia. FREEZE.json no es un resultado final.
+El último avance observado es 1300/5841 archivos, 6.201 GB, 119.0 s; todavía
+no se ha verificado la población completa. Esperar COMPLETE.json o conservar
+FAILED.json si aparece. La fuente del verificador tampoco debe modificarse
+mientras corre: compara su hash al cerrar. El manifiesto completo de paths y
+hashes queda local; publicar solo el recibo compacto cuando termine.
+
+```powershell
+$env:PYTHONPATH='src;.'
+.venv-transfer/Scripts/python.exe -u scripts/verify_phase_eap_media.py --inputs artifacts/runpod_event_authority_supplement_20261026/payload/workspace/e-jepa-ttc-v16-multimodal-validation/artifacts/multimodal_research_20261012/test12_phase_only/INPUTS.json --media-root E:/eAP_dataset --output DIRECTORIO_NUEVO
+```
+
+En la misma observación, EvTTC llegó a 516/2608 (505 nuevas), 1597.4 s,
+ETA móvil 237.2 min. Sigue vivo el worker 77708, sesión 59503. Mantener el
+protocolo y las fuentes intactos; evaluar solo tras el sello completo.
