@@ -1,0 +1,41 @@
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                          MODEL_FORWARD         0.00%       0.000us         0.00%       0.000us       0.000us     120.154ms        69.11%     120.154ms     120.154ms             1  
+                                     CRITERION_MATCHING         0.00%       0.000us         0.00%       0.000us       0.000us      55.992ms        32.20%      55.992ms      55.992ms             1  
+                                              aten::mul         2.16%       9.502ms         3.35%      14.742ms      14.134us      21.694ms        12.48%      21.694ms      20.799us          1043  
+                         aten::grid_sampler_2d_backward         0.08%     346.559us         0.29%       1.275ms      35.420us      19.913ms        11.45%      20.245ms     562.363us            36  
+void at::native::(anonymous namespace)::grid_sampler...         0.00%       0.000us         0.00%       0.000us       0.000us      19.913ms        11.45%      19.913ms     553.127us            36  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      17.934ms        10.32%      17.934ms      49.680us           361  
+                             aten::convolution_backward         0.75%       3.294ms         1.29%       5.693ms      79.066us      14.609ms         8.40%      15.005ms     208.408us            72  
+                                               aten::mm         1.09%       4.783ms         1.61%       7.066ms      24.281us      12.418ms         7.14%      12.418ms      42.674us           291  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      12.380ms         7.12%      12.380ms      19.314us           641  
+                                            aten::addmm         0.93%       4.089ms         1.21%       5.307ms      34.686us      10.076ms         5.80%      10.076ms      65.855us           153  
+                                              aten::sum         1.19%       5.214ms         1.88%       8.248ms      21.094us       9.969ms         5.73%      10.005ms      25.588us           391  
+                                             aten::add_         0.68%       2.975ms         1.14%       4.994ms       6.151us       9.699ms         5.58%       9.699ms      11.944us           812  
+                                aten::cudnn_convolution         1.96%       8.606ms         2.47%      10.867ms     130.924us       8.578ms         4.93%       8.915ms     107.409us            83  
+                                              aten::bmm         0.22%     948.664us         0.29%       1.284ms      21.041us       7.648ms         4.40%       7.648ms     125.379us            61  
+                                              aten::add         1.24%       5.454ms         2.77%      12.173ms      25.204us       7.430ms         4.27%       7.430ms      15.384us           483  
+                                            aten::copy_         1.35%       5.916ms         3.22%      14.172ms      13.344us       7.105ms         4.09%       7.105ms       6.690us          1062  
+                              Optimizer.step#AdamW.step         0.00%       0.000us         0.00%       0.000us       0.000us       6.906ms         3.97%       6.906ms       6.906ms             1  
+                                 ampere_sgemm_128x64_tn         0.00%       0.000us         0.00%       0.000us       0.000us       6.103ms         3.51%       6.103ms     226.022us            27  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       5.734ms         3.30%       5.734ms      12.072us           475  
+void at::native::reduce_kernel<128, 4, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       5.193ms         2.99%       5.193ms      29.507us           176  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       4.972ms         2.86%       4.972ms      13.812us           360  
+void cutlass::Kernel2<cutlass_80_simt_sgemm_128x64_8...         0.00%       0.000us         0.00%       0.000us       0.000us       4.811ms         2.77%       4.811ms      42.198us           114  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       4.401ms         2.53%       4.401ms      33.090us           133  
+                                            LOSS_FINITE         0.00%       0.000us         0.00%       0.000us       0.000us       3.849ms         2.21%       3.849ms       3.849ms             1  
+                                 ampere_sgemm_32x128_tn         0.00%       0.000us         0.00%       0.000us       0.000us       3.730ms         2.15%       3.730ms      38.851us            96  
+void cudnn::engines_precompiled::nchwToNhwcKernel<fl...         0.00%       0.000us         0.00%       0.000us       0.000us       3.709ms         2.13%       3.709ms      24.401us           152  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       3.297ms         1.90%       3.297ms      18.839us           175  
+void cutlass::Kernel2<cutlass_80_simt_sgemm_256x128_...         0.00%       0.000us         0.00%       0.000us       0.000us       3.014ms         1.73%       3.014ms     143.540us            21  
+                                ampere_sgemm_128x128_nt         0.00%       0.000us         0.00%       0.000us       0.000us       2.988ms         1.72%       2.988ms     149.424us            20  
+                               aten::threshold_backward         0.17%     758.203us         0.28%       1.209ms      14.572us       2.968ms         1.71%       2.968ms      35.759us            83  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       2.945ms         1.69%       2.945ms      35.913us            82  
+                                ampere_sgemm_128x128_nn         0.00%       0.000us         0.00%       0.000us       0.000us       2.933ms         1.69%       2.933ms     146.655us            20  
+                                  aten::grid_sampler_2d         0.08%     350.988us         0.19%     827.452us      22.985us       2.872ms         1.65%       2.872ms      79.789us            36  
+void at::native::(anonymous namespace)::grid_sampler...         0.00%       0.000us         0.00%       0.000us       0.000us       2.872ms         1.65%       2.872ms      79.789us            36  
+                                          OUTPUT_FINITE         0.00%       0.000us         0.00%       0.000us       0.000us       2.692ms         1.55%       2.692ms       2.692ms             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 439.760ms
+Self CUDA time total: 173.865ms
