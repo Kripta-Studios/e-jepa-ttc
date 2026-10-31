@@ -104,3 +104,26 @@ de las consultas actuales. La ruta inspeccionada repite ese delta en sus
 históricos: se cumple la precondición de la rama de identidad de CanonicalPair.
 Es evidencia estructural; no una validación ejecutada de contextos/cabeza ni
 un motivo para omitir la comprobación de genealogía de despliegue y RGB.
+
+## Disponibilidad posterior de la ruta Test12
+
+El preflight [EAP_DEPLOYMENT_PREFLIGHT.md](EAP_DEPLOYMENT_PREFLIGHT.md) localizó
+las 5.805 entradas físicas de eventos y los 36 shards RGB con tamaños esperados.
+Se verificaron los hashes de los 12 archivos de diagnósticos y la coincidencia
+de genealogía de su recibo con el bundle entregado. Los hashes de medios aún
+deben verificarse antes de usarlos. No se ejecutó ningún candidato ni se
+abrieron targets Test12.
+
+Los 5.805 deltas de eventos son identidad; los 5.805 deltas RGB no lo son.
+Los diagnósticos conservan contexto/cabeza y raw17, pero faltan PAIR133. Las rutas,
+comando y evidencia están en ese documento. No mezclar con las cachés OOF.
+
+La extracción de población seguía viva al alcanzar 443/2608 (434 nuevas),
+1255.8 s transcurridos. El ETA móvil fue 151.5 minutos; había subido hasta
+288 minutos con consultas de 10 s y luego volvió a bajar. No usar el ETA
+anterior de 65–75 minutos como compromiso. La sesión continúa siendo 59503,
+worker 77708, y sigue siendo necesario esperar el sello completo antes de
+abrir targets. No reiniciar por un cambio de velocidad.
+
+Apareció además `docs/release_research_plan_20261031/`, trabajo concurrente no
+creado ni añadido por esta ejecución. Preservarlo igual que physics_review.
