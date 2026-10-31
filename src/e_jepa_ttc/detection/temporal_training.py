@@ -38,13 +38,14 @@ from e_jepa_ttc.detection.temporal_fusion import CausalTemporalFeatureFusion
 from e_jepa_ttc.detection.temporal_source_patch import portable_tree_hashes
 
 TEMPORAL_TRAINING_SCHEMA = "eap_detection_temporal_training_config_v1"
+TEMPORAL_CONTINUATION_SCHEMA = "eap_detection_temporal_training_config_v2"
 TEMPORAL_CHECKPOINT_SCHEMA = "eap_detection_temporal_checkpoint_v1"
 FROZEN_SPLIT_SHA256 = "91a13c5ae7f6e40ee5fdb4a62da481eba5ffff2b8209ea1110befe3ad7cdc903"
 FROZEN_DATASET_REVISION = "a814a946e60d37f7242358af5f344542177e50c5"
 
 TRAINING_CODE_PATHS = (
     "scripts/smoke_monodgp_portable.py",
-    "scripts/train_detection_campaign.py",
+    "src/e_jepa_ttc/detection/campaign_resources.py",
     "scripts/train_detection_temporal_campaign.py",
     "src/e_jepa_ttc/detection/campaign_training.py",
     "src/e_jepa_ttc/detection/development_metrics.py",
@@ -74,8 +75,8 @@ def _exact(value: object, keys: set[str], name: str) -> dict[str, Any]:
     result = dict(value)
     if set(result) != keys:
         raise ValueError(
-            f"{name} keys differ: unknown={sorted(set(result)-keys)}, "
-            f"missing={sorted(keys-set(result))}"
+            f"{name} keys differ: unknown={sorted(set(result) - keys)}, "
+            f"missing={sorted(keys - set(result))}"
         )
     return result
 
@@ -112,34 +113,65 @@ class TemporalTrainingConfig:
     temporal: TemporalCampaignConfig
     parent: ParentCheckpointConfig
     runtime: TemporalRuntimeConfig
+    parent_config: CampaignConfig | None = None
 
     @property
     def sha256(self) -> str:
         value = asdict(self)
         value["baseline"] = asdict(self.baseline)
+        if self.parent_config is None:
+            value.pop("parent_config")
         return canonical_sha256(value)
 
 
 def load_temporal_training_config(path: str | Path) -> TemporalTrainingConfig:
     """Load a strict wrapper without weakening the ordinary CampaignConfig."""
     path = Path(path).resolve()
+    document = yaml.safe_load(path.read_text(encoding="utf-8"))
+    continuation = isinstance(document, Mapping) and document.get("schema") == (
+        TEMPORAL_CONTINUATION_SCHEMA
+    )
     raw = _exact(
-        yaml.safe_load(path.read_text(encoding="utf-8")),
-        {"schema", "baseline_config", "temporal", "parent", "runtime"},
+        document,
+        {"schema", "baseline_config", "temporal", "parent", "runtime"}
+        | ({"parent_config"} if continuation else set()),
         "temporal_training",
     )
-    if raw["schema"] != TEMPORAL_TRAINING_SCHEMA:
+    if raw["schema"] not in (TEMPORAL_TRAINING_SCHEMA, TEMPORAL_CONTINUATION_SCHEMA):
         raise ValueError("Unknown temporal training schema")
     baseline_path = (path.parent / str(raw["baseline_config"])).resolve()
     baseline = load_campaign_config(baseline_path)
     if (
-        baseline.optimization.updates != 8192
+        (not continuation and baseline.optimization.updates != 8192)
         or baseline.optimization.batch_size != 4
         or baseline.optimization.precision != "fp32"
         or baseline.optimization.matmul_precision != "highest"
-        or baseline.evaluation.full_selection_updates != (4096, 8192)
+        or (not continuation and baseline.evaluation.full_selection_updates != (4096, 8192))
     ):
         raise ValueError("S3 fixes 8192 extra updates, batch 4, FP32-highest and full evals")
+    parent_config = (
+        load_campaign_config((path.parent / str(raw["parent_config"])).resolve())
+        if continuation
+        else None
+    )
+    if parent_config is not None:
+        for field in (
+            "backbone",
+            "num_classes",
+            "queries",
+            "group_num",
+            "predict_velocity",
+            "velocity_loss_coef",
+            "width",
+            "height",
+        ):
+            if getattr(parent_config.model, field) != getattr(baseline.model, field):
+                raise ValueError(f"Continuation changes parent model contract: {field}")
+        if (
+            parent_config.data.expected_dataset_revision != baseline.data.expected_dataset_revision
+            or parent_config.data.expected_split_sha256 != baseline.data.expected_split_sha256
+        ):
+            raise ValueError("Continuation must preserve parent dataset release and split")
     if any(
         value != 0
         for value in (
@@ -199,7 +231,7 @@ def load_temporal_training_config(path: str | Path) -> TemporalTrainingConfig:
     if (
         isinstance(parent_update, bool)
         or not isinstance(parent_update, int)
-        or not 1 <= parent_update <= baseline.optimization.updates
+        or not 1 <= parent_update <= (parent_config or baseline).optimization.updates
     ):
         raise ValueError("parent.update must identify a completed baseline monitor update")
     return TemporalTrainingConfig(
@@ -233,6 +265,7 @@ def load_temporal_training_config(path: str | Path) -> TemporalTrainingConfig:
             history_media_receipt=str(runtime["history_media_receipt"]),
             history_media_receipt_sha256=str(runtime["history_media_receipt_sha256"]),
         ),
+        parent_config=parent_config,
     )
 
 
@@ -333,10 +366,9 @@ def validate_parent_checkpoint_payload(
     if (
         payload.get("schema") != CHECKPOINT_SCHEMA
         or payload.get("producer") != "scripts/train_detection_campaign.py"
-        or payload.get("config_sha256") != config.baseline.sha256
+        or payload.get("config_sha256") != (config.parent_config or config.baseline).sha256
         or payload.get("update") != config.parent.update
-        or payload.get("runtime_provenance_sha256")
-        != config.parent.runtime_provenance_sha256
+        or payload.get("runtime_provenance_sha256") != config.parent.runtime_provenance_sha256
     ):
         raise ValueError("Parent is not the configured selected baseline checkpoint")
 
@@ -513,9 +545,7 @@ def temporal_optimizer_parameter_groups(
         else:
             detector.append(parameter)
             names["detector_and_fusion"].append(name)
-    fusion_present = any(
-        name.startswith("fusion.") for name in names["detector_and_fusion"]
-    )
+    fusion_present = any(name.startswith("fusion.") for name in names["detector_and_fusion"])
     if not backbone or not detector or not fusion_present:
         raise ValueError("Temporal optimizer cannot identify backbone/detector/fusion parameters")
     optimization = config.optimization
@@ -709,7 +739,11 @@ def load_temporal_checkpoint(
     sampler.load_state_dict(payload["sampler"])
     restore_rng_state(payload["rng"])
     update = payload.get("update")
-    if isinstance(update, bool) or not isinstance(update, int) or not 0 <= update <= 8192:
+    if (
+        isinstance(update, bool)
+        or not isinstance(update, int)
+        or not 0 <= update <= config.baseline.optimization.updates
+    ):
         raise ValueError("Temporal checkpoint update is invalid")
     best_metric = payload.get("best_metric")
     if best_metric is not None and (

@@ -24,8 +24,8 @@ sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts")]
 import numpy as np
 import torch
 from smoke_monodgp_portable import build_detector, require_finite
-from train_detection_campaign import load_protocol, resource_admission
 
+from e_jepa_ttc.detection.campaign_resources import load_protocol, resource_admission
 from e_jepa_ttc.detection.campaign_training import UpdateLRScheduler
 from e_jepa_ttc.detection.development_metrics import evaluate_detections
 from e_jepa_ttc.detection.eap_rgb_data import EAPRGBDataset
@@ -148,6 +148,9 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
     device = torch.device("cuda:0")
     resource_evidence = resource_admission(config.baseline)
     resource_contract = immutable_resource_contract(config, resource_evidence)
+    # Retain bounded TAR indexes across random draws; no images or features are cached.
+    open_shards = 128 if config.parent_config is not None else 2
+    resource_contract["max_open_shards_per_reader"] = open_shards
     ledger = load_temporal_admission_ledger(
         config.runtime.temporal_media_admission, config.runtime.history_media_receipt
     )
@@ -159,6 +162,7 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
         admission_ledger=ledger,
         current_labels=True,
         max_label_sequences=config.baseline.data.label_cache_sequences,
+        max_open_shards=open_shards,
     )
     monitor_data = build_v5_temporal_campaign(
         dataset_root=config.baseline.data.root,
@@ -168,6 +172,7 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
         admission_ledger=ledger,
         current_labels=False,
         max_label_sequences=config.baseline.data.label_cache_sequences,
+        max_open_shards=open_shards,
     )
     backend, criterion, effective_model = build_detector(
         Path(config.runtime.portable_root),
@@ -223,6 +228,7 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
     protocol = load_protocol(config.baseline.evaluation.protocol)
     segment_started = time.monotonic()
     for update in range(start + 1, optimization.updates + 1):
+        step_started = time.monotonic()
         elapsed_seconds = committed_seconds + (time.monotonic() - segment_started)
         if elapsed_seconds >= config.baseline.resources.maximum_seconds:
             raise TimeoutError("Temporal campaign exceeded maximum_seconds")
@@ -238,6 +244,21 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
             update,
             optimization.gradient_clip_norm,
         )
+        with (output / "metrics.jsonl").open("a", encoding="utf-8") as stream:
+            stream.write(
+                json.dumps(
+                    {
+                        "update": update,
+                        "batch_size": optimization.batch_size,
+                        "image_exposures": update * optimization.batch_size,
+                        "observed_at_unix": time.time(),
+                        "step_seconds": time.monotonic() - step_started,
+                        **losses,
+                    },
+                    allow_nan=False,
+                )
+                + "\n"
+            )
         monitor_due = update in config.baseline.evaluation.updates
         full_due = update in config.baseline.evaluation.full_selection_updates
         if update % optimization.checkpoint_interval == 0 and not monitor_due:
@@ -283,6 +304,7 @@ def run(config_path: Path, output: Path, resume: Path | None) -> None:
                 current_labels=False,
                 full_selection_path=config.baseline.data.full_selection_tokens,
                 max_label_sequences=config.baseline.data.label_cache_sequences,
+                max_open_shards=open_shards,
             )
             _write(
                 output / f"evaluation/full_selection_update_{update:06d}.json",

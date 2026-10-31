@@ -94,8 +94,10 @@ def _predictor_artifacts(
     return predictions, sidecar
 
 
+@pytest.mark.parametrize("selection_panel", ["selection1024", "selection_full"])
 def test_tiny_label_free_panels_fit_train_apply_selection_and_reject_selection_fit(
     tmp_path: Path,
+    selection_panel: str,
 ) -> None:
     revision = "a" * 40
     train_token, selection_token = "train-sequence:frame", "selection-sequence:frame"
@@ -237,6 +239,7 @@ def test_tiny_label_free_panels_fit_train_apply_selection_and_reject_selection_f
         output_dir=panel_dir,
         train_count=1,
         selection_count=1,
+        selection_panel_name=selection_panel,
     )
     recipe = json.loads((panel_dir / "ranking_panel_recipe.json").read_text(encoding="utf-8"))
     assert recipe["panels"]["train4096"]["token_count"] == 1
@@ -264,7 +267,7 @@ def test_tiny_label_free_panels_fit_train_apply_selection_and_reject_selection_f
     )
     panel_module.build_ground_truth_bundle(
         recipe_path=panel_dir / "ranking_panel_recipe.json",
-        panel_name="selection1024",
+        panel_name=selection_panel,
         predictions_path=selection_predictions,
         sidecar_path=selection_sidecar,
         data_root=data_root,

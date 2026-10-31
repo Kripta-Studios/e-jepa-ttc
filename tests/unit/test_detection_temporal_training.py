@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import pytest
@@ -32,6 +32,7 @@ from e_jepa_ttc.detection.temporal_detector import (
     TemporalFrameIdentity,
 )
 from e_jepa_ttc.detection.temporal_training import (
+    TEMPORAL_CONTINUATION_SCHEMA,
     TEMPORAL_TRAINING_SCHEMA,
     ParentCheckpointConfig,
     TemporalRuntimeConfig,
@@ -177,9 +178,71 @@ def setup(variant: str = "correct_past_2"):
 def test_same_seed_initializes_all_controls_identically() -> None:
     left, right = seeded_fusion(13), seeded_fusion(13)
     assert all(
-        torch.equal(left.state_dict()[key], right.state_dict()[key])
-        for key in left.state_dict()
+        torch.equal(left.state_dict()[key], right.state_dict()[key]) for key in left.state_dict()
     )
+
+
+def test_legacy_config_hash_is_unchanged_by_optional_parent_config() -> None:
+    config = full_config()
+    historical = asdict(config)
+    historical.pop("parent_config")
+    assert config.sha256 == canonical_sha256(historical)
+
+
+def test_continuation_parent_is_bound_to_its_own_config_not_child_budget() -> None:
+    config = full_config()
+    parent_config = config.baseline
+    child = replace(
+        config.baseline,
+        optimization=replace(config.baseline.optimization, updates=1024),
+    )
+    config = replace(config, baseline=child, parent_config=parent_config)
+    payload = {
+        "schema": "eap_detection_campaign_checkpoint_v1",
+        "producer": "scripts/train_detection_campaign.py",
+        "config_sha256": parent_config.sha256,
+        "update": config.parent.update,
+        "runtime_provenance_sha256": config.parent.runtime_provenance_sha256,
+    }
+    validate_parent_checkpoint_payload(payload, config)
+    payload["config_sha256"] = child.sha256
+    with pytest.raises(ValueError, match="configured selected"):
+        validate_parent_checkpoint_payload(payload, config)
+
+
+def test_continuation_config_loads_dfull_parent_with_short_child_budget(tmp_path: Path) -> None:
+    source = Path("output/detection_campaign/rgb_screen_v5_seed7_v1/configs/r1.yaml")
+    parent = yaml.safe_load(source.read_text(encoding="utf-8"))
+    parent["optimization"]["updates"] = 38726
+    parent["evaluation"]["updates"] = [38726]
+    parent["evaluation"]["full_selection_updates"] = []
+    parent_path = tmp_path / "parent.yaml"
+    parent_path.write_text(yaml.safe_dump(parent), encoding="utf-8")
+    child = copy.deepcopy(parent)
+    child["optimization"]["updates"] = 1024
+    child["evaluation"]["updates"] = [512, 1024]
+    child_path = tmp_path / "child.yaml"
+    child_path.write_text(yaml.safe_dump(child), encoding="utf-8")
+    wrapper = yaml.safe_load(Path("configs/experiment/temporal_campaign_template.yaml").read_text())
+    wrapper.update(
+        schema=TEMPORAL_CONTINUATION_SCHEMA,
+        baseline_config=str(child_path),
+        parent_config=str(parent_path),
+    )
+    wrapper["parent"].update(update=34333, sha256="1" * 64, runtime_provenance_sha256="2" * 64)
+    for field in ("source_manifest_sha256", "expected_output_tree_sha256", "parity_report_sha256"):
+        wrapper["runtime"][field] = "3" * 64
+    path = tmp_path / "wrapper.yaml"
+    path.write_text(yaml.safe_dump(wrapper), encoding="utf-8")
+    config = load_temporal_training_config(path)
+    assert config.parent.update == 34333
+    assert config.baseline.optimization.updates == 1024
+    assert config.parent_config is not None
+    assert config.parent_config.optimization.updates == 38726
+    child["model"]["width"] = 320
+    child_path.write_text(yaml.safe_dump(child), encoding="utf-8")
+    with pytest.raises(ValueError, match="parent model contract"):
+        load_temporal_training_config(path)
 
 
 def test_optimizer_preserves_prefixed_backbone_lr_and_fusion_group() -> None:
@@ -210,8 +273,7 @@ def test_train_step_updates_fusion_and_detaches_history() -> None:
     assert value.current_images.grad is not None
     assert value.history_images is not None and value.history_images.grad is None
     assert any(
-        not torch.equal(before[key], item)
-        for key, item in adapter.fusion.state_dict().items()
+        not torch.equal(before[key], item) for key, item in adapter.fusion.state_dict().items()
     )
 
 
@@ -319,9 +381,7 @@ def test_resume_rejects_wrong_variant_parent_or_runtime(tmp_path: Path) -> None:
 
 
 def test_config_rejects_unknown_key_and_wrong_admission_hash(tmp_path: Path) -> None:
-    baseline = Path(
-        "output/detection_campaign/rgb_screen_v5_seed7_v1/configs/r1.yaml"
-    ).resolve()
+    baseline = Path("output/detection_campaign/rgb_screen_v5_seed7_v1/configs/r1.yaml").resolve()
     value = {
         "schema": TEMPORAL_TRAINING_SCHEMA,
         "baseline_config": str(baseline),
@@ -366,7 +426,7 @@ def test_config_rejects_unknown_key_and_wrong_admission_hash(tmp_path: Path) -> 
 
 
 def test_parity_rejects_shallow_pass_and_changed_runtime_sources() -> None:
-    root = Path.cwd()
+    root = Path("output/detection_temporal/r0_update512_parity_v2/runtime").resolve()
     report = json.loads(
         Path("output/detection_temporal/r0_update512_parity_v2/report.json").read_text()
     )
@@ -390,9 +450,9 @@ def test_parity_rejects_shallow_pass_and_changed_runtime_sources() -> None:
     decoded_missing["decoded_predictions_exact"] = False
     mutations.append(decoded_missing)
     runtime_changed = copy.deepcopy(report)
-    runtime_changed["runtime_source_hashes"][
-        "src/e_jepa_ttc/detection/temporal_detector.py"
-    ] = "0" * 64
+    runtime_changed["runtime_source_hashes"]["src/e_jepa_ttc/detection/temporal_detector.py"] = (
+        "0" * 64
+    )
     runtime_changed["runtime_source_hashes_sha256"] = canonical_sha256(
         runtime_changed["runtime_source_hashes"]
     )
@@ -456,9 +516,7 @@ def test_dynamic_headroom_is_excluded_from_resume_lineage() -> None:
         "available_ram_bytes": 10,
         "available_vram_bytes": 15,
     }
-    assert immutable_resource_contract(config, first) == immutable_resource_contract(
-        config, second
-    )
+    assert immutable_resource_contract(config, first) == immutable_resource_contract(config, second)
 
 
 def test_parent_payload_must_match_exact_child_baseline_config() -> None:

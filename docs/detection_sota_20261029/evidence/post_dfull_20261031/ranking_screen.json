@@ -1,0 +1,1447 @@
+{
+  "schema": "dfull_ranking_screen_v1",
+  "results": {
+    "baseline": {
+      "AP": 0.16870712373276467,
+      "samples": 1024,
+      "per_class": {
+        "car": 0.5871155561100113,
+        "bicycle": 0.006875687568756876,
+        "truck": 0.26852301316709964,
+        "pedestrian": 0.029174827086737007,
+        "motorcycle": 0.18717635397427362,
+        "bus": 0.18522528911569414,
+        "tricycle": 0.08532522750005564,
+        "other_vehicle": 0.000241035339489005
+      },
+      "class_agnostic_recall": {
+        "eligible_ground_truth_count": 4639,
+        "thresholds": {
+          "0.5": {
+            "TP": 1517,
+            "FN": 3122,
+            "recall": 0.32701013149385644
+          },
+          "1.0": {
+            "TP": 2298,
+            "FN": 2341,
+            "recall": 0.49536538046992884
+          },
+          "2.0": {
+            "TP": 3202,
+            "FN": 1437,
+            "recall": 0.6902349644319896
+          },
+          "4.0": {
+            "TP": 3970,
+            "FN": 669,
+            "recall": 0.8557878853201121
+          }
+        }
+      },
+      "by_sequence": {
+        "2Y46OkK3ff": {
+          "AP": 0.20128298618610052,
+          "samples": 128,
+          "per_class": {
+            "car": 0.676373424010834,
+            "bicycle": null,
+            "truck": 0.2616051805284086,
+            "pedestrian": 0.0,
+            "motorcycle": 0.06732673267326733,
+            "bus": 0.0011095937179924891,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 533,
+            "thresholds": {
+              "0.5": {
+                "TP": 263,
+                "FN": 270,
+                "recall": 0.49343339587242024
+              },
+              "1.0": {
+                "TP": 368,
+                "FN": 165,
+                "recall": 0.6904315196998124
+              },
+              "2.0": {
+                "TP": 455,
+                "FN": 78,
+                "recall": 0.8536585365853658
+              },
+              "4.0": {
+                "TP": 495,
+                "FN": 38,
+                "recall": 0.9287054409005628
+              }
+            }
+          }
+        },
+        "CzyQ8HKP6X": {
+          "AP": 0.516558224630256,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6494690171792632,
+            "bicycle": null,
+            "truck": 0.38364743208124896,
+            "pedestrian": null,
+            "motorcycle": null,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 466,
+            "thresholds": {
+              "0.5": {
+                "TP": 215,
+                "FN": 251,
+                "recall": 0.4613733905579399
+              },
+              "1.0": {
+                "TP": 314,
+                "FN": 152,
+                "recall": 0.6738197424892703
+              },
+              "2.0": {
+                "TP": 395,
+                "FN": 71,
+                "recall": 0.8476394849785408
+              },
+              "4.0": {
+                "TP": 430,
+                "FN": 36,
+                "recall": 0.9227467811158798
+              }
+            }
+          }
+        },
+        "EllUE6bwVp": {
+          "AP": 0.151837570176086,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5497791078944233,
+            "bicycle": 0.0,
+            "truck": 0.25897635674295466,
+            "pedestrian": 0.02765873867025862,
+            "motorcycle": 0.21775909924258846,
+            "bus": 0.07684397472005271,
+            "tricycle": 0.08368328413841031,
+            "other_vehicle": 0.0
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 699,
+            "thresholds": {
+              "0.5": {
+                "TP": 200,
+                "FN": 499,
+                "recall": 0.2861230329041488
+              },
+              "1.0": {
+                "TP": 303,
+                "FN": 396,
+                "recall": 0.4334763948497854
+              },
+              "2.0": {
+                "TP": 447,
+                "FN": 252,
+                "recall": 0.6394849785407726
+              },
+              "4.0": {
+                "TP": 600,
+                "FN": 99,
+                "recall": 0.8583690987124464
+              }
+            }
+          }
+        },
+        "JaGC4Q9pgU": {
+          "AP": 0.4638774252531723,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6220645757278015,
+            "bicycle": null,
+            "truck": 0.2510033435960718,
+            "pedestrian": null,
+            "motorcycle": 0.5185643564356436,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 502,
+            "thresholds": {
+              "0.5": {
+                "TP": 195,
+                "FN": 307,
+                "recall": 0.3884462151394422
+              },
+              "1.0": {
+                "TP": 288,
+                "FN": 214,
+                "recall": 0.5737051792828686
+              },
+              "2.0": {
+                "TP": 377,
+                "FN": 125,
+                "recall": 0.750996015936255
+              },
+              "4.0": {
+                "TP": 432,
+                "FN": 70,
+                "recall": 0.8605577689243028
+              }
+            }
+          }
+        },
+        "OBneIVg4Cw": {
+          "AP": 0.15328625978607827,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5321001912250563,
+            "bicycle": 0.03539603960396041,
+            "truck": 0.06912516797956532,
+            "pedestrian": 0.030728480572325606,
+            "motorcycle": 0.17457190234653414,
+            "bus": 0.22896039603960397,
+            "tricycle": 0.002121640735502122,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 759,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 556,
+                "recall": 0.26745718050065875
+              },
+              "1.0": {
+                "TP": 296,
+                "FN": 463,
+                "recall": 0.38998682476943347
+              },
+              "2.0": {
+                "TP": 454,
+                "FN": 305,
+                "recall": 0.5981554677206851
+              },
+              "4.0": {
+                "TP": 619,
+                "FN": 140,
+                "recall": 0.8155467720685112
+              }
+            }
+          }
+        },
+        "WbCh1DRerJ": {
+          "AP": 0.15879077070633718,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5269753466566639,
+            "bicycle": 0.006188118811881187,
+            "truck": 0.31978680665908876,
+            "pedestrian": 0.06530964335195152,
+            "motorcycle": 0.19126040509385067,
+            "bus": 0.0,
+            "tricycle": 0.15897631429809642,
+            "other_vehicle": 0.0018295307791648722
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 431,
+            "thresholds": {
+              "0.5": {
+                "TP": 120,
+                "FN": 311,
+                "recall": 0.27842227378190254
+              },
+              "1.0": {
+                "TP": 209,
+                "FN": 222,
+                "recall": 0.48491879350348027
+              },
+              "2.0": {
+                "TP": 286,
+                "FN": 145,
+                "recall": 0.6635730858468677
+              },
+              "4.0": {
+                "TP": 355,
+                "FN": 76,
+                "recall": 0.8236658932714617
+              }
+            }
+          }
+        },
+        "pBqGOb2vYq": {
+          "AP": 0.1871285736536279,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5135078638170139,
+            "bicycle": 0.0,
+            "truck": 0.17013900593020131,
+            "pedestrian": 0.0320802309828248,
+            "motorcycle": 0.19153635491082044,
+            "bus": 0.2530528515636979,
+            "tricycle": 0.14958370837083707,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 954,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 751,
+                "recall": 0.21278825995807127
+              },
+              "1.0": {
+                "TP": 327,
+                "FN": 627,
+                "recall": 0.34276729559748426
+              },
+              "2.0": {
+                "TP": 543,
+                "FN": 411,
+                "recall": 0.5691823899371069
+              },
+              "4.0": {
+                "TP": 765,
+                "FN": 189,
+                "recall": 0.8018867924528302
+              }
+            }
+          }
+        },
+        "vWp9XNYQ9V": {
+          "AP": 0.22405338480256382,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5807563903807214,
+            "bicycle": null,
+            "truck": 0.31545714882953385,
+            "pedestrian": null,
+            "motorcycle": 0.0,
+            "bus": 0.0,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 295,
+            "thresholds": {
+              "0.5": {
+                "TP": 118,
+                "FN": 177,
+                "recall": 0.4
+              },
+              "1.0": {
+                "TP": 193,
+                "FN": 102,
+                "recall": 0.6542372881355932
+              },
+              "2.0": {
+                "TP": 245,
+                "FN": 50,
+                "recall": 0.8305084745762712
+              },
+              "4.0": {
+                "TP": 274,
+                "FN": 21,
+                "recall": 0.9288135593220339
+              }
+            }
+          }
+        }
+      }
+    },
+    "scalar_uncertainty": {
+      "AP": 0.179076866901857,
+      "samples": 1024,
+      "per_class": {
+        "car": 0.6164545933006821,
+        "bicycle": 0.00629004076878276,
+        "truck": 0.2841156447282617,
+        "pedestrian": 0.0310807332600834,
+        "motorcycle": 0.1923352958666356,
+        "bus": 0.19457577593564845,
+        "tricycle": 0.10745044147299743,
+        "other_vehicle": 0.00031240988176487545
+      },
+      "class_agnostic_recall": {
+        "eligible_ground_truth_count": 4639,
+        "thresholds": {
+          "0.5": {
+            "TP": 1517,
+            "FN": 3122,
+            "recall": 0.32701013149385644
+          },
+          "1.0": {
+            "TP": 2299,
+            "FN": 2340,
+            "recall": 0.49558094416900195
+          },
+          "2.0": {
+            "TP": 3202,
+            "FN": 1437,
+            "recall": 0.6902349644319896
+          },
+          "4.0": {
+            "TP": 3968,
+            "FN": 671,
+            "recall": 0.855356757921966
+          }
+        }
+      },
+      "by_sequence": {
+        "2Y46OkK3ff": {
+          "AP": 0.21251958321305212,
+          "samples": 128,
+          "per_class": {
+            "car": 0.7130632322236394,
+            "bicycle": null,
+            "truck": 0.2812023818614232,
+            "pedestrian": 0.0,
+            "motorcycle": 0.06732673267326733,
+            "bus": 0.001005569306930693,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 533,
+            "thresholds": {
+              "0.5": {
+                "TP": 263,
+                "FN": 270,
+                "recall": 0.49343339587242024
+              },
+              "1.0": {
+                "TP": 368,
+                "FN": 165,
+                "recall": 0.6904315196998124
+              },
+              "2.0": {
+                "TP": 455,
+                "FN": 78,
+                "recall": 0.8536585365853658
+              },
+              "4.0": {
+                "TP": 495,
+                "FN": 38,
+                "recall": 0.9287054409005628
+              }
+            }
+          }
+        },
+        "CzyQ8HKP6X": {
+          "AP": 0.5398253769560837,
+          "samples": 128,
+          "per_class": {
+            "car": 0.675118142628923,
+            "bicycle": null,
+            "truck": 0.40453261128324436,
+            "pedestrian": null,
+            "motorcycle": null,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 466,
+            "thresholds": {
+              "0.5": {
+                "TP": 215,
+                "FN": 251,
+                "recall": 0.4613733905579399
+              },
+              "1.0": {
+                "TP": 314,
+                "FN": 152,
+                "recall": 0.6738197424892703
+              },
+              "2.0": {
+                "TP": 395,
+                "FN": 71,
+                "recall": 0.8476394849785408
+              },
+              "4.0": {
+                "TP": 430,
+                "FN": 36,
+                "recall": 0.9227467811158798
+              }
+            }
+          }
+        },
+        "EllUE6bwVp": {
+          "AP": 0.16207874194486413,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5816804821384018,
+            "bicycle": 0.0,
+            "truck": 0.2658354972767152,
+            "pedestrian": 0.02266217970744488,
+            "motorcycle": 0.23092195055999049,
+            "bus": 0.08026710912849533,
+            "tricycle": 0.11526271674786526,
+            "other_vehicle": 0.0
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 699,
+            "thresholds": {
+              "0.5": {
+                "TP": 200,
+                "FN": 499,
+                "recall": 0.2861230329041488
+              },
+              "1.0": {
+                "TP": 303,
+                "FN": 396,
+                "recall": 0.4334763948497854
+              },
+              "2.0": {
+                "TP": 447,
+                "FN": 252,
+                "recall": 0.6394849785407726
+              },
+              "4.0": {
+                "TP": 600,
+                "FN": 99,
+                "recall": 0.8583690987124464
+              }
+            }
+          }
+        },
+        "JaGC4Q9pgU": {
+          "AP": 0.47668501831336424,
+          "samples": 128,
+          "per_class": {
+            "car": 0.649029811745923,
+            "bicycle": null,
+            "truck": 0.26246088675852614,
+            "pedestrian": null,
+            "motorcycle": 0.5185643564356436,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 502,
+            "thresholds": {
+              "0.5": {
+                "TP": 195,
+                "FN": 307,
+                "recall": 0.3884462151394422
+              },
+              "1.0": {
+                "TP": 288,
+                "FN": 214,
+                "recall": 0.5737051792828686
+              },
+              "2.0": {
+                "TP": 377,
+                "FN": 125,
+                "recall": 0.750996015936255
+              },
+              "4.0": {
+                "TP": 432,
+                "FN": 70,
+                "recall": 0.8605577689243028
+              }
+            }
+          }
+        },
+        "OBneIVg4Cw": {
+          "AP": 0.16031611119953929,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5793589239908339,
+            "bicycle": 0.032178217821782186,
+            "truck": 0.06936252046790438,
+            "pedestrian": 0.030180042912736342,
+            "motorcycle": 0.17977727633350846,
+            "bus": 0.22896039603960397,
+            "tricycle": 0.002395400830405621,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 759,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 556,
+                "recall": 0.26745718050065875
+              },
+              "1.0": {
+                "TP": 296,
+                "FN": 463,
+                "recall": 0.38998682476943347
+              },
+              "2.0": {
+                "TP": 454,
+                "FN": 305,
+                "recall": 0.5981554677206851
+              },
+              "4.0": {
+                "TP": 619,
+                "FN": 140,
+                "recall": 0.8155467720685112
+              }
+            }
+          }
+        },
+        "WbCh1DRerJ": {
+          "AP": 0.16897656680674025,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5529587439624538,
+            "bicycle": 0.007425742574257427,
+            "truck": 0.33595893265461063,
+            "pedestrian": 0.05800648477454292,
+            "motorcycle": 0.19012911696429094,
+            "bus": 0.0,
+            "tricycle": 0.20546332650506427,
+            "other_vehicle": 0.0018701870187018705
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 431,
+            "thresholds": {
+              "0.5": {
+                "TP": 120,
+                "FN": 311,
+                "recall": 0.27842227378190254
+              },
+              "1.0": {
+                "TP": 210,
+                "FN": 221,
+                "recall": 0.4872389791183295
+              },
+              "2.0": {
+                "TP": 286,
+                "FN": 145,
+                "recall": 0.6635730858468677
+              },
+              "4.0": {
+                "TP": 355,
+                "FN": 76,
+                "recall": 0.8236658932714617
+              }
+            }
+          }
+        },
+        "pBqGOb2vYq": {
+          "AP": 0.19573263650278486,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5320477279749171,
+            "bicycle": 0.0,
+            "truck": 0.17041787877380432,
+            "pedestrian": 0.04529395423293475,
+            "motorcycle": 0.19546525037978868,
+            "bus": 0.2592354133151137,
+            "tricycle": 0.16766823084293536,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 954,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 751,
+                "recall": 0.21278825995807127
+              },
+              "1.0": {
+                "TP": 327,
+                "FN": 627,
+                "recall": 0.34276729559748426
+              },
+              "2.0": {
+                "TP": 543,
+                "FN": 411,
+                "recall": 0.5691823899371069
+              },
+              "4.0": {
+                "TP": 763,
+                "FN": 191,
+                "recall": 0.79979035639413
+              }
+            }
+          }
+        },
+        "vWp9XNYQ9V": {
+          "AP": 0.234982012886485,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6054042781307895,
+            "bicycle": null,
+            "truck": 0.3345237734151505,
+            "pedestrian": null,
+            "motorcycle": 0.0,
+            "bus": 0.0,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 295,
+            "thresholds": {
+              "0.5": {
+                "TP": 118,
+                "FN": 177,
+                "recall": 0.4
+              },
+              "1.0": {
+                "TP": 193,
+                "FN": 102,
+                "recall": 0.6542372881355932
+              },
+              "2.0": {
+                "TP": 245,
+                "FN": 50,
+                "recall": 0.8305084745762712
+              },
+              "4.0": {
+                "TP": 274,
+                "FN": 21,
+                "recall": 0.9288135593220339
+              }
+            }
+          }
+        }
+      }
+    },
+    "monotonic_temperature": {
+      "AP": 0.16870712373276467,
+      "samples": 1024,
+      "per_class": {
+        "car": 0.5871155561100113,
+        "bicycle": 0.006875687568756876,
+        "truck": 0.26852301316709964,
+        "pedestrian": 0.029174827086737007,
+        "motorcycle": 0.18717635397427362,
+        "bus": 0.18522528911569414,
+        "tricycle": 0.08532522750005564,
+        "other_vehicle": 0.000241035339489005
+      },
+      "class_agnostic_recall": {
+        "eligible_ground_truth_count": 4639,
+        "thresholds": {
+          "0.5": {
+            "TP": 1517,
+            "FN": 3122,
+            "recall": 0.32701013149385644
+          },
+          "1.0": {
+            "TP": 2298,
+            "FN": 2341,
+            "recall": 0.49536538046992884
+          },
+          "2.0": {
+            "TP": 3202,
+            "FN": 1437,
+            "recall": 0.6902349644319896
+          },
+          "4.0": {
+            "TP": 3970,
+            "FN": 669,
+            "recall": 0.8557878853201121
+          }
+        }
+      },
+      "by_sequence": {
+        "2Y46OkK3ff": {
+          "AP": 0.20128298618610052,
+          "samples": 128,
+          "per_class": {
+            "car": 0.676373424010834,
+            "bicycle": null,
+            "truck": 0.2616051805284086,
+            "pedestrian": 0.0,
+            "motorcycle": 0.06732673267326733,
+            "bus": 0.0011095937179924891,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 533,
+            "thresholds": {
+              "0.5": {
+                "TP": 263,
+                "FN": 270,
+                "recall": 0.49343339587242024
+              },
+              "1.0": {
+                "TP": 368,
+                "FN": 165,
+                "recall": 0.6904315196998124
+              },
+              "2.0": {
+                "TP": 455,
+                "FN": 78,
+                "recall": 0.8536585365853658
+              },
+              "4.0": {
+                "TP": 495,
+                "FN": 38,
+                "recall": 0.9287054409005628
+              }
+            }
+          }
+        },
+        "CzyQ8HKP6X": {
+          "AP": 0.516558224630256,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6494690171792632,
+            "bicycle": null,
+            "truck": 0.38364743208124896,
+            "pedestrian": null,
+            "motorcycle": null,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 466,
+            "thresholds": {
+              "0.5": {
+                "TP": 215,
+                "FN": 251,
+                "recall": 0.4613733905579399
+              },
+              "1.0": {
+                "TP": 314,
+                "FN": 152,
+                "recall": 0.6738197424892703
+              },
+              "2.0": {
+                "TP": 395,
+                "FN": 71,
+                "recall": 0.8476394849785408
+              },
+              "4.0": {
+                "TP": 430,
+                "FN": 36,
+                "recall": 0.9227467811158798
+              }
+            }
+          }
+        },
+        "EllUE6bwVp": {
+          "AP": 0.151837570176086,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5497791078944233,
+            "bicycle": 0.0,
+            "truck": 0.25897635674295466,
+            "pedestrian": 0.02765873867025862,
+            "motorcycle": 0.21775909924258846,
+            "bus": 0.07684397472005271,
+            "tricycle": 0.08368328413841031,
+            "other_vehicle": 0.0
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 699,
+            "thresholds": {
+              "0.5": {
+                "TP": 200,
+                "FN": 499,
+                "recall": 0.2861230329041488
+              },
+              "1.0": {
+                "TP": 303,
+                "FN": 396,
+                "recall": 0.4334763948497854
+              },
+              "2.0": {
+                "TP": 447,
+                "FN": 252,
+                "recall": 0.6394849785407726
+              },
+              "4.0": {
+                "TP": 600,
+                "FN": 99,
+                "recall": 0.8583690987124464
+              }
+            }
+          }
+        },
+        "JaGC4Q9pgU": {
+          "AP": 0.4638774252531723,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6220645757278015,
+            "bicycle": null,
+            "truck": 0.2510033435960718,
+            "pedestrian": null,
+            "motorcycle": 0.5185643564356436,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 502,
+            "thresholds": {
+              "0.5": {
+                "TP": 195,
+                "FN": 307,
+                "recall": 0.3884462151394422
+              },
+              "1.0": {
+                "TP": 288,
+                "FN": 214,
+                "recall": 0.5737051792828686
+              },
+              "2.0": {
+                "TP": 377,
+                "FN": 125,
+                "recall": 0.750996015936255
+              },
+              "4.0": {
+                "TP": 432,
+                "FN": 70,
+                "recall": 0.8605577689243028
+              }
+            }
+          }
+        },
+        "OBneIVg4Cw": {
+          "AP": 0.15328625978607827,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5321001912250563,
+            "bicycle": 0.03539603960396041,
+            "truck": 0.06912516797956532,
+            "pedestrian": 0.030728480572325606,
+            "motorcycle": 0.17457190234653414,
+            "bus": 0.22896039603960397,
+            "tricycle": 0.002121640735502122,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 759,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 556,
+                "recall": 0.26745718050065875
+              },
+              "1.0": {
+                "TP": 296,
+                "FN": 463,
+                "recall": 0.38998682476943347
+              },
+              "2.0": {
+                "TP": 454,
+                "FN": 305,
+                "recall": 0.5981554677206851
+              },
+              "4.0": {
+                "TP": 619,
+                "FN": 140,
+                "recall": 0.8155467720685112
+              }
+            }
+          }
+        },
+        "WbCh1DRerJ": {
+          "AP": 0.15879077070633718,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5269753466566639,
+            "bicycle": 0.006188118811881187,
+            "truck": 0.31978680665908876,
+            "pedestrian": 0.06530964335195152,
+            "motorcycle": 0.19126040509385067,
+            "bus": 0.0,
+            "tricycle": 0.15897631429809642,
+            "other_vehicle": 0.0018295307791648722
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 431,
+            "thresholds": {
+              "0.5": {
+                "TP": 120,
+                "FN": 311,
+                "recall": 0.27842227378190254
+              },
+              "1.0": {
+                "TP": 209,
+                "FN": 222,
+                "recall": 0.48491879350348027
+              },
+              "2.0": {
+                "TP": 286,
+                "FN": 145,
+                "recall": 0.6635730858468677
+              },
+              "4.0": {
+                "TP": 355,
+                "FN": 76,
+                "recall": 0.8236658932714617
+              }
+            }
+          }
+        },
+        "pBqGOb2vYq": {
+          "AP": 0.1871285736536279,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5135078638170139,
+            "bicycle": 0.0,
+            "truck": 0.17013900593020131,
+            "pedestrian": 0.0320802309828248,
+            "motorcycle": 0.19153635491082044,
+            "bus": 0.2530528515636979,
+            "tricycle": 0.14958370837083707,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 954,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 751,
+                "recall": 0.21278825995807127
+              },
+              "1.0": {
+                "TP": 327,
+                "FN": 627,
+                "recall": 0.34276729559748426
+              },
+              "2.0": {
+                "TP": 543,
+                "FN": 411,
+                "recall": 0.5691823899371069
+              },
+              "4.0": {
+                "TP": 765,
+                "FN": 189,
+                "recall": 0.8018867924528302
+              }
+            }
+          }
+        },
+        "vWp9XNYQ9V": {
+          "AP": 0.22405338480256382,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5807563903807214,
+            "bicycle": null,
+            "truck": 0.31545714882953385,
+            "pedestrian": null,
+            "motorcycle": 0.0,
+            "bus": 0.0,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 295,
+            "thresholds": {
+              "0.5": {
+                "TP": 118,
+                "FN": 177,
+                "recall": 0.4
+              },
+              "1.0": {
+                "TP": 193,
+                "FN": 102,
+                "recall": 0.6542372881355932
+              },
+              "2.0": {
+                "TP": 245,
+                "FN": 50,
+                "recall": 0.8305084745762712
+              },
+              "4.0": {
+                "TP": 274,
+                "FN": 21,
+                "recall": 0.9288135593220339
+              }
+            }
+          }
+        }
+      }
+    },
+    "learned": {
+      "AP": 0.18479928170207494,
+      "samples": 1024,
+      "per_class": {
+        "car": 0.6382072455819,
+        "bicycle": 0.005026656511805026,
+        "truck": 0.294887869396527,
+        "pedestrian": 0.03261992243532018,
+        "motorcycle": 0.1973988821473291,
+        "bus": 0.19722580987847943,
+        "tricycle": 0.11274310467566548,
+        "other_vehicle": 0.0002847629895732938
+      },
+      "class_agnostic_recall": {
+        "eligible_ground_truth_count": 4639,
+        "thresholds": {
+          "0.5": {
+            "TP": 1517,
+            "FN": 3122,
+            "recall": 0.32701013149385644
+          },
+          "1.0": {
+            "TP": 2298,
+            "FN": 2341,
+            "recall": 0.49536538046992884
+          },
+          "2.0": {
+            "TP": 3202,
+            "FN": 1437,
+            "recall": 0.6902349644319896
+          },
+          "4.0": {
+            "TP": 3965,
+            "FN": 674,
+            "recall": 0.8547100668247467
+          }
+        }
+      },
+      "by_sequence": {
+        "2Y46OkK3ff": {
+          "AP": 0.22232585172931985,
+          "samples": 128,
+          "per_class": {
+            "car": 0.7250501304968678,
+            "bicycle": null,
+            "truck": 0.3098901357210768,
+            "pedestrian": 0.0,
+            "motorcycle": 0.0757425742574257,
+            "bus": 0.0009464181712288877,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 533,
+            "thresholds": {
+              "0.5": {
+                "TP": 263,
+                "FN": 270,
+                "recall": 0.49343339587242024
+              },
+              "1.0": {
+                "TP": 368,
+                "FN": 165,
+                "recall": 0.6904315196998124
+              },
+              "2.0": {
+                "TP": 455,
+                "FN": 78,
+                "recall": 0.8536585365853658
+              },
+              "4.0": {
+                "TP": 495,
+                "FN": 38,
+                "recall": 0.9287054409005628
+              }
+            }
+          }
+        },
+        "CzyQ8HKP6X": {
+          "AP": 0.5536994856215379,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6952174843307708,
+            "bicycle": null,
+            "truck": 0.41218148691230505,
+            "pedestrian": null,
+            "motorcycle": null,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 466,
+            "thresholds": {
+              "0.5": {
+                "TP": 215,
+                "FN": 251,
+                "recall": 0.4613733905579399
+              },
+              "1.0": {
+                "TP": 314,
+                "FN": 152,
+                "recall": 0.6738197424892703
+              },
+              "2.0": {
+                "TP": 395,
+                "FN": 71,
+                "recall": 0.8476394849785408
+              },
+              "4.0": {
+                "TP": 430,
+                "FN": 36,
+                "recall": 0.9227467811158798
+              }
+            }
+          }
+        },
+        "EllUE6bwVp": {
+          "AP": 0.1701067920864769,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5978707671110135,
+            "bicycle": 0.0,
+            "truck": 0.2976374301061283,
+            "pedestrian": 0.017502712623013544,
+            "motorcycle": 0.23912599323614825,
+            "bus": 0.08187092543528195,
+            "tricycle": 0.12684650818022977,
+            "other_vehicle": 0.0
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 699,
+            "thresholds": {
+              "0.5": {
+                "TP": 200,
+                "FN": 499,
+                "recall": 0.2861230329041488
+              },
+              "1.0": {
+                "TP": 303,
+                "FN": 396,
+                "recall": 0.4334763948497854
+              },
+              "2.0": {
+                "TP": 447,
+                "FN": 252,
+                "recall": 0.6394849785407726
+              },
+              "4.0": {
+                "TP": 599,
+                "FN": 100,
+                "recall": 0.8569384835479256
+              }
+            }
+          }
+        },
+        "JaGC4Q9pgU": {
+          "AP": 0.4760946892480275,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6570059442760254,
+            "bicycle": null,
+            "truck": 0.25271376703241344,
+            "pedestrian": null,
+            "motorcycle": 0.5185643564356436,
+            "bus": null,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 502,
+            "thresholds": {
+              "0.5": {
+                "TP": 195,
+                "FN": 307,
+                "recall": 0.3884462151394422
+              },
+              "1.0": {
+                "TP": 288,
+                "FN": 214,
+                "recall": 0.5737051792828686
+              },
+              "2.0": {
+                "TP": 377,
+                "FN": 125,
+                "recall": 0.750996015936255
+              },
+              "4.0": {
+                "TP": 432,
+                "FN": 70,
+                "recall": 0.8605577689243028
+              }
+            }
+          }
+        },
+        "OBneIVg4Cw": {
+          "AP": 0.17015866581824077,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6194020324611045,
+            "bicycle": 0.032178217821782186,
+            "truck": 0.0638089230764136,
+            "pedestrian": 0.03184182978086604,
+            "motorcycle": 0.18521629125088535,
+            "bus": 0.25495049504950495,
+            "tricycle": 0.0037128712871287127,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 759,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 556,
+                "recall": 0.26745718050065875
+              },
+              "1.0": {
+                "TP": 296,
+                "FN": 463,
+                "recall": 0.38998682476943347
+              },
+              "2.0": {
+                "TP": 454,
+                "FN": 305,
+                "recall": 0.5981554677206851
+              },
+              "4.0": {
+                "TP": 619,
+                "FN": 140,
+                "recall": 0.8155467720685112
+              }
+            }
+          }
+        },
+        "WbCh1DRerJ": {
+          "AP": 0.17363062778524505,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5593179295152203,
+            "bicycle": 0.006188118811881187,
+            "truck": 0.35941968615406444,
+            "pedestrian": 0.0463564537469518,
+            "motorcycle": 0.17706088930659508,
+            "bus": 0.0,
+            "tricycle": 0.2381516897217451,
+            "other_vehicle": 0.0025502550255025484
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 431,
+            "thresholds": {
+              "0.5": {
+                "TP": 120,
+                "FN": 311,
+                "recall": 0.27842227378190254
+              },
+              "1.0": {
+                "TP": 209,
+                "FN": 222,
+                "recall": 0.48491879350348027
+              },
+              "2.0": {
+                "TP": 286,
+                "FN": 145,
+                "recall": 0.6635730858468677
+              },
+              "4.0": {
+                "TP": 355,
+                "FN": 76,
+                "recall": 0.8236658932714617
+              }
+            }
+          }
+        },
+        "pBqGOb2vYq": {
+          "AP": 0.20137822220731208,
+          "samples": 128,
+          "per_class": {
+            "car": 0.5594262716285421,
+            "bicycle": 0.0,
+            "truck": 0.17054722693784619,
+            "pedestrian": 0.04707133055467416,
+            "motorcycle": 0.20022419338388625,
+            "bus": 0.26311930690995267,
+            "tricycle": 0.16925922603628307,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 954,
+            "thresholds": {
+              "0.5": {
+                "TP": 203,
+                "FN": 751,
+                "recall": 0.21278825995807127
+              },
+              "1.0": {
+                "TP": 327,
+                "FN": 627,
+                "recall": 0.34276729559748426
+              },
+              "2.0": {
+                "TP": 543,
+                "FN": 411,
+                "recall": 0.5691823899371069
+              },
+              "4.0": {
+                "TP": 761,
+                "FN": 193,
+                "recall": 0.7976939203354297
+              }
+            }
+          }
+        },
+        "vWp9XNYQ9V": {
+          "AP": 0.23768343151443935,
+          "samples": 128,
+          "per_class": {
+            "car": 0.6219568502887247,
+            "bicycle": null,
+            "truck": 0.3287768757690327,
+            "pedestrian": null,
+            "motorcycle": 0.0,
+            "bus": 0.0,
+            "tricycle": null,
+            "other_vehicle": null
+          },
+          "class_agnostic_recall": {
+            "eligible_ground_truth_count": 295,
+            "thresholds": {
+              "0.5": {
+                "TP": 118,
+                "FN": 177,
+                "recall": 0.4
+              },
+              "1.0": {
+                "TP": 193,
+                "FN": 102,
+                "recall": 0.6542372881355932
+              },
+              "2.0": {
+                "TP": 245,
+                "FN": 50,
+                "recall": 0.8305084745762712
+              },
+              "4.0": {
+                "TP": 274,
+                "FN": 21,
+                "recall": 0.9288135593220339
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "fixed_pool_sha256": "f98c9be13861f95e6d4e1b5a9367d624938301e28275bc24cb24729e07299558",
+  "score_independent_pool_recall": {
+    "schema": "phase_ttc_score_independent_pool_recall_v1",
+    "proposal_geometry_sha256": "f98c9be13861f95e6d4e1b5a9367d624938301e28275bc24cb24729e07299558",
+    "eligible_ground_truth_count": 4639,
+    "thresholds": {
+      "0.5": {
+        "TP_maximum_cardinality": 1518,
+        "FN": 3121,
+        "recall": 0.3272256951929295
+      },
+      "1.0": {
+        "TP_maximum_cardinality": 2300,
+        "FN": 2339,
+        "recall": 0.495796507868075
+      },
+      "2.0": {
+        "TP_maximum_cardinality": 3210,
+        "FN": 1429,
+        "recall": 0.6919594740245743
+      },
+      "4.0": {
+        "TP_maximum_cardinality": 4040,
+        "FN": 599,
+        "recall": 0.8708773442552274
+      }
+    }
+  },
+  "scope": "Fixed pool, TRAIN-only fitted ranker, selection panel; screening only.",
+  "gain": 0.016092157969310267
+}

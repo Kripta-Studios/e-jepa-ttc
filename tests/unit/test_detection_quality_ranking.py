@@ -151,9 +151,7 @@ def test_score_independent_matching_masks_ignored_and_domain() -> None:
         (None, "masked"),
     ]
     assert rows[2].mask_reason == "ignored_ground_truth:test_ignore"
-    assert rows[3].mask_reason == (
-        "prediction_domain:camera_center_depth_outside_protocol"
-    )
+    assert rows[3].mask_reason == ("prediction_domain:camera_center_depth_outside_protocol")
     changed_scores = copy.deepcopy(predictions)
     for index, row in enumerate(changed_scores["seq:frame"]):
         row["score"] = predictions["seq:frame"][index]["score"]
@@ -175,9 +173,7 @@ def test_score_independent_matching_masks_ignored_and_domain() -> None:
 def test_ignored_only_class_is_masked_instead_of_taught_as_background() -> None:
     predictions, sidecar = _inputs()
     original = _ground_truth()["seq:frame"]
-    ignored_only = {
-        "seq:frame": replace(original, eligible=(), raw_count=len(original.ignored))
-    }
+    ignored_only = {"seq:frame": replace(original, eligible=(), raw_count=len(original.ignored))}
     rows = build_training_rows(
         predictions,
         sidecar,
@@ -237,9 +233,7 @@ def test_apply_preserves_fixed_pool_and_never_accepts_ground_truth() -> None:
     rows = build_training_rows(
         predictions, sidecar, _ground_truth(), protocol=EvaluationProtocol.default()
     )
-    bundle = fit_quality_ranker(
-        rows, provenance=_provenance(), recipe=RankingRecipe(epochs=3)
-    )
+    bundle = fit_quality_ranker(rows, provenance=_provenance(), recipe=RankingRecipe(epochs=3))
     output = apply_quality_ranker(
         predictions, sidecar, bundle, protocol=EvaluationProtocol.default()
     )
@@ -253,9 +247,7 @@ def test_apply_preserves_fixed_pool_and_never_accepts_ground_truth() -> None:
         "yaw_rad",
         "velocity_mps",
     }
-    for original, ranked in zip(
-        predictions["seq:frame"], output["seq:frame"], strict=True
-    ):
+    for original, ranked in zip(predictions["seq:frame"], output["seq:frame"], strict=True):
         assert all(ranked[name] == original[name] for name in immutable)
         assert ranked["classification_score"] == original["score"]
         assert ranked["original_detection_score"] == original["score"]
@@ -267,12 +259,11 @@ def test_apply_preserves_fixed_pool_and_never_accepts_ground_truth() -> None:
         _ground_truth(eligible_x=1.5),
         protocol=EvaluationProtocol.default(),
     )
-    assert [row.target_quality for row in perturbed_rows] != [
-        row.target_quality for row in rows
-    ]
-    assert apply_quality_ranker(
-        predictions, sidecar, bundle, protocol=EvaluationProtocol.default()
-    ) == output
+    assert [row.target_quality for row in perturbed_rows] != [row.target_quality for row in rows]
+    assert (
+        apply_quality_ranker(predictions, sidecar, bundle, protocol=EvaluationProtocol.default())
+        == output
+    )
 
 
 def test_controls_and_missing_fields() -> None:
@@ -302,9 +293,10 @@ def test_controls_and_missing_fields() -> None:
     temperature_metrics = evaluate_detections_v2(
         temperature, _ground_truth(), protocol=EvaluationProtocol.default()
     )
-    assert baseline_metrics["dev_AP101_supported_classes"] == temperature_metrics[
-        "dev_AP101_supported_classes"
-    ]
+    assert (
+        baseline_metrics["dev_AP101_supported_classes"]
+        == temperature_metrics["dev_AP101_supported_classes"]
+    )
     broken = copy.deepcopy(sidecar)
     frame = broken["frames"][0]  # type: ignore[index]
     del frame["tensors"]["pred_depth"]  # type: ignore[index]
@@ -346,21 +338,42 @@ def test_query_binding_supports_nonprefix_and_rejects_ambiguous_ties() -> None:
         )
 
 
+def test_equal_scores_bind_by_exact_decoded_dimensions_without_labels() -> None:
+    predictions, sidecar = _inputs()
+    tensors = sidecar["frames"][0]["tensors"]  # type: ignore[index]
+    tensors["pred_logits"]["values"][1] = list(  # type: ignore[index]
+        tensors["pred_logits"]["values"][0]  # type: ignore[index]
+    )
+    predictions["seq:frame"][1]["score"] = 0.9
+    predictions["seq:frame"][1]["size_lwh_m"] = [5.0, 1.8, 1.6]
+    tensors["pred_3d_dim"] = {  # type: ignore[index]
+        "values": [[1.6, 1.8, 4.0], [1.6, 1.8, 5.0], [1.6, 1.8, 4.0], [1.6, 1.8, 4.0]]
+    }
+    rows = build_training_rows(
+        predictions, sidecar, _ground_truth(), protocol=EvaluationProtocol.default()
+    )
+    assert len(rows) == 4
+    depth_index = FEATURE_NAMES.index("predicted_camera_depth_m")
+    assert [row.features[depth_index] for row in rows] == [10.0, 11.0, 12.0, 13.0]
+    # Remaining indistinguishable boxes must still fail, never choose arbitrarily.
+    tensors["pred_3d_dim"]["values"][1] = [1.6, 1.8, 4.0]  # type: ignore[index]
+    with pytest.raises(ValueError, match="map uniquely"):
+        build_training_rows(
+            predictions, sidecar, _ground_truth(), protocol=EvaluationProtocol.default()
+        )
+
+
 def test_tampered_bundle_is_rejected() -> None:
     predictions, sidecar = _inputs()
     rows = build_training_rows(
         predictions, sidecar, _ground_truth(), protocol=EvaluationProtocol.default()
     )
-    bundle = fit_quality_ranker(
-        rows, provenance=_provenance(), recipe=RankingRecipe(epochs=1)
-    )
+    bundle = fit_quality_ranker(rows, provenance=_provenance(), recipe=RankingRecipe(epochs=1))
     bias = bundle["bias"]
     assert isinstance(bias, float)
     bundle["bias"] = bias + 1
     with pytest.raises(ValueError, match="bundle hash"):
-        apply_quality_ranker(
-            predictions, sidecar, bundle, protocol=EvaluationProtocol.default()
-        )
+        apply_quality_ranker(predictions, sidecar, bundle, protocol=EvaluationProtocol.default())
 
 
 def test_apply_rejects_over_cap_and_revalidates_train_provenance() -> None:
@@ -368,16 +381,10 @@ def test_apply_rejects_over_cap_and_revalidates_train_provenance() -> None:
     rows = build_training_rows(
         predictions, sidecar, _ground_truth(), protocol=EvaluationProtocol.default()
     )
-    bundle = fit_quality_ranker(
-        rows, provenance=_provenance(), recipe=RankingRecipe(epochs=1)
-    )
-    oversized = {
-        "seq:frame": [dict(predictions["seq:frame"][0]) for _ in range(51)]
-    }
+    bundle = fit_quality_ranker(rows, provenance=_provenance(), recipe=RankingRecipe(epochs=1))
+    oversized = {"seq:frame": [dict(predictions["seq:frame"][0]) for _ in range(51)]}
     with pytest.raises(ValueError, match="proposal cap"):
-        apply_quality_ranker(
-            oversized, sidecar, bundle, protocol=EvaluationProtocol.default()
-        )
+        apply_quality_ranker(oversized, sidecar, bundle, protocol=EvaluationProtocol.default())
     with pytest.raises(ValueError, match="proposal cap"):
         apply_score_control(
             oversized,
@@ -386,15 +393,11 @@ def test_apply_rejects_over_cap_and_revalidates_train_provenance() -> None:
             control="baseline",
         )
 
-    changed_protocol = replace(
-        EvaluationProtocol.default(), distance_thresholds_m=(1.0, 2.0, 4.0)
-    )
+    changed_protocol = replace(EvaluationProtocol.default(), distance_thresholds_m=(1.0, 2.0, 4.0))
     with pytest.raises(ValueError, match="protocol differs"):
         apply_quality_ranker(predictions, sidecar, bundle, protocol=changed_protocol)
     with pytest.raises(ValueError, match="frozen to the default"):
-        apply_score_control(
-            predictions, sidecar, protocol=changed_protocol, control="baseline"
-        )
+        apply_score_control(predictions, sidecar, protocol=changed_protocol, control="baseline")
 
     invalid_role = copy.deepcopy(bundle)
     invalid_role["provenance"]["dataset_role"] = "selection"  # type: ignore[index]
@@ -424,26 +427,18 @@ def test_greedy_v2_recall_can_change_but_pool_capacity_and_geometry_do_not() -> 
             ignored_by_reason=(),
         )
     }
-    flexible_first = {
-        "seq:frame": [_prediction(0.75, 0.9), _prediction(-1.0, 0.8)]
-    }
-    constrained_first = {
-        "seq:frame": [_prediction(0.75, 0.8), _prediction(-1.0, 0.9)]
-    }
+    flexible_first = {"seq:frame": [_prediction(0.75, 0.9), _prediction(-1.0, 0.8)]}
+    constrained_first = {"seq:frame": [_prediction(0.75, 0.8), _prediction(-1.0, 0.9)]}
     first_v2 = evaluate_detections_v2(flexible_first, ground_truth, protocol=protocol)
     second_v2 = evaluate_detections_v2(constrained_first, ground_truth, protocol=protocol)
     first_greedy = first_v2["class_agnostic_recall"]["thresholds"]["2.0"]["TP"]  # type: ignore[index]
     second_greedy = second_v2["class_agnostic_recall"]["thresholds"]["2.0"]["TP"]  # type: ignore[index]
     assert (first_greedy, second_greedy) == (1, 2)
 
-    first_pool = score_independent_pool_recall(
-        flexible_first, ground_truth, protocol=protocol
-    )
-    second_pool = score_independent_pool_recall(
-        constrained_first, ground_truth, protocol=protocol
-    )
+    first_pool = score_independent_pool_recall(flexible_first, ground_truth, protocol=protocol)
+    second_pool = score_independent_pool_recall(constrained_first, ground_truth, protocol=protocol)
     assert first_pool["thresholds"]["2.0"]["TP_maximum_cardinality"] == 2  # type: ignore[index]
     assert first_pool == second_pool
-    assert proposal_geometry_sha256(
-        flexible_first, protocol=protocol
-    ) == proposal_geometry_sha256(constrained_first, protocol=protocol)
+    assert proposal_geometry_sha256(flexible_first, protocol=protocol) == proposal_geometry_sha256(
+        constrained_first, protocol=protocol
+    )

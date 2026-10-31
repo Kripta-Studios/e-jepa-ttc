@@ -110,9 +110,9 @@ class QualityTrainingRow:
 
 
 def _canonical_sha256(value: object) -> str:
-    encoded = json.dumps(
-        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    ).encode("utf-8")
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -136,8 +136,10 @@ def verify_train_token_ownership(
         raise ValueError("Split manifest lacks assignments.train")
     owner: dict[str, str] = {}
     for role, raw_sequences in assignments.items():
-        if not isinstance(role, str) or isinstance(raw_sequences, (str, bytes)) or not isinstance(
-            raw_sequences, Sequence
+        if (
+            not isinstance(role, str)
+            or isinstance(raw_sequences, (str, bytes))
+            or not isinstance(raw_sequences, Sequence)
         ):
             raise ValueError("Split assignments must map roles to sequence arrays")
         for value in raw_sequences:
@@ -196,9 +198,7 @@ def _sidecar_query_features(
     frames = sidecar.get("frames")
     if not isinstance(frames, list):
         raise ValueError("Detector sidecar frames are missing")
-    raw_frame_tokens = [
-        frame.get("sample_token") for frame in frames if isinstance(frame, Mapping)
-    ]
+    raw_frame_tokens = [frame.get("sample_token") for frame in frames if isinstance(frame, Mapping)]
     if len(raw_frame_tokens) != len(frames) or any(
         not isinstance(token, str) or not token for token in raw_frame_tokens
     ):
@@ -230,12 +230,22 @@ def _sidecar_query_features(
         if len(logits) != len(depths) or len(logits) < len(predictions[token]):
             raise ValueError("Sidecar has fewer queries than the fixed proposal pool")
         probabilities = [tuple(_sigmoid(value) for value in row) for row in logits]
+        dimensions_entry = tensors.get("pred_3d_dim")
+        dimensions = None
+        if isinstance(dimensions_entry, Mapping):
+            raw_dimensions = dimensions_entry.get("values")
+            if not isinstance(raw_dimensions, list):
+                raise ValueError("Sidecar dimension values must be arrays")
+            dimensions = [_vector(row, 3, "pred_3d_dim") for row in raw_dimensions]
+            if len(dimensions) != len(logits):
+                raise ValueError("Sidecar dimension query count differs")
         assigned_queries: set[int] = set()
         for prediction_index, prediction in enumerate(predictions[token]):
             class_name = prediction.get("class_name")
             if class_name not in classes:
                 raise ValueError("Prediction class is outside the fixed taxonomy")
             score = _finite(prediction.get("score"), "score")
+            length, width, height = _vector(prediction.get("size_lwh_m"), 3, "size_lwh_m")
             candidates = []
             for query, query_probabilities in enumerate(probabilities):
                 query_score = max(query_probabilities)
@@ -244,6 +254,10 @@ def _sidecar_query_features(
                     query not in assigned_queries
                     and query_class == class_name
                     and math.isclose(score, query_score, abs_tol=1e-7, rel_tol=0.0)
+                    # The frozen decoder copies HWL to LWH without arithmetic.
+                    # Exact dimensions bind close/equal scores without labels or
+                    # assumptions about query order, top-k or discarded boxes.
+                    and (dimensions is None or dimensions[query] == (height, width, length))
                 ):
                     candidates.append(query)
             if len(candidates) != 1:
@@ -259,9 +273,7 @@ def _sidecar_query_features(
             probability_sum = sum(probabilities[query])
             normalized = [value / probability_sum for value in probabilities[query]]
             entropy = -sum(value * math.log(max(value, 1e-12)) for value in normalized)
-            length, width, height = _vector(
-                prediction.get("size_lwh_m"), 3, "size_lwh_m"
-            )
+            length, width, height = _vector(prediction.get("size_lwh_m"), 3, "size_lwh_m")
             if min(length, width, height) <= 0:
                 raise ValueError("Decoded dimensions must be positive")
             features = (
@@ -303,9 +315,7 @@ def build_training_rows(
             raise ValueError("Training pool exceeds the frozen per-frame proposal cap")
         in_domain_indices: set[int] = set()
         for index, row in enumerate(predictions[token]):
-            box, _ = parse_box(
-                row, source_index=index, classes=protocol.classes, prediction=True
-            )
+            box, _ = parse_box(row, source_index=index, classes=protocol.classes, prediction=True)
             reason = domain_reason(
                 box,
                 intrinsic=np.asarray(ground_truth[token].intrinsic),
@@ -324,9 +334,7 @@ def build_training_rows(
                 if index in in_domain_indices and row.get("class_name") == class_name
             ]
             targets = [
-                target
-                for target in ground_truth[token].eligible
-                if target.class_name == class_name
+                target for target in ground_truth[token].eligible if target.class_name == class_name
             ]
             if not prediction_indices:
                 continue
@@ -384,13 +392,10 @@ def build_training_rows(
             remaining = [
                 index
                 for index in prediction_indices
-                if (token, index) not in assignments
-                and (token, index) not in duplicate_keys
+                if (token, index) not in assignments and (token, index) not in duplicate_keys
             ]
             ignored_targets = [
-                target
-                for target in ground_truth[token].ignored
-                if target.class_name == class_name
+                target for target in ground_truth[token].ignored if target.class_name == class_name
             ]
             if remaining and ignored_targets:
                 ignored_costs = np.asarray(
@@ -522,9 +527,7 @@ def fit_quality_ranker(
     )
     target_kinds = Counter(row.target_kind for row in rows)
     masked_by_reason_and_class = Counter(
-        (row.class_name, row.mask_reason)
-        for row in rows
-        if row.target_quality is None
+        (row.class_name, row.mask_reason) for row in rows if row.target_quality is None
     )
     bundle: dict[str, object] = {
         "schema": SCHEMA,
@@ -574,9 +577,7 @@ def _validate_bundle(
     expected_provenance = set(TrainingProvenance.__dataclass_fields__)
     if not isinstance(provenance, Mapping) or set(provenance) != expected_provenance:
         raise ValueError("Quality-ranker provenance fields differ")
-    TrainingProvenance(
-        **{name: str(provenance[name]) for name in expected_provenance}
-    ).validate()
+    TrainingProvenance(**{name: str(provenance[name]) for name in expected_provenance}).validate()
     if bundle.get("protocol_sha256") != provenance.get("protocol_sha256"):
         raise ValueError("Bundle protocol differs from its training provenance")
     normalizer = bundle.get("normalizer")
@@ -645,9 +646,7 @@ def apply_quality_ranker(
 def uncertainty_control_score(classification_score: float, depth_log_variance: float) -> float:
     """Fixed scalar control, not a calibrated probability."""
     score = min(max(_finite(classification_score, "classification_score"), 1e-9), 1 - 1e-9)
-    logit = math.log(score / (1 - score)) - 0.5 * _finite(
-        depth_log_variance, "depth_log_variance"
-    )
+    logit = math.log(score / (1 - score)) - 0.5 * _finite(depth_log_variance, "depth_log_variance")
     return _sigmoid(logit)
 
 
@@ -715,9 +714,7 @@ def proposal_geometry_sha256(
             raise ValueError("Proposal pool exceeds the frozen per-frame cap")
         geometry[token] = []
         for index, row in enumerate(predictions[token]):
-            box, _ = parse_box(
-                row, source_index=index, classes=protocol.classes, prediction=True
-            )
+            box, _ = parse_box(row, source_index=index, classes=protocol.classes, prediction=True)
             value: dict[str, object] = {
                 "class_name": box.class_name,
                 "translation_m": list(box.translation_m),
@@ -725,9 +722,7 @@ def proposal_geometry_sha256(
                 "yaw_rad": box.yaw_rad,
             }
             if "velocity_mps" in row:
-                value["velocity_mps"] = list(
-                    _vector(row["velocity_mps"], 2, "velocity_mps")
-                )
+                value["velocity_mps"] = list(_vector(row["velocity_mps"], 2, "velocity_mps"))
             geometry[token].append(value)
     return _canonical_sha256(geometry)
 
@@ -755,9 +750,7 @@ def score_independent_pool_recall(
         parsed_by_token[token] = []
         frame = ground_truth[token]
         for index, row in enumerate(predictions[token]):
-            box, _ = parse_box(
-                row, source_index=index, classes=protocol.classes, prediction=True
-            )
+            box, _ = parse_box(row, source_index=index, classes=protocol.classes, prediction=True)
             reason = domain_reason(
                 box,
                 intrinsic=np.asarray(frame.intrinsic),
@@ -766,9 +759,7 @@ def score_independent_pool_recall(
                 protocol=protocol,
             )
             if reason is None:
-                parsed_by_token[token].append(
-                    (box.translation_m[0], box.translation_m[1])
-                )
+                parsed_by_token[token].append((box.translation_m[0], box.translation_m[1]))
 
     def maximum_matches(token: str, threshold: float) -> int:
         targets = ground_truth[token].eligible
@@ -781,10 +772,7 @@ def score_independent_pool_recall(
                     target_index,
                 )
                 for target_index, target in enumerate(targets)
-                if math.hypot(
-                    x - target.translation_m[0], y - target.translation_m[1]
-                )
-                < threshold
+                if math.hypot(x - target.translation_m[0], y - target.translation_m[1]) < threshold
             ]
             edges.append([row[2] for row in sorted(candidates)])
         matched_prediction_by_target: dict[int, int] = {}
@@ -815,9 +803,7 @@ def score_independent_pool_recall(
         }
     return {
         "schema": "phase_ttc_score_independent_pool_recall_v1",
-        "proposal_geometry_sha256": proposal_geometry_sha256(
-            predictions, protocol=protocol
-        ),
+        "proposal_geometry_sha256": proposal_geometry_sha256(predictions, protocol=protocol),
         "eligible_ground_truth_count": eligible_count,
         "thresholds": thresholds,
     }

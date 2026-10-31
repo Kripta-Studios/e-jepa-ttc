@@ -83,9 +83,7 @@ def _compare_nested(
         if left.shape != right.shape or left.dtype != right.dtype:
             return ([{"path": path, "reason": "shape_or_dtype"}], float("inf"), 1)
         exact = torch.equal(left, right)
-        maximum = (
-            float((left.double() - right.double()).abs().max()) if left.numel() else 0.0
-        )
+        maximum = float((left.double() - right.double()).abs().max()) if left.numel() else 0.0
         return ([] if exact else [{"path": path, "reason": "value", "max": maximum}], maximum, 1)
     if isinstance(left, dict) or isinstance(right, dict):
         if not isinstance(left, dict) or not isinstance(right, dict) or left.keys() != right.keys():
@@ -134,8 +132,8 @@ def _worker(args: argparse.Namespace) -> int:
     prereg = json.loads(args.runtime_preregistration.read_text(encoding="utf-8"))
     if checkpoint.get("schema") != "eap_detection_campaign_checkpoint_v1":
         raise ValueError("Unexpected checkpoint schema")
-    if checkpoint.get("update") != 512:
-        raise ValueError("Engineering parity is pinned to the stable update-512 checkpoint")
+    if checkpoint.get("update") != args.expected_update:
+        raise ValueError("Engineering parity checkpoint differs from the requested update")
     config = prereg["config"]
     model_config = config["model"]
     torch.set_float32_matmul_precision(config["optimization"]["matmul_precision"])
@@ -165,12 +163,16 @@ def _worker(args: argparse.Namespace) -> int:
         from e_jepa_ttc.detection.temporal_fusion import CausalTemporalFeatureFusion
 
         fusion = CausalTemporalFeatureFusion().cuda().eval()
-        adapter = TemporalDetectorAdapter(
-            model,
-            fusion,
-            producer_version="r0_update512_temporal_parity_v1",
-            maximum_history_age_us=500_000,
-        ).cuda().eval()
+        adapter = (
+            TemporalDetectorAdapter(
+                model,
+                fusion,
+                producer_version="r0_update512_temporal_parity_v1",
+                maximum_history_age_us=500_000,
+            )
+            .cuda()
+            .eval()
+        )
         fusion_before = _state_sha256(fusion.state_dict())
 
     tokens = json.loads(args.tokens.read_text(encoding="utf-8"))["sample_tokens"]
@@ -258,15 +260,15 @@ def _worker(args: argparse.Namespace) -> int:
                 )
                 execute(
                     "current_only",
-                    lambda image=image,
-                    calibration=calibration,
-                    size=size,
-                    empty_context=empty_context: adapter(
-                        image,
-                        calibration,
-                        None,
-                        size,
-                        temporal_context=empty_context,
+                    lambda image=image, calibration=calibration, size=size,
+                    empty_context=empty_context: (
+                        adapter(
+                            image,
+                            calibration,
+                            None,
+                            size,
+                            temporal_context=empty_context,
+                        )
                     ),
                     raw.sample_token,
                     prepared.calibration,
@@ -282,20 +284,19 @@ def _worker(args: argparse.Namespace) -> int:
                 histories = image.unsqueeze(1).repeat(1, 2, 1, 1, 1)
                 execute(
                     "current_repeated",
-                    lambda image=image,
-                    calibration=calibration,
-                    size=size,
-                    repeated_context=repeated_context,
-                    histories=histories: adapter(
-                        image,
-                        calibration,
-                        None,
-                        size,
-                        temporal_context=repeated_context,
-                        history_images=histories,
-                        history_ages_us=torch.zeros(1, 2, device=image.device),
-                        history_mask=torch.ones(1, 2, dtype=torch.bool, device=image.device),
-                        history_limit=2,
+                    lambda image=image, calibration=calibration, size=size,
+                    repeated_context=repeated_context, histories=histories: (
+                        adapter(
+                            image,
+                            calibration,
+                            None,
+                            size,
+                            temporal_context=repeated_context,
+                            history_images=histories,
+                            history_ages_us=torch.zeros(1, 2, device=image.device),
+                            history_mask=torch.ones(1, 2, dtype=torch.bool, device=image.device),
+                            history_limit=2,
+                        )
                     ),
                     raw.sample_token,
                     prepared.calibration,
@@ -370,8 +371,21 @@ def _orchestrate(args: argparse.Namespace) -> int:
         raise FileExistsError(args.output)
     args.output.mkdir(parents=True)
     failure_path = args.checkpoint.parent.parent / "failure.json"
-    if not failure_path.is_file():
-        raise FileNotFoundError("Failed R0 run receipt is required for scope provenance")
+    if args.completed_parent:
+        parent_receipt_path = args.checkpoint.parent.parent / "summary.json"
+        parent_receipt = json.loads(parent_receipt_path.read_text(encoding="utf-8"))
+        if (
+            parent_receipt.get("status") != "COMPLETED"
+            or args.checkpoint.name != "selected.pt"
+            or parent_receipt.get("selected_checkpoint", {}).get("sha256")
+            != sha256_file(args.checkpoint)
+        ):
+            raise ValueError("Completed parent summary does not bind the selected checkpoint")
+    else:
+        parent_receipt_path = failure_path
+        if not failure_path.is_file():
+            raise FileNotFoundError("Failed R0 run receipt is required for scope provenance")
+        parent_receipt = json.loads(failure_path.read_text(encoding="utf-8"))
     source_manifest = json.loads(args.source_manifest.read_text(encoding="utf-8"))
     if source_manifest.get("checkpoint_sha256") != sha256_file(args.checkpoint):
         raise ValueError("Temporal source manifest checkpoint differs")
@@ -398,6 +412,8 @@ def _orchestrate(args: argparse.Namespace) -> int:
             str(source_root.resolve()),
             "--checkpoint",
             str(args.checkpoint.resolve()),
+            "--expected-update",
+            str(args.expected_update),
             "--runtime-preregistration",
             str(args.runtime_preregistration.resolve()),
             "--data-root",
@@ -454,11 +470,12 @@ def _orchestrate(args: argparse.Namespace) -> int:
     report = {
         "schema": "temporal_detector_engineering_parity_v1",
         "status": status,
-        "scope": "engineering parity only; failed R0 update-512 fixture; no AP or accuracy claim",
-        "r0_failure": json.loads(failure_path.read_text(encoding="utf-8")),
-        "r0_failure_sha256": sha256_file(failure_path),
+        "scope": "engineering parity only; explicitly bound parent; no AP or accuracy claim",
+        "parent_receipt": parent_receipt,
+        "parent_receipt_sha256": sha256_file(parent_receipt_path),
+        "parent_receipt_kind": "completed" if args.completed_parent else "failure",
         "checkpoint_sha256": sha256_file(args.checkpoint),
-        "checkpoint_update": 512,
+        "checkpoint_update": args.expected_update,
         "source_manifest_sha256": sha256_file(args.source_manifest),
         "runtime_source_hashes": runtime_hashes,
         "runtime_source_hashes_sha256": canonical_sha256(runtime_hashes),
@@ -490,6 +507,8 @@ def parser() -> argparse.ArgumentParser:
     value.add_argument("--temporal-source", type=Path)
     value.add_argument("--source-manifest", type=Path)
     value.add_argument("--checkpoint", type=Path, required=True)
+    value.add_argument("--expected-update", type=int, default=512)
+    value.add_argument("--completed-parent", action="store_true")
     value.add_argument("--runtime-preregistration", type=Path, required=True)
     value.add_argument("--data-root", type=Path, required=True)
     value.add_argument("--tokens", type=Path, required=True)

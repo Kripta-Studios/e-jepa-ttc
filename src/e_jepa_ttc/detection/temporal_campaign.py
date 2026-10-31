@@ -696,6 +696,7 @@ def build_v5_temporal_campaign(
     current_labels: bool,
     full_selection_path: str | Path | None = None,
     max_label_sequences: int = 24,
+    max_open_shards: int = 2,
 ) -> TemporalCampaignDataset:
     """Build one frozen train/monitor/full population from hash-bound artifacts."""
     manifest_path = Path(manifest_path).resolve()
@@ -765,7 +766,8 @@ def build_v5_temporal_campaign(
     current_dataset_cls = EAPRGBDataset if current_labels else _LabelFreeEAPRGBDataset
     current_reader = EAPTokenReader(
         current_dataset_cls(
-            root, current_tokens, max_label_sequences=max_label_sequences
+            root, current_tokens, max_label_sequences=max_label_sequences,
+            max_open_shards=max_open_shards,
         ),
         labels_enabled=current_labels,
     )
@@ -774,6 +776,7 @@ def build_v5_temporal_campaign(
             root,
             sorted(history_tokens) or current_tokens[:1],
             max_label_sequences=max_label_sequences,
+            max_open_shards=max_open_shards,
         ),
         labels_enabled=False,
     )

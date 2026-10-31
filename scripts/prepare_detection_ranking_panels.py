@@ -29,7 +29,7 @@ from e_jepa_ttc.detection.quality_ranking import (  # noqa: E402
 
 RECIPE_SCHEMA = "phase_ttc_detection_ranking_panel_recipe_v1"
 GT_SCHEMA = "phase_ttc_detection_ground_truth_bundle_v2"
-PANELS = {"train4096": "train", "selection1024": "selection"}
+PANELS = {"train4096": "train", "selection1024": "selection", "selection_full": "selection"}
 
 
 def sha256_file(path: Path) -> str:
@@ -99,6 +99,7 @@ def create_recipe(
     output_dir: Path,
     train_count: int = 4096,
     selection_count: int = 1024,
+    selection_panel_name: str = "selection1024",
 ) -> dict[str, object]:
     """Create label-free token files and bind all future inputs without reading labels."""
     if output_dir.exists():
@@ -125,9 +126,10 @@ def create_recipe(
         raise ValueError("Campaign manifest is not bound to the supplied split")
     media_path = data_root / "data/train.parquet"
     media_sha256 = sha256_file(media_path)
-    if campaign.get("source_media_sha256") != media_sha256 or split.get(
-        "media_sha256"
-    ) != media_sha256:
+    if (
+        campaign.get("source_media_sha256") != media_sha256
+        or split.get("media_sha256") != media_sha256
+    ):
         raise ValueError("Canonical metadata differs from campaign or split")
     files = public_files.get("files")
     media_receipt = files.get("data/train.parquet") if isinstance(files, Mapping) else None
@@ -144,17 +146,17 @@ def create_recipe(
     if not isinstance(sampled, list):
         raise ValueError("Population audit lacks per-sequence image samples")
     sampled_by_sequence = {
-        row.get("sequence_id"): row.get("image_wh")
-        for row in sampled
-        if isinstance(row, Mapping)
+        row.get("sequence_id"): row.get("image_wh") for row in sampled if isinstance(row, Mapping)
     }
     roles = campaign.get("roles")
     if not isinstance(roles, Mapping):
         raise ValueError("Campaign manifest lacks roles")
-    counts = {"train4096": train_count, "selection1024": selection_count}
+    if selection_panel_name not in {"selection1024", "selection_full"}:
+        raise ValueError("Unknown selection panel name")
+    counts = {"train4096": train_count, selection_panel_name: selection_count}
     output_dir.mkdir(parents=True)
     panel_receipts: dict[str, object] = {}
-    for panel, role in PANELS.items():
+    for panel, role in {"train4096": "train", selection_panel_name: "selection"}.items():
         entry = roles.get(role)
         if not isinstance(entry, Mapping):
             raise ValueError(f"Campaign manifest lacks role {role}")
@@ -281,9 +283,7 @@ def _verify_inference(
     return cast(dict[str, list[dict[str, object]]], raw_predictions), tokens
 
 
-def _verify_pinned_file(
-    data_root: Path, relative: str, public_files: Mapping[str, object]
-) -> str:
+def _verify_pinned_file(data_root: Path, relative: str, public_files: Mapping[str, object]) -> str:
     files = public_files.get("files")
     receipt = files.get(relative) if isinstance(files, Mapping) else None
     if not isinstance(receipt, Mapping):
@@ -349,14 +349,11 @@ def build_ground_truth_bundle(
         tokens
     ):
         raise ValueError("Canonical metadata is incomplete for the panel")
-    sequence_id_by_token = {
-        str(row["sample_token"]): str(row["sequence_id"]) for row in media_rows
-    }
+    sequence_id_by_token = {str(row["sample_token"]): str(row["sequence_id"]) for row in media_rows}
     owners = _split_owners(split)
     role = str(panel["role"])
     if any(
-        row["split"] != "train" or owners.get(str(row["sequence_id"])) != role
-        for row in media_rows
+        row["split"] != "train" or owners.get(str(row["sequence_id"])) != role for row in media_rows
     ):
         raise ValueError("Canonical metadata ownership differs from the panel role")
     train_ownership = None
@@ -437,6 +434,11 @@ def main() -> int:
     plan.add_argument("--output-dir", type=Path, required=True)
     plan.add_argument("--train-count", type=int, default=4096)
     plan.add_argument("--selection-count", type=int, default=1024)
+    plan.add_argument(
+        "--selection-panel-name",
+        choices=("selection1024", "selection_full"),
+        default="selection1024",
+    )
     gt = commands.add_parser("build-gt", help="build v2 GT after label-free artifact verification")
     gt.add_argument("--recipe", type=Path, required=True)
     gt.add_argument("--panel", choices=tuple(PANELS), required=True)
@@ -460,6 +462,7 @@ def main() -> int:
                 output_dir=args.output_dir,
                 train_count=args.train_count,
                 selection_count=args.selection_count,
+                selection_panel_name=args.selection_panel_name,
             )
         else:
             build_ground_truth_bundle(
