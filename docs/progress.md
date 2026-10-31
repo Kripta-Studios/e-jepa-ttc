@@ -637,3 +637,26 @@ Provided boxes remain an oracle-input condition, Slider extrinsics remain
 provisional, and early Slider 750 predictions can still be extreme or have the
 wrong sign. Further independent acquisition is needed for a stronger external
 generalization claim. Final verification and review receipts accompany delivery.
+
+## 2026-10-31 — Canonical PAIR fixed screen completed
+
+Resumed from f1f9c8ed. The 149-query screen completed in 999.372 seconds,
+with exact original producer/context/head parity against expanded149 and
+sealed predictions before a separate target join. Compact corrected replay
+also matches the prior full-producer canonical pilot at both common queries.
+
+F0 passes the preregistered development screen: Slider MAE 1.178156→1.120809 s
+and macro relative error 83.885894→82.442047%; road improves slightly. The
+delivered router fails its strict road criteria (MAE 0.338040871→0.338051072 s),
+although it improves Slider. No new missing predictions or sign changes occur.
+The native missing Slider-500:76 and original upstream rejection are preserved.
+
+The next justified expansion is the fixed F0 intervention on all 2608 eligible
+queries, reusing the 149 captured queries. The router is not promoted. eAP full
+history conservation and the Slider-750 evaluator discrepancy remain open.
+FINAL_MODEL is unchanged. No SOTA or official-score claim is made.
+
+Results, small evidence, limitations and regeneration command:
+docs/research_log_20261031_canonical_screen149/README.md. Validation: 49 tests,
+Ruff check and Pyright pass; changed-file formatting passes, while an unchanged
+historical test has a preserved broader-format failure (see VALIDATION.md).

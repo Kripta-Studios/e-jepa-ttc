@@ -1,0 +1,33 @@
+{
+  "status": "PASS_CHANGED_SCOPE",
+  "prior_sha256": "2042429935cbfc2e55c975edaaf01dcd9821d896c26421b2ce1930ea2c4f50f4",
+  "format_command": [
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv-transfer\\Scripts\\python.exe",
+    "-m",
+    "ruff",
+    "format",
+    "--check",
+    "operational/phase_timewarp/screen.py",
+    "operational/phase_timewarp/screen_metrics.py",
+    "scripts/screen_phase_canonical_pair.py",
+    "scripts/evaluate_phase_canonical_screen.py",
+    "scripts/report_phase_canonical_screen.py",
+    "scripts/audit_phase_canonical_compact.py",
+    "tests/unit/test_phase_canonical_screen.py",
+    "tests/unit/test_phase_canonical_screen_metrics.py"
+  ],
+  "format_returncode": 0,
+  "unchanged_historical_format_failure": "tests\\unit\\test_phase_canonical_pair.py",
+  "same_as_handoff_normalized": true,
+  "reason": "Preserve historical source bytes; inherited formatting debt is outside this change. Initial broad format failure retained.",
+  "sources": {
+    "operational/phase_timewarp/screen.py": "a904d3da048748c4b971dfb8a89b015ee620c23c8dc0019d9cfc683aa3f60b32",
+    "operational/phase_timewarp/screen_metrics.py": "73d41d3f5601857ebcc547ef32f7679d4f8a326ce8a431d8ab5f25739504623f",
+    "scripts/screen_phase_canonical_pair.py": "46cae5beb9a5c974446d548c5bad8358210d883c18898af473177325771fd251",
+    "scripts/evaluate_phase_canonical_screen.py": "4e152cfe83a150ffde9097e4bff0d58c0a606eca5d5e9659ae1655a07dcce131",
+    "scripts/report_phase_canonical_screen.py": "fc9866d09bb2351082de2f15f722d4bc27a7e27fdde2d7a72789dc2538f03146",
+    "scripts/audit_phase_canonical_compact.py": "da5df0ea3f1f231cc37a2445528844e5906ba6237bbc82aaed678946f4b3e4c5",
+    "tests/unit/test_phase_canonical_screen.py": "eb6fb0e33a0d198ecce6ac93f4a31d980fde9a86ee7416f38652327e177bbeed",
+    "tests/unit/test_phase_canonical_screen_metrics.py": "ae333aadfaed50186fdf5435d87142887384362e740bad4b6cecb1d61cbc1d5f"
+  }
+}
