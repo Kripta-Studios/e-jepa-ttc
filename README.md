@@ -44,6 +44,16 @@ import namespace and `e-jepa-ttc` command remain compatible with existing script
 and checkpoints. Historical artifacts retain their original identifiers.
 See [the naming decision](docs/decisions/ADR-0042-phase-ttc-name.md).
 
+## RGB detector development candidate
+
+The [1 November detector candidate](docs/detection_sota_20261029/RELEASE_CANDIDATE_20261101.md)
+packages the completed Dfull RGB detector with a TRAIN-fitted ranking model.
+On the same 23,958 development-selection frames, local AP improves from
+0.16474566 to 0.18502078. Temporal and event screening did not pass the
+predefined promotion margin. The package has verified replay parity and a
+functional multiobject PHASE replay; these results do not establish official
+3D-detection SOTA, production readiness, or new TTC accuracy.
+
 ## Historical development notes
 
 The dated notes below preserve the status at each research checkpoint. The

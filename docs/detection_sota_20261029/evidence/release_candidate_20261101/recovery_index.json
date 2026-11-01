@@ -1,0 +1,26 @@
+{
+  "verified_at_utc": "2026-11-01T10:03:02.472441+00:00",
+  "event_last_checkpoints": {
+    "F01_events": {
+      "path": "D:\\PHASE_TTC_LOCAL_CONTINUATION_20261101\\event_local_v1\\F01_events\\checkpoints\\last.pt",
+      "sha256": "d933225f5b0e1c78d7832d92c1eaba321e82e18e1fabdda5890d6ecc7dc16335",
+      "bytes": 502826923
+    },
+    "F01_rgb_capacity": {
+      "path": "D:\\PHASE_TTC_LOCAL_CONTINUATION_20261101\\event_local_v1\\F01_rgb_capacity\\checkpoints\\last.pt",
+      "sha256": "6947611e00eb91e42fc3affb93435791207c1fab12f3e4995e76fceb0d8a1d7c",
+      "bytes": 502827115
+    },
+    "F11_events": {
+      "path": "D:\\PHASE_TTC_LOCAL_CONTINUATION_20261101\\event_local_v1\\F11_events\\checkpoints\\last.pt",
+      "sha256": "64295bc9e09ea29d9e745bd6f32765c7aedffebf868cf398145c44a8d96c7476",
+      "bytes": 503800459
+    }
+  },
+  "inference_package": "D:\\PHASE_TTC_RELEASE_20261101\\dfull-rgb-ranked-seed7",
+  "dfull_campaign": "D:/PHASE_TTC_DFULL_20261031/campaign",
+  "ranking_and_event_campaign": "D:\\PHASE_TTC_LOCAL_CONTINUATION_20261101",
+  "phase_original_weights": "D:/E_JEPA_POD2_RETURN_20261027/FINAL_CANDIDATE",
+  "cloud_required_for_current_candidate": false,
+  "scope": "Local locations and current event checkpoint byte verification; not a claim of a second off-device backup."
+}

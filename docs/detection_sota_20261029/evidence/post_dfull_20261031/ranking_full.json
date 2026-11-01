@@ -1,0 +1,48 @@
+{
+  "schema": "dfull_ranking_full_confirmation_v1",
+  "frames": 23958,
+  "results": {
+    "baseline": {
+      "AP": 0.16474566077612413,
+      "per_class": {
+        "car": 0.5832174072399121,
+        "bicycle": 0.009441925186638946,
+        "truck": 0.2584528473557953,
+        "pedestrian": 0.025972791897761326,
+        "motorcycle": 0.17660858441787536,
+        "bus": 0.18701843075858932,
+        "tricycle": 0.07715532749545881,
+        "other_vehicle": 9.797185696163359e-05
+      }
+    },
+    "scalar_uncertainty": {
+      "AP": 0.17712301116490708,
+      "per_class": {
+        "car": 0.6117452030531357,
+        "bicycle": 0.011582835805019096,
+        "truck": 0.28183036859662836,
+        "pedestrian": 0.027459483335852818,
+        "motorcycle": 0.18353521955170785,
+        "bus": 0.1931171868633993,
+        "tricycle": 0.1075822911001273,
+        "other_vehicle": 0.0001315010133860032
+      }
+    },
+    "learned": {
+      "AP": 0.1850207831690803,
+      "per_class": {
+        "car": 0.6350279429358671,
+        "bicycle": 0.011141760618908488,
+        "truck": 0.2984469531934299,
+        "pedestrian": 0.02956428897974023,
+        "motorcycle": 0.18850811581015486,
+        "bus": 0.19654586928604606,
+        "tricycle": 0.12084569670884147,
+        "other_vehicle": 8.563781965421757e-05
+      }
+    }
+  },
+  "gain": 0.020275122392956174,
+  "positive_gain": true,
+  "scope": "Exact same full development selection and TRAIN-fitted ranker; global AP, never mean of shard AP; new local hardware run"
+}

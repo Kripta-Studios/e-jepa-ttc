@@ -1,0 +1,299 @@
+{
+  "verified_at_utc": "2026-11-01T10:00:55.759470+00:00",
+  "ranking_frames": 23958,
+  "ranking_shards": [
+    {
+      "shard": "000000",
+      "frames": 512,
+      "receipt_sha256": "458a2aa470d37098781614d768179ad1d58d445064d08d313fc5a3492ff03c76",
+      "verified_files": 9
+    },
+    {
+      "shard": "000512",
+      "frames": 512,
+      "receipt_sha256": "ef840ce75bbf372b289d13e8559440a2d1d7de94a0657308fbaf88acc50562d9",
+      "verified_files": 9
+    },
+    {
+      "shard": "001024",
+      "frames": 512,
+      "receipt_sha256": "484562fa179e67b38253a7267fad42610db2d763a493a23b41d0db6340a1b7d0",
+      "verified_files": 9
+    },
+    {
+      "shard": "001536",
+      "frames": 512,
+      "receipt_sha256": "8ff54c4dc974bdc957df2ceebefd24e67ec9ea7d9e534cefba2834c68384e215",
+      "verified_files": 9
+    },
+    {
+      "shard": "002048",
+      "frames": 512,
+      "receipt_sha256": "cd9acad68f7979ee4c6163e05bda665e1d6142aa4f56d68d63d98d842d9a4787",
+      "verified_files": 9
+    },
+    {
+      "shard": "002560",
+      "frames": 512,
+      "receipt_sha256": "da115acf709185a04182499d6860ced7293b855e9c46ba7433aa3e4bde5c2dfd",
+      "verified_files": 9
+    },
+    {
+      "shard": "003072",
+      "frames": 512,
+      "receipt_sha256": "9ebfdbbe864ddb1134671e844fedda9c42b003f8a669a77746d0c8315324a7f6",
+      "verified_files": 9
+    },
+    {
+      "shard": "003584",
+      "frames": 512,
+      "receipt_sha256": "2041829347242880db35012501b688e0d03da47b380e8280e99891c4be5a899a",
+      "verified_files": 9
+    },
+    {
+      "shard": "004096",
+      "frames": 512,
+      "receipt_sha256": "5665da6d7b2821d097ae8f9b3abeea7ebe949bd2247710f5187f8de15b9c4c68",
+      "verified_files": 9
+    },
+    {
+      "shard": "004608",
+      "frames": 512,
+      "receipt_sha256": "ca99d13dd93a09ad9f4e1e838560c1e65c55ab4003d8f04f85a74a1a3a499491",
+      "verified_files": 9
+    },
+    {
+      "shard": "005120",
+      "frames": 512,
+      "receipt_sha256": "e6ef653ba7e48d2a8b01c746c7fe6c429dad2179984b413cec7aede94bac3108",
+      "verified_files": 9
+    },
+    {
+      "shard": "005632",
+      "frames": 512,
+      "receipt_sha256": "ce86cb004ec0b8dfbd70b6a59dfaf29b1a382cb1e5398ce146021f0484cad505",
+      "verified_files": 9
+    },
+    {
+      "shard": "006144",
+      "frames": 512,
+      "receipt_sha256": "2ef2c7c2eb4133aba3e13391e4100e865b5cff12e3950e5619507fdda1f73c69",
+      "verified_files": 9
+    },
+    {
+      "shard": "006656",
+      "frames": 512,
+      "receipt_sha256": "102c3314df82df812851e097efd170d6b2a37069ff5d1b55a8337fb16247e283",
+      "verified_files": 9
+    },
+    {
+      "shard": "007168",
+      "frames": 512,
+      "receipt_sha256": "47627235ff6cb51d55b7d6af84f4b05309a5f326a1d4afea5675963969332cbc",
+      "verified_files": 9
+    },
+    {
+      "shard": "007680",
+      "frames": 512,
+      "receipt_sha256": "8e8925dc5ba7239760df7aef44de097eb17119528c221ba558e0f835631ac1f7",
+      "verified_files": 9
+    },
+    {
+      "shard": "008192",
+      "frames": 512,
+      "receipt_sha256": "81759365162c9dfd42722563fe5bf7b356050c5789de3f80674fd0c17c05fe92",
+      "verified_files": 9
+    },
+    {
+      "shard": "008704",
+      "frames": 512,
+      "receipt_sha256": "bbbb93483075dd1aa85f082736d242deed75861ee9e1e4d5d03520b407808987",
+      "verified_files": 9
+    },
+    {
+      "shard": "009216",
+      "frames": 512,
+      "receipt_sha256": "cd8b2e338d5da58982106f41738269d166014d41033eb61d55389c0905e6d8cc",
+      "verified_files": 9
+    },
+    {
+      "shard": "009728",
+      "frames": 512,
+      "receipt_sha256": "2ae81f8f54e964519b5b707d880aa82cbc8d8c439c1749146c3f873e2fb79cb3",
+      "verified_files": 9
+    },
+    {
+      "shard": "010240",
+      "frames": 512,
+      "receipt_sha256": "907dc8e85e03b11fb547c1a5057bb64be87d8024327d6344b76c3b5dccd6854d",
+      "verified_files": 9
+    },
+    {
+      "shard": "010752",
+      "frames": 512,
+      "receipt_sha256": "964112c13a90b7ae273369c9dc9533c61cf71e710ae43f8c9056faa35767e729",
+      "verified_files": 9
+    },
+    {
+      "shard": "011264",
+      "frames": 512,
+      "receipt_sha256": "20ea832fc721cb448adde30f3e99da78559164a9d65527ce10cbfd4a73c9a76d",
+      "verified_files": 9
+    },
+    {
+      "shard": "011776",
+      "frames": 512,
+      "receipt_sha256": "7be4d7c494d271154c044b97615fc3355a62866aaf16987849a1f46564d56188",
+      "verified_files": 9
+    },
+    {
+      "shard": "012288",
+      "frames": 512,
+      "receipt_sha256": "c4783d2d3fd780e1e8801886b399469077bcb8daed1c88182a5aa16a9aeae47a",
+      "verified_files": 9
+    },
+    {
+      "shard": "012800",
+      "frames": 512,
+      "receipt_sha256": "fa79120961dc288581535be4e6cfb7b7f41f4682d7ad861c2937879b5398d7c8",
+      "verified_files": 9
+    },
+    {
+      "shard": "013312",
+      "frames": 512,
+      "receipt_sha256": "7171696af56ac85f2d8cd91f87ee8d8d450795df8c8e5d97c68668458b339a7b",
+      "verified_files": 9
+    },
+    {
+      "shard": "013824",
+      "frames": 512,
+      "receipt_sha256": "fef5875d9cda25d4e9e8a03df6bc575f8359d4b62d5121194dafe643e269a903",
+      "verified_files": 9
+    },
+    {
+      "shard": "014336",
+      "frames": 512,
+      "receipt_sha256": "9065a260a8322a43a213c93f5b0d201162ebbfd6f31165189a4088d11de9d3fe",
+      "verified_files": 9
+    },
+    {
+      "shard": "014848",
+      "frames": 512,
+      "receipt_sha256": "e9a491475009369c0b988242dca37650c53d9fc0c7042ec88c105048f4e5b1b0",
+      "verified_files": 9
+    },
+    {
+      "shard": "015360",
+      "frames": 512,
+      "receipt_sha256": "1fe5b51d4aabfa986785b1380b27b6b81449f7a52f735884285dcb45d3e0f485",
+      "verified_files": 9
+    },
+    {
+      "shard": "015872",
+      "frames": 512,
+      "receipt_sha256": "6477b0d0163af48a2bf256f39d920ef384c3c1d571b9048e8310686cd0e2824b",
+      "verified_files": 9
+    },
+    {
+      "shard": "016384",
+      "frames": 512,
+      "receipt_sha256": "d7332df05854f1f7e5e09a48fffb075a7aea3abe7c26a0c3cfc5dc6bbf1dd1ee",
+      "verified_files": 9
+    },
+    {
+      "shard": "016896",
+      "frames": 512,
+      "receipt_sha256": "96a9d3f4304174a9ccac9a28761e6d3c9d72f858b4f9432fa2ac7796f9fb01d5",
+      "verified_files": 9
+    },
+    {
+      "shard": "017408",
+      "frames": 512,
+      "receipt_sha256": "eae20e6f1838b22cd35bf9086456b19bd6c1cb9304525609a6d25d12835524af",
+      "verified_files": 9
+    },
+    {
+      "shard": "017920",
+      "frames": 512,
+      "receipt_sha256": "4753e8f180334360621196dc866a55f5bad1a6da536f6bb326c385bf470dbf87",
+      "verified_files": 9
+    },
+    {
+      "shard": "018432",
+      "frames": 512,
+      "receipt_sha256": "e939f799cd50b14e06be9e68e95128e1d85206ca49639b52fe3c30d26481855d",
+      "verified_files": 9
+    },
+    {
+      "shard": "018944",
+      "frames": 512,
+      "receipt_sha256": "f335f67be07e790dc584c0b9f625525bb444f266d6dc9f93c82dd16e0f968c25",
+      "verified_files": 9
+    },
+    {
+      "shard": "019456",
+      "frames": 512,
+      "receipt_sha256": "457d25c8fe7291f693fbcef1732054779e57ff88d3df69c6d67f87b6c240619a",
+      "verified_files": 9
+    },
+    {
+      "shard": "019968",
+      "frames": 512,
+      "receipt_sha256": "462d0ab076a1181a396ce5442d4d485f342a50a9f4266a9c77ddac69b8024829",
+      "verified_files": 9
+    },
+    {
+      "shard": "020480",
+      "frames": 512,
+      "receipt_sha256": "8d332ddb109ede48c31bcbe66b335bcec53626b7bd595ad828b6f325f4b28e9c",
+      "verified_files": 9
+    },
+    {
+      "shard": "020992",
+      "frames": 512,
+      "receipt_sha256": "a34f055d0f07d6091348a9e1c1c2a7e09c82440349967dd1ba9668f391b47311",
+      "verified_files": 9
+    },
+    {
+      "shard": "021504",
+      "frames": 512,
+      "receipt_sha256": "9481814fb7c581bb5ce0ea9dbd01b2e1ee91d1d1d522d221feaa16bcbe7d3c9e",
+      "verified_files": 9
+    },
+    {
+      "shard": "022016",
+      "frames": 512,
+      "receipt_sha256": "fc5395eba62e34915ae88d53a1ccb1ada5eb9f2419b92f981b784a37a6d1ae10",
+      "verified_files": 9
+    },
+    {
+      "shard": "022528",
+      "frames": 512,
+      "receipt_sha256": "132f9d7b068c821f52bfee32a07d1e754c2bbf89f47fa577d542147bd70f6d44",
+      "verified_files": 9
+    },
+    {
+      "shard": "023040",
+      "frames": 512,
+      "receipt_sha256": "c3c43838c9e9696b9bc717f074ffb22a5fae1659a69ea1cff17353bd3c482ca2",
+      "verified_files": 9
+    },
+    {
+      "shard": "023552",
+      "frames": 406,
+      "receipt_sha256": "f28b0fbc757f2c40dd2a1f8c92c7fadff38b6785f6848b031acd313905c32d80",
+      "verified_files": 9
+    }
+  ],
+  "evidence_files_verified": 9,
+  "tests": {
+    "tests": 99,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "release_manifest_sha256": "61fc1023d67cf63aec8409023ddbdc44d02041c7413c3c2f83361e69a9ab2fbc",
+  "parity_receipt_sha256": "98f7fd89ad9368f794afd7710f9c3a72e5fd82770f1ed0be5ea46e7ab3147d88",
+  "phase_receipt_sha256": "0436ee59f30a1547491449458d76ec67fdd0840b78a240edd0c10e24ea21bf26",
+  "scope": "Existing artifact integrity and functional replay; no new accuracy experiment."
+}

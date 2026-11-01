@@ -1,0 +1,31 @@
+{
+  "schema": "dfull_events_local_migration_v1",
+  "source": "RunPod CA-MTL-1 outage",
+  "parent_checkpoint_sha256": "c58c13297fd15638d89364a25b88245cd8be669ab8bfdbcb741f03df0e9215b3",
+  "cloud_F01_checkpoint_recovered": false,
+  "restart": "same selected Dfull parent; seed 7; no claim of exact interrupted-run resume",
+  "preserved": [
+    "1024 updates",
+    "batch 4",
+    "seed 7",
+    "FP32 highest",
+    "learning rate and schedule",
+    "TRAIN and selection tokens",
+    "model, optimizer and losses",
+    "event tensors and causal cutoffs"
+  ],
+  "operational_changes": {
+    "checkpoint_interval": [
+      128,
+      64
+    ],
+    "maximum_seconds": [
+      5400,
+      21600
+    ],
+    "host": "local RTX 5070 Ti Laptop; comparisons with cloud runs retain this limitation"
+  },
+  "data_root": "E:/eAP_dataset",
+  "cache_root": "D:/PHASE_TTC_EVENT_PANEL_20261031",
+  "parity_report": "D:\\PHASE_TTC_LOCAL_CONTINUATION_20261101\\event_local_v1\\base_parity\\report.json"
+}

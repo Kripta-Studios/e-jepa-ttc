@@ -1,0 +1,27 @@
+{
+  "verified_at_utc": "2026-11-01T09:49:52.779940+00:00",
+  "ranking_frames": 23958,
+  "ranking_baseline_AP": 0.16474566077612413,
+  "ranking_learned_AP": 0.1850207831690803,
+  "ranking_relative_gain_percent": 12.306923470663307,
+  "ranking_per_class_regressions": [
+    "other_vehicle"
+  ],
+  "events": {
+    "F01_events": {
+      "AP": 0.17055750129931024,
+      "gain_over_local_rgb_capacity": 0.0029925721743747358,
+      "gain_over_strongest_available_rgb_control": 0.0014532292379842437,
+      "passes_screen": false
+    },
+    "F11_events": {
+      "AP": 0.16944685441756638,
+      "gain_over_local_rgb_capacity": 0.0018819252926308705,
+      "gain_over_strongest_available_rgb_control": 0.00034258235624037847,
+      "passes_screen": false
+    }
+  },
+  "event_gain_gate": 0.005,
+  "decision": "Retain Dfull RGB with confirmed TRAIN-fitted ranking as development candidate; do not promote events from this short screen. This is not an official SOTA or production-readiness certification.",
+  "scope": "Ranking comparison uses the same 23958 frames and same local proposals; event screen uses 1024 selection frames. Cloud RGB controls carry a host difference; local RGB-capacity control does not."
+}

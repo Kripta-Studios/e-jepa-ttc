@@ -1,6 +1,11 @@
 {
   "dfull_final_model.json": "5f3146e57b42da529398de9a3fae308b4b36bd1972b9bbc74547d88d8e3d8e4d",
   "event_gpu_smoke.json": "8a545a770c360924912aaa9a80071322f54609c688aaa9a0acd292fc8e52811a",
+  "event_host_migration.json": "803972ba87c5ec5dff9582f8f9e5749ccb467be15070b47d7624ec995f0a1571",
+  "event_local_gpu_parity.json": "8cedd36f23b6970d78c39c8bf9e24af2806c9006951bb204bb824aa55dc474f9",
+  "event_screen.json": "31230d90a49485a8f59944fabf4f2f171d6efb35524acb51161a7902103cdc26",
+  "final_screen_decision.json": "083fb16eabd33d9acbfc3cde3caef75dd682496421478430577ae0263a5829a2",
+  "ranking_full.json": "cf4a1daed16001ee92263637d9726ad9838c22f86dafb6e03914aef7e10d17f1",
   "ranking_screen.json": "9cfd1f982b281110247dacde0197f65e1136af73dddd4c969f6b754d99ee6f08",
   "temporal_screen.json": "b5f7a8854e3afbff0972bbbc11a958d04594e67bfe8b39dedf4d522bf6e9abf1"
 }

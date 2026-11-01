@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "sample_count": 8,
+  "baseline_predictions_exact": true,
+  "ranked_predictions_exact": true,
+  "comparison": "packaged fresh-process CUDA inference vs completed full-selection shard",
+  "geometry_velocity_preserved": true,
+  "manifest_sha256": "61fc1023d67cf63aec8409023ddbdc44d02041c7413c3c2f83361e69a9ab2fbc"
+}

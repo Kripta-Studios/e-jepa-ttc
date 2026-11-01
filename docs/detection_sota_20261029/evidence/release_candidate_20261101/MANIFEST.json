@@ -1,0 +1,10 @@
+{
+  "inference_receipt.json": "a3ecbcc97a51a1395dd99fc2d6459867de58d1853eb9b86a202128075741f936",
+  "phase_gpu_replay.json": "0436ee59f30a1547491449458d76ec67fdd0840b78a240edd0c10e24ea21bf26",
+  "phase_summary.json": "121b0a8e3b1c631b157f6a37de0e193d213aed7f1f186d438a0ee5eb7d2c587f",
+  "recovery_index.json": "966ecf6da42af7e4e4319d0df894c9c1f53952b924d7b4b1491b7cc8d89f7e40",
+  "release_manifest.json": "61fc1023d67cf63aec8409023ddbdc44d02041c7413c3c2f83361e69a9ab2fbc",
+  "replay_parity.json": "98f7fd89ad9368f794afd7710f9c3a72e5fd82770f1ed0be5ea46e7ab3147d88",
+  "tests.xml": "d78c634e737f8ec7d8d37bc0a7e0b26596e0ecaf21b765848219c1c182e07c7b",
+  "verification.json": "a95610c4e535a44b2ce811b42e751819ba7c3486b8a998a66ddf9d9a96c636ef"
+}

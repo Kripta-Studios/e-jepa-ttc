@@ -51,7 +51,7 @@ Absolute learned-ranking gain: 0.01609216.
 Sequence-level panel AP improved in 8/8 sequences.
 Bicycle AP decreased; rare-class coverage remains a limitation. The scalar
 uncertainty control is not a calibrated probability. The monotonic control
-preserved AP exactly. Full-selection confirmation is a separate pending result.
+preserved AP exactly. Full-selection confirmation is reported separately below.
 
 ## Interpretation and continuation
 
@@ -65,8 +65,8 @@ The event-input cache is prepared locally from public TRAIN/selection streams:
 50 ms windows ending at RGB exposure end, five bins per polarity, 160x96, FP32
 with lossless compression and per-window normalization. It reads no object labels
 and performs no GPU training. HDF5 source hashes and output hashes are verified.
-S4 training, independent TTC producers, end-to-end TTC evaluation and official
-benchmark comparison remain separate gates.
+Completed S4 screening is reported below. Independent TTC producers, end-to-end
+TTC quality and official benchmark comparison remain separate gates.
 
 ## Completed temporal screen
 
@@ -88,3 +88,65 @@ GPU admission: **PASS**; optimizer updates: 0; finite gradient tensors: 386.
 Nonzero synthetic event inputs with real label-free RGB preserve the
 initial detector outputs exactly for F01 and F11. Model state is unchanged.
 This validates integration and gradients, not real-event accuracy.
+
+## Full-selection ranking confirmation
+
+Completed 23,958 frames locally. The ranker was not refitted.
+Baseline, uncertainty control and learned ranking share exactly the same local
+proposals. Global AP uses the full population, not a mean of shard APs.
+
+| Method | Full-selection AP |
+|---|---:|
+| baseline | 0.16474566 |
+| scalar_uncertainty | 0.17712301 |
+| learned | 0.18502078 |
+
+Absolute gain: 0.02027512; relative gain: 12.31%.
+
+| Class | Local baseline | Learned ranking | Delta |
+|---|---:|---:|---:|
+| car | 0.58321741 | 0.63502794 | +0.05181054 |
+| bicycle | 0.00944193 | 0.01114176 | +0.00169984 |
+| truck | 0.25845285 | 0.29844695 | +0.03999411 |
+| pedestrian | 0.02597279 | 0.02956429 | +0.00359150 |
+| motorcycle | 0.17660858 | 0.18850812 | +0.01189953 |
+| bus | 0.18701843 | 0.19654587 | +0.00952744 |
+| tricycle | 0.07715533 | 0.12084570 | +0.04369037 |
+| other_vehicle | 0.00009797 | 0.00008564 | -0.00001233 |
+
+The other_vehicle regression is retained. Its low support remains a limitation.
+The earlier cloud and local baselines differ slightly; the reported ranking
+gain compares local outputs with local outputs. Selection is development-exposed,
+not an independent holdout. One seed cannot establish between-seed variance.
+
+## Completed event screen
+
+All three local arms completed 1,024 updates, seed 7, batch four. They use the
+same 1,024-frame selection panel; these APs are not full-selection APs.
+
+| Arm | Final-update panel AP | Delta vs local RGB capacity |
+|---|---:|---:|
+| F01_events | 0.17055750 | +0.00299257 |
+| F01_rgb_capacity | 0.16756493 | +0.00000000 |
+| F11_events | 0.16944685 | +0.00188193 |
+
+Neither event arm exceeds even the local RGB-capacity control by the predefined
+0.005 AP margin. Events are not promoted from this screen. This does not
+show convergence or rule out better event recipes. Temporal F00/F10 controls were
+run on the cloud GPU, so those comparisons also carry a host difference.
+The local arms restarted from the same selected Dfull checkpoint: the interrupted
+cloud F01 checkpoint was unavailable locally. Local checkpoints include
+optimizer/RNG state. Recovery cadence changed from 128 to 64 updates, and the
+wall-time ceiling was extended. Recipe, batch and populations were retained.
+
+## Candidate decision and remaining boundaries
+
+Package the frozen Dfull RGB detector with its fixed TRAIN-fitted learned ranker.
+Preserve baseline, temporal and event artifacts, including negative results.
+The candidate has no added event/history input and does not change 3D geometry or
+velocity. Its scores express relative detection ranking, not calibrated risk.
+Official scorer access, independent final audit, calibration, further seeds and
+independent detection–tracking–TTC quality are not satisfied by this delivery.
+The frozen TRAIN40 PHASE runtime remains previously exposed to these sequences.
+Do not describe this campaign as official SOTA, eight-class production readiness,
+or completion of all S0–S6 research gates.

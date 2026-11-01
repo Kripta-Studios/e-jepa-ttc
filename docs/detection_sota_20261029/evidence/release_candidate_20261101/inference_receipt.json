@@ -1,0 +1,15 @@
+{
+  "status": "COMPLETE",
+  "sample_count": 8,
+  "labels_read": false,
+  "manifest_sha256": "61fc1023d67cf63aec8409023ddbdc44d02041c7413c3c2f83361e69a9ab2fbc",
+  "elapsed_seconds_including_startup": 13.071223699997063,
+  "python": "3.11.15",
+  "host": "DESKTOP-2N393IP",
+  "files": {
+    "tokens.json": "f4d957c18a358eb99f4d60418c3c88b1c5310e1eb985c27bb784a7f61aa63321",
+    "baseline.json": "1d0b296626810e39f9239e4fb458bbb59f3910bda380cd3b6af4ec84b8b371cc",
+    "diagnostics.json": "6542e74636296453633f0af3fcfd11efbe9671c8544855d2ede6e28887d2cfd5",
+    "predictions.json": "95e8a5baf2c418b4060118c28406de6e677b4b6daa84124779454bd3b4223e4e"
+  }
+}

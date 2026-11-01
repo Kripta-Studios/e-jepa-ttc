@@ -1,0 +1,47 @@
+{
+  "arms": {
+    "F01_events": {
+      "AP": 0.17055750129931024,
+      "checkpoint_sha256": "d933225f5b0e1c78d7832d92c1eaba321e82e18e1fabdda5890d6ecc7dc16335",
+      "per_class": {
+        "car": 0.5830170580182954,
+        "bicycle": 0.008138396257208138,
+        "truck": 0.2650674026085956,
+        "pedestrian": 0.031849302645120606,
+        "motorcycle": 0.18114434488026565,
+        "bus": 0.2072211158240438,
+        "tricycle": 0.08775971083179536,
+        "other_vehicle": 0.00026267932915740536
+      }
+    },
+    "F01_rgb_capacity": {
+      "AP": 0.1675649291249355,
+      "checkpoint_sha256": "6947611e00eb91e42fc3affb93435791207c1fab12f3e4995e76fceb0d8a1d7c",
+      "per_class": {
+        "car": 0.5796267353087479,
+        "bicycle": 0.004785478547854784,
+        "truck": 0.2656672851790697,
+        "pedestrian": 0.03181610395422828,
+        "motorcycle": 0.1837949323944354,
+        "bus": 0.1901718676962189,
+        "tricycle": 0.08437843063042869,
+        "other_vehicle": 0.00027859928850027877
+      }
+    },
+    "F11_events": {
+      "AP": 0.16944685441756638,
+      "checkpoint_sha256": "64295bc9e09ea29d9e745bd6f32765c7aedffebf868cf398145c44a8d96c7476",
+      "per_class": {
+        "car": 0.5839886304809787,
+        "bicycle": 0.005239997683978924,
+        "truck": 0.26973358746313403,
+        "pedestrian": 0.03547512871965077,
+        "motorcycle": 0.18367828161038552,
+        "bus": 0.19455832607121407,
+        "tricycle": 0.0826096777200418,
+        "other_vehicle": 0.00029120559114734993
+      }
+    }
+  },
+  "scope": "single-seed local development screen; compare against saved RGB controls with explicit host difference; no SOTA/TTC claim"
+}

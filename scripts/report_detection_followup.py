@@ -74,7 +74,7 @@ def main() -> None:
             f"{len(baseline['by_sequence'])} sequences.",
             "Bicycle AP decreased; rare-class coverage remains a limitation. The scalar",
             "uncertainty control is not a calibrated probability. The monotonic control",
-            "preserved AP exactly. Full-selection confirmation is a separate pending result.",
+            "preserved AP exactly. Full-selection confirmation is reported separately below.",
             "",
             "## Interpretation and continuation",
             "",
@@ -89,8 +89,8 @@ def main() -> None:
             "50 ms windows ending at RGB exposure end, five bins per polarity, 160x96, FP32",
             "with lossless compression and per-window normalization. It reads no object labels",
             "and performs no GPU training. HDF5 source hashes and output hashes are verified.",
-            "S4 training, independent TTC producers, end-to-end TTC evaluation and official",
-            "benchmark comparison remain separate gates.",
+            "Completed S4 screening is reported below. Independent TTC producers, end-to-end",
+            "TTC quality and official benchmark comparison remain separate gates.",
             "",
         ]
     )
@@ -129,8 +129,92 @@ def main() -> None:
                 "",
             ]
         )
+    full_path = args.evidence / "ranking_full.json"
+    if full_path.exists():
+        full = json.loads(full_path.read_text(encoding="utf-8"))
+        base_ap = full["results"]["baseline"]["AP"]
+        rows.extend(
+            [
+                "## Full-selection ranking confirmation",
+                "",
+                f"Completed {full['frames']:,} frames locally. The ranker was not refitted.",
+                "Baseline, uncertainty control and learned ranking share exactly the same local",
+                "proposals. Global AP uses the full population, not a mean of shard APs.",
+                "",
+                "| Method | Full-selection AP |",
+                "|---|---:|",
+            ]
+        )
+        for name, result in full["results"].items():
+            rows.append(f"| {name} | {result['AP']:.8f} |")
+        rows.extend(
+            [
+                "",
+                f"Absolute gain: {full['gain']:.8f}; relative gain: "
+                f"{100 * full['gain'] / base_ap:.2f}%.",
+                "",
+                "| Class | Local baseline | Learned ranking | Delta |",
+                "|---|---:|---:|---:|",
+            ]
+        )
+        for name, value in full["results"]["baseline"]["per_class"].items():
+            learned_ap = full["results"]["learned"]["per_class"][name]
+            rows.append(f"| {name} | {value:.8f} | {learned_ap:.8f} | {learned_ap - value:+.8f} |")
+        rows.extend(
+            [
+                "",
+                "The other_vehicle regression is retained. Its low support remains a limitation.",
+                "The earlier cloud and local baselines differ slightly; the reported ranking",
+                "gain compares local outputs with local outputs. Selection is development-exposed,",
+                "not an independent holdout. One seed cannot establish between-seed variance.",
+                "",
+            ]
+        )
+    event_path = args.evidence / "event_screen.json"
+    if event_path.exists():
+        events = json.loads(event_path.read_text(encoding="utf-8"))
+        capacity = events["arms"]["F01_rgb_capacity"]["AP"]
+        rows.extend(
+            [
+                "## Completed event screen",
+                "",
+                "All three local arms completed 1,024 updates, seed 7, batch four. They use the",
+                "same 1,024-frame selection panel; these APs are not full-selection APs.",
+                "",
+                "| Arm | Final-update panel AP | Delta vs local RGB capacity |",
+                "|---|---:|---:|",
+            ]
+        )
+        for name, result in events["arms"].items():
+            rows.append(f"| {name} | {result['AP']:.8f} | {result['AP'] - capacity:+.8f} |")
+        rows.extend(
+            [
+                "",
+                "Neither event arm exceeds even the local RGB-capacity control by the predefined",
+                "0.005 AP margin. Events are not promoted from this screen. This does not",
+                "show convergence or rule out better event recipes. Temporal F00/F10 controls were",
+                "run on the cloud GPU, so those comparisons also carry a host difference.",
+                "The local arms restarted from the same selected Dfull checkpoint: the interrupted",
+                "cloud F01 checkpoint was unavailable locally. Local checkpoints include",
+                "optimizer/RNG state. Recovery cadence changed from 128 to 64 updates, and the",
+                "wall-time ceiling was extended. Recipe, batch and populations were retained.",
+                "",
+                "## Candidate decision and remaining boundaries",
+                "",
+                "Package the frozen Dfull RGB detector with its fixed TRAIN-fitted learned ranker.",
+                "Preserve baseline, temporal and event artifacts, including negative results.",
+                "The candidate has no added event/history input and does not change 3D geometry or",
+                "velocity. Its scores express relative detection ranking, not calibrated risk.",
+                "Official scorer access, independent final audit, calibration, further seeds and",
+                "independent detection–tracking–TTC quality are not satisfied by this delivery.",
+                "The frozen TRAIN40 PHASE runtime remains previously exposed to these sequences.",
+                "Do not describe this campaign as official SOTA, eight-class production readiness,",
+                "or completion of all S0–S6 research gates.",
+                "",
+            ]
+        )
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text("\n".join(rows), encoding="utf-8")
+    args.output.write_bytes("\n".join(rows).encode("utf-8"))
 
 
 if __name__ == "__main__":

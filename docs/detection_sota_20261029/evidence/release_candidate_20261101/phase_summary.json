@@ -1,0 +1,95 @@
+{
+  "status": "EXECUTED_DEVELOPMENT_EXPOSED",
+  "scope": "development_exposed_label_free_integration_no_accuracy_claim",
+  "frame_count": 8,
+  "sensor_span_us": 700010,
+  "targets_read": false,
+  "phase_bounds": "native_phase_bounds_preserved",
+  "cuda_resources": {
+    "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "device_total_bytes": 12820480000,
+    "peak_torch_allocated_bytes": 4336928256,
+    "peak_torch_reserved_bytes": 4389339136,
+    "execution_wall_seconds_including_model_load_and_media_read": 2.4878766999972868,
+    "max_objects": 8,
+    "logical_max_objects": 8,
+    "rgb_object_chunk_size": 1
+  },
+  "source_receipt_sha256": "0436ee59f30a1547491449458d76ec67fdd0840b78a240edd0c10e24ea21bf26",
+  "packet_ingested_count": 1,
+  "detections": [
+    {
+      "detection_id": "2Y46OkK3ff:000000258_000148581:2",
+      "class_name": "car",
+      "track_id": "track_000002",
+      "generation": 2,
+      "ttc_status": "available",
+      "ttc_reason": "",
+      "ttc_signed_s": 12.946146011352539,
+      "point_phase": 0.007754294201731682,
+      "phase_q10": -0.016487112268805504,
+      "phase_q90": 0.04511476308107376
+    },
+    {
+      "detection_id": "2Y46OkK3ff:000000258_000148581:3",
+      "class_name": "car",
+      "track_id": "track_000006",
+      "generation": 6,
+      "ttc_status": "available",
+      "ttc_reason": "",
+      "ttc_signed_s": 9.286887168884277,
+      "point_phase": 0.010826263576745987,
+      "phase_q10": -0.003235066309571266,
+      "phase_q90": 0.04421798512339592
+    },
+    {
+      "detection_id": "2Y46OkK3ff:000000258_000148581:0",
+      "class_name": "car",
+      "track_id": "track_000001",
+      "generation": 1,
+      "ttc_status": "available",
+      "ttc_reason": "",
+      "ttc_signed_s": 3.2044222354888916,
+      "point_phase": 0.03170418366789818,
+      "phase_q10": 0.01202254556119442,
+      "phase_q90": 0.06348209828138351
+    },
+    {
+      "detection_id": "2Y46OkK3ff:000000258_000148581:1",
+      "class_name": "truck",
+      "track_id": "track_000003",
+      "generation": 3,
+      "ttc_status": "available",
+      "ttc_reason": "",
+      "ttc_signed_s": 4.525786876678467,
+      "point_phase": 0.02234336920082569,
+      "phase_q10": 0.0049014706164598465,
+      "phase_q90": 0.054478395730257034
+    },
+    {
+      "detection_id": "2Y46OkK3ff:000000258_000148581:4",
+      "class_name": "car",
+      "track_id": "track_000007",
+      "generation": 7,
+      "ttc_status": "available",
+      "ttc_reason": "",
+      "ttc_signed_s": 2.71264386177063,
+      "point_phase": 0.037561070173978806,
+      "phase_q10": 0.021204078570008278,
+      "phase_q90": 0.07038335502147675
+    },
+    {
+      "detection_id": "2Y46OkK3ff:000000258_000148581:5",
+      "class_name": "car",
+      "track_id": "track_000011",
+      "generation": 11,
+      "ttc_status": "unavailable",
+      "ttc_reason": "track_not_confirmed",
+      "ttc_signed_s": null,
+      "point_phase": null,
+      "phase_q10": null,
+      "phase_q90": null
+    }
+  ],
+  "generalization_claim": false
+}
