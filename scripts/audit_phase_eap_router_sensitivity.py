@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import subprocess
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -15,7 +16,7 @@ from operational.phase_adapt_cache import atomic_receipt
 from operational.phase_campaign.data import read
 from operational.phase_startup.geometry import startup_geometry
 from operational.phase_submission.runtime import load_submission_model
-from scripts.build_phase_native_context_augmentations import native_vector, verify_artifacts
+from scripts.build_phase_native_context_augmentations import native_vector
 from scripts.build_phase_safe_test12_audit import query_history
 
 PLAN = Path("docs/research_log_canonical_population2608/EAP_ROUTER_SENSITIVITY_PROTOCOL.md")
@@ -27,7 +28,17 @@ def verified_parent(root: Path, required: set[str]) -> dict:
     names = {name.replace("\\", "/") for name in receipt["artifacts"]}
     if receipt["status"] != "COMPLETE" or (root / "FAILED.json").exists() or not required <= names:
         raise ValueError("Require a completed parent with all required artifacts")
-    verify_artifacts(root, receipt["artifacts"])
+    resolved_root = root.resolve(strict=True)
+
+    def verify_one(item: tuple[str, str]) -> None:
+        relative, digest = item
+        path = (resolved_root / relative).resolve(strict=True)
+        if not path.is_relative_to(resolved_root) or file_sha(path) != digest:
+            raise ValueError(f"Changed or escaping artifact: {relative}")
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        for _ in executor.map(verify_one, receipt["artifacts"].items()):
+            pass
     return receipt
 
 
@@ -149,6 +160,7 @@ def main() -> None:
         "router_device": "cpu",
         "native_phase_conversion_device": "cuda",
         "batch_size": 1,
+        "parent_verification_workers": 8,
         "targets_read": False,
         "optimizer_updates": 0,
         "promotion_admitted": False,

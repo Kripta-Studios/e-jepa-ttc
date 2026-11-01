@@ -60,6 +60,17 @@ def test_failed_parent_is_never_admitted(tmp_path):
         verified_parent(tmp_path, set())
 
 
+def test_parent_artifact_cannot_escape_its_root(tmp_path):
+    root = tmp_path / "run"
+    root.mkdir()
+    outside = tmp_path / "outside.txt"
+    outside.write_text("unchanged")
+    complete = {"status": "COMPLETE", "artifacts": {"../outside.txt": file_sha(outside)}}
+    (root / "COMPLETE.json").write_text(json.dumps(complete))
+    with pytest.raises(ValueError, match="escaping artifact"):
+        verified_parent(root, set())
+
+
 @pytest.mark.parametrize("old,new", [([], []), ([1], [1, 2]), ([[1]], [[1]])])
 def test_invalid_prediction_alignment_is_rejected(old, new):
     with pytest.raises(ValueError):

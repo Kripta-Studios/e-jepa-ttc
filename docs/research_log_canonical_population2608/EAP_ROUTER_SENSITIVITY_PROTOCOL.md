@@ -36,6 +36,10 @@ Actualización operativa previa a ejecutarlo: la captura v1 fue interrumpida.
 Consumir su recuperación v2 completa. Esperar también el fin del coordinador
 de latencia concurrente para no introducir carga de este diagnóstico en sus
 mediciones. No se modifica el control ni el criterio científico del protocolo.
+La verificación de padres usa ocho workers de lectura: cada ruta se resuelve
+y debe permanecer dentro de su raíz, y todos los hashes siguen siendo obligatorios.
+No se paraleliza la inferencia ni se omite ningún artefacto. Esta optimización se
+aplica después de terminar el reajuste del router, que conserva su snapshot anterior.
 
 Validación previa: ocho pruebas de cobertura, signos, ausencias, igualdad exacta
 de F0 y rechazo de padres incompletos/alterados; Ruff check/format y Pyright
