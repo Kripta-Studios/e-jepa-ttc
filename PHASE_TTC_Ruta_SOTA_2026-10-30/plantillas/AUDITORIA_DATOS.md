@@ -33,7 +33,7 @@ Estados: `clear`, `exposed`, `unresolved`. Anotar modalidades, supervisión y us
 - [ ] Excluidas grabaciones completas, otras cámaras, alias y derivados.
 - [ ] Registradas relaciones de adquisición no resueltas.
 
-**Qué demuestra la comprobación:** PENDIENTE.  
+**Qué demuestra la comprobación:** PENDIENTE.\
 **Qué no demuestra:** PENDIENTE.
 
 ## 3. Historial y roles
@@ -48,8 +48,8 @@ Estados: `clear`, `exposed`, `unresolved`. Anotar modalidades, supervisión y us
 - [ ] Reparto fijado sin mirar scores de candidatos.
 - [ ] Normalización y reglas aprendidas limitadas al ajuste autorizado.
 
-**Grupos elegibles y soporte por dominio:** PENDIENTE.  
-**Grupos realmente nuevos para confirmación:** PENDIENTE.  
+**Grupos elegibles y soporte por dominio:** PENDIENTE.\
+**Grupos realmente nuevos para confirmación:** PENDIENTE.\
 **Qué afirmaciones no permiten estos datos:** PENDIENTE.
 
 ## 4. Contrato de target y cobertura
@@ -69,10 +69,10 @@ Estados: `clear`, `exposed`, `unresolved`. Anotar modalidades, supervisión y us
 
 ## 5. Slider y datos adicionales
 
-**Colección independiente disponible y procedencia:** PENDIENTE.  
-**Acceso confirmado o solo propuesto:** PENDIENTE.  
-**Sesiones, sensores, calibración y referencia:** PENDIENTE.  
-**Separación desarrollo/reserva:** PENDIENTE.  
+**Colección independiente disponible y procedencia:** PENDIENTE.\
+**Acceso confirmado o solo propuesto:** PENDIENTE.\
+**Sesiones, sensores, calibración y referencia:** PENDIENTE.\
+**Separación desarrollo/reserva:** PENDIENTE.\
 **Si no existe:** hipótesis que pueden probarse con fixtures y afirmaciones que quedan pendientes.
 
 ## 6. Decisión
@@ -82,8 +82,8 @@ Estados: `clear`, `exposed`, `unresolved`. Anotar modalidades, supervisión y us
 - [ ] Existe confirmación independiente suficiente para la afirmación propuesta.
 - [ ] Hay límites pendientes; están descritos sin convertirlos en certificados.
 
-**Decisión y motivo:** PENDIENTE.  
-**Siguiente acción concreta:** PENDIENTE.  
+**Decisión y motivo:** PENDIENTE.\
+**Siguiente acción concreta:** PENDIENTE.\
 **Hashes de artefactos y revisión:** PENDIENTE.
 
 Guía: [03 — Protocolo y datos](../03_PROTOCOLO_Y_DATOS.md).

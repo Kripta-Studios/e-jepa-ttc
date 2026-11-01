@@ -78,7 +78,7 @@ def test_input_validation_is_not_a_physical_phase_domain_rejection():
     from operational.phase_timewarp.canonical_pair import CanonicalPhaseDomainError
 
     wrapper = CanonicalPair(RecordingPair())
-    values = batch([.1], [.1])
+    values = batch([0.1], [0.1])
     values.features[0, 128] = -1
     with pytest.raises(ValueError) as error:
         wrapper(values)

@@ -1,7 +1,7 @@
 # PHASE-TTC: plan de continuación hacia un resultado competitivo y una evaluación SOTA defendible
 
-**Fecha de revisión:** 29 de octubre de 2026.  
-**Alcance de esta entrega:** planificación, inspección de código y fuentes, y auditoría CPU de metadatos/recibos. No se ha entrenado, ejecutado inferencia GPU, enviado una submission ni publicado cambios.  
+**Fecha de revisión:** 29 de octubre de 2026.\
+**Alcance de esta entrega:** planificación, inspección de código y fuentes, y auditoría CPU de metadatos/recibos. No se ha entrenado, ejecutado inferencia GPU, enviado una submission ni publicado cambios.\
 **Base del plan:** `dev/eap-detection-local-20261029`, commit **`24b8f36f6e4aa17c965f9526d8cf486b512a8046`**. Incluye los resultados incorporados en `5c9fc73062f109f808be732a4a10d6f26a91afee`; el piloto se ejecutó sobre `3ebac039e56e3e5af98e0e3302084f00923235a1` y su snapshot de fuentes. `origin/main` inspeccionado: `f2903f0bfd47d7bf56358a94ad5fac0b8a8906ef`. No confundir estos tres estados.
 
 Se trabajó en un worktree aislado, rama local `analysis/eap-sota-20261029`, sin modificar archivos del repositorio. Este documento es una continuación separada: preserva los informes, pesos y resultados históricos, el artículo y el namespace `e_jepa_ttc`.

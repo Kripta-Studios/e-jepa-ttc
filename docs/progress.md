@@ -968,3 +968,16 @@ protect the received research documents and executed-source/evidence snapshots.
 Repository-wide Ruff lint passes; global format check still reports two unchanged,
 previously tracked files (report_phase_producer_timewarp.py and
 test_phase_canonical_pair.py). No full-suite or remote-CI success is claimed.
+
+2026-11-01 main-readiness fixes authorized after the integration audit: formatted
+the two files blocking CI, with identical Python ASTs before/after. Prior bytes
+remain available at df8530f8 and executed experiment receipts are unchanged.
+All 3172 checked Python files now pass Ruff format; repository-wide Ruff lint
+passes. Twenty Markdown hard breaks in three planning documents now use the
+backslash syntax rather than trailing spaces; diff whitespace checks pass.
+The README now distinguishes the original TRAIN40 system, the experimental
+adapted router and rejected canonical interventions, and points to the corrected
+434-target audit. Its 423-target report remains explicitly historical. The
+author's supplied student status and the renamed local attachment are recorded.
+The full test suite and remote CI are being rechecked; these formatting and
+documentation fixes do not assert model promotion or new scientific results.

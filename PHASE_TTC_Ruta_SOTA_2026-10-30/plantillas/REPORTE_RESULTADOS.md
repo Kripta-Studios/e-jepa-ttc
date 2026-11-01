@@ -15,9 +15,9 @@
 | Qué test o scores se conocían al diseñar el cambio | PENDIENTE |
 | Uso autorizado de datos y modalidades | PENDIENTE |
 
-**Pregunta prefijada:** PENDIENTE.  
-**Modificación realizada:** PENDIENTE.  
-**Criterio de selección y margen práctico fijado previamente:** PENDIENTE.  
+**Pregunta prefijada:** PENDIENTE.\
+**Modificación realizada:** PENDIENTE.\
+**Criterio de selección y margen práctico fijado previamente:** PENDIENTE.\
 **Desviaciones respecto al protocolo y cuándo ocurrieron:** PENDIENTE.
 
 ## 2. Población y cobertura
@@ -66,16 +66,16 @@ No equiparar kernels, adaptador offline, replay y adquisición-a-respuesta. Indi
 - [ ] Regresiones por dominio/seguridad visibles.
 - [ ] No se eligió semilla ni parámetro por la reserva.
 
-**Qué hipótesis refuta o apoya el resultado:** PENDIENTE.  
+**Qué hipótesis refuta o apoya el resultado:** PENDIENTE.\
 **Qué explicaciones alternativas siguen abiertas:** PENDIENTE.
 
 ## 6. Decisión y afirmación permitida
 
-**Decisión:** promover / rechazar / inconcluso / fallo técnico.  
-**Motivo cuantitativo y práctico:** PENDIENTE.  
-**Estado de la reserva después de este análisis:** PENDIENTE.  
-**Frase exacta que permite afirmar la evidencia:** PENDIENTE.  
-**Limitaciones y siguiente experimento:** PENDIENTE.  
+**Decisión:** promover / rechazar / inconcluso / fallo técnico.\
+**Motivo cuantitativo y práctico:** PENDIENTE.\
+**Estado de la reserva después de este análisis:** PENDIENTE.\
+**Frase exacta que permite afirmar la evidencia:** PENDIENTE.\
+**Limitaciones y siguiente experimento:** PENDIENTE.\
 **Recibo de revisión y enlaces a artefactos:** PENDIENTE.
 
 Guías: [04 — Evaluador](../04_EVALUADOR_Y_BASELINES.md) y [10 — Confirmación](../10_CONFIRMACION_ESTADISTICA_Y_SOTA.md).

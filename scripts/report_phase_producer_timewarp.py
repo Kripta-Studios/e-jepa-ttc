@@ -46,9 +46,7 @@ def main() -> None:
     evidence.mkdir(parents=True, exist_ok=True)
     for name in ("COMPLETE", "FREEZE", "PREFLIGHT"):
         source = args.pilot / f"{name}.json"
-        (evidence / f"{name.lower()}.json").write_bytes(
-            source.read_bytes().replace(b"\r\n", b"\n")
-        )
+        (evidence / f"{name.lower()}.json").write_bytes(source.read_bytes().replace(b"\r\n", b"\n"))
     verification = {
         "status": "PASS",
         "complete_sha256": file_sha(args.pilot / "COMPLETE.json"),
@@ -66,7 +64,8 @@ def main() -> None:
     }
     (evidence / "verification.json").write_text(
         json.dumps(verification, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8", newline="\n",
+        encoding="utf-8",
+        newline="\n",
     )
     lines = [
         "# PHASE-TTC: diagnóstico temporal de productores y fusión",
@@ -146,12 +145,14 @@ def main() -> None:
                 ]
                 changes = [
                     row["pair_log_ratio_max_abs_difference"]
-                    for row in values if "pair_log_ratio_max_abs_difference" in row
+                    for row in values
+                    if "pair_log_ratio_max_abs_difference" in row
                 ]
                 valid_changes = [v for v in changes if v is not None and math.isfinite(v)]
                 change = (
                     f"{max(valid_changes):.6g} ({len(valid_changes)}/{len(changes)})"
-                    if valid_changes else "no definido/no aplica"
+                    if valid_changes
+                    else "no definido/no aplica"
                 )
                 lines.append(
                     f"| {name} | {factor['speed']} | {stage} | {interval(inverse)} | "
