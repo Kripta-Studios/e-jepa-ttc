@@ -54,6 +54,13 @@ predefined promotion margin. The package has verified replay parity and a
 functional multiobject PHASE replay; these results do not establish official
 3D-detection SOTA, production readiness, or new TTC accuracy.
 
+The [first official eAP detection result](docs/detection_sota_20261029/evidence/official_benchmark_20261101/ANALYSIS.md),
+returned on 1 November 2026, reports **mAP 0.05129508** and **eAP score 0.13980148**
+on all 35,940 test frames. Four classes have zero official AP. The returned
+configuration applies minimum recall/precision of 0.1; the local development
+protocol and population differ. The development AP above is not an estimate of
+this official test score or evidence of eight-class production readiness.
+
 ## Historical development notes
 
 The dated notes below preserve the status at each research checkpoint. The

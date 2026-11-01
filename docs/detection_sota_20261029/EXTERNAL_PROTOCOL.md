@@ -2,6 +2,14 @@
 
 Comprobación del 29-10-2026. Se conserva sin modificar el plan recibido.
 
+Actualización del 01-11-2026: el usuario aportó los resultados del primer envío
+oficial aceptado, con mAP 0,05129508 sobre 35.940 frames. El
+[informe reproducible](evidence/official_benchmark_20261101/ANALYSIS.md) conserva
+la configuración y las curvas agregadas devueltas. Su aritmética se reconstruye
+exactamente, incluidos min_recall/min_precision=0,1. Esto amplía el contrato
+conocido; no proporciona los bytes del matching privado ni etiquetas test.
+Los estados de acceso del 29 de octubre que siguen son históricos.
+
 ## Reconciliación pública v2
 
 La [auditoría reproducible](evidence/external_protocol_v2/README.md) consultó 13

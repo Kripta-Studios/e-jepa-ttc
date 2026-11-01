@@ -78,8 +78,11 @@ además del replay real de paridad y la verificación de inputs públicos.
 El estado terminal y el hash del ZIP se consultan en el recibo de la ejecución,
 no se infieren de esta documentación.
 
-La AP 0,18502078 corresponde exclusivamente a selección de desarrollo. La
-puntuación oficial permanece desconocida hasta evaluar el envío en CodaBench.
+La AP 0,18502078 corresponde exclusivamente a selección de desarrollo. El
+primer resultado oficial posterior fue **mAP 0,05129508** y **eAP score 0,13980148**.
+El [análisis del scoring devuelto](evidence/official_benchmark_20261101/ANALYSIS.md)
+documenta la aceptación de los 35.940 frames, el desglose por clase y las
+diferencias de población y métrica. No convierte la AP local en una cifra oficial.
 
 ## Recuperación de una imagen truncada en el release público
 

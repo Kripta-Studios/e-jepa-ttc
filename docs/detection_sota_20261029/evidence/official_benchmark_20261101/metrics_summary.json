@@ -1,0 +1,193 @@
+{
+  "label_aps": {
+    "car": {
+      "0.5": 0.09454617760082915,
+      "1.0": 0.2549078181440823,
+      "2.0": 0.42477688293511745,
+      "4.0": 0.5152370940988027
+    },
+    "bicycle": {
+      "0.5": 0.0,
+      "1.0": 0.0,
+      "2.0": 0.0,
+      "4.0": 0.0
+    },
+    "truck": {
+      "0.5": 0.0,
+      "1.0": 0.0,
+      "2.0": 0.0013113052743372988,
+      "4.0": 0.03932892872122118
+    },
+    "pedestrian": {
+      "0.5": 0.0,
+      "1.0": 0.0,
+      "2.0": 0.0,
+      "4.0": 0.0
+    },
+    "motorcycle": {
+      "0.5": 0.0,
+      "1.0": 0.0041740029215005464,
+      "2.0": 0.050292753179311124,
+      "4.0": 0.1420743779750352
+    },
+    "bus": {
+      "0.5": 0.0,
+      "1.0": 0.0,
+      "2.0": 0.006250246425774882,
+      "4.0": 0.10854298791256595
+    },
+    "tricycle": {
+      "0.5": 0.0,
+      "1.0": 0.0,
+      "2.0": 0.0,
+      "4.0": 0.0
+    },
+    "other_vehicle": {
+      "0.5": 0.0,
+      "1.0": 0.0,
+      "2.0": 0.0,
+      "4.0": 0.0
+    }
+  },
+  "mean_dist_aps": {
+    "car": 0.3223669931947079,
+    "bicycle": 0.0,
+    "truck": 0.01016005849888962,
+    "pedestrian": 0.0,
+    "motorcycle": 0.049135283518961716,
+    "bus": 0.028698308584585205,
+    "tricycle": 0.0,
+    "other_vehicle": 0.0
+  },
+  "mean_ap": 0.051295080474643054,
+  "label_tp_errors": {
+    "car": {
+      "trans_err": 0.5065522726931169,
+      "scale_err": 0.06866740702928638,
+      "orient_err": 0.2594257115213344
+    },
+    "bicycle": {
+      "trans_err": 1.0,
+      "scale_err": 1.0,
+      "orient_err": 1.0
+    },
+    "truck": {
+      "trans_err": 0.8885338901824497,
+      "scale_err": 0.16735998031158988,
+      "orient_err": 0.22073132171476312
+    },
+    "pedestrian": {
+      "trans_err": 1.0,
+      "scale_err": 1.0,
+      "orient_err": 1.0
+    },
+    "motorcycle": {
+      "trans_err": 0.877642393163862,
+      "scale_err": 0.14108395170906063,
+      "orient_err": 0.5937643341197305
+    },
+    "bus": {
+      "trans_err": 1.148416187487285,
+      "scale_err": 0.18035578223529808,
+      "orient_err": 0.05197500588043167
+    },
+    "tricycle": {
+      "trans_err": 1.0,
+      "scale_err": 1.0,
+      "orient_err": 1.0
+    },
+    "other_vehicle": {
+      "trans_err": 1.0,
+      "scale_err": 1.0,
+      "orient_err": 1.0
+    }
+  },
+  "tp_errors": {
+    "trans_err": 0.9276430929408391,
+    "scale_err": 0.5696833901606544,
+    "orient_err": 0.6407370466545325
+  },
+  "tp_scores": {
+    "trans_err": 0.07235690705916087,
+    "scale_err": 0.4303166098393456,
+    "orient_err": 0.35926295334546754
+  },
+  "eap_score": 0.13980148407714865,
+  "eval_time": 140.86121487617493,
+  "gt_count_by_class": {
+    "car": 126744,
+    "bicycle": 603,
+    "truck": 37230,
+    "pedestrian": 8428,
+    "motorcycle": 15266,
+    "bus": 4768,
+    "tricycle": 1174,
+    "other_vehicle": 522
+  },
+  "cfg": {
+    "class_names": [
+      "car",
+      "bicycle",
+      "truck",
+      "pedestrian",
+      "motorcycle",
+      "bus",
+      "tricycle",
+      "other_vehicle"
+    ],
+    "dist_fcn": "center_distance",
+    "dist_ths": [
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "dist_th_tp": 2.0,
+    "min_recall": 0.1,
+    "min_precision": 0.1,
+    "max_boxes_per_sample": 500,
+    "mean_ap_weight": 5.0,
+    "tp_metrics": [
+      "trans_err",
+      "scale_err",
+      "orient_err"
+    ],
+    "available_tp_metrics": [
+      "trans_err",
+      "scale_err",
+      "orient_err",
+      "vel_err"
+    ],
+    "velocity_evaluated": false
+  },
+  "meta": {
+    "format": "eap_native_detection_result"
+  },
+  "gt_meta": {
+    "benchmark": "eAP_detection",
+    "format": "eap_native_detection_result",
+    "schema_version": "1.0",
+    "classes": [
+      "car",
+      "bicycle",
+      "truck",
+      "pedestrian",
+      "motorcycle",
+      "bus",
+      "tricycle",
+      "other_vehicle"
+    ],
+    "fields": [
+      "class_name",
+      "translation_m",
+      "size_lwh_m",
+      "yaw_rad",
+      "velocity_mps",
+      "score"
+    ],
+    "private_ground_truth": true
+  },
+  "num_samples": 35940,
+  "num_gt_boxes": 194735,
+  "num_pred_boxes": 1796950
+}
