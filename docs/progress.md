@@ -981,3 +981,12 @@ adapted router and rejected canonical interventions, and points to the corrected
 author's supplied student status and the renamed local attachment are recorded.
 The full test suite and remote CI are being rechecked; these formatting and
 documentation fixes do not assert model promotion or new scientific results.
+
+2026-11-01 CI verification: GitHub Actions run 41301252628 on a26b3222 completed
+successfully on Ubuntu, including dependency installation, global Ruff lint and
+format, both Pyright invocations, PowerShell syntax, the complete pytest suite,
+wheel build and both CLI entry points. The main-integration audit now records
+that its identified blockers are resolved in this run. Scientific limitations
+and unchanged experimental-model status remain explicit. The historical source
+bytes of both formatted Python files match their df8530f8 Git objects exactly;
+the local FORMAT_PARITY receipt records before/after hashes and AST equality.

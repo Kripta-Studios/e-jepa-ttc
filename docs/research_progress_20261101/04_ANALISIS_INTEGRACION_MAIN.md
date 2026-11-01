@@ -1,5 +1,16 @@
 # EvTTC: análisis de integración en main
 
+**Actualización posterior a la revisión:** el usuario autorizó corregir los
+bloqueos. El commit `a26b3222` corrige los dos archivos de formato sin cambiar
+sus AST, elimina los espacios finales de los planes conservando sus saltos de
+línea y actualiza el README con los 434 targets y las identidades de los modelos.
+La [CI completa de ese commit](https://github.com/Kripta-Studios/phase-ttc/actions/runs/41301252628)
+terminó en verde: instalación, lint, formato, tipos, PowerShell, suite completa,
+build y ambas CLI. Los bloqueos técnicos identificados abajo están resueltos
+en esa ejecución Linux. La integración puede revisarse mediante PR; esto no
+promueve el modelo ni resuelve los límites científicos. El análisis siguiente
+se conserva como registro del estado previo y debe leerse con esta actualización.
+
 Fecha de inspección: 1 de noviembre de 2026. Referencias obtenidas tras
 `git fetch origin`:
 
