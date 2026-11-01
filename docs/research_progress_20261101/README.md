@@ -1,5 +1,12 @@
 # Continuación de los tres requisitos científicos
 
+Documentación de conjunto solicitada tras publicar los experimentos:
+
+- [01: trabajo realizado](01_TRABAJO_REALIZADO.md): continuación desde el handoff,
+  implementación, ejecuciones, recuperación, controles y publicaciones.
+- [02: resultados y pendientes](02_RESULTADOS_Y_PENDIENTES.md): cifras verificadas,
+  logros, resultados negativos y requisitos que faltan para aprobar un modelo.
+
 El [informe v1](v1/README.md) registra experimentos terminados, no el cumplimiento
 del objetivo SOTA. No hay nueva versión aprobada ni evaluación oficial Test12.
 La investigación requiere acceso a esa evaluación y aclaración del protocolo
