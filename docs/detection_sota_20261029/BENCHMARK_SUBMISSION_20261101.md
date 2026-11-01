@@ -80,3 +80,41 @@ no se infieren de esta documentación.
 
 La AP 0,18502078 corresponde exclusivamente a selección de desarrollo. La
 puntuación oficial permanece desconocida hasta evaluar el envío en CodaBench.
+
+## Recuperación de una imagen truncada en el release público
+
+La ejecución inicial se detuvo al decodificar
+`kafYzX6kJ4:000000581_000291402` (posición 23.978, índice desde cero), después
+de guardar 23.808 frames en 93 bloques completos. El PNG tiene 720.896 bytes;
+su último chunk IDAT declara 8.192 bytes pero solo quedan 7.107. El TAR local
+conserva exactamente el SHA-256 oficial: el defecto está en el archivo publicado.
+Una revisión con el mismo decoder estricto de los 12.132 frames restantes
+identificó exclusivamente ese PNG como no decodificable.
+
+La recuperación conserva el directorio original y usa
+`D:/PHASE_TTC_SUBMISSION_20261101/test_recovery_v2`, con:
+
+```text
+--resume-from ORIGINAL_OUTPUT --decode-failures REMAINING_IMAGE_DECODE_AUDIT.json
+```
+
+La nueva admisión vincula explícitamente el hash de la admisión original.
+Reutiliza únicamente bloques completos cuyos hashes y tokens coinciden, y
+comprueba que población, medios, pesos, ranker, política de scores y batch siguen
+idénticos. No se reescriben los recibos anteriores ni se repite su inferencia.
+`REUSED_CHUNKS.json` enumera los bloques importados.
+
+Solo el PNG del audit, ligado por hash y vuelto a comprobar con PIL estricto,
+produce una abstención explícita: lista vacía de detecciones para ese token.
+No se habilita la carga global de imágenes truncadas, no se rellenan píxeles
+y no se utiliza otro frame como sustituto. Una imagen válida o bytes distintos
+no pueden activar esa excepción. El baseline y el sidecar conservan solo los
+frames realmente observados; `input_failures.json` registra la indisponibilidad
+y el exportador devuelve la cobertura completa con la lista vacía correspondiente.
+
+La recuperación pasa 19 pruebas y vuelve a reproducir exactamente las predicciones
+baseline y ranked en los ocho frames de paridad. Los fallos posteriores se marcan
+como `FAILED` en el estado, evitando que un recibo antiguo parezca trabajo activo.
+Los detalles están en [la evidencia de recuperación](evidence/benchmark_recovery_20261101/MANIFEST.json).
+`CURRENT_RUN.json`, fuera del repositorio, identifica la ejecución vigente;
+el finalizador copia el ZIP validado a Descargas cuando termina, sin enviarlo.

@@ -1,0 +1,14 @@
+{
+  "checked_frames": 12132,
+  "errors": [
+    {
+      "token": "kafYzX6kJ4:000000581_000291402",
+      "shard": "data/test/kafYzX6kJ4/rgb_shards/rgb-00000.tar",
+      "member": "rgb/000000581_000291402.png",
+      "bytes": 720896,
+      "sha256": "da891c5397ed6acc0f933298686aee56f209a474db268f30d25b63b60051101c",
+      "error": "image file is truncated"
+    }
+  ],
+  "elapsed_s": 34.57318870000017
+}

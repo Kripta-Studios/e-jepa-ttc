@@ -10,6 +10,7 @@ import argparse
 import gc
 import hashlib
 import importlib.util
+import io
 import json
 import math
 import os
@@ -44,6 +45,49 @@ CLASSES = (
     "other_vehicle",
 )
 FIELDS = ("class_name", "translation_m", "size_lwh_m", "yaw_rad", "velocity_mps", "score")
+PARENT_ADAPTER_SHA256 = "6574b4814c57bf2265996fdcb9eed424e4228e96028970294ed0bcbecfd8c67e"
+RESUME_BINDINGS = (
+    "split",
+    "sample_tokens",
+    "media_sha256",
+    "template_sha256",
+    "release_manifest_sha256",
+    "release_wrapper_sha256",
+    "chunk_size",
+    "batch_size",
+    "prefetch_frames",
+    "score_policy",
+    "targets_read",
+    "optimizer_updates",
+    "rgb_shards",
+)
+
+
+def validate_resume_parent(parent: dict[str, Any], current: dict[str, Any]) -> None:
+    """Admit unchanged completed v1 chunks under an explicit recovery receipt."""
+    if parent.get("adapter_sha256") != PARENT_ADAPTER_SHA256:
+        raise ValueError("Unsupported parent adapter for this recovery")
+    for name in RESUME_BINDINGS:
+        if name not in parent or parent[name] != current.get(name):
+            raise ValueError(f"Recovery would change the parent contract: {name}")
+
+
+def confirm_unavailable_image(raw: bytes, failure: dict[str, Any]) -> None:
+    """Abstain only on exact pre-audited bytes that still fail strict PNG decoding."""
+    from PIL import Image
+
+    if hashlib.sha256(raw).hexdigest() != failure.get("sha256"):
+        raise ValueError("Unavailable image bytes differ from the audit")
+    if failure.get("error") != "image file is truncated":
+        raise ValueError("Only verified truncated images are admitted for abstention")
+    try:
+        with Image.open(io.BytesIO(raw)) as decoded:
+            decoded.load()
+    except OSError as error:
+        if str(error) != failure["error"]:
+            raise ValueError("Image failure differs from the audit") from error
+    else:
+        raise ValueError("Audited unavailable image now decodes successfully")
 
 
 def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -168,6 +212,29 @@ def admit(args: argparse.Namespace) -> tuple[dict[str, Any], list[str], dict[str
             for s in shards
         },
     }
+    failures = {}
+    if args.decode_failures is not None:
+        audit = json.loads(args.decode_failures.read_text(encoding="utf-8"))
+        for failure in audit["errors"]:
+            token = failure["token"]
+            if token not in tokens or token in failures:
+                raise ValueError("Unavailable-image audit has unexpected or duplicate tokens")
+            row = next(r for r in rows if r["sample_token"] == token)
+            if (
+                failure["shard"] != row["rgb_shard_path"]
+                or failure["member"] != row["rgb_member_path"]
+            ):
+                raise ValueError("Unavailable-image identity differs from test metadata")
+            failures[token] = failure
+    plan["unavailable_inputs"] = failures
+    plan["unavailable_input_policy"] = "verified truncated image -> explicit empty predictions"
+    if args.resume_from is not None:
+        if args.resume_from.resolve() == args.output.resolve():
+            raise ValueError("Recovery must preserve the original run directory")
+        parent_path = args.resume_from / "ADMISSION.json"
+        parent = json.loads(parent_path.read_text(encoding="utf-8"))
+        validate_resume_parent(parent, plan)
+        plan["parent_admission_sha256"] = digest(parent_path)
     args.output.mkdir(parents=True, exist_ok=True)
     path = args.output / "ADMISSION.json"
     if path.exists():
@@ -229,7 +296,8 @@ def seal_submission(output: Path, folders: list[Path], tokens: list[str]) -> Non
             observed = payload_hash.hexdigest()
         if observed != digest(destination):
             raise ValueError("ZIP payload differs from validated JSON")
-    split = json.loads((output / "ADMISSION.json").read_text())["split"]
+    admission = json.loads((output / "ADMISSION.json").read_text())
+    split = admission["split"]
     write_json_bytes(
         output / "SUBMISSION_RECEIPT.json",
         {
@@ -240,6 +308,7 @@ def seal_submission(output: Path, folders: list[Path], tokens: list[str]) -> Non
             "frames": len(seen),
             "boxes": boxes,
             "empty_frames": empty,
+            "input_unavailable_frames": len(admission.get("unavailable_inputs", {})),
             "submission_json_sha256": observed,
             "submission_zip_sha256": digest(zip_path),
             "zip_bytes": zip_path.stat().st_size,
@@ -254,6 +323,8 @@ def run(args: argparse.Namespace) -> None:
     """Restore once, infer bounded chunks, rank in fresh processes, and seal output."""
     manifest, tokens, media_rows = admit(args)
     admission_sha = digest(args.output / "ADMISSION.json")
+    admission = json.loads((args.output / "ADMISSION.json").read_text(encoding="utf-8"))
+    unavailable_inputs = admission["unavailable_inputs"]
     checkpoint_path = args.release / manifest["checkpoint"]
     loader_path = checkpoint_path.parent.parent / "code/scripts/infer_detection_campaign.py"
     spec = importlib.util.spec_from_file_location("_frozen_benchmark_verifier", loader_path)
@@ -331,23 +402,43 @@ def run(args: argparse.Namespace) -> None:
             stream.write(json.dumps(value) + "\n")
 
     status(0, "INFERENCE")
+    reused = []
     for offset in range(0, len(tokens), args.chunk_size):
         part = tokens[offset : offset + args.chunk_size]
         folder = args.output / "chunks" / f"{offset:06d}"
+        expected_admission = admission_sha
+        if args.resume_from is not None and not (folder / "COMPLETE.json").exists():
+            parent_folder = args.resume_from / "chunks" / f"{offset:06d}"
+            if (parent_folder / "COMPLETE.json").exists():
+                if any(t in unavailable_inputs for t in part):
+                    raise ValueError(
+                        "An unavailable image appears in previously completed inference"
+                    )
+                folder = parent_folder
+                expected_admission = admission["parent_admission_sha256"]
+                reused.append(
+                    {
+                        "offset": offset,
+                        "frames": len(part),
+                        "receipt_sha256": digest(folder / "COMPLETE.json"),
+                    }
+                )
         folders.append(folder)
         if (folder / "COMPLETE.json").exists():
             receipt = json.loads((folder / "COMPLETE.json").read_text())
-            if receipt["admission_sha256"] != admission_sha or receipt["tokens"] != part:
+            if receipt["admission_sha256"] != expected_admission or receipt["tokens"] != part:
                 raise ValueError("Completed chunk belongs to another admission")
             for name, expected in receipt["files"].items():
                 if digest(folder / name) != expected:
                     raise ValueError("Changed completed chunk")
             status(offset + len(part), "INFERENCE")
             continue
+        atomic_json(args.output / "REUSED_CHUNKS.json", reused)
         folder.mkdir(parents=True, exist_ok=True)
         predictions: dict[str, Any] = {}
         frames: list[dict[str, Any]] = []
         members: dict[str, str] = {}
+        failures: dict[str, Any] = {}
         with (
             LabelFreeMedia(part) as dataset,
             torch.no_grad(),
@@ -355,6 +446,16 @@ def run(args: argparse.Namespace) -> None:
         ):
 
             def prepare(index: int) -> tuple[Any, Any]:
+                token = dataset.sample_tokens[index]
+                if token in unavailable_inputs:
+                    failure = unavailable_inputs[token]
+                    shard = dataset._shard(failure["shard"])
+                    stream = shard.extractfile(failure["member"])
+                    if stream is None:
+                        raise ValueError("Audited unavailable image member disappeared")
+                    with stream:
+                        confirm_unavailable_image(stream.read(), failure)
+                    return None, failure
                 raw = dataset[index]
                 return raw, prepare_sample(
                     raw,
@@ -368,6 +469,10 @@ def run(args: argparse.Namespace) -> None:
                 raw, prepared = pending.result()
                 if index + 1 < len(dataset):
                     pending = pool.submit(prepare, index + 1)
+                if raw is None:
+                    failures[part[index]] = prepared
+                    processed += 1
+                    continue
                 if raw.annotations:
                     raise ValueError("Label-free adapter returned annotations")
                 loader.verify_input_member(raw.sample_token, raw.member_sha256, ledger, members)
@@ -424,6 +529,17 @@ def run(args: argparse.Namespace) -> None:
                 stdout=log,
                 stderr=subprocess.STDOUT,
             )
+        if failures:
+            ranked_path = folder / "predictions.json"
+            ranked = json.loads(ranked_path.read_text(encoding="utf-8"))
+            ranked["observed_sample_count"] = ranked["sample_count"]
+            ranked["sample_count"] = len(part)
+            ranked["unavailable_inputs"] = failures
+            ranked["predictions"] = {
+                token: [] if token in failures else ranked["predictions"][token] for token in part
+            }
+            write_json_bytes(ranked_path, ranked)
+        write_json_bytes(folder / "input_failures.json", failures)
         write_json_bytes(
             folder / "COMPLETE.json",
             {
@@ -431,7 +547,12 @@ def run(args: argparse.Namespace) -> None:
                 "tokens": part,
                 "files": {
                     name: digest(folder / name)
-                    for name in ("baseline.json", "diagnostics.json", "predictions.json")
+                    for name in (
+                        "baseline.json",
+                        "diagnostics.json",
+                        "predictions.json",
+                        "input_failures.json",
+                    )
                 },
             },
         )
@@ -451,6 +572,8 @@ def main() -> None:
     parser.add_argument("--data-root", type=Path)
     parser.add_argument("--template", type=Path)
     parser.add_argument("--tokens", type=Path)
+    parser.add_argument("--resume-from", type=Path)
+    parser.add_argument("--decode-failures", type=Path)
     parser.add_argument("--split", choices=("test", "train"), default="test")
     parser.add_argument("--chunk-size", type=int, default=256)
     parser.add_argument("--cpu-threads", type=int, default=2)
@@ -466,7 +589,20 @@ def main() -> None:
         parser.error("Require data-root, chunk-size 1..512 and cpu-threads 1..16")
     os.environ["OMP_NUM_THREADS"] = str(args.cpu_threads)
     os.environ["MKL_NUM_THREADS"] = str(args.cpu_threads)
-    run(args)
+    try:
+        run(args)
+    except Exception as error:
+        status_path = args.output / "STATUS.json"
+        if status_path.exists():
+            status = json.loads(status_path.read_text(encoding="utf-8"))
+            status.update(
+                state="FAILED",
+                error_type=type(error).__name__,
+                error=str(error),
+                updated_at_utc=datetime.now(UTC).isoformat(),
+            )
+            atomic_json(status_path, status)
+        raise
 
 
 if __name__ == "__main__":

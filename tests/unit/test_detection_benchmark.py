@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import io
 import json
 import math
 import zipfile
@@ -7,10 +9,12 @@ import zipfile
 import pytest
 
 from scripts.infer_detection_benchmark import (
+    confirm_unavailable_image,
     native_box,
     read_template,
     seal_submission,
     validate_media_rows,
+    validate_resume_parent,
 )
 from scripts.infer_detection_release import digest, write_json_bytes
 
@@ -114,3 +118,55 @@ def test_zip_sealing_preserves_empty_frames_and_exact_coverage(tmp_path):
     (chunk / "predictions.json").write_text("{}")
     with pytest.raises(ValueError, match="Changed"):
         seal_submission(tmp_path, [chunk], ["s:1", "s:2"])
+
+
+def test_abstention_requires_exact_failed_bytes_and_actual_decoder_failure():
+    import random
+
+    from PIL import Image
+
+    stream = io.BytesIO()
+    Image.new("RGB", (16, 16), "red").save(stream, format="PNG")
+    valid = stream.getvalue()
+    record = {"sha256": hashlib.sha256(valid).hexdigest(), "error": "image file is truncated"}
+    with pytest.raises(ValueError, match="decodes"):
+        confirm_unavailable_image(valid, record)
+    with pytest.raises(ValueError, match="bytes"):
+        confirm_unavailable_image(valid[:-15], record)
+    noise = io.BytesIO()
+    Image.frombytes("RGB", (128, 128), random.Random(7).randbytes(128 * 128 * 3)).save(
+        noise, format="PNG"
+    )
+    truncated = noise.getvalue()[:-256]
+    confirm_unavailable_image(
+        truncated,
+        {
+            "sha256": hashlib.sha256(truncated).hexdigest(),
+            "error": "image file is truncated",
+        },
+    )
+    broken = b"not an image"
+    try:
+        Image.open(io.BytesIO(broken)).load()
+    except OSError as error:
+        reason = str(error)
+    # The benchmark recovery admits only the reproducible truncated PNG error.
+    with pytest.raises(ValueError):
+        confirm_unavailable_image(
+            broken, {"sha256": hashlib.sha256(broken).hexdigest(), "error": reason}
+        )
+
+
+def test_parent_migration_rejects_changed_model_population_or_scoring():
+    from scripts.infer_detection_benchmark import PARENT_ADAPTER_SHA256, RESUME_BINDINGS
+
+    parent = {key: "fixed" for key in RESUME_BINDINGS}
+    parent["adapter_sha256"] = PARENT_ADAPTER_SHA256
+    current = dict(parent)
+    current["adapter_sha256"] = "new_adapter"
+    validate_resume_parent(parent, current)
+    for key in RESUME_BINDINGS:
+        changed = dict(current)
+        changed[key] = "changed"
+        with pytest.raises(ValueError):
+            validate_resume_parent(parent, changed)

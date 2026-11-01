@@ -1,0 +1,30 @@
+{
+  "tar_hash_matches_official": true,
+  "tar_sha256": "c5f42f85073409fac6ed27e1da5a1d903912d5944d92e5619413dfe98539ecb5",
+  "failure": {
+    "index": 23978,
+    "token": "kafYzX6kJ4:000000581_000291402",
+    "shard": "data/test/kafYzX6kJ4/rgb_shards/rgb-00000.tar",
+    "member": "rgb/000000581_000291402.png",
+    "bytes": 720896,
+    "sha256": "da891c5397ed6acc0f933298686aee56f209a474db268f30d25b63b60051101c",
+    "error": "image file is truncated"
+  },
+  "png_chunks_tail": [
+    {
+      "tag": "IDAT",
+      "declared_bytes": 8192,
+      "available_bytes": 8192
+    },
+    {
+      "tag": "IDAT",
+      "declared_bytes": 8192,
+      "available_bytes": 8192
+    },
+    {
+      "tag": "IDAT",
+      "declared_bytes": 8192,
+      "available_bytes": 7107
+    }
+  ]
+}

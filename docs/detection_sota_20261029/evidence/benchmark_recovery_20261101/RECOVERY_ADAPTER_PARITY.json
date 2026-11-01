@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "frames": 8,
+  "baseline_exact": true,
+  "ranked_exact": true,
+  "adapter_sha256": "7c04e4f49a042e8446e9481f67b50bd6fd81f22db0515999d0f5abb037248231",
+  "scope": "Recovery adapter preserves frozen producer outputs for valid images."
+}
