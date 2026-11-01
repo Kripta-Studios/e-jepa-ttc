@@ -6,6 +6,10 @@ Documentación de conjunto solicitada tras publicar los experimentos:
   implementación, ejecuciones, recuperación, controles y publicaciones.
 - [02: resultados y pendientes](02_RESULTADOS_Y_PENDIENTES.md): cifras verificadas,
   logros, resultados negativos y requisitos que faltan para aprobar un modelo.
+- [03: entrega adaptada y comparación](03_ENTREGA_ADAPTADA_Y_COMPARACION.md):
+  identidad del ZIP, modelos utilizados, correo y comparación con el original.
+- [04: análisis de integración en main](04_ANALISIS_INTEGRACION_MAIN.md):
+  historial, CI, documentación pendiente y condiciones para integrar la investigación.
 
 El [informe v1](v1/README.md) registra experimentos terminados, no el cumplimiento
 del objetivo SOTA. No hay nueva versión aprobada ni evaluación oficial Test12.
