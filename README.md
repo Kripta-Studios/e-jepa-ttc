@@ -68,6 +68,11 @@ AP/TP configuration with reference matching. On the same 23,958 frames, mAP is
 preserves the historical results; equivalence to the private scorer is unverified.
 No new training or inference was needed.
 
+For continuation, read the [eAP state and artifact handoff](docs/detection_sota_20261029/ESTADO_RESULTADOS_Y_ARTEFACTOS_EAP_20261101.md)
+and the [research plan with a ready-to-use Codex prompt](docs/detection_sota_20261029/PLAN_INVESTIGACION_Y_PROMPT_CODEX_EAP_20261101.md).
+The plan separates completed evidence from proposed experiments and starts with
+geometry, target coverage and proposal diagnostics before further long training.
+
 ## Historical development notes
 
 The dated notes below preserve the status at each research checkpoint. The
