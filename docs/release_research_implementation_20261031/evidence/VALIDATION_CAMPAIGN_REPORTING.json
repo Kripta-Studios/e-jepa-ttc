@@ -1,0 +1,10 @@
+{
+  "sources": {
+    "scripts/report_release_research_campaign.py": "e05cf0ab98cd88d5500c4f1b04d3abc4ec0365f44751d02fe3f33083a0726d6d",
+    "scripts/finish_release_research.py": "f786edd78a68d79c02a2ad0c99686912d1df4b007dbd3839270a62d2685605bc"
+  },
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "pyright": "0 errors",
+  "scope": "static checks; real report still waits for native sensitivity and latency"
+}

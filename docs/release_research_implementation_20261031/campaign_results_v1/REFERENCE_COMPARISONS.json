@@ -1,0 +1,42 @@
+{
+  "activity": {
+    "acquisitions": 24,
+    "ci95": [
+      -88.7004822920064,
+      27.10349312267338
+    ],
+    "delta_macro_mse": -39.80131845758759,
+    "resamples": 2000,
+    "seed": 7
+  },
+  "permuted": {
+    "acquisitions": 24,
+    "ci95": [
+      -84.56412070076489,
+      -0.04389766736511059
+    ],
+    "delta_macro_mse": -49.3596745024694,
+    "resamples": 2000,
+    "seed": 7
+  },
+  "physical": {
+    "acquisitions": 24,
+    "ci95": [
+      -83.93149591787848,
+      -0.2561229282542121
+    ],
+    "delta_macro_mse": -48.991272858152605,
+    "resamples": 2000,
+    "seed": 7
+  },
+  "texture": {
+    "acquisitions": 24,
+    "ci95": [
+      -83.98933139583518,
+      2.105499440121994
+    ],
+    "delta_macro_mse": -48.0870108658006,
+    "resamples": 2000,
+    "seed": 7
+  }
+}

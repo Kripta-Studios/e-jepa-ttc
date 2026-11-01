@@ -1,0 +1,10 @@
+{
+  "cadence_development_gate": true,
+  "independent_confirmation": false,
+  "latency_complete": true,
+  "learned_conditional_families_trained": false,
+  "native_local_sensitivity_complete": true,
+  "official_promotion_admitted": false,
+  "official_score_conservation_demonstrated": false,
+  "release_modified": false
+}

@@ -1,0 +1,24 @@
+{
+  "config": {
+    "experiment_id": "full-native-parity-distribution-v1",
+    "optimizer_updates": 0,
+    "scope": "descriptive platform drift; no accuracy metric",
+    "targets_read": false
+  },
+  "git_commit": "80e3441c6c20c2bad9a49fd6af5fe67391f764f9",
+  "host": "DESKTOP-2N393IP",
+  "input_paths": {
+    "parent": "output\\release_research_20261031\\native_platform_followup_v2\\original_replay\\COMPLETE.json",
+    "parity": "output\\release_research_20261031\\native_platform_followup_v2\\original_replay\\ORIGINAL_PARITY.json",
+    "source:scripts/release_native_parity_distribution.py": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\release_native_parity_distribution.py"
+  },
+  "inputs": {
+    "parent": "df918622febb10d56e892affe948d94e306a74305cbcf2544850cf61a53ff821",
+    "parity": "032931360d1cb02af5dc57f545ee0e830db85ae254d26ffb7da2d04f92c0263a",
+    "source:scripts/release_native_parity_distribution.py": "90d6718bc6a4c9535c4d91a9295ac507f0fff3f0ee568a88ab271f20e9a2442a"
+  },
+  "python_version": "3.11.15",
+  "schema": "release_research_v1",
+  "scope": "development or mechanism only; never official promotion",
+  "start_time": "2026-11-01T00:31:54.117504+00:00"
+}

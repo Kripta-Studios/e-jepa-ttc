@@ -1,0 +1,380 @@
+{
+  "crop_invariance_max_error": 0.0,
+  "observability": {
+    "aperture_ambiguous": {
+      "estimable": false,
+      "median_absolute_residual": 1.1102230246251565e-16,
+      "null_leakage": 0.7071067811865475,
+      "q": null,
+      "rank": 1,
+      "sensitivity": null
+    },
+    "rank2_q_identifiable": {
+      "estimable": true,
+      "median_absolute_residual": 0.0,
+      "null_leakage": 0.0,
+      "q": 0.4,
+      "rank": 2,
+      "sensitivity": 0.7071067811865476
+    }
+  },
+  "photometric_S0": [
+    {
+      "estimate": {
+        "accepted": 62,
+        "endpoint_tolerance": 0.01,
+        "light": 0.0010967741935483772,
+        "max_absolute_residual": 0.009651731953570344,
+        "q": -0.49270214519563194,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 1789,
+      "light_true": 0.0,
+      "q_true": -0.5,
+      "threshold": 0.01
+    },
+    {
+      "estimate": {
+        "accepted": 60,
+        "endpoint_tolerance": 0.03,
+        "light": -0.0009999999999999102,
+        "max_absolute_residual": 0.023669338218456695,
+        "q": -0.4795112205175178,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 575,
+      "light_true": 0.0,
+      "q_true": -0.5,
+      "threshold": 0.03
+    },
+    {
+      "estimate": {
+        "accepted": 63,
+        "endpoint_tolerance": 0.01,
+        "light": 0.2975020027092044,
+        "max_absolute_residual": 0.008320357568255596,
+        "q": -0.4930145065044261,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 1834,
+      "light_true": 0.3,
+      "q_true": -0.5,
+      "threshold": 0.01
+    },
+    {
+      "estimate": {
+        "accepted": 61,
+        "endpoint_tolerance": 0.03,
+        "light": 0.2908517649206341,
+        "max_absolute_residual": 0.020080749016953114,
+        "q": -0.480812872017585,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 591,
+      "light_true": 0.3,
+      "q_true": -0.5,
+      "threshold": 0.03
+    },
+    {
+      "estimate": {
+        "accepted": 0,
+        "light": null,
+        "q": null,
+        "reason": "unidentifiable"
+      },
+      "events": 0,
+      "light_true": 0.0,
+      "q_true": 0.0,
+      "threshold": 0.01
+    },
+    {
+      "estimate": {
+        "accepted": 0,
+        "light": null,
+        "q": null,
+        "reason": "unidentifiable"
+      },
+      "events": 0,
+      "light_true": 0.0,
+      "q_true": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "estimate": {
+        "accepted": 64,
+        "endpoint_tolerance": 0.01,
+        "light": 0.29999999999999993,
+        "max_absolute_residual": 2.7755575615628914e-17,
+        "q": 1.183217191014507e-17,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 960,
+      "light_true": 0.3,
+      "q_true": 0.0,
+      "threshold": 0.01
+    },
+    {
+      "estimate": {
+        "accepted": 64,
+        "endpoint_tolerance": 0.03,
+        "light": 0.29999999999999993,
+        "max_absolute_residual": 2.7755575615628914e-17,
+        "q": 1.183217191014507e-17,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 320,
+      "light_true": 0.3,
+      "q_true": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "estimate": {
+        "accepted": 62,
+        "endpoint_tolerance": 0.01,
+        "light": 0.0010967741935482226,
+        "max_absolute_residual": 0.009651731953570324,
+        "q": 0.49270214519563194,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 1789,
+      "light_true": 0.0,
+      "q_true": 0.5,
+      "threshold": 0.01
+    },
+    {
+      "estimate": {
+        "accepted": 60,
+        "endpoint_tolerance": 0.03,
+        "light": -0.0010000000000000165,
+        "max_absolute_residual": 0.023669338218456668,
+        "q": 0.47951122051751793,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 575,
+      "light_true": 0.0,
+      "q_true": 0.5,
+      "threshold": 0.03
+    },
+    {
+      "estimate": {
+        "accepted": 63,
+        "endpoint_tolerance": 0.01,
+        "light": 0.29750200270920435,
+        "max_absolute_residual": 0.008320357568255624,
+        "q": 0.4930145065044261,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 1834,
+      "light_true": 0.3,
+      "q_true": 0.5,
+      "threshold": 0.01
+    },
+    {
+      "estimate": {
+        "accepted": 61,
+        "endpoint_tolerance": 0.03,
+        "light": 0.29085176492063364,
+        "max_absolute_residual": 0.020080749016953336,
+        "q": 0.4808128720175848,
+        "reason": "known_texture_development_fixture",
+        "required": 64
+      },
+      "events": 591,
+      "light_true": 0.3,
+      "q_true": 0.5,
+      "threshold": 0.03
+    }
+  ],
+  "scope": "synthetic mathematical mechanisms only, not model improvement",
+  "surface_expansion": [
+    0.09531017980432493,
+    -0.10536051565782628,
+    null
+  ],
+  "trajectories": [
+    {
+      "alpha": 0.5,
+      "equivariance_error": 0.0,
+      "jacobian": 0.8264462809917354,
+      "q": -1.0,
+      "transport_q": -0.9090909090909091
+    },
+    {
+      "alpha": 0.75,
+      "equivariance_error": 1.1102230246251565e-16,
+      "jacobian": 0.8264462809917354,
+      "q": -1.0,
+      "transport_q": -0.9090909090909091
+    },
+    {
+      "alpha": 1.0,
+      "equivariance_error": 0.0,
+      "jacobian": 0.8264462809917354,
+      "q": -1.0,
+      "transport_q": -0.9090909090909091
+    },
+    {
+      "alpha": 1.25,
+      "equivariance_error": 1.1102230246251565e-16,
+      "jacobian": 0.8264462809917354,
+      "q": -1.0,
+      "transport_q": -0.9090909090909091
+    },
+    {
+      "alpha": 2.0,
+      "equivariance_error": 0.0,
+      "jacobian": 0.8264462809917354,
+      "q": -1.0,
+      "transport_q": -0.9090909090909091
+    },
+    {
+      "alpha": 0.5,
+      "equivariance_error": 0.0,
+      "jacobian": 0.9802960494069208,
+      "q": -0.1,
+      "transport_q": -0.09900990099009901
+    },
+    {
+      "alpha": 0.75,
+      "equivariance_error": 1.3877787807814457e-17,
+      "jacobian": 0.9802960494069208,
+      "q": -0.1,
+      "transport_q": -0.09900990099009901
+    },
+    {
+      "alpha": 1.0,
+      "equivariance_error": 0.0,
+      "jacobian": 0.9802960494069208,
+      "q": -0.1,
+      "transport_q": -0.09900990099009901
+    },
+    {
+      "alpha": 1.25,
+      "equivariance_error": 0.0,
+      "jacobian": 0.9802960494069208,
+      "q": -0.1,
+      "transport_q": -0.09900990099009901
+    },
+    {
+      "alpha": 2.0,
+      "equivariance_error": 0.0,
+      "jacobian": 0.9802960494069208,
+      "q": -0.1,
+      "transport_q": -0.09900990099009901
+    },
+    {
+      "alpha": 0.5,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0,
+      "q": 0.0,
+      "transport_q": 0.0
+    },
+    {
+      "alpha": 0.75,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0,
+      "q": 0.0,
+      "transport_q": 0.0
+    },
+    {
+      "alpha": 1.0,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0,
+      "q": 0.0,
+      "transport_q": 0.0
+    },
+    {
+      "alpha": 1.25,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0,
+      "q": 0.0,
+      "transport_q": 0.0
+    },
+    {
+      "alpha": 2.0,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0,
+      "q": 0.0,
+      "transport_q": 0.0
+    },
+    {
+      "alpha": 0.5,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0203040506070808,
+      "q": 0.1,
+      "transport_q": 0.10101010101010102
+    },
+    {
+      "alpha": 0.75,
+      "equivariance_error": 1.3877787807814457e-17,
+      "jacobian": 1.0203040506070808,
+      "q": 0.1,
+      "transport_q": 0.10101010101010102
+    },
+    {
+      "alpha": 1.0,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0203040506070808,
+      "q": 0.1,
+      "transport_q": 0.10101010101010102
+    },
+    {
+      "alpha": 1.25,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0203040506070808,
+      "q": 0.1,
+      "transport_q": 0.10101010101010102
+    },
+    {
+      "alpha": 2.0,
+      "equivariance_error": 0.0,
+      "jacobian": 1.0203040506070808,
+      "q": 0.1,
+      "transport_q": 0.10101010101010102
+    },
+    {
+      "alpha": 0.5,
+      "equivariance_error": 0.0,
+      "jacobian": 1.2345679012345678,
+      "q": 1.0,
+      "transport_q": 1.1111111111111112
+    },
+    {
+      "alpha": 0.75,
+      "equivariance_error": 0.0,
+      "jacobian": 1.2345679012345678,
+      "q": 1.0,
+      "transport_q": 1.1111111111111112
+    },
+    {
+      "alpha": 1.0,
+      "equivariance_error": 0.0,
+      "jacobian": 1.2345679012345678,
+      "q": 1.0,
+      "transport_q": 1.1111111111111112
+    },
+    {
+      "alpha": 1.25,
+      "equivariance_error": 0.0,
+      "jacobian": 1.2345679012345678,
+      "q": 1.0,
+      "transport_q": 1.1111111111111112
+    },
+    {
+      "alpha": 2.0,
+      "equivariance_error": 0.0,
+      "jacobian": 1.2345679012345678,
+      "q": 1.0,
+      "transport_q": 1.1111111111111112
+    }
+  ]
+}

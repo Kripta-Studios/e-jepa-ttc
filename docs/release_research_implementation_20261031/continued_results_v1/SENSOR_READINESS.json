@@ -1,0 +1,24 @@
+{
+  "S1_real_calibration_executed": false,
+  "acquisitions": 25,
+  "conditions": [],
+  "decision": "diagnose",
+  "dense_features_interface": "CausalScaleTTC.forward(return_dense_features=True), endpoint_dense_features",
+  "dense_features_note": "source interface inspected; no new deployment forward or gradient experiment",
+  "family": "sensor",
+  "field_candidate_acquisitions": {
+    "contrast_or_threshold": 0,
+    "exposure": 24,
+    "gain": 0,
+    "light_reference": 0,
+    "refractory": 0,
+    "response": 0
+  },
+  "known_photometric_scale_established": false,
+  "missing": [
+    "event contrast thresholds or identified common scale",
+    "anchored event-sensor texture",
+    "alignment and reference residual decomposition"
+  ],
+  "release_modified": false
+}

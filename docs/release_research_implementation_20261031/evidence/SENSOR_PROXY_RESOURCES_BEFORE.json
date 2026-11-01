@@ -1,0 +1,20 @@
+{
+  "time_unix": 1793479476.3155909,
+  "cpu_percent": 65.1,
+  "logical_cpus": 32,
+  "available_gib": 5.892063140869141,
+  "disk_bytes_per_s": {
+    "PhysicalDrive0": {
+      "read": 0.0,
+      "write": 636928.0
+    },
+    "PhysicalDrive1": {
+      "read": 3625216.0,
+      "write": 4116480.0
+    },
+    "PhysicalDrive2": {
+      "read": 2813952.0,
+      "write": 0.0
+    }
+  }
+}

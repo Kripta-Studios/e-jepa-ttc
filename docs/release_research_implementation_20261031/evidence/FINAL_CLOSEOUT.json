@@ -1,0 +1,15 @@
+{
+  "current_state_path": "output\\release_research_20261031\\CURRENT_STATE.json",
+  "current_state_sha256": "ac3f60491d473c6f5ea00bfd7eace28b6537571123536a2b409698e405367235",
+  "focused_tests": 126,
+  "local_links_checked": 45,
+  "missing_links": [],
+  "pyright": "0 errors",
+  "readme_sha256": "45abdb4d8455c5aa919afccecf1ec2427fbac60caaedfe53a238ee72ad8b8225",
+  "ruff_check_format": "PASS",
+  "verified_final_reports": [
+    "campaign_results_v1",
+    "raw_latency_results_v1",
+    "native_parity_distribution_v1"
+  ]
+}

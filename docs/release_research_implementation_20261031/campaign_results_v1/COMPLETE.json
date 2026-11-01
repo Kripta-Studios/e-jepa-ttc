@@ -1,0 +1,32 @@
+{
+  "artifacts": {
+    "BACKEND_DIAGNOSIS.json": "44519ad562d1e4b1584df44fc3341a5a49ae296447cc65e9ad9e110843f87f25",
+    "DECISION.json": "0c74cdf8bd66a980293c1c4628c17ff31313f133dd5b02c84b9f4b761cc3de66",
+    "FREEZE.json": "10e1797124d59aa1f53940aede3e0b5d8204f4e45bd25ec227fc2f49a898c158",
+    "LATENCY.json": "99c8942540285576eaa0d83529123424ebe1a4dfee37bcd327080f8eaaba1a34",
+    "LATENCY_MEASUREMENTS.json": "e60181ed7618690a0211a4ab14d16dc753442b2b78aa2438cbcd10f274cc343c",
+    "NATIVE_ALIASED_PREDICTIONS.json": "b0d5f57f35d81bd9d85665e5f82d54e875db4ddddac8a720f18c50910d3542f2",
+    "NATIVE_ORIGINAL_PARITY.json": "252428a85b96415994ac01a4e89bc12d4c7708149a216aafd56b1bacfa97d07e",
+    "NATIVE_PHYSICAL_PREDICTIONS.json": "26b4db054a6abefdd6550f4afed4f988cdf11e1b04d33f86d68477ec71b42354",
+    "NATIVE_SENSITIVITY.json": "2e1aa9ab178b7767c4c1ee19e3fb6c4fa60cbb7cfdf0b73e357297f0445945d2",
+    "POPULATION.json": "fba7639355b437f74980c329f0fc107b3466a2ad457e5594a2004ec1cb1469e9",
+    "POPULATION.md": "e37bf519b0f1f33fa57e7f1c3e4a443431f2128710211aef8dfb6c0f973fb312",
+    "REFERENCE_COMPARISONS.json": "75d7c2368bb9d1a864ec7c5c7397443ab4e48bb3ee15647c453b46fd5c5a96aa",
+    "RESULTS.md": "87ac300eaf3199f98b458aa8170119cfd13f00ba6874e6bef84e2c0a7560ae21",
+    "executed_source\\operational\\release_research\\__init__.py": "4924916159215f69a21c7e009ef3b3d800d2143bd9ee74d7d27aa307bd147f6c",
+    "executed_source\\operational\\release_research\\auxiliaries.py": "9c010a63da3dc559240c2604f1f754e9359897ce3961c406b74541fa3e2b6d46",
+    "executed_source\\operational\\release_research\\evaluation.py": "3b43d600ac309d783702649e488b4a0e51c6d8ce22a295dcb65cbf8a41c2840c",
+    "executed_source\\operational\\release_research\\normal_quality.py": "2894d17c98fe9da525b2420c1088797a43ef9e7b68ecc58d70704050e5efc2b7",
+    "executed_source\\operational\\release_research\\photometric.py": "9148df177f9c8f814d090254bf35838573d3b28ab91bda69a0141b419c1f6cb3",
+    "executed_source\\operational\\release_research\\physics.py": "9f113c4c8c5b8ea39e7cca09d6f93ed2eb62a8deb0e44a4cc4ceeee092c37e29",
+    "executed_source\\operational\\release_research\\protocol.py": "b1ee9d06e5106429d3c2539603ed37a448fedfa2a5c8e5a721aed74ed2463049",
+    "executed_source\\operational\\release_research\\surface_correspondence.py": "0cfc03dbdc7e7e4f09ea3914e317d427bc9af7ce1fe19732ebbd52e89a374b3f",
+    "executed_source\\operational\\release_research\\visibility.py": "8c2abc4e0b15e76106ccf9abf3679ae4b0077ecb03af59265f55f2c34bbda96d",
+    "executed_source\\scripts\\release_research.py": "09f9e66779a0f4eb9315d71a2f0a510994ae164409e8b2d2ccc30ddf6929c840",
+    "executed_source\\scripts\\report_release_research_campaign.py": "e05cf0ab98cd88d5500c4f1b04d3abc4ec0365f44751d02fe3f33083a0726d6d",
+    "executed_source\\src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "end_time": "2026-11-01T00:56:25.183511+00:00",
+  "release_modified": false,
+  "status": "COMPLETE"
+}

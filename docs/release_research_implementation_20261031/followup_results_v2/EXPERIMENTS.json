@@ -1,0 +1,12 @@
+{
+  "cadence_localization": "output\\release_research_20261031\\cadence_localization_analysis149_v1",
+  "clock_cadence": "output\\release_research_20261031\\clock_cadence_analysis149_v1",
+  "clock_regimes": "output\\release_research_20261031\\clock_regimes_v1",
+  "native_original_drift": "output\\release_research_20261031\\native_original_drift_profile_v1",
+  "observability_failure": "output\\release_research_20261031\\observability_failure_audit_v1",
+  "photometric_q": "output\\release_research_20261031\\photometric_q_analysis149_v1",
+  "robust_measurement": "output\\release_research_20261031\\robust_measurement_analysis149_v1",
+  "sensor_identifiability": "output\\release_research_20261031\\sensor_identifiability_v2",
+  "sensor_proxy": "output\\release_research_20261031\\sensor_proxy_analysis149_v1",
+  "sensor_reference_control": "output\\release_research_20261031\\sensor_reference_analysis149_v1"
+}

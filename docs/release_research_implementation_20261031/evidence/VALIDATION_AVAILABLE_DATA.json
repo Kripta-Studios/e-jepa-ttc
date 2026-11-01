@@ -1,0 +1,61 @@
+{
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "pyright": "0 errors",
+  "sources": {
+    "scripts/release_sensor_proxy.py": "1121f6a3f9160af934dc0ea8e44a73d2c58990c563863c343bcb78a59a1bbfec",
+    "scripts/release_sensor_reference.py": "a8969161cc8093bc57722d913f58dab63d87b688b1b6ecb40580cdaf8851e2c3",
+    "scripts/release_photometric_q.py": "1cc32c93e3aff86a478cd616ac99d915e690e5faea85a9ea1db595a2fba164cf",
+    "scripts/release_clock_cadence.py": "94f68bfd01b2c7f2a9ebf3e530c8976fdbf26dc8ee3ad17c657f8db00c50b9a3",
+    "scripts/report_release_research_followup.py": "7916b1d463e4e23da6e560a5a28ad421602d26cbafe115bae72dd9a4c7e77f6c",
+    "tests/unit/test_release_sensor_proxy.py": "82e3072e87688c04313955cd22299b2a9eb5569ed31749cb5ea42cec513e68e1",
+    "tests/integration/test_release_sensor_proxy_runner.py": "1543cf2d81272427f3b7b28902367183a7c9a70d6ad6dcad424617564f5175d8",
+    "tests/unit/test_release_photometric_q.py": "b218503dc2546b6f9bdd54afa755c3da5c871bbc0362a62d958f19f16decc00b",
+    "tests/unit/test_release_clock_cadence.py": "1b8be6a31619f8b937d2a564dac476ed0e817b1df33b3b9999885a2397354226"
+  },
+  "junit": [
+    {
+      "path": "output\\release_research_20261031\\validation_sensor_reference_v2\\pytest.xml",
+      "sha256": "804fc61b80bf68b523dd49404e1d71c275063b69a85e82977fb0fb7764586850",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "8",
+      "time": "30.884",
+      "timestamp": "2026-10-31T22:01:56.555845+01:00",
+      "hostname": "DESKTOP-2N393IP"
+    },
+    {
+      "path": "output\\release_research_20261031\\validation_photometric_q_v1\\pytest.xml",
+      "sha256": "921cf1864a536550c2200f82d2068e61c93b3ab6889839998a614d4599cb2d85",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "6",
+      "time": "40.012",
+      "timestamp": "2026-10-31T22:15:01.734442+01:00",
+      "hostname": "DESKTOP-2N393IP"
+    },
+    {
+      "path": "output\\release_research_20261031\\validation_clock_cadence_v1\\pytest.xml",
+      "sha256": "7f802ec0d4294d280886c9c82de6d180e0abac6ef5ad4c904bf423ad14d70ac7",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "3",
+      "time": "20.514",
+      "timestamp": "2026-10-31T22:19:17.448320+01:00",
+      "hostname": "DESKTOP-2N393IP"
+    }
+  ],
+  "prior_validation": [
+    "VALIDATION_CONTINUED.json",
+    "VALIDATION_FOLLOWUP.json"
+  ],
+  "additional_distinct_tests": 17,
+  "total_distinct_tests_in_campaign": 88,
+  "superseded_collection_attempt": "validation_sensor_reference_v1 (unit/integration basename collision, corrected by integration filename)"
+}

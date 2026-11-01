@@ -1,0 +1,1042 @@
+{
+  "candidate_evaluated": false,
+  "elapsed_seconds": 5.586757100070827,
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "local_original_repeatability": "EXACT",
+  "policies": {
+    "matmul_0_cudnn_0": {
+      "allow_tf32_cudnn": false,
+      "allow_tf32_matmul": false,
+      "queries": {
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140300000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.0002744346857070923,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 1.0021030902862549e-06,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 1.0952353477478027e-06,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 1.2516975402832031e-06,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 8.139759302139282e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 1.0952353477478027e-06,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 9.313225746154785e-08,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 9.4585120677948e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 0.0001365169882774353,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 5.2988529205322266e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 3.968924283981323e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 1.3597309589385986e-06,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 9.760260581970215e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 1.4193356037139893e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 1.3560056686401367e-06,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 5.6743621826171875e-05,
+              "passed": true
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.000728905200958252,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 3.766268491744995e-06,
+              "passed": false
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 2.339482307434082e-06,
+              "passed": false
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 1.8551945686340332e-06,
+              "passed": false
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 2.693384885787964e-06,
+              "passed": false
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 2.339482307434082e-06,
+              "passed": false
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 1.4277175068855286e-06,
+              "passed": false
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 8.641183376312256e-05,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.9916661977767944
+        },
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140400000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.0008472204208374023,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 2.864748239517212e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 4.824250936508179e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 5.036592483520508e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 4.3101608753204346e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 4.824250936508179e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 1.9568833522498608e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 1.7464160919189453e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 0.00013062357902526855,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 3.039836883544922e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 1.8924474716186523e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 4.060566425323486e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 4.254281520843506e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 3.98978590965271e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 4.060566425323486e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 0.00015234947204589844,
+              "passed": true
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.0004086494445800781,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 4.824250936508179e-06,
+              "passed": false
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 4.034489393234253e-06,
+              "passed": false
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 4.298985004425049e-06,
+              "passed": false
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 3.822147846221924e-06,
+              "passed": false
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 4.038214683532715e-06,
+              "passed": false
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 3.57162207365036e-07,
+              "passed": true
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 2.5372952222824097e-05,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.8880871534347534
+        }
+      }
+    },
+    "matmul_0_cudnn_1": {
+      "allow_tf32_cudnn": true,
+      "allow_tf32_matmul": false,
+      "queries": {
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140300000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.0005061328411102295,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 1.173466444015503e-06,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 6.92903995513916e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 1.087784767150879e-06,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 1.6205012798309326e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 6.92903995513916e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 4.782341420650482e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 1.644343137741089e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 6.145238876342773e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 1.1801719665527344e-05,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 2.7447938919067383e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 2.980232238769531e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 6.034970283508301e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 7.450580596923828e-08,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 2.942979335784912e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 1.2278556823730469e-05,
+              "passed": true
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.00013369321823120117,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 1.0691583156585693e-06,
+              "passed": true
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 8.568167686462402e-08,
+              "passed": true
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 1.564621925354004e-07,
+              "passed": true
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 3.725290298461914e-09,
+              "passed": true
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 8.568167686462402e-08,
+              "passed": true
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 2.9336661100387573e-08,
+              "passed": true
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 3.635883331298828e-05,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.991621732711792
+        },
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140400000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.0005141496658325195,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 1.8514692783355713e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 1.817941665649414e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 1.8924474716186523e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 1.4528632164001465e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 1.817941665649414e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 1.2746895663440228e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 2.0638108253479004e-06,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 8.791685104370117e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 8.106231689453125e-06,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 1.3083219528198242e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 4.880130290985107e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 4.954636096954346e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 5.289912223815918e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 4.880130290985107e-07,
+              "passed": true
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 1.823902130126953e-05,
+              "passed": true
+            },
+            "R_CTX.input_0": {
+              "max_abs": 3.325939178466797e-05,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 1.9371509552001953e-07,
+              "passed": true
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 2.2724270820617676e-07,
+              "passed": true
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 2.980232238769531e-07,
+              "passed": true
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 1.7881393432617188e-07,
+              "passed": true
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 2.2724270820617676e-07,
+              "passed": true
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 3.306195139884949e-08,
+              "passed": true
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 3.8333237171173096e-06,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.888221263885498
+        }
+      }
+    },
+    "matmul_1_cudnn_0": {
+      "allow_tf32_cudnn": false,
+      "allow_tf32_matmul": true,
+      "queries": {
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140300000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.004023343324661255,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 1.0877847671508789e-05,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 7.003545761108398e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 3.5837292671203613e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 4.289671778678894e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 7.040798664093018e-07,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 3.891997039318085e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 4.980713129043579e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 0.005445003509521484,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 0.0018967390060424805,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 0.001264624297618866,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 4.297122359275818e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 2.136826515197754e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 5.339086055755615e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 4.297122359275818e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 0.0017914772033691406,
+              "passed": false
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.024447083473205566,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 0.00011047720909118652,
+              "passed": false
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 8.090957999229431e-05,
+              "passed": false
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 6.570294499397278e-05,
+              "passed": false
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 9.470805525779724e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 8.090957999229431e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 2.9567163437604904e-05,
+              "passed": false
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 0.00466194748878479,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.9934009313583374
+        },
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140400000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.004023343324661255,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 4.8317015171051025e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 9.909272193908691e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 1.5661120414733887e-05,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 5.923211574554443e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 9.909272193908691e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 5.077163223177195e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 0.00011534988880157471,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 0.0024137794971466064,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 0.00023865699768066406,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 0.0006879828870296478,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 3.1597912311553955e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 2.8431415557861328e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 3.1970441341400146e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 3.160163760185242e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 0.0011855363845825195,
+              "passed": false
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.010206431150436401,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 5.6117773056030273e-05,
+              "passed": false
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 5.223974585533142e-05,
+              "passed": false
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 5.2034854888916016e-05,
+              "passed": false
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 5.3942203521728516e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 5.223974585533142e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 3.880355507135391e-06,
+              "passed": false
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 0.0023995637893676758,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.8870539665222168
+        }
+      }
+    },
+    "matmul_1_cudnn_1": {
+      "allow_tf32_cudnn": true,
+      "allow_tf32_matmul": true,
+      "queries": {
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140300000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.0030650198459625244,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 1.3470649719238281e-05,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 1.9371509552001953e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 1.903623342514038e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 3.818422555923462e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 1.9334256649017334e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 1.5916302800178528e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 4.801154136657715e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 0.00500817596912384,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 0.0017696619033813477,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 0.0011047646403312683,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 3.588572144508362e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 1.6666948795318604e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 4.4479966163635254e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 3.5881996154785156e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 0.001495957374572754,
+              "passed": false
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.02198714017868042,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 9.439513087272644e-05,
+              "passed": false
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 6.901845335960388e-05,
+              "passed": false
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 5.466863512992859e-05,
+              "passed": false
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 8.189678192138672e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 6.902217864990234e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 2.5373417884111404e-05,
+              "passed": false
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 0.004204452037811279,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.993105411529541
+        },
+        "3RUZHwnCwK_000017_720578076_725578151_3RUZHwnCwK_000017_12140400000": {
+          "fields": {
+            "E_CTX_MATCHED.input_0": {
+              "max_abs": 0.0030650198459625244,
+              "passed": false
+            },
+            "E_CTX_MATCHED.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.input_3": {
+              "max_abs": 6.377696990966797e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "E_CTX_MATCHED.output_point_phase": {
+              "max_abs": 8.616596460342407e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q10": {
+              "max_abs": 7.860362529754639e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_q90": {
+              "max_abs": 9.8496675491333e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_location": {
+              "max_abs": 8.616596460342407e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_raw_residual": {
+              "max_abs": 7.191207259893417e-06,
+              "passed": false
+            },
+            "E_CTX_MATCHED.output_relative_cost": {
+              "max_abs": 3.536790609359741e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_0": {
+              "max_abs": 0.0026024580001831055,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.input_1": {
+              "max_abs": 0.0004413127899169922,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_correction": {
+              "max_abs": 0.0007434524595737457,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_point_phase": {
+              "max_abs": 3.495067358016968e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q10": {
+              "max_abs": 2.9880553483963013e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_q90": {
+              "max_abs": 3.645941615104675e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_raw_location": {
+              "max_abs": 3.4946948289871216e-05,
+              "passed": false
+            },
+            "PHASE_ONLY_EVENT_S7_TRAIN40.output_ttc": {
+              "max_abs": 0.001311182975769043,
+              "passed": false
+            },
+            "R_CTX.input_0": {
+              "max_abs": 0.011229202151298523,
+              "passed": false
+            },
+            "R_CTX.input_1": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_2": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.input_3": {
+              "max_abs": 6.471201777458191e-05,
+              "passed": false
+            },
+            "R_CTX.output_expert_index": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "R_CTX.output_point_phase": {
+              "max_abs": 5.7246536016464233e-05,
+              "passed": false
+            },
+            "R_CTX.output_q10": {
+              "max_abs": 5.479156970977783e-05,
+              "passed": false
+            },
+            "R_CTX.output_q90": {
+              "max_abs": 6.039813160896301e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_location": {
+              "max_abs": 5.7250261306762695e-05,
+              "passed": false
+            },
+            "R_CTX.output_raw_residual": {
+              "max_abs": 7.460825145244598e-06,
+              "passed": false
+            },
+            "R_CTX.output_relative_cost": {
+              "max_abs": 0.00241069495677948,
+              "passed": false
+            }
+          },
+          "historical_parity": false,
+          "prediction": -1.8869283199310303
+        }
+      }
+    }
+  },
+  "targets_read": false,
+  "torch": "2.11.0+cu128"
+}

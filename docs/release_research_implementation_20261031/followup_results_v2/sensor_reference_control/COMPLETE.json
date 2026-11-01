@@ -1,0 +1,25 @@
+{
+  "artifacts": {
+    "FITS.json": "2349731762da99a9323599f0191a6c9f568b1e32ffb3034db2c4db1be488e75f",
+    "FREEZE.json": "97636011d50306c8c15a63dddd5f8e74f260d10549992fd168795793de2ccaa3",
+    "METRICS.json": "98fca1251f886d00021b5bea5e769750b698e233bdfdf4bf032193162511c03c",
+    "PERMUTATIONS.json": "c73cf155d76305752f47cb48128138a349c08b5b65a31f86a650568e7cfdd78a",
+    "RESULTS.md": "e53f7f85f6d01598e0d500712d088e5ee6e0be92c829bab550e1670d8e2132cb",
+    "SCORED.json": "516aec6f217b16ffe98428314ea1e0896750e255ab079953bdf525f304e3b946",
+    "executed_source\\operational\\release_research\\__init__.py": "4924916159215f69a21c7e009ef3b3d800d2143bd9ee74d7d27aa307bd147f6c",
+    "executed_source\\operational\\release_research\\auxiliaries.py": "9c010a63da3dc559240c2604f1f754e9359897ce3961c406b74541fa3e2b6d46",
+    "executed_source\\operational\\release_research\\evaluation.py": "3b43d600ac309d783702649e488b4a0e51c6d8ce22a295dcb65cbf8a41c2840c",
+    "executed_source\\operational\\release_research\\normal_quality.py": "2894d17c98fe9da525b2420c1088797a43ef9e7b68ecc58d70704050e5efc2b7",
+    "executed_source\\operational\\release_research\\photometric.py": "9148df177f9c8f814d090254bf35838573d3b28ab91bda69a0141b419c1f6cb3",
+    "executed_source\\operational\\release_research\\physics.py": "9f113c4c8c5b8ea39e7cca09d6f93ed2eb62a8deb0e44a4cc4ceeee092c37e29",
+    "executed_source\\operational\\release_research\\protocol.py": "b1ee9d06e5106429d3c2539603ed37a448fedfa2a5c8e5a721aed74ed2463049",
+    "executed_source\\operational\\release_research\\surface_correspondence.py": "0cfc03dbdc7e7e4f09ea3914e317d427bc9af7ce1fe19732ebbd52e89a374b3f",
+    "executed_source\\operational\\release_research\\visibility.py": "8c2abc4e0b15e76106ccf9abf3679ae4b0077ecb03af59265f55f2c34bbda96d",
+    "executed_source\\scripts\\release_research.py": "09f9e66779a0f4eb9315d71a2f0a510994ae164409e8b2d2ccc30ddf6929c840",
+    "executed_source\\scripts\\release_sensor_proxy.py": "1121f6a3f9160af934dc0ea8e44a73d2c58990c563863c343bcb78a59a1bbfec",
+    "executed_source\\src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "end_time": "2026-10-31T21:06:36.432718+00:00",
+  "release_modified": false,
+  "status": "COMPLETE"
+}

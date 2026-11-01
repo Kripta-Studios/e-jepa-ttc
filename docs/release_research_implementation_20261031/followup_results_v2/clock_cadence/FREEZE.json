@@ -1,0 +1,52 @@
+{
+  "config": {
+    "D4_admitted": false,
+    "experiment_id": "clock-cadence-evaluate-v1",
+    "optimizer_updates": 0,
+    "targets_read": true
+  },
+  "git_commit": "a696291159a2a67ed1302d3c2f729b28b8f2141f",
+  "host": "DESKTOP-2N393IP",
+  "input_paths": {
+    "evaluation": "output\\release_research_20261031\\evaluation149_v2\\COMPLETE.json",
+    "parent": "output\\release_research_20261031\\clock_cadence149_v1\\COMPLETE.json",
+    "predictions": "output\\release_research_20261031\\clock_cadence149_v1\\PREDICTIONS.json",
+    "preregistration": "docs\\release_research_implementation_20261031\\CLOCK_CADENCE_CONTROL.md",
+    "source:C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc-v18-joint-measurement/scripts/release_research.py": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\release_research.py",
+    "source:operational/release_research/__init__.py": "operational\\release_research\\__init__.py",
+    "source:operational/release_research/auxiliaries.py": "operational\\release_research\\auxiliaries.py",
+    "source:operational/release_research/evaluation.py": "operational\\release_research\\evaluation.py",
+    "source:operational/release_research/normal_quality.py": "operational\\release_research\\normal_quality.py",
+    "source:operational/release_research/photometric.py": "operational\\release_research\\photometric.py",
+    "source:operational/release_research/physics.py": "operational\\release_research\\physics.py",
+    "source:operational/release_research/protocol.py": "operational\\release_research\\protocol.py",
+    "source:operational/release_research/surface_correspondence.py": "operational\\release_research\\surface_correspondence.py",
+    "source:operational/release_research/visibility.py": "operational\\release_research\\visibility.py",
+    "source:scripts/release_clock_cadence.py": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\release_clock_cadence.py",
+    "source:src/e_jepa_ttc/simplex_t/phase.py": "src\\e_jepa_ttc\\simplex_t\\phase.py",
+    "targets": "output\\release_research_20261031\\evaluation149_v2\\DIAGNOSTICS.json"
+  },
+  "inputs": {
+    "evaluation": "5e3dc0d8807d1f6d1cfb29a00410dda952e987ac3686c93338a89e654ffc4210",
+    "parent": "a40ce17d6d14216a9b723268b7dddb8fa60bca3021c6d51dacbab9d88e38c9c1",
+    "predictions": "99fdbac119c31cab32a62424f49db7ac24362b2ba9fa7ddea3fd81011b68d6b8",
+    "preregistration": "ad4b464901d7416423debbb05eae8035f81226c26f162772941adaeaa3d0553f",
+    "source:C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc-v18-joint-measurement/scripts/release_research.py": "09f9e66779a0f4eb9315d71a2f0a510994ae164409e8b2d2ccc30ddf6929c840",
+    "source:operational/release_research/__init__.py": "4924916159215f69a21c7e009ef3b3d800d2143bd9ee74d7d27aa307bd147f6c",
+    "source:operational/release_research/auxiliaries.py": "9c010a63da3dc559240c2604f1f754e9359897ce3961c406b74541fa3e2b6d46",
+    "source:operational/release_research/evaluation.py": "3b43d600ac309d783702649e488b4a0e51c6d8ce22a295dcb65cbf8a41c2840c",
+    "source:operational/release_research/normal_quality.py": "2894d17c98fe9da525b2420c1088797a43ef9e7b68ecc58d70704050e5efc2b7",
+    "source:operational/release_research/photometric.py": "9148df177f9c8f814d090254bf35838573d3b28ab91bda69a0141b419c1f6cb3",
+    "source:operational/release_research/physics.py": "9f113c4c8c5b8ea39e7cca09d6f93ed2eb62a8deb0e44a4cc4ceeee092c37e29",
+    "source:operational/release_research/protocol.py": "b1ee9d06e5106429d3c2539603ed37a448fedfa2a5c8e5a721aed74ed2463049",
+    "source:operational/release_research/surface_correspondence.py": "0cfc03dbdc7e7e4f09ea3914e317d427bc9af7ce1fe19732ebbd52e89a374b3f",
+    "source:operational/release_research/visibility.py": "8c2abc4e0b15e76106ccf9abf3679ae4b0077ecb03af59265f55f2c34bbda96d",
+    "source:scripts/release_clock_cadence.py": "94f68bfd01b2c7f2a9ebf3e530c8976fdbf26dc8ee3ad17c657f8db00c50b9a3",
+    "source:src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+    "targets": "7deff161f8c41f0ad67d98a0ba26549e18f4a078cabf8aa53360e758d26f9add"
+  },
+  "python_version": "3.11.15",
+  "schema": "release_research_v1",
+  "scope": "development or mechanism only; never official promotion",
+  "start_time": "2026-10-31T21:23:02.286524+00:00"
+}

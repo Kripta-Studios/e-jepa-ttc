@@ -1,0 +1,15 @@
+{
+  "artifacts": {
+    "FREEZE.json": "662cab8e2f91e68df862767c015dd225419f838243080c95d33e13aa60dcf69b",
+    "PRECOMPUTED_LATENCY.json": "99c8942540285576eaa0d83529123424ebe1a4dfee37bcd327080f8eaaba1a34",
+    "RAW_LATENCY.json": "e2b8108c6d792ec02b6adc2c71cadd6bd9571c3bbf746aae1f6bd447328e5890",
+    "RAW_MEASUREMENTS.json": "3f47937cc432b4f685bedaccbf3f64e7cb943ee66472eb2888a5192fa2d45be2",
+    "RAW_PARITY.json": "06a02e26febbc9e5fc28b264399740cce1d9608f2227796f269453be25f2dfa3",
+    "RAW_PARITY_RECORDS.json": "61e1b739ce9e565a574608728e0b086f031eb3770b00841e1265a7db65c6b74a",
+    "RESULTS.md": "c526f3f99cba8df1d9b2256bb23f47303ffb8c9d63d7815fc3b9db1d01d3ebb4",
+    "executed_source\\scripts\\report_release_research_raw_latency.py": "3eb39280cab4ca5d388f08a0b7752d1a2a0b15e758e9aa0f23b110510d77cc3d"
+  },
+  "end_time": "2026-11-01T01:08:45.791543+00:00",
+  "release_modified": false,
+  "status": "COMPLETE"
+}

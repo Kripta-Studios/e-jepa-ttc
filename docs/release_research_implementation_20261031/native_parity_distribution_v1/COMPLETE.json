@@ -1,0 +1,11 @@
+{
+  "artifacts": {
+    "FREEZE.json": "79b4ca1c284e5a60847f6b73729ebdda8484f3d61662feb8fb2db9600e7f632d",
+    "RESULTS.json": "0443ad5658bc27060449b33bdca206cfbf9dd724866c2c58049a3d845a396999",
+    "RESULTS.md": "7eb42a9a5b7c50869eac41f6cb8b647ba91b57d6addfd795c330e02e0f39abfd",
+    "executed_source\\scripts\\release_native_parity_distribution.py": "90d6718bc6a4c9535c4d91a9295ac507f0fff3f0ee568a88ab271f20e9a2442a"
+  },
+  "end_time": "2026-11-01T00:31:54.249524+00:00",
+  "release_modified": false,
+  "status": "COMPLETE"
+}

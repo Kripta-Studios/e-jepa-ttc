@@ -1,0 +1,6 @@
+{
+  "all_exact": true,
+  "observations": 120,
+  "queries": 120,
+  "targets_read": false
+}
