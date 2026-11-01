@@ -61,6 +61,13 @@ configuration applies minimum recall/precision of 0.1; the local development
 protocol and population differ. The development AP above is not an estimate of
 this official test score or evidence of eight-class production readiness.
 
+The [benchmark-aligned local reevaluation](docs/detection_sota_20261029/BENCHMARK_LOCAL_ALIGNMENT_20261101.md)
+retains all 190,469 public selection annotations and uses the organizer-returned
+AP/TP configuration with reference matching. On the same 23,958 frames, mAP is
+**0.05701726 without ranking and 0.06204229 with ranking**. This additive profile
+preserves the historical results; equivalence to the private scorer is unverified.
+No new training or inference was needed.
+
 ## Historical development notes
 
 The dated notes below preserve the status at each research checkpoint. The

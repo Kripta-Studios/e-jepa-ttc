@@ -10,6 +10,12 @@ exactamente, incluidos min_recall/min_precision=0,1. Esto amplía el contrato
 conocido; no proporciona los bytes del matching privado ni etiquetas test.
 Los estados de acceso del 29 de octubre que siguen son históricos.
 
+La [alineación local del 1 de noviembre](BENCHMARK_LOCAL_ALIGNMENT_20261101.md)
+implementa un perfil independiente con esa aritmética y matching de referencia,
+incluyendo toda la población raw pública de selección. Produce mAP 0,05701726
+sin ranking y 0,06204229 con ranking. No modifica el protocolo histórico ni
+certifica una réplica exacta del scorer privado.
+
 ## Reconciliación pública v2
 
 La [auditoría reproducible](evidence/external_protocol_v2/README.md) consultó 13

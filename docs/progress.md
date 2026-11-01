@@ -672,3 +672,18 @@ continuation began at update 9 with the expected batch. A detached single-child
 controller verifies final artifacts and compares full-selection results automatically.
 No gain from the intervention is claimed yet. Seeds 13 and 23 remain deferred.
 See [the registered campaign](detection_sota_20261029/R2_RARE_SAMPLING_CAMPAIGN.md).
+
+## 2026-11-01 — Official detection result and benchmark-aligned local evaluation
+
+The official RGB ranked submission returned mAP 0.05129508 on 35,940 test frames.
+Its aggregate scoring output exposed minimum recall/precision 0.1 and TP-error
+arithmetic that differ from the historical local development profile. The new
+additive reference evaluator preserves the old protocol and frozen producers.
+It reevaluates all 23,958 saved selection frames with 190,469 raw public objects:
+baseline mAP 0.05701726, learned ranking 0.06204229, scalar control 0.06053089.
+No training, inference, paid compute or private-label access was needed.
+
+The [alignment report](detection_sota_20261029/BENCHMARK_LOCAL_ALIGNMENT_20261101.md)
+documents the comparison, reproduction command, 36 passing focused tests and
+remaining private-scorer equivalence limit. New training decisions must use the
+explicit new profile; historical frozen runners retain their original semantics.

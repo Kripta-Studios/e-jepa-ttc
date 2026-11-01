@@ -1,0 +1,13 @@
+{
+  "focused_tests_passed": 36,
+  "ruff": "passed",
+  "pyright": "0 errors, 0 warnings",
+  "two_full_evaluations_metrics_and_report_byte_identical": true,
+  "historical_protocol_modified": false,
+  "new_training": false,
+  "new_inference": false,
+  "paid_compute": false,
+  "verified_shards": 47,
+  "verified_frames": 23958,
+  "source_hashes_verified": true
+}
