@@ -1,0 +1,63 @@
+{
+  "markdown_files": 13,
+  "words_approx": 10751,
+  "local_links_checked": 49,
+  "broken_links": [],
+  "format_issues": [],
+  "balanced_code_fences": true,
+  "files": {
+    "00_RELEASE_Y_PUNTOS_DE_INTEGRACION.md": {
+      "sha256": "74e8aaf1a1362e135acc98f095efd6b97a45d62ce17318df385ce8d7c707b688",
+      "lines": 59
+    },
+    "01_DATOS_Y_PROTOCOLO.md": {
+      "sha256": "fbb3e63c0302c4b2c1fc4f37d93354085d2d6be51226eec435c531f16798caec",
+      "lines": 64
+    },
+    "02_CADENCIA_Y_DIAGNOSTICOS.md": {
+      "sha256": "03fd9a153f4fd91a875a29de19178f5f14be1dfdc85feb929dab7a97c3e7b5a1",
+      "lines": 50
+    },
+    "03_RELOJ_Y_ESTADO_CAUSAL.md": {
+      "sha256": "3d5fa8ed15c4839e0dc9da40f5bd3fb9ef3c7fa8d333f10ed5abcd805b9a4c14",
+      "lines": 61
+    },
+    "04_OBSERVABILIDAD_Y_FUSION.md": {
+      "sha256": "53885aefe0e05ba340ee222c8b1c3e13cbe579ebc3b2ea4aa2ec1ad6945d8e9e",
+      "lines": 60
+    },
+    "05_AUXILIAR_DEL_SENSOR.md": {
+      "sha256": "520942812f7c0db45bb051a80cc898e6fcbe3696196cb3db0f546891e299a236",
+      "lines": 49
+    },
+    "06_COORDENADAS_Y_VISIBILIDAD.md": {
+      "sha256": "e764a9491566a93a0e1479242e928961a717a701f6fb77545a036e144081eea8",
+      "lines": 53
+    },
+    "07_SECUENCIA_Y_PRESUPUESTO.md": {
+      "sha256": "a97b2d62d0f8bbb5d328d4cd50da68dbd874ca179d91b350487da4fc5aeec5e5",
+      "lines": 56
+    },
+    "08_EVALUACION_Y_PROMOCION.md": {
+      "sha256": "18d2a32a41cf32fca7253c36a95c5b4b6377148e91f159feddcab1747d987eae",
+      "lines": 63
+    },
+    "09_JEPA_CONDICIONAL.md": {
+      "sha256": "822d3b34aff39b9ca5a61c2e227fa4771eb7593569970623abeb61cabe05e69d",
+      "lines": 42
+    },
+    "10_GUIA_DE_EJECUCION.md": {
+      "sha256": "7d814fc231d4b94fa41e0db096c8f747678c6f4bd38613b9c32d183283e455a5",
+      "lines": 101
+    },
+    "11_FUENTES_Y_RAZONAMIENTO.md": {
+      "sha256": "0ada5919618a5c1453fd98eadf0fd10b380bf7a3fabd23b7b95ec87302335db5",
+      "lines": 47
+    },
+    "README.md": {
+      "sha256": "225a0f6777a8221fd64a0f99fa9c6523c4b442fe8e7cf13c4ef55da0b2716913",
+      "lines": 49
+    }
+  },
+  "validation_scope": "Documentation links, code fences and file hashes; no training, model inference, experimental tests or checkpoint hashing."
+}

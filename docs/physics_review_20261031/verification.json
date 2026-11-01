@@ -1,0 +1,195 @@
+{
+  "paper_verifier": {
+    "public_hashes_verified": 13,
+    "transfer_recomputations": 8,
+    "official_score_fields_verified": 12,
+    "official_weighted_MiD": 35.80145158082389,
+    "official_public_rank": 1,
+    "query_overlap": 0,
+    "shared_sequence_groups": 3
+  },
+  "transfer": {
+    "n": 468,
+    "groups": 32,
+    "metrics": {
+      "phase": {
+        "mean": 1.0226772891449643,
+        "median": 0.4635651296310425,
+        "p95": 3.2430100058319082,
+        "max": 32.50547059545899,
+        "rte": 41.226715650131354,
+        "counts_above_s": {
+          "1": 131,
+          "3": 29,
+          "5": 9,
+          "10": 5
+        }
+      },
+      "rgb": {
+        "mean": 1.0153774810531568,
+        "median": 0.40789732163238535,
+        "p95": 3.798780919168089,
+        "max": 16.644879660705566,
+        "rte": 38.55554128641268,
+        "counts_above_s": {
+          "1": 134,
+          "3": 37,
+          "5": 13,
+          "10": 2
+        }
+      },
+      "event": {
+        "mean": 1.4514224779516203,
+        "median": 0.8566000329589842,
+        "p95": 4.397003270892325,
+        "max": 35.95409789135742,
+        "rte": 65.69549923947625,
+        "counts_above_s": {
+          "1": 214,
+          "3": 44,
+          "5": 16,
+          "10": 4
+        }
+      },
+      "garl": {
+        "mean": 3.257595943366874,
+        "median": 0.6738400137939454,
+        "p95": 5.252375501841734,
+        "max": 624.07259503125,
+        "rte": 140.06886644688743,
+        "counts_above_s": {
+          "1": 173,
+          "3": 54,
+          "5": 28,
+          "10": 13
+        }
+      }
+    },
+    "note": "Recomputed from predictions; bootstrap intervals below are archived, not new resampling."
+  },
+  "v8_saved_scalar_projection": [
+    {
+      "evidence_id": "E21",
+      "json_pointer": "/factorial_cells/analytic_only/metrics/mid_macro_sequence",
+      "group": "V8 factorial replay",
+      "model": "analytic_only",
+      "metric": "MiD",
+      "unit": "dimensionless scaled error",
+      "direction": "lower",
+      "value": 373.1764096806153,
+      "seeds": "7",
+      "folds": 3,
+      "scope": "post-training counterfactual replay"
+    },
+    {
+      "evidence_id": "E21",
+      "json_pointer": "/factorial_cells/analytic_residual/metrics/mid_macro_sequence",
+      "group": "V8 factorial replay",
+      "model": "analytic_residual",
+      "metric": "MiD",
+      "unit": "dimensionless scaled error",
+      "direction": "lower",
+      "value": 373.5960622266817,
+      "seeds": "7",
+      "folds": 3,
+      "scope": "post-training counterfactual replay"
+    },
+    {
+      "evidence_id": "E21",
+      "json_pointer": "/factorial_cells/analytic_residual_transport/metrics/mid_macro_sequence",
+      "group": "V8 factorial replay",
+      "model": "analytic_residual_transport",
+      "metric": "MiD",
+      "unit": "dimensionless scaled error",
+      "direction": "lower",
+      "value": 163.23102227889166,
+      "seeds": "7",
+      "folds": 3,
+      "scope": "post-training counterfactual replay"
+    },
+    {
+      "evidence_id": "E21",
+      "json_pointer": "/factorial_cells/analytic_residual_transport_history/metrics/mid_macro_sequence",
+      "group": "V8 factorial replay",
+      "model": "analytic_residual_transport_history",
+      "metric": "MiD",
+      "unit": "dimensionless scaled error",
+      "direction": "lower",
+      "value": 155.82380686558793,
+      "seeds": "7",
+      "folds": 3,
+      "scope": "post-training counterfactual replay"
+    },
+    {
+      "evidence_id": "E21",
+      "json_pointer": "/factorial_cells/analytic_transport/metrics/mid_macro_sequence",
+      "group": "V8 factorial replay",
+      "model": "analytic_transport",
+      "metric": "MiD",
+      "unit": "dimensionless scaled error",
+      "direction": "lower",
+      "value": 373.1764096806153,
+      "seeds": "7",
+      "folds": 3,
+      "scope": "post-training counterfactual replay"
+    }
+  ],
+  "jepa_saved_analysis": {
+    "decision": "closed_no_additional_training",
+    "primary_benefit_gate_passed": false,
+    "primary_mae": {
+      "B_static": 0.03763238961408746,
+      "C_one_step": 0.03564004206250102,
+      "C_shuffle": 0.035061885577055175,
+      "random_init": 0.037196408997659317
+    },
+    "primary_comparisons": {
+      "B_static": {
+        "ci95_sequence_bootstrap": [
+          -0.0049620951828768045,
+          0.0008189780757168292
+        ],
+        "mean_delta_mae": -0.0019923475515864395,
+        "paired_sequence_count": 8,
+        "per_seed_mean_delta": {
+          "13": 0.0011644924808963232,
+          "21": -0.005109292570733696,
+          "7": -0.0020322425649219465
+        },
+        "seeds_kept_together": true,
+        "upper_ci_below_zero": false
+      },
+      "C_shuffle": {
+        "ci95_sequence_bootstrap": [
+          -0.002170051001389082,
+          0.002925896583929867
+        ],
+        "mean_delta_mae": 0.0005781564854458428,
+        "paired_sequence_count": 8,
+        "per_seed_mean_delta": {
+          "13": 0.0016740088686336848,
+          "21": 0.001702462020297956,
+          "7": -0.0016420014325941121
+        },
+        "seeds_kept_together": true,
+        "upper_ci_below_zero": false
+      }
+    }
+  },
+  "math": {
+    "clock_composition": "passes 5 signed/zero scalar examples; arithmetic check, not sensor validation",
+    "endpoint_example": {
+      "dt_s": 0.1,
+      "height_ratio": 1.1,
+      "current_ttc": 0.9999999999999992,
+      "previous_ttc": 1.0999999999999996
+    }
+  },
+  "source_sha256": {
+    "paper/data/transfer_queries.csv": "2fd4c33716a6c48e50aab581b3a6f172e5492d9136d408433868f63a71431621",
+    "paper/data/early_results.json": "bbc3e4b30c44e6af003574c49fbc18d38b2fb501473f0807e9ee5c819db97fae",
+    "paper/data/public_evidence_registry.json": "c7c1130068c98e00ee8588f7ee0b2f361020b5c8f88a251ac5c786db5125514b",
+    "paper/revision/derived_transfer_analysis.json": "b7e51514c785927f05fe57d63c7cebe74991fe74b63cbf8bc8d83e5d1316fe9a",
+    "docs/jepa_closure_20261031/closure_analysis.json": "f5a26209649df64752d401a7487c93f4a6caf27b7e801a274e75813d3525f819"
+  }
+}

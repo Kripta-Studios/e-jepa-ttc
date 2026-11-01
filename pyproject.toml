@@ -74,6 +74,10 @@ extend-exclude = [
   "docs/rgb_port_streaming_20261010/evidence",
   "docs/train40_runtime_council_20261028/evidence",
   "docs/sota_campaign_20261008",
+  # Received research review and executed snapshots retain their original evidence bytes.
+  # Maintained implementation in operational/, scripts/ and tests/ remains checked.
+  "docs/physics_review_20261031",
+  "docs/release_research_implementation_20261031/**/executed_source",
   # These executed V4.9 entry points have explicit immutable SHA-256 contracts.
   "scripts/preflight_object_event_v4_9.py",
   "scripts/analyze_object_event_v4_9_fixed_fusion.py",
