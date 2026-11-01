@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "frames": 8,
+  "baseline_exact": true,
+  "ranked_exact": true,
+  "prefetch_frames": 1,
+  "adapter_sha256": "6574b4814c57bf2265996fdcb9eed424e4228e96028970294ed0bcbecfd8c67e",
+  "scope": "Explicit split adapter and bounded prefetch preserve historical frozen inference on TRAIN parity population."
+}

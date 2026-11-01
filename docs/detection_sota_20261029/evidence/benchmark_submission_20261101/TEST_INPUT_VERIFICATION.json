@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "dataset": "NAIL-HNU/eAP-dataset",
+  "revision": "a814a946e60d37f7242358af5f344542177e50c5",
+  "test_manifest_sha256": "3974dde70fc0eed64bfd63e20a0ddb7d5780dcc5e1ef27b9f174b3dea47b92ae",
+  "rgb_shards_verified_against_hf_lfs": 45,
+  "rgb_bytes": 40315494400,
+  "sample_template_sha256": "598703c65a2919195c0063af8426d145c3d78f53b8ce2b7541185775238f2999",
+  "tokens": 35940,
+  "data_sources": "public test inputs only; no test labels"
+}
