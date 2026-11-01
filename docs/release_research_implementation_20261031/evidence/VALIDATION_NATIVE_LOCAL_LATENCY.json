@@ -1,0 +1,25 @@
+{
+  "sources": {
+    "scripts/release_native_local_latency.py": "da713c786397d7c8030dc4d5910ee44f4623cfeff03d286a41c1be0e20dc9603",
+    "tests/unit/test_release_native_local_latency.py": "14ca8a85d1c9df8a16d6a32f357acd8a92e4db9f8e7501673a0b35db16bb77d0",
+    "docs/release_research_implementation_20261031/NATIVE_LOCAL_LATENCY_PROTOCOL.md": "b490ae7e0b91ee649d16cc97fd7fef11bb82e6182616e535d7ab2b33aa86036b"
+  },
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "pyright": "0 errors",
+  "junit": {
+    "path": "output\\release_research_20261031\\validation_native_local_latency_v3\\pytest.xml",
+    "sha256": "b67e4585bf830d48d81b6657477636a420ddcaaa70a811ab77804d02c0fe6adb",
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "10",
+    "time": "22.186",
+    "timestamp": "2026-10-31T23:19:19.551660+01:00",
+    "hostname": "DESKTOP-2N393IP"
+  },
+  "prior_validation": "VALIDATION_NATIVE_PLATFORM_PAIR.json",
+  "distinct_campaign_tests": 115,
+  "gpu_latency_run_executed": false
+}

@@ -1,0 +1,32 @@
+{
+  "clarification": "FP32 60-second cap emits59.999996; use exact q.abs()<=FP32(1/60) predicate, not TTC==60",
+  "modalities": {
+    "event": {
+      "baseline": {
+        "inverse_magnitude_floor_rows": 769,
+        "negative_floor": 407,
+        "positive_floor": 362
+      },
+      "corrected": {
+        "inverse_magnitude_floor_rows": 769,
+        "negative_floor": 407,
+        "positive_floor": 362
+      }
+    },
+    "rgb": {
+      "baseline": {
+        "inverse_magnitude_floor_rows": 364,
+        "negative_floor": 186,
+        "positive_floor": 178
+      },
+      "corrected": {
+        "inverse_magnitude_floor_rows": 364,
+        "negative_floor": 186,
+        "positive_floor": 178
+      }
+    }
+  },
+  "run_complete_sha256": "12367719c9d4f4b12ac9a18bc7fcafccdd5bacc117276f554076f9ec1364ebb6",
+  "supersedes_exact60_counter": "b7b3e5c14f4c9029c09e5aabf950de4e76300f8e4121c72e21146c2909d36778",
+  "targets_read": false
+}

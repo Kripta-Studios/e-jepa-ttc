@@ -1,0 +1,467 @@
+{
+  "rows": [
+    {
+      "seed": 7,
+      "kind": "expansion",
+      "split": "development",
+      "truth": {
+        "q": 3.406655733069835,
+        "translation": [
+          0.47665656116349064,
+          0.33082282829423215
+        ]
+      },
+      "result": {
+        "q": 3.091152648936322,
+        "translation": [
+          0.449889255411132,
+          0.2678084620713054
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.5259249999653548,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 759,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3907022870828803,
+          "internal_reference_seconds_before_query": 0.0199945,
+          "objective": "energy",
+          "contrast_baseline": 0.001959131341861676,
+          "contrast_best": 0.0025385980348926005,
+          "contrast_gain": 0.2957773583879695,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.006389937889967445,
+          "minimum_warp_scale": 1.0000370938317873,
+          "solutions": [
+            {
+              "parameters": [
+                3.091152648936322,
+                0.449889255411132,
+                0.2678084620713054
+              ],
+              "objective": -1.2957773583879695,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                3.091152598817924,
+                0.4498892385645568,
+                0.26780847971099986
+              ],
+              "objective": -1.295777358358082,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                3.0920094312374182,
+                0.4478694809186251,
+                0.2666000695472977
+              ],
+              "objective": -1.2957752399371536,
+              "success": true,
+              "evaluations": 196,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "assessment": {
+        "passed": false,
+        "expected_motion": true,
+        "absolute_q_error": 0.3155030841335127,
+        "maximum_translation_error": 0.06301436622292678,
+        "relative_ttc_error": null
+      },
+      "events_sha256": "aee95fead4fb44e6e9099c206e683da47e77822e86d37835b6ece8589e436bba"
+    },
+    {
+      "seed": 7,
+      "kind": "receding",
+      "split": "development",
+      "truth": {
+        "q": -3.406655733069835,
+        "translation": [
+          0.47665656116349064,
+          0.33082282829423215
+        ]
+      },
+      "result": {
+        "q": -3.5398495468849887,
+        "translation": [
+          0.40743256123077604,
+          0.3369982890761668
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.5417478999588639,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.391180977772343,
+          "internal_reference_seconds_before_query": 0.0199945,
+          "objective": "energy",
+          "contrast_baseline": 0.001563950021294091,
+          "contrast_best": 0.002276407309427373,
+          "contrast_gain": 0.45554990788245187,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.04320759856741252,
+          "minimum_warp_scale": 0.8584874346641789,
+          "solutions": [
+            {
+              "parameters": [
+                -3.5398495468849887,
+                0.40743256123077604,
+                0.3369982890761668
+              ],
+              "objective": -1.4555499078824519,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.636370913244113,
+                0.3715117390961208,
+                0.3877510258095715
+              ],
+              "objective": -1.4506610601322851,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -3.5398495468849887,
+                0.40743256123077604,
+                0.3369982890761668
+              ],
+              "objective": -1.4555499078824519,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "assessment": {
+        "passed": false,
+        "expected_motion": true,
+        "absolute_q_error": 0.13319381381515383,
+        "maximum_translation_error": 0.06922399993271461,
+        "relative_ttc_error": null
+      },
+      "events_sha256": "5b380c5f7b26ac3922e30b25334b537c3569183d1bc1e7fdd1d569726594489e"
+    },
+    {
+      "seed": 7,
+      "kind": "translation",
+      "split": "development",
+      "truth": {
+        "q": 0.0,
+        "translation": [
+          0.47665656116349064,
+          0.33082282829423215
+        ]
+      },
+      "result": {
+        "q": 0.17888076825467228,
+        "translation": [
+          0.40218415640770133,
+          0.3057079226089847
+        ],
+        "ttc_seconds": 5.590315883350308,
+        "valid": true,
+        "reason": "available",
+        "elapsed_seconds": 0.43885779997799546,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 649,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.39091064245491786,
+          "internal_reference_seconds_before_query": 0.0199945,
+          "objective": "energy",
+          "contrast_baseline": 0.0021945533385592953,
+          "contrast_best": 0.0023821076127230898,
+          "contrast_gain": 0.08546352957951897,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.010195636068749403,
+          "minimum_warp_scale": 1.000002146569219,
+          "solutions": [
+            {
+              "parameters": [
+                0.17888076825467228,
+                0.40218415640770133,
+                0.3057079226089847
+              ],
+              "objective": -1.085463529579519,
+              "success": true,
+              "evaluations": 189,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.1788837708591646,
+                0.4021832005906822,
+                0.3057077916606016
+              ],
+              "objective": -1.0854635294880892,
+              "success": true,
+              "evaluations": 190,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.17888768029550353,
+                0.4021819470567236,
+                0.30570761742200325
+              ],
+              "objective": -1.0854635293677608,
+              "success": true,
+              "evaluations": 187,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "assessment": {
+        "passed": false,
+        "expected_motion": false,
+        "absolute_q_error": 0.17888076825467228,
+        "maximum_translation_error": 0.07447240475578931,
+        "relative_ttc_error": null
+      },
+      "events_sha256": "b28c6975b67c8815f989b307182af15169a48498b63b2b807ac6dac2d85664f6"
+    },
+    {
+      "seed": 7,
+      "kind": "stationary",
+      "split": "development",
+      "truth": {
+        "q": 0.0,
+        "translation": [
+          0.0,
+          0.0
+        ]
+      },
+      "result": {
+        "q": -0.0597883333294944,
+        "translation": [
+          0.16448900330844277,
+          -0.2837652819905606
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "optimizer_failure",
+        "elapsed_seconds": 0.5897695999592543,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 803,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.3906032452622306,
+          "internal_reference_seconds_before_query": 0.0199945,
+          "objective": "energy",
+          "contrast_baseline": 0.0022319148033328974,
+          "contrast_best": 0.0022344174314321156,
+          "contrast_gain": 0.0011212919487253448,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.004569637559818762,
+          "minimum_warp_scale": 0.9976098417984868,
+          "solutions": [
+            {
+              "parameters": [
+                -0.16054453229694465,
+                0.1276258377997786,
+                -0.27281614669376086
+              ],
+              "objective": -1.0009797101754054,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -0.09412634523474073,
+                0.1797570881923571,
+                -0.28773535455254773
+              ],
+              "objective": -1.001112525080287,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            },
+            {
+              "parameters": [
+                -0.0597883333294944,
+                0.16448900330844277,
+                -0.2837652819905606
+              ],
+              "objective": -1.0011212919487253,
+              "success": false,
+              "evaluations": 240,
+              "message": "Maximum number of function evaluations has been exceeded."
+            }
+          ]
+        }
+      },
+      "assessment": {
+        "passed": true,
+        "expected_motion": false,
+        "absolute_q_error": 0.0597883333294944,
+        "maximum_translation_error": 0.2837652819905606,
+        "relative_ttc_error": null
+      },
+      "events_sha256": "0580ef4439fec4cc215359887a40c65bc1e2792a0b63f5d459a1a1ee951d552f"
+    },
+    {
+      "seed": 7,
+      "kind": "noise",
+      "split": "development",
+      "truth": {
+        "q": 0.0,
+        "translation": [
+          0.0,
+          0.0
+        ]
+      },
+      "result": {
+        "q": 0.06836078725829077,
+        "translation": [
+          0.14996235216680825,
+          0.2091144136164136
+        ],
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "flat_objective",
+        "elapsed_seconds": 0.5622559000039473,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 684,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 0.9667738537396015,
+          "internal_reference_seconds_before_query": 0.0199945,
+          "objective": "energy",
+          "contrast_baseline": 0.00017347706565645204,
+          "contrast_best": 0.00017352332276783348,
+          "contrast_gain": 0.00026664684006738604,
+          "lost_fraction": 0.0,
+          "profile_gap_fixed_translation": 0.0002837521679175392,
+          "minimum_warp_scale": 1.000000820329447,
+          "solutions": [
+            {
+              "parameters": [
+                0.019505469998357707,
+                0.13107158919710307,
+                0.227571110324412
+              ],
+              "objective": -1.0002589641851534,
+              "success": true,
+              "evaluations": 196,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.019505478666499,
+                0.1310715905626349,
+                0.22757110492498006
+              ],
+              "objective": -1.0002589641851223,
+              "success": true,
+              "evaluations": 196,
+              "message": "Optimization terminated successfully."
+            },
+            {
+              "parameters": [
+                0.06836078725829077,
+                0.14996235216680825,
+                0.2091144136164136
+              ],
+              "objective": -1.0002666468400674,
+              "success": true,
+              "evaluations": 209,
+              "message": "Optimization terminated successfully."
+            }
+          ]
+        }
+      },
+      "assessment": {
+        "passed": true,
+        "expected_motion": false,
+        "absolute_q_error": 0.06836078725829077,
+        "maximum_translation_error": 0.2091144136164136,
+        "relative_ttc_error": null
+      },
+      "events_sha256": "580645a675f81558c6a42d0ea38f3a80b2815f72cf54c8f1a34c90858ffea9cc"
+    },
+    {
+      "seed": 7,
+      "kind": "edge",
+      "split": "development",
+      "truth": {
+        "q": 0.0,
+        "translation": [
+          0.0,
+          0.0
+        ]
+      },
+      "result": {
+        "q": null,
+        "translation": null,
+        "ttc_seconds": null,
+        "valid": false,
+        "reason": "insufficient_spatial_support",
+        "elapsed_seconds": 0.0005250000394880772,
+        "diagnostics": {
+          "input_events": 4096,
+          "roi_events": 4096,
+          "used_events": 4096,
+          "objective_evaluations": 0,
+          "reference_time_us": 100000,
+          "event_span_seconds": 0.039965,
+          "spatial_eigen_ratio": 6.017044425593513e-06
+        }
+      },
+      "assessment": {
+        "passed": true,
+        "expected_motion": false,
+        "absolute_q_error": null,
+        "maximum_translation_error": null,
+        "relative_ttc_error": null
+      },
+      "events_sha256": "10ec86b7a2002d913c014474ade1baa6be230053d8e3eb2d6145a2b57ffd330e"
+    }
+  ],
+  "all_synthetic_gates_pass": false,
+  "evaluation_passed": 0,
+  "evaluation_total": 0,
+  "timing_seconds": {
+    "total": 2.6590811999049038,
+    "median": 0.5338364499621093,
+    "p95": 0.5828911749704275,
+    "max": 0.5897695999592543
+  },
+  "timing_scope": "full estimate_expansion including validation, ROI/sample selection, grid, optimization, diagnostic probes; excludes fixture generation",
+  "real_data_authorized_by_this_result": false
+}

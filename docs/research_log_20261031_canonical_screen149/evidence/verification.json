@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-10-31T18:07:46.969398+00:00",
+  "git_commit": "f8131a031f61d9270323fe3961dad88016b582cd",
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv-transfer\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/unit/test_phase_timewarp.py",
+        "tests/unit/test_phase_timewarp_capture_pilot.py",
+        "tests/unit/test_phase_canonical_pair.py",
+        "tests/unit/test_phase_canonical_pilot.py",
+        "tests/unit/test_phase_canonical_pair_source_audit.py",
+        "tests/unit/test_phase_canonical_screen.py",
+        "tests/unit/test_phase_canonical_screen_metrics.py",
+        "-q"
+      ],
+      "returncode": 0,
+      "log": "check_0.log",
+      "sha256": "9187488ef3d10e92ecd44590a9aa03a2aa6f37c1f96cb5754652e91f499d5a8d"
+    },
+    {
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv-transfer\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "operational/phase_timewarp",
+        "scripts/screen_phase_canonical_pair.py",
+        "scripts/evaluate_phase_canonical_screen.py",
+        "scripts/report_phase_canonical_screen.py",
+        "scripts/audit_phase_canonical_compact.py",
+        "tests/unit/test_phase_timewarp.py",
+        "tests/unit/test_phase_timewarp_capture_pilot.py",
+        "tests/unit/test_phase_canonical_pair.py",
+        "tests/unit/test_phase_canonical_pilot.py",
+        "tests/unit/test_phase_canonical_pair_source_audit.py",
+        "tests/unit/test_phase_canonical_screen.py",
+        "tests/unit/test_phase_canonical_screen_metrics.py"
+      ],
+      "returncode": 0,
+      "log": "check_1.log",
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv-transfer\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "operational/phase_timewarp",
+        "scripts/screen_phase_canonical_pair.py",
+        "scripts/evaluate_phase_canonical_screen.py",
+        "scripts/report_phase_canonical_screen.py",
+        "scripts/audit_phase_canonical_compact.py",
+        "tests/unit/test_phase_timewarp.py",
+        "tests/unit/test_phase_timewarp_capture_pilot.py",
+        "tests/unit/test_phase_canonical_pair.py",
+        "tests/unit/test_phase_canonical_pilot.py",
+        "tests/unit/test_phase_canonical_pair_source_audit.py",
+        "tests/unit/test_phase_canonical_screen.py",
+        "tests/unit/test_phase_canonical_screen_metrics.py"
+      ],
+      "returncode": 1,
+      "log": "check_2.log",
+      "sha256": "536b8cb75d4076c8ef83e037d60185a60fe74a53531331ea5a6be92f5d87ae86"
+    },
+    {
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv-transfer\\Scripts\\python.exe",
+        "-m",
+        "pyright",
+        "--project",
+        "output/phase_event_expansion/objective_profile/pyright_transfer.json",
+        "operational/phase_timewarp",
+        "scripts/screen_phase_canonical_pair.py",
+        "scripts/evaluate_phase_canonical_screen.py",
+        "scripts/report_phase_canonical_screen.py",
+        "scripts/audit_phase_canonical_compact.py"
+      ],
+      "returncode": 0,
+      "log": "check_3.log",
+      "sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad"
+    }
+  ],
+  "status": "FAIL"
+}

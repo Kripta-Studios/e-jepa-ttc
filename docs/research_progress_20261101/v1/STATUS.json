@@ -1,0 +1,65 @@
+{
+  "eap_local_sensitivity_complete": true,
+  "eap_test12_accuracy_validated": false,
+  "new_router_development_gate_passes": false,
+  "new_model_approved": false,
+  "sota_comparable_superiority_demonstrated": false,
+  "goal_achieved": false,
+  "delivered_model_identity_and_components_verified": true,
+  "next_dependencies": [
+    "Authorized official Test12 evaluation; public targets are unavailable",
+    "Slider-750 aligned targets/evaluator and equivalent baseline reproduction",
+    "Full candidate validation before any delivered-model replacement"
+  ],
+  "sources": {
+    "native_result": {
+      "path": "output\\release_research_20261031\\native_platform_followup_v2\\paired_replay\\RESULTS.json",
+      "sha256": "2e1aa9ab178b7767c4c1ee19e3fb6c4fa60cbb7cfdf0b73e357297f0445945d2"
+    },
+    "native_decision": {
+      "path": "output\\release_research_20261031\\native_platform_followup_v2\\DECISION.json",
+      "sha256": "d3bf31277361a8a2a5c3f2fe94daa99a8d2fade9d3c41dcd4bad73b852aecdb6"
+    },
+    "router_result": {
+      "path": "output\\phase_timewarp\\eap_router_sensitivity_v1\\REPORT.json",
+      "sha256": "1ba0445029643af075ee390376903cbf508cc2e2e5d4f985a8b32b9ad4ea3f0d"
+    },
+    "router_freeze": {
+      "path": "output\\phase_timewarp\\eap_router_sensitivity_v1\\FREEZE.json",
+      "sha256": "fe0b2b1b9e061a8d18826a31d8a490f5dd6883d92c9cb0993990e76ceae8b5b9"
+    },
+    "router_complete": {
+      "path": "output\\phase_timewarp\\eap_router_sensitivity_v1\\COMPLETE.json",
+      "sha256": "48cb354e1bf9bd083de6428488305304cf62091e18e83516d0d2eb67c344fe59"
+    },
+    "refit_result": {
+      "path": "output\\phase_timewarp\\canonical_router_refit_v1\\REPORT.json",
+      "sha256": "8475d5c7d8e5b870ef0273f35df677abc6a46a3b8845be32658d8cd0382d9f9f"
+    },
+    "refit_freeze": {
+      "path": "output\\phase_timewarp\\canonical_router_refit_v1\\FREEZE.json",
+      "sha256": "9c1895bd439cc2da0170940492b4eee44732d1ed952ca87d58bdffc9b7e09540"
+    },
+    "refit_complete": {
+      "path": "output\\phase_timewarp\\canonical_router_refit_v1\\COMPLETE.json",
+      "sha256": "f67a17abe77492270eeea1699f2a02a5d865e8022d1024dae7899d3d9f6dcefd"
+    },
+    "external": {
+      "path": "output\\phase_timewarp\\external_dependencies_20261101\\VERIFIED.json",
+      "sha256": "c86a5c17a349924c0eb23e373083ab3a943f95274dc7dc6029fa359a4feca9aa"
+    },
+    "evaluator_audit": {
+      "path": "output\\phase_safe_fusion\\evaluator_audit\\AUDIT.json",
+      "sha256": "af97200329206304d21aa7d16c740ef28340899d495cca533744c76f65437733"
+    },
+    "historical_comparison_contract": {
+      "path": "data\\protocols\\evttc_official_comparison_v2.json",
+      "sha256": "0a7940addb471a18a6c0c59172116eb83307496c22674eabb1a8763404b70d8e"
+    },
+    "delivered_model": {
+      "path": "output\\phase_submission\\FINAL_MODEL\\MODEL.json",
+      "sha256": "fe1460c407ccd08fc670c1955435b0fe9b4719737e22e3dec7534a57e66bb005"
+    }
+  },
+  "generator_sha256": "53994d552f353283ba4cc7750c092adb68ea858e8666eb68472a1a5da26a909b"
+}

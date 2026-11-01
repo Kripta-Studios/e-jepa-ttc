@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "full_suite": {
+    "tests": 7343,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 46,
+    "passed": 7297,
+    "seconds": 708.672,
+    "sha256": "2251c3c16cd74c6b82ae5bc47cdae507ac7dc4521522603df2d9271bd7002d48",
+    "junit_case_entries_including_subtests": 7360,
+    "subtests_passed": 17,
+    "wall_seconds": 709.93
+  },
+  "focused": {
+    "tests": 31,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 31,
+    "seconds": 5.242,
+    "sha256": "d7e85ab2ea4b5a8e53c338d7fe89f705a08bdbbdf9b680d9392ce6af734a4623"
+  },
+  "initial_full_progress_counts": {
+    ".": 7288,
+    "s": 46,
+    "F": 7
+  },
+  "utf8_failed_test_retry": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 7,
+    "seconds": 7.778,
+    "sha256": "4f3752c791925e757764a1332c28c7be3e470ee8621199e1447d8fd5126b4581"
+  },
+  "environment_correction": "PYTHONUTF8=1 and PYTHONIOENCODING=utf-8 inherited by subprocesses",
+  "ruff": "PASS",
+  "pyright": "0 errors, 0 warnings",
+  "scientific_artifact_verifier": "PASS",
+  "independent_review": "GO_CON_ALCANCE_LIMITADO; both minor audit gaps completed",
+  "integration": "keep existing local research/evttc-transfer-v2 branch"
+}

@@ -1,0 +1,14 @@
+{
+  "candidate_evaluated": false,
+  "elapsed_seconds": 51.11133730004076,
+  "failed_observations": 24,
+  "freeze_sha256": "64105093e9524e62bfed0a3e125d0e9349aa5c3c570af005b805f0d48158e57d",
+  "mode": "pilot",
+  "observations": 24,
+  "optimizer_updates": 0,
+  "parity_status": "FAIL",
+  "results_sha256": "0bff9ef0eac8cb02b91ddf6dc5e8ab6bced36f1fd380f079c1c0299c07168d74",
+  "script_sha256": "1b082ccee5b5f790125c1197c2bacb800a3147dd70e1e82b71352d1487057fa9",
+  "status": "COMPLETE",
+  "targets_read": false
+}

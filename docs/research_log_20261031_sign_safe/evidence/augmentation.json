@@ -1,0 +1,146 @@
+{
+  "schema": "phase_safe_geometry_augmentations_v1",
+  "created_utc": "2026-10-31T15:31:06.531374+00:00",
+  "scope": "Geometry observation channel only; not raw-sensor or native cold-start augmentation",
+  "native_scope": "Cached native predictions retain original unperturbed bbox/sensor histories",
+  "targets": "Real frozen targets copied unchanged; no synthetic labels or label adjustment",
+  "rows": 2608,
+  "road_rows": 2531,
+  "slider500_rows": 77,
+  "groups": [
+    "CCRm-low-0-overlap-0",
+    "CCRm-low-50-overlap-50",
+    "CCRm-medium-0-overlap-0",
+    "CCRm-medium-50-overlap-50",
+    "CCRs-1-high-0-overlap-0",
+    "CCRs-1-high-50-overlap-50",
+    "CCRs-1-low-0-overlap-0",
+    "CCRs-1-low-50-overlap-50",
+    "CCRs-1-medium-0-overlap-0",
+    "CCRs-1-medium-50-overlap-50",
+    "CCRs-3-low-100-overlap-100",
+    "CCRs-3-medium-100-overlap-100",
+    "CCRs-side-high",
+    "CCRs-side-low",
+    "CCRs-side-medium",
+    "CPLA-high",
+    "CPLA-low",
+    "CPLA-medium",
+    "CPNA-high",
+    "CPNA-low",
+    "CPNA-medium",
+    "CPNAO-high",
+    "CPNAO-low",
+    "CPNAO-medium",
+    "Slider-500"
+  ],
+  "excluded_groups": [
+    "CCRm-low-100-overlap-100",
+    "CCRm-medium-100-overlap-100",
+    "CCRs-1-high-100-overlap-100",
+    "CCRs-1-low-100-overlap-100",
+    "CCRs-1-medium-100-overlap-100",
+    "CCRs-2-high-100-overlap-100",
+    "CCRs-2-low-100-overlap-100",
+    "CCRs-2-medium-100-overlap-100",
+    "Slider-1000",
+    "Slider-750"
+  ],
+  "eligible_sensor_metadata_rows": 2714,
+  "history_policy": "All sensor-only observations from eligible groups, cutoff at query and 650 ms history",
+  "variants": [
+    "last2",
+    "last4",
+    "jitter2px",
+    "dropout50"
+  ],
+  "seed": 7,
+  "rng": "PCG64 seeded by first16bytes SHA256(UTF8(seed\\0token\\0variant)), big-endian",
+  "jitter": "Independent continuous uniform[-2,+2]pixels per box coordinate; no label access",
+  "dropout": "Independent Bernoulli50% per causal box; no forced endpoint or imputation",
+  "clean_parity": {
+    "passed": true,
+    "rtol": 1e-06,
+    "atol": 1e-06,
+    "geometry_exact": true,
+    "quality_exact": true,
+    "before_augmentation": true,
+    "rows": 2608,
+    "population_sha256": "1c200903e5cbaf4cc2115c6b53dc252613e51d2f0dc0d9dcb595cdbe523e804e",
+    "metadata_sha256": "d976c31c9110c06c75a0b8925aa5c0852acc53440424eb8a6880e8dd095856b8",
+    "script_sha256": "7c57da18db245ee772c5da273f4fcb864750aee7428d32b3cc76a4cadc426a28"
+  },
+  "clean_parity_receipt_sha256": "af2d486853bbee421dd00e0b8414c1d086782acf08724b2d7728552d89e78ba6",
+  "unchanged_array_checks": {
+    "native": true,
+    "target": true,
+    "group": true,
+    "family": true,
+    "token": true
+  },
+  "unchanged_array_sha256": {
+    "native": "e593778a23a9e4c2375476a19337050f2ffeac5a7d0207970f8b027b6242e1b5",
+    "target": "c53cf67357cb2ce0b45ee91544b096e6f4f7712555601f21c36798310ebfaaef",
+    "group": "af1dd87bd4329f067a666e580727795ea7f99bdbd848bacc76ab4f5e4ac9dd2f",
+    "family": "abb65119831f102b35e5170acdc84a25ed118e5283ea9aa97c2161fde6dc18fc",
+    "token": "b06d74e6eddb76dad7226d50d81e3ad4ee3075fb10f4b06899088c5fd2b2f843"
+  },
+  "variant_support": {
+    "last2": {
+      "valid_geometry": 2549,
+      "reasons": {
+        "available": 2549,
+        "stationary_or_undefined_expansion": 58,
+        "insufficient_causal_history": 1
+      },
+      "mean_observation_count": 1.999616564417178
+    },
+    "last4": {
+      "valid_geometry": 2589,
+      "reasons": {
+        "available": 2589,
+        "stationary_or_undefined_expansion": 18,
+        "insufficient_causal_history": 1
+      },
+      "mean_observation_count": 3.9976993865030677
+    },
+    "jitter2px": {
+      "valid_geometry": 2607,
+      "reasons": {
+        "available": 2607,
+        "insufficient_causal_history": 1
+      },
+      "mean_observation_count": 12.712806748466258
+    },
+    "dropout50": {
+      "valid_geometry": 2303,
+      "reasons": {
+        "available": 2303,
+        "stale_endpoint": 276,
+        "insufficient_causal_history": 14,
+        "stationary_or_undefined_expansion": 15
+      },
+      "mean_observation_count": 6.328604294478527
+    }
+  },
+  "source_sha256": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\build_phase_safe_augmentations.py": "7c57da18db245ee772c5da273f4fcb864750aee7428d32b3cc76a4cadc426a28",
+    "operational\\phase_startup\\geometry.py": "1698cb19e30c4f491bbaa42e34e5ef24fb0aadfc081506da8cabe363e590b8d7",
+    "operational\\phase_robust\\data.py": "4e3fcf7ac2ee0fa1a9a224130b9b1c7d03efba5aa63f46856d8082b08fc55c65"
+  },
+  "input_sha256": {
+    "output\\phase_submission\\training\\POPULATION.npz": "1c200903e5cbaf4cc2115c6b53dc252613e51d2f0dc0d9dcb595cdbe523e804e",
+    "output\\phase_submission\\training\\CONFIG.json": "e1286706ab164886d2059d9fb02c58cd9c5492b19478edecaaa861a13dd40e5d",
+    "output\\phase_adapt_final\\data_v3\\POPULATION.json": "d976c31c9110c06c75a0b8925aa5c0852acc53440424eb8a6880e8dd095856b8",
+    "output\\phase_campaign\\Slider500\\inputs\\Slider-500\\bbox.csv": "a05c4740ddd0b73db560b6e0703aabe9ac35dd71b56f4e561c83ab254d16ddfc",
+    "output\\phase_campaign\\Slider500\\FREEZE.json": "6c67b96d037c48fdf884a159048638980f27a05046f0ae9faded08dd0a655bea"
+  },
+  "output_sha256": {
+    "AUGMENTATIONS.npz": "c9bbc7e3274422ac165a7e9ea69a89b2ea18335553326d450f35bd7e749e96c2"
+  },
+  "benchmark_sensor_or_target_files_opened": false,
+  "excluded_metadata_access": "Only sequence_id inspected before dropping excluded groups",
+  "geometry_helpers_receive_targets": false,
+  "training_performed": false,
+  "model_selection_performed": false
+}

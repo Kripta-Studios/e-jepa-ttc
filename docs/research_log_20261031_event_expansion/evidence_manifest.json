@@ -1,0 +1,18 @@
+{
+  "generator_sha256": "a8b6252b90cae72358001fb4a32686e41087a43aa236037fa9a611864eabab97",
+  "receipts": {
+    "accelerator.json": "9d10e0eee4fdeab8a2f56caad55f9528129ec72c8dd397c57aec9cba009970b2",
+    "background_sensitivity.json": "df87ac12565be6a0edb20d82644abf76b307922c3feff619ef5410176ccf113b",
+    "cuda_all77.json": "3f0a16a21bef98dac7380b3f5af26f7d65e4460c5f65cc9b20a882e911a3dae5",
+    "cuda_all77_context.json": "7e38f38b36064180767e6a0f758957a6534ae099c6077c7158fed7aeb08a75b1",
+    "energy_midpoint.json": "0784235c09556b21c760e4954260ea2ccad679080c18c01e2f824442635481b1",
+    "energy_original.json": "f0b52a73aaadb17eae2308c46d2b3d13e3d7fb79ce1e983fb5d82c461bf4cba1",
+    "full_coverage_comparison.json": "7c72138b71badcf1f0edae0b88d20341e4229963225a8898c5b8850b34943c5a",
+    "hybrid_all77.json": "64ee7f30796d7926056d1a821b53f7733f102ab30762238c69dd97a0a40452a5",
+    "hybrid_all77_context.json": "321016fee146c93a83711d0bbf80a470ceeb69b2272de3a08c1225f62e5597af",
+    "ncc_confirmation.json": "2d93590c3cf74716a410dd074443347282c95f0613d2de6cfad413cd829f3a2b",
+    "ncc_development.json": "0f612f283f02450109f003f00aebe7949c71e1949145ebe78a6e8a0cfbc615f4",
+    "objective_profile.json": "1f8dedd50c342e637364eda1108e3392a4686b527954816548310ba7effef699",
+    "real_slider500.json": "03eb4c789436aba7bae1837d90cd938f430e41bc4c71f852f83c45656209a075"
+  }
+}

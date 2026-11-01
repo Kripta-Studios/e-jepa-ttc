@@ -1,0 +1,27 @@
+{
+  "executed_mechanism_assertions": [
+    "constant velocity transport within 1e-12",
+    "shared-prefix future invariance",
+    "event nominal-clock exact equality in 134 queries",
+    "full event streams equal within 1 ps in 24 analytic ambiguity cases"
+  ],
+  "new_regression_tests": {
+    "file": "tests\\unit\\test_release_sensor_identifiability.py",
+    "passed": 2,
+    "seconds": 23.74
+  },
+  "prior_validation": "VALIDATION_CONTINUED.json",
+  "pyright": "0 errors",
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "sources": {
+    "scripts\\release_cadence_localization.py": "bcffae69bccc96bdf32bda7424a993a5858028e65841e5ac7768da7bbe04c47a",
+    "scripts\\release_clock_regimes.py": "c007984b25d78c1d4345d367e61521ac27989620d323431e076d1d20e0f304d3",
+    "scripts\\release_native_drift_audit.py": "77f368bb0f8c2fe27ce636b5b8b9de3a873c318725cf7a45e91724599da10867",
+    "scripts\\release_observability_failure_audit.py": "2e135e1834139a078cba8444d7cbfabea4a6c16dd3e57e25846806bbaac84730",
+    "scripts\\release_robust_measurement.py": "915256403765912a37a3d800fbed61a11b8ebbab272fe8fcc1b2dece2708c39c",
+    "scripts\\release_sensor_identifiability.py": "15333810249f9953bb7916ab6ad6ca11fe9fe86bf16c869ceb5db86eb3fd3210",
+    "scripts\\report_release_research_followup.py": "a545f4fcbadd153108a7cf7208678fa5fdf13a87da659a6c6b3a33b427a09ccd",
+    "tests\\unit\\test_release_sensor_identifiability.py": "bd1c88bbd37fbb1132c860886ce3f04b135af57df5caceccb67b7de07711ff90"
+  }
+}

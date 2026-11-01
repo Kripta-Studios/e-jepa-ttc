@@ -1,0 +1,186 @@
+{
+  "event": {
+    "columns": {
+      "event_a5_flow": {
+        "normalized_max_abs": 4.8995018005371094e-05,
+        "raw_max_abs": 3.6135315895080566e-07,
+        "scale": 0.007373451720923185
+      },
+      "event_a5_log_variance": {
+        "normalized_max_abs": 6.663799285888672e-05,
+        "raw_max_abs": 0.0002155303955078125,
+        "scale": 3.231414794921875
+      },
+      "event_a5_margin": {
+        "normalized_max_abs": 0.00017380714416503906,
+        "raw_max_abs": 0.000919342041015625,
+        "scale": 5.285013198852539
+      },
+      "event_a5_phase": {
+        "normalized_max_abs": 8.106231689453125e-05,
+        "raw_max_abs": 1.6689300537109375e-06,
+        "scale": 0.020591329783201218
+      },
+      "event_abs_c2f_minus_a5": {
+        "normalized_max_abs": 0.00032389163970947266,
+        "raw_max_abs": 1.1324882507324219e-06,
+        "scale": 0.0034962892532348633
+      },
+      "event_abs_pair_minus_a5": {
+        "normalized_max_abs": 0.0007158517837524414,
+        "raw_max_abs": 3.2261013984680176e-06,
+        "scale": 0.00450678076595068
+      },
+      "event_abs_pair_minus_c2f": {
+        "normalized_max_abs": 0.0008246302604675293,
+        "raw_max_abs": 4.3585896492004395e-06,
+        "scale": 0.005285301245748997
+      },
+      "event_c2f_flow": {
+        "normalized_max_abs": 5.307793617248535e-05,
+        "raw_max_abs": 3.9674341678619385e-07,
+        "scale": 0.00747618218883872
+      },
+      "event_c2f_log_variance": {
+        "normalized_max_abs": 8.869171142578125e-05,
+        "raw_max_abs": 0.00028228759765625,
+        "scale": 3.181081533432007
+      },
+      "event_c2f_margin": {
+        "normalized_max_abs": 0.0002949237823486328,
+        "raw_max_abs": 0.00154876708984375,
+        "scale": 5.249050140380859
+      },
+      "event_c2f_minus_a5": {
+        "normalized_max_abs": 0.0002507716417312622,
+        "raw_max_abs": 1.1324882507324219e-06,
+        "scale": 0.004516012966632843
+      },
+      "event_c2f_phase": {
+        "normalized_max_abs": 0.00013637542724609375,
+        "raw_max_abs": 2.8014183044433594e-06,
+        "scale": 0.020552989095449448
+      },
+      "event_count_log1p_mean": {
+        "normalized_max_abs": 4.291534423828125e-06,
+        "raw_max_abs": 5.7220458984375e-06,
+        "scale": 1.3228484392166138
+      },
+      "event_pair_minus_a5": {
+        "normalized_max_abs": 0.0005640387535095215,
+        "raw_max_abs": 3.2261013984680176e-06,
+        "scale": 0.00571955181658268
+      },
+      "event_pair_minus_c2f": {
+        "normalized_max_abs": 0.0006421208381652832,
+        "raw_max_abs": 4.3585896492004395e-06,
+        "scale": 0.006787885446101427
+      },
+      "event_pair_phase": {
+        "normalized_max_abs": 7.224082946777344e-05,
+        "raw_max_abs": 1.55717134475708e-06,
+        "scale": 0.02154514566063881
+      },
+      "event_rate_log1p_mean": {
+        "normalized_max_abs": 3.5762786865234375e-06,
+        "raw_max_abs": 4.76837158203125e-06,
+        "scale": 1.3228955268859863
+      }
+    },
+    "observations": 2,
+    "producer_diagnostics_changed": true,
+    "raw_statistics_exact": false
+  },
+  "rgb": {
+    "columns": {
+      "rgb_a5_flow": {
+        "normalized_max_abs": 1.990795135498047e-05,
+        "raw_max_abs": 1.8067657947540283e-07,
+        "scale": 0.009043258614838123
+      },
+      "rgb_a5_log_variance": {
+        "normalized_max_abs": 0.0001442432403564453,
+        "raw_max_abs": 0.0004253387451171875,
+        "scale": 2.9492452144622803
+      },
+      "rgb_a5_margin": {
+        "normalized_max_abs": 0.000408172607421875,
+        "raw_max_abs": 0.0024204254150390625,
+        "scale": 5.931798934936523
+      },
+      "rgb_a5_phase": {
+        "normalized_max_abs": 0.00019931793212890625,
+        "raw_max_abs": 4.392117261886597e-06,
+        "scale": 0.02204241417348385
+      },
+      "rgb_abs_c2f_minus_a5": {
+        "normalized_max_abs": 0.0007254481315612793,
+        "raw_max_abs": 3.945082426071167e-06,
+        "scale": 0.005438048858195543
+      },
+      "rgb_abs_pair_minus_a5": {
+        "normalized_max_abs": 0.00024241209030151367,
+        "raw_max_abs": 1.8365681171417236e-06,
+        "scale": 0.007576425559818745
+      },
+      "rgb_abs_pair_minus_c2f": {
+        "normalized_max_abs": 0.000280529260635376,
+        "raw_max_abs": 2.339482307434082e-06,
+        "scale": 0.008338878862559795
+      },
+      "rgb_c2f_flow": {
+        "normalized_max_abs": 0.00012046098709106445,
+        "raw_max_abs": 1.4677643775939941e-06,
+        "scale": 0.012180686928331852
+      },
+      "rgb_c2f_log_variance": {
+        "normalized_max_abs": 0.0001226663589477539,
+        "raw_max_abs": 0.00034809112548828125,
+        "scale": 2.8381614685058594
+      },
+      "rgb_c2f_margin": {
+        "normalized_max_abs": 0.0002334117889404297,
+        "raw_max_abs": 0.001377105712890625,
+        "scale": 5.901268005371094
+      },
+      "rgb_c2f_minus_a5": {
+        "normalized_max_abs": 0.0005950927734375,
+        "raw_max_abs": 3.945082426071167e-06,
+        "scale": 0.006629128474742174
+      },
+      "rgb_c2f_phase": {
+        "normalized_max_abs": 0.00011157989501953125,
+        "raw_max_abs": 2.4847686290740967e-06,
+        "scale": 0.022297488525509834
+      },
+      "rgb_luminance_mean": {
+        "normalized_max_abs": 0.0,
+        "raw_max_abs": 0.0,
+        "scale": 0.13237044215202332
+      },
+      "rgb_pair_minus_a5": {
+        "normalized_max_abs": 0.00021460652351379395,
+        "raw_max_abs": 1.8365681171417236e-06,
+        "scale": 0.008557735942304134
+      },
+      "rgb_pair_minus_c2f": {
+        "normalized_max_abs": 0.0002361685037612915,
+        "raw_max_abs": 2.339482307434082e-06,
+        "scale": 0.009906111285090446
+      },
+      "rgb_pair_phase": {
+        "normalized_max_abs": 0.00020241737365722656,
+        "raw_max_abs": 4.824250936508179e-06,
+        "scale": 0.02384314127266407
+      },
+      "rgb_spatial_gradient_log1p": {
+        "normalized_max_abs": 0.0,
+        "raw_max_abs": 0.0,
+        "scale": 0.009424079209566116
+      }
+    },
+    "observations": 2,
+    "producer_diagnostics_changed": true,
+    "raw_statistics_exact": true
+  }
+}

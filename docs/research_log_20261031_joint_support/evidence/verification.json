@@ -1,0 +1,21 @@
+{
+  "admitted_variant_weights_exact": true,
+  "all_checkpoint_hashes_verified": true,
+  "all_reference_vectors_exact": true,
+  "all_seed_predictions_finite": true,
+  "all_source_archives_and_inputs_unchanged": true,
+  "base33_clean_only_centers_scales_exact": true,
+  "clean_oof_rows": 2608,
+  "eap_or_test12_or_benchmark_evaluated": false,
+  "epochs_each": 300,
+  "fit_groups_disjoint": true,
+  "fits_verified": 48,
+  "oof_sha256": "8d76f0b404a48848dc0a130b0d2c5290b47961d6735cb5bdebbdef0f632626fe",
+  "perfold_aggregate_and_seed_means_exact": true,
+  "restart_oof_rows": 447,
+  "selected": null,
+  "selection_sha256": "0f797d31051aa58032a4db8b5fb245ad2069d2aa10e44d75a43bdfce4008b1a2",
+  "status": "PASS",
+  "support10_train_union_centers_scales_masks_exact": true,
+  "training_repeated": false
+}

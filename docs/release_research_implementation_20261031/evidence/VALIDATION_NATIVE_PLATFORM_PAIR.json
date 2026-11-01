@@ -1,0 +1,25 @@
+{
+  "sources": {
+    "scripts/release_native_platform_pair.py": "aaeb627e465ad0e98bcfd8f39e2e281ba99221b44a435ccc1883998de63be74c",
+    "scripts/continue_native_platform_diagnostic.py": "b3ad73c9daab6ed26f19f38f1598dcc6dc91c9d42812ad0b4e05506d40e450d5",
+    "tests/unit/test_release_native_platform_pair.py": "e575bc9bcfbf5fb7b567f992ba4f93817cddf5f1744e139c4f90efafecd001b8",
+    "docs/release_research_implementation_20261031/NATIVE_PLATFORM_PAIR_PROTOCOL.md": "520c8961c20d8d95492fcedd93ce28f6103e4995380f7e1e745eed62c069cb20"
+  },
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "pyright": "0 errors",
+  "junit": {
+    "path": "output\\release_research_20261031\\validation_native_platform_pair_v2\\pytest.xml",
+    "sha256": "fe394f71abac266c951a99bc37fbb4933cffe6d9e1909be42d1489d27620140d",
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "8",
+    "time": "6.325",
+    "timestamp": "2026-10-31T23:12:28.983361+01:00",
+    "hostname": "DESKTOP-2N393IP"
+  },
+  "prior_validation": "VALIDATION_NATIVE_BACKEND.json",
+  "distinct_campaign_tests": 105
+}

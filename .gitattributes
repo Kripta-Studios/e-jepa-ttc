@@ -1,5 +1,12 @@
 * text=auto eol=lf
 
+# Bounded research closure copies retain the source receipts' exact bytes.
+docs/research_close_20261101/evidence/** -text whitespace=cr-at-eol
+docs/research_progress_20261101/**/evidence/** -text whitespace=cr-at-eol
+
+# JEPA closure evidence and retention receipts preserve their verified SHA-256 bytes.
+docs/jepa_closure_20261031/** -text whitespace=cr-at-eol
+
 # TRAIN40 runtime receipts and source snapshots are bound by byte-level SHA-256.
 docs/train40_runtime_handoff_20261027/evidence/** -text -whitespace
 docs/train40_runtime_resume_20261027/evidence/** -text -whitespace
@@ -118,3 +125,58 @@ docs/post_v18_transfer_20261017/EAP_64_QUERIES.csv -text whitespace=cr-at-eol
 docs/post_v18_transfer_20261017/EAP_V_EXISTING_PREDICTIONS.csv -text whitespace=cr-at-eol
 docs/post_v18_transfer_20261017/EVTTC_QUERIES.csv -text whitespace=cr-at-eol
 docs/post_v18_transfer_20261017/EVTTC_TRAJECTORIES.svg -text whitespace=cr-at-eol
+
+# Release research receipts, historical documents and executed sources retain SHA-256 bytes.
+docs/physics_review_20261031/** -text whitespace=cr-at-eol
+docs/physics_review_20261031/git/*.md -text whitespace=cr-at-eol,-blank-at-eof
+docs/release_research_plan_20261031/** -text whitespace=cr-at-eol
+docs/release_research_implementation_20261031/** -text whitespace=cr-at-eol
+operational/release_research/** -text whitespace=cr-at-eol
+scripts/continue_native_platform_diagnostic.py -text whitespace=cr-at-eol
+scripts/continue_release_research.py -text whitespace=cr-at-eol
+scripts/finish_release_research.py -text whitespace=cr-at-eol
+scripts/release_cadence_localization.py -text whitespace=cr-at-eol
+scripts/release_clock_cadence.py -text whitespace=cr-at-eol
+scripts/release_clock_regimes.py -text whitespace=cr-at-eol
+scripts/release_native_backend_diagnosis.py -text whitespace=cr-at-eol
+scripts/release_native_drift_audit.py -text whitespace=cr-at-eol
+scripts/release_native_local_latency.py -text whitespace=cr-at-eol
+scripts/release_native_pair_capture.py -text whitespace=cr-at-eol
+scripts/release_native_pair_replay.py -text whitespace=cr-at-eol
+scripts/release_native_parity_distribution.py -text whitespace=cr-at-eol
+scripts/release_native_platform_pair.py -text whitespace=cr-at-eol
+scripts/release_native_raw_latency.py -text whitespace=cr-at-eol
+scripts/release_observability.py -text whitespace=cr-at-eol
+scripts/release_observability_analysis.py -text whitespace=cr-at-eol
+scripts/release_observability_failure_audit.py -text whitespace=cr-at-eol
+scripts/release_photometric_q.py -text whitespace=cr-at-eol
+scripts/release_research.py -text whitespace=cr-at-eol
+scripts/release_robust_measurement.py -text whitespace=cr-at-eol
+scripts/release_sensor_identifiability.py -text whitespace=cr-at-eol
+scripts/release_sensor_inventory.py -text whitespace=cr-at-eol
+scripts/release_sensor_proxy.py -text whitespace=cr-at-eol
+scripts/release_sensor_reference.py -text whitespace=cr-at-eol
+scripts/release_surface.py -text whitespace=cr-at-eol
+scripts/release_surface_analysis.py -text whitespace=cr-at-eol
+scripts/report_release_research_campaign.py -text whitespace=cr-at-eol
+scripts/report_release_research_continuation.py -text whitespace=cr-at-eol
+scripts/report_release_research_followup.py -text whitespace=cr-at-eol
+scripts/report_release_research_raw_latency.py -text whitespace=cr-at-eol
+scripts/resume_release_native_research.py -text whitespace=cr-at-eol
+tests/integration/test_release_research_runner.py -text whitespace=cr-at-eol
+tests/integration/test_release_sensor_proxy_runner.py -text whitespace=cr-at-eol
+tests/unit/test_release_clock_cadence.py -text whitespace=cr-at-eol
+tests/unit/test_release_continuation.py -text whitespace=cr-at-eol
+tests/unit/test_release_native_backend_diagnosis.py -text whitespace=cr-at-eol
+tests/unit/test_release_native_local_latency.py -text whitespace=cr-at-eol
+tests/unit/test_release_native_platform_pair.py -text whitespace=cr-at-eol
+tests/unit/test_release_native_raw_latency.py -text whitespace=cr-at-eol
+tests/unit/test_release_native_recovery.py -text whitespace=cr-at-eol
+tests/unit/test_release_native_replay.py -text whitespace=cr-at-eol
+tests/unit/test_release_normal_quality.py -text whitespace=cr-at-eol
+tests/unit/test_release_observability_analysis.py -text whitespace=cr-at-eol
+tests/unit/test_release_photometric_q.py -text whitespace=cr-at-eol
+tests/unit/test_release_research.py -text whitespace=cr-at-eol
+tests/unit/test_release_sensor_identifiability.py -text whitespace=cr-at-eol
+tests/unit/test_release_sensor_proxy.py -text whitespace=cr-at-eol
+tests/unit/test_release_surface.py -text whitespace=cr-at-eol

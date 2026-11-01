@@ -1,0 +1,12 @@
+{
+  "checkpoints": {
+    "13": "6e9263ef871cde5d761ff65f3f91d968f1d17fd5cc801d5303af76426750e08d",
+    "21": "70e90e7892b95c9dfb58d124214fca5c77c9c2135139ff064370cbdd4f36394c",
+    "7": "660caebeb6d89e5437cb02c35c2aab0f4efccfca6d0cdb2f5b1e754a4b82d3ea"
+  },
+  "config_sha256": "bc6200501c2f8c37ec9faf5d9809a9970a6296d0cc0333bbe9b55daedc939742",
+  "prediction_sha256": "927da122397d8c795b11e366069b53769d5a74ccb948011730cc6971c499f156",
+  "selected": "quality",
+  "selection_sha256": "e32f43ea197b43d3b96293f9b645b5f3e399dbfd35c3d654e5dfc83c51cfb21d",
+  "timestamp_utc": "2026-10-30T23:35:18.595370+00:00"
+}

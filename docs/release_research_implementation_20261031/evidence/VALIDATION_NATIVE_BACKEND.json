@@ -1,0 +1,25 @@
+{
+  "sources": {
+    "scripts/release_native_backend_diagnosis.py": "ea7bccea057e998f8b05c552ad0cb0607f7c81d8c04f48f2b7cab737278a4fda",
+    "tests/unit/test_release_native_backend_diagnosis.py": "7f8bd6772445d5006005121e15ec2fb6039d01a51dc603d0f2455c44eb73086b",
+    "docs/release_research_implementation_20261031/NATIVE_BACKEND_DIAGNOSIS.md": "096f4f3267b1d40b24caae5b69f523cb98f9381ed942bcef353301e2e9bd7932"
+  },
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "pyright": "0 errors",
+  "junit": {
+    "path": "output\\release_research_20261031\\validation_native_backend_v2\\pytest.xml",
+    "sha256": "c8435a26b9481f3ee6eb4a5a0e642e8ca7f96f236c5d8dcba66d257c5704cbc3",
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "9",
+    "time": "46.247",
+    "timestamp": "2026-10-31T22:40:50.189808+01:00",
+    "hostname": "DESKTOP-2N393IP"
+  },
+  "prior_validation": "VALIDATION_AVAILABLE_DATA.json",
+  "distinct_campaign_tests": 97,
+  "gpu_experiment_executed": false
+}

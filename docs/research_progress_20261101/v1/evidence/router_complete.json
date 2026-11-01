@@ -1,0 +1,11 @@
+{
+  "artifacts": {
+    "FREEZE.json": "fe0b2b1b9e061a8d18826a31d8a490f5dd6883d92c9cb0993990e76ceae8b5b9",
+    "PREDICTIONS.json": "01772be086e4250e4b9e4f393e1e833568272079c5241162b4ed6d077ab8e4aa",
+    "REPORT.json": "1ba0445029643af075ee390376903cbf508cc2e2e5d4f985a8b32b9ad4ea3f0d"
+  },
+  "elapsed_seconds": 62.35698670000056,
+  "promotion_admitted": false,
+  "status": "COMPLETE",
+  "targets_read": false
+}

@@ -1,0 +1,168 @@
+{
+  "archives": {
+    "test12_predictions_3RUZHwnCwK": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_3RUZHwnCwK_855648991a0abb48.tar",
+      "sha256": "855648991a0abb48f9c37ef87dfcd047514af6b807769f2d5e8404230be3f928"
+    },
+    "test12_predictions_71wUSQYMpk": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_71wUSQYMpk_a8d636c8f6a40383.tar",
+      "sha256": "a8d636c8f6a40383bc4cf6b24fe3494db26f3a7fceb0bc8bdce46a2277ca476d"
+    },
+    "test12_predictions_89fvtHGHx2": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_89fvtHGHx2_f046b1ec925f6cf7.tar",
+      "sha256": "f046b1ec925f6cf7021bcae3635ed5e21769ff4b8cf85310d2327bf4ab8a7624"
+    },
+    "test12_predictions_HHJe79eY2J": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_HHJe79eY2J_89ef9170f776fe4f.tar",
+      "sha256": "89ef9170f776fe4f464fa4fa713a64733e30513cdf3df8551755b556924c7649"
+    },
+    "test12_predictions_JcjcDPISuL": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_JcjcDPISuL_0ee4e9d93172b9fc.tar",
+      "sha256": "0ee4e9d93172b9fc8f63c538c62c678db9e9d34d9a5e82bfc8d6f9367f1be96d"
+    },
+    "test12_predictions_M8I2irMvY7": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_M8I2irMvY7_fc587fce60b1fab6.tar",
+      "sha256": "fc587fce60b1fab62d15cdaff57183cec7582094641a216864e11f780adaa093"
+    },
+    "test12_predictions_Mu6kaUjIz3": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_Mu6kaUjIz3_6ae5bfe0714b0816.tar",
+      "sha256": "6ae5bfe0714b08166992464981359c895ddf13e20f6fe5f3ca35ecb5f18e0521"
+    },
+    "test12_predictions_V741M41vPW": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_V741M41vPW_442c8526a44740f2.tar",
+      "sha256": "442c8526a44740f2577e627a6364a03f00df92717de444d84510ce8e0edac429"
+    },
+    "test12_predictions_kafYzX6kJ4": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_kafYzX6kJ4_d695f3d023e99b3f.tar",
+      "sha256": "d695f3d023e99b3f16f2afabd46c243f78154bcabbd1b2047b050b1dd31b3ddc"
+    },
+    "test12_predictions_nP4MRdpEeO": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_nP4MRdpEeO_901025b3c87d2aae.tar",
+      "sha256": "901025b3c87d2aae15aaf0b1075e7c16737bb7db140efb47244d07ec16c5c7c7"
+    },
+    "test12_predictions_r0PXQOpCA6": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_r0PXQOpCA6_8a96ad2c41a8c42a.tar",
+      "sha256": "8a96ad2c41a8c42a678059bccaf7f029c7b7f88078560c31c6455d9c7e0e1149"
+    },
+    "test12_predictions_vhjB5OViA7": {
+      "path": "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_vhjB5OViA7_f86b748292c6793a.tar",
+      "sha256": "f86b748292c6793ac4ed86f29d13d7e7dc4edc1ec33e8c036a6305c29f4b601e"
+    }
+  },
+  "atol": 1e-06,
+  "baseline_sha256": "3ddbd9f0fa1c95c6cf81164f1bd03249af67f77d596ca8f40d8ffbfaa751b1cd",
+  "batch_size": 1,
+  "candidate_evaluated": false,
+  "device": "cuda",
+  "git_commit": "f457f764a8710a1d0a255adf198160244178595e",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "inputs_sha256": "b78730abe68de7fbe06c6c98b25d5fa025c04d9303720b680ce0c0f575d2e526",
+  "mode": "pilot",
+  "models": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\E_A5.pt": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\E_C2F.pt": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\E_CTX_MATCHED.pt": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\MODEL_SEAL.json.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\OOF_RECIPE.json.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\PAIR_E.pt": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\PAIR_R.pt": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\PHASE_ONLY_EVENT_S7_TRAIN40.pt": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\R_A5.pt": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\R_C2F.pt": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\R_CTX.pt": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\event_normalizer.json": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\output\\phase_submission\\FINAL_MODEL\\upstream\\components\\rgb_normalizer.json": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+  },
+  "optimizer_updates": 0,
+  "python": "3.11.15",
+  "rtol": 1e-05,
+  "schema": "phase_original_eap_rgb_capture_v1",
+  "selected": [
+    "0289612d4c5d174a2c45ad210a8f1e136be5d591c24600d88fe1c30f4d6e5049",
+    "08d30b04e52db349dd8708f33f843644dc42c135fa65437da50ba4af6eb80fbd",
+    "0ec14b88156bca2f7b7da4d353b9c6537b1959cf6d61badf2352607d85c5420e",
+    "2304f133b066ddb6e0407df6be38849e43aee5bb7cacac28a009c34f9b603c0f",
+    "4647cbdae078830fa04c65affac1690997e1fe32d46751fb09004bc72bc57319",
+    "4fc20dd19af0b7152b5c2fd9c3350c2d8b4a82fa5cc4fce500e1cc3cb978e8b4",
+    "58a77191c49647fb9a7fd2706804d3277644331a5bb0fd5436cac7ae431a5234",
+    "6e17f2b57a7fc978b6cb03b3903ee98f98f86063b0cb15cccbb52814ac58998b",
+    "73902cb929d5bdbf82a35e3b3e8c294c44ad7b7202796ad8ddb3da8468b28c03",
+    "83b776e7d05dc5377b9de75b88b803e636a0083ca54c646c9741c5176de504fb",
+    "8d55630623d39ec45339aa9109ff681d3b0a069f8d0d5d97b2253b582e303474",
+    "9096bae009efad84cacee42314d6e78279a68f886d7458642278b30322d6adfb",
+    "971b8dcd801c8dd920e0e9baf48fb7784b7b1452819accdd661cef4ef836f775",
+    "995a2983f45395dadfeda0dc9c0489babc93def5ca15b880d1766db27d54060a",
+    "9ddd5dc2d8422e773a5e522b6cc6489251bdbe99c866ad43c388de929cd202b2",
+    "a200231ff025c71549b9b1a76643731d39417e080c3695d52e60d1278e2bdd78",
+    "a33b456127e00484ab7ef5d13da3f9db34c27c0fe93ebd80ba69e805f44004da",
+    "bbf02dd55fa8838f38f73c3676b01fd57509f42da25bc07faeb7017406162dfa",
+    "bd9ac9b5f737891040bb1883e061a67970f037221aafa578d9f2d1f2db6740cc",
+    "c8b7508263ccea35563f37fad548bca9744ed5bc21c8f546f452a2d8dd93941a",
+    "c98bb64df8e59e1fae0dd5e72ba9884bc271de3accad2d13f06b56bc4b5caf7d",
+    "eaccc963db64aafaf1f6a9ae359ddd236299213895a3eaa1ffa2778d3ec5530c",
+    "f7732b7412bc66d858466b09b4fe84c36bdf83050b879af77efa9fa58836eb75",
+    "f9ad6be632450d5e7d7687fe62f6cc7b321e96d85fb409c7e3d992d524cc745d"
+  ],
+  "selection": "pilot:first/last physical query per sequence; full:all RGB histories",
+  "sources": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\capture_phase_eap_rgb_pair.py": "1b082ccee5b5f790125c1197c2bacb800a3147dd70e1e82b71352d1487057fa9",
+    "docs\\superpowers\\plans\\2026-10-31-phase-canonical-population2608.md": "1ffda5b6c202ea1d45e942a75061b60a6eaddcf14c856445beb1a894371562cb",
+    "docs\\superpowers\\plans\\2026-10-31-phase-canonical-screen149.md": "e016a6f13f0636377883c30640547cfea480b4630297a753fbfacf7004b01e22",
+    "docs\\superpowers\\plans\\2026-10-31-phase-native-context-augmentation.md": "f9240b5b3bd1139344a907b0cc1b23aa69a0ba35a009395e17bd143575c96d91",
+    "docs\\superpowers\\plans\\2026-10-31-phase-native-observation-cache.md": "921e920af5b2f55dad0e1e5e676770d1d646366aba0fa5cb4f6aecc14b289314",
+    "operational/phase_timewarp/compact_capture.py": "a4e5f71cfeab587d89aafe2aa92409e2378ed093e1630db2aad657537a8b0924",
+    "operational\\evttc_competition\\geometry.py": "0c790f966c7aa3ac01d3b8cf8978e9dbc2c251309130db49fe184267fde5db24",
+    "operational\\evttc_competition\\prepare.py": "032a1a57eddc860f78def259dae64e33b2af0fcce4a029763905df11c6f017c3",
+    "operational\\evttc_competition\\readers.py": "8101a73fd15121bfb22299c3df0a321f570c747565c16f0b12a6d48ee80ace9e",
+    "operational\\evttc_competition\\runtime.py": "9d1d3d54bc4812671b5f8e00e48f7c2124033a5fbc25a601564c0b8a40d0e13b",
+    "operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "operational\\evttc_transfer\\inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "operational\\final_refit\\features.py": "c2b1290e6a55648ef84be8c26c20281c2d9a4377cab98f97724337ebdcfcaf09",
+    "operational\\final_refit\\recipe.py": "2753b5bb9c0faf15d23622489e6316bbf594830d0bff515bd595699dae22ea4d",
+    "operational\\final_refit\\test12.py": "d8ef8b2d316778d2def763f3c394fafd33a43d28fd1548b19bc5119311c2ade6",
+    "operational\\final_refit\\training.py": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+    "operational\\phase_observation_cache\\__init__.py": "897e59170122c25082f8109bfe327d22de1c91deefe3f49ed59b4336f6d9dd51",
+    "operational\\phase_observation_cache\\capture.py": "f7adfb61289d4d447e1e9dd2a2c641abcc26cf3c805977f1349211e92c25a3be",
+    "operational\\phase_observation_cache\\integrity.py": "73cf1b97c7e1c53c1cde7ffb83cba062eb6cb2c9cf5ca6ab4fbed4567e896c8c",
+    "operational\\phase_observation_cache\\replay.py": "bcb48e45e2c40debbfefa70fe97cc552018fc952c8f55fd89d80011b74e41c39",
+    "operational\\phase_robust\\cache.py": "ef0f1827070ea8e5abf54c4f59d6e70939b37029b3f11c72536940d75b76b2c0",
+    "operational\\phase_startup\\__init__.py": "866aa4f6464f979a07fd88499f5db13c2f36ee6b10defa1cab1226b386b8373f",
+    "operational\\phase_startup\\geometry.py": "1698cb19e30c4f491bbaa42e34e5ef24fb0aadfc081506da8cabe363e590b8d7",
+    "operational\\phase_startup\\model.py": "878dab038fa508d2208e6f88892a85a8a5ef3c6c9a41866f97162af6bd3143ff",
+    "operational\\phase_startup\\runtime.py": "3b3f9ee1c215dd7c30e46a98b8c7f5a921db1522fb99e68471ac2e8330f14238",
+    "operational\\phase_submission\\runtime.py": "bd2762811c9cc39b88def78d894e8d00fd7c5b71ac4199752410359cda813ac4",
+    "operational\\phase_timewarp\\canonical_pair.py": "f5788577e8eef1d95b299da234f0e32352d40b914b5669e440fc917c9c6dd82d",
+    "operational\\phase_timewarp\\capture.py": "b93a0b5f9c123e8fb222a72f942312c5fa2aea0532efc0fbfc3b256ac602c31d",
+    "operational\\phase_timewarp\\pilot.py": "95c559fb4aff7e42b976d1a4086a589e891d4fc6b8d681780535a6508c37de17",
+    "operational\\phase_timewarp\\screen.py": "a904d3da048748c4b971dfb8a89b015ee620c23c8dc0019d9cfc683aa3f60b32",
+    "operational\\phase_timewarp\\warp.py": "a635e2240416d03acf27e65c17105c77ce466e323c4c6704dad96eda4c885018",
+    "operational\\rgb_port\\infer_experts.py": "b6d12889078b8ffed23134a52ec653e7ac4aae56700c17384b866eac1231cc9f",
+    "operational\\rgb_port\\train_heads.py": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+    "operational\\rgb_port\\train_producers.py": "1d5295b9dd3c38e42adfea825bcfed8a2c483f8f32c3aacf4dfc56d8362eb7fc",
+    "operational\\rgb_port\\transfer.py": "990710cdceb06483a13a3a7df35446a1cd42e88bdbeda6f9be7c988f69418e73",
+    "operational\\rgb_port_revision\\transfer_inputs.py": "1bb1e3b2b876988171c031f2f14ba76515f7e0d777f111501e9d34d3dc19c0ad",
+    "operational\\rgb_port_streaming\\contracts.py": "af10f369e5c2f4896100808dcd21abd290bbf1c8168ba5a75a00fb11ea271e2c",
+    "scripts\\build_phase_native_context_augmentations.py": "ddb23291bfefbad5fe4efd3956b2e907dfd77f3b2d7a1701fd3378a50da59418",
+    "scripts\\final_train40_transfer.py": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730",
+    "scripts\\pilot_phase_observation_cache.py": "feb2f081366eb6900a112ea035e24a01c5ef77d2d6e54b2bbebfc8df1067331d",
+    "scripts\\pilot_phase_producer_timewarp.py": "46ffaf9d7aab9c465b4f38e11b30c3e8b094af4e7d51b26097a3ce1a0a8a1a70",
+    "scripts\\population_phase_canonical_pair.py": "9a0de3ee581b89ae165d60eaf92dc1c05e82c0ba1f4cb3168fbff926acac7d1d",
+    "scripts\\screen_phase_canonical_pair.py": "46cae5beb9a5c974446d548c5bad8358210d883c18898af473177325771fd251",
+    "src\\e_jepa_ttc\\data\\event_v4_geometry.py": "4476f01232c08dd4c120258ae5761643701e08fcdecdd24311e3c39483ebf68b",
+    "src\\e_jepa_ttc\\data\\stage61_pair_feature_cache.py": "83c0801435d57a854dd17a7ce302eeaa156290c0f065078439119a15ac611cf1",
+    "src\\e_jepa_ttc\\models\\causal_scale_ttc.py": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+    "src\\e_jepa_ttc\\models\\collision_clock_math.py": "fb49a6cdb8a5bb3880c5c1f49035329f2f9c602b62ac3a78f4045e4ef6872b0f",
+    "src\\e_jepa_ttc\\models\\local_transport.py": "bb4f41ebff0cd0c0b8a9d9e3598ae2e83d3263eb81b74de26325efbb8c46be05",
+    "src\\e_jepa_ttc\\rgb_port\\data.py": "a33a0ddeb62b7a668d25e9d2e8f880261cc7e325d8bcfe953bcee18e4b0410ec",
+    "src\\e_jepa_ttc\\rgb_port\\features.py": "c22f17ad073a594b865a7c58aa078d809478b9b8c697bbde671d0501da9ae114",
+    "src\\e_jepa_ttc\\rgb_port\\normalization.py": "4fafd5e75ebc9f2ee200d690664a308b742d41f80e4651e213929cb7b1033faa",
+    "src\\e_jepa_ttc\\simplex_t\\model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+    "src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde",
+    "src\\e_jepa_ttc\\training\\stage61_pair_head.py": "0c1cca4ecb1b2975709ba95e77cba616b363d5bb2e0d005605b075ef1265bdb3",
+    "tests/unit/test_phase_compact_capture.py": "7538bfcd85b127c889dbe5e70e7ee7e3d8061534ff41965fd3966096df3eef05",
+    "tests\\unit\\test_phase_canonical_screen.py": "eb6fb0e33a0d198ecce6ac93f4a31d980fde9a86ee7416f38652327e177bbeed"
+  },
+  "targets_read": false,
+  "tf32": false,
+  "torch": "2.11.0+cu128"
+}

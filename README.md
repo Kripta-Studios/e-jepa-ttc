@@ -30,7 +30,48 @@ separate EvTTC competition queries with unverified TTC labels, and a 250-update
 paced replay. Fusion has a mixed error profile against RGB alone, and the
 replay's 29.14 ms p95 response exceeds the 20 ms target.
 
+**EvTTC research status, 1 November 2026:** the
+[current research index](docs/research_progress_20261101/README.md) separates the
+original submission, the adapted model and subsequent diagnostic experiments.
+
+| Version | Status |
+|---|---|
+| Original PHASE-TTC, 28 October | Frozen TRAIN40 system; organizers reported evaluating all 434 EvTTC predictions. The local evaluator reproduces nine rounded sequence scores; Slider-750 remains unresolved. |
+| PHASE-TTC-Adapt-20261031 | Experimental three-seed fusion-router ensemble fitted on 2,608 development queries. The original nine components remain frozen. Historical benchmark exposure is disclosed; official evaluation of this version is not established by the retained evidence. |
+| Canonical PAIR and later router refit | F0 passes the fixed local development screens, but the router interventions fail their respective controls. No replacement model is approved. |
+
+The [corrected evaluator audit](docs/research_log_20261031_sign_safe/README.md)
+covers **434 public targets** after repairing the CCRs1-low/medium source mapping.
+Under the same local evaluator and negative-output interpolation, mean relative
+error across those queries is **49.89% for the original and 17.25% for the adapted
+model**. These are local diagnostics, not official adapted scores or evidence of
+independent SOTA. The [submission comparison](docs/research_progress_20261101/03_ENTREGA_ADAPTADA_Y_COMPARACION.md)
+records the exact model and ZIP identities, denominators and remaining discrepancy.
+
+The complete local eAP sensitivity audit covers 5,805 physical queries and 6,762
+aliases, with no new missing predictions or sign changes for F0 and the frozen
+router. It does not establish Test12 accuracy preservation: private-target
+evaluation and historical producer parity remain unresolved. The
+[latest measured results](docs/research_progress_20261101/v1/README.md) retain the
+failed controls and the unchanged model identity. Integrating this research code
+does not promote an experimental model or change the article's frozen system.
+
 **Author:** Álvaro Schwiedop Souto
+
+**Academic status:** undergraduate student at the University of Santiago de
+Compostela, as supplied by the author for the benchmark correspondence.
+
+**Detailed research log, 29–31 October 2026:** the
+[Spanish technical dossier](docs/research_log_20261029_31/README.md) reconstructs
+the data audit, trained models, grouped experiments, rejected trials, CUDA Graphs
+and cache optimization, test evidence, and the final adapted EvTTC submission.
+The [historical submission report](docs/evttc_submission_20261031/REPORT.md)
+preserves its earlier 423-target evaluation; the corrected 434-target audit
+linked above supersedes that local scoring snapshot. The
+[research release and artifact inventory](docs/research_log_20261029_31/09_PUBLICACION_E_INVENTARIO.md)
+provide the versioned model packages and checksums. The local attachment was
+renamed from `results.zip` to `PHASE-TTC-Adapt.zip` without changing its bytes;
+historical receipts retain the original filename.
 
 [Email](mailto:alvaro.schwiedop@evocon-solutions.com) ·
 [LinkedIn](https://www.linkedin.com/in/%C3%A1lvaro-schwiedop-souto-92718b339/) ·

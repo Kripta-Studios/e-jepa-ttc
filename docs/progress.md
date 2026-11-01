@@ -4,7 +4,7 @@
 
 - completados 15 runs: SOFT, C2F, T20, CAP-S y partial-freeze, tres folds seed 7;
 - integridad OOF: 8.192 tokens únicos, nueve secuencias y 100% de puntos finitos;
-- MiD puntual: A5 158.449; SOFT 165.116; C2F 158.573; T20 165.260;
+- MiD puntual: A5 158.449; SOFT 165.116; C2F158.573; T20 165.260;
   CAP-S 167.025; partial-freeze 167.826;
 - todos los brazos fallan mecanismo, geometría y candidatura; V7 cierra negativo;
 - partial-freeze congela 9.664 parámetros, pero solo retiene ~19% de slopes y
@@ -603,3 +603,390 @@ on the integration pull request; merging requires those checks to pass.
 
 No new training, model selection, benchmark submission, or scientific-result
 change is part of this integration.
+
+## 2026-10-31 — Native quality fusion and final eligible-data refit
+
+The later local research iteration is documented in
+`docs/superpowers/plans/2026-10-31-phase-robust-fusion.md` and generated results
+under `output/phase_robust/report/REPORT.md`. It preserves the original candidate
+and the previously delivered F1 campaign. The new component is a three-seed
+ensemble of 401-parameter gates combining frozen F0 with causal inverse-box-scale
+geometry and observation quality; the original upstream graph remains frozen.
+
+The evaluated candidate improves grouped-development road RAE 27.199->12.834%
+and MAE 0.6963->0.4224s. CCRm, excluded from this gate's fit/selection but
+historically exposed, improves 16.749->15.662% and 1.0830->1.0197s; its four-record
+bootstrap includes zero. Slider 750/1000 public targets were joined after sealing
+predictions by exact frame and <=2us clock. Local scores and explicit startup
+failures are retained; they are not substituted into old official aggregates.
+
+A supplementary fixed all-data refit trains on 2677queries from 27recordings:
+24eligible road recordings and 3Slider. The 8original overlap road recordings stay
+excluded. Its metrics are resubstitution only and its uncertainty has not been
+independently recalibrated. `FINAL_MODEL` delivers both variants, with the evaluated
+weights as default and outer bindings protecting their distinct identities.
+
+Validation covers 144raw-sensor perturbations,144bbox perturbations,88744bitwise
+source predictions in absent-history fallback, exact TorchScript reloads, strict
+sensor-cache parity and a native-road raw replay equal to the cached candidate.
+The competition CLI is restricted to Slider; a separate sensor-only native-road
+manifest CLI preserves the evaluated RGB/history contract. Neither reads targets.
+
+No independent SOTA, end-to-end encoder improvement or JEPA benefit is claimed.
+Provided boxes remain an oracle-input condition, Slider extrinsics remain
+provisional, and early Slider 750 predictions can still be extreme or have the
+wrong sign. Further independent acquisition is needed for a stronger external
+generalization claim. Final verification and review receipts accompany delivery.
+
+## 2026-10-31 — Canonical PAIR fixed screen completed
+
+Resumed from f1f9c8ed. The 149-query screen completed in 999.372 seconds,
+with exact original producer/context/head parity against expanded149 and
+sealed predictions before a separate target join. Compact corrected replay
+also matches the prior full-producer canonical pilot at both common queries.
+
+F0 passes the preregistered development screen: Slider MAE 1.178156→1.120809 s
+and macro relative error 83.885894→82.442047%; road improves slightly. The
+delivered router fails its strict road criteria (MAE 0.338040871→0.338051072 s),
+although it improves Slider. No new missing predictions or sign changes occur.
+The native missing Slider-500:76 and original upstream rejection are preserved.
+
+The next justified expansion is the fixed F0 intervention on all 2608 eligible
+queries, reusing the 149 captured queries. The router is not promoted. eAP full
+history conservation and the Slider-750 evaluator discrepancy remain open.
+FINAL_MODEL is unchanged. No SOTA or official-score claim is made.
+
+Results, small evidence, limitations and regeneration command:
+docs/research_log_20261031_canonical_screen149/README.md. Validation: 49 tests,
+Ruff check and Pyright pass; changed-file formatting passes, while an unchanged
+historical test has a preserved broader-format failure (see VALIDATION.md).
+
+The 2608-query expansion is running with frozen runtime sources unchanged.
+A dedicated population report generator is ready and rejects incomplete or
+149-query evidence. A target-free eAP index audit establishes the identity-clock
+precondition for all 88,744 TRAIN40 event-history queries in the inspected
+materialization path. This is structural evidence only; deployment ancestry,
+RGB history and complete context/head preservation remain unverified. See
+docs/research_log_20261031_canonical_screen149/EAP_EVENT_CADENCE.md.
+
+The eAP deployment-media verification is now complete: all 5,805 physical event
+tensors and 36 RGB shards match the frozen public inventory (55,130,168,689
+bytes; 415.994 s). No arrays were decoded and no candidate was executed. This
+closes local input-byte availability, not prediction or accuracy preservation.
+Small completion evidence and reproduction commands are in
+docs/research_log_20261031_canonical_screen149/EAP_DEPLOYMENT_PREFLIGHT.md.
+
+## 2026-10-31 — Release research implementation and first frozen diagnostics
+
+Added isolated `operational/release_research` modules and the executable
+`python -m scripts.release_research` mechanism/diagnose/evaluate/report workflow.
+Implemented signed q transport and bounded causal controls, q-specific SVD
+estimability, attenuation-only RGB correction, local sensor and conditioned
+latent auxiliaries, crop/surface diagnostics, photometric fixtures, admission
+contracts, acquisition bootstrap, and immutable source-bound receipts.
+
+Verified local R0 seal, nine checkpoint hashes, normalizers and recipe. Executed
+the geometric/photometric mechanism bank and target-blind O0/D1-D3 diagnostics on
+the sealed screen149, followed by a separate authorized development target join.
+The authoritative diagnostic is `diagnostics149_v4`; its evaluation is
+`evaluation149_v2`. Earlier attempts remain recorded: exact CPU/CUDA emission
+comparison failed at FP32 rounding, and a native-vector RGB/event labeling error
+was corrected with a distinct-modality integration regression test.
+
+No learned candidate is admitted by this result. R0 beats the fixed half-gate
+and raw-PAIR temporal controls in macro MAE on this exposed cohort. These are
+development diagnostics, not independent confirmation. Full research completion,
+RAW quality extraction, calibrated S1, learned arms/OOF rebuilds, native candidate
+conservation and full-chain latency remain pending. The concurrent population2608
+worker and its frozen sources were not changed or duplicated.
+
+Validation: 26 new unit/integration tests and 25 existing canonical PAIR/screen
+tests pass; Ruff check/format and scoped Pyright pass. Reproduction commands,
+precise implementation boundaries and generated results:
+`docs/release_research_implementation_20261031/README.md`.
+
+## 2026-10-31 — RAW observability, real surfaces and conditional continuation
+
+Continued the requested research beyond the first diagnostic. Extracted six
+label-blind observability indicators on the exact release RAW ROIs for all 149
+queries. After sealing features, ran four acquisition-held-out ridge probes
+(100 fits): constant, support, physical and stratified permutation. The physical
+probe does not pass its preregistered incremental-signal gate. No O1/O2 weights
+were trained. Results retain the 148 evaluable pairs and all missing indicators.
+
+Executed V0/V1 on the real RGB triplets with fixed local correspondences,
+forward/backward checks and an independently measured a-to-c route. The geometric
+measurement is representable on 133 queries but worsens TTC versus R0 with an
+explicit fallback. Auditable triplets/history snapshots retain their common ROI;
+constant anisotropic resizing is recorded separately. This does not identify
+actual object visibility or rule out background/parallax errors.
+
+Inventoried calibration/schema for all 24 road RAW acquisitions and Slider-500.
+The admitted local inputs expose geometry and RGB exposure, but no identified
+contrast-threshold/response/reference-texture calibration. Real S1 remains a data
+identification task; synthetic S0 does not admit producer fine-tuning by itself.
+
+Added original native PAIR133 capture and full-history replay. The successful CPU
+profile captures two observations per modality, reproduces its local PAIR/PHASE17
+exactly, and preserves failed integration attempts. Historical TTC tolerance
+passes for both queries; intermediate historical tensor tolerances fail. The
+candidate was not executed. A separate fixed CUDA follow-up preserves tolerances
+and waits for population2608 F0 admission and a free GPU.
+
+Started `output/release_research_20261031/continuation_v1`: it watches the existing
+worker 77708 by command and creation time without restarting it. Upon COMPLETE it
+verifies/evaluates population2608 and publishes its report, then conditionally
+runs original CUDA parity, full native capture and paired canonical replay. Each
+failed scientific gate stops its dependent stages with a recorded reason. No
+native targets are read and no release is replaced. Live state is STATUS.json;
+the campaign itself remains incomplete until its outstanding evidence exists.
+
+All 69 focused tests pass, including the conditional continuation branches.
+Ruff check/format and scoped Pyright pass for every new module/runner. Findings
+and generated tables: `docs/release_research_implementation_20261031/continued_results_v1/RESULTS.md`.
+
+## 2026-10-31 — Cadence attribution and failure localization followups
+
+Completed the four fixed PAIR branches on the exposed 149-query cohort using
+one paired CPU original: event-only, RGB-only and both, preserving full
+PHASE17/context/head recomputation. The nominal event clock gives exact identity
+in 134 queries. The favorable Slider signal is mostly attributable to RGB, with
+an additional event contribution and interaction; the road change is small.
+This descriptive result does not change the population2608 candidate or gate.
+
+Audited O0 algebraic observability versus actual measurement error, residual
+degrees of freedom and per-acquisition ridge contributions. Compared OLS with
+the existing robust normal-flow solver on the same stored planes and unchanged
+solver settings. Low coverage and wrong-sign estimates remain; the robust
+fallback comparison does not beat R0. No learned gate was opened.
+
+Extended S0 with full-stream equivalence controls: unknown texture/motion and
+photometric scale ambiguities, plus the known-reference recovery control.
+The initial comparison incorrectly required ordering among simultaneous events;
+the failed run remains, and two regression tests cover semantic stream matching.
+The corrected comparison retains pixel, polarity and every timestamp.
+
+Executed fixed clock regimes with irregular delayed observations, gaps, braking,
+acceleration and recession. Verified exact noiseless constant-velocity transport
+and identical predictions for shared prefixes with different futures. Recorded
+q error, sign errors and response delay; smoothing can delay a braking reversal.
+These fixtures do not admit D4 or substitute for the negative real-data control.
+
+Localized the native CPU/historical drift in raw PHASE17 producer diagnostics
+and normalized columns without reading targets or changing tolerance. CUDA
+parity remains the queued follow-up after population2608 admission.
+
+All six followups have COMPLETE receipts with executed source and input hashes.
+Generated report: `docs/release_research_implementation_20261031/followup_results_v1/RESULTS.md`.
+Ruff check/format and Pyright pass for all eight added/updated follow-up files;
+two new regression tests pass. Evidence: `evidence/VALIDATION_FOLLOWUP.json` in
+that implementation dossier. Population2608 and its frozen sources stay intact.
+
+## 2026-10-31 — Available-data sensor investigation
+
+The user confirms that no reserved acquisitions or additional photometric
+calibration exist and requests continued use of existing data. This changes
+the feasible confirmation scope, not its exposure designation. Executed S1
+on the available RAW: 72 road queries from 24 acquisitions, keeping all 149
+inventory entries and explicit Slider alignment rejections. A measured
+single-thread CPU profile admitted extraction alongside the existing worker;
+no additional research GPU job was launched.
+
+Fitted acquisition-excluded response proxies for activity, texture, radial
+R0 motion and permuted motion. The radial proxy does not beat the controls.
+Added a fixed observed-RGB brightness-change control using the same admitted
+cells, and refitted every control on that common support. Observed RGB improves
+sensor residuals; this is motion/reference evidence, not a TTC result.
+
+Then recovered expansion with fixed radial, translation, affine and spatially
+permuted models, using only the scale fits excluding each acquisition. Preserved
+all nuisance terms, rank diagnostics, signs, unavailable measurements and R0
+fallback before joining TTC targets. Affine recovery improves over radial and
+permuted readings, but strongly worsens TTC versus R0. No producer training is
+admitted by the current proxy. Runs: sensor_proxy149_v1,
+sensor_proxy_analysis149_v1, sensor_reference149_v1,
+sensor_reference_analysis149_v1, photometric_q149_v1,
+photometric_q_analysis149_v1 under output/release_research_20261031.
+
+Also reconstructed the archived native runtime environment from hashed
+preservation archives: historical Linux/RTX 4090 and current Windows/RTX 5070 Ti
+Laptop differ despite sharing the torch version. Missing explicit backend flag
+settings in entrypoints do not establish historical runtime TF32 state. Kept
+the exact original parity requirements; evidence is NATIVE_PLATFORM_EVIDENCE.json.
+
+Repeated the fixed clock controls on stored original/canonical PAIR phases,
+with each compared against its own event context and exact context fallback.
+Cadence correction does not reveal an observer advantage. Persistence and
+transport agree because the latest admitted observation is at query time.
+Runs clock_cadence149_v1 and clock_cadence_analysis149_v1 are COMPLETE.
+
+Generated followup_results_v2 from ten sealed experiments, including all four
+sensor-reference contrasts with acquisition bootstrap intervals. The mean
+observed-RGB advantage versus activity is imprecise, while its contrast with
+the radial physical proxy excludes zero descriptively. No independent or
+multiplicity-corrected claim is made. Seventeen additional tests pass; 88 distinct
+campaign checks including prior suites. Ruff format/check and scoped Pyright
+pass for nine available-data files; VALIDATION_AVAILABLE_DATA.json binds them.
+
+Prepared a conditional original-only CUDA backend diagnostic, without editing
+the running continuation's sources. It can run only after that continuation
+closes with original CUDA profile parity failure. Four fixed matmul/cuDNN TF32
+policies use the same two physical queries; the first must exactly repeat the
+local CUDA original before historical comparison. No tolerance relaxation or
+canonical candidate is allowed. Nine guard/archive-authentication tests pass;
+97 distinct campaign tests including prior validation. Ruff and Pyright pass.
+VALIDATION_NATIVE_BACKEND.json records this as prepared, not a GPU experiment.
+
+## 2026-10-31 — Population2608 closed; local native sensitivity continued
+
+The original extraction published COMPLETE: 2608 queries, 2459 new road queries
+plus 149 reused, exact paired original at every new query, no optimizer updates
+or targets during extraction. The fixed F0 development gate passes in both
+domains, preserving coverage and signs. Road macro MAE changes from 0.810620018
+to 0.810489612 seconds (descriptive CI crosses zero); Slider from 1.178155898
+to 1.120808950 seconds. Slider remains one previously exposed acquisition,
+not new independent evidence. Generated population_report is under continuation_v1.
+
+The queued original CUDA profile completed and fails historical intermediate
+parity in both queries, while each TTC satisfies the unchanged tolerance.
+The continuation closed with native_cuda_profile_parity_failed_candidate_not_run.
+Executed native_backend_diagnosis_v1: all four TF32 policies fail historical
+parity; false/false exactly repeats the local CUDA original. No historical gate
+was relaxed or reclassified and the candidate was not evaluated in these profiles.
+
+Preregistered a different, explicitly limited experiment in
+NATIVE_PLATFORM_PAIR_PROTOCOL.md: measure original/canonical sensitivity on
+all 5805 physical native queries on the available local platform. This preserves
+the historical failure and makes no score-conservation/promotion claim. Started
+native_platform_followup_v1, which captures original producers, records the full
+historical comparison, then requires exact local original PAIR/context/head replay
+before applying the fixed canonical intervention. No new/private targets or
+official release files are touched. Running status is in that folder's STATUS.json.
+
+Prepared NATIVE_LOCAL_LATENCY_PROTOCOL.md and its runner for after full paired
+completion: deterministic first ten physical queries per sequence, two independent
+caches, balanced execution order, uninstrumented timing separate from stage
+instrumentation, exact prediction checks and explicit single-server queue simulation.
+Eight platform-admission/sensitivity tests and ten latency selection/instrumentation
+tests pass. Campaign total is 115 distinct focused tests. Ruff and Pyright pass;
+validation receipts bind the versions. Latency is prepared, not yet measured.
+
+Started final_reporting_v1 to watch the existing native continuation by PID and
+creation time, without restarting it. Its sources and latency protocol are frozen.
+After native COMPLETE and worker exit it runs the local latency protocol, then
+report_release_research_campaign.py into campaign_results_v1. That report requires
+all completed receipts, resolves the full logical alias map, and preserves the
+distinction between historical failure, local sensitivity and native accuracy.
+It cannot publish a completed report from a partial capture. Live state is
+output/release_research_20261031/final_reporting_v1/STATUS.json. Ruff format/check
+and Pyright pass for the reporting orchestration; no scientific completion is
+claimed merely because this continuation is queued.
+
+Registered NATIVE_RAW_LATENCY_PROTOCOL.md after identifying the precise timing
+boundary: the existing native benchmark loads precomputed event NPZ tensors.
+The supplemental runner rebuilds the current event observation from local eAP
+HDF5 with the historical +5 pixel offset, half-open windows and exact voxel
+reductions, then checks elementwise identity before admission to RAW-to-output
+timing. All 12 source files are local (117.21 GiB); no download or extra acquisition
+is used. Full RAW hashes are outside the service timer. Six new tests pass,
+bringing the distinct focused total to 121; Ruff and configured Pyright pass.
+native_raw_parity_v1 is running in CPU alongside the existing native capture.
+The RAW GPU benchmark will wait for the queued NPZ benchmark/report to finish.
+No end-to-end RAW latency claim is made from prepared-input timing or by adding
+percentiles from different experiments. Validation: VALIDATION_NATIVE_RAW.json.
+
+2026-11-01 interruption/recovery: original native and reporting workers no longer
+existed; the old capture last wrote at 00:08:53, with 5805 event and 1474 RGB
+observations complete. One further CALLS.json contained NUL bytes after the
+interruption. Old artifacts and failed recovery preflight logs are retained.
+The corrected recovery reads sequence identity from the public queries (RGB
+observation metadata does not carry sequence_id), excludes the incomplete pair,
+and freezes 7279 valid fragments in NATIVE_RECOVERY_INVENTORY_v3.json.
+All 34 first/last modality-sequence producer sentinels are exactly reproduced.
+Five recovery tests pass; the focused campaign total is 126, with Ruff/Pyright
+passing. The detached coordinator runs native_platform_followup_v2 and then
+final_reporting_v2, the RAW benchmark and its supplementary report sequentially.
+Do not interpret the fast fragment-copy log entries as new inference.
+
+Measured progress audit at 00:34:04: new RGB began at 00:33:08; 487 new observations
+had completed in the last ten minutes, all within a 56.50-second active span.
+Active rate was 516.07 observations/minute, leaving 3844 RGB (7.45 minutes at that
+rate, capture only). Earlier audit at 00:24 correctly found zero new observations
+in the preceding ten minutes. Neither audit claims comparison/latency completion.
+
+At 01:15:17 all native capture inference was finished (5805 event and 5805 RGB
+observations); subsequent minutes were final input/artifact hashing. Capture
+COMPLETE preceded original_replay. The full original replay is now COMPLETE:
+all 5805 queries fail historical intermediate parity and 504 fail the unchanged
+TTC tolerance. Descriptive prediction drift (not target error) has median
+0.0001854897 s, p95 0.0010940552 s, p99 0.0027967834 s and maximum 0.49679184 s.
+The maximum occurs in the predicted-magnitude >16 s stratum. The complete report
+is native_parity_distribution_v1; its executed source is retained. A subsequent
+source-only line-wrap edit leaves report text/numerics unchanged and passes Ruff.
+The local paired replay is ongoing and requires exact original context/head
+repeatability before applying the canonical branch. Historical failure is retained.
+
+Native local paired replay and its parent are now COMPLETE (5805/5805): exact
+original repeatability and nominal event context, no new missing predictions,
+no sign changes. Canonical-vs-original absolute changes: median 0.0000143051 s,
+p95 0.0000767708 s, p99 0.0001210403 s, maximum 0.0064964294 s. These are prediction
+differences, not native target errors. NPZ/RGB latency is also COMPLETE on the
+fixed 120 queries: original p50/p95 329.344/1603.654 ms, canonical
+346.744/1658.066 ms; p95 ratio 1.0339304. Every timed output equals local replay.
+The instrumented second pass is separate. campaign_results_v1 and
+final_reporting_v2 are COMPLETE. The detached coordinator has launched
+native_raw_latency_v1; its initial full RAW-byte verification is outside timing.
+Do not interpret the prepared-NPZ table as RAW representation construction time.
+
+2026-11-01 final closeout: native_raw_latency_v1 and raw_latency_results_v1 are
+COMPLETE. RAW-to-output service on the fixed 120 physical prefixes has original
+p50/p95/p99 532.024/963.353/1014.155 ms and canonical
+534.662/1008.124/1208.804 ms. The p95 ratio is 1.046474, within the descriptive
++10% budget. All timed predictions are exactly equal to local full replay;
+the 120 reconstructed event tensors were also exact. Inputs were hashed before
+and after timing. Supplied boxes, potentially warm OS caches and the scoped
+prefix population remain explicit limitations; this is not a 50 Hz guarantee.
+No research coordinator or GPU benchmark worker remains active. CURRENT_STATE.json
+points to the completed current runs and preserves the interrupted v1 attempts.
+The official release is unchanged. No native private target evaluation or
+independent acquisition confirmation is claimed. Conditional learned families
+remain unadmitted by their measured controls, rather than declared universally
+incapable of improvement. Final summaries are in campaign_results_v1 and
+raw_latency_results_v1, with native_parity_distribution_v1 describing platform drift.
+
+2026-11-01 publication: added Spanish companion documents at
+docs/release_research_summary_20261101/TRABAJO_REALIZADO.md and
+RESULTADOS_Y_LIMITES.md, distinguishing completed available-data studies from
+unadmitted training arms and unproved official improvement. Revalidated all 126
+focused tests (7.92 s), Ruff on 57 maintained research Python files, and Pyright
+including the new tests. Four presence/type assertions in two test files resolve
+the expanded type-check scope without changing experiment code or frozen evidence.
+Verified 24 COMPLETE receipts and 494 artifact references; 272 references resolve
+in explicitly declared local runs, as documented by the compact report bundles.
+All 24 local links in the two new summaries resolve. Git byte-preservation rules
+protect the received research documents and executed-source/evidence snapshots.
+Repository-wide Ruff lint passes; global format check still reports two unchanged,
+previously tracked files (report_phase_producer_timewarp.py and
+test_phase_canonical_pair.py). No full-suite or remote-CI success is claimed.
+
+2026-11-01 main-readiness fixes authorized after the integration audit: formatted
+the two files blocking CI, with identical Python ASTs before/after. Prior bytes
+remain available at df8530f8 and executed experiment receipts are unchanged.
+All 3172 checked Python files now pass Ruff format; repository-wide Ruff lint
+passes. Twenty Markdown hard breaks in three planning documents now use the
+backslash syntax rather than trailing spaces; diff whitespace checks pass.
+The README now distinguishes the original TRAIN40 system, the experimental
+adapted router and rejected canonical interventions, and points to the corrected
+434-target audit. Its 423-target report remains explicitly historical. The
+author's supplied student status and the renamed local attachment are recorded.
+The full test suite and remote CI are being rechecked; these formatting and
+documentation fixes do not assert model promotion or new scientific results.
+
+2026-11-01 CI verification: GitHub Actions run 41301252628 on a26b3222 completed
+successfully on Ubuntu, including dependency installation, global Ruff lint and
+format, both Pyright invocations, PowerShell syntax, the complete pytest suite,
+wheel build and both CLI entry points. The main-integration audit now records
+that its identified blockers are resolved in this run. Scientific limitations
+and unchanged experimental-model status remain explicit. The historical source
+bytes of both formatted Python files match their df8530f8 Git objects exactly;
+the local FORMAT_PARITY receipt records before/after hashes and AST equality.

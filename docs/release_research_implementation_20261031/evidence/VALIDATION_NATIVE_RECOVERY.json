@@ -1,0 +1,25 @@
+{
+  "distinct_campaign_tests": 126,
+  "interrupted_capture_preserved": true,
+  "junit": {
+    "errors": "0",
+    "failures": "0",
+    "hostname": "DESKTOP-2N393IP",
+    "name": "pytest",
+    "path": "output\\release_research_20261031\\validation_native_recovery_v4\\pytest.xml",
+    "sha256": "bf9a829bf879da261cb64b29212695ba154e38a2bbf289d87299c800c6ad37ee",
+    "skipped": "0",
+    "tests": "5",
+    "time": "3.542",
+    "timestamp": "2026-11-01T00:27:21.526186+01:00"
+  },
+  "prior_validation": "VALIDATION_NATIVE_RAW.json",
+  "pyright": "0 errors with research project config",
+  "recovery_producer_sentinels_passed": false,
+  "ruff_check": "PASS",
+  "sources": {
+    "docs/release_research_implementation_20261031/NATIVE_INTERRUPTION_RECOVERY.md": "36a68302707d3e93ff502aed10484ffd9612f3f1e38599839449616daa9ff74e",
+    "scripts/resume_release_native_research.py": "905dfa783df90b6055825e8fc79bb72872a7c4ea8e8d3421acb794673df4f37d",
+    "tests/unit/test_release_native_recovery.py": "0202357e7e34731e5cc425412af3e133b1ac052716fb273d53724a4e147b4b70"
+  }
+}

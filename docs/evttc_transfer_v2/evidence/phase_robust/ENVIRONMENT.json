@@ -1,0 +1,13 @@
+{
+  "config_sha256": "bc6200501c2f8c37ec9faf5d9809a9970a6296d0cc0333bbe9b55daedc939742",
+  "cuda": "12.8",
+  "dataset_manifest_hash": "4dd31f7c9a927762de9ee6eead98c3ded28e0f90a75bd7f3d6b67b9bf91fc072",
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "host": "DESKTOP-2N393IP",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.11.15",
+  "split_version": "phase_robust_quality_v1_scenario_family_groups",
+  "status": "training_and_evaluations_complete",
+  "torch": "2.11.0+cu128",
+  "verification_time_utc": "2026-10-31T00:03:22.735049+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "rtol": 1e-06,
+  "atol": 1e-06,
+  "geometry_exact": true,
+  "quality_exact": true,
+  "before_augmentation": true,
+  "rows": 2608,
+  "population_sha256": "1c200903e5cbaf4cc2115c6b53dc252613e51d2f0dc0d9dcb595cdbe523e804e",
+  "metadata_sha256": "d976c31c9110c06c75a0b8925aa5c0852acc53440424eb8a6880e8dd095856b8",
+  "script_sha256": "7c57da18db245ee772c5da273f4fcb864750aee7428d32b3cc76a4cadc426a28"
+}

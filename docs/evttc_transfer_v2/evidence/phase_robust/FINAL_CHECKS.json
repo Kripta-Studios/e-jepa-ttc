@@ -1,0 +1,28 @@
+{
+  "focused_final": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 14
+  },
+  "full_suite": {
+    "additional_subtests": 17,
+    "errors": 0,
+    "failures": 0,
+    "passed": 7309,
+    "seconds": 1047.626,
+    "skipped": 46
+  },
+  "pyright": "0 errors",
+  "receipts": {
+    "output\\phase_robust\\FINAL_MODEL\\FUSION_BINDING.json": "a61caadf007e462ebd62c66e330051e3b1a0ab888965657d0494a13462653601",
+    "output\\phase_robust\\NATIVE_PARITY.json": "a80e162aaa80388d2bc0ba3b715f725f99883de12a54160cd9e0d2be3ed71b3a",
+    "output\\phase_robust\\REVIEW.json": "df791a7d6d13bc7cacb45d2089ae20cc46c98f411d8496c6813ab6ed3d5a41e7",
+    "output\\phase_robust\\report\\VERIFICATION.json": "d5d3225ad0e203b78e3c8592ceec3b86e91d85798b6ab33c24e9c3d9d4976f03",
+    "output\\phase_robust_focused_final.xml": "b3a95810862e419d47ab6a244e8b12886d2ef264c09be19b22ad24e6bd1361a5",
+    "output\\phase_robust_full.xml": "a8f610973b534c59de022cc37d5ceab93c1f0444f53904f00d35fe55ff2da53e"
+  },
+  "review": "two important deployment findings fixed; no weight changes",
+  "ruff": "passed",
+  "status": "passed",
+  "verification_scope": "Full suite began before the final adapter/package corrections; final14focused tests, strict export verification and native raw parity validate those corrections. No retraining after review."
+}

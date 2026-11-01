@@ -1,0 +1,35 @@
+{
+  "config": {
+    "experiment_id": "raw-latency-report-v1",
+    "official_release_modified": false,
+    "scope": "exposed data; no independent confirmation or official accuracy claim"
+  },
+  "git_commit": "e918ca0fd1a3d664eed06b45ba7ebdd2ec719319",
+  "host": "DESKTOP-2N393IP",
+  "input_paths": {
+    "PRECOMPUTED_LATENCY.json": "docs\\release_research_implementation_20261031\\campaign_results_v1\\LATENCY.json",
+    "RAW_LATENCY.json": "output\\release_research_20261031\\native_raw_latency_v1\\RESULTS.json",
+    "RAW_MEASUREMENTS.json": "output\\release_research_20261031\\native_raw_latency_v1\\MEASUREMENTS.json",
+    "RAW_PARITY.json": "output\\release_research_20261031\\native_raw_parity_v1\\RESULTS.json",
+    "RAW_PARITY_RECORDS.json": "output\\release_research_20261031\\native_raw_parity_v1\\RECORDS.json",
+    "campaign": "docs\\release_research_implementation_20261031\\campaign_results_v1\\COMPLETE.json",
+    "latency": "output\\release_research_20261031\\native_raw_latency_v1\\COMPLETE.json",
+    "parity": "output\\release_research_20261031\\native_raw_parity_v1\\COMPLETE.json",
+    "source:scripts/report_release_research_raw_latency.py": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\report_release_research_raw_latency.py"
+  },
+  "inputs": {
+    "PRECOMPUTED_LATENCY.json": "99c8942540285576eaa0d83529123424ebe1a4dfee37bcd327080f8eaaba1a34",
+    "RAW_LATENCY.json": "e2b8108c6d792ec02b6adc2c71cadd6bd9571c3bbf746aae1f6bd447328e5890",
+    "RAW_MEASUREMENTS.json": "3f47937cc432b4f685bedaccbf3f64e7cb943ee66472eb2888a5192fa2d45be2",
+    "RAW_PARITY.json": "06a02e26febbc9e5fc28b264399740cce1d9608f2227796f269453be25f2dfa3",
+    "RAW_PARITY_RECORDS.json": "61e1b739ce9e565a574608728e0b086f031eb3770b00841e1265a7db65c6b74a",
+    "campaign": "95f57e485ea8f4b81e77d0b2c066c446a3821e1b4a49dbd61fcd007c591468fe",
+    "latency": "8fe435491b46625c566ef9fef497c2012038bb56e1af811d75d162246900b9a9",
+    "parity": "bf4cc4f6c0940551cf130d5748074185a2f70ba9d37954b4e24a63c79e6c01ad",
+    "source:scripts/report_release_research_raw_latency.py": "3eb39280cab4ca5d388f08a0b7752d1a2a0b15e758e9aa0f23b110510d77cc3d"
+  },
+  "python_version": "3.11.15",
+  "schema": "release_research_v1",
+  "scope": "development or mechanism only; never official promotion",
+  "start_time": "2026-11-01T01:08:45.742567+00:00"
+}

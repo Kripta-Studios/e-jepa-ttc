@@ -1,0 +1,56 @@
+{
+  "schema": "native_platform_evidence_v1",
+  "inputs_sha256": {
+    "D:\\E_JEPA_POD2_RETURN_20261027\\LOCAL_FINAL_PRESERVATION_COMPLETE.json": "dd3b63b7eeee75b8444b1d4466004e18a733263268ea83379932cb47ea4414f6",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\final_diagnostics_b206c5f51a8aac5f.tar": "b206c5f51a8aac5fa6f22dd883fee7b1f9481a2df537b6f071c7986d87150d48",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\final_runtime_bd0149ce1cdeb4a9.tar": "bd0149ce1cdeb4a97cadc3ecea2077a48e764d2ad77e18168549a3f89e022751",
+    "output\\phase_timewarp\\population2608_v1\\FREEZE.json": "a847ace2866628af3b0e9e0ccb91038fc4da93593ffd56d0f6f5d746229623f1"
+  },
+  "historical_environment": {
+    "captured_utc": "2026-10-27T16:33:57.537308+00:00",
+    "python": "3.11.15",
+    "torch_compiled_cuda": "12.8",
+    "cudnn_runtime": {
+      "torch_imported": false,
+      "gpu_context_created": false,
+      "library_path": "/opt/ejepa_env/lib/python3.11/site-packages/nvidia/cudnn/lib/libcudnn.so.9",
+      "runtime_version_integer": 91900
+    },
+    "gpu_csv": "NVIDIA GeForce RTX 4090, GPU-76c760e3-5571-9c40-65a4-abeb0e7fd5e3, 595.91.07, 24564",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "limitations": [
+      "On-disk SHA does not prove code already loaded by a running interpreter.",
+      "cuDNN version call allocates no training/model/GPU tensors.",
+      "Head parity is not whole-pipeline latency or official evaluation.",
+      "No private test targets, leaderboard measurements or official SOTA claim."
+    ],
+    "packages": {
+      "torch": "2.11.0+cu128",
+      "torchvision": "0.26.0+cu128",
+      "numpy": "2.4.6",
+      "nvidia-cudnn-cu12": "9.19.0.56"
+    },
+    "member_sha256": "d29bbaeef0a235b131b9b8300773de3356ee1409777f866e9e305e0db042db18",
+    "member": "workspace/ejepa_final_diagnostics/ENVIRONMENT_FULL_20261027.json"
+  },
+  "archived_entrypoints": {
+    "workspace/ejepa_final_operations/runpod_test12_sequence_queue.py": {
+      "sha256": "a7e512b50039695634ba357a00dee4213df758f1fbb8b195a25116a8795e8e53",
+      "explicit_tf32_control_lines": 0
+    },
+    "workspace/ejepa_final_operations/runpod_test12_staged.py": {
+      "sha256": "64a020ff65ad9528056dda0fc3ac2e5b14b195e2cc9d398ee71b8a3921ed3eb4",
+      "explicit_tf32_control_lines": 0
+    }
+  },
+  "current_population_environment": {
+    "host": "DESKTOP-2N393IP",
+    "python": "3.11.15",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "tf32": false
+  },
+  "interpretation": "GPU/OS differ; backend defaults/environment not established from this on-disk snapshot; no causal attribution or tolerance change",
+  "native_targets_read": false
+}

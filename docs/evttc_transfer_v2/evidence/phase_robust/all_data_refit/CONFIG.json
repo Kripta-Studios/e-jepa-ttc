@@ -1,0 +1,50 @@
+{
+  "default_evaluated_candidate": "output\\phase_robust\\training",
+  "exclusion": "original eight overlap road recordings remain excluded",
+  "fit_groups": [
+    "CCRm-low-0-overlap-0",
+    "CCRm-low-50-overlap-50",
+    "CCRm-medium-0-overlap-0",
+    "CCRm-medium-50-overlap-50",
+    "CCRs-1-high-0-overlap-0",
+    "CCRs-1-high-50-overlap-50",
+    "CCRs-1-low-0-overlap-0",
+    "CCRs-1-low-50-overlap-50",
+    "CCRs-1-medium-0-overlap-0",
+    "CCRs-1-medium-50-overlap-50",
+    "CCRs-3-low-100-overlap-100",
+    "CCRs-3-medium-100-overlap-100",
+    "CCRs-side-high",
+    "CCRs-side-low",
+    "CCRs-side-medium",
+    "CPLA-high",
+    "CPLA-low",
+    "CPLA-medium",
+    "CPNA-high",
+    "CPNA-low",
+    "CPNA-medium",
+    "CPNAO-high",
+    "CPNAO-low",
+    "CPNAO-medium",
+    "Slider-1000",
+    "Slider-500",
+    "Slider-750"
+  ],
+  "inputs": {
+    "output\\phase_robust\\external\\Slider-1000\\PREDICTIONS.npz": "bcfc314e11f189cacf2209e3d59f8eb3917cb6ae4176b99f0b2c7f42d4acd132",
+    "output\\phase_robust\\external\\Slider-1000\\TARGETS.npz": "fad0a7a3ca1ace3d1c469539cb3b638b79685097acef901bd002f27857e8cbbb",
+    "output\\phase_robust\\external\\Slider-750\\PREDICTIONS.npz": "1fbab4d34d9d81ced83b3777bba6da988eae0c2d7526edcc660f1e8875f88974",
+    "output\\phase_robust\\external\\Slider-750\\TARGETS.npz": "f0669c6de8a5be4a311c83800f22d9eaaba3f9a1c78353380544bc0df66708a6",
+    "output\\phase_robust\\training\\POPULATION.npz": "4dd31f7c9a927762de9ee6eead98c3ded28e0f90a75bd7f3d6b67b9bf91fc072"
+  },
+  "parent_freeze_sha256": "fd284ce3f12a9c89db5e9c59bda26a9b68bb1db9b60cc5894e0d05b735e95943",
+  "rows": 2677,
+  "scope": "all-data release refit, all metrics descriptive; no held-out confirmation remains for these weights",
+  "sources": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\refit_phase_robust_all.py": "5f938b757762de6820437ba6a63377486a116c081b233f7300c09d9a156fc0a9",
+    "operational\\phase_robust\\model.py": "e83b5fc6ff5f672afce1ed629d813bb6f65cdf7c541eb247a78ee43b82816ac5",
+    "scripts\\train_phase_robust.py": "bb85bd26d7e96b901ca3d01f57aa088e637cf1131a63ad6556376ead14dc8aea"
+  },
+  "uncertainty": "previous separate calibration cannot be transferred as a validated interval after fitting its labels",
+  "unchanged": "quality401 gate; seeds7/13/21;200epochs;AdamW lr.01 wd.01; family-balanced loss; no search after reserve"
+}

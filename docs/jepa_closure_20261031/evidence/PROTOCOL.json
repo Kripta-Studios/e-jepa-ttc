@@ -1,0 +1,56 @@
+{
+  "H_rows": 256,
+  "H_usage": "terminal after all three arms perseed; never earlystop,tune,selectcheckpoint",
+  "P_rows": 512,
+  "allowed_parallelism": "up to3seedworkers; armssequential",
+  "architecture": "Reviewed microgate: encoder.features, pool4x4,shared1x1to768,residual predictor1536->128->768,lastconvzero",
+  "arms": [
+    "B_static",
+    "C_one_step",
+    "C_shuffle"
+  ],
+  "batch_size": 16,
+  "benefit_gate": "primary C-B and C-shuffle upper95%CI<0, all seeds reported; not a newindependentSOTAclaim",
+  "checkpoint_selection": "fixed step1000 only",
+  "conditioning": "lasttwoobserved event frames only; fixedrequested horizon100000us; nofutureinputs",
+  "core_sha256": "bf907d2376fdfb6db633ece4d2c36b5f5c7661c1c6d445dbd69447db0ce64d41",
+  "device": "cpu",
+  "encoder_source_sha256": "0e5802ef7ce98cac37ad414d66ba339bbd62cffe7f9a459fc495875a6feac934",
+  "evaluator_sha256": "c6924b0d533a993b22cd11b0bd527cb55fa2c41ba867112e322badc63d706a03",
+  "labels_in_training": false,
+  "loss": "SmoothL1 beta1, static weight1, future weight1 for C/shuffle and0 forB",
+  "normalizer": "P current teacher only; perchannel across P and spatial, epsilon1e-6; fixed for future/H",
+  "optimizer": {
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "grad_clip_norm": 1.0,
+    "lr": 0.0003,
+    "name": "AdamW",
+    "weight_decay": 0.01
+  },
+  "primary_readout": "encoder_dense temporal_difference predicting measured_log_height_ratio, MAE",
+  "probe": "Pfit-onlystandardization; ridgealpha1; noHhyperparameterselection",
+  "readout": "predictor discarded; frozen dense/projected previous,current",
+  "schema": "causal_pilot768_protocol_v1",
+  "scope": "historically_exposed_P_fit_H_terminal_diagnostic",
+  "script_sha256": "0dceb5c345ecd77007075ad41e4092160201a1fcc0ca84e7605efda8e8b40305",
+  "secondary_readouts": [
+    "encoder_dense level_last",
+    "encoder_dense level_and_difference",
+    "projected temporal_difference",
+    "projected level_last",
+    "projected level_and_difference"
+  ],
+  "seeds": [
+    7,
+    13,
+    21
+  ],
+  "shuffle": "seeded sequence-block ordering then circular shift by maximum sequence size; P only",
+  "statistic": "mean seeded paired MAE difference perHsequence;10000pairedsequencebootstrap seed7,keepseeds together",
+  "teacher": "fixedfull768x4x4; no128projection",
+  "threads_per_worker": 2,
+  "updates_per_arm": 1000
+}

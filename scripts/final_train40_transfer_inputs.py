@@ -31,9 +31,9 @@ DEFAULT_MANIFEST = ROOT / "data/manifests/evttc_all32_local.yaml"
 HISTORICAL = ROOT / "docs/post_v18_transfer_20261017/evidence/QUERY_MANIFEST.json"
 
 
-def uniform_indices(size: int, limit: int = 16) -> list[int]:
+def uniform_indices(size: int, limit: int | None = 16) -> list[int]:
     """Include both endpoints using deterministic integer-spaced indices."""
-    if size <= limit:
+    if limit is None or size <= limit:
         return list(range(size))
     return [index * (size - 1) // (limit - 1) for index in range(limit)]
 
@@ -49,7 +49,9 @@ def immutable_json(path: Path, value: Any) -> None:
     path.write_bytes(payload)
 
 
-def sequence_population(spec: dict[str, Any], data_parent: Path) -> dict[str, Any]:
+def sequence_population(
+    spec: dict[str, Any], data_parent: Path, *, limit: int | None = 16
+) -> dict[str, Any]:
     """Read public ROI and sensor clocks only; never parse a TTC or depth asset."""
     folder = data_parent / spec["local_path"]
     raw = folder / spec["event_hdf5"]
@@ -174,7 +176,7 @@ def sequence_population(spec: dict[str, Any], data_parent: Path) -> dict[str, An
         }
         row["metadata_sha256"] = _canonical_sha256(row)
         candidates.append(row)
-    chosen = [candidates[i] for i in uniform_indices(len(candidates))]
+    chosen = [candidates[i] for i in uniform_indices(len(candidates), limit)]
     return {
         "rows": chosen,
         "excluded": excluded,

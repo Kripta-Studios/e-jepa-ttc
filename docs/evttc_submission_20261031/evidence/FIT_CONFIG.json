@@ -1,0 +1,66 @@
+{
+  "coordinate": "inverse",
+  "excluded_road": [
+    "CCRm-low-100-overlap-100",
+    "CCRm-medium-100-overlap-100",
+    "CCRs-1-high-100-overlap-100",
+    "CCRs-1-low-100-overlap-100",
+    "CCRs-1-medium-100-overlap-100",
+    "CCRs-2-high-100-overlap-100",
+    "CCRs-2-low-100-overlap-100",
+    "CCRs-2-medium-100-overlap-100"
+  ],
+  "excluded_slider": [
+    "Slider-750",
+    "Slider-1000"
+  ],
+  "fit_groups": [
+    "CCRm-low-0-overlap-0",
+    "CCRm-low-50-overlap-50",
+    "CCRm-medium-0-overlap-0",
+    "CCRm-medium-50-overlap-50",
+    "CCRs-1-high-0-overlap-0",
+    "CCRs-1-high-50-overlap-50",
+    "CCRs-1-low-0-overlap-0",
+    "CCRs-1-low-50-overlap-50",
+    "CCRs-1-medium-0-overlap-0",
+    "CCRs-1-medium-50-overlap-50",
+    "CCRs-3-low-100-overlap-100",
+    "CCRs-3-medium-100-overlap-100",
+    "CCRs-side-high",
+    "CCRs-side-low",
+    "CCRs-side-medium",
+    "CPLA-high",
+    "CPLA-low",
+    "CPLA-medium",
+    "CPNA-high",
+    "CPNA-low",
+    "CPNA-medium",
+    "CPNAO-high",
+    "CPNAO-low",
+    "CPNAO-medium",
+    "Slider-500"
+  ],
+  "historical_exposure": "all32road plus all3Slider inspected previously; earlier recipe selection used exposed Slider labels; cannot claim virgin benchmark",
+  "inputs": {
+    "output\\evttc_transfer_v2\\inputs_reviewed\\exclusions.json": "06e7e1ee58924481ea95e02e335943a6d698fa851871ef588dc5dcd6216a0297",
+    "output\\phase_startup\\training_rate\\POPULATION.npz": "73de465c03423e2ee86d0cbf8965170cb5e51ddc7bd7ba7bdb73542693bf1af0"
+  },
+  "model_name": "PHASE-TTC-Adapt-20261031",
+  "recipe": "previously selected inverse QA,688parameters,300updates AdamW lr.01 wd.01,unchanged augmentation/loss",
+  "rows": 2608,
+  "scope": "adapted research candidate; no direct benchmark-recording fit; historical exposure remains",
+  "seeds": [
+    7,
+    13,
+    21
+  ],
+  "selected": "QA",
+  "sources": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\train_phase_submission.py": "b616bfffe01a9bdcd5feb11719eaa3b02314ac7756c83d3f184553a4633484ed",
+    "operational\\phase_startup\\model.py": "878dab038fa508d2208e6f88892a85a8a5ef3c6c9a41866f97162af6bd3143ff",
+    "operational\\phase_submission\\protocol.py": "ef085fb14644d998dc768fe211855d6df4d9eff53deca0f8430cfa56d84569ee",
+    "scripts\\train_phase_startup.py": "61c530944a7320bdeb836eaf2f63c0f23a4c1e39d574d18e5186561dcc1e4ee4"
+  },
+  "uncertainty": "no calibrated interval; prior calibration labels included in final fit"
+}

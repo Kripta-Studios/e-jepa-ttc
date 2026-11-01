@@ -1,0 +1,84 @@
+{
+  "status": "ready",
+  "schema": "causal_pilot768_ready_v1",
+  "files": {
+    "event_inputs_P.npz": "d3740fc8ed3a40cb934940cfd540fba62793d766c9a21255ab64a0a82dd890bc",
+    "teacher_targets_P.npz": "c0a312b322568ecb906f52745ab415918e2df278452a9617664de860a3bdf71d",
+    "P_plan.json": "1446eb8edd248e8cb8b4070779e73fa379d181c35d2f61aa6e753233cfa7a05a",
+    "event_inputs_H.npz": "7549f25511269dc4672ab4a7bd9d1b371c6926c48bfce11d31d66a08e3a03b2e",
+    "teacher_targets_H.npz": "d703673072fb59b4e847bff6476b52f23b5dbf330648919ab8e9c08d7a08ac83",
+    "H_plan.json": "aa042580654a17fc3a3010617cd552e2a526c41bd54b509f887c4aa0281845de"
+  },
+  "checks": {
+    "causal_cutoffs": true,
+    "fixed_context_roi": true,
+    "disjoint_sequences": true,
+    "channel_major_768_4_4": true,
+    "all_event_rows_byte_exact": true,
+    "all_arrays_finite": true
+  },
+  "rows": {
+    "P": 512,
+    "H": 256
+  },
+  "sequence_counts": {
+    "P": 24,
+    "H": 8
+  },
+  "preselection_sha256": "4767224db39dcb8f0b9bf7c4b3cdfe6f7e3412d8ae8be13c94a2541625f5e20e",
+  "teacher_binding": {
+    "teacher_sha256": "1c691ab2f6f5d3e510a92edae16d2a2b0be4122f7e37fe545438830a0dbe3868",
+    "helper_sha256": "ded70c606c0dde656cabf3e2a0006951151bb046f6455a162856b620d5c36425",
+    "backend": "cpu_float32",
+    "spatial_pool": [
+      4,
+      4
+    ],
+    "projection": null,
+    "flatten_order": "channel_major_768_then_4x4",
+    "input_recipe": {
+      "source": "prepared common ROI RGB uint8 [B,T,3,H,W]",
+      "image_mode": true,
+      "independent_frames": true,
+      "resize": {
+        "size": [
+          384,
+          384
+        ],
+        "mode": "bilinear",
+        "align_corners": false,
+        "antialias": true
+      },
+      "additional_crop": null,
+      "divide": 255,
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "output": "[B,T,576,768] float32; spatial grid24x24 retained",
+      "caveat": "Caller must establish ROI causality. No future prediction or teacher qualification is established by extraction."
+    },
+    "preselection_sha256": "4767224db39dcb8f0b9bf7c4b3cdfe6f7e3412d8ae8be13c94a2541625f5e20e",
+    "model_source_sha256": "d2932eabeba684d8f558302a13cfd4be70a0170ee5112f5a794652d0a29089b9",
+    "torch_version": "2.11.0+cu128",
+    "rgb_sha256": "3e1fe5ce25a762aa43f47cc266c11a10e3dcd24b6aa839757038dc805948bc87"
+  },
+  "teacher_prior32_rows_reused": 32,
+  "gpu_used": false,
+  "workers": 8,
+  "threads_per_worker": 2,
+  "student_updates": 0,
+  "teacher_updates": 0,
+  "normalizers_fitted": false,
+  "ttc_labels_included": false,
+  "V_or_test_used": false,
+  "elapsed_seconds": 434.60226249694824,
+  "scope": "historically_exposed_sequence_heldout_diagnostic_not_confirmatory",
+  "script_sha256": "4726a463ec7cbda20d3e9eb693574f8fbeee8bf6207082feb8d780a3f56f5bef"
+}

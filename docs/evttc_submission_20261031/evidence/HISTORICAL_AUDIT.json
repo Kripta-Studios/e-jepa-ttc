@@ -1,0 +1,902 @@
+{
+  "affiliation": null,
+  "author": "\u00c1lvaro Schwiedop Souto",
+  "cameras": {
+    "CCRm-low": {
+      "calibration": {
+        "event_distortion": [
+          -0.0012966394634865413,
+          -0.16636604328999108,
+          0.00010240333339156836,
+          0.0010389816555963398
+        ],
+        "event_intrinsics": [
+          3318.7275633511367,
+          3315.8078180219154,
+          641.4355976139799,
+          335.02519149405884
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "dataset key declares Blackfly/RGB to Prophesee/event; rotation transposed",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          0.007854585582891378,
+          -0.07588188416794327,
+          0.0004248544697792097,
+          0.0014231224401358945
+        ],
+        "rgb_intrinsics": [
+          4678.175433331083,
+          4675.916093832853,
+          971.0517127273132,
+          590.1940189903296
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999104554155399,
+            -0.013380890038170602,
+            -0.00018147306613923659
+          ],
+          [
+            0.013379652863394945,
+            0.9998945566899754,
+            -0.005644500953353808
+          ],
+          [
+            0.000256982377595639,
+            0.005641567472232456,
+            0.9999840532111068
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_bfs_to_prophesee",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.830422725217307,
+        "rgb": 23.193148220771967
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRm-medium": {
+      "calibration": {
+        "event_distortion": [
+          -0.0012966394634865413,
+          -0.16636604328999108,
+          0.00010240333339156836,
+          0.0010389816555963398
+        ],
+        "event_intrinsics": [
+          3318.7275633511367,
+          3315.8078180219154,
+          641.4355976139799,
+          335.02519149405884
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "dataset key declares Blackfly/RGB to Prophesee/event; rotation transposed",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          0.007854585582891378,
+          -0.07588188416794327,
+          0.0004248544697792097,
+          0.0014231224401358945
+        ],
+        "rgb_intrinsics": [
+          4678.175433331083,
+          4675.916093832853,
+          971.0517127273132,
+          590.1940189903296
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999104554155399,
+            -0.013380890038170602,
+            -0.00018147306613923659
+          ],
+          [
+            0.013379652863394945,
+            0.9998945566899754,
+            -0.005644500953353808
+          ],
+          [
+            0.000256982377595639,
+            0.005641567472232456,
+            0.9999840532111068
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_bfs_to_prophesee",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.830422725217307,
+        "rgb": 23.193148220771967
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRs1-high": {
+      "calibration": {
+        "event_distortion": [
+          0.015526182326080693,
+          -0.6696369958762965,
+          0.00016616923458348916,
+          0.001552476009246031
+        ],
+        "event_intrinsics": [
+          3318.998982261081,
+          3318.0789536908683,
+          637.2961331163233,
+          333.7131603581845
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "dataset key declares Blackfly/RGB to Prophesee/event; rotation transposed",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          -0.0006493884229779502,
+          -0.00854609846383313,
+          0.0006116354140483586,
+          0.0013332696960929482
+        ],
+        "rgb_intrinsics": [
+          4684.621833707343,
+          4684.788010153691,
+          965.2762110070464,
+          591.0359348499603
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999100033223156,
+            -0.013372695250177544,
+            -0.0010753035426410977
+          ],
+          [
+            0.01336617817003455,
+            0.9998935251840345,
+            -0.005855217858248217
+          ],
+          [
+            0.0011534890939360408,
+            0.005840318209356057,
+            0.9999822799160591
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_bfs_to_prophesee",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.828680367700677,
+        "rgb": 23.162095439818152
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRs1-low": {
+      "calibration": {
+        "event_distortion": [
+          0.003924603462167624,
+          -0.23464324162360672,
+          -2.528518876856676e-05,
+          0.0026365755511751263
+        ],
+        "event_intrinsics": [
+          3318.5626034552356,
+          3316.1738815047224,
+          651.548156668202,
+          329.8003144701837
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "provider data-format documentation declares camera/RGB to Prophesee/event; the legacy key name alone is not used to reverse that direction; rotation transposed. The stored matrix is also numerically continuous with the newer T_bfs_to_prophesee cohorts",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          -0.021212915858101842,
+          0.34718504214213775,
+          0.0009471375269003584,
+          0.0016539789715052818
+        ],
+        "rgb_intrinsics": [
+          4687.034330133933,
+          4683.719657599617,
+          972.7478795373573,
+          591.2940997605618
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999075971225094,
+            -0.013453557156409848,
+            0.0019491065980450483
+          ],
+          [
+            0.013467812153371141,
+            0.9998812141803184,
+            -0.007495036030317344
+          ],
+          [
+            -0.0018480401761969251,
+            0.0075205936689506075,
+            0.9999700122595556
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_to_right_bfs",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.831481809692963,
+        "rgb": 23.15049534847777
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRs1-medium": {
+      "calibration": {
+        "event_distortion": [
+          0.003924603462167624,
+          -0.23464324162360672,
+          -2.528518876856676e-05,
+          0.0026365755511751263
+        ],
+        "event_intrinsics": [
+          3318.5626034552356,
+          3316.1738815047224,
+          651.548156668202,
+          329.8003144701837
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "provider data-format documentation declares camera/RGB to Prophesee/event; the legacy key name alone is not used to reverse that direction; rotation transposed. The stored matrix is also numerically continuous with the newer T_bfs_to_prophesee cohorts",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          -0.021212915858101842,
+          0.34718504214213775,
+          0.0009471375269003584,
+          0.0016539789715052818
+        ],
+        "rgb_intrinsics": [
+          4687.034330133933,
+          4683.719657599617,
+          972.7478795373573,
+          591.2940997605618
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999075971225094,
+            -0.013453557156409848,
+            0.0019491065980450483
+          ],
+          [
+            0.013467812153371141,
+            0.9998812141803184,
+            -0.007495036030317344
+          ],
+          [
+            -0.0018480401761969251,
+            0.0075205936689506075,
+            0.9999700122595556
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_to_right_bfs",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.831481809692963,
+        "rgb": 23.15049534847777
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRs2-high": {
+      "calibration": {
+        "event_distortion": [
+          -0.0012966394634865413,
+          -0.16636604328999108,
+          0.00010240333339156836,
+          0.0010389816555963398
+        ],
+        "event_intrinsics": [
+          3318.7275633511367,
+          3315.8078180219154,
+          641.4355976139799,
+          335.02519149405884
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "dataset key declares Blackfly/RGB to Prophesee/event; rotation transposed",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          0.007854585582891378,
+          -0.07588188416794327,
+          0.0004248544697792097,
+          0.0014231224401358945
+        ],
+        "rgb_intrinsics": [
+          4678.175433331083,
+          4675.916093832853,
+          971.0517127273132,
+          590.1940189903296
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999104554155399,
+            -0.013380890038170602,
+            -0.00018147306613923659
+          ],
+          [
+            0.013379652863394945,
+            0.9998945566899754,
+            -0.005644500953353808
+          ],
+          [
+            0.000256982377595639,
+            0.005641567472232456,
+            0.9999840532111068
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_bfs_to_prophesee",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.830422725217307,
+        "rgb": 23.193148220771967
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRs2-low": {
+      "calibration": {
+        "event_distortion": [
+          -0.0012966394634865413,
+          -0.16636604328999108,
+          0.00010240333339156836,
+          0.0010389816555963398
+        ],
+        "event_intrinsics": [
+          3318.7275633511367,
+          3315.8078180219154,
+          641.4355976139799,
+          335.02519149405884
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "dataset key declares Blackfly/RGB to Prophesee/event; rotation transposed",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          0.007854585582891378,
+          -0.07588188416794327,
+          0.0004248544697792097,
+          0.0014231224401358945
+        ],
+        "rgb_intrinsics": [
+          4678.175433331083,
+          4675.916093832853,
+          971.0517127273132,
+          590.1940189903296
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999104554155399,
+            -0.013380890038170602,
+            -0.00018147306613923659
+          ],
+          [
+            0.013379652863394945,
+            0.9998945566899754,
+            -0.005644500953353808
+          ],
+          [
+            0.000256982377595639,
+            0.005641567472232456,
+            0.9999840532111068
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_bfs_to_prophesee",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.830422725217307,
+        "rgb": 23.193148220771967
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "CCRs2-medium": {
+      "calibration": {
+        "event_distortion": [
+          -0.0012966394634865413,
+          -0.16636604328999108,
+          0.00010240333339156836,
+          0.0010389816555963398
+        ],
+        "event_intrinsics": [
+          3318.7275633511367,
+          3315.8078180219154,
+          641.4355976139799,
+          335.02519149405884
+        ],
+        "event_resolution": [
+          1280,
+          720
+        ],
+        "metadata": {
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "transform_direction_interpretation": "dataset key declares Blackfly/RGB to Prophesee/event; rotation transposed",
+          "translation_present_but_omitted_without_depth": true
+        },
+        "rgb_distortion": [
+          0.007854585582891378,
+          -0.07588188416794327,
+          0.0004248544697792097,
+          0.0014231224401358945
+        ],
+        "rgb_intrinsics": [
+          4678.175433331083,
+          4675.916093832853,
+          971.0517127273132,
+          590.1940189903296
+        ],
+        "rgb_resolution": [
+          1920,
+          1200
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999104554155399,
+            -0.013380890038170602,
+            -0.00018147306613923659
+          ],
+          [
+            0.013379652863394945,
+            0.9998945566899754,
+            -0.005644500953353808
+          ],
+          [
+            0.000256982377595639,
+            0.005641567472232456,
+            0.9999840532111068
+          ]
+        ],
+        "source_kind": "road_right",
+        "transform_source": "prophesee/event_cam_right/calib/T_bfs_to_prophesee",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 21.830422725217307,
+        "rgb": 23.193148220771967
+      },
+      "lens_evidence": "inferred by matching calibrated FoV to paper Table II 16mm pair",
+      "nominal_lens_mm": 16,
+      "pair": "Prophesee EVK-v4 + FLIR Blackfly-S (right)"
+    },
+    "Slider-1000": {
+      "calibration": {
+        "event_distortion": [
+          0.9917751728283679,
+          -46.198744725423786,
+          0.0,
+          0.0
+        ],
+        "event_intrinsics": [
+          1846.7399480323948,
+          1845.3523793138982,
+          320.7875472605093,
+          237.96665183706554
+        ],
+        "event_resolution": [
+          640,
+          480
+        ],
+        "metadata": {
+          "camera_role_rule": "smaller image is DVS/event; larger image is APS/RGB",
+          "event_group": "#refs#/d",
+          "event_pose_count": 15,
+          "matched_pose_count": 12,
+          "matched_pose_indices": [
+            {
+              "event": 12,
+              "rgb": 15
+            },
+            {
+              "event": 14,
+              "rgb": 17
+            },
+            {
+              "event": 0,
+              "rgb": 0
+            },
+            {
+              "event": 4,
+              "rgb": 4
+            },
+            {
+              "event": 11,
+              "rgb": 10
+            },
+            {
+              "event": 13,
+              "rgb": 16
+            },
+            {
+              "event": 9,
+              "rgb": 8
+            },
+            {
+              "event": 6,
+              "rgb": 6
+            },
+            {
+              "event": 1,
+              "rgb": 1
+            },
+            {
+              "event": 5,
+              "rgb": 5
+            },
+            {
+              "event": 8,
+              "rgb": 7
+            },
+            {
+              "event": 10,
+              "rgb": 9
+            }
+          ],
+          "matlab_K_transposed_to_conventional_form": true,
+          "pose_pairing": "deterministic all-pairs 1deg/20mm consensus",
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "rgb_group": "#refs#/c",
+          "rgb_pose_count": 18,
+          "rotation_residual_deg_max": 0.32315407283822356,
+          "status": "candidate_only_no_authoritative_intercamera_extrinsic",
+          "translation_candidate_mm_median": [
+            -3.193660072615625,
+            0.3271304084718061,
+            23.848785651155254
+          ],
+          "translation_residual_mm_max": 6.257839858336559,
+          "translation_used_for_projection": false
+        },
+        "rgb_distortion": [
+          -0.018132238545460415,
+          -0.27397248067452806,
+          0.0,
+          0.0
+        ],
+        "rgb_intrinsics": [
+          4672.4794618751675,
+          4676.997355599025,
+          651.6803878629363,
+          557.5660151867253
+        ],
+        "rgb_resolution": [
+          1440,
+          1080
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999891493610508,
+            0.0017714120899041848,
+            0.004308510110244166
+          ],
+          [
+            -0.0016709772320668713,
+            0.9997293603778792,
+            -0.023203746109780623
+          ],
+          [
+            -0.004348447453086131,
+            0.023196294912010616,
+            0.9997214726648134
+          ]
+        ],
+        "source_kind": "slider_candidate",
+        "transform_source": "robust consensus from MATLAB cameraParameters board poses",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 19.661007946448258,
+        "rgb": 17.520042737532027
+      },
+      "lens_evidence": "nominal mm not established; use supplied calibration and identify testbed",
+      "nominal_lens_mm": null,
+      "pair": "Inivation DVXplorer + DAHENG MER2 (beam-splitter testbed)"
+    },
+    "Slider-750": {
+      "calibration": {
+        "event_distortion": [
+          0.9917751728283679,
+          -46.198744725423786,
+          0.0,
+          0.0
+        ],
+        "event_intrinsics": [
+          1846.7399480323948,
+          1845.3523793138982,
+          320.7875472605093,
+          237.96665183706554
+        ],
+        "event_resolution": [
+          640,
+          480
+        ],
+        "metadata": {
+          "camera_role_rule": "smaller image is DVS/event; larger image is APS/RGB",
+          "event_group": "#refs#/d",
+          "event_pose_count": 15,
+          "matched_pose_count": 12,
+          "matched_pose_indices": [
+            {
+              "event": 12,
+              "rgb": 15
+            },
+            {
+              "event": 14,
+              "rgb": 17
+            },
+            {
+              "event": 0,
+              "rgb": 0
+            },
+            {
+              "event": 4,
+              "rgb": 4
+            },
+            {
+              "event": 11,
+              "rgb": 10
+            },
+            {
+              "event": 13,
+              "rgb": 16
+            },
+            {
+              "event": 9,
+              "rgb": 8
+            },
+            {
+              "event": 6,
+              "rgb": 6
+            },
+            {
+              "event": 1,
+              "rgb": 1
+            },
+            {
+              "event": 5,
+              "rgb": 5
+            },
+            {
+              "event": 8,
+              "rgb": 7
+            },
+            {
+              "event": 10,
+              "rgb": 9
+            }
+          ],
+          "matlab_K_transposed_to_conventional_form": true,
+          "pose_pairing": "deterministic all-pairs 1deg/20mm consensus",
+          "projection_model": "rotation_only_radtan_perimeter_envelope",
+          "rgb_group": "#refs#/c",
+          "rgb_pose_count": 18,
+          "rotation_residual_deg_max": 0.32315407283822356,
+          "status": "candidate_only_no_authoritative_intercamera_extrinsic",
+          "translation_candidate_mm_median": [
+            -3.193660072615625,
+            0.3271304084718061,
+            23.848785651155254
+          ],
+          "translation_residual_mm_max": 6.257839858336559,
+          "translation_used_for_projection": false
+        },
+        "rgb_distortion": [
+          -0.018132238545460415,
+          -0.27397248067452806,
+          0.0,
+          0.0
+        ],
+        "rgb_intrinsics": [
+          4672.4794618751675,
+          4676.997355599025,
+          651.6803878629363,
+          557.5660151867253
+        ],
+        "rgb_resolution": [
+          1440,
+          1080
+        ],
+        "rotation_event_to_rgb": [
+          [
+            0.9999891493610508,
+            0.0017714120899041848,
+            0.004308510110244166
+          ],
+          [
+            -0.0016709772320668713,
+            0.9997293603778792,
+            -0.023203746109780623
+          ],
+          [
+            -0.004348447453086131,
+            0.023196294912010616,
+            0.9997214726648134
+          ]
+        ],
+        "source_kind": "slider_candidate",
+        "transform_source": "robust consensus from MATLAB cameraParameters board poses",
+        "translation_omitted": true
+      },
+      "horizontal_fov_deg": {
+        "event": 19.661007946448258,
+        "rgb": 17.520042737532027
+      },
+      "lens_evidence": "nominal mm not established; use supplied calibration and identify testbed",
+      "nominal_lens_mm": null,
+      "pair": "Inivation DVXplorer + DAHENG MER2 (beam-splitter testbed)"
+    }
+  },
+  "cpu_observed_same_host_2026_10_31": {
+    "Name": "AMD Ryzen 9 9955HX 16-Core Processor           ",
+    "NumberOfCores": 16,
+    "NumberOfLogicalProcessors": 32
+  },
+  "cpu_provenance": "current hardware queried on the same laptop; historical run did not log CPU",
+  "evaluation_pdf_sha256": "2e88892833c5e5ef0d7f1138ff1d0ae5eb9975e882465f6d9130dd66ef8f51be",
+  "historical_environment": {
+    "cuda_available": true,
+    "cuda_runtime": "12.8",
+    "device": "cuda",
+    "dirty_source_sha256": "d02dd98cfbebab19c0e3f64848f3c25d4f6acddbe4d9746215b8f6b9a1adec2d",
+    "end_utc": "2026-10-28T18:33:29.493078+00:00",
+    "git_commit": "1dbf329c77cda55358add8b752bdc1a7e9d0527f",
+    "git_dirty": true,
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "hostname": "DESKTOP-2N393IP",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.15",
+    "python_executable": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+    "seed": 7,
+    "start_utc": "2026-10-28T18:09:12.951576+00:00",
+    "torch": "2.11.0+cu128"
+  },
+  "local_slider_protocol_audit": {
+    "Slider-1000": {
+      "negative_changes": [],
+      "processed_relative_error_pct": 156.88134149168354,
+      "raw_relative_error_pct": 156.88134149168354,
+      "rows": 18,
+      "scope": "public targets only; does not certify organizer target equivalence",
+      "target_sha256": "1d71a51e4fbd21280f53425e05c63367f08ea3662e32017cde913128b8e60f78"
+    },
+    "Slider-750": {
+      "negative_changes": [
+        {
+          "index": 2,
+          "processed": 19.194387912750244,
+          "raw": -42.22498321533203
+        },
+        {
+          "index": 6,
+          "processed": 38.703229904174805,
+          "raw": -6.958716869354248
+        }
+      ],
+      "processed_relative_error_pct": 283.9310581484616,
+      "raw_relative_error_pct": 282.498227597849,
+      "rows": 51,
+      "scope": "public targets only; does not certify organizer target equivalence",
+      "target_sha256": "4fb29e203ff057a262d0d118641769ee22306e57a6361f23b53313a0e03c2641"
+    }
+  },
+  "organizer_email_rules": {
+    "all_434_received": true,
+    "all_bbox_timestamps_required": true,
+    "ground_truth": "matched or interpolated to bbox reference timestamps",
+    "negative_processing": "linear interpolation between surrounding valid predictions",
+    "negative_values_permitted_in_raw_files": true,
+    "source": "email supplied verbatim by user, no date headers supplied"
+  },
+  "original_zip_matches_historical_manifest": true,
+  "original_zip_sha256": "2c79847516993924229799696b05d84185e1dc32d90cbc1ac6016532e9552733",
+  "primary_sources": [
+    "https://nail-hnu.github.io/EvTTC/about/sensor/",
+    "https://arxiv.org/html/2412.05053v1",
+    "https://nail-hnu.github.io/EvTTC/download/data_format/",
+    "https://nail-hnu.github.io/EventAidedTTC/"
+  ],
+  "public_source_revisions": {
+    "NAIL-HNU/EvTTC": "015e62d21c942356f2e85ff50b9dd0dcf33dedce",
+    "NAIL-HNU/event_aided_ttc": "79ff0842955304ec4f6164ec09baddc71386d225"
+  },
+  "sole_author_user_confirmed": true,
+  "source_hashes": {
+    "RUN_FREEZE.json": "fab56dfcd99d953a54067a2103faba49e8edb9d886c94e7bc06d805877bf6324",
+    "all_rows.jsonl": "e420f65ef05ce54a82502ceaaf9cc18b0c339ce7761d9aa049a687c60382126f",
+    "environment.json": "5b0d9dc637136881e1ca2cb9f4b7cc1162b133e0bc4733a6326298c8ac6d0346",
+    "manifest.json": "cb8735c37a53af0d134c5114bff8add946a4811b8e2b38bebe09b6ad8e4da0a4"
+  },
+  "verification": {
+    "exact_ledger_match": true,
+    "mean_cost_seconds": 3.268250489632936,
+    "negative": 2,
+    "rows": 434
+  }
+}

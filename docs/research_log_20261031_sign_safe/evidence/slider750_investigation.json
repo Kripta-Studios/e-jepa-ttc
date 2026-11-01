@@ -1,0 +1,61 @@
+{
+  "scope": "Primary-source investigation only; no offsets or score-matching transformations searched",
+  "sources": [
+    {
+      "path": "sources/official_sensor_clocks.html",
+      "url": "https://nail-hnu.github.io/EvTTC/about/synchronization/",
+      "sha256": "4670df4586ac76fcafec77e744e82ae8f700f5a95a422217659060e59a0ba2b9"
+    },
+    {
+      "path": "sources/official_data_format.html",
+      "url": "https://nail-hnu.github.io/EvTTC/download/data_format/",
+      "sha256": "f622c7916587f73455f68eb75c259062e4505e3e979192afdf59d22b2f73c811"
+    },
+    {
+      "path": "sources/primary_metricRee.m",
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/event_aided_ttc/79ff0842955304ec4f6164ec09baddc71386d225/matlab_code/utils/metricRee.m",
+      "sha256": "8e9a736528b2e0f40b618a891a8d04b96e27b7d970fd3386778f49d389733397"
+    },
+    {
+      "path": "sources/primary_code_tree.json",
+      "url": "https://api.github.com/repos/NAIL-HNU/event_aided_ttc/git/trees/79ff0842955304ec4f6164ec09baddc71386d225?recursive=1",
+      "sha256": "c1c5c671f0e41bc73601e2d48c02ba17de2c59c6f253311d7aef561de86239fe"
+    },
+    {
+      "path": "sources/official_website_tree.json",
+      "url": "https://api.github.com/repos/NAIL-HNU/EvTTC/git/trees/015e62d21c942356f2e85ff50b9dd0dcf33dedce?recursive=1",
+      "sha256": "87c383802828eb1c711cda876041b8a1b11dc0fefc915d225d018c4050ea9a5c"
+    }
+  ],
+  "findings": [
+    "Public Slider-750 ground truth fetched on this audit is byte-identical to previous public CSV.",
+    "All51 benchmark query frame indices have corresponding public GT rows with timestamps agreeing within2us.",
+    "The two original negative predictions are linearly interpolated between surrounding valid timestamped estimates; mismatch remains.",
+    "EvTTC published data-format documentation defines seconds for TTC/timestamps and does not specify a Slider750 target correction.",
+    "Pinned public event_aided_ttc source tree contains an FCWD example and metricRee, but no interpolate2negative file or dedicated official competition evaluator.",
+    "No authoritative alternate Slider750 target file or clock correction was established."
+  ],
+  "local_original_vs_official": {
+    "local_count": 51,
+    "local_original_rte_pct": 283.9310581484616,
+    "official_pdf": {
+      "count": 51,
+      "rte_pct": 132.0,
+      "runtime_seconds": 6.192
+    },
+    "matches_pdf_rounding": false,
+    "interpolated_negative_row_indices": [
+      1,
+      5
+    ],
+    "frozen_submission_negative_row_indices": [
+      5
+    ]
+  },
+  "needed_for_exact_reproduction": [
+    "Organizer aligned51-row Slider750 GT vector keyed by supplied bbox index and timestamp",
+    "Evaluator implementation/version and actual interpolation settings",
+    "Confirmation of the original results.zip SHA256 used for Slider750"
+  ],
+  "no_training_or_selection": true
+}

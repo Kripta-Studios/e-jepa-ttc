@@ -1,0 +1,20 @@
+Subject: PHASE-TTC-Adapt-20261031 — new version for separate EvTTC evaluation
+
+Dear EvTTC team,
+
+I have prepared a separately identified adapted research version, PHASE-TTC-Adapt-20261031. The attached results.zip contains one prediction and measured execution time at each of the 434 supplied bounding-box timestamps across all ten sequences. Please evaluate this version separately from the PHASE-TTC submission of 28 October; it should not silently replace that version's experimental description.
+
+This version retains the original frozen TRAIN40 sensor producers and adds an ensemble of three small learned fusion routers, with causal bounding-box expansion and observation-quality features. Each router has 688 parameters. The final fit uses 2,608 queries from 24 road recordings and Slider-500, excluding the eight road recordings matched to the competition sequences and excluding Slider-750 and Slider-1000. Seeds are 7, 13 and 21, with the same fixed training recipe for all three.
+
+There is historical exposure: the wider development campaign inspected results on all road recordings and all three Slider recordings, and the fusion recipe was selected during that campaign. Excluding competition recordings from this final fit does not remove that exposure. This candidate should therefore be described as an adapted research method, not as an untouched zero-shot evaluation or a new independent holdout. The training uses the native road camera preparation, whereas the submitted predictions use the competition right-camera preparation; this transfer is documented.
+
+Inference uses only causal events, RGB and supplied bounding boxes. Ground-truth TTC and target distance are not inputs. Every submitted output was sealed before the new local scoring step. The complete source, frozen weights, training population and exclusions, runtime records and integrity checks accompany the research package. Local supported-target scores are clearly separated from official evaluation and are not claimed as leaderboard results.
+
+The computing platform, cameras and sole-author details are the same as in my implementation-details reply: AMD Ryzen 9 9955HX, NVIDIA GeForce RTX 5070 Ti Laptop GPU, Python/PyTorch, and Álvaro Schwiedop Souto with no institutional affiliation. The method's full title remains PHASE-TTC: Causal Event–RGB Fusion for Time-to-Contact Estimation.
+
+The camera adapter retains its documented rotation-only projection, with translation omitted without an inference-available depth estimate; the Slider inter-camera rotation remains a provisional calibration consensus. These limitations have not been hidden by post-processing the supplied outputs. Signed values are preserved in the files. Please apply your standard negative-output rule consistently if needed.
+
+Thank you for considering this separate version. Please let me know which adapted-method disclosure or listing category is appropriate for it.
+
+Best regards,
+Álvaro Schwiedop Souto

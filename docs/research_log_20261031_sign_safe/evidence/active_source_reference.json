@@ -1,0 +1,28 @@
+{
+  "F0": {
+    "coverage": 1.0,
+    "finite": 88744,
+    "mae_seconds": 1.4160298109054565,
+    "population": 88744,
+    "relative_absolute_error_pct": 27.365737915039062,
+    "relative_rows": 88744,
+    "rmse_seconds": 4.692690372467041,
+    "valid_targets": 88744,
+    "wrong_sign": 1417
+  },
+  "current_active": {
+    "coverage": 1.0,
+    "finite": 88744,
+    "mae_seconds": 1.1770474910736084,
+    "population": 88744,
+    "relative_absolute_error_pct": 22.19563865661621,
+    "relative_rows": 88744,
+    "rmse_seconds": 3.0966808795928955,
+    "valid_targets": 88744,
+    "wrong_sign": 1131
+  },
+  "model_sha256": "fe1460c407ccd08fc670c1955435b0fe9b4719737e22e3dec7534a57e66bb005",
+  "predictions_sha256": "bbcaf3bba8706f3d7a4b2938f746dcc55d3fd3e9104d1bb946bfbf19befafff1",
+  "scope": "TRAIN40 resubstitution; active router; not held-out eAP generalization",
+  "source_population_sha256": "7ffd2d102322651f530d31efce0f47f2b8dcd53bfa66bb41264a6fdd9392a35a"
+}

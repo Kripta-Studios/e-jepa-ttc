@@ -1,0 +1,28 @@
+{
+  "reviewer": "dossier_publication_review",
+  "fresh_context": true,
+  "critical": 0,
+  "important": 1,
+  "important_fixed": 1,
+  "correction": "Family bootstrap retains pooled query weighting; corrected macro label to micro without changing numbers",
+  "minor_deferred": [
+    {
+      "file": "09_PUBLICACION_E_INVENTARIO.md",
+      "observation": "The phrase four first historical types describes categories, not literal first four table rows; inventory and hashes are correct"
+    }
+  ],
+  "checks": {
+    "final_table_rows": 13,
+    "archives": 10,
+    "archive_total_bytes": 200240822,
+    "sizes_sha256_crc_members": true,
+    "reproduction_paths_in_final_archive": true
+  },
+  "declined_to_judge": [
+    "remote publication pending",
+    "private evaluator and official accuracy",
+    "independent generalization/SOTA/safety/calibration",
+    "fresh training or full suite for documentation",
+    "complete third-party licensing or exhaustive contents-level secret audit"
+  ]
+}

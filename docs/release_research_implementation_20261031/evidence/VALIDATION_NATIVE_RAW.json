@@ -1,0 +1,25 @@
+{
+  "distinct_campaign_tests": 121,
+  "junit": {
+    "errors": "0",
+    "failures": "0",
+    "hostname": "DESKTOP-2N393IP",
+    "name": "pytest",
+    "path": "output\\release_research_20261031\\validation_native_raw_v2\\pytest.xml",
+    "sha256": "ce8cb8db11c3acbad3982bd885f25eea953402e6ffaab1d5a1e166365aaf109c",
+    "skipped": "0",
+    "tests": "6",
+    "time": "9.008",
+    "timestamp": "2026-10-31T23:47:10.454519+01:00"
+  },
+  "prior_validation": "VALIDATION_NATIVE_LOCAL_LATENCY.json",
+  "pyright": "0 errors using operational/release_research/pyrightconfig.json",
+  "raw_latency_run_executed": false,
+  "ruff_check": "PASS",
+  "sources": {
+    "docs/release_research_implementation_20261031/NATIVE_RAW_LATENCY_PROTOCOL.md": "374b196bcd1f74c90438666d71cbe3fa6093e200cd273c1f26d0f522855f43fe",
+    "scripts/release_native_raw_latency.py": "ab3a040ba26e1e292377a4dafecb7f0f6e59a42b423401814cf5283b0a00edf7",
+    "scripts/report_release_research_raw_latency.py": "3eb39280cab4ca5d388f08a0b7752d1a2a0b15e758e9aa0f23b110510d77cc3d",
+    "tests/unit/test_release_native_raw_latency.py": "e7285bc0776c491327113b77f81225f37bbdee9ff1f97ab6717b4867cf7c5e54"
+  }
+}

@@ -1,0 +1,29 @@
+e482c220 2026-10-31 12:15:51 +0100 Deliver audited three-seed PHASE-TTC adapted EvTTC submission
+3eb5cb5e 2026-10-31 11:29:55 +0100 Evaluate signed startup routing and deliver reproducible all-data candidate
+70efabae 2026-10-31 01:11:08 +0100 feat: train and audit causal quality fusion with portable final models
+73a74f4d 2026-10-30 22:57:46 +0100 Close campaign with independent review and full Windows test verification
+55415cc2 2026-10-30 22:39:31 +0100 Complete paired comparator audit and explicit missing-estimate causes
+c3d51251 2026-10-30 22:30:19 +0100 Record grouped, external and raw-sensor campaign results with verification
+30bd87f5 2026-10-30 22:28:53 +0100 Preserve missing predictions on recovery and report campaign tradeoffs
+27cc992a 2026-10-30 22:16:08 +0100 Add frozen external sensor validation and campaign diagnostic controls
+0e3c0469 2026-10-30 21:50:35 +0100 feat: add exposed family-heldout PHASE campaign and baseline diagnostics
+50b2bb68 2026-10-30 21:33:36 +0100 docs: deliver verified all-data PHASE-ADAPT refit and performance evidence
+dfbd20b7 2026-10-30 21:06:22 +0100 perf: reuse exact CUDA producer graphs and sensor caches for final refit
+ed9743d5 2026-10-30 20:20:38 +0100 feat(report): generate adapted model card and measured training artifacts
+bd8805ad 2026-10-30 19:55:36 +0100 fix(train): verify adapted graph and recover interrupted feature caches
+0cc59c62 2026-10-30 19:41:30 +0100 feat(train): add explicit all-data PHASE-ADAPT final refit pipeline
+65edf4ee 2026-10-30 19:27:38 +0100 fix(audit): bind evidence and diagnostics before opening protocol gates
+02a0d7f6 2026-10-30 19:08:47 +0100 docs(research): record transfer audit evidence and gated pilot decision
+d799345d 2026-10-30 19:08:46 +0100 feat(audit): add bounded target scoring and passive candidate diagnostics
+07bd0497 2026-10-30 19:08:46 +0100 feat(audit): preserve candidate ancestry and acquisition uncertainty
+0f091880 2026-10-30 18:47:47 +0100 feat(audit): reproduce exact EvTTC recording overlap
+30b28b5c 2026-10-30 18:08:12 +0100 docs: plan EvTTC transfer diagnosis with audited data overlap
+f2903f0b 2026-10-29 11:56:49 +0100 docs: add 3D detection research and council review
+e58d0106 2026-10-29 10:49:54 +0100 Publish final PHASE-TTC research and manuscript on main (#1)
+3434a3be 2026-10-29 10:39:17 +0100 fix(ci): remove cross-checkout dependencies and normalize POSIX return paths
+bb4ef634 2026-10-29 10:28:39 +0100 fix(ci): install plain TeX dependency required by newtxmath
+89c74c34 2026-10-29 10:24:42 +0100 docs(paper): publish final manuscript and validate it in CI
+820e6a6f 2026-10-29 10:24:12 +0100 fix(ci): make research validation reproducible in clean clones
+2a047bf1 2026-10-29 09:37:21 +0100 merge: integrate current main naming into final research history
+0f10312d 2026-10-29 09:12:48 +0100 docs: record manuscript prose refinement and verified delivery
+3615b935 2026-10-29 00:04:49 +0100 docs: record final PHASE-TTC article refinement and validation

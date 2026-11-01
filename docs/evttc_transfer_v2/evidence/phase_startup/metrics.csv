@@ -1,0 +1,25 @@
+cohort,scope,model,population,valid_targets,finite,coverage,mae_seconds,rmse_seconds,relative_rows,relative_absolute_error_pct,wrong_sign
+road_development_1747,"family-held-out OOF, historically exposed",F0,1747,1747,1747,1.0,0.6962953805923462,1.0652483701705933,1747,27.199377059936523,0
+road_development_1747,"family-held-out OOF, historically exposed",previous_quality_oof,1747,1747,1747,1.0,0.42235860228538513,0.8231577277183533,1747,12.833632469177246,0
+road_development_1747,"family-held-out OOF, historically exposed",router_inverse_oof,1747,1747,1747,1.0,0.4048822224140167,0.6862481832504272,1747,12.651274681091309,0
+CCRm_580,"excluded from current fit/selection, historically exposed",F0,580,580,580,1.0,1.0829684734344482,2.0697789192199707,580,16.749462127685547,0
+CCRm_580,"excluded from current fit/selection, historically exposed",previous_quality,580,580,580,1.0,1.019652247428894,1.9536755084991455,580,15.662412643432617,0
+CCRm_580,"excluded from current fit/selection, historically exposed",router_inverse,580,580,580,1.0,1.035544991493225,2.0775129795074463,580,15.191049575805664,0
+Slider-500,exposed; fit rows for router_fit/refit,F0,77,77,76,0.987012987012987,1.1782077550888062,1.372377634048462,76,83.88740539550781,1
+Slider-500,exposed; fit rows for router_fit/refit,previous_quality,77,77,77,1.0,0.29302018880844116,0.7206171751022339,77,29.331867218017578,1
+Slider-500,all Slider held out together,router_all_slider_held_out,77,77,77,1.0,0.5088008046150208,0.6185665726661682,77,29.977113723754883,0
+Slider-500,exposed; fit rows for router_fit/refit,router_fit,77,77,77,1.0,0.20037882030010223,0.2639465034008026,77,13.19705581665039,0
+Slider-500,exposed; fit rows for router_fit/refit,router_all_data_refit,77,77,77,1.0,0.24018986523151398,0.32411035895347595,77,14.448230743408203,0
+Slider-500,exposed; fit rows for router_fit/refit,geometry_only,77,77,76,0.987012987012987,0.40752819180488586,0.74100261926651,76,19.49460220336914,0
+Slider-750,exposed; fit rows for router_fit/refit,F0,51,51,51,1.0,4.539549350738525,10.90786361694336,51,282.4763488769531,2
+Slider-750,exposed; fit rows for router_fit/refit,previous_quality,51,51,51,1.0,3.315706491470337,9.68758773803711,51,168.03799438476562,2
+Slider-750,all Slider held out together,router_all_slider_held_out,51,51,51,1.0,1.9050372838974,4.878293514251709,51,107.92449188232422,1
+Slider-750,exposed; fit rows for router_fit/refit,router_fit,51,51,51,1.0,0.3447904884815216,0.730754017829895,51,24.93065643310547,1
+Slider-750,exposed; fit rows for router_fit/refit,router_all_data_refit,51,51,51,1.0,0.3524901568889618,0.7546095848083496,51,25.462095260620117,1
+Slider-750,exposed; fit rows for router_fit/refit,geometry_only,51,51,50,0.9803921568627451,0.20924849808216095,0.2904239892959595,50,18.434551239013672,0
+Slider-1000,exposed; fit rows for router_fit/refit,F0,18,18,18,1.0,0.8211698532104492,0.8249250054359436,18,156.8755645751953,0
+Slider-1000,exposed; fit rows for router_fit/refit,previous_quality,18,18,18,1.0,0.27565279603004456,0.3931841552257538,18,38.419334411621094,0
+Slider-1000,all Slider held out together,router_all_slider_held_out,18,18,18,1.0,0.2895500361919403,0.365761935710907,18,45.46694564819336,0
+Slider-1000,exposed; fit rows for router_fit/refit,router_fit,18,18,18,1.0,0.14439238607883453,0.323417603969574,18,19.462324142456055,0
+Slider-1000,exposed; fit rows for router_fit/refit,router_all_data_refit,18,18,18,1.0,0.19414417445659637,0.4087648391723633,18,26.14129066467285,0
+Slider-1000,exposed; fit rows for router_fit/refit,geometry_only,18,18,17,0.9444444444444444,0.048472460359334946,0.06717658042907715,17,8.670843124389648,0

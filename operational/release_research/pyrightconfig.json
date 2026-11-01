@@ -1,0 +1,8 @@
+{
+  "include": [".", "../../scripts/release_research.py"],
+  "extraPaths": ["../../src", "../.."],
+  "venvPath": "../..",
+  "venv": ".venv-transfer",
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": "none"
+}

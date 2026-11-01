@@ -1,0 +1,22 @@
+{
+  "markdown_files": 22,
+  "local_links_checked": 641,
+  "broken_links": [],
+  "python_helpers_compile": true,
+  "json_parsed": 4,
+  "verified_sources_unchanged": {
+    "paper/data/transfer_queries.csv": true,
+    "paper/data/early_results.json": true,
+    "paper/data/public_evidence_registry.json": true,
+    "paper/revision/derived_transfer_analysis.json": true,
+    "docs/jepa_closure_20261031/closure_analysis.json": true
+  },
+  "head_at_delivery_check": "e750e38130ae02ba2a362bee3270b4fc3cb8d063",
+  "concurrent_sources_sha256": {
+    "docs/research_log_20261031_canonical_screen149/README.md": "5b4528bad5ac4d7c6109093ca9586d6373ae4f2cb72e9382504a9e1a1d6a08b3",
+    "docs/research_log_20261031_canonical_screen149/evidence/report.json": "58750ffb56fb2a2d4d83b1fb2a1873d09ff8c2f444f9ded76b7c15ddd8cdfdfc",
+    "docs/research_log_20261031_canonical_screen149/CONTINUATION.md": "61994d853939ffd2aaa81a962489638e7938fe7807508d6b31bbcbb17b4b034a",
+    "docs/research_log_20261031_canonical_screen149/evidence/eap_history_inventory.json": "17660e9ac723f194ba1043985140704000f17d5b7b678cf384109f09d5ebf8d0"
+  },
+  "note": "Read-only consistency checks; no new training, model inference, bootstrap or screen execution."
+}

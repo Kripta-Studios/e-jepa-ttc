@@ -1,0 +1,63 @@
+{
+  "captured_at": "2026-10-31T21:49:31.787632+00:00",
+  "scope": "post-run local environment inventory bound to completed runs; not retrospective proof of historical backend flags",
+  "python": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\.venv-transfer\\Scripts\\python.exe",
+  "os": "Windows-10-10.0.26200-SP0",
+  "host": "DESKTOP-2N393IP",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "h5py": "3.16.0",
+    "pandas": "3.0.3",
+    "psutil": "7.2.2",
+    "pytest": "9.1.1",
+    "ruff": "0.15.20",
+    "pyright": "1.1.411"
+  },
+  "torch_cuda_build": "12.8",
+  "cudnn_runtime": null,
+  "cudnn_query_limitation": "GPU hidden in this CPU-only inventory. Initial torch.backends.cudnn.version() query raised min() arg is an empty sequence; no runtime version inferred.",
+  "torch_version_source_sha256": "533e322ff85c9adf6f17cde43856524d757ffdac13dd06e35628b0d43520a070",
+  "gpu_query": "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86",
+  "bound_runs": {
+    "sensor_proxy_profile_v1": {
+      "complete_sha256": "8916aaeb15f5c915ce1d44de07a6b654ae88d1dd02f61f59121424e332bf9f68",
+      "freeze_sha256": "bb2dc22ef07aa65b47a5631ebfa10ad57d12d3b1f66da51ab41e36c2bf136cb2"
+    },
+    "sensor_proxy149_v1": {
+      "complete_sha256": "9cf5c4b51ede9ce3b89ba90b734e71bc4c46473be9d8d3aba76ac554735f86e8",
+      "freeze_sha256": "9443dcd3af759e61f36efa8ffc0a84a8eb995525beaa2fb0c9c15d796b524bf5"
+    },
+    "sensor_proxy_analysis149_v1": {
+      "complete_sha256": "22c7110431cae8d62ad023c453c6b88585d961b152e74a8c5c9e64ea43da89b9",
+      "freeze_sha256": "5fb3f52ec4ed18290deaaa487b62f97570539440eb6232bfdf7f45db7ad0616f"
+    },
+    "sensor_reference149_v1": {
+      "complete_sha256": "0f3217ac2074b5d0b6f0f48e4569f3b1857cc4e09fb7fb5252b1e78fb442579a",
+      "freeze_sha256": "def69dc756d28396bf86f8efddb3eb09987c8a91cd779c135106a311906c89c5"
+    },
+    "sensor_reference_analysis149_v1": {
+      "complete_sha256": "9c16b6e8cf1c58ef9540d2d84f290b6cc649c09be522aee234aa78e1556cc61a",
+      "freeze_sha256": "97636011d50306c8c15a63dddd5f8e74f260d10549992fd168795793de2ccaa3"
+    },
+    "photometric_q149_v1": {
+      "complete_sha256": "03e5ee6dae8b904bcaa0cbd422f271b77263406fa27a475a8d31f8f3d93f2ec4",
+      "freeze_sha256": "cedbb3f9765bb4cd99567905d082d725ec09ab64e171f159e5acd7e54bb20b0d"
+    },
+    "photometric_q_analysis149_v1": {
+      "complete_sha256": "8efd0dfbf8388ccba5a41c084edb5c267cba01e27de6885c6e0437a9ee03bf82",
+      "freeze_sha256": "8125af66357529c8718a488e69b575c7f2a0808345ec6816db1823574a7e0f9e"
+    },
+    "clock_cadence149_v1": {
+      "complete_sha256": "a40ce17d6d14216a9b723268b7dddb8fa60bca3021c6d51dacbab9d88e38c9c1",
+      "freeze_sha256": "293e975fe7faa165a6bd7345ad7e276388ccef02719bd26ec61a190f1bfc53d6"
+    },
+    "clock_cadence_analysis149_v1": {
+      "complete_sha256": "d227b29cba22a7b9dfe932fcaebd4b9f26f834128f21ad60739439b2683070cc",
+      "freeze_sha256": "0928789675ee0c16cf7d4facde250f031702a2cf629a1e1f8fbd3d032b17ac78"
+    }
+  }
+}

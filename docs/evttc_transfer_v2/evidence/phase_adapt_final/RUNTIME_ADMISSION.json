@@ -1,0 +1,607 @@
+{
+  "candidate": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+    },
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3"
+  },
+  "exact": true,
+  "population_sha256": "d976c31c9110c06c75a0b8925aa5c0852acc53440424eb8a6880e8dd095856b8",
+  "producers": [
+    {
+      "capture_stream_id": 1522888763952,
+      "dedicated_capture_stream": true,
+      "endpoint_reuse": false,
+      "endpoint_reuse_by_modality": {
+        "E": false,
+        "R": false
+      },
+      "endpoint_reuse_fallback_calls": 0,
+      "history_group_size": null,
+      "initial_exact_parity": true,
+      "initial_parity_reference": "ORIGINAL_PRODUCER_TENSOR_CORE",
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED",
+      "producer": "E_A5_MATCHED",
+      "replays": 36,
+      "setup_seconds": 0.5516521999961697,
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "transport_contract": {
+        "adapter_before_endpoint_reuse": true,
+        "adjacent_pair_deduplication": false,
+        "compile_backend": null,
+        "history_group_size": null,
+        "mode": "original",
+        "reverse_correlation_reuse": false,
+        "reverse_sample_reuse": false,
+        "weighted_summary_reuse": false
+      },
+      "transport_reuse": "original"
+    },
+    {
+      "capture_stream_id": 1522888763984,
+      "dedicated_capture_stream": true,
+      "endpoint_reuse": false,
+      "endpoint_reuse_by_modality": {
+        "E": false,
+        "R": false
+      },
+      "endpoint_reuse_fallback_calls": 0,
+      "history_group_size": null,
+      "initial_exact_parity": true,
+      "initial_parity_reference": "ORIGINAL_PRODUCER_TENSOR_CORE",
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED",
+      "producer": "E_C2F_MATCHED",
+      "replays": 36,
+      "setup_seconds": 1.8856185000040568,
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ],
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "transport_contract": {
+        "adapter_before_endpoint_reuse": true,
+        "adjacent_pair_deduplication": false,
+        "compile_backend": null,
+        "history_group_size": null,
+        "mode": "original",
+        "reverse_correlation_reuse": false,
+        "reverse_sample_reuse": false,
+        "weighted_summary_reuse": false
+      },
+      "transport_reuse": "original"
+    },
+    {
+      "capture_stream_id": 1522888765376,
+      "dedicated_capture_stream": true,
+      "endpoint_reuse": false,
+      "endpoint_reuse_by_modality": {
+        "E": false,
+        "R": false
+      },
+      "endpoint_reuse_fallback_calls": 0,
+      "history_group_size": null,
+      "initial_exact_parity": true,
+      "initial_parity_reference": "ORIGINAL_PRODUCER_TENSOR_CORE",
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED",
+      "producer": "R_A5",
+      "replays": 180,
+      "setup_seconds": 1.1172571000060998,
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "transport_contract": {
+        "adapter_before_endpoint_reuse": true,
+        "adjacent_pair_deduplication": false,
+        "compile_backend": null,
+        "history_group_size": null,
+        "mode": "original",
+        "reverse_correlation_reuse": false,
+        "reverse_sample_reuse": false,
+        "weighted_summary_reuse": false
+      },
+      "transport_reuse": "original"
+    },
+    {
+      "capture_stream_id": 1522888765152,
+      "dedicated_capture_stream": true,
+      "endpoint_reuse": false,
+      "endpoint_reuse_by_modality": {
+        "E": false,
+        "R": false
+      },
+      "endpoint_reuse_fallback_calls": 0,
+      "history_group_size": null,
+      "initial_exact_parity": true,
+      "initial_parity_reference": "ORIGINAL_PRODUCER_TENSOR_CORE",
+      "jit_optimized_execution": false,
+      "precision": "FP32_TF32_DISABLED",
+      "producer": "R_C2F",
+      "replays": 180,
+      "setup_seconds": 2.2971567999920808,
+      "shape": [
+        1,
+        3,
+        3,
+        128,
+        128
+      ],
+      "trace_warnings": [
+        "Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "Converting a tensor to a Python float might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!",
+        "`torch.jit.trace_method` is deprecated. Please switch to `torch.compile` or `torch.export`.",
+        "`torch.jit.trace` is deprecated. Please switch to `torch.compile` or `torch.export`."
+      ],
+      "transport_contract": {
+        "adapter_before_endpoint_reuse": true,
+        "adjacent_pair_deduplication": false,
+        "compile_backend": null,
+        "history_group_size": null,
+        "mode": "original",
+        "reverse_correlation_reuse": false,
+        "reverse_sample_reuse": false,
+        "weighted_summary_reuse": false
+      },
+      "transport_reuse": "original"
+    }
+  ],
+  "results": [
+    {
+      "cached_seconds": 6.87877029995434,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 0,
+      "original_seconds": 2.8595099999802187,
+      "sequence": "CCRm-low-0-overlap-0"
+    },
+    {
+      "cached_seconds": 0.6243842999683693,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 107,
+      "original_seconds": 2.0326268000062555,
+      "sequence": "CCRm-low-100-overlap-100"
+    },
+    {
+      "cached_seconds": 1.0789651999948546,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 303,
+      "original_seconds": 1.7985081999795511,
+      "sequence": "CCRm-low-50-overlap-50"
+    },
+    {
+      "cached_seconds": 0.44774360000155866,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 449,
+      "original_seconds": 1.4457215999718755,
+      "sequence": "CCRm-medium-0-overlap-0"
+    },
+    {
+      "cached_seconds": 1.417935799981933,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 550,
+      "original_seconds": 1.9693715999601409,
+      "sequence": "CCRm-medium-0-overlap-0"
+    },
+    {
+      "cached_seconds": 0.4796321999747306,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 551,
+      "original_seconds": 2.763289300026372,
+      "sequence": "CCRm-medium-0-overlap-0"
+    },
+    {
+      "cached_seconds": 0.31136910000350326,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 552,
+      "original_seconds": 1.466756500012707,
+      "sequence": "CCRm-medium-0-overlap-0"
+    },
+    {
+      "cached_seconds": 0.544939199986402,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 635,
+      "original_seconds": 0.9190606999909505,
+      "sequence": "CCRm-medium-100-overlap-100"
+    },
+    {
+      "cached_seconds": 0.6013620999874547,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 801,
+      "original_seconds": 1.1586741000064649,
+      "sequence": "CCRm-medium-50-overlap-50"
+    },
+    {
+      "cached_seconds": 0.7417042999877594,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 977,
+      "original_seconds": 1.1356257000006735,
+      "sequence": "CCRs-1-high-0-overlap-0"
+    },
+    {
+      "cached_seconds": 1.0439739999710582,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1067,
+      "original_seconds": 1.7674351999885403,
+      "sequence": "CCRs-1-high-100-overlap-100"
+    },
+    {
+      "cached_seconds": 0.6690033000195399,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1161,
+      "original_seconds": 1.4096870999783278,
+      "sequence": "CCRs-1-high-50-overlap-50"
+    },
+    {
+      "cached_seconds": 0.5543675000080839,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1297,
+      "original_seconds": 1.199844499991741,
+      "sequence": "CCRs-1-low-0-overlap-0"
+    },
+    {
+      "cached_seconds": 0.41063590004341677,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1433,
+      "original_seconds": 1.4582134999800473,
+      "sequence": "CCRs-1-low-100-overlap-100"
+    },
+    {
+      "cached_seconds": 0.4162478999933228,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1450,
+      "original_seconds": 1.6680407999665476,
+      "sequence": "CCRs-1-low-100-overlap-100"
+    },
+    {
+      "cached_seconds": 0.7860911999596283,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1533,
+      "original_seconds": 1.871501299960073,
+      "sequence": "CCRs-1-low-50-overlap-50"
+    },
+    {
+      "cached_seconds": 0.9706951000262052,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1629,
+      "original_seconds": 1.6614421000122093,
+      "sequence": "CCRs-1-medium-0-overlap-0"
+    },
+    {
+      "cached_seconds": 0.663536700012628,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1722,
+      "original_seconds": 2.061960499966517,
+      "sequence": "CCRs-1-medium-100-overlap-100"
+    },
+    {
+      "cached_seconds": 2.4094621000112966,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1871,
+      "original_seconds": 5.5165931999799795,
+      "sequence": "CCRs-1-medium-50-overlap-50"
+    },
+    {
+      "cached_seconds": 2.111117299995385,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 1956,
+      "original_seconds": 5.615755300037563,
+      "sequence": "CCRs-2-high-100-overlap-100"
+    },
+    {
+      "cached_seconds": 2.279788899992127,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2079,
+      "original_seconds": 6.7603084000293165,
+      "sequence": "CCRs-2-low-100-overlap-100"
+    },
+    {
+      "cached_seconds": 2.7600693000131287,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2243,
+      "original_seconds": 8.043563599989284,
+      "sequence": "CCRs-2-medium-100-overlap-100"
+    },
+    {
+      "cached_seconds": 0.5624284000368789,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2365,
+      "original_seconds": 4.575532699993346,
+      "sequence": "CCRs-3-low-100-overlap-100"
+    },
+    {
+      "cached_seconds": 2.2226572000072338,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2546,
+      "original_seconds": 4.768021600029897,
+      "sequence": "CCRs-3-medium-100-overlap-100"
+    },
+    {
+      "cached_seconds": 0.9673014000291005,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2647,
+      "original_seconds": 1.8757332999957725,
+      "sequence": "CCRs-side-high"
+    },
+    {
+      "cached_seconds": 0.7308951999875717,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2751,
+      "original_seconds": 1.2087860999745317,
+      "sequence": "CCRs-side-low"
+    },
+    {
+      "cached_seconds": 0.9381520000169985,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 2889,
+      "original_seconds": 0.9544305999879725,
+      "sequence": "CCRs-side-medium"
+    },
+    {
+      "cached_seconds": 1.3056442000088282,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3026,
+      "original_seconds": 2.061215399997309,
+      "sequence": "CPLA-high"
+    },
+    {
+      "cached_seconds": 0.7194612000021152,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3099,
+      "original_seconds": 1.1926082000136375,
+      "sequence": "CPLA-low"
+    },
+    {
+      "cached_seconds": 0.577605800004676,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3247,
+      "original_seconds": 1.3228815000038594,
+      "sequence": "CPLA-medium"
+    },
+    {
+      "cached_seconds": 0.8329894000198692,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3329,
+      "original_seconds": 2.075094599975273,
+      "sequence": "CPNA-high"
+    },
+    {
+      "cached_seconds": 0.5972120999940671,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3391,
+      "original_seconds": 1.5310433999984525,
+      "sequence": "CPNA-low"
+    },
+    {
+      "cached_seconds": 0.7533878000103869,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3545,
+      "original_seconds": 1.5596725000068545,
+      "sequence": "CPNA-medium"
+    },
+    {
+      "cached_seconds": 0.8790793000371195,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3611,
+      "original_seconds": 2.8531811999855563,
+      "sequence": "CPNAO-high"
+    },
+    {
+      "cached_seconds": 0.9307293000165373,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3722,
+      "original_seconds": 1.624709099996835,
+      "sequence": "CPNAO-low"
+    },
+    {
+      "cached_seconds": 0.90745350002544,
+      "errors": {
+        "features": 0.0,
+        "rgb_width_logits": 0.0
+      },
+      "exact": true,
+      "index": 3793,
+      "original_seconds": 2.494213600002695,
+      "sequence": "CPNAO-medium"
+    }
+  ],
+  "runtime_sha256": "18d1678a5ccdc32cf9da81845465d89e3dec7146f3becf44af5dd788a64b1c56",
+  "sensor_cache": {
+    "bbox_cache_hits": 1,
+    "bbox_validations": 71,
+    "event_cache_hit_bytes": 353839054,
+    "event_prepare_seconds": 18.878466999798547,
+    "event_read_bytes": 3194789481,
+    "event_unique_windows_encoded": 216,
+    "frame_cache_hits": 6,
+    "frame_read_bytes": 1700352000,
+    "rgb_crop_tasks": 252,
+    "rgb_prepare_seconds": 9.713008000224363,
+    "source_opens": 32
+  }
+}

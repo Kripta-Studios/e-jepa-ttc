@@ -1,0 +1,830 @@
+{
+  "all_queries_with_R0_fallback": {
+    "baseline": {
+      "macro_mae": 0.7660248271310539,
+      "macro_relative": 0.33471291720698565,
+      "maximum": 5.314299315214157,
+      "median": 0.7052811980247498,
+      "micro_mae": 0.9693056932977728,
+      "p95": 2.2167519330978394,
+      "sign_errors": 1,
+      "tail_counts": {
+        "1": 58,
+        "10": 0,
+        "3": 4,
+        "5": 2
+      },
+      "urgency": {
+        "0.5": {
+          "false_negative": 4,
+          "false_positive": 0,
+          "positive_targets": 5
+        },
+        "1.0": {
+          "false_negative": 20,
+          "false_positive": 0,
+          "positive_targets": 21
+        },
+        "2.0": {
+          "false_negative": 28,
+          "false_positive": 1,
+          "positive_targets": 71
+        },
+        "4.0": {
+          "false_negative": 32,
+          "false_positive": 2,
+          "positive_targets": 137
+        }
+      }
+    },
+    "baseline_available": 148,
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 7,
+      "unit": "acquisition"
+    },
+    "by_acquisition": {
+      "CCRm-low-0-overlap-0": {
+        "baseline": {
+          "mae": 0.399649977684021,
+          "relative": 0.12403878553887772
+        },
+        "candidate": {
+          "mae": 1.539311448733012,
+          "relative": 0.4706443374053341
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRm-low-50-overlap-50": {
+        "baseline": {
+          "mae": 0.43519099553426105,
+          "relative": 0.13012053260451303
+        },
+        "candidate": {
+          "mae": 0.8077975908915201,
+          "relative": 0.23187518539713095
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRm-medium-0-overlap-0": {
+        "baseline": {
+          "mae": 0.6454710960388184,
+          "relative": 0.0982644936056744
+        },
+        "candidate": {
+          "mae": 12.471187114715576,
+          "relative": 1.7294094756008198
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRm-medium-50-overlap-50": {
+        "baseline": {
+          "mae": 0.4937833547592163,
+          "relative": 0.14265790235663153
+        },
+        "candidate": {
+          "mae": 1.0258062680562336,
+          "relative": 0.256982887695077
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-high-0-overlap-0": {
+        "baseline": {
+          "mae": 1.6713860432306926,
+          "relative": 0.5148371854546387
+        },
+        "candidate": {
+          "mae": 1.779499093691508,
+          "relative": 0.5676907257371806
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-high-50-overlap-50": {
+        "baseline": {
+          "mae": 0.2685868740081787,
+          "relative": 0.1305105585930275
+        },
+        "candidate": {
+          "mae": 0.31316884358723956,
+          "relative": 0.16614320575600444
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-low-0-overlap-0": {
+        "baseline": {
+          "mae": 0.3690308729807536,
+          "relative": 0.07260291073002138
+        },
+        "candidate": {
+          "mae": 2.554675340652466,
+          "relative": 0.6125138502424069
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-low-50-overlap-50": {
+        "baseline": {
+          "mae": 0.037526726722717285,
+          "relative": 0.015694713896064742
+        },
+        "candidate": {
+          "mae": 4.3618009487787885,
+          "relative": 1.5466758988599054
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-medium-0-overlap-0": {
+        "baseline": {
+          "mae": 0.20021235942840576,
+          "relative": 0.08353771777517077
+        },
+        "candidate": {
+          "mae": 2.4886346658070884,
+          "relative": 1.0461978615609901
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-medium-50-overlap-50": {
+        "baseline": {
+          "mae": 0.06600737571716309,
+          "relative": 0.04142959628115073
+        },
+        "candidate": {
+          "mae": 2.572309374809265,
+          "relative": 1.5167491357980076
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-3-low-100-overlap-100": {
+        "baseline": {
+          "mae": 0.2562045256296794,
+          "relative": 0.08630097262808058
+        },
+        "candidate": {
+          "mae": 1.107086181640625,
+          "relative": 0.34077521677167305
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-3-medium-100-overlap-100": {
+        "baseline": {
+          "mae": 0.10272300243377686,
+          "relative": 0.05670214143016328
+        },
+        "candidate": {
+          "mae": 1.4285992781321208,
+          "relative": 0.718011762175735
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-side-high": {
+        "baseline": {
+          "mae": 0.5587451060612997,
+          "relative": 0.2974361892586623
+        },
+        "candidate": {
+          "mae": 1.7755057414372761,
+          "relative": 1.2136874133549367
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-side-low": {
+        "baseline": {
+          "mae": 1.5493920644124348,
+          "relative": 0.5052079323551087
+        },
+        "candidate": {
+          "mae": 3.7076505025227866,
+          "relative": 0.824306429851398
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-side-medium": {
+        "baseline": {
+          "mae": 1.6680411497751872,
+          "relative": 0.7181849366896006
+        },
+        "candidate": {
+          "mae": 4.9698576132456465,
+          "relative": 1.3761927044724704
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPLA-high": {
+        "baseline": {
+          "mae": 0.5616656144460043,
+          "relative": 0.33202758363720014
+        },
+        "candidate": {
+          "mae": 0.7069766521453857,
+          "relative": 0.46929230058245947
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPLA-low": {
+        "baseline": {
+          "mae": 0.6941997607549032,
+          "relative": 0.19508996752053953
+        },
+        "candidate": {
+          "mae": 0.7629980643590292,
+          "relative": 0.22946520216343294
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPLA-medium": {
+        "baseline": {
+          "mae": 1.0062482953071594,
+          "relative": 0.43942641069500393
+        },
+        "candidate": {
+          "mae": 19.489461759726208,
+          "relative": 6.987420018429128
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNA-high": {
+        "baseline": {
+          "mae": 0.8748863140741984,
+          "relative": 0.6144259355313259
+        },
+        "candidate": {
+          "mae": 1.2272541125615437,
+          "relative": 0.9351713560354286
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNA-low": {
+        "baseline": {
+          "mae": 1.0117268562316895,
+          "relative": 0.260096268690886
+        },
+        "candidate": {
+          "mae": 4.65759555498759,
+          "relative": 1.256514523717969
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNA-medium": {
+        "baseline": {
+          "mae": 1.162299116452535,
+          "relative": 0.8521629624101251
+        },
+        "candidate": {
+          "mae": 1.7324031988779705,
+          "relative": 1.1128786362950527
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNAO-high": {
+        "baseline": {
+          "mae": 2.339702049891154,
+          "relative": 0.9543722865222503
+        },
+        "candidate": {
+          "mae": 2.487412134806315,
+          "relative": 1.0375865227048853
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNAO-low": {
+        "baseline": {
+          "mae": 1.1038977305094402,
+          "relative": 0.44852492641816255
+        },
+        "candidate": {
+          "mae": 0.6117084821065267,
+          "relative": 0.281751939164926
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNAO-medium": {
+        "baseline": {
+          "mae": 0.49588751792907715,
+          "relative": 0.4153110799538116
+        },
+        "candidate": {
+          "mae": 2.573029041290283,
+          "relative": 2.465690624053426
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "Slider-500": {
+        "baseline": {
+          "mae": 1.17815589826358,
+          "relative": 0.83885893959795
+        },
+        "candidate": {
+          "mae": 0.44784528173898397,
+          "relative": 0.4353569572258083
+        },
+        "paired": 76,
+        "required": 77
+      }
+    },
+    "candidate": {
+      "macro_mae": 3.1039829715720395,
+      "macro_relative": 1.1131593668420634,
+      "maximum": 57.138103723526,
+      "median": 0.46188145875930786,
+      "micro_mae": 1.7938610029381674,
+      "p95": 5.311143629252911,
+      "sign_errors": 1,
+      "tail_counts": {
+        "1": 53,
+        "10": 3,
+        "3": 15,
+        "5": 10
+      },
+      "urgency": {
+        "0.5": {
+          "false_negative": 4,
+          "false_positive": 0,
+          "positive_targets": 5
+        },
+        "1.0": {
+          "false_negative": 11,
+          "false_positive": 0,
+          "positive_targets": 21
+        },
+        "2.0": {
+          "false_negative": 25,
+          "false_positive": 0,
+          "positive_targets": 71
+        },
+        "4.0": {
+          "false_negative": 34,
+          "false_positive": 1,
+          "positive_targets": 137
+        }
+      }
+    },
+    "candidate_available": 148,
+    "native_overall": null,
+    "newly_missing": 0,
+    "paired": 148,
+    "paired_macro_delta_ci95": [
+      0.9342313089663523,
+      4.198244943792357
+    ],
+    "required": 149,
+    "scope": "paired exposed development; aliases must be collapsed before calling",
+    "sign_changes": 0
+  },
+  "anisotropic_resize": 53,
+  "emission_status": {
+    "ok": 133,
+    "unavailable_surface": 16
+  },
+  "fallback_queries": 16,
+  "history_crop_changes": 0,
+  "missing_coordinate_audit": 3,
+  "raw_surface_status": {
+    "fewer_than_three_real_frames": 2,
+    "insufficient_or_invalid_surface": 13,
+    "measured": 133,
+    "no_rgb_observation": 1
+  },
+  "surface_available": 133,
+  "surface_beats_R0": 77,
+  "surface_loses_to_R0": 56,
+  "surface_only": {
+    "baseline": {
+      "macro_mae": 0.6177618938503844,
+      "macro_relative": 0.27444824576844207,
+      "maximum": 3.0718672275543213,
+      "median": 0.6546530723571777,
+      "micro_mae": 0.8336793108094007,
+      "p95": 1.982660388946533,
+      "sign_errors": 0,
+      "tail_counts": {
+        "1": 45,
+        "10": 0,
+        "3": 1,
+        "5": 0
+      },
+      "urgency": {
+        "0.5": {
+          "false_negative": 0,
+          "false_positive": 0,
+          "positive_targets": 5
+        },
+        "1.0": {
+          "false_negative": 16,
+          "false_positive": 0,
+          "positive_targets": 21
+        },
+        "2.0": {
+          "false_negative": 26,
+          "false_positive": 1,
+          "positive_targets": 71
+        },
+        "4.0": {
+          "false_negative": 22,
+          "false_positive": 2,
+          "positive_targets": 137
+        }
+      }
+    },
+    "baseline_available": 148,
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 7,
+      "unit": "acquisition"
+    },
+    "by_acquisition": {
+      "CCRm-low-0-overlap-0": {
+        "baseline": {
+          "mae": 0.399649977684021,
+          "relative": 0.12403878553887772
+        },
+        "candidate": {
+          "mae": 1.539311448733012,
+          "relative": 0.4706443374053341
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRm-low-50-overlap-50": {
+        "baseline": {
+          "mae": 0.43519099553426105,
+          "relative": 0.13012053260451303
+        },
+        "candidate": {
+          "mae": 0.8077975908915201,
+          "relative": 0.23187518539713095
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRm-medium-0-overlap-0": {
+        "baseline": {
+          "mae": 0.6454710960388184,
+          "relative": 0.0982644936056744
+        },
+        "candidate": {
+          "mae": 12.471187114715576,
+          "relative": 1.7294094756008198
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRm-medium-50-overlap-50": {
+        "baseline": {
+          "mae": 0.4937833547592163,
+          "relative": 0.14265790235663153
+        },
+        "candidate": {
+          "mae": 1.0258062680562336,
+          "relative": 0.256982887695077
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-high-0-overlap-0": {
+        "baseline": {
+          "mae": 0.20530682802200317,
+          "relative": 0.10076994890361085
+        },
+        "candidate": {
+          "mae": 0.3674764037132263,
+          "relative": 0.18005025932742355
+        },
+        "paired": 2,
+        "required": 3
+      },
+      "CCRs-1-high-50-overlap-50": {
+        "baseline": {
+          "mae": 0.25146055221557617,
+          "relative": 0.20098271155595995
+        },
+        "candidate": {
+          "mae": 0.3852064609527588,
+          "relative": 0.3078806530448909
+        },
+        "paired": 1,
+        "required": 3
+      },
+      "CCRs-1-low-0-overlap-0": {
+        "baseline": {
+          "mae": 0.3690308729807536,
+          "relative": 0.07260291073002138
+        },
+        "candidate": {
+          "mae": 2.554675340652466,
+          "relative": 0.6125138502424069
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-low-50-overlap-50": {
+        "baseline": {
+          "mae": 0.037526726722717285,
+          "relative": 0.015694713896064742
+        },
+        "candidate": {
+          "mae": 4.3618009487787885,
+          "relative": 1.5466758988599054
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-medium-0-overlap-0": {
+        "baseline": {
+          "mae": 0.20021235942840576,
+          "relative": 0.08353771777517077
+        },
+        "candidate": {
+          "mae": 2.4886346658070884,
+          "relative": 1.0461978615609901
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-1-medium-50-overlap-50": {
+        "baseline": {
+          "mae": 0.06600737571716309,
+          "relative": 0.04142959628115073
+        },
+        "candidate": {
+          "mae": 2.572309374809265,
+          "relative": 1.5167491357980076
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-3-low-100-overlap-100": {
+        "baseline": {
+          "mae": 0.2562045256296794,
+          "relative": 0.08630097262808058
+        },
+        "candidate": {
+          "mae": 1.107086181640625,
+          "relative": 0.34077521677167305
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-3-medium-100-overlap-100": {
+        "baseline": {
+          "mae": 0.10272300243377686,
+          "relative": 0.05670214143016328
+        },
+        "candidate": {
+          "mae": 1.4285992781321208,
+          "relative": 0.718011762175735
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-side-high": {
+        "baseline": {
+          "mae": 0.5587451060612997,
+          "relative": 0.2974361892586623
+        },
+        "candidate": {
+          "mae": 1.7755057414372761,
+          "relative": 1.2136874133549367
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-side-low": {
+        "baseline": {
+          "mae": 1.5493920644124348,
+          "relative": 0.5052079323551087
+        },
+        "candidate": {
+          "mae": 3.7076505025227866,
+          "relative": 0.824306429851398
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CCRs-side-medium": {
+        "baseline": {
+          "mae": 1.6680411497751872,
+          "relative": 0.7181849366896006
+        },
+        "candidate": {
+          "mae": 4.9698576132456465,
+          "relative": 1.3761927044724704
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPLA-high": {
+        "baseline": {
+          "mae": 0.5616656144460043,
+          "relative": 0.33202758363720014
+        },
+        "candidate": {
+          "mae": 0.7069766521453857,
+          "relative": 0.46929230058245947
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPLA-low": {
+        "baseline": {
+          "mae": 0.6941997607549032,
+          "relative": 0.19508996752053953
+        },
+        "candidate": {
+          "mae": 0.7629980643590292,
+          "relative": 0.22946520216343294
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPLA-medium": {
+        "baseline": {
+          "mae": 1.0062482953071594,
+          "relative": 0.43942641069500393
+        },
+        "candidate": {
+          "mae": 19.489461759726208,
+          "relative": 6.987420018429128
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNA-high": {
+        "baseline": {
+          "mae": 0.258952260017395,
+          "relative": 0.22382307998012474
+        },
+        "candidate": {
+          "mae": 0.7875039577484131,
+          "relative": 0.7049412107362787
+        },
+        "paired": 2,
+        "required": 3
+      },
+      "CPNA-low": {
+        "baseline": {
+          "mae": 1.0117268562316895,
+          "relative": 0.260096268690886
+        },
+        "candidate": {
+          "mae": 4.65759555498759,
+          "relative": 1.256514523717969
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNA-medium": {
+        "baseline": {
+          "mae": 1.162299116452535,
+          "relative": 0.8521629624101251
+        },
+        "candidate": {
+          "mae": 1.7324031988779705,
+          "relative": 1.1128786362950527
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNAO-high": {
+        "baseline": {
+          "mae": 0.8569115400314331,
+          "relative": 0.4264914435954318
+        },
+        "candidate": {
+          "mae": 1.0784766674041748,
+          "relative": 0.5513127978693843
+        },
+        "paired": 2,
+        "required": 3
+      },
+      "CPNAO-low": {
+        "baseline": {
+          "mae": 1.1038977305094402,
+          "relative": 0.44852492641816255
+        },
+        "candidate": {
+          "mae": 0.6117084821065267,
+          "relative": 0.281751939164926
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "CPNAO-medium": {
+        "baseline": {
+          "mae": 0.49588751792907715,
+          "relative": 0.4153110799538116
+        },
+        "candidate": {
+          "mae": 2.573029041290283,
+          "relative": 2.465690624053426
+        },
+        "paired": 3,
+        "required": 3
+      },
+      "Slider-500": {
+        "baseline": {
+          "mae": 1.053512667164658,
+          "relative": 0.5943209357004762
+        },
+        "candidate": {
+          "mae": 0.21254892692421423,
+          "relative": 0.12968228933255535
+        },
+        "paired": 66,
+        "required": 77
+      }
+    },
+    "candidate": {
+      "macro_mae": 2.9670242895863277,
+      "macro_relative": 1.0624361045561124,
+      "maximum": 57.138103723526,
+      "median": 0.38779330253601074,
+      "micro_mae": 1.7512295801836746,
+      "p95": 5.5063652992248455,
+      "sign_errors": 0,
+      "tail_counts": {
+        "1": 40,
+        "10": 3,
+        "3": 12,
+        "5": 8
+      },
+      "urgency": {
+        "0.5": {
+          "false_negative": 0,
+          "false_positive": 0,
+          "positive_targets": 5
+        },
+        "1.0": {
+          "false_negative": 7,
+          "false_positive": 0,
+          "positive_targets": 21
+        },
+        "2.0": {
+          "false_negative": 23,
+          "false_positive": 0,
+          "positive_targets": 71
+        },
+        "4.0": {
+          "false_negative": 24,
+          "false_positive": 1,
+          "positive_targets": 137
+        }
+      }
+    },
+    "candidate_available": 133,
+    "native_overall": null,
+    "newly_missing": 15,
+    "paired": 133,
+    "paired_macro_delta_ci95": [
+      0.9389888725696187,
+      4.2034301551562345
+    ],
+    "required": 149,
+    "scope": "paired exposed development; aliases must be collapsed before calling",
+    "sign_changes": 0
+  },
+  "within_acquisition_quality_vs_surface_gain": {
+    "absolute_composition_residual": {
+      "available": 133,
+      "groups": 24,
+      "pearson_after_group_centering": -0.4513152726092656,
+      "within_group_rows": 132
+    },
+    "affine_pixel_residual": {
+      "available": 133,
+      "groups": 24,
+      "pearson_after_group_centering": 0.04222033982837551,
+      "within_group_rows": 132
+    },
+    "coverage": {
+      "available": 133,
+      "groups": 24,
+      "pearson_after_group_centering": 0.06488681907333367,
+      "within_group_rows": 132
+    }
+  },
+  "within_triplet_crop_changes": 0
+}

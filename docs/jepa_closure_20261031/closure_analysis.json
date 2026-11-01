@@ -1,0 +1,145 @@
+{
+  "decision": "closed_no_additional_training",
+  "scope": "post_hoc_descriptive_analysis_of_historically_exposed_sequences",
+  "primary_benefit_gate_passed": false,
+  "elapsed_seconds": 1056.4420075416565,
+  "primary_mae": {
+    "B_static": 0.03763238961408746,
+    "C_one_step": 0.03564004206250102,
+    "C_shuffle": 0.035061885577055175,
+    "random_init": 0.037196408997659317
+  },
+  "primary_comparisons": {
+    "B_static": {
+      "ci95_sequence_bootstrap": [
+        -0.0049620951828768045,
+        0.0008189780757168292
+      ],
+      "mean_delta_mae": -0.0019923475515864395,
+      "paired_sequence_count": 8,
+      "per_seed_mean_delta": {
+        "13": 0.0011644924808963232,
+        "21": -0.005109292570733696,
+        "7": -0.0020322425649219465
+      },
+      "seeds_kept_together": true,
+      "upper_ci_below_zero": false
+    },
+    "C_shuffle": {
+      "ci95_sequence_bootstrap": [
+        -0.002170051001389082,
+        0.002925896583929867
+      ],
+      "mean_delta_mae": 0.0005781564854458428,
+      "paired_sequence_count": 8,
+      "per_seed_mean_delta": {
+        "13": 0.0016740088686336848,
+        "21": 0.001702462020297956,
+        "7": -0.0016420014325941121
+      },
+      "seeds_kept_together": true,
+      "upper_ci_below_zero": false
+    }
+  },
+  "latent_comparisons": {
+    "C_future_minus_own_student_persistence": {
+      "ci95_sequence_bootstrap": [
+        -0.04155749827623367,
+        -0.028288195592661707
+      ],
+      "mean_delta_mse": -0.03530466308196385,
+      "per_seed_mean_delta": [
+        -0.03339911252260208,
+        -0.03510825335979462,
+        -0.03740662336349487
+      ]
+    },
+    "delta_true/C_minus_B_static": {
+      "ci95_sequence_bootstrap": [
+        0.036300250329077244,
+        0.04039869892100493
+      ],
+      "mean_delta_mse": 0.03848015858481328,
+      "per_seed_mean_delta": [
+        0.03415772505104542,
+        0.04154981207102537,
+        0.03973293863236904
+      ]
+    },
+    "delta_true/C_minus_C_shuffle": {
+      "ci95_sequence_bootstrap": [
+        0.001209778400758902,
+        0.0067750300280749794
+      ],
+      "mean_delta_mse": 0.004474221728742123,
+      "per_seed_mean_delta": [
+        -0.002000928856432438,
+        0.004546390846371651,
+        0.010877203196287155
+      ]
+    },
+    "future_true/C_minus_B_static": {
+      "ci95_sequence_bootstrap": [
+        -0.021644900242487587,
+        -0.012034634749094646
+      ],
+      "mean_delta_mse": -0.017191633582115173,
+      "per_seed_mean_delta": [
+        -0.010370045900344849,
+        -0.017169445753097534,
+        -0.024035409092903137
+      ]
+    },
+    "future_true/C_minus_C_shuffle": {
+      "ci95_sequence_bootstrap": [
+        -0.06519341468811035,
+        -0.042344771387676415
+      ],
+      "mean_delta_mse": -0.05317387729883194,
+      "per_seed_mean_delta": [
+        -0.04825742542743683,
+        -0.05810432881116867,
+        -0.05315987765789032
+      ]
+    }
+  },
+  "both_controls_improved_mean_sequences": [
+    "CzyQ8HKP6X",
+    "JaGC4Q9pgU"
+  ],
+  "both_controls_improved_every_seed_sequences": [
+    "JaGC4Q9pgU"
+  ],
+  "descriptive_associations": {
+    "B_static": {
+      "future_vs_expansion_pearson_n8": 0.20654148868900657,
+      "joint_improvement_sequences": [
+        "2JkLL5W891",
+        "CzyQ8HKP6X",
+        "JaGC4Q9pgU",
+        "qGsgzl4Q8B"
+      ]
+    },
+    "C_shuffle": {
+      "future_vs_expansion_pearson_n8": 0.26966137383429645,
+      "joint_improvement_sequences": [
+        "CzyQ8HKP6X",
+        "JaGC4Q9pgU"
+      ]
+    }
+  },
+  "source_sha256": {
+    "results.json": "965cd039ad626769be98c92be8a4427dc3bf89d9f733d36f91386dc4210dbb9c",
+    "CAMPAIGN_STATUS.json": "e2e87716a9689a84f6f1787ab2f2f2e0e3d232abebd4eb798ca02a7a59364588",
+    "seed7/summary.json": "648ecc4cd8fcc51bdaf51407dd5a959e97aa20b5f6e53a4b25b75212f8bde148",
+    "seed13/summary.json": "5972eaf7a1370eda4953d4df44885e09e15b17a055c6f1796ad353cffa6e6636",
+    "seed21/summary.json": "7f8a01be1623f0e11617d57a4e5819507ddfbf1ef9996c4c1b69a8e0d8bbd2f5"
+  },
+  "limitations": [
+    "Eight sequences; three seeds kept together.",
+    "Post hoc subgroup patterns cannot rescue the preregistered gate.",
+    "Expansion is annotated log-height change, not a rate or TTC seconds.",
+    "No physical scenario labels assigned from opaque sequence IDs.",
+    "Predictor-retained TTC and autoregressive rollouts remain untested."
+  ]
+}

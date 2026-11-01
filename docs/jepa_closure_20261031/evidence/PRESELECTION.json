@@ -1,0 +1,60 @@
+{
+  "schema": "causal_pilot768_preselection_v1",
+  "created_utc": "2026-10-31T14:01:20.088655+00:00",
+  "roles": {
+    "P": "train",
+    "H": "validation"
+  },
+  "rows": {
+    "P": 512,
+    "H": 256
+  },
+  "groups": {
+    "P": [
+      "2Y46OkK3ff",
+      "6WCDpro5rE",
+      "8SdieOgbva",
+      "8mNnrXjpVB",
+      "9ITOs4twfk",
+      "A1Nhv0KtmL",
+      "ClXqVoZOFu",
+      "DGqicHUGWb",
+      "EllUE6bwVp",
+      "EuFGqTcqIz",
+      "GjMYZjmSQb",
+      "LMHPShQkaU",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "Po6ePjWYAz",
+      "VLA3oBKFyX",
+      "eX8t2nGd6O",
+      "nRcwUlHyAd",
+      "pakWgyPNTL",
+      "q2k6O0X6JY",
+      "qoohcdtLDH",
+      "vWp9XNYQ9V",
+      "wE9MZUmiJP",
+      "xkiVthsGwf"
+    ],
+    "H": [
+      "2JkLL5W891",
+      "34K84TaN11",
+      "CzyQ8HKP6X",
+      "JaGC4Q9pgU",
+      "L36QTEoVkB",
+      "mHGFBekt7X",
+      "pBqGOb2vYq",
+      "qGsgzl4Q8B"
+    ]
+  },
+  "plan_sha256": {
+    "P": "1446eb8edd248e8cb8b4070779e73fa379d181c35d2f61aa6e753233cfa7a05a",
+    "H": "aa042580654a17fc3a3010617cd552e2a526c41bd54b509f887c4aa0281845de"
+  },
+  "selection": "label-blind fixed sequence round-robin and evenly spaced candidates",
+  "metrics_used_for_selection": false,
+  "ttc_labels_used_for_selection": false,
+  "V_or_test_included": false,
+  "scope": "historically_exposed_sequence_heldout_diagnostic_not_confirmatory",
+  "nominal_horizon_us": 100000
+}

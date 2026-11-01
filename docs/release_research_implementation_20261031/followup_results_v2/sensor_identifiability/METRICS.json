@@ -1,0 +1,9 @@
+{
+  "cases": 24,
+  "distinct_q_identical_stream_cases": 12,
+  "identical_stream_cases": 24,
+  "known_texture_recovery_max_q_error": 0.03377399151458005,
+  "real_S1_admitted": false,
+  "release_modified": false,
+  "scope": "affine log-texture only; events omit the differing static reference"
+}

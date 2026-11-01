@@ -1,0 +1,220 @@
+{
+  "export_exact_parity": true,
+  "final_bundle_sha256": "73cb209a923589c3ba83f753167e704405ba8402c2b40123dcff32cf740d5505",
+  "raw_sensor_replay": "passed",
+  "recipe_hash": "c09b0bef5cb5f2c68e7b263516869e276d096134d3361eb68634d6b7562e5141",
+  "reports": {
+    "13": {
+      "baseline": {
+        "domains": {
+          "eap": {
+            "mae_seconds": 1.4160298109054565,
+            "nonfinite": 0,
+            "relative_absolute_error_pct": 27.365737915039062,
+            "rows": 88744
+          },
+          "evttc": {
+            "mae_seconds": 1.094082236289978,
+            "nonfinite": 0,
+            "relative_absolute_error_pct": 40.70634841918945,
+            "rows": 3571
+          }
+        },
+        "loss": 0.28388407826423645,
+        "scope": "training_resubstitution"
+      },
+      "checkpoint_sha256": "1a479e5e80614cae7fbaae2be0d668e3234c552b1ce03acce91c88fb676dee1d",
+      "epochs": 2,
+      "history": [
+        {
+          "domains": {
+            "eap": {
+              "mae_seconds": 1.4367918968200684,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 26.92144203186035,
+              "rows": 88744
+            },
+            "evttc": {
+              "mae_seconds": 1.0677238702774048,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 37.00636291503906,
+              "rows": 3571
+            }
+          },
+          "epoch": 1,
+          "loss": 0.26688915491104126,
+          "rows_seen": 92315,
+          "scope": "training_resubstitution",
+          "updates": 722
+        },
+        {
+          "domains": {
+            "eap": {
+              "mae_seconds": 1.4387260675430298,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 27.186851501464844,
+              "rows": 88744
+            },
+            "evttc": {
+              "mae_seconds": 1.0550663471221924,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 37.29116439819336,
+              "rows": 3571
+            }
+          },
+          "epoch": 2,
+          "loss": 0.2639162540435791,
+          "rows_seen": 92315,
+          "scope": "training_resubstitution",
+          "updates": 1444
+        }
+      ],
+      "parameters": 1955,
+      "rows": 92315,
+      "seed": 13,
+      "updates": 1444
+    },
+    "21": {
+      "baseline": {
+        "domains": {
+          "eap": {
+            "mae_seconds": 1.4160298109054565,
+            "nonfinite": 0,
+            "relative_absolute_error_pct": 27.365737915039062,
+            "rows": 88744
+          },
+          "evttc": {
+            "mae_seconds": 1.094082236289978,
+            "nonfinite": 0,
+            "relative_absolute_error_pct": 40.70634841918945,
+            "rows": 3571
+          }
+        },
+        "loss": 0.28388407826423645,
+        "scope": "training_resubstitution"
+      },
+      "checkpoint_sha256": "6e90b9c9e93840e28bd45392380e73fbb6d5c1cfdcf534aeb4daaeafd8a0bbfe",
+      "epochs": 2,
+      "history": [
+        {
+          "domains": {
+            "eap": {
+              "mae_seconds": 1.441516637802124,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 27.139371871948242,
+              "rows": 88744
+            },
+            "evttc": {
+              "mae_seconds": 1.062856912612915,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 37.16461944580078,
+              "rows": 3571
+            }
+          },
+          "epoch": 1,
+          "loss": 0.2673411965370178,
+          "rows_seen": 92315,
+          "scope": "training_resubstitution",
+          "updates": 722
+        },
+        {
+          "domains": {
+            "eap": {
+              "mae_seconds": 1.4339224100112915,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 27.138181686401367,
+              "rows": 88744
+            },
+            "evttc": {
+              "mae_seconds": 1.0590534210205078,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 37.1121711730957,
+              "rows": 3571
+            }
+          },
+          "epoch": 2,
+          "loss": 0.2637399733066559,
+          "rows_seen": 92315,
+          "scope": "training_resubstitution",
+          "updates": 1444
+        }
+      ],
+      "parameters": 1955,
+      "rows": 92315,
+      "seed": 21,
+      "updates": 1444
+    },
+    "7": {
+      "baseline": {
+        "domains": {
+          "eap": {
+            "mae_seconds": 1.4160298109054565,
+            "nonfinite": 0,
+            "relative_absolute_error_pct": 27.365737915039062,
+            "rows": 88744
+          },
+          "evttc": {
+            "mae_seconds": 1.094082236289978,
+            "nonfinite": 0,
+            "relative_absolute_error_pct": 40.70634841918945,
+            "rows": 3571
+          }
+        },
+        "loss": 0.28388407826423645,
+        "scope": "training_resubstitution"
+      },
+      "checkpoint_sha256": "e2f21190e354f042a61851e028a6953e63b7f155fde0541595a33cee71312295",
+      "epochs": 2,
+      "history": [
+        {
+          "domains": {
+            "eap": {
+              "mae_seconds": 1.4343459606170654,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 27.217947006225586,
+              "rows": 88744
+            },
+            "evttc": {
+              "mae_seconds": 1.0557903051376343,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 37.33485794067383,
+              "rows": 3571
+            }
+          },
+          "epoch": 1,
+          "loss": 0.267039954662323,
+          "rows_seen": 92315,
+          "scope": "training_resubstitution",
+          "updates": 722
+        },
+        {
+          "domains": {
+            "eap": {
+              "mae_seconds": 1.4334958791732788,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 26.91722297668457,
+              "rows": 88744
+            },
+            "evttc": {
+              "mae_seconds": 1.0519005060195923,
+              "nonfinite": 0,
+              "relative_absolute_error_pct": 36.812889099121094,
+              "rows": 3571
+            }
+          },
+          "epoch": 2,
+          "loss": 0.26352694630622864,
+          "rows_seen": 92315,
+          "scope": "training_resubstitution",
+          "updates": 1444
+        }
+      ],
+      "parameters": 1955,
+      "rows": 92315,
+      "seed": 7,
+      "updates": 1444
+    }
+  },
+  "scope": "training_resubstitution_only",
+  "selected_seed": 7
+}

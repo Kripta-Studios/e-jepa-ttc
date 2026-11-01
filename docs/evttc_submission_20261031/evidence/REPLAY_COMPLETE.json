@@ -1,0 +1,136 @@
+{
+  "by_sequence": {
+    "CCRm-low": {
+      "mean_cost_seconds": 2.0543388190451966,
+      "negative": 0,
+      "p95_cost_seconds": 2.5110332199721594,
+      "rows": 42
+    },
+    "CCRm-medium": {
+      "mean_cost_seconds": 2.133317642501788,
+      "negative": 0,
+      "p95_cost_seconds": 3.211972800036892,
+      "rows": 40
+    },
+    "CCRs1-high": {
+      "mean_cost_seconds": 3.4724361333297566,
+      "negative": 0,
+      "p95_cost_seconds": 4.191933074995177,
+      "rows": 30
+    },
+    "CCRs1-low": {
+      "mean_cost_seconds": 1.2919411340006628,
+      "negative": 0,
+      "p95_cost_seconds": 1.692563914961647,
+      "rows": 50
+    },
+    "CCRs1-medium": {
+      "mean_cost_seconds": 1.5215589093006499,
+      "negative": 0,
+      "p95_cost_seconds": 2.33794654001249,
+      "rows": 43
+    },
+    "CCRs2-high": {
+      "mean_cost_seconds": 1.9354910728683443,
+      "negative": 0,
+      "p95_cost_seconds": 2.5795030299923383,
+      "rows": 59
+    },
+    "CCRs2-low": {
+      "mean_cost_seconds": 1.4769125260873293,
+      "negative": 0,
+      "p95_cost_seconds": 2.091504574957071,
+      "rows": 46
+    },
+    "CCRs2-medium": {
+      "mean_cost_seconds": 1.9143136654599484,
+      "negative": 0,
+      "p95_cost_seconds": 2.4679816300165838,
+      "rows": 55
+    },
+    "Slider-1000": {
+      "mean_cost_seconds": 1.07000240554852,
+      "negative": 0,
+      "p95_cost_seconds": 1.3991369399940592,
+      "rows": 18
+    },
+    "Slider-750": {
+      "mean_cost_seconds": 0.839107445101071,
+      "negative": 1,
+      "p95_cost_seconds": 1.3829561499878764,
+      "rows": 51
+    }
+  },
+  "finite_rows": 434,
+  "freeze_sha256": "f253bec2762efb92ae56c1e2529a453a71804a1f427ac8803001677343e12d4e",
+  "ledger_sha256": "cdbf0f0b3758d57c53a1ed2fbce038c6a3509b2c69c565b3db3d29bdbb8d8b67",
+  "results_zip_sha256": "e7e41820003f18a28f2ef23e634992b05d7789ecf48364b2debe659cbb9a20e7",
+  "rows": 434,
+  "targets_read": false,
+  "validation": {
+    "errors": [],
+    "files": [
+      {
+        "path": "CCRs1-low/results.txt",
+        "rows": 50,
+        "sequence_id": "CCRs1-low",
+        "sha256": "059bc048405d754e24c69297598fda31792a101c45d1fcbe69edb84867345d0d"
+      },
+      {
+        "path": "CCRs1-medium/results.txt",
+        "rows": 43,
+        "sequence_id": "CCRs1-medium",
+        "sha256": "26992eff4278896bb05663bb7deab61ddff51df7a3cf31f0443e7b32976f570b"
+      },
+      {
+        "path": "CCRs1-high/results.txt",
+        "rows": 30,
+        "sequence_id": "CCRs1-high",
+        "sha256": "540d0856b24c74f3582d18ac3cb91079a11ff6d1ae1edf86c4002ce61208f373"
+      },
+      {
+        "path": "CCRs2-low/results.txt",
+        "rows": 46,
+        "sequence_id": "CCRs2-low",
+        "sha256": "f7c3e695f5875ab6083a2ba6a061ff3ef3a5948549c6bed7df6285078d43a200"
+      },
+      {
+        "path": "CCRs2-medium/results.txt",
+        "rows": 55,
+        "sequence_id": "CCRs2-medium",
+        "sha256": "ddfa3b350710721258eb2c68c903e33909c6e05d26cc7e4609dacd124775d6df"
+      },
+      {
+        "path": "CCRs2-high/results.txt",
+        "rows": 59,
+        "sequence_id": "CCRs2-high",
+        "sha256": "4540d1834c2788d3149938d900fedc7c257d78561ccc7f244a38192d3e991d0a"
+      },
+      {
+        "path": "CCRm-low/results.txt",
+        "rows": 42,
+        "sequence_id": "CCRm-low",
+        "sha256": "919dbb59a906881458d8d4d96b2e01c3b1d7ec6153fca2309e086993d3a1601d"
+      },
+      {
+        "path": "CCRm-medium/results.txt",
+        "rows": 40,
+        "sequence_id": "CCRm-medium",
+        "sha256": "2614600c1659759f93f463565f02ec8445b062c8b917e3a4ac49d9fb17529683"
+      },
+      {
+        "path": "Slider-750/results.txt",
+        "rows": 51,
+        "sequence_id": "Slider-750",
+        "sha256": "247db7d8ffbcd92d9e2ff19be018a73520616bec2bc58f6708e9f4dc94c40622"
+      },
+      {
+        "path": "Slider-1000/results.txt",
+        "rows": 18,
+        "sequence_id": "Slider-1000",
+        "sha256": "84438c1be086a7bbfdd8c5aa077eff4dca8dd028864a1270905853589e28d339"
+      }
+    ],
+    "valid": true
+  }
+}

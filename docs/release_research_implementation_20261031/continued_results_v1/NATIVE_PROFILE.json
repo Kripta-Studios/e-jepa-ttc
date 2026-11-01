@@ -1,0 +1,16 @@
+{
+  "archives": {
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_3RUZHwnCwK_855648991a0abb48.tar": "855648991a0abb48f9c37ef87dfcd047514af6b807769f2d5e8404230be3f928"
+  },
+  "candidate_executed": false,
+  "candidate_missing": null,
+  "elapsed_seconds": 18.944419900071807,
+  "event_context_exact": null,
+  "historical_failed_queries": 2,
+  "historical_parity": "FAIL",
+  "maximum_prediction_change_seconds": null,
+  "native_accuracy_evaluated": false,
+  "queries": 2,
+  "scope": "prediction conservation only; no accuracy or official promotion claim",
+  "targets_read": false
+}

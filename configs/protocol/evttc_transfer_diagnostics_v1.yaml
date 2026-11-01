@@ -1,0 +1,8 @@
+schema: evttc_transfer_diagnostics_v1
+scope: exposed_diagnostic
+selection_basis: fixed_row_indices_without_target_or_error_selection
+row_indices: [0, 1, 10, last]
+parity: exact_with_untraced_current_runtime
+source_note: local_transport formatting differs from historical bytes; AST equality verified separately
+labels_in_inference: false
+training: false

@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-10-31T15:08:09.0508723+00:00",
+  "archive_sha256": "e388d2a58a49c0de15eedc53b69c62fa55ebb4cf64b0beae97ce899db37e93e7",
+  "archive_members_verified": 62,
+  "final_checkpoints_verified": 9,
+  "generated_outputs_reproduced_exactly": [
+    "closure_analysis.json",
+    "sequence_deltas.csv",
+    "tables.md"
+  ],
+  "analysis_source_sha256": "4fc5a785becabafdfeef024ee21570cba23733a52e34a985267310c4329559f1",
+  "ruff_check": "passed",
+  "ruff_format_check": "passed",
+  "independent_review": "No actionable issues; all 16 sequence/control rows and all recorded source hashes verified",
+  "new_training_started": false
+}

@@ -1,0 +1,188 @@
+{
+  "active_history_rows": 88744,
+  "audit_sha256": "8830c23ab2c3f62e37006b589959e617101db9db21ffc4ea54a26f7753ef6976",
+  "cache_receipt": {
+    "binding_sha256": "39b96b395ac0cabdc0c375074a0186f396782a9676bceb79553204844cc858ca",
+    "eap_rows": 88744,
+    "evttc_recordings": 32,
+    "evttc_rows": 3571,
+    "evttc_sensor_eligible": 3828,
+    "independent_test": false,
+    "official_equivalence": "unverified",
+    "population_sha256": "d976c31c9110c06c75a0b8925aa5c0852acc53440424eb8a6880e8dd095856b8",
+    "role": "all_compatible_local_refit",
+    "rows": 92315,
+    "status": "COMPLETE",
+    "targets_sha256": "1ea975bfb5fc1d1fb7c0f0a5a55f08db28a81080aeb365d7b09426d09aaeaa8a",
+    "train40_restore_sha256": "008d8ab2cb60b352015eb89f5734e924f37eea0003b72de582647aaf7b0b5a10",
+    "training_npz_sha256": "96498f7c99181ecb45e8c53957b05482fd3eef6e93eac0eccb5a92c68fb43a86"
+  },
+  "candidate": {
+    "candidate": "PHASE_ONLY_EVENT_S7_TRAIN40_SCIENTIFIC_OOF",
+    "components": {
+      "E_A5": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+      "E_C2F": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+      "E_CTX_MATCHED": "fec0ca9f2433a913ae1047cd0b47715a1dce39c4c2e4eecb9539f796434d137e",
+      "MODEL_SEAL.json": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+      "OOF_RECIPE.json": "e5ade2e986f30dbe672a13155b45a4288aa069b2b94a474951e4940900f0bd00",
+      "PAIR_E": "ccdd694f5d812a458c396fdb19bbffe439eff78fe38d57a7b288d4a4fd232680",
+      "PAIR_R": "dba94f1ae807d8e84ef68f50c93882a766a92cfc0b9a08da53c30fedbf509bc1",
+      "PHASE_ONLY_EVENT_S7_TRAIN40": "a24bfc72ca7f53a93d53db806b6866c6a5a4b6abde074b5dfec50436b7005408",
+      "R_A5": "3f09a2e06d4ff6aebaa64d8c1a8ccc0ade54eaa25b54bc11700fd70bd9701f29",
+      "R_C2F": "d5fa8fd9ed80df6141c3df8bd2ed8ac013c87e5e5bde7367a3b588c5b09e5a35",
+      "R_CTX": "a19f8188b859dcac7fb0cd4c68d0cd5c5c9a839ad84c0ac7ee1b3d61181d1852",
+      "event_normalizer": "19f9bf704de53a938e955ef1919e51881ec1f9c85c1d3e2cfd54aa6d76045f9f",
+      "rgb_normalizer": "d902dba58dc9738ed268e56fe57291fda1cf0dfb2e03be4da1171668e689bd59"
+    },
+    "model_seal_sha256": "cf5f4eac22e572679c77cd0f6a16425f978600597d4be77f0b1e576c226165a4",
+    "portable_paths_sha256": "4a4609591f80470dc304a68d20e3f1f707f5b88dc13ff04451d93e58d3b5465b",
+    "recipe_sha256": "78c83c09fc176846e1135df3b625a2455b71336becb9305589f55269058915c3"
+  },
+  "exact_token_join": true,
+  "feature_contract": "native=F0,RGB_context,event_context; geometry clipped +/-60s; quality20",
+  "geometry_metrics": {
+    "coverage": 0.998343549986478,
+    "finite": 88597,
+    "mae_seconds": 3.027785301208496,
+    "population": 88744,
+    "relative_absolute_error_pct": 53.67426681518555,
+    "relative_rows": 88597,
+    "rmse_seconds": 8.634081840515137,
+    "valid_targets": 88744,
+    "wrong_sign": 2287
+  },
+  "geometry_reasons": {
+    "available": 88597,
+    "stationary_or_undefined_expansion": 147
+  },
+  "groups": 40,
+  "historical_groups_disjoint": true,
+  "historical_role_groups": {
+    "H": [
+      "2JkLL5W891",
+      "34K84TaN11",
+      "CzyQ8HKP6X",
+      "JaGC4Q9pgU",
+      "L36QTEoVkB",
+      "mHGFBekt7X",
+      "pBqGOb2vYq",
+      "qGsgzl4Q8B"
+    ],
+    "P": [
+      "2Y46OkK3ff",
+      "6WCDpro5rE",
+      "8SdieOgbva",
+      "8mNnrXjpVB",
+      "9ITOs4twfk",
+      "A1Nhv0KtmL",
+      "ClXqVoZOFu",
+      "DGqicHUGWb",
+      "EllUE6bwVp",
+      "EuFGqTcqIz",
+      "GjMYZjmSQb",
+      "LMHPShQkaU",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "Po6ePjWYAz",
+      "VLA3oBKFyX",
+      "eX8t2nGd6O",
+      "nRcwUlHyAd",
+      "pakWgyPNTL",
+      "q2k6O0X6JY",
+      "qoohcdtLDH",
+      "vWp9XNYQ9V",
+      "wE9MZUmiJP",
+      "xkiVthsGwf"
+    ],
+    "V": [
+      "2cyv0Oedzg",
+      "5ilM1PX2vz",
+      "6h5yRW2LGc",
+      "WbCh1DRerJ",
+      "Z30i8WuL2N",
+      "pzJcg1OCfc",
+      "rhYxPcU29n",
+      "t79dBxj1WS"
+    ]
+  },
+  "history_contract": "Row-local same-object supplied public bbox geometry; deduplicated annotation clocks; timestamp in [query-650000,query], availability<=cutoff<=query. No media decoded. Public annotations are the supplied ROI input, not an evaluated detector.",
+  "history_counts": {
+    "2": 3993,
+    "3": 3820,
+    "4": 3988,
+    "5": 6101,
+    "6": 3530,
+    "7": 67312
+  },
+  "metadata_inputs": {
+    "H": {
+      "path": "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\H_ROWS.parquet",
+      "sha256": "137420177757b802abd66b9077cb50ef0a37d8d55951dbcb8582d316d1ee60a1"
+    },
+    "P": {
+      "path": "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\P_ROWS.parquet",
+      "sha256": "d0341f7aedede35e47ba2e8afa1452478fd39ba43615a85627804ab1fa183b94"
+    },
+    "V": {
+      "path": "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\V_ROWS.parquet",
+      "sha256": "c0344a33739e845a5e5f7ddd5d7098c1fbc08a2fb5b6ad426400ee07c8423402"
+    }
+  },
+  "optimizer_updates": 0,
+  "original_metrics": {
+    "F0": {
+      "coverage": 1.0,
+      "finite": 88744,
+      "mae_seconds": 1.4160298109054565,
+      "population": 88744,
+      "relative_absolute_error_pct": 27.365737915039062,
+      "relative_rows": 88744,
+      "rmse_seconds": 4.692690372467041,
+      "valid_targets": 88744,
+      "wrong_sign": 1417
+    },
+    "RGB_context": {
+      "coverage": 1.0,
+      "finite": 88744,
+      "mae_seconds": 1.6238154172897339,
+      "population": 88744,
+      "relative_absolute_error_pct": 31.8991641998291,
+      "relative_rows": 88744,
+      "rmse_seconds": 5.279024600982666,
+      "valid_targets": 88744,
+      "wrong_sign": 1541
+    },
+    "event_context": {
+      "coverage": 1.0,
+      "finite": 88744,
+      "mae_seconds": 2.043550729751587,
+      "population": 88744,
+      "relative_absolute_error_pct": 40.383941650390625,
+      "relative_rows": 88744,
+      "rmse_seconds": 5.909755706787109,
+      "valid_targets": 88744,
+      "wrong_sign": 2845
+    }
+  },
+  "population_sha256": "7ffd2d102322651f530d31efce0f47f2b8dcd53bfa66bb41264a6fdd9392a35a",
+  "raw_media_read": false,
+  "rows": 88744,
+  "schema": "phase_safe_source_active_audit_v1",
+  "scope": "TRAIN40 resubstitution preservation audit; final F0 head fitted all 88744 rows. Upstream features are FIVE_FOLD_PHYSICAL_OOF. Historical P/H/V are all TRAIN. This is not held-out eAP generalization or deployment-feature evaluation.",
+  "sources_sha256": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\build_phase_safe_source_audit.py": "026e07f6bdb9aa99e1d835d154d98e02f5582a7acf162db3eab02dc43a7dcbbe",
+    "operational\\final_refit\\training.py": "cddb650c637e3627bf711ad3571dd9454baecfc997e09cb0ce3675d5cf3a54a4",
+    "operational\\phase_adapt_cache.py": "06d0588bbe68018226a6d1eeb90bb84ad12ad5fca41d1fcc4a5f1986f520edf8",
+    "operational\\phase_campaign\\data.py": "1cd88387ab589d8c71dd95c51c2847867280b9d2e96cfeaeeedcb543de83d179",
+    "operational\\phase_campaign\\evaluation.py": "29bde5ab0376446b45d8b3685f43f09addb8628f0f984f2ccecc9710439fc3df",
+    "operational\\phase_robust\\bundle.py": "6237ef620d78af6ca8c1ed9ec5d3589ba0d07ea6ff2e8083df455ab87ed726f2",
+    "operational\\phase_startup\\geometry.py": "1698cb19e30c4f491bbaa42e34e5ef24fb0aadfc081506da8cabe363e590b8d7",
+    "scripts\\final_train40_transfer.py": "1d4117685d2e5fd3ed442732458f82d0d8e1db0fb0653e47714bb5ab6a300730",
+    "src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "status": "COMPLETE",
+  "target_contract": "Existing target_phase converted by phase_to_ttc; +/-60s support",
+  "tracks": 1812,
+  "upstream_bundle_sha256": "dbb95f68ce861a72bb9b8169677a96442523cb256fb1d45c412acee46a07677d",
+  "valid_geometry_rows": 88597
+}

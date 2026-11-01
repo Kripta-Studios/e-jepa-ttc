@@ -1,0 +1,54 @@
+{
+  "archive_sha256": "63e2720817ba6521dfebbe56c0c6f9b32a5a07170b1f33386297163367ae8e51",
+  "code_trace": [
+    "event_history._query_plan takes delta_seconds from index delta_t_s",
+    "event_history._fresh_pair_phases repeats that delta over all 16 producer slots",
+    "CanonicalPair identity branch calls original with unchanged full batch once",
+    "Identity output preserves original phase bits including historical log epsilon"
+  ],
+  "current_arrays_read": [
+    "features",
+    "token",
+    "group"
+  ],
+  "float32_100ms_rows": 88744,
+  "groups": 40,
+  "identity_order_and_clock_bits_equal_current_query": true,
+  "index_arrays_read": [
+    "tokens",
+    "sequences",
+    "delta_t_s",
+    "windows_us"
+  ],
+  "index_member": "workspace/ejepa_final_inputs/workspace/e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAIN40_INDEX.npz",
+  "index_member_sha256": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+  "input_freeze_sha256": "7003da721c2a7fcf506974b7ac25d2938892e101e03b04a386e31dd4c4191f76",
+  "inputs_complete_sha256": "6b798917b1e70657041adefbd6d38864ac968d99e260ec6b4bddd42749026123",
+  "interpretation": "For finite valid FP32 history inputs using this materialization path, all indexed queries meet the identity-clock precondition; PAIR correction is inactive. This is structural evidence, not an executed history/context/head comparison.",
+  "nonidentity_rows": 0,
+  "optimizer_updates": 0,
+  "physical_last_interval_not_100000_us": 88720,
+  "physical_last_interval_us_quantiles": [
+    99945.0,
+    100001.0,
+    100001.0,
+    100002.0,
+    100058.0
+  ],
+  "producer_calls": 0,
+  "remaining": [
+    "Verify deployed history path and producer/checkpoint ancestry",
+    "Validate historical features and reconstruct contexts/head with consistent ancestry",
+    "Audit RGB histories with measured varying cadence",
+    "Keep OOF caches distinct from deployment inputs"
+  ],
+  "rows": 88744,
+  "scope": "TRAIN40 event-history clock precondition; not complete eAP preservation",
+  "source_hashes": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\audit_phase_eap_event_cadence.py": "89e40d0f4abe8a0bb46f81544c75204dbcc4d3b9b1759c76f6641aabf3485b6c",
+    "operational\\final_refit\\event_history.py": "e0d0f9566a6c49aafe8e1c7d55305b97273cf1ea46b15a71dea62c67733b997b",
+    "operational\\phase_timewarp\\canonical_pair.py": "f5788577e8eef1d95b299da234f0e32352d40b914b5669e440fc917c9c6dd82d"
+  },
+  "status": "CLOCKS_AUDITED",
+  "targets_read": false
+}

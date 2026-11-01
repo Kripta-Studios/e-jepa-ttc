@@ -1,0 +1,13 @@
+{
+  "cuda": "12.8",
+  "device": "cuda",
+  "finished_utc": "2026-10-31T10:56:50.571247+00:00",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "gpu_peak_allocated_bytes": 68241920,
+  "host": "DESKTOP-2N393IP",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.11.15",
+  "setup_seconds_last_session": 7.758550700033084,
+  "started_utc": "2026-10-31T10:44:03.566675+00:00",
+  "torch": "2.11.0+cu128"
+}

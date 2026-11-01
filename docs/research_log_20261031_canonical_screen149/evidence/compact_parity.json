@@ -1,0 +1,18 @@
+{
+  "audit_source_sha256": "da5df0ea3f1f231cc37a2445528844e5906ba6237bbc82aaed678946f4b3e4c5",
+  "pilot_complete_sha256": "70c774826de9caf043e1c207770012b5983d00e9bf05a449f12bb946916e1bab",
+  "producer_calls": 0,
+  "results": {
+    "Slider-500:38": {
+      "context_arrays_exact": 30,
+      "producer_arrays_exact": 22
+    },
+    "evttc:EXTENDED:CCRm-low-0-overlap-0:17000441": {
+      "context_arrays_exact": 30,
+      "producer_arrays_exact": 12
+    }
+  },
+  "screen_complete_sha256": "e9d03b2ee1fe72a9acad3b159943f01370e539ce73fc3651c623df400dfd4aa9",
+  "status": "PASS",
+  "targets_read": false
+}

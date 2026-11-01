@@ -1,0 +1,22 @@
+{
+  "seeds": {
+    "7": {
+      "state_dict_bitwise_equal": true,
+      "original_sha256": "75d5d2a55e4811e03e72ecd08c2c15b5f72d899793be2bbe716c460b0d7d83f9",
+      "reproduced_sha256": "75d5d2a55e4811e03e72ecd08c2c15b5f72d899793be2bbe716c460b0d7d83f9"
+    },
+    "13": {
+      "state_dict_bitwise_equal": true,
+      "original_sha256": "738df69c2b8b1550a01827f6d01de2138c3153e1ed2366905666ada6aa964a53",
+      "reproduced_sha256": "738df69c2b8b1550a01827f6d01de2138c3153e1ed2366905666ada6aa964a53"
+    },
+    "21": {
+      "state_dict_bitwise_equal": true,
+      "original_sha256": "aa810ff3b52551a6780c7b2a218055d80f79ef89c86b1ec123a8d6c425783657",
+      "reproduced_sha256": "aa810ff3b52551a6780c7b2a218055d80f79ef89c86b1ec123a8d6c425783657"
+    }
+  },
+  "training_predictions_exact_rows": 2608,
+  "fresh_environment": true,
+  "scope": "reproduced unchanged fixed recipe; not a new hyperparameter attempt"
+}

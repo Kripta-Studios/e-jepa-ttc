@@ -1,0 +1,12 @@
+{
+  "claim": "artifact integrity only; no scientific promotion implied",
+  "clean_state_parity": "verified_by_runner_for_all_clean_queries",
+  "external_metrics": "recomputed",
+  "external_prediction_seal": "verified",
+  "grouped_fits": 21,
+  "physical_actual_producer_checks": 3,
+  "robustness_attempts": 432,
+  "robustness_failures_retained": 0,
+  "same_heldout_queries_all_seeds": 2531,
+  "status": "PASS"
+}

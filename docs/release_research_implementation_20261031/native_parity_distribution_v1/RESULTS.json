@@ -1,0 +1,82 @@
+{
+  "absolute_difference_p50_p95_p99_max_s": [
+    0.00018548965454101562,
+    0.0010940551757812503,
+    0.002796783447265628,
+    0.4967918395996094
+  ],
+  "by_predicted_magnitude": [
+    {
+      "absolute_difference_p50_p95_p99_max_s": null,
+      "failed": 0,
+      "predicted_magnitude_max_s": 1,
+      "predicted_magnitude_min_s": 0,
+      "queries": 0
+    },
+    {
+      "absolute_difference_p50_p95_p99_max_s": [
+        6.127357482910156e-05,
+        0.00023419857025146483,
+        0.0002953100204467774,
+        0.00034058094024658203
+      ],
+      "failed": 1,
+      "predicted_magnitude_max_s": 2,
+      "predicted_magnitude_min_s": 1,
+      "queries": 48
+    },
+    {
+      "absolute_difference_p50_p95_p99_max_s": [
+        9.202957153320312e-05,
+        0.0003602981567382811,
+        0.000688724517822265,
+        0.002433300018310547
+      ],
+      "failed": 35,
+      "predicted_magnitude_max_s": 4,
+      "predicted_magnitude_min_s": 2,
+      "queries": 1049
+    },
+    {
+      "absolute_difference_p50_p95_p99_max_s": [
+        0.00019550323486328125,
+        0.0008279800415039052,
+        0.0014837265014648422,
+        0.017695903778076172
+      ],
+      "failed": 272,
+      "predicted_magnitude_max_s": 8,
+      "predicted_magnitude_min_s": 4,
+      "queries": 3883
+    },
+    {
+      "absolute_difference_p50_p95_p99_max_s": [
+        0.00054168701171875,
+        0.002464008331298828,
+        0.009792327880859234,
+        0.032706260681152344
+      ],
+      "failed": 175,
+      "predicted_magnitude_max_s": 16,
+      "predicted_magnitude_min_s": 8,
+      "queries": 795
+    },
+    {
+      "absolute_difference_p50_p95_p99_max_s": [
+        0.0038499832153320312,
+        0.31057491302490114,
+        0.49673099517822267,
+        0.4967918395996094
+      ],
+      "failed": 21,
+      "predicted_magnitude_max_s": null,
+      "predicted_magnitude_min_s": 16,
+      "queries": 30
+    }
+  ],
+  "failed": 504,
+  "interpretation": "Magnitude uses local prediction; groups are not official scoring categories.",
+  "prediction_error_against_truth": false,
+  "queries": 5805,
+  "targets_read": false
+}

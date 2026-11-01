@@ -1,0 +1,27 @@
+{
+  "archives": {
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_3RUZHwnCwK_855648991a0abb48.tar": "855648991a0abb48f9c37ef87dfcd047514af6b807769f2d5e8404230be3f928",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_71wUSQYMpk_a8d636c8f6a40383.tar": "a8d636c8f6a40383bc4cf6b24fe3494db26f3a7fceb0bc8bdce46a2277ca476d",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_89fvtHGHx2_f046b1ec925f6cf7.tar": "f046b1ec925f6cf7021bcae3635ed5e21769ff4b8cf85310d2327bf4ab8a7624",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_HHJe79eY2J_89ef9170f776fe4f.tar": "89ef9170f776fe4f464fa4fa713a64733e30513cdf3df8551755b556924c7649",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_JcjcDPISuL_0ee4e9d93172b9fc.tar": "0ee4e9d93172b9fc8f63c538c62c678db9e9d34d9a5e82bfc8d6f9367f1be96d",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_M8I2irMvY7_fc587fce60b1fab6.tar": "fc587fce60b1fab62d15cdaff57183cec7582094641a216864e11f780adaa093",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_Mu6kaUjIz3_6ae5bfe0714b0816.tar": "6ae5bfe0714b08166992464981359c895ddf13e20f6fe5f3ca35ecb5f18e0521",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_V741M41vPW_442c8526a44740f2.tar": "442c8526a44740f2577e627a6364a03f00df92717de444d84510ce8e0edac429",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_kafYzX6kJ4_d695f3d023e99b3f.tar": "d695f3d023e99b3f16f2afabd46c243f78154bcabbd1b2047b050b1dd31b3ddc",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_nP4MRdpEeO_901025b3c87d2aae.tar": "901025b3c87d2aae15aaf0b1075e7c16737bb7db140efb47244d07ec16c5c7c7",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_r0PXQOpCA6_8a96ad2c41a8c42a.tar": "8a96ad2c41a8c42a678059bccaf7f029c7b7f88078560c31c6455d9c7e0e1149",
+    "D:\\E_JEPA_POD2_RETURN_20261027\\test12_predictions_vhjB5OViA7_f86b748292c6793a.tar": "f86b748292c6793ac4ed86f29d13d7e7dc4edc1ec33e8c036a6305c29f4b601e"
+  },
+  "candidate_executed": false,
+  "candidate_missing": null,
+  "elapsed_seconds": 481.7179421999999,
+  "event_context_exact": null,
+  "historical_failed_queries": 5805,
+  "historical_parity": "FAIL",
+  "maximum_prediction_change_seconds": null,
+  "native_accuracy_evaluated": false,
+  "queries": 5805,
+  "scope": "prediction conservation only; no accuracy or official promotion claim",
+  "targets_read": false
+}

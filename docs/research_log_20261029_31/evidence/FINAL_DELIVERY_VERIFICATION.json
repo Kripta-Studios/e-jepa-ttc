@@ -1,0 +1,10 @@
+{
+  "archive_sha256": "4805fc06131988a93cb60e0a399a28582fef5235dba42974ebd237e42b5726c9",
+  "all_2588_members_rehashed_independently": true,
+  "extracted_model_evaluation_matches": true,
+  "fresh_environment": true,
+  "submission_rows": 434,
+  "supported_local_targets": 423,
+  "source_commit": "e482c220d6326c6939c5264c1b0f3aefa918c083",
+  "result_zip_sha256": "e7e41820003f18a28f2ef23e634992b05d7789ecf48364b2debe659cbb9a20e7"
+}

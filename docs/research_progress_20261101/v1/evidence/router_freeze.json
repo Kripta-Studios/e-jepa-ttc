@@ -1,0 +1,34 @@
+{
+  "batch_size": 1,
+  "git_commit": "e918ca0fd1a3d664eed06b45ba7ebdd2ec719319",
+  "historical_gate_reclassified": false,
+  "logical_queries": 6762,
+  "native_phase_conversion_device": "cuda",
+  "optimizer_updates": 0,
+  "parent_verification_workers": 8,
+  "parents": {
+    "artifacts\\runpod_event_authority_supplement_20261026\\payload\\workspace\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\test12_phase_only\\INPUTS.json": "b78730abe68de7fbe06c6c98b25d5fa025c04d9303720b680ce0c0f575d2e526",
+    "output\\release_research_20261031\\native_platform_followup_v2\\capture\\COMPLETE.json": "e6eeaa9265e5d3d2e1a9fd214d88e26698be9b7899a764d9f29748d2b9fc37d6",
+    "output\\release_research_20261031\\native_platform_followup_v2\\original_replay\\COMPLETE.json": "df918622febb10d56e892affe948d94e306a74305cbcf2544850cf61a53ff821",
+    "output\\release_research_20261031\\native_platform_followup_v2\\paired_replay\\COMPLETE.json": "355eff206198da43b6f012d57290ed19ee623c2681ebcf2c20fb2871c05a083c"
+  },
+  "physical_queries": 5805,
+  "promotion_admitted": false,
+  "router_device": "cpu",
+  "router_prior_screen": "failed; diagnostic only",
+  "schema": "phase_eap_local_router_sensitivity_v1",
+  "sources": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\audit_phase_eap_router_sensitivity.py": "c5d2aa859eec052d783b6922d22fae1697fa2b0ca4807acb09f762d901b807ab",
+    "docs\\research_log_canonical_population2608\\EAP_ROUTER_SENSITIVITY_PROTOCOL.md": "1c879834f22f1d9d0fe47b68fe41a8c85123ec43183cfecabbf2cd01fabe7785",
+    "operational\\phase_startup\\geometry.py": "1698cb19e30c4f491bbaa42e34e5ef24fb0aadfc081506da8cabe363e590b8d7",
+    "operational\\phase_startup\\model.py": "878dab038fa508d2208e6f88892a85a8a5ef3c6c9a41866f97162af6bd3143ff",
+    "operational\\phase_startup\\runtime.py": "3b3f9ee1c215dd7c30e46a98b8c7f5a921db1522fb99e68471ac2e8330f14238",
+    "operational\\phase_submission\\runtime.py": "bd2762811c9cc39b88def78d894e8d00fd7c5b71ac4199752410359cda813ac4",
+    "output\\phase_submission\\FINAL_MODEL\\MODEL.json": "fe1460c407ccd08fc670c1955435b0fe9b4719737e22e3dec7534a57e66bb005",
+    "scripts\\build_phase_native_context_augmentations.py": "ddb23291bfefbad5fe4efd3956b2e907dfd77f3b2d7a1701fd3378a50da59418",
+    "scripts\\build_phase_safe_source_audit.py": "026e07f6bdb9aa99e1d835d154d98e02f5582a7acf162db3eab02dc43a7dcbbe",
+    "scripts\\build_phase_safe_test12_audit.py": "4c0681116f43b3dcf2d774ede5847bce1de775a69f68f64ef455224fb139ee0a",
+    "src\\e_jepa_ttc\\simplex_t\\phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "targets_read": false
+}

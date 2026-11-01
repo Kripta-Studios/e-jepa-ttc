@@ -1,0 +1,5083 @@
+{
+  "records": [
+    {
+      "baseline_exact": true,
+      "group": "CCRm-low-0-overlap-0",
+      "query_us": 15650404,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.8257930278778076,
+            4.312493324279785,
+            3.647310495376587
+          ],
+          "rejected_calls": [],
+          "router": 3.9722392559051514
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.8258066177368164,
+            4.312516689300537,
+            3.647310495376587
+          ],
+          "rejected_calls": [],
+          "router": 3.972241163253784
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-low-0-overlap-0:15650404"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-low-0-overlap-0",
+      "query_us": 17000441,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.790883779525757,
+            3.015897035598755,
+            2.831587553024292
+          ],
+          "rejected_calls": [],
+          "router": 3.1500961780548096
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.790874481201172,
+            3.0159075260162354,
+            2.831587553024292
+          ],
+          "rejected_calls": [],
+          "router": 3.1500957012176514
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-low-0-overlap-0:17000441"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-low-0-overlap-0",
+      "query_us": 19000484,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.7611225843429565,
+            1.860802173614502,
+            2.0062625408172607
+          ],
+          "rejected_calls": [],
+          "router": 1.8357192277908325
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.7611236572265625,
+            1.8607962131500244,
+            2.0062625408172607
+          ],
+          "rejected_calls": [],
+          "router": 1.8357186317443848
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-low-0-overlap-0:19000484"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-low-50-overlap-50",
+      "query_us": 11950307,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.195607662200928,
+            4.526623725891113,
+            4.445495128631592
+          ],
+          "rejected_calls": [],
+          "router": 3.6919662952423096
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.19566011428833,
+            4.526712894439697,
+            4.445495128631592
+          ],
+          "rejected_calls": [],
+          "router": 3.6919705867767334
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-low-50-overlap-50:11950307"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-low-50-overlap-50",
+      "query_us": 13700355,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.6555519104003906,
+            2.881891965866089,
+            3.107208728790283
+          ],
+          "rejected_calls": [],
+          "router": 2.9505631923675537
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.6555447578430176,
+            2.8819055557250977,
+            3.107208728790283
+          ],
+          "rejected_calls": [],
+          "router": 2.9505622386932373
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-low-50-overlap-50:13700355"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-low-50-overlap-50",
+      "query_us": 15450394,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.6386351585388184,
+            2.7661750316619873,
+            3.0570926666259766
+          ],
+          "rejected_calls": [],
+          "router": 2.7657768726348877
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.63865327835083,
+            2.7662017345428467,
+            3.0570926666259766
+          ],
+          "rejected_calls": [],
+          "router": 2.765780210494995
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-low-50-overlap-50:15450394"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-medium-0-overlap-0",
+      "query_us": 12000324,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.054272174835205,
+            7.978023052215576,
+            7.245602607727051
+          ],
+          "rejected_calls": [],
+          "router": 5.773054122924805
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.054244041442871,
+            7.978047847747803,
+            7.245602607727051
+          ],
+          "rejected_calls": [],
+          "router": 5.773054122924805
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-medium-0-overlap-0:12000324"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-medium-0-overlap-0",
+      "query_us": 14000367,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.9157214164733887,
+            3.8726329803466797,
+            5.916514873504639
+          ],
+          "rejected_calls": [],
+          "router": 3.9278547763824463
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.9156904220581055,
+            3.8725976943969727,
+            5.916514873504639
+          ],
+          "rejected_calls": [],
+          "router": 3.9278457164764404
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-medium-0-overlap-0:14000367"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-medium-0-overlap-0",
+      "query_us": 16000419,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.0731866359710693,
+            2.1513912677764893,
+            2.6554114818573
+          ],
+          "rejected_calls": [],
+          "router": 1.9319357872009277
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.0731916427612305,
+            2.151420831680298,
+            2.6554114818573
+          ],
+          "rejected_calls": [],
+          "router": 1.9319359064102173
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-medium-0-overlap-0:16000419"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-medium-50-overlap-50",
+      "query_us": 9800259,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            6.455247402191162,
+            6.81292200088501,
+            6.522016525268555
+          ],
+          "rejected_calls": [],
+          "router": 7.942287445068359
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            6.455245018005371,
+            6.812955379486084,
+            6.522016525268555
+          ],
+          "rejected_calls": [],
+          "router": 7.942298412322998
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-medium-50-overlap-50:9800259"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-medium-50-overlap-50",
+      "query_us": 12000308,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.033163547515869,
+            3.228581666946411,
+            3.7903010845184326
+          ],
+          "rejected_calls": [],
+          "router": 3.3508031368255615
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.0331778526306152,
+            3.2285995483398438,
+            3.7903010845184326
+          ],
+          "rejected_calls": [],
+          "router": 3.3508071899414062
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-medium-50-overlap-50:12000308"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRm-medium-50-overlap-50",
+      "query_us": 14300363,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.7102857828140259,
+            1.877403736114502,
+            2.0358164310455322
+          ],
+          "rejected_calls": [],
+          "router": 1.9377540349960327
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.710288166999817,
+            1.8774009943008423,
+            2.0358164310455322
+          ],
+          "rejected_calls": [],
+          "router": 1.93775475025177
+        }
+      },
+      "token": "evttc:EXTENDED:CCRm-medium-50-overlap-50:14300363"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-high-0-overlap-0",
+      "query_us": 15735764,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            8.029047966003418,
+            8.846107482910156,
+            39.28986740112305
+          ],
+          "rejected_calls": [],
+          "router": 5.172877788543701
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            8.031423568725586,
+            8.849320411682129,
+            39.28986740112305
+          ],
+          "rejected_calls": [],
+          "router": 5.173168659210205
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-high-0-overlap-0:15735764"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-high-0-overlap-0",
+      "query_us": 17184687,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.482743978500366,
+            2.6714894771575928,
+            2.9865784645080566
+          ],
+          "rejected_calls": [],
+          "router": 2.207045793533325
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.483750820159912,
+            2.672971725463867,
+            2.9865784645080566
+          ],
+          "rejected_calls": [],
+          "router": 2.207160234451294
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-high-0-overlap-0:17184687"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-high-0-overlap-0",
+      "query_us": 18283893,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.484855055809021,
+            1.4733580350875854,
+            1.7357370853424072
+          ],
+          "rejected_calls": [],
+          "router": 1.4258489608764648
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.4850363731384277,
+            1.4734803438186646,
+            1.7357370853424072
+          ],
+          "rejected_calls": [],
+          "router": 1.4258623123168945
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-high-0-overlap-0:18283893"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-high-50-overlap-50",
+      "query_us": 15752651,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.218142032623291,
+            4.303069114685059,
+            6.029216766357422
+          ],
+          "rejected_calls": [],
+          "router": 3.1997954845428467
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.217857360839844,
+            4.3026862144470215,
+            6.029216766357422
+          ],
+          "rejected_calls": [],
+          "router": 3.199747323989868
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-high-50-overlap-50:15752651"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-high-50-overlap-50",
+      "query_us": 17553383,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.4206173419952393,
+            2.673210620880127,
+            2.525543451309204
+          ],
+          "rejected_calls": [],
+          "router": 2.397167921066284
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.420278787612915,
+            2.6726834774017334,
+            2.525543451309204
+          ],
+          "rejected_calls": [],
+          "router": 2.3971188068389893
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-high-50-overlap-50:17553383"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-high-50-overlap-50",
+      "query_us": 19204080,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.5030049085617065,
+            1.630629301071167,
+            1.859313726425171
+          ],
+          "rejected_calls": [],
+          "router": 1.2731581926345825
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.5026156902313232,
+            1.6300454139709473,
+            1.859313726425171
+          ],
+          "rejected_calls": [],
+          "router": 1.2731516361236572
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-high-50-overlap-50:19204080"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-low-0-overlap-0",
+      "query_us": 15600593,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.333627223968506,
+            4.665632247924805,
+            4.833130836486816
+          ],
+          "rejected_calls": [],
+          "router": 4.459985256195068
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.333674907684326,
+            4.665735244750977,
+            4.833130836486816
+          ],
+          "rejected_calls": [],
+          "router": 4.460000514984131
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-low-0-overlap-0:15600593"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-low-0-overlap-0",
+      "query_us": 17000621,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.105821132659912,
+            4.374440670013428,
+            4.704329490661621
+          ],
+          "rejected_calls": [],
+          "router": 3.6428565979003906
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.105850696563721,
+            4.374485969543457,
+            4.704329490661621
+          ],
+          "rejected_calls": [],
+          "router": 3.6428582668304443
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-low-0-overlap-0:17000621"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-low-0-overlap-0",
+      "query_us": 18400658,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.790980815887451,
+            2.979081153869629,
+            3.341341495513916
+          ],
+          "rejected_calls": [],
+          "router": 2.5616586208343506
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.7909998893737793,
+            2.979112386703491,
+            3.341341495513916
+          ],
+          "rejected_calls": [],
+          "router": 2.561659097671509
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-low-0-overlap-0:18400658"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-low-50-overlap-50",
+      "query_us": 15900609,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.836724281311035,
+            4.081196308135986,
+            4.288968563079834
+          ],
+          "rejected_calls": [],
+          "router": 4.103604316711426
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.8367557525634766,
+            4.081272602081299,
+            4.288968563079834
+          ],
+          "rejected_calls": [],
+          "router": 4.103618621826172
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-low-50-overlap-50:15900609"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-low-50-overlap-50",
+      "query_us": 17100640,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.6214194297790527,
+            2.888810157775879,
+            2.850426197052002
+          ],
+          "rejected_calls": [],
+          "router": 2.8152923583984375
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.621380090713501,
+            2.888766050338745,
+            2.850426197052002
+          ],
+          "rejected_calls": [],
+          "router": 2.815284490585327
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-low-50-overlap-50:17100640"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-low-50-overlap-50",
+      "query_us": 18450669,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.4091697931289673,
+            1.5778782367706299,
+            1.5926538705825806
+          ],
+          "rejected_calls": [],
+          "router": 1.4946683645248413
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.4091796875,
+            1.5778899192810059,
+            1.5926538705825806
+          ],
+          "rejected_calls": [],
+          "router": 1.4946727752685547
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-low-50-overlap-50:18450669"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-medium-0-overlap-0",
+      "query_us": 12350513,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.1105618476867676,
+            3.22729229927063,
+            4.025688171386719
+          ],
+          "rejected_calls": [],
+          "router": 3.566166639328003
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.110591173171997,
+            3.2273685932159424,
+            4.025688171386719
+          ],
+          "rejected_calls": [],
+          "router": 3.566178321838379
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-medium-0-overlap-0:12350513"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-medium-0-overlap-0",
+      "query_us": 13400538,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.3628735542297363,
+            2.4721426963806152,
+            3.1609084606170654
+          ],
+          "rejected_calls": [],
+          "router": 2.544156551361084
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.362828016281128,
+            2.4720869064331055,
+            3.1609084606170654
+          ],
+          "rejected_calls": [],
+          "router": 2.544142007827759
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-medium-0-overlap-0:13400538"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-medium-0-overlap-0",
+      "query_us": 14450563,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.6047066450119019,
+            1.6899816989898682,
+            2.0041821002960205
+          ],
+          "rejected_calls": [],
+          "router": 1.4661515951156616
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.6046987771987915,
+            1.6899620294570923,
+            2.0041821002960205
+          ],
+          "rejected_calls": [],
+          "router": 1.4661513566970825
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-medium-0-overlap-0:14450563"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-medium-50-overlap-50",
+      "query_us": 13200524,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.3277437686920166,
+            3.5380139350891113,
+            3.782069206237793
+          ],
+          "rejected_calls": [],
+          "router": 3.6128604412078857
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.327756643295288,
+            3.5380332469940186,
+            3.782069206237793
+          ],
+          "rejected_calls": [],
+          "router": 3.6128642559051514
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-medium-50-overlap-50:13200524"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-medium-50-overlap-50",
+      "query_us": 14550561,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.8636116981506348,
+            2.0690791606903076,
+            2.3230161666870117
+          ],
+          "rejected_calls": [],
+          "router": 1.9433895349502563
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.8635839223861694,
+            2.0690512657165527,
+            2.3230161666870117
+          ],
+          "rejected_calls": [],
+          "router": 1.9433866739273071
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-medium-50-overlap-50:14550561"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-1-medium-50-overlap-50",
+      "query_us": 15600587,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.2716296911239624,
+            1.3427244424819946,
+            1.6985712051391602
+          ],
+          "rejected_calls": [],
+          "router": 1.2524343729019165
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.2715797424316406,
+            1.3426576852798462,
+            1.6985712051391602
+          ],
+          "rejected_calls": [],
+          "router": 1.2524276971817017
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-1-medium-50-overlap-50:15600587"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-3-low-100-overlap-100",
+      "query_us": 9400254,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.6441450119018555,
+            5.158872604370117,
+            4.226938724517822
+          ],
+          "rejected_calls": [],
+          "router": 4.339855194091797
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.644131183624268,
+            5.158834457397461,
+            4.226938724517822
+          ],
+          "rejected_calls": [],
+          "router": 4.339852809906006
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-3-low-100-overlap-100:9400254"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-3-low-100-overlap-100",
+      "query_us": 11250300,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.254648447036743,
+            3.389604330062866,
+            3.718937397003174
+          ],
+          "rejected_calls": [],
+          "router": 3.4708073139190674
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.254650831222534,
+            3.3896021842956543,
+            3.718937397003174
+          ],
+          "rejected_calls": [],
+          "router": 3.470808744430542
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-3-low-100-overlap-100:11250300"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-3-low-100-overlap-100",
+      "query_us": 13100346,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.6419730186462402,
+            2.854377269744873,
+            3.125056028366089
+          ],
+          "rejected_calls": [],
+          "router": 2.458864212036133
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.64198899269104,
+            2.8543992042541504,
+            3.125056028366089
+          ],
+          "rejected_calls": [],
+          "router": 2.458864450454712
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-3-low-100-overlap-100:13100346"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-3-medium-100-overlap-100",
+      "query_us": 8650230,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.5297319889068604,
+            2.798102617263794,
+            3.0216140747070312
+          ],
+          "rejected_calls": [],
+          "router": 2.4864015579223633
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.5297048091888428,
+            2.7980456352233887,
+            3.0216140747070312
+          ],
+          "rejected_calls": [],
+          "router": 2.486396074295044
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-3-medium-100-overlap-100:8650230"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-3-medium-100-overlap-100",
+      "query_us": 9900261,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.6821292638778687,
+            1.9185104370117188,
+            1.8687288761138916
+          ],
+          "rejected_calls": [],
+          "router": 1.6750024557113647
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.6821370124816895,
+            1.918515682220459,
+            1.8687288761138916
+          ],
+          "rejected_calls": [],
+          "router": 1.6750035285949707
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-3-medium-100-overlap-100:9900261"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-3-medium-100-overlap-100",
+      "query_us": 11150292,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.51174795627594,
+            1.630232334136963,
+            1.8005058765411377
+          ],
+          "rejected_calls": [],
+          "router": 1.5332478284835815
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.511733889579773,
+            1.6302040815353394,
+            1.8005058765411377
+          ],
+          "rejected_calls": [],
+          "router": 1.5332437753677368
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-3-medium-100-overlap-100:11150292"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-high",
+      "query_us": 13263343,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.0539581775665283,
+            3.514914035797119,
+            3.0066447257995605
+          ],
+          "rejected_calls": [],
+          "router": 2.2622344493865967
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.0544230937957764,
+            3.5167059898376465,
+            3.0066447257995605
+          ],
+          "rejected_calls": [],
+          "router": 2.262235164642334
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-high:13263343"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-high",
+      "query_us": 14564632,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.6750683784484863,
+            2.630889892578125,
+            3.8465754985809326
+          ],
+          "rejected_calls": [],
+          "router": 1.620186448097229
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.673947811126709,
+            2.6292877197265625,
+            3.8465754985809326
+          ],
+          "rejected_calls": [],
+          "router": 1.6202130317687988
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-high:14564632"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-high",
+      "query_us": 15865930,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.363221526145935,
+            1.3966437578201294,
+            1.571487307548523
+          ],
+          "rejected_calls": [],
+          "router": 1.2342594861984253
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.3624913692474365,
+            1.3950814008712769,
+            1.571487307548523
+          ],
+          "rejected_calls": [],
+          "router": 1.234165072441101
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-high:15865930"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-low",
+      "query_us": 12050518,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.101963996887207,
+            8.799656867980957,
+            7.300472736358643
+          ],
+          "rejected_calls": [],
+          "router": 6.182556629180908
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.101850986480713,
+            8.799638748168945,
+            7.300472736358643
+          ],
+          "rejected_calls": [],
+          "router": 6.182554721832275
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-low:12050518"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-low",
+      "query_us": 14150569,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.487062454223633,
+            6.815932273864746,
+            6.561631679534912
+          ],
+          "rejected_calls": [],
+          "router": 4.001340389251709
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.486939430236816,
+            6.8159589767456055,
+            6.561631679534912
+          ],
+          "rejected_calls": [],
+          "router": 4.001339912414551
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-low:14150569"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-low",
+      "query_us": 15850609,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.46125602722168,
+            5.308326244354248,
+            4.323988437652588
+          ],
+          "rejected_calls": [],
+          "router": 2.290985584259033
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.461272716522217,
+            5.308335781097412,
+            4.323988437652588
+          ],
+          "rejected_calls": [],
+          "router": 2.290985345840454
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-low:15850609"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-medium",
+      "query_us": 11900508,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.104012489318848,
+            8.591033935546875,
+            7.43001127243042
+          ],
+          "rejected_calls": [],
+          "router": 7.716578006744385
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.103938579559326,
+            8.591034889221191,
+            7.43001127243042
+          ],
+          "rejected_calls": [],
+          "router": 7.716561794281006
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-medium:11900508"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-medium",
+      "query_us": 13600549,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.621373653411865,
+            4.982127666473389,
+            5.260434150695801
+          ],
+          "rejected_calls": [],
+          "router": 3.5451393127441406
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.621282577514648,
+            4.982032299041748,
+            5.260434150695801
+          ],
+          "rejected_calls": [],
+          "router": 3.5451385974884033
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-medium:13600549"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CCRs-side-medium",
+      "query_us": 15300589,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.100170612335205,
+            5.036435127258301,
+            3.5215530395507812
+          ],
+          "rejected_calls": [],
+          "router": 1.6744437217712402
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.100168228149414,
+            5.036368370056152,
+            3.5215530395507812
+          ],
+          "rejected_calls": [],
+          "router": 1.6744438409805298
+        }
+      },
+      "token": "evttc:EXTENDED:CCRs-side-medium:15300589"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-high",
+      "query_us": 16373025,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.3528923988342285,
+            2.651125907897949,
+            7.588649749755859
+          ],
+          "rejected_calls": [],
+          "router": 1.7824268341064453
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.356856107711792,
+            2.6624038219451904,
+            7.588649749755859
+          ],
+          "rejected_calls": [],
+          "router": 1.7829087972640991
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-high:16373025"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-high",
+      "query_us": 17269086,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.4106131792068481,
+            1.3373128175735474,
+            2.0427541732788086
+          ],
+          "rejected_calls": [],
+          "router": 1.3041614294052124
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.4160443544387817,
+            1.3461564779281616,
+            2.0427541732788086
+          ],
+          "rejected_calls": [],
+          "router": 1.3044825792312622
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-high:17269086"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-high",
+      "query_us": 18414156,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.242255687713623,
+            1.0263736248016357,
+            1.942622184753418
+          ],
+          "rejected_calls": [],
+          "router": 0.8736980557441711
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.2464573383331299,
+            1.0322877168655396,
+            1.942622184753418
+          ],
+          "rejected_calls": [],
+          "router": 0.8735485076904297
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-high:18414156"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-low",
+      "query_us": 18550702,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            6.05262565612793,
+            7.8595356941223145,
+            6.580235004425049
+          ],
+          "rejected_calls": [],
+          "router": 5.9748759269714355
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            6.052493095397949,
+            7.859493255615234,
+            6.580235004425049
+          ],
+          "rejected_calls": [],
+          "router": 5.974833965301514
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-low:18550702"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-low",
+      "query_us": 20350739,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.422745227813721,
+            4.577388286590576,
+            5.363396644592285
+          ],
+          "rejected_calls": [],
+          "router": 4.506337642669678
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.422675609588623,
+            4.577285289764404,
+            5.363396644592285
+          ],
+          "rejected_calls": [],
+          "router": 4.5062785148620605
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-low:20350739"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-low",
+      "query_us": 22150777,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.2284913063049316,
+            2.025207996368408,
+            3.772902727127075
+          ],
+          "rejected_calls": [],
+          "router": 1.9905719757080078
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.228498935699463,
+            2.0252132415771484,
+            3.772902727127075
+          ],
+          "rejected_calls": [],
+          "router": 1.9905729293823242
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-low:22150777"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-medium",
+      "query_us": 15900635,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.011451244354248,
+            4.708541393280029,
+            7.01476526260376
+          ],
+          "rejected_calls": [],
+          "router": 2.5020315647125244
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.011475563049316,
+            4.708556652069092,
+            7.01476526260376
+          ],
+          "rejected_calls": [],
+          "router": 2.502032995223999
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-medium:15900635"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-medium",
+      "query_us": 16900660,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.5402204990386963,
+            2.5170764923095703,
+            3.4075510501861572
+          ],
+          "rejected_calls": [],
+          "router": 2.5698931217193604
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.5401158332824707,
+            2.5169382095336914,
+            3.4075510501861572
+          ],
+          "rejected_calls": [],
+          "router": 2.5698111057281494
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-medium:16900660"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPLA-medium",
+      "query_us": 17850678,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.2216300964355469,
+            1.0636043548583984,
+            2.3974547386169434
+          ],
+          "rejected_calls": [],
+          "router": 1.0076589584350586
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.2215834856033325,
+            1.0635406970977783,
+            2.3974547386169434
+          ],
+          "rejected_calls": [],
+          "router": 1.0076589584350586
+        }
+      },
+      "token": "evttc:EXTENDED:CPLA-medium:17850678"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-high",
+      "query_us": 20352438,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.616307020187378,
+            2.6672523021698,
+            5.896874904632568
+          ],
+          "rejected_calls": [],
+          "router": 1.5918155908584595
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.6162891387939453,
+            2.6671712398529053,
+            5.896874904632568
+          ],
+          "rejected_calls": [],
+          "router": 1.591816782951355
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-high:20352438"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-high",
+      "query_us": 21102489,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.5865073204040527,
+            1.4616730213165283,
+            1.8238660097122192
+          ],
+          "rejected_calls": [],
+          "router": 1.1217995882034302
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.5864319801330566,
+            1.4614657163619995,
+            1.8238660097122192
+          ],
+          "rejected_calls": [],
+          "router": 1.121789574623108
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-high:21102489"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-high",
+      "query_us": 21852531,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.1933705806732178,
+            1.1056517362594604,
+            1.8813658952713013
+          ],
+          "rejected_calls": [],
+          "router": 0.9240491986274719
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.193336009979248,
+            1.1055890321731567,
+            1.8813658952713013
+          ],
+          "rejected_calls": [],
+          "router": 0.9240400195121765
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-high:21852531"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-low",
+      "query_us": 19150731,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.653656959533691,
+            5.89195442199707,
+            6.4127044677734375
+          ],
+          "rejected_calls": [],
+          "router": 5.752315521240234
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.653533935546875,
+            5.891819953918457,
+            6.4127044677734375
+          ],
+          "rejected_calls": [],
+          "router": 5.752185821533203
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-low:19150731"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-low",
+      "query_us": 20700764,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            6.447428226470947,
+            7.666107177734375,
+            5.3638763427734375
+          ],
+          "rejected_calls": [],
+          "router": 6.468708515167236
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            6.4473090171813965,
+            7.666158676147461,
+            5.3638763427734375
+          ],
+          "rejected_calls": [],
+          "router": 6.468591690063477
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-low:20700764"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-low",
+      "query_us": 22500801,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.5536930561065674,
+            2.435969352722168,
+            3.9183003902435303
+          ],
+          "rejected_calls": [],
+          "router": 2.646253824234009
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.553699254989624,
+            2.4359729290008545,
+            3.9183003902435303
+          ],
+          "rejected_calls": [],
+          "router": 2.6462595462799072
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-low:22500801"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-medium",
+      "query_us": 17750680,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.7356345653533936,
+            2.6077687740325928,
+            3.806882858276367
+          ],
+          "rejected_calls": [],
+          "router": 2.414645195007324
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.735644578933716,
+            2.6077210903167725,
+            3.806882858276367
+          ],
+          "rejected_calls": [],
+          "router": 2.4146502017974854
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-medium:17750680"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-medium",
+      "query_us": 18450694,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.6421709060668945,
+            3.164863109588623,
+            3.3023645877838135
+          ],
+          "rejected_calls": [],
+          "router": 1.5565710067749023
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.6421353816986084,
+            3.1648168563842773,
+            3.3023645877838135
+          ],
+          "rejected_calls": [],
+          "router": 1.5565708875656128
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-medium:18450694"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNA-medium",
+      "query_us": 19150707,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.4014796018600464,
+            1.1217502355575562,
+            2.6503539085388184
+          ],
+          "rejected_calls": [],
+          "router": 0.9306355118751526
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.401413083076477,
+            1.1216641664505005,
+            2.6503539085388184
+          ],
+          "rejected_calls": [],
+          "router": 0.9306330680847168
+        }
+      },
+      "token": "evttc:EXTENDED:CPNA-medium:19150707"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-high",
+      "query_us": 14250446,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.9446539878845215,
+            11.566400527954102,
+            5.458709716796875
+          ],
+          "rejected_calls": [],
+          "router": 2.5984270572662354
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            7.944551467895508,
+            11.566261291503906,
+            5.458709716796875
+          ],
+          "rejected_calls": [],
+          "router": 2.598435640335083
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-high:14250446"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-high",
+      "query_us": 15500467,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.1989548206329346,
+            3.2003519535064697,
+            3.967243194580078
+          ],
+          "rejected_calls": [],
+          "router": 2.0167324542999268
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            3.1989426612854004,
+            3.2003061771392822,
+            3.967243194580078
+          ],
+          "rejected_calls": [],
+          "router": 2.0167317390441895
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-high:15500467"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-high",
+      "query_us": 16750488,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.48850679397583,
+            2.1021487712860107,
+            6.8276166915893555
+          ],
+          "rejected_calls": [],
+          "router": 1.9547077417373657
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.488520622253418,
+            2.1021645069122314,
+            6.8276166915893555
+          ],
+          "rejected_calls": [],
+          "router": 1.9547120332717896
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-high:16750488"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-low",
+      "query_us": 22900802,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.178884983062744,
+            4.302231311798096,
+            7.399780750274658
+          ],
+          "rejected_calls": [],
+          "router": 2.9292972087860107
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            5.178915977478027,
+            4.302286148071289,
+            7.399780750274658
+          ],
+          "rejected_calls": [],
+          "router": 2.929293394088745
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-low:22900802"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-low",
+      "query_us": 23800830,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.928043842315674,
+            2.839002847671509,
+            5.419711112976074
+          ],
+          "rejected_calls": [],
+          "router": 2.9669246673583984
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.9279263019561768,
+            2.8388469219207764,
+            5.419711112976074
+          ],
+          "rejected_calls": [],
+          "router": 2.9668312072753906
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-low:23800830"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-low",
+      "query_us": 24650841,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.3580658435821533,
+            2.019646644592285,
+            17.208433151245117
+          ],
+          "rejected_calls": [],
+          "router": 1.6475900411605835
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.3581182956695557,
+            2.0197041034698486,
+            17.208433151245117
+          ],
+          "rejected_calls": [],
+          "router": 1.6475902795791626
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-low:24650841"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-medium",
+      "query_us": 18800710,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.256347894668579,
+            1.4337841272354126,
+            3.570732593536377
+          ],
+          "rejected_calls": [],
+          "router": 1.4529927968978882
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            2.256317615509033,
+            1.4337313175201416,
+            3.570732593536377
+          ],
+          "rejected_calls": [],
+          "router": 1.45297110080719
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-medium:18800710"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-medium",
+      "query_us": 19250720,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.5134146213531494,
+            1.326730489730835,
+            3.1148977279663086
+          ],
+          "rejected_calls": [],
+          "router": 1.1751576662063599
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.5134254693984985,
+            1.3267450332641602,
+            3.1148977279663086
+          ],
+          "rejected_calls": [],
+          "router": 1.1751575469970703
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-medium:19250720"
+    },
+    {
+      "baseline_exact": true,
+      "group": "CPNAO-medium",
+      "query_us": 19650730,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.0327749252319336,
+            0.9627910852432251,
+            1.7404686212539673
+          ],
+          "rejected_calls": [],
+          "router": 0.9116477370262146
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            1.032737374305725,
+            0.9627417922019958,
+            1.7404686212539673
+          ],
+          "rejected_calls": [],
+          "router": 0.9116395115852356
+        }
+      },
+      "token": "evttc:EXTENDED:CPNAO-medium:19650730"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 40081,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 1,
+            "rgb": 1
+          },
+          "native": [
+            4.482127666473389,
+            5.925665378570557,
+            3.8340976238250732
+          ],
+          "rejected_calls": [],
+          "router": 4.485721588134766
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 1,
+            "rgb": 1
+          },
+          "native": [
+            5.15219259262085,
+            5.6259918212890625,
+            4.415524005889893
+          ],
+          "rejected_calls": [],
+          "router": 5.150136470794678
+        }
+      },
+      "token": "Slider-500:0"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 80163,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 1,
+            "rgb": 1
+          },
+          "native": [
+            5.349498748779297,
+            7.1460957527160645,
+            4.465672016143799
+          ],
+          "rejected_calls": [],
+          "router": 3.322011709213257
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 1,
+            "rgb": 1
+          },
+          "native": [
+            5.544302940368652,
+            6.770138740539551,
+            5.779875755310059
+          ],
+          "rejected_calls": [],
+          "router": 3.3196074962615967
+        }
+      },
+      "token": "Slider-500:1"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 120245,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 2,
+            "rgb": 1
+          },
+          "native": [
+            5.447257995605469,
+            6.8464250564575195,
+            6.733935832977295
+          ],
+          "rejected_calls": [],
+          "router": 3.737048864364624
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 2,
+            "rgb": 1
+          },
+          "native": [
+            6.351867198944092,
+            6.54498291015625,
+            16.17441749572754
+          ],
+          "rejected_calls": [],
+          "router": 3.577211618423462
+        }
+      },
+      "token": "Slider-500:2"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 160328,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 2,
+            "rgb": 1
+          },
+          "native": [
+            4.970711708068848,
+            6.056100368499756,
+            5.595195293426514
+          ],
+          "rejected_calls": [],
+          "router": 3.270704984664917
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 2,
+            "rgb": 1
+          },
+          "native": [
+            5.136290550231934,
+            5.964076042175293,
+            5.229790210723877
+          ],
+          "rejected_calls": [],
+          "router": 3.261326789855957
+        }
+      },
+      "token": "Slider-500:3"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 200410,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 2,
+            "rgb": 2
+          },
+          "native": [
+            4.864508152008057,
+            5.763271808624268,
+            5.469799995422363
+          ],
+          "rejected_calls": [
+            {
+              "call_id": 0,
+              "reason": "original_producer_batch_rejected",
+              "status": "rejected"
+            }
+          ],
+          "router": 3.1760356426239014
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 2,
+            "rgb": 2
+          },
+          "native": [
+            4.980280876159668,
+            5.612918376922607,
+            5.842370986938477
+          ],
+          "rejected_calls": [
+            {
+              "call_id": 0,
+              "reason": "original_producer_batch_rejected",
+              "status": "rejected"
+            }
+          ],
+          "router": 3.1552913188934326
+        }
+      },
+      "token": "Slider-500:4"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 240492,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 3,
+            "rgb": 2
+          },
+          "native": [
+            5.32608699798584,
+            5.430656909942627,
+            7.044862270355225
+          ],
+          "rejected_calls": [],
+          "router": 3.233356475830078
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 3,
+            "rgb": 2
+          },
+          "native": [
+            5.275692939758301,
+            5.3133463859558105,
+            6.880613327026367
+          ],
+          "rejected_calls": [],
+          "router": 3.2250964641571045
+        }
+      },
+      "token": "Slider-500:5"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 280574,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 3,
+            "rgb": 3
+          },
+          "native": [
+            4.9702887535095215,
+            5.0797271728515625,
+            6.567823886871338
+          ],
+          "rejected_calls": [],
+          "router": 3.2134923934936523
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 3,
+            "rgb": 3
+          },
+          "native": [
+            4.92132568359375,
+            4.966088771820068,
+            6.4317946434021
+          ],
+          "rejected_calls": [],
+          "router": 3.199751853942871
+        }
+      },
+      "token": "Slider-500:6"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 320656,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 3
+          },
+          "native": [
+            5.0854644775390625,
+            4.825850963592529,
+            7.422860622406006
+          ],
+          "rejected_calls": [],
+          "router": 3.1799914836883545
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 3
+          },
+          "native": [
+            5.067976951599121,
+            4.74116849899292,
+            7.579951286315918
+          ],
+          "rejected_calls": [],
+          "router": 3.1665821075439453
+        }
+      },
+      "token": "Slider-500:7"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 360738,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 4
+          },
+          "native": [
+            4.744753360748291,
+            4.676119804382324,
+            6.349689960479736
+          ],
+          "rejected_calls": [],
+          "router": 2.9654858112335205
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 4
+          },
+          "native": [
+            4.688229560852051,
+            4.6318888664245605,
+            5.931695461273193
+          ],
+          "rejected_calls": [],
+          "router": 2.9580461978912354
+        }
+      },
+      "token": "Slider-500:8"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 400820,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 4
+          },
+          "native": [
+            4.673067569732666,
+            4.5418782234191895,
+            6.927526950836182
+          ],
+          "rejected_calls": [],
+          "router": 3.1041440963745117
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 4
+          },
+          "native": [
+            4.661981582641602,
+            4.505495071411133,
+            6.92181921005249
+          ],
+          "rejected_calls": [],
+          "router": 3.098778009414673
+        }
+      },
+      "token": "Slider-500:9"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 440901,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.499641418457031,
+            4.406085014343262,
+            6.7601728439331055
+          ],
+          "rejected_calls": [],
+          "router": 2.8618714809417725
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.514318466186523,
+            4.393615245819092,
+            6.789798259735107
+          ],
+          "rejected_calls": [],
+          "router": 2.861783742904663
+        }
+      },
+      "token": "Slider-500:10"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 480983,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.4648756980896,
+            4.452986717224121,
+            6.425003528594971
+          ],
+          "rejected_calls": [],
+          "router": 2.975630044937134
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 5
+          },
+          "native": [
+            4.419851303100586,
+            4.353176593780518,
+            6.392136573791504
+          ],
+          "rejected_calls": [],
+          "router": 2.9688234329223633
+        }
+      },
+      "token": "Slider-500:11"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 521065,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 6
+          },
+          "native": [
+            4.225158214569092,
+            4.224699020385742,
+            6.086657524108887
+          ],
+          "rejected_calls": [],
+          "router": 2.806466817855835
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 6
+          },
+          "native": [
+            4.212483882904053,
+            4.173620223999023,
+            6.085207939147949
+          ],
+          "rejected_calls": [],
+          "router": 2.8045873641967773
+        }
+      },
+      "token": "Slider-500:12"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 561147,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 6
+          },
+          "native": [
+            4.198314666748047,
+            4.196234703063965,
+            6.156338214874268
+          ],
+          "rejected_calls": [],
+          "router": 2.9900991916656494
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 6
+          },
+          "native": [
+            4.22191858291626,
+            4.195596694946289,
+            6.148258686065674
+          ],
+          "rejected_calls": [],
+          "router": 2.9904098510742188
+        }
+      },
+      "token": "Slider-500:13"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 601230,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.134365558624268,
+            4.248869895935059,
+            5.5070013999938965
+          ],
+          "rejected_calls": [],
+          "router": 2.924889326095581
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.156378269195557,
+            4.24865198135376,
+            5.5070013999938965
+          ],
+          "rejected_calls": [],
+          "router": 2.925090789794922
+        }
+      },
+      "token": "Slider-500:14"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 641312,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.299127578735352,
+            4.416281700134277,
+            5.755666732788086
+          ],
+          "rejected_calls": [],
+          "router": 2.870305299758911
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.297807216644287,
+            4.383580207824707,
+            5.755666732788086
+          ],
+          "rejected_calls": [],
+          "router": 2.8701412677764893
+        }
+      },
+      "token": "Slider-500:15"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 681394,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.178068161010742,
+            4.331962585449219,
+            5.218008995056152
+          ],
+          "rejected_calls": [],
+          "router": 2.821531057357788
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.190084934234619,
+            4.31729793548584,
+            5.218008995056152
+          ],
+          "rejected_calls": [],
+          "router": 2.821521520614624
+        }
+      },
+      "token": "Slider-500:16"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 721476,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.232454299926758,
+            4.380951881408691,
+            5.463371276855469
+          ],
+          "rejected_calls": [],
+          "router": 2.81606388092041
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.221807956695557,
+            4.319355010986328,
+            5.463371276855469
+          ],
+          "rejected_calls": [],
+          "router": 2.8159990310668945
+        }
+      },
+      "token": "Slider-500:17"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 761558,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9143388271331787,
+            3.9879956245422363,
+            5.179025650024414
+          ],
+          "rejected_calls": [],
+          "router": 2.792552947998047
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9639391899108887,
+            4.030764579772949,
+            5.179025650024414
+          ],
+          "rejected_calls": [],
+          "router": 2.792632818222046
+        }
+      },
+      "token": "Slider-500:18"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 801640,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.019245624542236,
+            4.160241603851318,
+            5.1852312088012695
+          ],
+          "rejected_calls": [],
+          "router": 2.758272409439087
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.02532434463501,
+            4.138209342956543,
+            5.1852312088012695
+          ],
+          "rejected_calls": [],
+          "router": 2.75826096534729
+        }
+      },
+      "token": "Slider-500:19"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 841722,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.984323740005493,
+            4.1113433837890625,
+            4.851107120513916
+          ],
+          "rejected_calls": [],
+          "router": 2.6632308959960938
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.999464511871338,
+            4.095154762268066,
+            4.851107120513916
+          ],
+          "rejected_calls": [],
+          "router": 2.663226842880249
+        }
+      },
+      "token": "Slider-500:20"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 881803,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9251482486724854,
+            4.101991176605225,
+            4.517306804656982
+          ],
+          "rejected_calls": [],
+          "router": 2.6020350456237793
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.939912796020508,
+            4.081237316131592,
+            4.517306804656982
+          ],
+          "rejected_calls": [],
+          "router": 2.602030038833618
+        }
+      },
+      "token": "Slider-500:21"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 921885,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.069608688354492,
+            4.296951770782471,
+            4.691347599029541
+          ],
+          "rejected_calls": [],
+          "router": 2.5399444103240967
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.0615339279174805,
+            4.241960048675537,
+            4.691347599029541
+          ],
+          "rejected_calls": [],
+          "router": 2.539919137954712
+        }
+      },
+      "token": "Slider-500:22"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 961967,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            4.020614147186279,
+            4.271515846252441,
+            4.293850421905518
+          ],
+          "rejected_calls": [],
+          "router": 2.4962754249572754
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9948582649230957,
+            4.186409950256348,
+            4.293850421905518
+          ],
+          "rejected_calls": [],
+          "router": 2.496230363845825
+        }
+      },
+      "token": "Slider-500:23"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1002050,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9121952056884766,
+            4.141077041625977,
+            4.262546062469482
+          ],
+          "rejected_calls": [],
+          "router": 2.457474708557129
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.8957881927490234,
+            4.073453426361084,
+            4.262546062469482
+          ],
+          "rejected_calls": [],
+          "router": 2.457434892654419
+        }
+      },
+      "token": "Slider-500:24"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1042132,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.809643030166626,
+            4.028390407562256,
+            4.20867395401001
+          ],
+          "rejected_calls": [],
+          "router": 2.4596071243286133
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.7923645973205566,
+            3.956049919128418,
+            4.20867395401001
+          ],
+          "rejected_calls": [],
+          "router": 2.459562063217163
+        }
+      },
+      "token": "Slider-500:25"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1082214,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9809272289276123,
+            4.258225440979004,
+            4.184850215911865
+          ],
+          "rejected_calls": [],
+          "router": 2.462552309036255
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.9852285385131836,
+            4.214457988739014,
+            4.184850215911865
+          ],
+          "rejected_calls": [],
+          "router": 2.4625351428985596
+        }
+      },
+      "token": "Slider-500:26"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1122296,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.7924931049346924,
+            4.212155342102051,
+            3.833310127258301
+          ],
+          "rejected_calls": [],
+          "router": 2.4849796295166016
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.7945477962493896,
+            4.164102554321289,
+            3.833310127258301
+          ],
+          "rejected_calls": [],
+          "router": 2.484959840774536
+        }
+      },
+      "token": "Slider-500:27"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1162378,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.7830705642700195,
+            4.102015972137451,
+            3.80995774269104
+          ],
+          "rejected_calls": [],
+          "router": 2.450669527053833
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.8021743297576904,
+            4.076312065124512,
+            3.80995774269104
+          ],
+          "rejected_calls": [],
+          "router": 2.450669527053833
+        }
+      },
+      "token": "Slider-500:28"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1202460,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.637885808944702,
+            3.98814058303833,
+            3.831381320953369
+          ],
+          "rejected_calls": [],
+          "router": 2.439652681350708
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.6514220237731934,
+            3.964224338531494,
+            3.831381320953369
+          ],
+          "rejected_calls": [],
+          "router": 2.43965220451355
+        }
+      },
+      "token": "Slider-500:29"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1242542,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.4209725856781006,
+            3.6158857345581055,
+            3.9347500801086426
+          ],
+          "rejected_calls": [],
+          "router": 2.4773340225219727
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.4548897743225098,
+            3.6178650856018066,
+            3.9347500801086426
+          ],
+          "rejected_calls": [],
+          "router": 2.47737193107605
+        }
+      },
+      "token": "Slider-500:30"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1282624,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.3385040760040283,
+            3.580350875854492,
+            3.671247959136963
+          ],
+          "rejected_calls": [],
+          "router": 2.481330633163452
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.3709661960601807,
+            3.576834201812744,
+            3.671247959136963
+          ],
+          "rejected_calls": [],
+          "router": 2.481367826461792
+        }
+      },
+      "token": "Slider-500:31"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1322705,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.237744092941284,
+            3.4866576194763184,
+            3.4983110427856445
+          ],
+          "rejected_calls": [],
+          "router": 2.4878995418548584
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.257969856262207,
+            3.4531869888305664,
+            3.4983110427856445
+          ],
+          "rejected_calls": [],
+          "router": 2.4879086017608643
+        }
+      },
+      "token": "Slider-500:32"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1362787,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.187784194946289,
+            3.4396612644195557,
+            3.394120454788208
+          ],
+          "rejected_calls": [],
+          "router": 2.4811689853668213
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.241057872772217,
+            3.4665560722351074,
+            3.394120454788208
+          ],
+          "rejected_calls": [],
+          "router": 2.4812638759613037
+        }
+      },
+      "token": "Slider-500:33"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1402869,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.1039090156555176,
+            3.344956398010254,
+            3.3404641151428223
+          ],
+          "rejected_calls": [],
+          "router": 2.462049722671509
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            3.1690211296081543,
+            3.39225435256958,
+            3.3404641151428223
+          ],
+          "rejected_calls": [],
+          "router": 2.462183713912964
+        }
+      },
+      "token": "Slider-500:34"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1442952,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.93100643157959,
+            3.179255485534668,
+            3.1602942943573
+          ],
+          "rejected_calls": [],
+          "router": 2.4348456859588623
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.9716145992279053,
+            3.181462049484253,
+            3.1602942943573
+          ],
+          "rejected_calls": [],
+          "router": 2.4349472522735596
+        }
+      },
+      "token": "Slider-500:35"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1483034,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.8299295902252197,
+            3.0969560146331787,
+            3.013882637023926
+          ],
+          "rejected_calls": [],
+          "router": 2.393465757369995
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.8775851726531982,
+            3.106121301651001,
+            3.013882637023926
+          ],
+          "rejected_calls": [],
+          "router": 2.3936023712158203
+        }
+      },
+      "token": "Slider-500:36"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1523116,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.739309072494507,
+            3.017082691192627,
+            3.0087430477142334
+          ],
+          "rejected_calls": [],
+          "router": 2.333094358444214
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.784966230392456,
+            3.0257842540740967,
+            3.0087430477142334
+          ],
+          "rejected_calls": [],
+          "router": 2.333221435546875
+        }
+      },
+      "token": "Slider-500:37"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1563198,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.7155847549438477,
+            3.00608491897583,
+            2.921912670135498
+          ],
+          "rejected_calls": [],
+          "router": 2.256577253341675
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.744687557220459,
+            2.981079578399658,
+            2.921912670135498
+          ],
+          "rejected_calls": [],
+          "router": 2.256622076034546
+        }
+      },
+      "token": "Slider-500:38"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1603280,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.753668785095215,
+            3.121959924697876,
+            2.8258895874023438
+          ],
+          "rejected_calls": [],
+          "router": 2.203071355819702
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.808706045150757,
+            3.1480822563171387,
+            2.8258895874023438
+          ],
+          "rejected_calls": [],
+          "router": 2.203160285949707
+        }
+      },
+      "token": "Slider-500:39"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1643362,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.667572259902954,
+            2.981656312942505,
+            2.8205747604370117
+          ],
+          "rejected_calls": [],
+          "router": 2.141408920288086
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.7368264198303223,
+            3.0348846912384033,
+            2.8205747604370117
+          ],
+          "rejected_calls": [],
+          "router": 2.14152455329895
+        }
+      },
+      "token": "Slider-500:40"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1683444,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.460855007171631,
+            2.6647589206695557,
+            2.832981824874878
+          ],
+          "rejected_calls": [],
+          "router": 2.0677664279937744
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.5072896480560303,
+            2.680393934249878,
+            2.832981824874878
+          ],
+          "rejected_calls": [],
+          "router": 2.067854642868042
+        }
+      },
+      "token": "Slider-500:41"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1723526,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.360776662826538,
+            2.5724282264709473,
+            2.623903751373291
+          ],
+          "rejected_calls": [],
+          "router": 1.991805911064148
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.408714532852173,
+            2.5866289138793945,
+            2.623903751373291
+          ],
+          "rejected_calls": [],
+          "router": 1.9918947219848633
+        }
+      },
+      "token": "Slider-500:42"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1763607,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.3209638595581055,
+            2.556583881378174,
+            2.59407377243042
+          ],
+          "rejected_calls": [],
+          "router": 1.9396189451217651
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.3690052032470703,
+            2.5712032318115234,
+            2.59407377243042
+          ],
+          "rejected_calls": [],
+          "router": 1.9397004842758179
+        }
+      },
+      "token": "Slider-500:43"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1803689,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.2765026092529297,
+            2.4791109561920166,
+            2.584881067276001
+          ],
+          "rejected_calls": [],
+          "router": 1.8703569173812866
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.313749074935913,
+            2.47084379196167,
+            2.584881067276001
+          ],
+          "rejected_calls": [],
+          "router": 1.8704032897949219
+        }
+      },
+      "token": "Slider-500:44"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1843771,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.1965267658233643,
+            2.3857545852661133,
+            2.5057694911956787
+          ],
+          "rejected_calls": [],
+          "router": 1.8153190612792969
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.2461588382720947,
+            2.4014368057250977,
+            2.5057694911956787
+          ],
+          "rejected_calls": [],
+          "router": 1.8153966665267944
+        }
+      },
+      "token": "Slider-500:45"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1883854,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.196704626083374,
+            2.3970959186553955,
+            2.481113910675049
+          ],
+          "rejected_calls": [],
+          "router": 1.768471360206604
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.280120849609375,
+            2.4820668697357178,
+            2.481113910675049
+          ],
+          "rejected_calls": [],
+          "router": 1.7685946226119995
+        }
+      },
+      "token": "Slider-500:46"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1923936,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.2042720317840576,
+            2.3977694511413574,
+            2.4513936042785645
+          ],
+          "rejected_calls": [],
+          "router": 1.7352981567382812
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.2715370655059814,
+            2.453181743621826,
+            2.4513936042785645
+          ],
+          "rejected_calls": [],
+          "router": 1.7353798151016235
+        }
+      },
+      "token": "Slider-500:47"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 1964018,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.1590700149536133,
+            2.3664731979370117,
+            2.350994825363159
+          ],
+          "rejected_calls": [],
+          "router": 1.6822792291641235
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.2498888969421387,
+            2.458953857421875,
+            2.350994825363159
+          ],
+          "rejected_calls": [],
+          "router": 1.6823769807815552
+        }
+      },
+      "token": "Slider-500:48"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2004100,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.040477752685547,
+            2.2317261695861816,
+            2.2925822734832764
+          ],
+          "rejected_calls": [],
+          "router": 1.6388788223266602
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.1218502521514893,
+            2.3063509464263916,
+            2.2925822734832764
+          ],
+          "rejected_calls": [],
+          "router": 1.638981819152832
+        }
+      },
+      "token": "Slider-500:49"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2044181,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.9228531122207642,
+            2.110485076904297,
+            2.183753490447998
+          ],
+          "rejected_calls": [],
+          "router": 1.598111629486084
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            2.0146543979644775,
+            2.2059876918792725,
+            2.183753490447998
+          ],
+          "rejected_calls": [],
+          "router": 1.5982593297958374
+        }
+      },
+      "token": "Slider-500:50"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2084263,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.885515570640564,
+            2.083146810531616,
+            2.078735113143921
+          ],
+          "rejected_calls": [],
+          "router": 1.5554094314575195
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.974339246749878,
+            2.1737027168273926,
+            2.078735113143921
+          ],
+          "rejected_calls": [],
+          "router": 1.5555387735366821
+        }
+      },
+      "token": "Slider-500:51"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2124345,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.8260453939437866,
+            2.041783332824707,
+            1.944782018661499
+          ],
+          "rejected_calls": [],
+          "router": 1.511684536933899
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.9471796751022339,
+            2.192373037338257,
+            1.944782018661499
+          ],
+          "rejected_calls": [],
+          "router": 1.5118622779846191
+        }
+      },
+      "token": "Slider-500:52"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2164427,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.7044187784194946,
+            1.828505277633667,
+            1.9293758869171143
+          ],
+          "rejected_calls": [],
+          "router": 1.4637478590011597
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.8147010803222656,
+            1.9564424753189087,
+            1.9293758869171143
+          ],
+          "rejected_calls": [],
+          "router": 1.4639601707458496
+        }
+      },
+      "token": "Slider-500:53"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2204509,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.5911699533462524,
+            1.7127381563186646,
+            1.9391839504241943
+          ],
+          "rejected_calls": [],
+          "router": 1.413679599761963
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.7373178005218506,
+            1.9158151149749756,
+            1.9391839504241943
+          ],
+          "rejected_calls": [],
+          "router": 1.4140139818191528
+        }
+      },
+      "token": "Slider-500:54"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2244590,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.58119797706604,
+            1.670224666595459,
+            1.8951712846755981
+          ],
+          "rejected_calls": [],
+          "router": 1.3551889657974243
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.7232770919799805,
+            1.8621115684509277,
+            1.8951712846755981
+          ],
+          "rejected_calls": [],
+          "router": 1.3554309606552124
+        }
+      },
+      "token": "Slider-500:55"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2284672,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.5266122817993164,
+            1.59170401096344,
+            1.8995075225830078
+          ],
+          "rejected_calls": [],
+          "router": 1.3056062459945679
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.6893904209136963,
+            1.8220067024230957,
+            1.8995075225830078
+          ],
+          "rejected_calls": [],
+          "router": 1.3058627843856812
+        }
+      },
+      "token": "Slider-500:56"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2324754,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.525132656097412,
+            1.5753825902938843,
+            1.8478033542633057
+          ],
+          "rejected_calls": [],
+          "router": 1.2472516298294067
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.6610705852508545,
+            1.7533564567565918,
+            1.8478033542633057
+          ],
+          "rejected_calls": [],
+          "router": 1.2474058866500854
+        }
+      },
+      "token": "Slider-500:57"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2364836,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.4357645511627197,
+            1.4810972213745117,
+            1.8156341314315796
+          ],
+          "rejected_calls": [],
+          "router": 1.195141077041626
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.5951745510101318,
+            1.715207576751709,
+            1.8156341314315796
+          ],
+          "rejected_calls": [],
+          "router": 1.1953240633010864
+        }
+      },
+      "token": "Slider-500:58"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2404919,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.3316007852554321,
+            1.3447645902633667,
+            1.7973473072052002
+          ],
+          "rejected_calls": [],
+          "router": 1.1299630403518677
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.5019372701644897,
+            1.6122764348983765,
+            1.7973473072052002
+          ],
+          "rejected_calls": [],
+          "router": 1.1301690340042114
+        }
+      },
+      "token": "Slider-500:59"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2445001,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.2842456102371216,
+            1.2835094928741455,
+            1.7626785039901733
+          ],
+          "rejected_calls": [],
+          "router": 1.0778366327285767
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.4410486221313477,
+            1.5456355810165405,
+            1.7626785039901733
+          ],
+          "rejected_calls": [],
+          "router": 1.0779688358306885
+        }
+      },
+      "token": "Slider-500:60"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2485083,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.2347066402435303,
+            1.228348731994629,
+            1.7459523677825928
+          ],
+          "rejected_calls": [],
+          "router": 1.0237997770309448
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.388421654701233,
+            1.4765276908874512,
+            1.7459523677825928
+          ],
+          "rejected_calls": [],
+          "router": 1.0238581895828247
+        }
+      },
+      "token": "Slider-500:61"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2525165,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.319328784942627,
+            1.359926462173462,
+            1.7261607646942139
+          ],
+          "rejected_calls": [],
+          "router": 0.9730673432350159
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.470737099647522,
+            1.594122290611267,
+            1.7261607646942139
+          ],
+          "rejected_calls": [],
+          "router": 0.972819983959198
+        }
+      },
+      "token": "Slider-500:62"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2565247,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.2478803396224976,
+            1.2524853944778442,
+            1.6882539987564087
+          ],
+          "rejected_calls": [],
+          "router": 0.9279105067253113
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.4257217645645142,
+            1.527456521987915,
+            1.6882539987564087
+          ],
+          "rejected_calls": [],
+          "router": 0.9273457527160645
+        }
+      },
+      "token": "Slider-500:63"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2605329,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.2531006336212158,
+            1.2381649017333984,
+            1.658961534500122
+          ],
+          "rejected_calls": [],
+          "router": 0.8846035003662109
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.4044746160507202,
+            1.4625345468521118,
+            1.658961534500122
+          ],
+          "rejected_calls": [],
+          "router": 0.8838629126548767
+        }
+      },
+      "token": "Slider-500:64"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2645411,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.1586881875991821,
+            1.1254348754882812,
+            1.611783504486084
+          ],
+          "rejected_calls": [],
+          "router": 0.8362887501716614
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.326847791671753,
+            1.3587875366210938,
+            1.611783504486084
+          ],
+          "rejected_calls": [],
+          "router": 0.8351507186889648
+        }
+      },
+      "token": "Slider-500:65"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2685492,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.18849515914917,
+            1.1579846143722534,
+            1.6014056205749512
+          ],
+          "rejected_calls": [],
+          "router": 0.7957733273506165
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.310556411743164,
+            1.309181809425354,
+            1.6014056205749512
+          ],
+          "rejected_calls": [],
+          "router": 0.7947874665260315
+        }
+      },
+      "token": "Slider-500:66"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2725574,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.0577590465545654,
+            1.0035079717636108,
+            1.59371817111969
+          ],
+          "rejected_calls": [],
+          "router": 0.7585434913635254
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.1707414388656616,
+            1.1368672847747803,
+            1.59371817111969
+          ],
+          "rejected_calls": [],
+          "router": 0.7576265335083008
+        }
+      },
+      "token": "Slider-500:67"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2765656,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.05242121219635,
+            0.9797460436820984,
+            1.5826350450515747
+          ],
+          "rejected_calls": [],
+          "router": 0.7149837017059326
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.1679630279541016,
+            1.1164053678512573,
+            1.5826350450515747
+          ],
+          "rejected_calls": [],
+          "router": 0.7137967944145203
+        }
+      },
+      "token": "Slider-500:68"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2805738,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.010236144065857,
+            0.9223803877830505,
+            1.5403043031692505
+          ],
+          "rejected_calls": [],
+          "router": 0.6755601763725281
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.1216148138046265,
+            1.0456194877624512,
+            1.5403043031692505
+          ],
+          "rejected_calls": [],
+          "router": 0.6743294596672058
+        }
+      },
+      "token": "Slider-500:69"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2845821,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            0.9178215265274048,
+            0.8168932199478149,
+            1.477474331855774
+          ],
+          "rejected_calls": [],
+          "router": 0.6396753787994385
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.0505892038345337,
+            0.9644917249679565,
+            1.477474331855774
+          ],
+          "rejected_calls": [],
+          "router": 0.6383029818534851
+        }
+      },
+      "token": "Slider-500:70"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2885903,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.005042314529419,
+            0.8879519104957581,
+            1.4408564567565918
+          ],
+          "rejected_calls": [],
+          "router": 0.609409511089325
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.1768614053726196,
+            1.0717869997024536,
+            1.4408564567565918
+          ],
+          "rejected_calls": [],
+          "router": 0.6070389151573181
+        }
+      },
+      "token": "Slider-500:71"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2925985,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.4494532346725464,
+            1.9291795492172241,
+            1.4484226703643799
+          ],
+          "rejected_calls": [],
+          "router": 0.5655274987220764
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.6320029497146606,
+            2.3444454669952393,
+            1.4484226703643799
+          ],
+          "rejected_calls": [],
+          "router": 0.5628848075866699
+        }
+      },
+      "token": "Slider-500:72"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 2966067,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            -7.019613265991211,
+            -2.946397542953491,
+            1.3260914087295532
+          ],
+          "rejected_calls": [],
+          "router": 0.5254027843475342
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            -4.874297142028809,
+            -2.554407835006714,
+            1.3260914087295532
+          ],
+          "rejected_calls": [],
+          "router": 0.5308347344398499
+        }
+      },
+      "token": "Slider-500:73"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 3006149,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.5507242679595947,
+            2.5747573375701904,
+            1.3002164363861084
+          ],
+          "rejected_calls": [],
+          "router": 0.5044605731964111
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.6737959384918213,
+            2.7901620864868164,
+            1.3002164363861084
+          ],
+          "rejected_calls": [],
+          "router": 0.5027772784233093
+        }
+      },
+      "token": "Slider-500:74"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 3046231,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.324318528175354,
+            1.3066470623016357,
+            1.237187385559082
+          ],
+          "rejected_calls": [],
+          "router": 0.49831900000572205
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 4,
+            "rgb": 7
+          },
+          "native": [
+            1.4972422122955322,
+            1.4464147090911865,
+            1.237187385559082
+          ],
+          "rejected_calls": [],
+          "router": 0.49504587054252625
+        }
+      },
+      "token": "Slider-500:75"
+    },
+    {
+      "baseline_exact": true,
+      "group": "Slider-500",
+      "query_us": 3086313,
+      "results": {
+        "canonical": {
+          "accepted_observations": {
+            "event": 0,
+            "rgb": 0
+          },
+          "native": [
+            null,
+            null,
+            null
+          ],
+          "rejected_calls": [],
+          "router": 0.43148598074913025
+        },
+        "original": {
+          "accepted_observations": {
+            "event": 0,
+            "rgb": 0
+          },
+          "native": [
+            null,
+            null,
+            null
+          ],
+          "rejected_calls": [],
+          "router": 0.43148598074913025
+        }
+      },
+      "token": "Slider-500:76"
+    }
+  ],
+  "targets_read": false
+}
