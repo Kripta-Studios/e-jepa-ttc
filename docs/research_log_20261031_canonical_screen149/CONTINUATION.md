@@ -1,5 +1,19 @@
 # Continuación activa tras el screen
 
+**Resultado actualizado, 1 de noviembre:** la recuperación v2, ambos replays y
+las mediciones de latencia concurrentes terminaron. Después terminó la auditoría
+separada del router sobre 5805 consultas físicas / 6762 aliases: cero nuevas
+ausencias y cero cambios de signo. La precisión Test12 no se ha evaluado.
+El nuevo reajuste emparejado de 48 entrenamientos tampoco supera el screen149:
+el MAE de carretera pasa de 0.484752 a 0.511821 s. No se exporta ni promueve.
+El [informe con evidencia exacta](../research_progress_20261101/v1/README.md)
+conserva estos resultados, la falta de paridad histórica y la discrepancia de
+Slider-750. El modelo entregable y sus componentes se verificaron sin cambios.
+Faltan evaluación oficial Test12, candidato aprobado y comparación equivalente;
+el objetivo no está completado. Las consultas al usuario sobre acceso a CodaBench
+y permiso explícito para escribir a los organizadores siguen sin respuesta.
+No reiniciar los runs completos ni ejecutar el generador de cierre acotado.
+
 **Actualización 1 de noviembre:** el usuario ha solicitado resolver los tres
 requisitos (eAP completo, candidato aprobado y comparación SOTA equivalente).
 El cierre acotado preparado no se ha ejecutado y no sustituye esos requisitos.

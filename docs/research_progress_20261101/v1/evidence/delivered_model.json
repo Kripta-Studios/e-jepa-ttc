@@ -1,0 +1,16 @@
+{
+  "export_sha256": "53cafd818ef977b3b2860947e9910f55a255d55dfeef1c42646db6c22debaaba",
+  "fit_recordings": 25,
+  "fit_rows": 2608,
+  "implementation": {
+    "operational\\phase_startup\\__init__.py": "866aa4f6464f979a07fd88499f5db13c2f36ee6b10defa1cab1226b386b8373f",
+    "operational\\phase_startup\\geometry.py": "1698cb19e30c4f491bbaa42e34e5ef24fb0aadfc081506da8cabe363e590b8d7",
+    "operational\\phase_startup\\model.py": "878dab038fa508d2208e6f88892a85a8a5ef3c6c9a41866f97162af6bd3143ff",
+    "operational\\phase_startup\\runtime.py": "3b3f9ee1c215dd7c30e46a98b8c7f5a921db1522fb99e68471ac2e8330f14238"
+  },
+  "name": "PHASE-TTC-Adapt-20261031",
+  "router_freeze_sha256": "139ce8d6aea1472b7522ddbc9815816711f523603211b8a002f52fceb3120f8a",
+  "schema": "phase_evttc_submission_model_v1",
+  "scope": "adapted research candidate; no direct benchmark-recording fit; historical exposure remains",
+  "upstream_sha256": "dbb95f68ce861a72bb9b8169677a96442523cb256fb1d45c412acee46a07677d"
+}

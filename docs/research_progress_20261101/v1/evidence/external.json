@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-11-01T00:02:59.425534+00:00",
+  "repository": "NAIL-HNU/GarlTTC-dataset",
+  "revision": "53fbaade17f3b76aa56dc7df2b527ce279062f59",
+  "repository_last_modified": "2026-10-31T13:53:24+00:00",
+  "readme_url": "https://huggingface.co/datasets/NAIL-HNU/GarlTTC-dataset/blob/53fbaade17f3b76aa56dc7df2b527ce279062f59/README.md",
+  "official_evaluation_url": "https://www.codabench.org/competitions/17289/",
+  "public_file_inventory": [
+    ".gitattributes",
+    "README.md",
+    "annotations/train.parquet",
+    "data/test_inputs.parquet",
+    "data/train.parquet",
+    "dataset_info.json",
+    "sample_submission.json",
+    "splits/test.txt",
+    "splits/train.txt"
+  ],
+  "official_template_logical_queries": 6762,
+  "trusted_physical_queries": 5805,
+  "exact_logical_token_set_match": true,
+  "private_test_targets_downloaded": false,
+  "test12_accuracy_evaluated": false,
+  "official_submission_sent": false,
+  "required_for_test12_accuracy": "Authorized official CodaBench evaluation",
+  "scope": "Submission identity and public availability only; no accuracy claim",
+  "source_sha256": {
+    "output\\phase_timewarp\\external_dependencies_20261101\\hf_dataset_info.json": "a21763f1650000652558237e36dd3af07b13f0a0da88a70d40cec3a867345f81",
+    "output\\phase_timewarp\\external_dependencies_20261101\\pinned_dataset\\README.md": "b22f80ed371e3c03adb10512f950e3d2dc135a5fbafc9697a5b88d9e9ef9ef8c",
+    "output\\phase_timewarp\\external_dependencies_20261101\\pinned_dataset\\sample_submission.json": "1a80e2dfe42b1fad2736304bc536c3ea981d5570f705b601e2e9442596f9afe6",
+    "artifacts\\runpod_event_authority_supplement_20261026\\payload\\workspace\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\test12_phase_only\\INPUTS.json": "b78730abe68de7fbe06c6c98b25d5fa025c04d9303720b680ce0c0f575d2e526"
+  },
+  "script_sha256": "35ae9c0f73a758150babc6e3e62b52f8974c2c89b2e8a21558b2c6b9b08133ed"
+}

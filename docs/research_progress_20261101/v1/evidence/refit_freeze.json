@@ -1,0 +1,51 @@
+{
+  "arms": [
+    "original",
+    "canonical"
+  ],
+  "device": "cpu",
+  "fits": 48,
+  "folds": [
+    "CCRm",
+    "CCRs-1",
+    "CCRs-3",
+    "CCRs-side",
+    "CPLA",
+    "CPNA",
+    "CPNAO",
+    "Slider"
+  ],
+  "git_commit": "a84122ce28e6a083745c20376bbe85b45044fa53",
+  "host": "DESKTOP-2N393IP",
+  "optimizer_updates_per_fit": 300,
+  "prior_frozen_router_screen_reclassified": false,
+  "promotion_admitted": false,
+  "python_version": "3.11.15",
+  "schema": "phase_canonical_router_refit_v1",
+  "scope": "historically exposed grouped development; no Test12 targets or benchmark fit",
+  "seeds": [
+    7,
+    13,
+    21
+  ],
+  "sources_and_inputs": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\scripts\\train_phase_canonical_router.py": "be197cfe117cfbcb04f742a5465fa29ab79ba3ab3b4e458663e815d57b7e6dc1",
+    "docs\\research_log_canonical_population2608\\CANONICAL_ROUTER_REFIT_PROTOCOL.md": "c5882232d35f0193d999456ad90ae9789146781b3f5e217c99dededef6aa52ff",
+    "operational\\phase_robust\\model.py": "e83b5fc6ff5f672afce1ed629d813bb6f65cdf7c541eb247a78ee43b82816ac5",
+    "operational\\phase_startup\\model.py": "878dab038fa508d2208e6f88892a85a8a5ef3c6c9a41866f97162af6bd3143ff",
+    "operational\\phase_startup\\runtime.py": "3b3f9ee1c215dd7c30e46a98b8c7f5a921db1522fb99e68471ac2e8330f14238",
+    "operational\\phase_timewarp\\screen_metrics.py": "73d41d3f5601857ebcc547ef32f7679d4f8a326ce8a431d8ab5f25739504623f",
+    "output\\phase_submission\\training\\CONFIG.json": "e1286706ab164886d2059d9fb02c58cd9c5492b19478edecaaa861a13dd40e5d",
+    "output\\phase_submission\\training\\POPULATION.npz": "1c200903e5cbaf4cc2115c6b53dc252613e51d2f0dc0d9dcb595cdbe523e804e",
+    "output\\phase_timewarp\\population2608_v1\\COMPLETE.json": "2a6fc0fd462a0520648835801896951faa97edcc8b8639bcc1d3a27740d31bfd",
+    "output\\phase_timewarp\\screen149_v1\\COMPLETE.json": "e9d03b2ee1fe72a9acad3b159943f01370e539ce73fc3651c623df400dfd4aa9",
+    "scripts\\audit_phase_eap_router_sensitivity.py": "58d7e0e7af79a9c8173eda3a5fa5cfd470d303a51122ca55551c2fe1ccaf8947",
+    "scripts\\report_phase_canonical_population.py": "b3880f445e1b02ada2e3531d4029e6c54e1ed8a702a6a06f2b65700f4eb314f1",
+    "scripts\\train_phase_robust.py": "bb85bd26d7e96b901ca3d01f57aa088e637cf1131a63ad6556376ead14dc8aea",
+    "scripts\\train_phase_startup.py": "61c530944a7320bdeb836eaf2f63c0f23a4c1e39d574d18e5186561dcc1e4ee4"
+  },
+  "start_time": "2026-11-01T00:15:32.103475+00:00",
+  "steps_per_fit": 300,
+  "threads": 1,
+  "torch": "2.11.0+cu128"
+}

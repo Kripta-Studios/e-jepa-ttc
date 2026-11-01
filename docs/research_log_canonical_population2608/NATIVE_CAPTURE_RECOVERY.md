@@ -1,5 +1,15 @@
 # Recuperación de captura nativa interrumpida
 
+**Resultado posterior:** `native_platform_followup_v2` terminó con sus tres
+etapas completas. El original local se reproduce exactamente en 5805 consultas,
+y el contexto de eventos es idéntico entre brazos. Persisten 5805 fallos del
+control de paridad histórica, 504 de ellos en TTC. Las mediciones de latencia
+concurrentes terminaron antes de ejecutar la auditoría separada del router.
+Esta última también terminó sin nuevas ausencias ni cambios de signo; no mide
+precisión Test12. Véase el [informe verificado](../research_progress_20261101/v1/README.md).
+Los PID y estados activos que siguen documentan la recuperación; ya no son una
+instrucción de reanudación. El intento v1 permanece conservado.
+
 El 1 de noviembre se comprobó que no existían ni coordinador 44880 ni worker
 63932, ni otro proceso con los comandos de captura/replay de este experimento.
 El run `native_platform_followup_v1` seguía indicando capture, sin COMPLETE ni

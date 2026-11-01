@@ -1,0 +1,25 @@
+{
+  "absolute_change_p50_p95_p99_seconds": [
+    1.430511474609375e-05,
+    7.677078247070312e-05,
+    0.00012104034423828132
+  ],
+  "candidate_available": 5805,
+  "elapsed_seconds": 983.9743564999999,
+  "event_context_exact": true,
+  "exact_predictions": 86,
+  "historical_original_failed_queries": 5805,
+  "historical_original_ttc_failed_queries": 504,
+  "historical_parity_granted": false,
+  "local_original_exact": true,
+  "maximum_absolute_change_seconds": 0.006496429443359375,
+  "native_accuracy_evaluated": false,
+  "newly_available": 0,
+  "newly_missing": 0,
+  "original_available": 5805,
+  "paired": 5805,
+  "promotion_admitted": false,
+  "queries": 5805,
+  "runtime_scope": "compact replay with verification/output IO; not full-chain latency",
+  "sign_changes": 0
+}

@@ -1,0 +1,249 @@
+{
+  "accuracy_evaluated": false,
+  "active_history_physical_queries": 5805,
+  "aliases_are_independent_samples": false,
+  "by_sequence": {
+    "3RUZHwnCwK": {
+      "canonical_available": 461,
+      "exact": 3,
+      "max_abs_seconds": 0.00010395050048828125,
+      "mean_abs_seconds": 1.8186269251229705e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 461,
+      "p50_p95_p99_abs_seconds": [
+        1.2874603271484375e-05,
+        5.7220458984375e-05,
+        8.659362792968746e-05
+      ],
+      "paired": 461,
+      "queries": 461,
+      "sign_changes": 0
+    },
+    "71wUSQYMpk": {
+      "canonical_available": 325,
+      "exact": 7,
+      "max_abs_seconds": 9.059906005859375e-05,
+      "mean_abs_seconds": 1.759969271146334e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 325,
+      "p50_p95_p99_abs_seconds": [
+        1.1920928955078125e-05,
+        5.5599212646484386e-05,
+        7.665634155273437e-05
+      ],
+      "paired": 325,
+      "queries": 325,
+      "sign_changes": 0
+    },
+    "89fvtHGHx2": {
+      "canonical_available": 118,
+      "exact": 3,
+      "max_abs_seconds": 4.482269287109375e-05,
+      "mean_abs_seconds": 1.1656243922346729e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 118,
+      "p50_p95_p99_abs_seconds": [
+        8.940696716308594e-06,
+        2.9635429382324215e-05,
+        3.846168518066406e-05
+      ],
+      "paired": 118,
+      "queries": 118,
+      "sign_changes": 0
+    },
+    "HHJe79eY2J": {
+      "canonical_available": 334,
+      "exact": 4,
+      "max_abs_seconds": 0.00020599365234375,
+      "mean_abs_seconds": 2.132490009604814e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 334,
+      "p50_p95_p99_abs_seconds": [
+        1.5735626220703125e-05,
+        5.707740783691403e-05,
+        8.715152740478539e-05
+      ],
+      "paired": 334,
+      "queries": 334,
+      "sign_changes": 0
+    },
+    "JcjcDPISuL": {
+      "canonical_available": 1013,
+      "exact": 13,
+      "max_abs_seconds": 0.00022029876708984375,
+      "mean_abs_seconds": 1.8613712691131018e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 1013,
+      "p50_p95_p99_abs_seconds": [
+        1.1444091796875e-05,
+        5.817413330078125e-05,
+        8.571624755859375e-05
+      ],
+      "paired": 1013,
+      "queries": 1013,
+      "sign_changes": 0
+    },
+    "M8I2irMvY7": {
+      "canonical_available": 383,
+      "exact": 6,
+      "max_abs_seconds": 0.00010776519775390625,
+      "mean_abs_seconds": 1.3878700316107927e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 383,
+      "p50_p95_p99_abs_seconds": [
+        9.059906005859375e-06,
+        4.100799560546875e-05,
+        6.653785705566407e-05
+      ],
+      "paired": 383,
+      "queries": 383,
+      "sign_changes": 0
+    },
+    "Mu6kaUjIz3": {
+      "canonical_available": 461,
+      "exact": 3,
+      "max_abs_seconds": 0.0001506805419921875,
+      "mean_abs_seconds": 2.7359178423105765e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 461,
+      "p50_p95_p99_abs_seconds": [
+        2.1457672119140625e-05,
+        7.05718994140625e-05,
+        0.00011930465698242184
+      ],
+      "paired": 461,
+      "queries": 461,
+      "sign_changes": 0
+    },
+    "V741M41vPW": {
+      "canonical_available": 570,
+      "exact": 10,
+      "max_abs_seconds": 0.0001220703125,
+      "mean_abs_seconds": 1.9000915058872155e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 570,
+      "p50_p95_p99_abs_seconds": [
+        1.1920928955078125e-05,
+        5.7744979858398394e-05,
+        9.122371673583982e-05
+      ],
+      "paired": 570,
+      "queries": 570,
+      "sign_changes": 0
+    },
+    "kafYzX6kJ4": {
+      "canonical_available": 216,
+      "exact": 2,
+      "max_abs_seconds": 7.724761962890625e-05,
+      "mean_abs_seconds": 2.0357745665091056e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 216,
+      "p50_p95_p99_abs_seconds": [
+        1.7404556274414062e-05,
+        4.7206878662109375e-05,
+        6.433725357055665e-05
+      ],
+      "paired": 216,
+      "queries": 216,
+      "sign_changes": 0
+    },
+    "nP4MRdpEeO": {
+      "canonical_available": 363,
+      "exact": 4,
+      "max_abs_seconds": 0.000362396240234375,
+      "mean_abs_seconds": 2.3623800146349864e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 363,
+      "p50_p95_p99_abs_seconds": [
+        1.8596649169921875e-05,
+        5.898475646972653e-05,
+        8.058547973632812e-05
+      ],
+      "paired": 363,
+      "queries": 363,
+      "sign_changes": 0
+    },
+    "r0PXQOpCA6": {
+      "canonical_available": 795,
+      "exact": 10,
+      "max_abs_seconds": 0.0017948150634765625,
+      "mean_abs_seconds": 1.983432649816357e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 795,
+      "p50_p95_p99_abs_seconds": [
+        8.58306884765625e-06,
+        6.437301635742188e-05,
+        0.00011452674865722648
+      ],
+      "paired": 795,
+      "queries": 795,
+      "sign_changes": 0
+    },
+    "vhjB5OViA7": {
+      "canonical_available": 766,
+      "exact": 7,
+      "max_abs_seconds": 0.00041961669921875,
+      "mean_abs_seconds": 2.590452099593439e-05,
+      "newly_available": 0,
+      "newly_missing": 0,
+      "original_available": 766,
+      "p50_p95_p99_abs_seconds": [
+        1.71661376953125e-05,
+        7.414817810058594e-05,
+        9.448528289794932e-05
+      ],
+      "paired": 766,
+      "queries": 766,
+      "sign_changes": 0
+    }
+  },
+  "historical_parity_granted": false,
+  "logical_aliases": {
+    "canonical_available": 6762,
+    "exact": 84,
+    "max_abs_seconds": 0.0017948150634765625,
+    "mean_abs_seconds": 2.061229455897668e-05,
+    "newly_available": 0,
+    "newly_missing": 0,
+    "original_available": 6762,
+    "p50_p95_p99_abs_seconds": [
+      1.33514404296875e-05,
+      6.196498870849601e-05,
+      9.1552734375e-05
+    ],
+    "paired": 6762,
+    "queries": 6762,
+    "sign_changes": 0
+  },
+  "physical": {
+    "canonical_available": 5805,
+    "exact": 72,
+    "max_abs_seconds": 0.0017948150634765625,
+    "mean_abs_seconds": 2.0465103333413242e-05,
+    "newly_available": 0,
+    "newly_missing": 0,
+    "original_available": 5805,
+    "p50_p95_p99_abs_seconds": [
+      1.33514404296875e-05,
+      6.103515625e-05,
+      9.202957153320312e-05
+    ],
+    "paired": 5805,
+    "queries": 5805,
+    "sign_changes": 0
+  },
+  "promotion_admitted": false,
+  "router_prior_screen": "failed; diagnostic only",
+  "targets_read": false
+}
