@@ -29,15 +29,19 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("native", "router", "refit", "external", "output"):
         parser.add_argument("--" + name, required=True, type=Path)
+    parser.add_argument("--bundle", type=Path, default=Path("output/phase_submission/FINAL_MODEL"))
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError("Use a fresh report directory")
     native = sealed_report(args.native / "paired_replay", "RESULTS.json")
+    native_decision = sealed_report(args.native, "DECISION.json")
     router = sealed_report(args.router, "REPORT.json")
     router_freeze = sealed_report(args.router, "FREEZE.json")
     refit = sealed_report(args.refit, "REPORT.json")
     if (
         native["queries"] != 5805
+        or native_decision["queries"] != 5805
+        or native_decision["promotion_admitted"]
         or not native["local_original_exact"]
         or not native["event_context_exact"]
         or native["native_accuracy_evaluated"]
@@ -49,6 +53,24 @@ def main() -> None:
     external = read(args.external)
     if not external["exact_logical_token_set_match"] or external["test12_accuracy_evaluated"]:
         raise ValueError("External evidence scope changed")
+    evaluator = Path("output/phase_safe_fusion/evaluator_audit/AUDIT.json")
+    published = Path("docs/research_log_20261031_sign_safe/evidence/evaluator_audit.json")
+    manifest = read(Path("docs/research_log_20261031_sign_safe/evidence_manifest.json"))
+    if (
+        digest(published) != manifest["receipts"]["evaluator_audit.json"]
+        or evaluator.read_bytes().replace(b"\r\n", b"\n") != published.read_bytes()
+    ):
+        raise ValueError("Official-equivalence audit differs from the published record")
+    audit = read(evaluator)
+    if audit["official_equivalence"]:
+        raise ValueError("Official equivalence changed; reassess the report")
+    from operational.phase_submission.runtime import load_submission_model
+
+    expected = read(Path("output/phase_timewarp/population2608_v1/FREEZE.json"))["inputs"]
+    model_key = next(k for k in expected if k.replace("\\", "/").endswith("FINAL_MODEL/MODEL.json"))
+    if digest(args.bundle / "MODEL.json") != expected[model_key]:
+        raise ValueError("Delivered model identity changed")
+    load_submission_model(args.bundle)
     sources = {
         "native_result": args.native / "paired_replay/RESULTS.json",
         "native_decision": args.native / "DECISION.json",
@@ -59,6 +81,9 @@ def main() -> None:
         "refit_freeze": args.refit / "FREEZE.json",
         "refit_complete": args.refit / "COMPLETE.json",
         "external": args.external,
+        "evaluator_audit": evaluator,
+        "historical_comparison_contract": Path("data/protocols/evttc_official_comparison_v2.json"),
+        "delivered_model": args.bundle / "MODEL.json",
     }
     status = {
         "eap_local_sensitivity_complete": True,
@@ -67,6 +92,7 @@ def main() -> None:
         "new_model_approved": False,
         "sota_comparable_superiority_demonstrated": False,
         "goal_achieved": False,
+        "delivered_model_identity_and_components_verified": True,
         "next_dependencies": [
             "Authorized official Test12 evaluation; public targets are unavailable",
             "Slider-750 aligned targets/evaluator and equivalent baseline reproduction",
@@ -143,6 +169,13 @@ def main() -> None:
         "resultado recibido. La auditoría anterior se conserva; no se ajustan offsets "
         "ni targets para forzar coincidencia. Tampoco se acredita una reproducción "
         "completa equivalente de los baselines SOTA.",
+        "",
+        "Se mantiene la distinción entre las diez secuencias de la competición, "
+        "las tres filas de transferencia Garl-TTC y la validación in-domain de "
+        "[REACT](https://arxiv.org/html/2609.19204v1). El contrato histórico copiado "
+        "documenta estas poblaciones distintas; sus antiguos flags de descarga no "
+        "describen el estado operativo actual. No se mezclan sus cifras para construir "
+        "una clasificación nueva.",
         "",
         "La validación local no elimina estas dependencias externas. La consulta a los "
         "organizadores permanece pendiente de autorización explícita; no se presupone "
